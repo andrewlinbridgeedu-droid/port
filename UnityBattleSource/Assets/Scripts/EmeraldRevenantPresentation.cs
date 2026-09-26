@@ -26,6 +26,8 @@ public sealed class EmeraldRevenantPresentation : MonoBehaviour
             Vector3.Scale(localVisibleBounds.size,new Vector3(Mathf.Abs(scale.x),Mathf.Abs(scale.y),Mathf.Abs(scale.z))));
     } }
     public bool IsInstalled => installed && actor != null;
+    /// Read-only: which enemy currently wears the revenant (presentation identity only).
+    public EnemyHandle InstalledHandle => IsInstalled ? handle : null;
     public Vector3 CastAnchor => chestCore != null ? chestCore.position : actor != null ? actor.transform.TransformPoint(castLocalOffset) : Vector3.zero;
 
     public void Install(EnemyHandle enemyHandle)

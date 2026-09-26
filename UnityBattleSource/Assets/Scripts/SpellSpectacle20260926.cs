@@ -15,6 +15,12 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
 {
     public enum Family { Crescent, Rising, Falling, Surge, Fan, Twin, Curtain, Tide }
     public enum Style { Light, Strike, Heavy, Support, Control }
+    /// Row in SpectacleMatter; each matter has its own edge, darkness, flow and flicker.
+    public enum Matter { Filigree = 0, Flame = 1, Water = 2, Crystal = 3, Silk = 4, Ink = 5, Electric = 6, Smoke = 7 }
+    /// Signature element that belongs to one identity, on top of its body.
+    public enum Accent { None, Lightning, Cracks, Vortex, Wings, Orbit, Shards, Splatter, Foam,
+        // Signature moves: whirlwind, sword qi, sword rain, meteor shower, ground spikes, coiling dragon, lotus bloom.
+        Tornado, SwordQi, SwordRain, Meteor, Spikes, Dragon, Lotus }
     enum Mote { Spark = 0, Ember = 1, Shard = 2, Ink = 3, Petal = 4, Card = 5, Wisp = 6, Puff = 7 }
 
     sealed class Profile
@@ -25,8 +31,10 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         public Color[] ramp;
         public Color line, core, wash, hot;
         public Mote mote, mote2;
+        public Matter matter;
+        public Accent accent;
         public bool column;
-        public float scale = 1f, rampSpan = 1f;
+        public float scale = 1f, rampSpan = 1f, wobble;
     }
 
     sealed class Cue
@@ -52,7 +60,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
     readonly Dictionary<string, int> castCount = new Dictionary<string, int>();
     readonly Dictionary<string, Texture2D> ramps = new Dictionary<string, Texture2D>();
     Material sweepMaterial, washMaterial, flareMaterial;
-    Texture2D filigree, noise, atlas;
+    Texture2D matterAtlas, noise, atlas;
     Transform root;
     Wash wash;
     int live, bursts;
@@ -87,6 +95,14 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         string model = actor.ProfileEnemyId;
         var ghost = actor.EnemyRoot ? actor.EnemyRoot.GetComponentInChildren<FogGhostActor>(false) : null;
         if (ghost && ghost.gameObject.activeInHierarchy) model = ghost.IsSplit ? "crimson-ghost" : "fog-ghost";
+        // Wanted bosses reuse other enemies' art templates (B04 executor, B06
+        // adjudicator); their identity lives on the bounty presentation.
+        // The emerald revenant replaces a hound's body from the battle object.
+        var revenant = battle.GetComponent<EmeraldRevenantPresentation>();
+        if (revenant && revenant.InstalledHandle == actor) model = "emerald";
+        var bounty = actor.GetComponent<BountyIdentityPresentation20260917>();
+        if (bounty && !string.IsNullOrEmpty(bounty.bountyID) && bounty.bountyID.Length >= 3)
+            model = "bounty-" + bounty.bountyID.Substring(0, 3);
         var profile = EnemyProfile(actor.BattleEnemyId, intent, model);
         var style = EnemyStyle(profile, intent, model);
         Func<Vector3> caster = () => actor && actor.EffectAnchor ? actor.EffectAnchor.position
@@ -191,16 +207,16 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         var sweep = Resources.Load<Shader>("SpellSpectacle20260926/SpectacleSweep");
         var washShader = Resources.Load<Shader>("SpellSpectacle20260926/SpectacleWash");
         var flare = Resources.Load<Shader>("SpellSpectacle20260926/SpectacleFlare");
-        filigree = Resources.Load<Texture2D>("SpellSpectacle20260926/SpectacleFiligree");
+        matterAtlas = Resources.Load<Texture2D>("SpellSpectacle20260926/SpectacleMatter");
         noise = Resources.Load<Texture2D>("SpellSpectacle20260926/SpectacleNoise");
         atlas = Resources.Load<Texture2D>("SpellSpectacle20260926/SpectacleAtlas");
-        if (!sweep || !washShader || !flare || !filigree || !noise || !atlas)
+        if (!sweep || !washShader || !flare || !matterAtlas || !noise || !atlas)
         {
             Debug.LogWarning("SPELL_SPECTACLE_MISSING_RESOURCE");
             return false;
         }
         sweepMaterial = new Material(sweep) { name = "SpectacleSweep" };
-        sweepMaterial.SetTexture("_Filigree", filigree);
+        sweepMaterial.SetTexture("_Matter", matterAtlas);
         sweepMaterial.SetTexture("_Noise", noise);
         washMaterial = new Material(washShader) { name = "SpectacleWash" };
         washMaterial.SetTexture("_Noise", noise);
@@ -298,17 +314,22 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         var family = cue.cast % 2 == 1 ? p.familyAlt : p.family;
         if (style == Style.Support) family = Family.Rising;
         int layers = style switch { Style.Heavy => 3, Style.Strike => 3, Style.Light => 2, Style.Support => 3, _ => 2 };
+        // The coiling dragon is the subject; keep only one light companion body.
+        bool dragon = p.accent == Accent.Dragon;
+        if (dragon) layers = 1;
         var ramp = Ramp(p);
-        var paths = Paths(family, frame, layers, rng);
+        // A lotus bloom is the whole support body; tongues would hide the petals.
+        var paths = p.accent == Accent.Lotus ? new List<Path>() : Paths(family, frame, layers, rng);
         for (int k = 0; k < paths.Count; k++)
         {
+            paths[k].wobble = p.wobble * frame.s;
             var body = Body.Create(root, sweepMaterial, this);
             float bodyDelay = delay + paths[k].delay;
             body.Setup(paths[k], frame.target, ramp, p, style, bodyDelay, (float)rng.NextDouble() * 10f, k);
         }
         // Strike and heavy casts also open one body of the identity's second
         // form, so a hit reads as layered matter rather than a single sweep.
-        if ((style == Style.Strike || style == Style.Heavy) && p.familyAlt != family)
+        if (!dragon && (style == Style.Strike || style == Style.Heavy) && p.familyAlt != family)
         {
             var extra = Paths(p.familyAlt, frame, 1, rng);
             for (int k = 0; k < Mathf.Min(2, extra.Count); k++)
@@ -318,13 +339,31 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 body.Setup(extra[k], frame.target, ramp, p, style, delay + .045f + extra[k].delay, (float)rng.NextDouble() * 10f, 4 + k);
             }
         }
-        if (p.column && style != Style.Light)
+        if (!dragon && p.column && style != Style.Light)
         {
             var col = Column(frame, rng);
             var body = Body.Create(root, sweepMaterial, this);
             body.Setup(col, frame.target, ramp, p, style == Style.Support ? Style.Support : Style.Heavy, delay + .02f, (float)rng.NextDouble() * 10f, 7);
         }
+        // The identity's signature element (bolts, ground cracks, vortex, wings).
+        var accentPaths = AccentPaths(p.accent, frame, style, rng);
+        Flares impacts = null;
+        for (int k = 0; k < accentPaths.Count; k++)
+        {
+            var body = Body.Create(root, sweepMaterial, this);
+            body.Setup(accentPaths[k], accentPaths[k].pivot ?? frame.target, ramp, p, style, delay + accentPaths[k].delay, (float)rng.NextDouble() * 10f, 10 + k);
+            if (accentPaths[k].impactAt is Vector3 at)
+            {
+                if (!impacts) impacts = Flares.Create(root, flareMaterial, this);
+                impacts.Impact(p, at, frame, delay + accentPaths[k].delay + BaseReveal(style) * accentPaths[k].revealScale, rng, p.accent == Accent.Meteor || p.accent == Accent.Dragon);
+            }
+        }
     }
+
+    static float BaseReveal(Style style) => style switch
+    {
+        Style.Heavy => .15f, Style.Strike => .12f, Style.Light => .10f, Style.Support => .30f, _ => .16f
+    };
 
     // ------------------------------------------------------------ geometry
 
@@ -342,6 +381,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             float onScreen = Vector3.Dot(target - caster, right);
             side = Mathf.Abs(onScreen) > .05f ? Mathf.Sign(onScreen) : (rng.NextDouble() < .5 ? -1f : 1f);
         }
+        /// Ground point under the target and the horizontal axis pointing into the screen.
+        public Vector3 Foot => new Vector3(target.x, .03f, target.z);
+        public Vector3 Depth { get { var d = Vector3.Cross(right, Vector3.up); d.y = 0; return d.sqrMagnitude > 1e-6f ? d.normalized : Vector3.forward; } }
     }
 
     public sealed class Path
@@ -353,6 +395,16 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         public float bulgeAmount = .35f;
         public bool anchored;      // width grows from the spine to one side
         public float delay, reveal = 1f, tile = 2.5f, rampShift, rampSpan = 1f;
+        // Motion and look overrides used by the signature elements.
+        public Vector3? pivot;               // rotation/scale centre (wing shoulder, vortex eye)
+        public Vector3 offset;               // starts displaced, settles at contact
+        public Vector3 spinAxis, swingAxis;
+        public float spin, swing;            // deg/s continuous spin; deg folded -> open swing
+        public float revealScale = 1f, holdScale = 1f, flicker, coreAmt = -1f, wobble, opacity = -1f;
+        public bool shrink;                  // pulled inward while it lives
+        public bool rigid;                   // keeps its size: blades, meteors, spikes
+        public Vector3 drift;                // keeps travelling after it arrives (sword qi)
+        public Vector3? impactAt;            // flare + debris when it arrives (landing blade, meteor)
     }
 
     static float R(System.Random rng, float a, float b) => a + (float)rng.NextDouble() * (b - a);
@@ -503,7 +555,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                     var centre = f.target + f.up * .45f * s + f.toCam * .2f * s * k;
                     Func<float, Vector3> pos = t => centre + (t - .5f) * length * d + perp * bend * length * .5f * (1 - Mathf.Pow(2 * t - 1, 2));
                     var path = Make(56, pos, _ => perp, t => s * (.58f - .08f * k) * Swell(t, .55f) * (1 + .45f * Mathf.Exp(-Mathf.Pow((t - .6f) / .16f, 2))), f.toCam);
-                    path.delay = k * .055f; path.rampShift = .12f * k; path.tile = 3.6f;
+                    path.delay = k * .055f; path.rampShift = .12f * k; path.tile = 3.6f; path.revealScale = .45f;
                     list.Add(path);
                 }
                 break;
@@ -563,6 +615,354 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         return path;
     }
 
+    // ------------------------------------------------------------ signature elements
+
+    static Path Polyline(List<Vector3> pts, Vector3 toCam, float h0, float h1, Func<float, Vector3> across = null)
+    {
+        int n = pts.Count;
+        Func<float, Vector3> pos = t =>
+        {
+            float x = Mathf.Clamp01(t) * (n - 1);
+            int i = Mathf.Min((int)x, n - 2);
+            return Vector3.Lerp(pts[i], pts[i + 1], x - i);
+        };
+        return Make(Mathf.Max(24, n * 3), pos, across ?? FacingAcross(pos, toCam), t => Mathf.Lerp(h0, h1, t) * (.35f + .65f * Swell(Mathf.Pow(t, .25f), .5f)), toCam);
+    }
+
+    // Midpoint displacement in the camera plane: a jagged bolt, never a straight bar.
+    static List<Vector3> Jag(Vector3 a, Vector3 b, Vector3 toCam, System.Random rng, int levels, float disp)
+    {
+        var pts = new List<Vector3> { a, b };
+        float amount = disp;
+        for (int l = 0; l < levels; l++)
+        {
+            var next = new List<Vector3>();
+            for (int i = 0; i < pts.Count - 1; i++)
+            {
+                var seg = pts[i + 1] - pts[i];
+                var perp = Vector3.Cross(seg, toCam).normalized;
+                next.Add(pts[i]);
+                next.Add((pts[i] + pts[i + 1]) * .5f + perp * seg.magnitude * amount * R(rng, -1, 1));
+            }
+            next.Add(pts[pts.Count - 1]);
+            pts = next;
+            amount *= .58f;
+        }
+        return pts;
+    }
+
+    List<Path> AccentPaths(Accent accent, Frame f, Style style, System.Random rng)
+    {
+        var list = new List<Path>();
+        float s = f.s;
+        bool light = style == Style.Light;
+        switch (accent)
+        {
+            case Accent.Lightning:
+            {
+                int bolts = style == Style.Heavy ? 4 : light ? 2 : 3;
+                for (int b = 0; b < bolts; b++)
+                {
+                    var start = b == 0 && Vector3.Distance(f.caster, f.target) > 2f * s
+                        ? Vector3.Lerp(f.caster, f.target, .12f) + f.up * .3f * s
+                        : f.target + f.up * R(rng, 3.8f, 5.4f) * s + f.right * R(rng, -2.4f, 2.4f) * s + f.toCam * R(rng, 0, .4f) * s;
+                    var end = f.target + f.right * R(rng, -.35f, .35f) * s + f.up * R(rng, -.45f, .25f) * s;
+                    var pts = Jag(start, end, f.toCam, rng, 5, .24f);
+                    var bolt = Polyline(pts, f.toCam, .3f * s, .2f * s);
+                    bolt.coreAmt = 4.5f; bolt.revealScale = .4f; bolt.holdScale = 1.1f; bolt.flicker = .6f; bolt.tile = 3f; bolt.opacity = .55f;
+                    bolt.delay = b * .04f + R(rng, 0, .03f);
+                    list.Add(bolt);
+                    for (int k = 0; k < 2; k++)
+                    {
+                        int at = Mathf.Clamp((int)(pts.Count * R(rng, .3f, .8f)), 1, pts.Count - 2);
+                        var dir = (pts[at + 1] - pts[at - 1]).normalized;
+                        var side = Vector3.Cross(dir, f.toCam).normalized * (k == 0 ? 1 : -1);
+                        var tip = pts[at] + (dir * .6f + side * .8f).normalized * R(rng, .8f, 1.7f) * s;
+                        var branch = Polyline(Jag(pts[at], tip, f.toCam, rng, 4, .3f), f.toCam, .14f * s, .05f * s);
+                        branch.coreAmt = 4f; branch.revealScale = .4f; branch.holdScale = .9f; branch.flicker = .6f; branch.opacity = .55f;
+                        branch.delay = bolt.delay + .025f;
+                        list.Add(branch);
+                    }
+                }
+                break;
+            }
+            case Accent.Cracks:
+            {
+                // Fissures run outward over the ground from the recipient's feet,
+                // at uneven angles and lengths, some forking.
+                var foot = new Vector3(f.target.x, .03f, f.target.z);
+                var gx = f.right; gx.y = 0; gx.Normalize();
+                var gz = Vector3.Cross(gx, Vector3.up);
+                int rays = style == Style.Heavy ? 7 : light ? 3 : 5;
+                float heading = R(rng, 0, 6.28f);
+                for (int r = 0; r < rays; r++)
+                {
+                    heading += R(rng, .6f, 1.4f);
+                    float len = R(rng, 1.5f, 3.4f) * s, h = heading;
+                    var pts = new List<Vector3> { foot };
+                    var pnt = foot;
+                    for (int k = 0; k < 10; k++)
+                    {
+                        h += R(rng, -.45f, .45f);
+                        pnt += (Mathf.Cos(h) * gx + Mathf.Sin(h) * gz) * len / 10f * R(rng, .7f, 1.3f);
+                        pts.Add(pnt);
+                    }
+                    var crack = Polyline(pts, f.toCam, .15f * s, .03f * s, null);
+                    FlattenAcross(crack);
+                    crack.coreAmt = 1.6f; crack.revealScale = 1.5f; crack.holdScale = 2f; crack.tile = 1.6f;
+                    crack.delay = r * .018f;
+                    list.Add(crack);
+                    if (rng.NextDouble() < .55)
+                    {
+                        int at = rng.Next(3, 7);
+                        float bh = h + (rng.NextDouble() < .5 ? -1 : 1) * R(rng, .5f, .9f);
+                        var bpts = new List<Vector3> { pts[at] };
+                        var bp = pts[at];
+                        for (int k = 0; k < 4; k++) { bh += R(rng, -.4f, .4f); bp += (Mathf.Cos(bh) * gx + Mathf.Sin(bh) * gz) * len / 12f; bpts.Add(bp); }
+                        var fork = Polyline(bpts, f.toCam, .06f * s, .02f * s);
+                        FlattenAcross(fork);
+                        fork.coreAmt = 1.4f; fork.revealScale = 1.2f; fork.holdScale = 2f; fork.delay = crack.delay + .08f;
+                        list.Add(fork);
+                    }
+                }
+                break;
+            }
+            case Accent.Vortex:
+            {
+                // Arms spiral into the recipient and keep turning while pulled inward.
+                var sUp = Vector3.Cross(f.right, f.toCam).normalized;
+                int arms = style == Style.Heavy ? 4 : 3;
+                // Well under one turn per arm so it never reads as nested rings.
+                float a0 = R(rng, 0, 6.28f), turn = (rng.NextDouble() < .5 ? -1 : 1) * R(rng, .5f, .72f) * 6.283f;
+                var eye = f.target + f.up * .1f * s;
+                for (int k = 0; k < arms; k++)
+                {
+                    float th0 = a0 + 6.283f * k / arms + R(rng, -.5f, .5f), rOut = R(rng, 2.1f, 2.9f) * s;
+                    Func<float, Vector3> pos = t =>
+                    {
+                        float th = th0 + turn * t, r = Mathf.Lerp(rOut, .18f * s, Mathf.Pow(t, .7f));
+                        return eye + r * (Mathf.Cos(th) * f.right + Mathf.Sin(th) * sUp) + f.toCam * (.3f * s * (1 - t));
+                    };
+                    float w0 = R(rng, .55f, .8f);
+                    var arm = Make(56, pos, FacingAcross(pos, f.toCam), t => s * (w0 * Mathf.Pow(1 - t, 1.3f) + .03f) * Swell(Mathf.Pow(t, .3f), .5f), f.toCam);
+                    arm.pivot = eye; arm.spinAxis = f.toCam; arm.spin = -Mathf.Sign(turn) * 120f; arm.shrink = true; arm.opacity = .85f;
+                    arm.revealScale = 1.2f; arm.holdScale = 1.1f; arm.tile = 2.2f; arm.delay = k * .03f;
+                    list.Add(arm);
+                }
+                break;
+            }
+            case Accent.Wings:
+            {
+                // Two swept wings unfold from the recipient's shoulders.
+                var shoulder = f.target + f.up * .3f * s - f.toCam * .2f * s;
+                int feathers = style == Style.Heavy ? 6 : 5;
+                for (int side = -1; side <= 1; side += 2)
+                    for (int k = 0; k < feathers; k++)
+                    {
+                        float fr = k / (feathers - 1f), th = Mathf.Lerp(-18f, 72f, fr) * Mathf.Deg2Rad + R(rng, -.08f, .08f);
+                        float len = s * (3.7f - 1.3f * fr) * R(rng, .9f, 1.08f), sd = side;
+                        var dir = sd * Mathf.Cos(th) * f.right + Mathf.Sin(th) * f.up;
+                        Func<float, Vector3> pos = t => shoulder + dir * len * t - f.up * (.4f * s * Mathf.Sin(Mathf.PI * t) * (1 - fr))
+                            + f.right * sd * .3f * s * t * t - f.toCam * .25f * s * t;
+                        var feather = Make(40, pos, FacingAcross(pos, f.toCam), t => s * (.34f + .14f * (1 - fr)) * Swell(Mathf.Pow(t, .45f), .7f) * (1 - .3f * t), f.toCam);
+                        feather.pivot = shoulder; feather.swingAxis = f.toCam; feather.swing = -sd * 68f;
+                        feather.revealScale = 1.5f; feather.holdScale = 1.5f; feather.tile = 1.8f;
+                        feather.delay = fr * .025f; feather.rampShift = R(rng, -.15f, .2f);
+                        list.Add(feather);
+                    }
+                break;
+            }
+            case Accent.Tornado:
+            {
+                // Wind bands wrap a funnel that widens upward and spins as one.
+                var foot = f.Foot; var gz = f.Depth;
+                int bands = style == Style.Heavy ? 7 : light ? 4 : 6;
+                float height = R(rng, 4.8f, 5.8f) * s, spinSign = rng.NextDouble() < .5 ? -1 : 1;
+                for (int k = 0; k < bands; k++)
+                {
+                    float a0 = 6.283f * k / bands + R(rng, -.35f, .35f), turns = spinSign * R(rng, 1.1f, 1.7f) * 6.283f;
+                    float h0 = R(rng, 0f, .22f), h1 = R(rng, .72f, 1f), wBand = R(rng, .45f, .72f) * s;
+                    Func<float, Vector3> pos = t =>
+                    {
+                        float hh = Mathf.Lerp(h0, h1, t), r = Mathf.Lerp(.28f, 2.3f, hh * hh) * s * (1 + .08f * Mathf.Sin(t * 9 + a0));
+                        float a = a0 + turns * t;
+                        return foot + Vector3.up * height * hh + r * (Mathf.Cos(a) * f.right + Mathf.Sin(a) * gz);
+                    };
+                    var band = Make(72, pos, t => Vector3.up + .25f * f.right, t => wBand * Swell(t, .5f) * (.55f + .8f * Mathf.Lerp(h0, h1, t)), f.toCam);
+                    band.pivot = foot; band.spinAxis = Vector3.up; band.spin = spinSign * R(rng, 380f, 520f);
+                    band.revealScale = 1.3f; band.holdScale = 2.4f; band.tile = 2f; band.delay = k * .02f; band.rampShift = R(rng, -.15f, .2f);
+                    list.Add(band);
+                }
+                break;
+            }
+            case Accent.SwordQi:
+            {
+                // Crescent sword waves sweep through the target and fly on.
+                int n = style == Style.Heavy ? 4 : light ? 2 : 3;
+                for (int k = 0; k < n; k++)
+                {
+                    float ang = (k == 0 ? R(rng, -12, 12) : k == 1 ? R(rng, 32, 52) : k == 2 ? R(rng, -52, -32) : R(rng, 70, 80)) * Mathf.Deg2Rad;
+                    var d = (Mathf.Cos(ang) * f.right * f.side * (k % 2 == 0 ? 1 : -1) + Mathf.Sin(ang) * f.up).normalized;
+                    var perp = Vector3.Cross(d, f.toCam).normalized;
+                    float radius = R(rng, 1.9f, 2.7f) * s, span = R(rng, 105, 140) * Mathf.Deg2Rad, thick = R(rng, .3f, .42f) * s;
+                    var c = f.target - d * radius * .55f + f.toCam * .15f * s * k;
+                    Func<float, Vector3> radial = t => { float ph = Mathf.Lerp(-span * .5f, span * .5f, t); return Mathf.Cos(ph) * d + Mathf.Sin(ph) * perp; };
+                    var wave = Make(56, t => c + radial(t) * radius, radial, t => thick * Mathf.Pow(Swell(t, 1f), 1.25f), f.toCam);
+                    wave.pivot = f.target; wave.offset = -d * R(rng, 2.6f, 3.4f) * s; wave.drift = d * R(rng, 5f, 8f) * s;
+                    wave.rigid = true; wave.revealScale = .75f; wave.holdScale = .6f; wave.coreAmt = 1.8f; wave.tile = 3f;
+                    wave.delay = k * .07f; wave.rampShift = .1f * k;
+                    list.Add(wave);
+                }
+                break;
+            }
+            case Accent.SwordRain:
+            {
+                // Blades drop from the sky and stake the ground around the target.
+                var foot = f.Foot; var gz = f.Depth;
+                int n = style == Style.Heavy ? 10 : light ? 4 : 7;
+                for (int i = 0; i < n; i++)
+                {
+                    var land = foot + (f.right * R(rng, -1.7f, 1.7f) + gz * R(rng, -1.1f, 1.1f)) * s;
+                    var tilt = (Vector3.down + f.right * R(rng, -.35f, .35f) + gz * R(rng, -.2f, .2f)).normalized;
+                    float L = R(rng, 2.4f, 3.3f) * s, bw = R(rng, .2f, .27f) * s;
+                    var tip = land + tilt * .25f * s; var top = tip - tilt * L;
+                    var blade = Make(28, t => Vector3.Lerp(top, tip, t), _ => Vector3.Cross(tilt, f.toCam), t =>
+                        t < .12f ? bw * 1.9f * Swell(t / .12f, .6f) : bw * (1 - Mathf.Pow((t - .12f) / .88f, 1.7f)) + .005f * s, f.toCam);
+                    blade.pivot = tip; blade.offset = -tilt * R(rng, 4.5f, 6f) * s; blade.rigid = true;
+                    blade.revealScale = .6f; blade.holdScale = 2.2f; blade.coreAmt = 1.4f; blade.tile = 1.2f;
+                    blade.delay = i * .045f + R(rng, 0, .03f); blade.impactAt = land;
+                    list.Add(blade);
+                }
+                break;
+            }
+            case Accent.Meteor:
+            {
+                // Burning stones fall on a slant with long tails and burst on landing.
+                var foot = f.Foot; var gz = f.Depth;
+                int n = style == Style.Heavy ? 6 : light ? 2 : 4;
+                var inc = (Vector3.down + f.right * -f.side * R(rng, .5f, .8f) + gz * R(rng, -.2f, .2f)).normalized;
+                for (int i = 0; i < n; i++)
+                {
+                    var land = foot + (f.right * R(rng, -1.6f, 1.6f) + gz * R(rng, -.8f, .8f)) * s + Vector3.up * .15f * s;
+                    float Lt = R(rng, 3.4f, 5f) * s, bend = R(rng, -.3f, .3f) * s, head = R(rng, .45f, .62f) * s;
+                    var tail = land - inc * Lt; var perp = Vector3.Cross(inc, f.toCam).normalized;
+                    var met = Make(40, t => Vector3.Lerp(tail, land, t) + perp * bend * Mathf.Sin(Mathf.PI * t), _ => perp, t => .04f * s + head * Mathf.Pow(t, 2.2f), f.toCam);
+                    met.pivot = land; met.offset = -inc * R(rng, 3f, 4.5f) * s; met.rigid = true;
+                    met.revealScale = 1f; met.holdScale = .5f; met.coreAmt = 2.2f; met.tile = 1.6f;
+                    met.delay = i * .085f + R(rng, 0, .04f); met.impactAt = land;
+                    list.Add(met);
+                }
+                break;
+            }
+            case Accent.Spikes:
+            {
+                // Crystal or bone spikes burst out of the ground around the target.
+                var foot = f.Foot; var gz = f.Depth;
+                int n = style == Style.Heavy ? 12 : light ? 5 : 9;
+                for (int i = 0; i < n; i++)
+                {
+                    float ang = i * 2.39996f + R(rng, -.3f, .3f), rr = R(rng, .25f, 2f) * s;
+                    var radial = Mathf.Cos(ang) * f.right + Mathf.Sin(ang) * gz;
+                    var bottom = foot + radial * rr - Vector3.up * .1f * s;
+                    var tilt = (Vector3.up + radial * R(rng, .15f, .6f)).normalized;
+                    float h = s * R(rng, 1.3f, 2.9f) * Mathf.Clamp(1.25f - rr / (2.4f * s), .45f, 1.2f), w = h * R(rng, .13f, .19f);
+                    var a1 = Vector3.Cross(tilt, f.toCam).normalized; var a2 = Vector3.Cross(tilt, a1).normalized;
+                    foreach (var across in new[] { a1, a2 })
+                    {
+                        var ax = across;
+                        var spike = Make(20, t => bottom + tilt * h * t, _ => ax, t => w * Mathf.Pow(1 - t, 1.1f), f.toCam);
+                        spike.pivot = bottom; spike.offset = -tilt * h * .9f; spike.rigid = true;
+                        spike.revealScale = .55f; spike.holdScale = 2.4f; spike.coreAmt = .9f; spike.tile = .9f;
+                        spike.delay = rr / s * .035f + R(rng, 0, .02f);
+                        list.Add(spike);
+                    }
+                }
+                break;
+            }
+            case Accent.Dragon:
+            {
+                // A serpent body coils up around the target, head last, with whiskers.
+                var foot = f.Foot; var gz = f.Depth;
+                float turns = (rng.NextDouble() < .5 ? -1 : 1) * R(rng, 1.7f, 2f) * 6.283f, a0 = R(rng, 0, 6.28f), height = R(rng, 3.9f, 4.4f) * s;
+                Func<float, Vector3> pos = t =>
+                {
+                    float a = a0 + turns * t, r = s * (1.05f - .3f * t + .08f * Mathf.Sin(t * 15f));
+                    return foot + Vector3.up * (.2f * s + height * Mathf.Pow(t, .9f)) + r * (Mathf.Cos(a) * f.right + Mathf.Sin(a) * gz);
+                };
+                Func<float, float> girth = t => s * (.05f + .26f * Swell(Mathf.Pow(t, .6f), .7f) + .3f * Mathf.Exp(-Mathf.Pow((t - .95f) / .045f, 2)));
+                foreach (var across in new Func<float, Vector3>[] { _ => Vector3.up, FacingAcross(pos, f.toCam) })
+                {
+                    var body = Make(96, pos, across, girth, f.toCam);
+                    body.bulgeAmount = .9f; body.pivot = foot; body.spinAxis = Vector3.up; body.spin = -Mathf.Sign(turns) * 40f; body.opacity = 1f;
+                    body.revealScale = 2.4f; body.holdScale = 1.7f; body.tile = 5f; body.coreAmt = .7f;
+                    list.Add(body);
+                }
+                var headPt = pos(1f); var headDir = (pos(1f) - pos(.97f)).normalized;
+                for (int k = -1; k <= 1; k += 2)
+                {
+                    var side = Vector3.Cross(headDir, f.toCam).normalized * k;
+                    var w1 = headPt + (-headDir * .8f + side * .9f + Vector3.up * .3f) * s; var w2 = headPt + (-headDir * 1.9f + side * 1.3f - Vector3.up * .2f) * s;
+                    var whisker = Make(28, t => Bezier(headPt, w1, w2, w2 + side * .4f * s, t), FacingAcross(t => Bezier(headPt, w1, w2, w2 + side * .4f * s, t), f.toCam), t => s * .07f * (1 - t), f.toCam);
+                    whisker.pivot = foot; whisker.spinAxis = Vector3.up; whisker.spin = -Mathf.Sign(turns) * 40f;
+                    whisker.revealScale = 1.2f; whisker.holdScale = 2f; whisker.coreAmt = 1.6f; whisker.delay = BaseReveal(style) * 2.1f;
+                    list.Add(whisker);
+                }
+                list[0].impactAt = headPt;
+                break;
+            }
+            case Accent.Lotus:
+            {
+                // Petals open outward from the recipient's feet: a bloom, never a blast.
+                var foot = f.Foot + Vector3.up * .06f * s; var gz = f.Depth;
+                for (int ring = 0; ring < 2; ring++)
+                {
+                    int petals = ring == 0 ? 8 : 6;
+                    float open = (ring == 0 ? 60f : 32f) * Mathf.Deg2Rad, L = (ring == 0 ? 2.7f : 2.1f) * s, off = ring * .5f;
+                    for (int j = 0; j < petals; j++)
+                    {
+                        float ang = 6.283f * (j + off) / petals + R(rng, -.1f, .1f);
+                        var radial = Mathf.Cos(ang) * f.right + Mathf.Sin(ang) * gz;
+                        var tangent = Vector3.Cross(Vector3.up, radial).normalized;
+                        var tilt = Vector3.up * Mathf.Cos(open) + radial * Mathf.Sin(open);
+                        var bottom = foot + radial * (ring == 0 ? .45f : .2f) * s;
+                        var petal = Make(30, t => bottom + tilt * L * t + radial * .18f * s * Mathf.Sin(Mathf.PI * t), _ => tangent,
+                            t => s * (ring == 0 ? .66f : .56f) * Mathf.Pow(Mathf.Max(0f, Mathf.Sin(Mathf.PI * Mathf.Pow(t, .75f))), .7f), -radial);
+                        petal.bulgeAmount = .4f; petal.pivot = bottom; petal.swingAxis = tangent; petal.swing = -40f;
+                        petal.revealScale = 1.2f; petal.holdScale = 1.6f; petal.tile = 1.1f; petal.coreAmt = .8f;
+                        petal.delay = ring * .06f + j * .012f; petal.rampShift = ring * .2f;
+                        list.Add(petal);
+                    }
+                }
+                break;
+            }
+        }
+        return list;
+    }
+
+    static void FlattenAcross(Path path)
+    {
+        int n = path.points.Length;
+        for (int i = 0; i < n; i++)
+        {
+            var tangent = path.points[Mathf.Min(n - 1, i + 1)] - path.points[Mathf.Max(0, i - 1)];
+            var a = Vector3.Cross(tangent, Vector3.up);
+            path.across[i] = a.sqrMagnitude > 1e-8f ? a.normalized : Vector3.right;
+        }
+        path.bulge = Vector3.up; path.bulgeAmount = .15f;
+    }
+
+    static (float tear, float soft, float facet, float ink, float distort, float flicker, float flow, float tile) MatterLook(Matter m) => m switch
+    {
+        Matter.Flame => (1.25f, .045f, 0f, 0f, .12f, 0f, 2.4f, .8f),
+        Matter.Water => (.7f, .11f, 0f, 0f, .05f, 0f, 1f, 1f),
+        Matter.Crystal => (1f, .012f, 1f, 0f, 0f, 0f, .12f, 1.2f),
+        Matter.Silk => (.32f, .05f, 0f, 0f, .03f, 0f, .75f, .9f),
+        Matter.Ink => (1.35f, .03f, 0f, .85f, .02f, 0f, .25f, .8f),
+        Matter.Electric => (.85f, .05f, 0f, 0f, .06f, .5f, 1.6f, 1.3f),
+        Matter.Smoke => (.6f, .22f, 0f, 0f, .08f, 0f, .5f, .8f),
+        _ => (1f, .07f, 0f, 0f, 0f, 0f, .55f, 1f),
+    };
+
     // ------------------------------------------------------------ body
 
     sealed class Body : MonoBehaviour
@@ -571,8 +971,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         MeshRenderer meshRenderer;
         Mesh mesh;
         MaterialPropertyBlock block;
-        Vector3 pivot;
-        float age, delay, reveal, hold, fade, intensity, seed, dir;
+        Vector3 pivot, offset, spinAxis, swingAxis, drift;
+        float age, delay, reveal, hold, fade, intensity, seed, dir, spin, swing, flow;
+        bool shrink, rigid;
         Style style;
 
         public static Body Create(Transform parent, Material material, SpellSpectacle20260926 owner)
@@ -594,6 +995,8 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         {
             this.pivot = pivot; this.delay = delay; this.seed = seed; this.style = style;
             dir = layer % 2 == 0 ? 1 : -1;
+            offset = path.offset; spin = path.spin; spinAxis = path.spinAxis; swing = path.swing; swingAxis = path.swingAxis; shrink = path.shrink;
+            rigid = path.rigid; drift = path.drift;
             (reveal, hold, fade, intensity) = style switch
             {
                 Style.Heavy => (.15f, .16f, .50f, 1.16f),
@@ -602,6 +1005,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 Style.Support => (.30f, .26f, .54f, 1.06f),
                 _ => (.16f, .14f, .44f, 1.06f),
             };
+            reveal *= path.revealScale; hold *= path.holdScale;
+            var look = MatterLook(p.matter);
+            flow = look.flow;
             transform.position = pivot;
             mesh = BuildMesh(path, pivot);
             GetComponent<MeshFilter>().sharedMesh = mesh;
@@ -612,10 +1018,18 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             block.SetFloat("_Seed", seed);
             block.SetFloat("_RampShift", path.rampShift);
             block.SetFloat("_RampSpan", path.rampSpan * p.rampSpan);
-            block.SetFloat("_Tile", path.tile);
-            block.SetFloat("_Tear", style == Style.Support ? .7f : 1f);
-            block.SetFloat("_CoreAmt", style == Style.Support ? .4f : style == Style.Control ? .45f : .6f);
-            block.SetFloat("_Opacity", style == Style.Support ? .95f : .97f);
+            block.SetFloat("_Tile", path.tile * look.tile);
+            block.SetFloat("_Tear", look.tear * (style == Style.Support ? .75f : 1f));
+            block.SetFloat("_Row", (int)p.matter);
+            block.SetFloat("_EdgeSoft", look.soft);
+            block.SetFloat("_Facet", look.facet);
+            block.SetFloat("_Ink", look.ink);
+            block.SetFloat("_Distort", look.distort);
+            block.SetFloat("_Flicker", Mathf.Max(look.flicker * (layer >= 10 ? 1f : .4f), path.flicker));
+            block.SetFloat("_Wobble", path.wobble);
+            block.SetFloat("_WobbleFreq", 2.2f);
+            block.SetFloat("_CoreAmt", path.coreAmt >= 0 ? path.coreAmt : style == Style.Support ? .4f : style == Style.Control ? .45f : .6f);
+            block.SetFloat("_Opacity", path.opacity >= 0 ? path.opacity : p.matter == Matter.Ink ? 1f : style == Style.Support ? .95f : .97f);
             Apply(0);
         }
 
@@ -685,7 +1099,18 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             if (t > reveal) scale = Mathf.Lerp(1.07f, 1f, Mathf.Clamp01((t - reveal) / .1f));
             float out01 = Mathf.Clamp01((t - reveal - hold) / fade);
             scale += out01 * .10f;
+            if (rigid) scale = 1f;
+            if (shrink) scale *= Mathf.Lerp(1.12f, .5f, Mathf.Clamp01(t / (reveal + hold + fade)));
             transform.localScale = Vector3.one * scale;
+            var rot = Quaternion.identity;
+            if (spin != 0) rot = Quaternion.AngleAxis(spin * t, spinAxis);
+            if (swing != 0)
+            {
+                // Folded -> open with a slight overshoot, like wings snapping out.
+                float sw = Mathf.Clamp01(t / (reveal * 1.4f)), e = 1 - Mathf.Pow(1 - sw, 3);
+                rot = rot * Quaternion.AngleAxis(swing * (1 - e) - swing * .12f * Mathf.Sin(Mathf.PI * e), swingAxis);
+            }
+            transform.SetPositionAndRotation(pivot + offset * (1 - eased) + drift * t, rot);
             float flash = 1 + 1.3f * Mathf.Exp(-t / .07f);
             block.SetFloat("_Reveal", Mathf.Lerp(-.05f, 1.12f, eased));
             block.SetFloat("_Dissolve", Mathf.Lerp(-.25f, 1.05f, out01 * out01 * (3 - 2 * out01)));
@@ -693,7 +1118,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             block.SetFloat("_Intensity", intensity * (1 + .12f * Mathf.Exp(-t / .07f)));
             block.SetFloat("_Glow", flash);
             block.SetFloat("_Head", grow < 1 ? 1.4f : Mathf.Lerp(1.4f, .2f, Mathf.Clamp01((t - reveal) / .12f)));
-            block.SetFloat("_Scroll", t * .55f * dir);
+            block.SetFloat("_Scroll", t * flow * dir);
             block.SetFloat("_Flow", t);
             meshRenderer.SetPropertyBlock(block);
         }
@@ -715,7 +1140,10 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             public Color color;
             public Rect cell;
             public float size, sizeEnd, rot, spin, life, age, delay, drag, gravity, stretch, peak, opacity, hot;
-            public bool flat, pop;
+            public bool flat, pop, orbit;
+            // Orbit: circles an axis through oc while its radius eases r0 -> r1.
+            public Vector3 oc, oax, ou, ov;
+            public float r0, r1, a0, w, rise;
         }
 
         SpellSpectacle20260926 owner;
@@ -761,24 +1189,13 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             bool damage = style == Style.Light || style == Style.Strike || style == Style.Heavy;
             float tier = style == Style.Heavy ? 1.2f : style == Style.Strike ? 1f : style == Style.Light ? .62f : .7f;
             var hotSpot = f.target + f.toCam * .35f * s;
-            if (damage || style == Style.Control)
-            {
-                // Small white-gold heart inside an identity-coloured star, then a
-                // torn splash of body colour that stays readable on bright ground.
-                var rim = Pick(p, rng, .45f, .85f);
-                // Several recipients each keep one tinted heart; only a single hit gets the white core.
-                if (!group)
-                    Add(new Mark { pos = hotSpot, cell = Star(rng.Next(4)), color = Color.Lerp(rim, p.core, .45f), size = 1.1f * s * tier, sizeEnd = 2.8f * s * tier, rot = R(rng, 0, 360), spin = R(rng, -40, 40), life = .26f, delay = delay, peak = .14f, pop = true, opacity = .35f, hot = 1f });
-                Add(new Mark { pos = hotSpot + f.toCam * .05f, cell = Star(rng.Next(4)), color = rim, size = (group ? 1.3f : 1.7f) * s * tier, sizeEnd = (group ? 3.1f : 4.1f) * s * tier, rot = R(rng, 0, 360), spin = R(rng, -25, 25), life = .38f, delay = delay + .02f, peak = .18f, pop = true, opacity = .6f, hot = group ? .35f : .8f });
-                Add(new Mark { pos = hotSpot - f.toCam * .1f, cell = Splash(rng.Next(4)), color = Pick(p, rng, .15f, .6f), size = 1.5f * s * tier, sizeEnd = 5f * s * tier, rot = R(rng, 0, 360), spin = R(rng, -30, 30), life = .48f, delay = delay, peak = .2f, opacity = .92f, hot = .15f });
-                if (style == Style.Heavy && !group)
-                    Add(new Mark { pos = f.target - f.up * .78f * s, cell = Splash(rng.Next(4)), color = Pick(p, rng, .1f, .5f), size = 2.4f * s, sizeEnd = 8.4f * s, rot = R(rng, 0, 360), spin = R(rng, -15, 15), life = .65f, delay = delay + .02f, peak = .22f, flat = true, opacity = .9f, hot = .1f });
-            }
+            if (damage || style == Style.Control) Heart(p, style, f, rng, delay, group, tier, hotSpot);
             if (support)
             {
                 // A soft tinted bloom on the recipient: warmth and reception, no splash or white core.
                 Add(new Mark { pos = hotSpot, cell = Star(rng.Next(4)), color = Pick(p, rng, .35f, .7f), size = 1.2f * s, sizeEnd = 3.2f * s, rot = R(rng, 0, 360), spin = R(rng, -20, 20), life = .7f, delay = delay + .12f, peak = .35f, pop = true, opacity = .25f, hot = .2f });
             }
+            AccentMarks(p, style, f, rng, delay, group, tier, hotSpot);
             int count = style switch { Style.Heavy => 112, Style.Strike => 82, Style.Light => 52, Style.Support => 64, _ => 52 };
             if (group) count = Mathf.RoundToInt(count * .6f);
             if (ReducedMotion) count = Mathf.RoundToInt(count * .6f);
@@ -822,6 +1239,273 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             }
         }
 
+        // Each matter answers the contact with its own heart instead of one shared star.
+        void Heart(Profile p, Style style, Frame f, System.Random rng, float delay, bool group, float tier, Vector3 hot)
+        {
+            float s = f.s;
+            var rim = Pick(p, rng, .45f, .85f);
+            bool energy = p.matter == Matter.Filigree || p.matter == Matter.Electric;
+            if (energy)
+            {
+                if (!group)
+                    Add(new Mark { pos = hot, cell = Star(rng.Next(4)), color = Color.Lerp(rim, p.core, .45f), size = 1.1f * s * tier, sizeEnd = 2.8f * s * tier, rot = R(rng, 0, 360), spin = R(rng, -40, 40), life = .26f, delay = delay, peak = .14f, pop = true, opacity = .35f, hot = 1f });
+                Add(new Mark { pos = hot + f.toCam * .05f, cell = Star(rng.Next(4)), color = rim, size = (group ? 1.3f : 1.7f) * s * tier, sizeEnd = (group ? 3.1f : 4.1f) * s * tier, rot = R(rng, 0, 360), spin = R(rng, -25, 25), life = .38f, delay = delay + .02f, peak = .18f, pop = true, opacity = .6f, hot = group ? .35f : .8f });
+                Add(new Mark { pos = hot - f.toCam * .1f, cell = Splash(rng.Next(4)), color = Pick(p, rng, .15f, .6f), size = 1.5f * s * tier, sizeEnd = 5f * s * tier, rot = R(rng, 0, 360), spin = R(rng, -30, 30), life = .48f, delay = delay, peak = .2f, opacity = .92f, hot = .15f });
+            }
+            else switch (p.matter)
+            {
+                case Matter.Flame:
+                    Add(new Mark { pos = hot, cell = Star(rng.Next(4)), color = rim, size = 1.2f * s * tier, sizeEnd = 3f * s * tier, rot = R(rng, 0, 360), life = .3f, delay = delay, peak = .16f, pop = true, opacity = .5f, hot = .55f });
+                    for (int i = 0; i < 9; i++)
+                    {
+                        var d = Random3(rng); d.y = Mathf.Abs(d.y) * .6f + .2f;
+                        Add(new Mark { pos = hot, vel = d.normalized * R(rng, 4f, 8f) * s, drag = 4f, gravity = -3f * s, cell = MoteCell(Mote.Puff), color = Pick(p, rng, .35f, .9f), size = .5f * s * tier, sizeEnd = 1.6f * s * tier, rot = R(rng, 0, 360), spin = R(rng, -200, 200), life = R(rng, .4f, .6f), delay = delay, peak = .2f, opacity = .85f, hot = .35f });
+                    }
+                    break;
+                case Matter.Crystal:
+                    Add(new Mark { pos = hot, cell = Star(rng.Next(4)), color = Color.Lerp(rim, Color.white, .5f), size = .7f * s * tier, sizeEnd = 2f * s * tier, rot = R(rng, 0, 360), life = .22f, delay = delay, peak = .12f, pop = true, opacity = .4f, hot = 1f });
+                    for (int i = 0; i < 11; i++)
+                    {
+                        var d = Random3(rng) + f.toCam * .3f;
+                        Add(new Mark { pos = hot, vel = d.normalized * R(rng, 8f, 14f) * s * tier, drag = 3.2f, gravity = 3f * s, cell = MoteCell(Mote.Shard), color = Pick(p, rng, .45f, 1f), size = R(rng, .45f, .85f) * s * tier, sizeEnd = .25f * s, rot = R(rng, 0, 360), spin = R(rng, -700, 700), life = R(rng, .4f, .6f), delay = delay, peak = .15f, opacity = .95f, hot = .25f });
+                    }
+                    break;
+                case Matter.Water:
+                    for (int i = 0; i < 2; i++)
+                        Add(new Mark { pos = hot - f.toCam * .1f * i, cell = Splash(rng.Next(4)), color = Pick(p, rng, .55f, 1f), size = 1.2f * s * tier, sizeEnd = R(rng, 3.6f, 4.8f) * s * tier, rot = R(rng, 0, 360), spin = R(rng, -40, 40), life = .5f, delay = delay + i * .04f, peak = .2f, pop = true, opacity = .85f, hot = .35f });
+                    for (int i = 0; i < 12; i++)
+                    {
+                        var d = Random3(rng); d.y = Mathf.Abs(d.y);
+                        Add(new Mark { pos = hot, vel = d * R(rng, 3f, 7f) * s, drag = 2.5f, gravity = 5f * s, cell = MoteCell(Mote.Puff), color = Pick(p, rng, .7f, 1f), size = .4f * s, sizeEnd = 1.1f * s, rot = R(rng, 0, 360), life = R(rng, .45f, .7f), delay = delay, peak = .2f, opacity = .75f, hot = .3f });
+                    }
+                    break;
+                case Matter.Silk:
+                    Add(new Mark { pos = hot, cell = Star(rng.Next(4)), color = rim, size = .9f * s * tier, sizeEnd = 2.4f * s * tier, rot = R(rng, 0, 360), life = .28f, delay = delay, peak = .15f, pop = true, opacity = .45f, hot = .5f });
+                    for (int i = 0; i < 16; i++)
+                    {
+                        var d = Random3(rng) + f.toCam * .2f;
+                        Add(new Mark { pos = hot, vel = d.normalized * R(rng, 5f, 9f) * s, drag = 3.8f, gravity = 1.2f * s, cell = MoteCell(Mote.Petal), color = Pick(p, rng, .3f, 1f), size = R(rng, .35f, .6f) * s * tier, sizeEnd = .3f * s, rot = R(rng, 0, 360), spin = R(rng, -420, 420), life = R(rng, .55f, .85f), delay = delay, peak = .2f, opacity = .92f, hot = .1f });
+                    }
+                    break;
+                case Matter.Ink:
+                    for (int i = 0; i < 2; i++)
+                        Add(new Mark { pos = hot - f.toCam * .1f * i, cell = Splash(rng.Next(4)), color = Pick(p, rng, 0f, .25f), size = 1.2f * s * tier, sizeEnd = R(rng, 3.6f, 4.6f) * s * tier, rot = R(rng, 0, 360), spin = R(rng, -20, 20), life = .6f, delay = delay + i * .03f, peak = .35f, pop = true, opacity = .95f, hot = 0f });
+                    Add(new Mark { pos = hot + f.toCam * .1f, cell = Star(rng.Next(4)), color = p.line, size = .6f * s * tier, sizeEnd = 1.8f * s * tier, rot = R(rng, 0, 360), life = .24f, delay = delay, peak = .12f, pop = true, opacity = .4f, hot = .6f });
+                    break;
+                case Matter.Smoke:
+                    Add(new Mark { pos = hot, cell = Star(rng.Next(4)), color = rim, size = 1f * s * tier, sizeEnd = 2.6f * s * tier, rot = R(rng, 0, 360), life = .35f, delay = delay, peak = .2f, pop = true, opacity = .3f, hot = .2f });
+                    for (int i = 0; i < 7; i++)
+                    {
+                        var d = Random3(rng);
+                        Add(new Mark { pos = hot, vel = d * R(rng, 2.5f, 5f) * s, drag = 3f, gravity = -1f * s, cell = MoteCell(Mote.Puff), color = Pick(p, rng, .25f, .8f), size = .8f * s * tier, sizeEnd = 2.4f * s * tier, rot = R(rng, 0, 360), spin = R(rng, -90, 90), life = R(rng, .6f, .9f), delay = delay, peak = .3f, opacity = .72f, hot = .1f });
+                    }
+                    break;
+            }
+            bool groundBurst = p.matter == Matter.Filigree || p.matter == Matter.Flame || p.matter == Matter.Crystal || p.matter == Matter.Electric;
+            if (style == Style.Heavy && !group && groundBurst && p.accent != Accent.Cracks)
+                Add(new Mark { pos = new Vector3(f.target.x, .04f, f.target.z), cell = Splash(rng.Next(4)), color = Pick(p, rng, .1f, .5f), size = 2.4f * s, sizeEnd = 8.4f * s, rot = R(rng, 0, 360), spin = R(rng, -15, 15), life = .65f, delay = delay + .02f, peak = .22f, flat = true, opacity = .9f, hot = .1f });
+        }
+
+        void AccentMarks(Profile p, Style style, Frame f, System.Random rng, float delay, bool group, float tier, Vector3 hot)
+        {
+            float s = f.s, scale = group ? .6f : 1f;
+            switch (p.accent)
+            {
+                case Accent.Orbit:
+                {
+                    // Petals, cards, embers or bubbles circle the recipient and spread.
+                    int n = Mathf.RoundToInt((style == Style.Heavy ? 48 : 36) * scale);
+                    float dirSign = rng.NextDouble() < .5 ? -1 : 1;
+                    for (int i = 0; i < n; i++)
+                    {
+                        var ax = (Vector3.up + Random3(rng) * .3f).normalized;
+                        var ou = Vector3.Cross(ax, f.right).normalized; if (ou.sqrMagnitude < .1f) ou = f.toCam;
+                        var ov = Vector3.Cross(ax, ou);
+                        var type = i % 3 == 2 ? p.mote2 : p.mote;
+                        Add(new Mark { orbit = true, oc = f.target + f.up * R(rng, -.7f, .4f) * s, oax = ax, ou = ou, ov = ov,
+                            r0 = R(rng, .3f, .9f) * s, r1 = R(rng, 1.8f, 3.1f) * s, a0 = R(rng, 0, 6.28f), w = dirSign * R(rng, 3.5f, 7f) * (rng.NextDouble() < .15 ? -1 : 1), rise = R(rng, -.3f, 2.2f) * s,
+                            cell = MoteCell(type), color = Pick(p, rng, .25f, 1f), size = R(rng, .22f, .42f) * s * tier, sizeEnd = .18f * s, rot = R(rng, 0, 360), spin = R(rng, -300, 300),
+                            life = R(rng, .8f, 1.25f), delay = delay + R(rng, 0, .12f), peak = .3f, opacity = type == Mote.Ember || type == Mote.Spark ? .35f : .9f, hot = type == Mote.Ember || type == Mote.Spark ? .6f : .05f });
+                    }
+                    break;
+                }
+                case Accent.Vortex:
+                {
+                    // Matter drawn in along the spiral toward the eye.
+                    int n = Mathf.RoundToInt(34 * scale);
+                    var sUp = Vector3.Cross(f.right, f.toCam).normalized;
+                    for (int i = 0; i < n; i++)
+                        Add(new Mark { orbit = true, oc = f.target + f.up * .1f * s, oax = f.toCam, ou = f.right, ov = sUp,
+                            r0 = R(rng, 2.2f, 3.4f) * s, r1 = .15f * s, a0 = R(rng, 0, 6.28f), w = R(rng, 5f, 8f), rise = 0,
+                            cell = MoteCell(p.mote), color = Pick(p, rng, .3f, 1f), size = R(rng, .18f, .34f) * s, sizeEnd = .06f * s, rot = R(rng, 0, 360), spin = R(rng, -400, 400),
+                            life = R(rng, .7f, 1f), delay = delay + R(rng, 0, .1f), peak = .25f, opacity = .85f, hot = .2f });
+                    break;
+                }
+                case Accent.Shards:
+                {
+                    int n = Mathf.RoundToInt((style == Style.Heavy ? 24 : 16) * scale);
+                    for (int i = 0; i < n; i++)
+                    {
+                        var d = (Random3(rng) + f.up * .5f + f.toCam * .3f).normalized;
+                        Add(new Mark { pos = hot, vel = d * R(rng, 6f, 12f) * s * tier, drag = 1.1f, gravity = 9f * s, cell = MoteCell(Mote.Shard), color = Pick(p, rng, .4f, 1f),
+                            size = R(rng, .3f, .7f) * s * tier, sizeEnd = .2f * s, rot = R(rng, 0, 360), spin = R(rng, -800, 800), life = R(rng, .6f, .9f), delay = delay, peak = .15f, opacity = .95f, hot = .15f });
+                    }
+                    for (int i = 0; i < 6 * scale; i++)
+                        Add(new Mark { pos = hot + Random3(rng) * R(rng, .5f, 2f) * s, cell = Star(rng.Next(4)), color = Color.white, size = .1f * s, sizeEnd = .9f * s, rot = R(rng, 0, 360), life = .2f, delay = delay + R(rng, .05f, .3f), peak = .3f, pop = true, opacity = .3f, hot = 1f });
+                    break;
+                }
+                case Accent.Splatter:
+                {
+                    var foot = new Vector3(f.target.x, .04f, f.target.z);
+                    for (int i = 0; i < 4 * scale + 1; i++)
+                        Add(new Mark { pos = foot + (f.right * R(rng, -1.6f, 1.6f) + Vector3.Cross(f.right, Vector3.up) * R(rng, -1f, 1f)) * s, cell = Splash(rng.Next(4)), color = Pick(p, rng, 0f, .3f),
+                            size = 1f * s, sizeEnd = R(rng, 2.5f, 4.5f) * s, rot = R(rng, 0, 360), life = 1f, delay = delay + R(rng, .02f, .12f), peak = .55f, pop = true, flat = true, opacity = .95f, hot = 0f });
+                    for (int i = 0; i < 28 * scale; i++)
+                    {
+                        var d = (Random3(rng) + f.up * .6f).normalized;
+                        Add(new Mark { pos = hot, vel = d * R(rng, 5f, 11f) * s, drag = .9f, gravity = 11f * s, stretch = .03f, cell = MoteCell(Mote.Ink), color = i % 4 == 0 ? p.line : Pick(p, rng, 0f, .35f),
+                            size = R(rng, .14f, .3f) * s, sizeEnd = .1f * s, rot = R(rng, 0, 360), life = R(rng, .55f, .85f), delay = delay, peak = .15f, opacity = .95f, hot = i % 4 == 0 ? .5f : 0f });
+                    }
+                    break;
+                }
+                case Accent.Foam:
+                {
+                    for (int i = 0; i < 38 * scale; i++)
+                    {
+                        var d = (f.right * f.side * R(rng, .2f, 1f) + f.up * R(rng, .5f, 1.2f) + f.toCam * R(rng, -.3f, .5f)).normalized;
+                        Add(new Mark { pos = hot + f.right * R(rng, -1f, 1f) * s - f.up * .5f * s, vel = d * R(rng, 4f, 8.5f) * s, drag = 1.6f, gravity = 7f * s, cell = MoteCell(Mote.Puff), color = Pick(p, rng, .6f, 1f),
+                            size = R(rng, .3f, .6f) * s, sizeEnd = R(rng, .7f, 1.1f) * s, rot = R(rng, 0, 360), spin = R(rng, -120, 120), life = R(rng, .6f, .95f), delay = delay + R(rng, 0, .08f), peak = .25f, opacity = .8f, hot = .25f });
+                    }
+                    for (int i = 0; i < 26 * scale; i++)
+                    {
+                        var d = (Random3(rng) + f.up).normalized;
+                        Add(new Mark { pos = hot, vel = d * R(rng, 6f, 11f) * s, drag = 1.2f, gravity = 10f * s, stretch = .04f, cell = MoteCell(Mote.Spark), color = Pick(p, rng, .75f, 1f),
+                            size = R(rng, .1f, .2f) * s, sizeEnd = .06f * s, life = R(rng, .45f, .7f), delay = delay, peak = .15f, opacity = .5f, hot = .7f });
+                    }
+                    break;
+                }
+                case Accent.Cracks:
+                {
+                    // Debris and dust thrown up along the fissures.
+                    var foot = new Vector3(f.target.x, .04f, f.target.z);
+                    var gz = Vector3.Cross(f.right, Vector3.up).normalized;
+                    for (int i = 0; i < 18 * scale; i++)
+                    {
+                        float a = R(rng, 0, 6.28f), r = R(rng, .4f, 2.6f) * s;
+                        var at = foot + (Mathf.Cos(a) * f.right + Mathf.Sin(a) * gz) * r;
+                        Add(new Mark { pos = at, vel = (Vector3.up * R(rng, 4f, 8f) + (at - foot).normalized * R(rng, .5f, 2f)) * s, drag = .8f, gravity = 12f * s, cell = MoteCell(Mote.Shard), color = Pick(p, rng, .15f, .7f),
+                            size = R(rng, .16f, .38f) * s, sizeEnd = .12f * s, rot = R(rng, 0, 360), spin = R(rng, -600, 600), life = R(rng, .6f, .9f), delay = delay + R(rng, .02f, .15f), peak = .15f, opacity = .95f, hot = .1f });
+                    }
+                    for (int i = 0; i < 8 * scale; i++)
+                        Add(new Mark { pos = foot + (f.right * R(rng, -2f, 2f) + gz * R(rng, -1f, 1f)) * s + Vector3.up * .3f * s, vel = Vector3.up * R(rng, .5f, 1.5f) * s, drag = 2f,
+                            cell = MoteCell(Mote.Puff), color = Pick(p, rng, .1f, .45f), size = .9f * s, sizeEnd = 2.4f * s, rot = R(rng, 0, 360), spin = R(rng, -60, 60), life = R(rng, .8f, 1.1f), delay = delay + .05f, peak = .35f, opacity = .55f, hot = 0f });
+                    break;
+                }
+                case Accent.Wings:
+                {
+                    // Loose feathers shed from the wing tips.
+                    for (int i = 0; i < 22 * scale; i++)
+                    {
+                        float sd = i % 2 == 0 ? -1 : 1;
+                        var at = f.target + f.right * sd * R(rng, 1.4f, 3.2f) * s + f.up * R(rng, .4f, 2.8f) * s;
+                        Add(new Mark { pos = at, vel = (f.right * sd * R(rng, .5f, 2f) + Vector3.down * R(rng, .2f, 1f)) * s, drag = 2f, gravity = 1.5f * s, cell = MoteCell(p.mote2 == Mote.Spark ? Mote.Wisp : p.mote2), color = Pick(p, rng, .3f, 1f),
+                            size = R(rng, .25f, .45f) * s, sizeEnd = .15f * s, rot = R(rng, 0, 360), spin = R(rng, -240, 240), life = R(rng, .7f, 1.1f), delay = delay + R(rng, .08f, .25f), peak = .3f, opacity = .85f, hot = .2f });
+                    }
+                    break;
+                }
+                case Accent.Tornado:
+                {
+                    // Debris and dust dragged round and up the funnel.
+                    var foot = f.Foot; var gz = f.Depth;
+                    float w = rng.NextDouble() < .5 ? -1 : 1;
+                    for (int i = 0; i < 46 * scale; i++)
+                    {
+                        var type = i % 3 == 0 ? p.mote2 : p.mote;
+                        Add(new Mark { orbit = true, oc = foot, oax = Vector3.up, ou = f.right, ov = gz, r0 = R(rng, .25f, .8f) * s, r1 = R(rng, 1.4f, 2.6f) * s, a0 = R(rng, 0, 6.28f),
+                            w = w * R(rng, 7f, 11f), rise = R(rng, 2.5f, 5.5f) * s, cell = MoteCell(type), color = Pick(p, rng, .25f, 1f), size = R(rng, .16f, .34f) * s, sizeEnd = .1f * s,
+                            rot = R(rng, 0, 360), spin = R(rng, -500, 500), life = R(rng, .9f, 1.3f), delay = delay + R(rng, 0, .15f), peak = .3f, opacity = type == Mote.Spark || type == Mote.Ember ? .35f : .85f, hot = .3f });
+                    }
+                    break;
+                }
+                case Accent.SwordQi:
+                {
+                    for (int i = 0; i < 26 * scale; i++)
+                    {
+                        var d = (f.right * f.side * R(rng, -1f, 1f) + f.up * R(rng, -.5f, .8f)).normalized;
+                        Add(new Mark { pos = hot, vel = d * R(rng, 9f, 16f) * s, drag = 3.5f, stretch = .06f, cell = MoteCell(Mote.Spark), color = Pick(p, rng, .5f, 1f),
+                            size = R(rng, .1f, .2f) * s, sizeEnd = .04f * s, life = R(rng, .25f, .45f), delay = delay + R(rng, 0, .2f), peak = .12f, opacity = .35f, hot = .9f });
+                    }
+                    break;
+                }
+                case Accent.Meteor:
+                {
+                    for (int i = 0; i < 30 * scale; i++)
+                    {
+                        var at = f.Foot + (f.right * R(rng, -2f, 2f) + f.Depth * R(rng, -1f, 1f)) * s + Vector3.up * R(rng, 3f, 5.5f) * s;
+                        Add(new Mark { pos = at, vel = (Vector3.down * R(rng, 6f, 10f) + f.right * -f.side * R(rng, 3f, 5f)) * s, drag = .3f, stretch = .03f, cell = MoteCell(Mote.Ember), color = Pick(p, rng, .4f, 1f),
+                            size = R(rng, .12f, .24f) * s, sizeEnd = .08f * s, life = R(rng, .5f, .8f), delay = delay + R(rng, 0, .35f), peak = .2f, opacity = .4f, hot = .7f });
+                    }
+                    break;
+                }
+                case Accent.Spikes:
+                {
+                    for (int i = 0; i < 24 * scale; i++)
+                    {
+                        var d = (Random3(rng) + Vector3.up * 1.2f).normalized;
+                        Add(new Mark { pos = f.Foot + (f.right * R(rng, -1.5f, 1.5f) + f.Depth * R(rng, -1f, 1f)) * s, vel = d * R(rng, 4f, 8f) * s, drag = 1f, gravity = 10f * s, cell = MoteCell(Mote.Shard), color = Pick(p, rng, .5f, 1f),
+                            size = R(rng, .14f, .3f) * s, sizeEnd = .08f * s, rot = R(rng, 0, 360), spin = R(rng, -700, 700), life = R(rng, .5f, .8f), delay = delay + R(rng, 0, .1f), peak = .15f, opacity = .95f, hot = .2f });
+                    }
+                    break;
+                }
+                case Accent.Dragon:
+                {
+                    var gz = f.Depth;
+                    for (int i = 0; i < 40 * scale; i++)
+                        Add(new Mark { orbit = true, oc = f.Foot, oax = Vector3.up, ou = f.right, ov = gz, r0 = R(rng, 1.4f, 2.2f) * s, r1 = R(rng, 1.8f, 2.8f) * s, a0 = R(rng, 0, 6.28f),
+                            w = R(rng, -3f, 3f), rise = R(rng, 2f, 5.5f) * s, cell = MoteCell(i % 2 == 0 ? Mote.Spark : p.mote), color = Pick(p, rng, .5f, 1f), size = R(rng, .1f, .24f) * s, sizeEnd = .06f * s,
+                            rot = R(rng, 0, 360), life = R(rng, .9f, 1.4f), delay = delay + R(rng, .1f, .5f), peak = .3f, opacity = .4f, hot = .7f });
+                    break;
+                }
+                case Accent.Lotus:
+                {
+                    for (int i = 0; i < 26 * scale; i++)
+                    {
+                        var at = f.Foot + (f.right * R(rng, -1.4f, 1.4f) + f.Depth * R(rng, -.8f, .8f)) * s;
+                        Add(new Mark { pos = at, vel = Vector3.up * R(rng, 1.5f, 3.5f) * s, drag = 1.2f, gravity = -.5f * s, cell = MoteCell(i % 2 == 0 ? Mote.Petal : Mote.Spark), color = Pick(p, rng, .4f, 1f),
+                            size = R(rng, .14f, .3f) * s, sizeEnd = .08f * s, rot = R(rng, 0, 360), spin = R(rng, -200, 200), life = R(rng, .9f, 1.3f), delay = delay + R(rng, .15f, .5f), peak = .35f, opacity = .8f, hot = .3f });
+                    }
+                    break;
+                }
+                case Accent.Lightning:
+                {
+                    for (int i = 0; i < 22 * scale; i++)
+                    {
+                        var d = Random3(rng);
+                        Add(new Mark { pos = hot, vel = d * R(rng, 8f, 15f) * s, drag = 3f, stretch = .05f, cell = MoteCell(Mote.Spark), color = Pick(p, rng, .5f, 1f),
+                            size = R(rng, .1f, .22f) * s, sizeEnd = .05f * s, life = R(rng, .25f, .45f), delay = delay + R(rng, 0, .15f), peak = .12f, opacity = .35f, hot = .9f });
+                    }
+                    break;
+                }
+            }
+        }
+
+        /// Landing burst for a blade, meteor or dragon pearl at its arrival time.
+        public void Impact(Profile p, Vector3 at, Frame f, float delay, System.Random rng, bool big)
+        {
+            float s = f.s * (big ? 1.2f : .75f);
+            var rim = Pick(p, rng, .45f, .9f);
+            Add(new Mark { pos = at + f.toCam * .2f * s, cell = Star(rng.Next(4)), color = Color.Lerp(rim, p.core, .35f), size = .5f * s, sizeEnd = 2f * s, rot = R(rng, 0, 360), spin = R(rng, -60, 60), life = .3f, delay = delay, peak = .15f, pop = true, opacity = .45f, hot = .9f });
+            Add(new Mark { pos = new Vector3(at.x, .04f, at.z), cell = Splash(rng.Next(4)), color = Pick(p, rng, .1f, .6f), size = .6f * s, sizeEnd = 2.6f * s, rot = R(rng, 0, 360), life = .55f, delay = delay, peak = .25f, pop = true, flat = true, opacity = .9f, hot = .1f });
+            int n = big ? 14 : 8;
+            for (int i = 0; i < n; i++)
+            {
+                var d = (Random3(rng) + Vector3.up * .9f).normalized;
+                var type = i % 2 == 0 ? p.mote : Mote.Spark;
+                Add(new Mark { pos = at, vel = d * R(rng, 3f, 7f) * s, drag = 1.6f, gravity = 8f * s, stretch = type == Mote.Spark ? .04f : 0f, cell = MoteCell(type), color = Pick(p, rng, .4f, 1f),
+                    size = R(rng, .12f, .26f) * s, sizeEnd = .06f * s, rot = R(rng, 0, 360), spin = R(rng, -500, 500), life = R(rng, .35f, .6f), delay = delay, peak = .15f, opacity = type == Mote.Spark ? .35f : .9f, hot = type == Mote.Spark ? .8f : .1f });
+            }
+        }
+
         static Vector3 Random3(System.Random rng)
         {
             var v = new Vector3(R(rng, -1, 1), R(rng, -1, 1), R(rng, -1, 1));
@@ -842,7 +1526,14 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 var m = marks[i];
                 m.age += dt;
                 float t = m.age - m.delay;
-                if (t >= 0)
+                if (t >= 0 && m.orbit)
+                {
+                    float k = Mathf.Clamp01(t / m.life), e = 1 - (1 - k) * (1 - k);
+                    float a = m.a0 + m.w * t, r = Mathf.Lerp(m.r0, m.r1, e);
+                    m.pos = m.oc + (Mathf.Cos(a) * m.ou + Mathf.Sin(a) * m.ov) * r + m.oax * m.rise * k;
+                    m.rot += m.spin * dt;
+                }
+                else if (t >= 0)
                 {
                     m.vel *= Mathf.Exp(-m.drag * dt);
                     m.vel += Vector3.down * m.gravity * dt;
@@ -992,11 +1683,11 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
 
     static Color C(string hex) { ColorUtility.TryParseHtmlString(hex, out var c); return c; }
 
-    static Profile P(string id, Family family, Family alt, Style style, string[] ramp, string line, string core, string wash, string hot, Mote mote, Mote mote2, bool column = false, float scale = 1f)
+    static Profile P(string id, Family family, Family alt, Style style, string[] ramp, string line, string core, string wash, string hot, Mote mote, Mote mote2, Matter matter, Accent accent, bool column = false, float scale = 1f, float wobble = 0f)
     {
         var colors = new Color[ramp.Length];
         for (int i = 0; i < ramp.Length; i++) colors[i] = C(ramp[i]);
-        return new Profile { id = id, family = family, familyAlt = alt, style = style, ramp = colors, line = C(line), core = C(core), wash = C(wash), hot = C(hot), mote = mote, mote2 = mote2, column = column, scale = scale };
+        return new Profile { id = id, family = family, familyAlt = alt, style = style, ramp = colors, line = C(line), core = C(core), wash = C(wash), hot = C(hot), mote = mote, mote2 = mote2, matter = matter, accent = accent, column = column, scale = scale, wobble = wobble };
     }
 
     static readonly string[] Rainbow = { "#ff2a3c", "#ff7a1a", "#ffd21f", "#3ddc6a", "#28c8ff", "#4c6bff", "#b44cff" };
@@ -1004,73 +1695,73 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
     static readonly Dictionary<string, Profile> Profiles = new Dictionary<string, Profile>
     {
         // Hero: the Fool's tarot light is prismatic; each card keeps its own form.
-        ["paper"] = P("paper", Family.Surge, Family.Surge, Style.Light, new[] { "#5a1bd6", "#b04cff", "#ff5fd0", "#ffc94a", "#7fe8ff" }, "#ffd76a", "#fff4d8", "#7a2cff", "#ffe2a8", Mote.Card, Mote.Spark),
-        ["sidestep"] = P("sidestep", Family.Twin, Family.Twin, Style.Strike, new[] { "#3a0f8f", "#8a3dff", "#ff58c8", "#ffb22e", "#fff0b0" }, "#ffd35a", "#fff6e0", "#8c2bff", "#ffd9a0", Mote.Spark, Mote.Card),
-        ["mask"] = P("mask", Family.Fan, Family.Fan, Style.Control, new[] { "#0a3a66", "#1f8ad6", "#3ad6e8", "#a57bff", "#f0f4ff" }, "#dff8ff", "#ffffff", "#2aa6c8", "#e8fbff", Mote.Shard, Mote.Wisp),
-        ["identity"] = P("identity", Family.Fan, Family.Fan, Style.Control, new[] { "#1a4dff", "#46b8ff", "#f4f1ff", "#ffb04a", "#ff6a1f" }, "#ffe0a0", "#ffffff", "#3b6cff", "#ffe6c2", Mote.Shard, Mote.Card),
-        ["seal"] = P("seal", Family.Falling, Family.Falling, Style.Heavy, new[] { "#3b0a6e", "#9b2cff", "#ff4f9a", "#ff9a2e", "#ffe27a" }, "#ffcf5a", "#fff2d0", "#ff5a1f", "#ffd08a", Mote.Ember, Mote.Card, true),
-        ["chase"] = P("chase", Family.Surge, Family.Twin, Style.Strike, new[] { "#0b3b66", "#1fb7d6", "#6af0e0", "#b58cff", "#ffffff" }, "#c9fff4", "#ffffff", "#1b9bd0", "#e6fffb", Mote.Wisp, Mote.Spark),
-        ["climax"] = P("climax", Family.Crescent, Family.Crescent, Style.Heavy, Rainbow, "#ffd24a", "#fff8e0", "#ff4a14", "#ffe39a", Mote.Spark, Mote.Petal, true, 1.12f),
-        ["reversal"] = P("reversal", Family.Curtain, Family.Curtain, Style.Strike, new[] { "#3a0640", "#a81f86", "#ff4fae", "#ffb04a", "#6a3cff" }, "#ffd07a", "#ffe6f4", "#c2289a", "#ffd4ec", Mote.Petal, Mote.Spark),
-        ["ward"] = P("ward", Family.Rising, Family.Rising, Style.Support, new[] { "#0b5a8a", "#39c6ff", "#8ae0ff", "#ffd66b", "#ffffff" }, "#fff0b0", "#ffffff", "#2a9fe0", "#e6f8ff", Mote.Wisp, Mote.Spark),
-        ["declaration"] = P("declaration", Family.Rising, Family.Rising, Style.Heavy, new[] { "#2b1466", "#6a3cff", "#c07aff", "#ffcf6a", "#fff4dc" }, "#ffd76a", "#fffaf0", "#6f3cff", "#fff0cc", Mote.Card, Mote.Shard, true),
+        ["paper"] = P("paper", Family.Surge, Family.Surge, Style.Light, new[] { "#5a1bd6", "#b04cff", "#ff5fd0", "#ffc94a", "#7fe8ff" }, "#ffd76a", "#fff4d8", "#7a2cff", "#ffe2a8", Mote.Card, Mote.Spark, Matter.Filigree, Accent.Orbit),
+        ["sidestep"] = P("sidestep", Family.Twin, Family.Twin, Style.Strike, new[] { "#3a0f8f", "#8a3dff", "#ff58c8", "#ffb22e", "#fff0b0" }, "#ffd35a", "#fff6e0", "#8c2bff", "#ffd9a0", Mote.Shard, Mote.Card, Matter.Crystal, Accent.Shards),
+        ["mask"] = P("mask", Family.Fan, Family.Fan, Style.Control, new[] { "#0a3a66", "#1f8ad6", "#3ad6e8", "#a57bff", "#f0f4ff" }, "#dff8ff", "#ffffff", "#2aa6c8", "#e8fbff", Mote.Shard, Mote.Wisp, Matter.Crystal, Accent.Shards),
+        ["identity"] = P("identity", Family.Fan, Family.Fan, Style.Control, new[] { "#1a4dff", "#46b8ff", "#f4f1ff", "#ffb04a", "#ff6a1f" }, "#ffe0a0", "#ffffff", "#3b6cff", "#ffe6c2", Mote.Card, Mote.Wisp, Matter.Smoke, Accent.Vortex),
+        ["seal"] = P("seal", Family.Falling, Family.Falling, Style.Heavy, new[] { "#3b0a6e", "#9b2cff", "#ff4f9a", "#ff9a2e", "#ffe27a" }, "#ffcf5a", "#fff2d0", "#ff5a1f", "#ffd08a", Mote.Ember, Mote.Card, Matter.Filigree, Accent.Cracks, true),
+        ["chase"] = P("chase", Family.Surge, Family.Twin, Style.Strike, new[] { "#0b3b66", "#1fb7d6", "#6af0e0", "#b58cff", "#ffffff" }, "#c9fff4", "#ffffff", "#1b9bd0", "#e6fffb", Mote.Spark, Mote.Wisp, Matter.Electric, Accent.Lightning),
+        ["climax"] = P("climax", Family.Crescent, Family.Crescent, Style.Heavy, Rainbow, "#ffd24a", "#fff8e0", "#ff4a14", "#ffe39a", Mote.Spark, Mote.Petal, Matter.Filigree, Accent.Wings, true, 1.12f),
+        ["reversal"] = P("reversal", Family.Curtain, Family.Curtain, Style.Strike, new[] { "#3a0640", "#a81f86", "#ff4fae", "#ffb04a", "#6a3cff" }, "#ffd07a", "#ffe6f4", "#c2289a", "#ffd4ec", Mote.Petal, Mote.Spark, Matter.Silk, Accent.Orbit),
+        ["ward"] = P("ward", Family.Rising, Family.Rising, Style.Support, new[] { "#0b5a8a", "#39c6ff", "#8ae0ff", "#ffd66b", "#ffffff" }, "#fff0b0", "#ffffff", "#2a9fe0", "#e6f8ff", Mote.Wisp, Mote.Spark, Matter.Water, Accent.None, false, 1f, 0.04f),
+        ["declaration"] = P("declaration", Family.Rising, Family.Rising, Style.Heavy, new[] { "#2b1466", "#6a3cff", "#c07aff", "#ffcf6a", "#fff4dc" }, "#ffd76a", "#fffaf0", "#6f3cff", "#fff0cc", Mote.Card, Mote.Shard, Matter.Filigree, Accent.Vortex, true),
 
         // Mainline enemies.
-        ["guard"] = P("guard", Family.Twin, Family.Twin, Style.Strike, new[] { "#4a0610", "#c01a24", "#ff5a1e", "#ffc23a", "#fff0c0" }, "#ffcf6a", "#fff1d6", "#d8341c", "#ffd9a8", Mote.Spark, Mote.Shard),
-        ["archivist"] = P("archivist", Family.Twin, Family.Falling, Style.Strike, new[] { "#081a3a", "#1a4fb8", "#2a9aff", "#ffb02a", "#fff0c0" }, "#ffd27a", "#f4fbff", "#2f86e0", "#dff4ff", Mote.Shard, Mote.Spark),
-        ["fog-ghost"] = P("fog-ghost", Family.Tide, Family.Surge, Style.Strike, new[] { "#0a1f4f", "#1f66c8", "#2fc8ff", "#8a7bff", "#e6fdff" }, "#bff6ff", "#f2feff", "#1d6fd8", "#dcfbff", Mote.Wisp, Mote.Puff),
-        ["crimson-ghost"] = P("crimson-ghost", Family.Tide, Family.Surge, Style.Strike, new[] { "#3a0620", "#b0124a", "#ff4f7a", "#a04cff", "#ffd0dc" }, "#ffc0cf", "#fff0f4", "#c01848", "#ffd6e0", Mote.Wisp, Mote.Puff),
-        ["early-hound"] = P("early-hound", Family.Surge, Family.Surge, Style.Light, new[] { "#3a0602", "#c41a06", "#ff6a0a", "#ffb81f", "#fff0a0" }, "#ffd35a", "#fff3d0", "#ff4a0c", "#ffd08a", Mote.Ember, Mote.Spark),
-        ["hound"] = P("hound", Family.Surge, Family.Tide, Style.Strike, new[] { "#4a0a04", "#d62a0a", "#ff7a14", "#ffc93a", "#fff2b0" }, "#ffd35a", "#fff3d0", "#ff4a0c", "#ffd08a", Mote.Ember, Mote.Spark),
-        ["magma"] = P("magma", Family.Tide, Family.Rising, Style.Heavy, new[] { "#1a0402", "#8a1206", "#ff4a0a", "#ffa21f", "#fff0a0" }, "#ffc24a", "#fff0c8", "#ff3a08", "#ffc070", Mote.Ember, Mote.Shard),
-        ["emerald"] = P("emerald", Family.Rising, Family.Surge, Style.Heavy, new[] { "#032a1a", "#0e8a4a", "#3cff8a", "#c8ff5a", "#fff6b0" }, "#d8ff7a", "#f4ffe0", "#16c85a", "#e2ffc0", Mote.Ember, Mote.Puff),
-        ["mind"] = P("mind", Family.Fan, Family.Fan, Style.Strike, new[] { "#1a1454", "#4a3cd6", "#8a9cff", "#c8a8ff", "#ffe1a0" }, "#e8ecff", "#ffffff", "#5a5ae0", "#eef0ff", Mote.Card, Mote.Wisp),
-        ["leech"] = P("leech", Family.Surge, Family.Rising, Style.Strike, new[] { "#200a3a", "#7a1fae", "#d85cff", "#ffd0f4", "#9fe8ff" }, "#f2c6ff", "#fff0ff", "#8a28c8", "#f6dcff", Mote.Card, Mote.Wisp),
-        ["scribe"] = P("scribe", Family.Surge, Family.Twin, Style.Strike, new[] { "#12041f", "#4a148a", "#a33cff", "#ff5fb0", "#ffd36a" }, "#ffcf5a", "#f8e8ff", "#7a22d0", "#f0d4ff", Mote.Ink, Mote.Spark),
-        ["executor"] = P("executor", Family.Twin, Family.Surge, Style.Heavy, new[] { "#120a04", "#5a3208", "#d68a14", "#ffd24a", "#fff6d0" }, "#ffe08a", "#fff8e8", "#d87a10", "#ffe2a8", Mote.Ink, Mote.Spark),
-        ["chronarch"] = P("chronarch", Family.Falling, Family.Fan, Style.Heavy, new[] { "#2a1204", "#8a4a12", "#e89a2e", "#ffe07a", "#5ae0c8" }, "#ffd76a", "#fff4d8", "#e0821a", "#ffe4a8", Mote.Shard, Mote.Card, true, 1.08f),
-        ["matriarch"] = P("matriarch", Family.Curtain, Family.Twin, Style.Strike, new[] { "#3a0412", "#c0142e", "#ff4f6a", "#ff9ab0", "#f4f6ff" }, "#f4f6ff", "#ffffff", "#d01a3a", "#ffd8e0", Mote.Petal, Mote.Spark),
-        ["rescue"] = P("rescue", Family.Falling, Family.Falling, Style.Strike, new[] { "#3a1a04", "#b86a14", "#ffb23a", "#ffd86a", "#ffffff" }, "#ffe08a", "#fff8e8", "#e08a1a", "#ffe6b8", Mote.Spark, Mote.Puff),
-        ["adjudicator"] = P("adjudicator", Family.Falling, Family.Falling, Style.Heavy, new[] { "#1f1206", "#6a3a12", "#d6862a", "#ffd35a", "#fff4d0" }, "#ffd76a", "#fff6e0", "#c8701a", "#ffe0a8", Mote.Shard, Mote.Puff, false, 1.08f),
-        ["convoy"] = P("convoy", Family.Tide, Family.Tide, Style.Heavy, new[] { "#120c06", "#4a3212", "#b87a2a", "#ffc24a", "#fff0c0" }, "#ffd06a", "#fff4dc", "#b8661a", "#ffdca0", Mote.Shard, Mote.Puff, false, 1.08f),
-        ["elite"] = P("elite", Family.Twin, Family.Falling, Style.Heavy, new[] { "#3a0608", "#b81a1a", "#ff6a2a", "#ffd24a", "#fff8e0" }, "#ffd35a", "#fff6e0", "#e0301a", "#ffd4a0", Mote.Spark, Mote.Shard, true),
+        ["guard"] = P("guard", Family.Twin, Family.Twin, Style.Strike, new[] { "#4a0610", "#c01a24", "#ff5a1e", "#ffc23a", "#fff0c0" }, "#ffcf6a", "#fff1d6", "#d8341c", "#ffd9a8", Mote.Spark, Mote.Ember, Matter.Flame, Accent.SwordQi),
+        ["archivist"] = P("archivist", Family.Falling, Family.Twin, Style.Strike, new[] { "#081a3a", "#1a4fb8", "#2a9aff", "#ffb02a", "#fff0c0" }, "#ffd27a", "#f4fbff", "#2f86e0", "#dff4ff", Mote.Spark, Mote.Shard, Matter.Electric, Accent.Lightning),
+        ["fog-ghost"] = P("fog-ghost", Family.Tide, Family.Surge, Style.Strike, new[] { "#0a1f4f", "#1f66c8", "#2fc8ff", "#8a7bff", "#e6fdff" }, "#bff6ff", "#f2feff", "#1d6fd8", "#dcfbff", Mote.Wisp, Mote.Puff, Matter.Water, Accent.Foam, false, 1f, 0.06f),
+        ["crimson-ghost"] = P("crimson-ghost", Family.Surge, Family.Tide, Style.Strike, new[] { "#3a0620", "#b0124a", "#ff4f7a", "#a04cff", "#ffd0dc" }, "#ffc0cf", "#fff0f4", "#c01848", "#ffd6e0", Mote.Wisp, Mote.Puff, Matter.Smoke, Accent.Vortex),
+        ["early-hound"] = P("early-hound", Family.Rising, Family.Surge, Style.Light, new[] { "#3a0602", "#c41a06", "#ff6a0a", "#ffb81f", "#fff0a0" }, "#ffd35a", "#fff3d0", "#ff4a0c", "#ffd08a", Mote.Ember, Mote.Spark, Matter.Flame, Accent.Orbit),
+        ["hound"] = P("hound", Family.Surge, Family.Tide, Style.Strike, new[] { "#4a0a04", "#d62a0a", "#ff7a14", "#ffc93a", "#fff2b0" }, "#ffd35a", "#fff3d0", "#ff4a0c", "#ffd08a", Mote.Ember, Mote.Spark, Matter.Flame, Accent.Wings),
+        ["magma"] = P("magma", Family.Tide, Family.Falling, Style.Heavy, new[] { "#1a0402", "#8a1206", "#ff4a0a", "#ffa21f", "#fff0a0" }, "#ffc24a", "#fff0c8", "#ff3a08", "#ffc070", Mote.Ember, Mote.Shard, Matter.Flame, Accent.Cracks),
+        ["emerald"] = P("emerald", Family.Rising, Family.Surge, Style.Heavy, new[] { "#032a1a", "#0e8a4a", "#3cff8a", "#c8ff5a", "#fff6b0" }, "#d8ff7a", "#f4ffe0", "#16c85a", "#e2ffc0", Mote.Ember, Mote.Puff, Matter.Flame, Accent.Tornado),
+        ["mind"] = P("mind", Family.Fan, Family.Fan, Style.Strike, new[] { "#06202a", "#127a8a", "#5ae0e8", "#e0f8ff", "#ffd88a" }, "#ffe6a8", "#ffffff", "#1a9aaa", "#e0fbff", Mote.Card, Mote.Wisp, Matter.Smoke, Accent.Orbit),
+        ["leech"] = P("leech", Family.Surge, Family.Rising, Style.Strike, new[] { "#200a3a", "#7a1fae", "#d85cff", "#ffd0f4", "#9fe8ff" }, "#f2c6ff", "#fff0ff", "#8a28c8", "#f6dcff", Mote.Card, Mote.Ink, Matter.Ink, Accent.Vortex),
+        ["scribe"] = P("scribe", Family.Surge, Family.Twin, Style.Strike, new[] { "#12041f", "#4a148a", "#a33cff", "#ff5fb0", "#ffd36a" }, "#ffcf5a", "#f8e8ff", "#7a22d0", "#f0d4ff", Mote.Ink, Mote.Spark, Matter.Ink, Accent.Splatter),
+        ["executor"] = P("executor", Family.Twin, Family.Surge, Style.Heavy, new[] { "#120a04", "#5a3208", "#d68a14", "#ffd24a", "#fff6d0" }, "#ffe08a", "#fff8e8", "#d87a10", "#ffe2a8", Mote.Ink, Mote.Spark, Matter.Ink, Accent.Splatter),
+        ["chronarch"] = P("chronarch", Family.Falling, Family.Fan, Style.Heavy, new[] { "#1a0e04", "#8a4a12", "#e8a02e", "#3ad6c0", "#e8fff8" }, "#ffd76a", "#fff4d8", "#e0821a", "#ffe4a8", Mote.Shard, Mote.Card, Matter.Filigree, Accent.Dragon, true, 1.08f),
+        ["matriarch"] = P("matriarch", Family.Curtain, Family.Twin, Style.Strike, new[] { "#3a0412", "#c0142e", "#ff4f6a", "#ff9ab0", "#f4f6ff" }, "#f4f6ff", "#ffffff", "#d01a3a", "#ffd8e0", Mote.Petal, Mote.Shard, Matter.Silk, Accent.Orbit),
+        ["rescue"] = P("rescue", Family.Fan, Family.Falling, Style.Strike, new[] { "#3a1a04", "#b86a14", "#ffb23a", "#ffd86a", "#ffffff" }, "#ffe08a", "#fff8e8", "#e08a1a", "#ffe6b8", Mote.Puff, Mote.Spark, Matter.Smoke, Accent.Cracks),
+        ["adjudicator"] = P("adjudicator", Family.Falling, Family.Falling, Style.Heavy, new[] { "#0a1426", "#2a4a7a", "#6aa0e0", "#e8f0ff", "#ffd36a" }, "#ffd36a", "#f4f8ff", "#2a5ab0", "#dce8ff", Mote.Shard, Mote.Puff, Matter.Crystal, Accent.Cracks, false, 1.08f),
+        ["convoy"] = P("convoy", Family.Tide, Family.Tide, Style.Heavy, new[] { "#1a0a06", "#5a2410", "#b8501a", "#ff8a3a", "#ffd8a0" }, "#ffb86a", "#fff0dc", "#b84a14", "#ffd0a0", Mote.Shard, Mote.Puff, Matter.Smoke, Accent.Shards, false, 1.08f),
+        ["elite"] = P("elite", Family.Twin, Family.Falling, Style.Heavy, new[] { "#3a0608", "#b81a1a", "#ff6a2a", "#ffd24a", "#fff8e0" }, "#ffd35a", "#fff6e0", "#e0301a", "#ffd4a0", Mote.Spark, Mote.Shard, Matter.Crystal, Accent.SwordRain, true),
 
         // Church tower beasts.
-        ["stonehide"] = P("stonehide", Family.Falling, Family.Falling, Style.Heavy, new[] { "#1a1006", "#6a4a1a", "#d69a3a", "#ffe08a", "#fff8e0" }, "#ffd87a", "#fff6e0", "#c87a2a", "#ffe0b0", Mote.Shard, Mote.Puff),
-        ["saltmaw"] = P("saltmaw", Family.Rising, Family.Fan, Style.Strike, new[] { "#0a2a3a", "#2ab8d6", "#e8ffff", "#ff9ad6", "#b58cff" }, "#ffffff", "#ffffff", "#2ab0d0", "#eaffff", Mote.Shard, Mote.Spark),
-        ["salt-poison"] = P("salt-poison", Family.Tide, Family.Tide, Style.Strike, new[] { "#062a1a", "#1a8a5a", "#6affb0", "#e8ffd0", "#c8ffff" }, "#e0fff0", "#ffffff", "#1aa86a", "#e0ffe8", Mote.Puff, Mote.Ember),
-        ["shellback"] = P("shellback", Family.Twin, Family.Surge, Style.Strike, new[] { "#2a0a06", "#8a2a12", "#e86a2a", "#ffc24a", "#fff0c8" }, "#ffd06a", "#fff2dc", "#d8501a", "#ffd8a8", Mote.Spark, Mote.Shard),
-        ["ironclaw"] = P("ironclaw", Family.Twin, Family.Twin, Style.Strike, new[] { "#0a1a2a", "#2a6ab8", "#5ad0ff", "#ffc24a", "#ffffff" }, "#ffe08a", "#ffffff", "#3a8ad0", "#e6f8ff", Mote.Spark, Mote.Shard),
-        ["frilled-naga"] = P("frilled-naga", Family.Fan, Family.Surge, Style.Strike, new[] { "#2a1a04", "#b8861a", "#ffd24a", "#fff6c0", "#4ae0c0" }, "#fff0a0", "#fffbe8", "#e0a01a", "#fff0b8", Mote.Wisp, Mote.Spark, true),
-        ["boneclaw"] = P("boneclaw", Family.Crescent, Family.Twin, Style.Strike, new[] { "#0a2a2a", "#1aa8a0", "#7ae0c8", "#c8b0ff", "#ffffff" }, "#f4f0d8", "#ffffff", "#18a09a", "#eafff8", Mote.Shard, Mote.Spark),
-        ["copperback"] = P("copperback", Family.Tide, Family.Falling, Style.Strike, new[] { "#1a0a04", "#8a3a12", "#e8782a", "#ffc86a", "#4ad6b8" }, "#ffd07a", "#fff2dc", "#d86a1a", "#ffdcaa", Mote.Shard, Mote.Spark),
-        ["crimson-brute"] = P("crimson-brute", Family.Surge, Family.Falling, Style.Heavy, new[] { "#2a0404", "#b80c0c", "#ff4a14", "#ffb22a", "#fff0b0" }, "#ffcf4a", "#fff2d0", "#ff300c", "#ffc890", Mote.Ember, Mote.Spark),
-        ["veil-oracle"] = P("veil-oracle", Family.Twin, Family.Curtain, Style.Strike, new[] { "#2a0418", "#a0124a", "#ff3a6a", "#ffb0c8", "#ffe0a0" }, "#ffd8a0", "#fff0f4", "#c8124a", "#ffd0dc", Mote.Petal, Mote.Wisp),
-        ["golden-throat"] = P("golden-throat", Family.Fan, Family.Tide, Style.Strike, new[] { "#2a2a04", "#8ab81a", "#e8ff4a", "#ffd24a", "#fff8d0" }, "#fff0a0", "#fffbe0", "#b8d01a", "#fff4b0", Mote.Puff, Mote.Wisp),
-        ["moonfang"] = P("moonfang", Family.Crescent, Family.Twin, Style.Strike, new[] { "#0a0a2a", "#3a4ab8", "#7a9cff", "#ffe08a", "#ffffff" }, "#f4f6ff", "#ffffff", "#4a5ad0", "#eef2ff", Mote.Spark, Mote.Shard),
+        ["stonehide"] = P("stonehide", Family.Falling, Family.Falling, Style.Heavy, new[] { "#1a1006", "#6a4a1a", "#d69a3a", "#ffe08a", "#fff8e0" }, "#ffd87a", "#fff6e0", "#c87a2a", "#ffe0b0", Mote.Shard, Mote.Puff, Matter.Crystal, Accent.Cracks),
+        ["saltmaw"] = P("saltmaw", Family.Rising, Family.Fan, Style.Strike, new[] { "#0a2a3a", "#2ab8d6", "#e8ffff", "#ff9ad6", "#b58cff" }, "#ffffff", "#ffffff", "#2ab0d0", "#eaffff", Mote.Shard, Mote.Spark, Matter.Crystal, Accent.Spikes),
+        ["salt-poison"] = P("salt-poison", Family.Tide, Family.Tide, Style.Strike, new[] { "#062a1a", "#1a8a5a", "#6affb0", "#e8ffd0", "#c8ffff" }, "#e0fff0", "#ffffff", "#1aa86a", "#e0ffe8", Mote.Puff, Mote.Ember, Matter.Smoke, Accent.Orbit, false, 1f, 0.04f),
+        ["shellback"] = P("shellback", Family.Twin, Family.Surge, Style.Strike, new[] { "#2a0a06", "#8a2a12", "#e86a2a", "#ffc24a", "#fff0c8" }, "#ffd06a", "#fff2dc", "#d8501a", "#ffd8a8", Mote.Spark, Mote.Shard, Matter.Smoke, Accent.Shards),
+        ["ironclaw"] = P("ironclaw", Family.Twin, Family.Twin, Style.Strike, new[] { "#0a1a2a", "#2a6ab8", "#5ad0ff", "#ffc24a", "#ffffff" }, "#ffe08a", "#ffffff", "#3a8ad0", "#e6f8ff", Mote.Spark, Mote.Shard, Matter.Crystal, Accent.SwordQi),
+        ["frilled-naga"] = P("frilled-naga", Family.Fan, Family.Surge, Style.Strike, new[] { "#2a1a04", "#b8861a", "#ffd24a", "#fff6c0", "#4ae0c0" }, "#fff0a0", "#fffbe8", "#e0a01a", "#fff0b8", Mote.Wisp, Mote.Spark, Matter.Electric, Accent.None, true, 1f, 0.1f),
+        ["boneclaw"] = P("boneclaw", Family.Crescent, Family.Twin, Style.Strike, new[] { "#0a2a2a", "#1aa8a0", "#7ae0c8", "#c8b0ff", "#ffffff" }, "#f4f0d8", "#ffffff", "#18a09a", "#eafff8", Mote.Shard, Mote.Spark, Matter.Crystal, Accent.Spikes),
+        ["copperback"] = P("copperback", Family.Tide, Family.Falling, Style.Strike, new[] { "#1a0a04", "#8a3a12", "#e8782a", "#ffc86a", "#4ad6b8" }, "#ffd07a", "#fff2dc", "#d86a1a", "#ffdcaa", Mote.Shard, Mote.Spark, Matter.Crystal, Accent.Cracks),
+        ["crimson-brute"] = P("crimson-brute", Family.Falling, Family.Surge, Style.Heavy, new[] { "#2a0404", "#b80c0c", "#ff4a14", "#ffb22a", "#fff0b0" }, "#ffcf4a", "#fff2d0", "#ff300c", "#ffc890", Mote.Ember, Mote.Spark, Matter.Flame, Accent.Meteor),
+        ["veil-oracle"] = P("veil-oracle", Family.Curtain, Family.Twin, Style.Strike, new[] { "#2a0418", "#a0124a", "#ff3a6a", "#ffb0c8", "#ffe0a0" }, "#ffd8a0", "#fff0f4", "#c8124a", "#ffd0dc", Mote.Petal, Mote.Wisp, Matter.Silk, Accent.Vortex),
+        ["golden-throat"] = P("golden-throat", Family.Fan, Family.Tide, Style.Strike, new[] { "#2a2a04", "#8ab81a", "#e8ff4a", "#ffd24a", "#fff8d0" }, "#fff0a0", "#fffbe0", "#b8d01a", "#fff4b0", Mote.Puff, Mote.Wisp, Matter.Smoke, Accent.Orbit, false, 1f, 0.12f),
+        ["moonfang"] = P("moonfang", Family.Crescent, Family.Twin, Style.Strike, new[] { "#0a0a2a", "#3a4ab8", "#7a9cff", "#ffe08a", "#ffffff" }, "#f4f6ff", "#ffffff", "#4a5ad0", "#eef2ff", Mote.Spark, Mote.Shard, Matter.Smoke, Accent.Tornado),
 
         // Wanted bosses.
-        ["bounty-b01"] = P("bounty-b01", Family.Twin, Family.Twin, Style.Heavy, new[] { "#2a0408", "#9a1020", "#e8484a", "#9ab0d0", "#ffffff" }, "#f0f4ff", "#ffffff", "#c01a24", "#ffd8d8", Mote.Spark, Mote.Shard),
-        ["bounty-b02"] = P("bounty-b02", Family.Rising, Family.Falling, Style.Heavy, new[] { "#2a1804", "#a8741a", "#ffc83a", "#fff2b0", "#ffffff" }, "#ffe08a", "#fffbe8", "#e0a01a", "#fff0c0", Mote.Card, Mote.Spark, true),
-        ["bounty-b03"] = P("bounty-b03", Family.Tide, Family.Surge, Style.Heavy, new[] { "#041a3a", "#0a5aa0", "#1fc8e0", "#6ae8ff", "#ffffff" }, "#e0ffff", "#ffffff", "#0a7ac8", "#dcfaff", Mote.Puff, Mote.Spark),
-        ["bounty-b04"] = P("bounty-b04", Family.Surge, Family.Falling, Style.Heavy, new[] { "#0e0418", "#3a148a", "#8a3cff", "#ff8a3a", "#ffe08a" }, "#ffcf6a", "#f8ecff", "#6a22d0", "#f0dcff", Mote.Ink, Mote.Card),
-        ["bounty-b05"] = P("bounty-b05", Family.Twin, Family.Curtain, Style.Strike, new[] { "#2a0206", "#b00a1e", "#ff3a4a", "#ffc0c8", "#ffe8a0" }, "#ffd0a0", "#fff0f0", "#d0101e", "#ffd0d4", Mote.Petal, Mote.Spark),
-        ["bounty-b06"] = P("bounty-b06", Family.Falling, Family.Tide, Style.Heavy, new[] { "#040e1f", "#12386a", "#3a8ab8", "#bfe8f8", "#ffffff" }, "#dff4ff", "#ffffff", "#1a5a9a", "#dcefff", Mote.Shard, Mote.Puff, false, 1.08f),
-        ["bounty-b07"] = P("bounty-b07", Family.Fan, Family.Tide, Style.Strike, new[] { "#2a1a02", "#c8861a", "#ffc83a", "#9aff5a", "#fff8d0" }, "#fff0a0", "#fffbe0", "#e0a01a", "#fff0b8", Mote.Wisp, Mote.Puff, true),
-        ["bounty-b08"] = P("bounty-b08", Family.Twin, Family.Twin, Style.Heavy, new[] { "#5a6aa8", "#ff7ac0", "#7ad0ff", "#c89cff", "#ffffff" }, "#ffffff", "#ffffff", "#8a9ac8", "#f4f8ff", Mote.Shard, Mote.Spark),
-        ["bounty-b09"] = P("bounty-b09", Family.Twin, Family.Surge, Style.Heavy, new[] { "#1a0804", "#7a2a0a", "#d8661a", "#ffc24a", "#fff0c0" }, "#ffd06a", "#fff4e0", "#c8501a", "#ffd8a0", Mote.Shard, Mote.Spark),
-        ["bounty-b10"] = P("bounty-b10", Family.Curtain, Family.Crescent, Style.Heavy, new[] { "#2a0212", "#a00a3a", "#ff2a5a", "#ff9ab8", "#ffe0a0" }, "#ffd0a0", "#fff0f4", "#d0103a", "#ffd0dc", Mote.Petal, Mote.Wisp, false, 1.08f),
+        ["bounty-b01"] = P("bounty-b01", Family.Twin, Family.Twin, Style.Heavy, new[] { "#2a0408", "#9a1020", "#e8484a", "#9ab0d0", "#ffffff" }, "#f0f4ff", "#ffffff", "#c01a24", "#ffd8d8", Mote.Spark, Mote.Shard, Matter.Crystal, Accent.SwordQi),
+        ["bounty-b02"] = P("bounty-b02", Family.Rising, Family.Falling, Style.Heavy, new[] { "#2a1804", "#a8741a", "#ffc83a", "#fff2b0", "#ffffff" }, "#ffe08a", "#fffbe8", "#e0a01a", "#fff0c0", Mote.Card, Mote.Spark, Matter.Filigree, Accent.Orbit, true),
+        ["bounty-b03"] = P("bounty-b03", Family.Tide, Family.Surge, Style.Heavy, new[] { "#041a3a", "#0a5aa0", "#1fc8e0", "#6ae8ff", "#ffffff" }, "#e0ffff", "#ffffff", "#0a7ac8", "#dcfaff", Mote.Puff, Mote.Spark, Matter.Water, Accent.Foam, false, 1f, 0.05f),
+        ["bounty-b04"] = P("bounty-b04", Family.Fan, Family.Surge, Style.Heavy, new[] { "#0e0418", "#3a148a", "#8a3cff", "#ff8a3a", "#ffe08a" }, "#ffcf6a", "#f8ecff", "#6a22d0", "#f0dcff", Mote.Ink, Mote.Card, Matter.Ink, Accent.Orbit),
+        ["bounty-b05"] = P("bounty-b05", Family.Twin, Family.Curtain, Style.Strike, new[] { "#2a0206", "#b00a1e", "#ff3a4a", "#ffc0c8", "#ffe8a0" }, "#ffd0a0", "#fff0f0", "#d0101e", "#ffd0d4", Mote.Petal, Mote.Spark, Matter.Silk, Accent.Orbit),
+        ["bounty-b06"] = P("bounty-b06", Family.Falling, Family.Tide, Style.Heavy, new[] { "#040e1f", "#12386a", "#3a8ab8", "#bfe8f8", "#ffffff" }, "#dff4ff", "#ffffff", "#1a5a9a", "#dcefff", Mote.Shard, Mote.Puff, Matter.Water, Accent.Cracks, false, 1.08f),
+        ["bounty-b07"] = P("bounty-b07", Family.Fan, Family.Tide, Style.Strike, new[] { "#2a1a02", "#c8861a", "#ffc83a", "#9aff5a", "#fff8d0" }, "#fff0a0", "#fffbe0", "#e0a01a", "#fff0b8", Mote.Wisp, Mote.Puff, Matter.Electric, Accent.Orbit, true, 1f, 0.1f),
+        ["bounty-b08"] = P("bounty-b08", Family.Twin, Family.Twin, Style.Heavy, new[] { "#5a6aa8", "#ff7ac0", "#7ad0ff", "#c89cff", "#ffffff" }, "#ffffff", "#ffffff", "#8a9ac8", "#f4f8ff", Mote.Shard, Mote.Spark, Matter.Crystal, Accent.SwordRain),
+        ["bounty-b09"] = P("bounty-b09", Family.Crescent, Family.Surge, Style.Heavy, new[] { "#1a0804", "#7a2a0a", "#d8661a", "#ffc24a", "#fff0c0" }, "#ffd06a", "#fff4e0", "#c8501a", "#ffd8a0", Mote.Shard, Mote.Ember, Matter.Flame, Accent.Shards),
+        ["bounty-b10"] = P("bounty-b10", Family.Curtain, Family.Crescent, Style.Heavy, new[] { "#2a0212", "#a00a3a", "#ff2a5a", "#ff9ab8", "#ffe0a0" }, "#ffd0a0", "#fff0f4", "#d0103a", "#ffd0dc", Mote.Petal, Mote.Wisp, Matter.Silk, Accent.Wings, false, 1.08f),
 
         // Support semantics.
-        ["heal"] = P("heal", Family.Rising, Family.Rising, Style.Support, new[] { "#0a4a3a", "#1ac89a", "#6affc8", "#ffe08a", "#ffffff" }, "#fff0b0", "#ffffff", "#18b88a", "#e0fff4", Mote.Petal, Mote.Spark),
-        ["heal-crimson"] = P("heal-crimson", Family.Rising, Family.Rising, Style.Support, new[] { "#4a0a1a", "#d03a6a", "#ffb0c8", "#ffffff", "#ffe08a" }, "#ffe0b0", "#ffffff", "#d03a6a", "#ffe4ec", Mote.Petal, Mote.Wisp),
-        ["enemy-ward"] = P("enemy-ward", Family.Rising, Family.Rising, Style.Support, new[] { "#0a1640", "#1f4fc8", "#3aa8ff", "#ffb83a", "#fff2c8" }, "#ffe0a0", "#ffffff", "#3a7ad0", "#e4f2ff", Mote.Shard, Mote.Wisp),
-        ["relic-mask"] = P("relic-mask", Family.Rising, Family.Rising, Style.Support, new[] { "#1a0f3a", "#5a3cc8", "#9a8cff", "#e8e4ff", "#ffd88a" }, "#ffe6a8", "#ffffff", "#5a4ad0", "#eeeaff", Mote.Card, Mote.Wisp),
-        ["stone-ward"] = P("stone-ward", Family.Rising, Family.Rising, Style.Support, new[] { "#1a1006", "#6a4a1a", "#d69a3a", "#ffe08a", "#fff8e0" }, "#ffd87a", "#fff6e0", "#c87a2a", "#ffe0b0", Mote.Shard, Mote.Spark),
-        ["anchor-ward"] = P("anchor-ward", Family.Rising, Family.Rising, Style.Support, new[] { "#040e1f", "#12386a", "#2a7ac8", "#8ad8ff", "#ffffff" }, "#dff4ff", "#ffffff", "#1a5a9a", "#dcefff", Mote.Shard, Mote.Wisp),
-        ["poison-field"] = P("poison-field", Family.Rising, Family.Rising, Style.Support, new[] { "#022414", "#0a7a3a", "#2ae86a", "#b8ff4a", "#f0ffb0" }, "#d8ff7a", "#f4ffe0", "#16b04a", "#d8ffb0", Mote.Puff, Mote.Ember),
-        ["escort-ward"] = P("escort-ward", Family.Rising, Family.Rising, Style.Support, new[] { "#041a3a", "#0a5aa0", "#1fc8e0", "#6ae8ff", "#ffffff" }, "#e0ffff", "#ffffff", "#0a7ac8", "#dcfaff", Mote.Wisp, Mote.Spark),
-        ["empower"] = P("empower", Family.Rising, Family.Rising, Style.Support, new[] { "#3a1a04", "#d8861a", "#ffd24a", "#fff6d0", "#ff6a3a" }, "#fff0a0", "#ffffff", "#e0901a", "#fff0c8", Mote.Ember, Mote.Spark),
+        ["heal"] = P("heal", Family.Rising, Family.Rising, Style.Support, new[] { "#0a4a3a", "#1ac89a", "#6affc8", "#ffe08a", "#ffffff" }, "#fff0b0", "#ffffff", "#18b88a", "#e0fff4", Mote.Petal, Mote.Spark, Matter.Water, Accent.Lotus, false, 1f, 0.04f),
+        ["heal-crimson"] = P("heal-crimson", Family.Rising, Family.Rising, Style.Support, new[] { "#4a0a1a", "#d03a6a", "#ffb0c8", "#ffffff", "#ffe08a" }, "#ffe0b0", "#ffffff", "#d03a6a", "#ffe4ec", Mote.Petal, Mote.Wisp, Matter.Silk, Accent.Lotus),
+        ["enemy-ward"] = P("enemy-ward", Family.Rising, Family.Rising, Style.Support, new[] { "#0a1640", "#1f4fc8", "#3aa8ff", "#ffb83a", "#fff2c8" }, "#ffe0a0", "#ffffff", "#3a7ad0", "#e4f2ff", Mote.Shard, Mote.Wisp, Matter.Crystal, Accent.None),
+        ["relic-mask"] = P("relic-mask", Family.Rising, Family.Rising, Style.Support, new[] { "#1a0f3a", "#5a3cc8", "#9a8cff", "#e8e4ff", "#ffd88a" }, "#ffe6a8", "#ffffff", "#5a4ad0", "#eeeaff", Mote.Card, Mote.Wisp, Matter.Smoke, Accent.Orbit),
+        ["stone-ward"] = P("stone-ward", Family.Rising, Family.Rising, Style.Support, new[] { "#1a1006", "#6a4a1a", "#d69a3a", "#ffe08a", "#fff8e0" }, "#ffd87a", "#fff6e0", "#c87a2a", "#ffe0b0", Mote.Shard, Mote.Spark, Matter.Crystal, Accent.None),
+        ["anchor-ward"] = P("anchor-ward", Family.Rising, Family.Rising, Style.Support, new[] { "#040e1f", "#12386a", "#2a7ac8", "#8ad8ff", "#ffffff" }, "#dff4ff", "#ffffff", "#1a5a9a", "#dcefff", Mote.Shard, Mote.Wisp, Matter.Water, Accent.None, false, 1f, 0.04f),
+        ["poison-field"] = P("poison-field", Family.Rising, Family.Rising, Style.Support, new[] { "#022414", "#0a7a3a", "#2ae86a", "#b8ff4a", "#f0ffb0" }, "#d8ff7a", "#f4ffe0", "#16b04a", "#d8ffb0", Mote.Puff, Mote.Ember, Matter.Smoke, Accent.None),
+        ["escort-ward"] = P("escort-ward", Family.Rising, Family.Rising, Style.Support, new[] { "#041a3a", "#0a5aa0", "#1fc8e0", "#6ae8ff", "#ffffff" }, "#e0ffff", "#ffffff", "#0a7ac8", "#dcfaff", Mote.Wisp, Mote.Spark, Matter.Water, Accent.None, false, 1f, 0.05f),
+        ["empower"] = P("empower", Family.Rising, Family.Rising, Style.Support, new[] { "#3a1a04", "#d8861a", "#ffd24a", "#fff6d0", "#ff6a3a" }, "#fff0a0", "#ffffff", "#e0901a", "#fff0c8", Mote.Ember, Mote.Spark, Matter.Flame, Accent.Orbit),
     };
 
     static Profile PlayerProfile(string skillID)

@@ -1190,7 +1190,7 @@ public sealed class BattlePrototype : MonoBehaviour
             string intent=intentParts.Length>1?intentParts[1]:"strike";
             if(intent=="guard"||intent=="charge"||intent=="recover"||intent=="bounty_bind_charge"||intent=="bounty_copy_charge"||intent=="bounty_knock_charge"||intent=="bounty_veil_charge"||intent=="bounty_armor"||intent=="bounty_mirror"){
                 bounty.Prepare(intent);
-                if(intent=="guard"||intent=="bounty_armor"){var h=actingHandle;SpellSpectacle20260926.PlayState(this,actingHandle.ProfileEnemyId=="bounty-b06"?"anchor-ward":"stone-ward",()=>SpellSpectacle20260926.AnchorOf(h),SpellSpectacle20260926.StableHash(h.BattleEnemyId));}
+                if(intent=="guard"||intent=="bounty_armor"){var h=actingHandle;SpellSpectacle20260926.PlayState(this,bounty.bountyID=="b06"?"anchor-ward":"stone-ward",()=>SpellSpectacle20260926.AnchorOf(h),SpellSpectacle20260926.StableHash(h.BattleEnemyId));}
                 return;}
             StartCoroutine(bounty.Strike(actingHandle,()=>PlayerFireBreathImpactAnchor,intent,()=>UnityBattleBridge.ReportCombatContact("enemy:"+actingHandle.BattleEnemyId),()=>NativeCombatEnabled&&IsActiveEnemyHandle(actingHandle)));return;
         }
