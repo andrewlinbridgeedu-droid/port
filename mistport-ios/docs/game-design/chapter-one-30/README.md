@@ -42,6 +42,7 @@ Q1–8失名与诊所 → Q9–16假家庭、错误救援与终止旧犬 → Q17
 | [四项审查与后续计划](CHAPTER1_REVIEW_AND_PLAN_20260925.md) | 本轮总结果、证据层级、优先级与验收顺序 |
 | [全法术命中华彩层 9/26](../../../../docs/development/SPELL_SPECTACLE_20260926.md)（89组Unity实录，未装机、待视觉认可）／[法术强度返工](../../../../docs/development/SPELL_IMPACT_GRADE_20260925.md)／[M12/M15与Build126](../../../../docs/development/SPELL_IMPACT_DEVICE_20260925.md)／[M12二次展开补修](../../../../docs/development/M12_DEPLOY_GRADE_20260926.md)／[受创反馈](../../../../docs/development/PLAYER_IMPACT_FEEDBACK_20260925.md) | 原批82段Unity实录、M12/M15补修片与正式受创桥接分批核对；Build126已装机、Q6旧蓝盾仍偏平，M12加强版正式录制、设备导出和签名Build127完成但未装机，M15/H10及用户视觉认可仍未完成 |
 | [高塔／十案战场Debug直达入口](../../../../docs/development/CHAPTER1_AUDIT_DIRECT_PREVIEW_20260925.md) | Build126已编入隔离战场夹具并装机，但该入口尚未真机实玩；不能当塔百层或十案自然通关 |
+| [玩家工作与工资](PLAYER_WORK_AND_WAGES_20260926.md) | 先做战斗清场委托；工资托管及产业结算独立原型已编写，游戏接线仍待实施 |
 | [银行与产业投资](BANK_AND_INDUSTRY_DESIGN_20260925.md) | 新经济系统方案、经营决策、候选数值、亏损与离港承接；未实施 |
 | [完整规划与Pro交接](ECONOMY_PRO_CONSULTATION_20260925.md) | 18份输入包、A–H回答来源、采纳与候选边界 |
 | [每服2,000玩家经济落地咨询](ECONOMY_2000_PLAYER_PRO_20260926.md) | V3审核包已取得，10×5×365日本地复跑与原结果逐字节一致；仍有服务涨价、缺货及工业燃料未支付等模型缺口，未实施 |
