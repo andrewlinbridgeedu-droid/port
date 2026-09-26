@@ -1,0 +1,2145 @@
+{
+ "rows": [
+  {
+   "id": "H00",
+   "key": "H00",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 75,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "basic:clock-guard-primary"
+    }
+   ],
+   "attack": "basic:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "H01",
+   "key": "H01",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 111,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "skill:fool_skill_01:clock-guard-primary"
+    }
+   ],
+   "attack": "skill:fool_skill_01:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "H04",
+   "key": "H04",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 111,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "skill:fool_skill_04:clock-guard-primary"
+    }
+   ],
+   "attack": "skill:fool_skill_04:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "H05",
+   "key": "H05",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 111,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "skill:fool_skill_05:clock-guard-primary"
+    }
+   ],
+   "attack": "skill:fool_skill_05:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "H06",
+   "key": "H06",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 111,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "skill:fool_skill_06:clock-guard-primary"
+    }
+   ],
+   "attack": "skill:fool_skill_06:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "H07",
+   "key": "H07",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 111,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "skill:fool_skill_07:clock-guard-primary"
+    }
+   ],
+   "attack": "skill:fool_skill_07:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "H08",
+   "key": "H08",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 111,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "skill:fool_skill_08:clock-guard-primary"
+    }
+   ],
+   "attack": "skill:fool_skill_08:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "H10",
+   "key": "H10",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 111,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "skill:fool_skill_10:clock-guard-primary"
+    }
+   ],
+   "attack": "skill:fool_skill_10:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "L02",
+   "key": "L02",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 111,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "skill:fool_skill_02:clock-guard-primary"
+    }
+   ],
+   "attack": "skill:fool_skill_02:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "L09",
+   "key": "L09",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 111,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "skill:fool_skill_09:clock-guard-primary"
+    }
+   ],
+   "attack": "skill:fool_skill_09:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "H01",
+   "key": "H01-dual",
+   "setup": "wave-instances:clock-guard-primary@archivist,clock-guard-secondary@archivist",
+   "frames": 108,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [
+    "skill-targets:clock-guard-primary|clock-guard-secondary"
+   ],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "skill:fool_skill_01:clock-guard-primary"
+    }
+   ],
+   "attack": "skill:fool_skill_01:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "H00",
+   "key": "H00-followup-basic",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 99,
+   "expected": 3,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "basic:clock-guard-primary"
+    },
+    {
+     "frame": 24,
+     "command": "basic:clock-guard-primary"
+    },
+    {
+     "frame": 42,
+     "command": "basic:clock-guard-primary"
+    }
+   ],
+   "attack": "basic:clock-guard-primary",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "H00",
+   "key": "H00-followup-skill",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 108,
+   "expected": 2,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "basic:clock-guard-primary"
+    },
+    {
+     "frame": 24,
+     "command": "skill:fool_skill_07:clock-guard-primary"
+    }
+   ],
+   "attack": "basic:clock-guard-primary",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "H10",
+   "key": "H10-four",
+   "setup": "wave-instances:clock-guard-primary@archivist,clock-guard-secondary@archivist,clock-guard-third@archivist,clock-guard-fourth@archivist",
+   "frames": 108,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [
+    "skill-targets:clock-guard-primary|clock-guard-secondary|clock-guard-third|clock-guard-fourth"
+   ],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "skill:fool_skill_10:clock-guard-primary"
+    }
+   ],
+   "attack": "skill:fool_skill_10:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "H04",
+   "key": "H04-recipient",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 111,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "skill:fool_skill_04:clock-guard-primary"
+    }
+   ],
+   "attack": "skill:fool_skill_04:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "H10",
+   "key": "H10-recipient",
+   "setup": "wave-instances:clock-guard-primary@archivist,clock-guard-secondary@archivist,clock-guard-third@archivist,clock-guard-fourth@archivist",
+   "frames": 111,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [
+    "skill-targets:clock-guard-primary|clock-guard-secondary|clock-guard-third|clock-guard-fourth"
+   ],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "skill:fool_skill_10:clock-guard-primary"
+    }
+   ],
+   "attack": "skill:fool_skill_10:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "R01",
+   "key": "R01",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 96,
+   "expected": 0,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "masquerade:2"
+    },
+    {
+     "frame": 33,
+     "command": "masquerade-hit:1"
+    },
+    {
+     "frame": 60,
+     "command": "masquerade-hit:0"
+    }
+   ],
+   "attack": "masquerade:2",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "R01",
+   "key": "R01-expire",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 150,
+   "expected": 0,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "masquerade:1"
+    }
+   ],
+   "attack": "masquerade:1",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "M01",
+   "key": "M01",
+   "setup": "wave-instances:clock-guard-primary",
+   "frames": 108,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M02",
+   "key": "M02",
+   "setup": "wave-instances:clock-guard-primary",
+   "frames": 108,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary:guard"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:guard",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M03",
+   "key": "M03",
+   "setup": "wave-instances:clock-guard-primary@fog-ghost",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M03",
+   "key": "M03-red",
+   "setup": "wave-instances:clock-guard-primary@crimson-ghost",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M04",
+   "key": "M04",
+   "setup": "wave-instances:clock-guard-primary@fog-ghost,clock-guard-secondary@crimson-ghost",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-secondary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-secondary"
+    }
+   ],
+   "attack": "enemy:clock-guard-secondary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M05",
+   "key": "M05",
+   "setup": "wave-instances:hell-hound-primary@early-hell-hound",
+   "frames": 138,
+   "expected": 1,
+   "actor": "hell-hound-primary",
+   "focus": "enemy",
+   "warm": [
+    "early-presence:3"
+   ],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:hell-hound-primary"
+    }
+   ],
+   "attack": "enemy:hell-hound-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M06",
+   "key": "M06",
+   "setup": "wave-instances:hell-hound-primary@early-hell-hound",
+   "frames": 138,
+   "expected": 1,
+   "actor": "hell-hound-primary",
+   "focus": "enemy",
+   "warm": [
+    "early-presence:4",
+    "q4-hound:probe"
+   ],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:hell-hound-primary"
+    }
+   ],
+   "attack": "enemy:hell-hound-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M07",
+   "key": "M07",
+   "setup": "wave-instances:hell-hound-primary@early-hell-hound",
+   "frames": 210,
+   "expected": 2,
+   "actor": "hell-hound-primary",
+   "focus": "enemy",
+   "warm": [
+    "early-presence:4"
+   ],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "q4-hound:charge"
+    },
+    {
+     "frame": 66,
+     "command": "q4-hound:first"
+    },
+    {
+     "frame": 66,
+     "command": "enemy:hell-hound-primary"
+    },
+    {
+     "frame": 135,
+     "command": "q4-hound:second"
+    },
+    {
+     "frame": 135,
+     "command": "enemy:hell-hound-primary"
+    }
+   ],
+   "attack": "q4-hound:first",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "M08",
+   "key": "M08",
+   "setup": "wave-instances:hell-hound-primary",
+   "frames": 138,
+   "expected": 1,
+   "actor": "hell-hound-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:hell-hound-primary"
+    }
+   ],
+   "attack": "enemy:hell-hound-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M09",
+   "key": "M09",
+   "setup": "wave-instances:hell-hound-primary",
+   "frames": 138,
+   "expected": 1,
+   "actor": "hell-hound-primary",
+   "focus": "enemy",
+   "warm": [
+    "@advance-enemy:hell-hound-primary"
+   ],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:hell-hound-primary"
+    }
+   ],
+   "attack": "enemy:hell-hound-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M10",
+   "key": "M10",
+   "setup": "chapter-thirty:19",
+   "frames": 120,
+   "expected": 0,
+   "actor": "hell-hound-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "emerald-poison:3"
+    },
+    {
+     "frame": 60,
+     "command": "emerald-poison:6"
+    }
+   ],
+   "attack": "emerald-poison:3",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "M11",
+   "key": "M11",
+   "setup": "chapter-thirty:19",
+   "frames": 150,
+   "expected": 1,
+   "actor": "hell-hound-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "encore-charge"
+    },
+    {
+     "frame": 36,
+     "command": "enemy:hell-hound-primary"
+    },
+    {
+     "frame": 36,
+     "command": "emerald-spell:burst"
+    },
+    {
+     "frame": 36,
+     "command": "encore-release"
+    }
+   ],
+   "attack": "enemy:hell-hound-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M12",
+   "key": "M12",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 102,
+   "expected": 0,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "archive-state:guard"
+    },
+    {
+     "frame": 78,
+     "command": "archive-state:recover"
+    }
+   ],
+   "attack": "archive-state:guard",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "M13",
+   "key": "M13",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M14",
+   "key": "M14",
+   "setup": "wave-instances:clock-guard-primary@archivist",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [
+    "@advance-enemy:clock-guard-primary"
+   ],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M23",
+   "key": "M23",
+   "setup": "wave-instances:clock-guard-primary@matriarch",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M24",
+   "key": "M24",
+   "setup": "wave-instances:clock-guard-primary@matriarch",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [
+    "@advance-enemy:clock-guard-primary"
+   ],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M26",
+   "key": "M26",
+   "setup": "wave-instances:clock-guard-primary@executor",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M27",
+   "key": "M27",
+   "setup": "wave-instances:clock-guard-primary@executor",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [
+    "@advance-enemy:clock-guard-primary"
+   ],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M30",
+   "key": "M30",
+   "setup": "wave-instances:clock-guard-primary@chronarch",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M31",
+   "key": "M31",
+   "setup": "wave-instances:clock-guard-primary@chronarch",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [
+    "@advance-enemy:clock-guard-primary"
+   ],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M15",
+   "key": "M15",
+   "setup": "wave-instances:clock-core-primary,clock-guard-primary",
+   "frames": 108,
+   "expected": 1,
+   "actor": "clock-core-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-core-primary"
+    }
+   ],
+   "attack": "enemy:clock-core-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M16",
+   "key": "M16",
+   "setup": "wave-instances:clock-core-primary,clock-guard-primary",
+   "frames": 108,
+   "expected": 1,
+   "actor": "clock-core-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-core-primary:repair_guard:clock-guard-primary"
+    },
+    {
+     "frame": 42,
+     "command": "enemy-heal:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-core-primary:repair_guard:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M16",
+   "key": "M16-recipient",
+   "setup": "wave-instances:clock-core-primary,clock-guard-primary",
+   "frames": 108,
+   "expected": 1,
+   "actor": "clock-core-primary",
+   "focus": "clock-guard-primary",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-core-primary:repair_guard:clock-guard-primary"
+    },
+    {
+     "frame": 42,
+     "command": "enemy-heal:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-core-primary:repair_guard:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M17",
+   "key": "M17",
+   "setup": "wave-instances:memory-leech-primary",
+   "frames": 330,
+   "expected": 3,
+   "actor": "memory-leech-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:memory-leech-primary"
+    },
+    {
+     "frame": 111,
+     "command": "enemy:memory-leech-primary"
+    },
+    {
+     "frame": 216,
+     "command": "enemy:memory-leech-primary"
+    }
+   ],
+   "attack": "enemy:memory-leech-primary",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "M18",
+   "key": "M18",
+   "setup": "wave-instances:memory-leech-primary",
+   "frames": 171,
+   "expected": 1,
+   "actor": "memory-leech-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "leech-charge:charge"
+    },
+    {
+     "frame": 36,
+     "command": "enemy:memory-leech-primary:name_devour"
+    }
+   ],
+   "attack": "enemy:memory-leech-primary:name_devour",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M19",
+   "key": "M19",
+   "setup": "wave-instances:clock-guard-primary@scribe",
+   "frames": 108,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary:fortify"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:fortify",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M20",
+   "key": "M20",
+   "setup": "wave-instances:clock-guard-primary@scribe",
+   "frames": 108,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary:calibrate"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:calibrate",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M21",
+   "key": "M21",
+   "setup": "wave-instances:clock-guard-primary@scribe",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M22",
+   "key": "M22",
+   "setup": "wave-instances:clock-guard-primary",
+   "frames": 156,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary:thirteenth_charge"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:thirteenth_charge",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M25",
+   "key": "M25",
+   "setup": "wave-instances:clock-guard-primary@rescue",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M28",
+   "key": "M28",
+   "setup": "wave-instances:clock-guard-primary@adjudicator",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "M29",
+   "key": "M29",
+   "setup": "wave-instances:clock-guard-primary@convoy",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "T11",
+   "key": "T11",
+   "setup": "church-tower:clock-guard-primary@stonehide,clock-guard-secondary@stonehide",
+   "frames": 105,
+   "expected": 0,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary:guard"
+    },
+    {
+     "frame": 72,
+     "command": "enemy:clock-guard-primary:recover"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:guard",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "T12",
+   "key": "T12",
+   "setup": "church-tower:clock-guard-primary@stonehide,clock-guard-secondary@stonehide",
+   "frames": 189,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:charge"
+    },
+    {
+     "frame": 66,
+     "command": "enemy:clock-guard-primary:archive_slam"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:archive_slam",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "T21",
+   "key": "T21",
+   "setup": "church-tower:clock-guard-primary@saltmaw,clock-guard-secondary@stonehide",
+   "frames": 141,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_sac_charge"
+    },
+    {
+     "frame": 66,
+     "command": "enemy:clock-guard-primary:tower_poison"
+    },
+    {
+     "frame": 93,
+     "command": "church-status:poison:1"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_poison",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "T22",
+   "key": "T22",
+   "setup": "church-tower:clock-guard-primary@saltmaw,clock-guard-secondary@stonehide",
+   "frames": 141,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_sac_charge"
+    },
+    {
+     "frame": 66,
+     "command": "enemy:clock-guard-primary:tower_salt_spike"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_salt_spike",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "T31",
+   "key": "T31",
+   "setup": "church-tower:clock-guard-primary@shellback,clock-guard-secondary@stonehide",
+   "frames": 141,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_mend_charge"
+    },
+    {
+     "frame": 66,
+     "command": "enemy:clock-guard-primary:tower_mend:clock-guard-secondary"
+    },
+    {
+     "frame": 93,
+     "command": "enemy-heal:clock-guard-secondary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_mend:clock-guard-secondary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "T32",
+   "key": "T32",
+   "setup": "church-tower:clock-guard-primary@shellback,clock-guard-secondary@stonehide",
+   "frames": 81,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary:tower_short_pounce"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_short_pounce",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "T41",
+   "key": "T41",
+   "setup": "church-tower:clock-guard-primary@ironclaw,clock-guard-secondary@stonehide",
+   "frames": 129,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_blade_charge"
+    },
+    {
+     "frame": 54,
+     "command": "enemy:clock-guard-primary:tower_cut_first"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_cut_first",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "T42",
+   "key": "T42",
+   "setup": "church-tower:clock-guard-primary@ironclaw,clock-guard-secondary@stonehide",
+   "frames": 129,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_blade_charge"
+    },
+    {
+     "frame": 54,
+     "command": "enemy:clock-guard-primary:tower_cut_second"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_cut_second",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "T43",
+   "key": "T43",
+   "setup": "church-tower:clock-guard-primary@ironclaw,clock-guard-secondary@stonehide",
+   "frames": 177,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_raised_blade"
+    },
+    {
+     "frame": 102,
+     "command": "enemy:clock-guard-primary:tower_heavy_cut"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_heavy_cut",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "T51",
+   "key": "T51",
+   "setup": "church-tower:clock-guard-primary@frilled-naga,clock-guard-secondary@stonehide",
+   "frames": 141,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_crown_charge"
+    },
+    {
+     "frame": 66,
+     "command": "enemy:clock-guard-primary:tower_empower:clock-guard-secondary"
+    },
+    {
+     "frame": 93,
+     "command": "church-status:empowered:clock-guard-secondary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_empower:clock-guard-secondary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "T51",
+   "key": "T51-recipient",
+   "setup": "church-tower:clock-guard-primary@frilled-naga,clock-guard-secondary@stonehide",
+   "frames": 141,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "clock-guard-secondary",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_crown_charge"
+    },
+    {
+     "frame": 66,
+     "command": "enemy:clock-guard-primary:tower_empower:clock-guard-secondary"
+    },
+    {
+     "frame": 93,
+     "command": "church-status:empowered:clock-guard-secondary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_empower:clock-guard-secondary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "T52",
+   "key": "T52",
+   "setup": "church-tower:clock-guard-primary@frilled-naga,clock-guard-secondary@stonehide",
+   "frames": 141,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_crown_charge"
+    },
+    {
+     "frame": 66,
+     "command": "enemy:clock-guard-primary:tower_sound_arrow"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_sound_arrow",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "T61",
+   "key": "T61",
+   "setup": "church-tower:clock-guard-primary@boneclaw,clock-guard-secondary@stonehide",
+   "frames": 186,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_claw_charge"
+    },
+    {
+     "frame": 111,
+     "command": "enemy:clock-guard-primary:tower_piercing_claw"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_piercing_claw",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "T62",
+   "key": "T62",
+   "setup": "church-tower:clock-guard-primary@boneclaw,clock-guard-secondary@stonehide",
+   "frames": 186,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_claw_charge"
+    },
+    {
+     "frame": 111,
+     "command": "enemy:clock-guard-primary:tower_tail_sweep"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_tail_sweep",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "T63",
+   "key": "T63",
+   "setup": "church-tower:clock-guard-primary@boneclaw,clock-guard-secondary@stonehide",
+   "frames": 186,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_claw_charge"
+    },
+    {
+     "frame": 111,
+     "command": "enemy:clock-guard-primary:tower_heavy_claw"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_heavy_claw",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "N07A",
+   "key": "N07A",
+   "setup": "church-tower:clock-guard-primary@copperback",
+   "frames": 135,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_copperback_charge"
+    },
+    {
+     "frame": 72,
+     "command": "enemy:clock-guard-primary:tower_copperback_first"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_copperback_first",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "N07B",
+   "key": "N07B",
+   "setup": "church-tower:clock-guard-primary@copperback",
+   "frames": 153,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_copperback_charge2"
+    },
+    {
+     "frame": 90,
+     "command": "enemy:clock-guard-primary:tower_copperback_second"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_copperback_second",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "N08A",
+   "key": "N08A",
+   "setup": "church-tower:clock-guard-primary@crimson-brute",
+   "frames": 135,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_brute_charge"
+    },
+    {
+     "frame": 72,
+     "command": "enemy:clock-guard-primary:tower_brute_first"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_brute_first",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "N08B",
+   "key": "N08B",
+   "setup": "church-tower:clock-guard-primary@crimson-brute",
+   "frames": 153,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_brute_charge2"
+    },
+    {
+     "frame": 90,
+     "command": "enemy:clock-guard-primary:tower_brute_second"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_brute_second",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "N09A",
+   "key": "N09A",
+   "setup": "church-tower:clock-guard-primary@veil-oracle",
+   "frames": 135,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_veil_charge"
+    },
+    {
+     "frame": 72,
+     "command": "enemy:clock-guard-primary:tower_veil_first"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_veil_first",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "N09B",
+   "key": "N09B",
+   "setup": "church-tower:clock-guard-primary@veil-oracle",
+   "frames": 153,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_veil_charge2"
+    },
+    {
+     "frame": 90,
+     "command": "enemy:clock-guard-primary:tower_veil_second"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_veil_second",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "N10A",
+   "key": "N10A",
+   "setup": "church-tower:clock-guard-primary@golden-throat",
+   "frames": 135,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_throat_charge"
+    },
+    {
+     "frame": 72,
+     "command": "enemy:clock-guard-primary:tower_throat_first"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_throat_first",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "N10B",
+   "key": "N10B",
+   "setup": "church-tower:clock-guard-primary@golden-throat",
+   "frames": 153,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_throat_charge2"
+    },
+    {
+     "frame": 90,
+     "command": "enemy:clock-guard-primary:tower_throat_second"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_throat_second",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "N11A",
+   "key": "N11A",
+   "setup": "church-tower:clock-guard-primary@moonfang",
+   "frames": 135,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_moonfang_charge"
+    },
+    {
+     "frame": 72,
+     "command": "enemy:clock-guard-primary:tower_moonfang_first"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_moonfang_first",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "N11B",
+   "key": "N11B",
+   "setup": "church-tower:clock-guard-primary@moonfang",
+   "frames": 153,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:tower_moonfang_charge2"
+    },
+    {
+     "frame": 90,
+     "command": "enemy:clock-guard-primary:tower_moonfang_second"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:tower_moonfang_second",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B01",
+   "key": "B01",
+   "setup": "wave-instances:clock-guard-primary@bounty-b01",
+   "frames": 171,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:charge"
+    },
+    {
+     "frame": 96,
+     "command": "enemy:clock-guard-primary:ambush"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:ambush",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B02",
+   "key": "B02",
+   "setup": "wave-instances:clock-guard-primary@bounty-b02",
+   "frames": 171,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:bounty_bind_charge"
+    },
+    {
+     "frame": 96,
+     "command": "enemy:clock-guard-primary:bind"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:bind",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B03A",
+   "key": "B03A",
+   "setup": "wave-instances:clock-guard-primary@bounty-b03",
+   "frames": 120,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary:strike"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:strike",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B03B",
+   "key": "B03B",
+   "setup": "wave-instances:clock-guard-primary@bounty-b03",
+   "frames": 171,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:charge"
+    },
+    {
+     "frame": 96,
+     "command": "enemy:clock-guard-primary:heavy_strike"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:heavy_strike",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B04",
+   "key": "B04",
+   "setup": "wave-instances:clock-guard-primary@bounty-b04",
+   "frames": 171,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:bounty_copy_charge"
+    },
+    {
+     "frame": 96,
+     "command": "enemy:clock-guard-primary:overwrite"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:overwrite",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B05A",
+   "key": "B05A",
+   "setup": "wave-instances:clock-guard-primary@bounty-b05",
+   "frames": 120,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary:strike"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:strike",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B05B",
+   "key": "B05B",
+   "setup": "wave-instances:clock-guard-primary@bounty-b05",
+   "frames": 171,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:charge"
+    },
+    {
+     "frame": 96,
+     "command": "enemy:clock-guard-primary:silk_bind"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:silk_bind",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B06G",
+   "key": "B06G",
+   "setup": "wave-instances:clock-guard-primary@bounty-b06",
+   "frames": 120,
+   "expected": 0,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary:guard"
+    },
+    {
+     "frame": 102,
+     "command": "enemy:clock-guard-primary:recover"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:guard",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "B06H",
+   "key": "B06H",
+   "setup": "wave-instances:clock-guard-primary@bounty-b06",
+   "frames": 171,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:charge"
+    },
+    {
+     "frame": 96,
+     "command": "enemy:clock-guard-primary:heavy_strike"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:heavy_strike",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B05A",
+   "key": "B05A-alternating",
+   "setup": "wave-instances:clock-guard-primary@bounty-b05",
+   "frames": 195,
+   "expected": 2,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary:strike"
+    },
+    {
+     "frame": 90,
+     "command": "enemy:clock-guard-primary:strike"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:strike",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "B02",
+   "key": "B02-persistent",
+   "setup": "wave-instances:clock-guard-primary@bounty-b02",
+   "frames": 186,
+   "expected": 0,
+   "actor": "clock-guard-primary",
+   "focus": "player",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "church-status:bindings:clock-guard-primary"
+    },
+    {
+     "frame": 156,
+     "command": "church-status:bindings:"
+    }
+   ],
+   "attack": "church-status:bindings:clock-guard-primary",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "B03S",
+   "key": "B03S",
+   "setup": "wave-instances:clock-guard-primary@ghost",
+   "frames": 144,
+   "expected": 0,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "church-status:escorted:clock-guard-primary"
+    },
+    {
+     "frame": 108,
+     "command": "church-status:escorted:"
+    }
+   ],
+   "attack": "church-status:escorted:clock-guard-primary",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "B03E",
+   "key": "B03E",
+   "setup": "wave-instances:clock-guard-primary@ghost",
+   "frames": 138,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B07",
+   "key": "B07-knock",
+   "setup": "wave-instances:clock-guard-primary@bounty-b07",
+   "frames": 171,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:bounty_knock_charge"
+    },
+    {
+     "frame": 96,
+     "command": "enemy:clock-guard-primary:bounty_knock"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:bounty_knock",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B07",
+   "key": "B07-spittle",
+   "setup": "wave-instances:clock-guard-primary@bounty-b07",
+   "frames": 120,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary:bounty_spittle"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:bounty_spittle",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B08",
+   "key": "B08-mirror",
+   "setup": "wave-instances:clock-guard-primary@bounty-b08,clock-guard-secondary@bounty-b08-echo,clock-core-primary@bounty-b08-echo",
+   "frames": 125,
+   "expected": 0,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary:bounty_mirror"
+    },
+    {
+     "frame": 105,
+     "command": "enemy:clock-guard-primary:recover"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:bounty_mirror",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "B08",
+   "key": "B08-true-stab",
+   "setup": "wave-instances:clock-guard-primary@bounty-b08,clock-guard-secondary@bounty-b08-echo,clock-core-primary@bounty-b08-echo",
+   "frames": 171,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:charge"
+    },
+    {
+     "frame": 96,
+     "command": "enemy:clock-guard-primary:bounty_true_stab"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:bounty_true_stab",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B08E",
+   "key": "B08-echo-strike",
+   "setup": "wave-instances:clock-guard-primary@bounty-b08-echo",
+   "frames": 120,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary:strike"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:strike",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B09",
+   "key": "B09-armor",
+   "setup": "wave-instances:clock-guard-primary@bounty-b09",
+   "frames": 125,
+   "expected": 0,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-primary:bounty_armor"
+    },
+    {
+     "frame": 105,
+     "command": "enemy:clock-guard-primary:recover"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:bounty_armor",
+   "safety": false,
+   "trial": ""
+  },
+  {
+   "id": "B09",
+   "key": "B09-rend",
+   "setup": "wave-instances:clock-guard-primary@bounty-b09",
+   "frames": 171,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:charge"
+    },
+    {
+     "frame": 96,
+     "command": "enemy:clock-guard-primary:bounty_rend"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:bounty_rend",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B10",
+   "key": "B10-veil",
+   "setup": "wave-instances:clock-guard-primary@bounty-b10,clock-guard-secondary@bounty-b10-vessel",
+   "frames": 171,
+   "expected": 1,
+   "actor": "clock-guard-primary",
+   "focus": "enemy",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 3,
+     "command": "enemy:clock-guard-primary:bounty_veil_charge"
+    },
+    {
+     "frame": 96,
+     "command": "enemy:clock-guard-primary:bounty_veil"
+    }
+   ],
+   "attack": "enemy:clock-guard-primary:bounty_veil",
+   "safety": true,
+   "trial": ""
+  },
+  {
+   "id": "B10V",
+   "key": "B10-transfer",
+   "setup": "wave-instances:clock-guard-primary@bounty-b10,clock-guard-secondary@bounty-b10-vessel",
+   "frames": 120,
+   "expected": 1,
+   "actor": "clock-guard-secondary",
+   "focus": "clock-guard-primary",
+   "warm": [],
+   "cues": [
+    {
+     "frame": 6,
+     "command": "enemy:clock-guard-secondary:bounty_transfer"
+    },
+    {
+     "frame": 31,
+     "command": "enemy-heal:clock-guard-primary"
+    }
+   ],
+   "attack": "enemy:clock-guard-secondary:bounty_transfer",
+   "safety": true,
+   "trial": ""
+  }
+ ]
+}
