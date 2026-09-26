@@ -1,0 +1,39 @@
+{
+  "source_sha256": "5db5a8b0c11118cb422209c6149aaab213186b141e19e6a3310695669da28503",
+  "economic_logic_modified": false,
+  "only_patch": "OUT path redirected into temporary directory",
+  "supplied_verifier": "PASS\ndaily_rows 19710\nevent_outcomes 306\nscenarios 18\nseeds ['20260926', '20260927', '20260928']",
+  "daily_rows_independently_reconciled": 19710,
+  "opening_model_money": 760000,
+  "byte_equal": {
+    "allowance_grid.csv": true,
+    "daily_results.csv": true,
+    "event_definitions.csv": true,
+    "event_outcomes.csv": true,
+    "event_window_summary.csv": false,
+    "invariant_checks.csv": true,
+    "proficiency_farming.csv": true,
+    "proficiency_tiers.csv": true,
+    "scenario_summary.csv": true
+  },
+  "semantic_differences": [
+    {
+      "file": "event_window_summary.csv",
+      "csv_line": 15,
+      "column": "avg_price_index",
+      "source": "1.6994",
+      "rerun": "1.6995"
+    }
+  ],
+  "not_regenerated": [
+    "event_outcome_aggregate.csv",
+    "implementation_parameters.csv",
+    "scenario_aggregate.csv"
+  ],
+  "limits": [
+    "Aggregate player wallet cannot prove individual affordability.",
+    "Prices are simulated quotes, not observed CPI.",
+    "Turnover is incorrectly repriced after sales in preserved model.",
+    "No live database, concurrency, or player-save verification."
+  ]
+}

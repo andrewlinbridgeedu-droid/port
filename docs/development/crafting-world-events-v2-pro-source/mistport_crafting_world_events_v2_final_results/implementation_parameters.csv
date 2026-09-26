@@ -1,0 +1,20 @@
+category,key,value,status,note
+currency,display_rate,100 copper = 1 gold,user-set display convention,ledger remains integer copper
+allowance,free_basic,28 copper / 7 world cycles,v2 candidate,catch-up max 4 blocks
+allowance,pass_extra,28 tradable copper / 7 world cycles,v2 main candidate,catch-up max 8 blocks; directed-service alternative remains unapproved
+market,p2p_fee,5%,candidate,retired in model; if later respent it is not a sink
+craft,station_fee,1 copper / successful product receipt,candidate,retired in model
+tower_material,selected_bundle_quantity,2 units / valid tower victory,v2 candidate,D01-D11 two-choice mapping; no first-clear copper duplication
+repair,gross_repair_proxy,1.2 copper per tower victory,model sensitivity only,not measured from current saves
+repair,basic_wrap_discount,up to 6 copper per repair invoice,candidate,reduces copper sink
+repair,advanced_wrap_discount,up to 12 copper per repair invoice,candidate,reduces copper sink
+gear,crafted_armor_basic,+100 HP; +400 bp DR,candidate fixed catalog,available early; no random instance
+gear,crafted_armor_advanced,+180 HP; +700 bp DR,candidate fixed catalog,still below current F1-10 combined armor benchmark
+gear,crafted_weapon_basic,+1600 attackBP,candidate fixed catalog,available early
+gear,crafted_weapon_advanced,+2800 attackBP,candidate fixed catalog,below current F10 +36% weapon benchmark
+level,max_candidate_level,20 at 6000 XP,new design,gating only; no HP/ATK scaling
+level,xp_sources,Q1-30 first clear 100 each; tower F1-100 first clear 20 each; B01-B10 first close 100 each,candidate,total 6000; repeats 0 XP
+proficiency,range,0..100 independently per textile/leather/metal/alchemy,candidate,successful unique product receipt only
+proficiency,gain,recipe start+0..9:+3; +10..19:+2; +20..29:+1; >=+30:+0,candidate,rework/replay/dismantle callbacks add 0
+world_event,activity_scale,<500 rolling-14 active:0.4; 500..1400:1.0; >1400:1.5,candidate,fixed at event start
+world_event,success_rule,min paid-goods fill >=70% AND combat contribution >=80%,candidate,donations unpaid; event budget finite
