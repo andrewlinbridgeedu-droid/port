@@ -1,0 +1,42 @@
+{
+  "id": "b02",
+  "source": "/Users/andrewlin/Downloads/DEV_Projects/mindstone-game/ArtSource/BountyIntake20260922/originals/Meshy_AI_The_Clockwork_Butcher_0923025322_texture.glb",
+  "original_triangles": 2618300,
+  "mobile_triangles": 50000,
+  "bones": 17,
+  "clips": {
+    "Idle": [
+      1,
+      121
+    ],
+    "Charge": [
+      122,
+      166
+    ],
+    "Cast": [
+      167,
+      196
+    ],
+    "Hit": [
+      197,
+      208
+    ],
+    "Death": [
+      209,
+      244
+    ],
+    "Charge2": [
+      245,
+      289
+    ],
+    "Cast2": [
+      290,
+      319
+    ],
+    "Retreat": [
+      320,
+      359
+    ]
+  },
+  "source_bytes": 86163592
+}

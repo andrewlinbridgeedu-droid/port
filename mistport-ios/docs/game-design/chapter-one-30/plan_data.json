@@ -1,0 +1,1026 @@
+{
+  "status": "design_only_not_implemented",
+  "models": [
+    {
+      "id": "M00",
+      "name": "主角",
+      "role": "hero"
+    },
+    {
+      "id": "M01",
+      "name": "空壳守卫",
+      "role": "existing_enemy"
+    },
+    {
+      "id": "M02",
+      "name": "幽灵",
+      "role": "existing_enemy"
+    },
+    {
+      "id": "M03",
+      "name": "旧地狱犬",
+      "role": "existing_enemy"
+    },
+    {
+      "id": "M04",
+      "name": "翠焰亡灵",
+      "role": "existing_enemy"
+    },
+    {
+      "id": "M05",
+      "name": "档案门卫",
+      "role": "existing_enemy"
+    },
+    {
+      "id": "M06",
+      "name": "寄忆核心",
+      "role": "existing_enemy"
+    },
+    {
+      "id": "M07",
+      "name": "记忆蛭",
+      "role": "existing_enemy"
+    },
+    {
+      "id": "M08",
+      "name": "铠甲犬",
+      "role": "existing_enemy"
+    },
+    {
+      "id": "M09",
+      "name": "织幕女主",
+      "role": "existing_enemy"
+    },
+    {
+      "id": "M10",
+      "name": "书记员",
+      "role": "existing_enemy"
+    },
+    {
+      "id": "M11",
+      "name": "救援者",
+      "role": "existing_enemy"
+    },
+    {
+      "id": "M12",
+      "name": "机械笔臂",
+      "role": "existing_enemy",
+      "source_asset": "ArtSource/CodexExecutor20260916/Meshy_AI_Codex_Sentinel_0917011404_texture.glb",
+      "source_sha256": "757c980ddcea6b702a44ab3986830b6fb529623a839c00afed34e42a4ffa0e97",
+      "supersedes": "Meshy_AI_Ironclad_Sentinel_0916101320_texture.glb",
+      "production_status": "rigged_unity_runtime_validated_not_phone_installed",
+      "runtime_asset": "UnityBattleSource/Assets/Resources/Enemies/Signature/CodexExecutor/CodexExecutor_Combat.fbx",
+      "triangles": 60000,
+      "bones": 22,
+      "old_source_deleted": true
+    },
+    {
+      "id": "M13",
+      "name": "裁决锤卫",
+      "role": "existing_enemy"
+    },
+    {
+      "id": "M14",
+      "name": "封栈锤卫",
+      "role": "existing_enemy"
+    },
+    {
+      "id": "M15",
+      "name": "总签官（瑟维安·洛）",
+      "role": "new_boss",
+      "source": "Meshy_AI_Chronarch_Sovereign_0917015018_texture.glb",
+      "asset_manifest": "ArtSource/ChapterOneBoss20260916/manifest.json",
+      "production_status": "approved_highpoly_pending_rig_and_mobile_mesh"
+    }
+  ],
+  "missions": [
+    {
+      "q": 1,
+      "title": "雨夜醒来",
+      "enemies": [
+        "M01"
+      ],
+      "copper": 30,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 2,
+      "title": "雾都幽灵",
+      "enemies": [
+        "M02",
+        "M02"
+      ],
+      "copper": 30,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 3,
+      "title": "循名而来的猎犬",
+      "enemies": [
+        "M03"
+      ],
+      "copper": 30,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 4,
+      "title": "猎犬试探",
+      "enemies": [
+        "M03"
+      ],
+      "copper": 30,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 5,
+      "title": "不肯落幕",
+      "enemies": [
+        "M04"
+      ],
+      "copper": 30,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 6,
+      "title": "档案街入口",
+      "enemies": [
+        "M05"
+      ],
+      "copper": 40,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 7,
+      "title": "空白身份牌",
+      "enemies": [
+        "M01",
+        "M01",
+        "M06"
+      ],
+      "copper": 40,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 8,
+      "title": "不属于我的名字",
+      "enemies": [
+        "M07"
+      ],
+      "copper": 40,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 9,
+      "title": "被改写的证词",
+      "enemies": [
+        "M10",
+        "M06"
+      ],
+      "copper": 40,
+      "xp": 0,
+      "talent": 4
+    },
+    {
+      "q": 10,
+      "title": "失踪者名单",
+      "enemies": [
+        "M08",
+        "M05"
+      ],
+      "copper": 40,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 11,
+      "title": "不属于我的家人",
+      "enemies": [
+        "M07",
+        "M07",
+        "M01"
+      ],
+      "copper": 50,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 12,
+      "title": "强制校正",
+      "enemies": [
+        "M10",
+        "M10"
+      ],
+      "copper": 50,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 13,
+      "title": "救援命令",
+      "enemies": [
+        "M11",
+        "M06"
+      ],
+      "copper": 50,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 14,
+      "title": "错误名牌",
+      "enemies": [
+        "M07",
+        "M10"
+      ],
+      "copper": 50,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 15,
+      "title": "归属标签",
+      "enemies": [
+        "M09",
+        "M06",
+        "M06"
+      ],
+      "copper": 50,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 16,
+      "title": "销号追索",
+      "enemies": [
+        "M03"
+      ],
+      "copper": 80,
+      "xp": 0,
+      "talent": 4
+    },
+    {
+      "q": 17,
+      "title": "自动补位",
+      "enemies": [
+        "M12"
+      ],
+      "copper": 80,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 18,
+      "title": "无效的许可",
+      "enemies": [
+        "M13"
+      ],
+      "copper": 80,
+      "xp": 0,
+      "talent": 6
+    },
+    {
+      "q": 19,
+      "title": "外海收件人",
+      "enemies": [
+        "M04"
+      ],
+      "copper": 80,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 20,
+      "title": "押运中的活档案",
+      "enemies": [
+        "M14"
+      ],
+      "copper": 80,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 21,
+      "title": "原始救援条款",
+      "enemies": [
+        "M11",
+        "M06"
+      ],
+      "copper": 100,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 22,
+      "title": "不属于你的庇护",
+      "enemies": [
+        "M09"
+      ],
+      "copper": 100,
+      "xp": 0,
+      "talent": 8
+    },
+    {
+      "q": 23,
+      "title": "不以人名封口",
+      "enemies": [
+        "M13"
+      ],
+      "copper": 100,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 24,
+      "title": "地下泊位",
+      "enemies": [
+        "M08",
+        "M02"
+      ],
+      "copper": 100,
+      "xp": 0,
+      "talent": 8
+    },
+    {
+      "q": 25,
+      "title": "自愿断线",
+      "enemies": [
+        "M09"
+      ],
+      "copper": 100,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 26,
+      "title": "最后一趟押运",
+      "enemies": [
+        "M14"
+      ],
+      "copper": 120,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 27,
+      "title": "未签署的归属",
+      "enemies": [
+        "M05",
+        "M08"
+      ],
+      "copper": 120,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 28,
+      "title": "五次回流",
+      "enemies": [
+        "M15"
+      ],
+      "copper": 120,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 29,
+      "title": "最后的代签",
+      "enemies": [
+        "M15",
+        "M12",
+        "M01"
+      ],
+      "copper": 120,
+      "xp": 0,
+      "talent": 0
+    },
+    {
+      "q": 30,
+      "title": "无主者的签名",
+      "enemies": [
+        "M15"
+      ],
+      "copper": 300,
+      "xp": 0,
+      "talent": 0
+    }
+  ],
+  "skill_grants": {
+    "1_after": "sidestep",
+    "3_before": "mask_and_2_slots",
+    "8_before": "identity",
+    "9_after": "evidence",
+    "10_after": "pursuit_and_4_slots",
+    "11_after": "finale",
+    "12_after": "turn_tables",
+    "13_after": "nameless"
+  },
+  "talent_cap": 30,
+  "fallback": {
+    "kind": "relic_loadout",
+    "available_after_q": 4,
+    "base_defense_button": false,
+    "guaranteed_owned_relic": "R02",
+    "support_relic": "R04",
+    "support_price": 120,
+    "free_work_available_after_q": 4,
+    "status": "design_not_combat_validated",
+    "support_status": "candidate_not_implemented_or_validated"
+  },
+  "promotion": {
+    "required_tower_floor": 0,
+    "total_copper": 1360,
+    "purchases": [
+      {
+        "id": "mirrorMothScale",
+        "quantity": 1,
+        "price": 260,
+        "available_after_q": 17
+      },
+      {
+        "id": "reverseClockEssence",
+        "quantity": 1,
+        "price": 340,
+        "available_after_q": 20
+      },
+      {
+        "id": "ownerlessMaskWax",
+        "quantity": 1,
+        "price": 480,
+        "available_after_q": 23
+      },
+      {
+        "id": "ritual_fee",
+        "quantity": 1,
+        "price": 280,
+        "available_after_q": 30
+      }
+    ],
+    "ritual_location": "黑盐岸"
+  },
+  "relics": [
+    {
+      "id": "R01",
+      "name": "裂名假面",
+      "price": 0,
+      "downside": "永久十裂纹",
+      "loanable": false
+    },
+    {
+      "id": "R02",
+      "name": "僭命勋章",
+      "price": 0,
+      "downside": "效果结束先剩余生命减半向上取整，再恢复正常上限和攻击；无临时生命双扣",
+      "loanable": false,
+      "candidate": {
+        "max_hp_multiplier": 1.5,
+        "current_hp_multiplier": 1.5,
+        "attack_multiplier": 1.3,
+        "duration_seconds": 8,
+        "cooldown_seconds": 24,
+        "expiry_remaining_hp_multiplier": 0.5,
+        "expiry_rounding": "ceil",
+        "blocks_damage": false,
+        "pauses_attacks": false,
+        "settle_once_on": [
+          "expiry",
+          "victory",
+          "retreat"
+        ],
+        "combat_validated": false
+      }
+    },
+    {
+      "id": "R03",
+      "name": "迟签印章",
+      "price": 360,
+      "downside": "普攻−20%",
+      "loanable": true
+    },
+    {
+      "id": "R04",
+      "name": "盐封呼吸囊",
+      "price": 120,
+      "downside": "直接承伤+12%",
+      "loanable": true
+    },
+    {
+      "id": "R05",
+      "name": "反照墨镜",
+      "price": 520,
+      "downside": "其他敌人直伤+15%",
+      "loanable": true
+    },
+    {
+      "id": "R06",
+      "name": "缄卷镇纸",
+      "price": 400,
+      "downside": "持续承伤+25%",
+      "loanable": true
+    },
+    {
+      "id": "R07",
+      "name": "逆潮铜锚",
+      "price": 640,
+      "downside": "连伤首击+15%",
+      "loanable": true
+    },
+    {
+      "id": "R08",
+      "name": "归属断线针",
+      "price": 720,
+      "downside": "自身受治疗−30%",
+      "loanable": true
+    },
+    {
+      "id": "R09",
+      "name": "空栏名片",
+      "price": 680,
+      "downside": "所有伤害−12%",
+      "loanable": true
+    },
+    {
+      "id": "R10",
+      "name": "返礼银扣",
+      "price": 160,
+      "downside": "挡住直伤后为攻击者送盾",
+      "loanable": true
+    }
+  ],
+  "tower_bands": [
+    {
+      "from": 1,
+      "to": 10,
+      "coin_per_floor": 8,
+      "merit_per_floor": 2,
+      "sample_waves": [
+        [
+          "D00",
+          "D01"
+        ]
+      ],
+      "unlock_after_q": 7,
+      "status": "design_not_implemented_or_balanced"
+    },
+    {
+      "from": 11,
+      "to": 20,
+      "coin_per_floor": 10,
+      "merit_per_floor": 2,
+      "sample_waves": [
+        [
+          "D00"
+        ],
+        [
+          "D02",
+          "D01"
+        ]
+      ],
+      "unlock_after_q": 15,
+      "status": "design_not_implemented_or_balanced"
+    },
+    {
+      "from": 21,
+      "to": 30,
+      "coin_per_floor": 12,
+      "merit_per_floor": 2,
+      "sample_waves": [
+        [
+          "D00",
+          "D02"
+        ],
+        [
+          "D03",
+          "D01",
+          "D00"
+        ]
+      ],
+      "unlock_after_q": 15,
+      "status": "design_not_implemented_or_balanced"
+    },
+    {
+      "from": 31,
+      "to": 40,
+      "coin_per_floor": 14,
+      "merit_per_floor": 3,
+      "sample_waves": [
+        [
+          "D04",
+          "D01"
+        ],
+        [
+          "D04",
+          "D00",
+          "D02"
+        ]
+      ],
+      "unlock_after_q": 20,
+      "status": "design_not_implemented_or_balanced"
+    },
+    {
+      "from": 41,
+      "to": 50,
+      "coin_per_floor": 16,
+      "merit_per_floor": 3,
+      "sample_waves": [
+        [
+          "D05",
+          "D00"
+        ],
+        [
+          "D05",
+          "D01",
+          "D03"
+        ]
+      ],
+      "unlock_after_q": 20,
+      "status": "design_not_implemented_or_balanced"
+    },
+    {
+      "from": 51,
+      "to": 60,
+      "coin_per_floor": 18,
+      "merit_per_floor": 3,
+      "sample_waves": [
+        [
+          "D01",
+          "D00"
+        ],
+        [
+          "D06",
+          "D02"
+        ]
+      ],
+      "unlock_after_q": 26,
+      "status": "design_not_implemented_or_balanced"
+    },
+    {
+      "from": 61,
+      "to": 70,
+      "coin_per_floor": 20,
+      "merit_per_floor": 4,
+      "sample_waves": [
+        [
+          "D04",
+          "D00"
+        ],
+        [
+          "D02",
+          "D01"
+        ],
+        [
+          "D06",
+          "D03"
+        ]
+      ],
+      "unlock_after_q": 26,
+      "status": "design_not_implemented_or_balanced"
+    },
+    {
+      "from": 71,
+      "to": 80,
+      "coin_per_floor": 22,
+      "merit_per_floor": 4,
+      "sample_waves": [
+        [
+          "D01",
+          "D04"
+        ],
+        [
+          "D00",
+          "D02"
+        ],
+        [
+          "D03",
+          "D01",
+          "D04"
+        ]
+      ],
+      "unlock_after_q": 30,
+      "status": "design_not_implemented_or_balanced"
+    },
+    {
+      "from": 81,
+      "to": 90,
+      "coin_per_floor": 24,
+      "merit_per_floor": 4,
+      "sample_waves": [
+        [
+          "D05",
+          "D02"
+        ],
+        [
+          "D04",
+          "D01"
+        ],
+        [
+          "D06",
+          "D00",
+          "D03",
+          "D01"
+        ]
+      ],
+      "unlock_after_q": 30,
+      "status": "design_not_implemented_or_balanced"
+    },
+    {
+      "from": 91,
+      "to": 100,
+      "coin_per_floor": 26,
+      "merit_per_floor": 5,
+      "sample_waves": [
+        [
+          "D00",
+          "D01",
+          "D04"
+        ],
+        [
+          "D06",
+          "D02"
+        ],
+        [
+          "D05",
+          "D01",
+          "D03",
+          "D04"
+        ]
+      ],
+      "unlock_after_q": 30,
+      "status": "design_not_implemented_or_balanced"
+    }
+  ],
+  "demon_models": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05",
+    "D06"
+  ],
+  "bounties": [
+    {
+      "id": "B01",
+      "copper": 60,
+      "merit": 12,
+      "enemies": [
+        "M01"
+      ],
+      "release": "chapter1"
+    },
+    {
+      "id": "B02",
+      "copper": 80,
+      "merit": 16,
+      "enemies": [
+        "M11"
+      ],
+      "release": "chapter1"
+    },
+    {
+      "id": "B03",
+      "copper": 100,
+      "merit": 20,
+      "enemies": [
+        "M02"
+      ],
+      "release": "chapter1"
+    },
+    {
+      "id": "B04",
+      "copper": 120,
+      "merit": 24,
+      "enemies": [
+        "M12"
+      ],
+      "release": "chapter1"
+    },
+    {
+      "id": "B05",
+      "copper": 140,
+      "merit": 28,
+      "enemies": [
+        "M09"
+      ],
+      "release": "chapter1"
+    },
+    {
+      "id": "B06",
+      "copper": 160,
+      "merit": 32,
+      "enemies": [
+        "M13"
+      ],
+      "release": "chapter1"
+    }
+  ],
+  "underground": [
+    {
+      "id": "U01",
+      "copper": 65,
+      "merit": 0
+    },
+    {
+      "id": "U02",
+      "copper": 75,
+      "merit": 0
+    },
+    {
+      "id": "U03",
+      "copper": 85,
+      "merit": 0
+    },
+    {
+      "id": "U04",
+      "copper": 95,
+      "merit": 0
+    },
+    {
+      "id": "U05",
+      "copper": 110,
+      "merit": 0
+    },
+    {
+      "id": "U06",
+      "copper": 130,
+      "merit": 0
+    }
+  ],
+  "loan": {
+    "sellable": false,
+    "dismantlable": false,
+    "pledgeable": false,
+    "tier_uses_lifetime_merit": true,
+    "merit_spent_on_new_contract": false,
+    "rental_battles": 3,
+    "rental_fee_refundable": false,
+    "ordinary_wear_deposit_deduction": 0,
+    "deposit_forfeited_only_if_broken_or_lost": true,
+    "refund_max_fraction": 1,
+    "prices": [
+      {"id": "R04", "unlock_q": 4, "merit": 20, "deposit": 80, "rent": 12},
+      {"id": "R10", "unlock_q": 4, "merit": 20, "deposit": 110, "rent": 16},
+      {"id": "R03", "unlock_q": 9, "merit": 20, "deposit": 240, "rent": 36},
+      {"id": "R05", "unlock_q": 14, "merit": 40, "deposit": 350, "rent": 52},
+      {"id": "R06", "unlock_q": 18, "merit": 40, "deposit": 270, "rent": 40},
+      {"id": "R07", "unlock_q": 20, "merit": 80, "deposit": 430, "rent": 64},
+      {"id": "R08", "unlock_q": 26, "merit": 80, "deposit": 480, "rent": 72},
+      {"id": "R09", "unlock_q": 17, "merit": 80, "deposit": 460, "rent": 68}
+    ]
+  },
+  "economy": {
+    "main_total": 2280,
+    "fallback_work": {
+      "entry_fee": 0,
+      "requires_combat": false,
+      "copper": 40,
+      "minutes_range": [
+        2,
+        3
+      ]
+    },
+    "scenarios": [
+      {
+        "name": "main_only",
+        "opening": 0,
+        "side_income": 0,
+        "other_spend": 0
+      },
+      {
+        "name": "main_one_relic",
+        "opening": 0,
+        "side_income": 0,
+        "other_spend": 330
+      },
+      {
+        "name": "all_side_three_relics",
+        "opening": 0,
+        "side_income": 1220,
+        "other_spend": 1330
+      }
+    ]
+  },
+  "story_revision": "chapter1-30-v3-three-encounters",
+  "chapter_title": "请勿认领",
+  "recurring_entities": [
+    {
+      "id": "H03",
+      "model": "M03",
+      "quests": [
+        3,
+        4,
+        16
+      ],
+      "final": "destroyed"
+    },
+    {
+      "id": "T15",
+      "model": "M09",
+      "quests": [
+        15,
+        22,
+        25
+      ],
+      "final": "voluntary_release"
+    },
+    {
+      "id": "R13",
+      "model": "M11",
+      "quests": [
+        13,
+        21
+      ],
+      "final": "rescuer"
+    },
+    {
+      "id": "V21",
+      "model": "M14",
+      "quests": [
+        20,
+        26
+      ],
+      "final": "destroyed"
+    },
+    {
+      "id": "S30",
+      "model": "M15",
+      "quests": [
+        28,
+        29,
+        30
+      ],
+      "final": "truly_dead"
+    }
+  ],
+  "ending": {
+    "boss_quests": [
+      28,
+      29,
+      30
+    ],
+    "boss_phases": 3,
+    "boss_bodies": 1,
+    "boss_truly_dead": true,
+    "old_three_endings": false,
+    "rescued_people_free": true,
+    "destination": "黑盐岸·潮汐荒野",
+    "lead": "白潮疗养院第七住客",
+    "promotion_ritual_location": "黑盐岸",
+    "preserve_merit_loans_tower": true,
+    "boss_phase_names": [
+      "受托人",
+      "监护人",
+      "所有者"
+    ],
+    "boss_phase_quests": {
+      "受托人": 28,
+      "监护人": 29,
+      "所有者": 30
+    }
+  },
+  "boss_encounters": [
+    {
+      "q": 28,
+      "cycles": 5,
+      "solo": true,
+      "win": "alive_after_five_cycles_and_source_cut",
+      "death": false
+    },
+    {
+      "q": 29,
+      "cycles": 5,
+      "solo": false,
+      "win": "alive_boss_departed_and_all_adds_defeated",
+      "death": false
+    },
+    {
+      "q": 30,
+      "solo": true,
+      "win": "boss_dead_and_hero_alive_after_pending_threats",
+      "death": true
+    }
+  ],
+  "evidence_nodes": {
+    "ian_rescued": 24,
+    "voluntary_release": 25,
+    "paradox_proof": 26,
+    "original_name": 27,
+    "external_claim_date": 27,
+    "boss_echo": 30
+  },
+  "demon_source_manifest": "ArtSource/ChurchDemons20260916/manifest.json",
+  "reused_demon_model": "M03",
+  "demon_asset_count_including_reuse": 7,
+  "tower_reused_model": {
+    "id": "D00",
+    "source": "M03",
+    "identity": "independent_wild_individuals_not_H03"
+  },
+  "plan_revision": "chapter1-v3.1-seven-demon-masters"
+}

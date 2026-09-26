@@ -1,0 +1,190 @@
+{
+  "schema": 1,
+  "id": "storm-verdant-vortex-v1",
+  "displayName": "凤凰扑击",
+  "archetype": "projectile",
+  "seed": 481927,
+  "timeline": {
+    "windup": 0.18,
+    "travel": 0.82,
+    "impact": 0.46,
+    "decay": 0.58
+  },
+  "anchors": {
+    "origin": "source",
+    "target": "target",
+    "impact": "impact",
+    "ground": "ground",
+    "originOffset": [
+      0,
+      0,
+      0
+    ],
+    "targetOffset": [
+      0,
+      0,
+      0
+    ],
+    "impactOffset": [
+      0,
+      0,
+      0
+    ],
+    "groundOffset": [
+      0,
+      0,
+      0
+    ]
+  },
+  "behavior": {
+    "path": "bezier",
+    "arcHeight": 0.16,
+    "startScale": 0.82,
+    "endScale": 1.56,
+    "impactScale": 2.05,
+    "tracking": 1.0,
+    "beamWidth": 0.0,
+    "orbitRadius": 0.0,
+    "spinDegrees": 1080.0,
+    "extensionType": ""
+  },
+  "layers": [
+    {
+      "name": "verdant-vortex-core",
+      "backend": "extension",
+      "asset": "",
+      "role": "core",
+      "anchor": "motion",
+      "start": 0.0,
+      "end": 1.0,
+      "color": [
+        0.18,
+        0.90,
+        0.32,
+        1.0
+      ],
+      "scale": [1.08, 1.08, 1.08],
+      "startScale": 1.0,
+      "endScale": 1.0,
+      "width": 0.16,
+      "pointCount": 40,
+      "renderQueue": 3490,
+      "sortingOrder": 0,
+      "seedOffset": 11,
+      "fps": 60.0,
+      "loop": false,
+      "faceCamera": false,
+      "frontOfTarget": false,
+      "extensionType": "Mindstone.VFXV1.VerdantEffekseerSpellExtension"
+    },
+    {
+      "name": "phoenix-flame-trail",
+      "backend": "extension",
+      "asset": "",
+      "role": "direction",
+      "anchor": "motion",
+      "start": 0.03,
+      "end": 0.56,
+      "color": [
+        1.0,
+        0.42,
+        0.04,
+        0.98
+      ],
+      "scale": [0.94, 0.94, 0.94],
+      "startScale": 0.70,
+      "endScale": 1.70,
+      "width": 0.12,
+      "pointCount": 56,
+      "renderQueue": 3510,
+      "sortingOrder": 4,
+      "seedOffset": 23,
+      "fps": 60.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": false,
+      "extensionType": "Mindstone.VFXV1.VerdantEffekseerSpellExtension"
+    },
+    {
+      "name": "phoenix-impact-particles",
+      "backend": "extension",
+      "asset": "",
+      "role": "impact-front",
+      "anchor": "impact",
+      "start": 0.49,
+      "end": 0.95,
+      "color": [
+        0.60,
+        1.0,
+        0.32,
+        1.0
+      ],
+      "scale": [1.14, 1.14, 1.14],
+      "startScale": 0.64,
+      "endScale": 1.88,
+      "width": 0.17,
+      "pointCount": 64,
+      "renderQueue": 4990,
+      "sortingOrder": 18,
+      "seedOffset": 43,
+      "fps": 60.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": true,
+      "extensionType": "Mindstone.VFXV1.VerdantEffekseerSpellExtension"
+    },
+    {
+      "name": "phoenix-impact-flash",
+      "backend": "extension",
+      "asset": "",
+      "role": "accent",
+      "anchor": "impact",
+      "start": 0.49,
+      "end": 0.56,
+      "color": [
+        0.90,
+        1.0,
+        0.50,
+        1.0
+      ],
+      "scale": [1.12, 1.12, 1.12],
+      "startScale": 0.78,
+      "endScale": 1.82,
+      "width": 0.12,
+      "pointCount": 36,
+      "renderQueue": 5000,
+      "sortingOrder": 24,
+      "seedOffset": 59,
+      "fps": 60.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": true,
+      "extensionType": "Mindstone.VFXV1.VerdantEffekseerSpellExtension"
+    }
+  ],
+  "capture": {
+    "times": [
+      0.12,
+      0.55,
+      1.02,
+      1.30,
+      1.78
+    ],
+    "device": "iPhone 13",
+    "targetFps": 60
+  },
+  "cleanupSeconds": 0.28,
+  "showcase": {
+    "sourceActor": "clockguard",
+    "source": [
+      -3.45,
+      1.65,
+      3.8
+    ],
+    "target": [
+      -3.45,
+      0.66,
+      3.8
+    ]
+  }
+}

@@ -1,0 +1,1145 @@
+{
+  "version": "church_s9_proposal_0.3",
+  "status": "design_and_static_checks_only",
+  "sequence": 9,
+  "level_cap": 10,
+  "talent_cap": 30,
+  "research": {
+    "threshold": 6,
+    "random_resets_progress": false,
+    "counts_before_catalog_unlock": true,
+    "is_trade_currency": false
+  },
+  "first_clear_bonus_is_additive": true,
+  "failure_reward": 0,
+  "spawned_enemy_reward": 0,
+  "random_relic_max_per_clear": 1,
+  "manual_start_required": true,
+  "instant_sweep_enabled": false,
+  "consecutive_runs_enabled": false,
+  "public_market_enabled": false,
+  "currency_types": [
+    "crowns",
+    "essence"
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "cumulative_xp": 0,
+      "base_hp": 1800,
+      "base_attack": 80
+    },
+    {
+      "level": 2,
+      "cumulative_xp": 100,
+      "base_hp": 1866,
+      "base_attack": 82
+    },
+    {
+      "level": 3,
+      "cumulative_xp": 240,
+      "base_hp": 1933,
+      "base_attack": 84
+    },
+    {
+      "level": 4,
+      "cumulative_xp": 420,
+      "base_hp": 2000,
+      "base_attack": 86
+    },
+    {
+      "level": 5,
+      "cumulative_xp": 640,
+      "base_hp": 2066,
+      "base_attack": 88
+    },
+    {
+      "level": 6,
+      "cumulative_xp": 900,
+      "base_hp": 2133,
+      "base_attack": 91
+    },
+    {
+      "level": 7,
+      "cumulative_xp": 1200,
+      "base_hp": 2200,
+      "base_attack": 93
+    },
+    {
+      "level": 8,
+      "cumulative_xp": 1540,
+      "base_hp": 2266,
+      "base_attack": 95
+    },
+    {
+      "level": 9,
+      "cumulative_xp": 1920,
+      "base_hp": 2333,
+      "base_attack": 97
+    },
+    {
+      "level": 10,
+      "cumulative_xp": 2340,
+      "base_hp": 2400,
+      "base_attack": 100
+    }
+  ],
+  "churches": [
+    {
+      "id": "L",
+      "name": "守灯教会",
+      "name_status": "暂定",
+      "theme": "护甲、直击、蓄力",
+      "pool": [
+        "R06",
+        "R11"
+      ]
+    },
+    {
+      "id": "M",
+      "name": "观镜教会",
+      "name_status": "暂定",
+      "theme": "护盾、治疗、保护关系",
+      "pool": [
+        "R10",
+        "R14",
+        "R15"
+      ]
+    },
+    {
+      "id": "A",
+      "name": "缄卷教会",
+      "name_status": "暂定",
+      "theme": "召唤、死亡遗留、审验",
+      "pool": [
+        "R16",
+        "R18"
+      ]
+    }
+  ],
+  "quests": [
+    {
+      "id": "Q01",
+      "name": "入职演证",
+      "requires_quest": null,
+      "accepted_skill_grants": [
+        "N"
+      ],
+      "completion_skill_grants": [
+        "F"
+      ],
+      "objective": "authored_story_trial",
+      "completion_reward": {
+        "xp": 80,
+        "crowns": 60,
+        "essence": 4,
+        "talent_points": 4,
+        "restored_relics": []
+      }
+    },
+    {
+      "id": "Q02",
+      "name": "假面与纸人",
+      "requires_quest": "Q01",
+      "accepted_skill_grants": [
+        "M"
+      ],
+      "completion_skill_grants": [],
+      "objective": "authored_story_trial",
+      "completion_reward": {
+        "xp": 100,
+        "crowns": 80,
+        "essence": 6,
+        "talent_points": 4,
+        "restored_relics": [
+          "R01",
+          "R02"
+        ]
+      }
+    },
+    {
+      "id": "Q03",
+      "name": "失名邮件",
+      "requires_quest": "Q02",
+      "accepted_skill_grants": [
+        "E"
+      ],
+      "completion_skill_grants": [],
+      "objective": "authored_story_trial",
+      "completion_reward": {
+        "xp": 150,
+        "crowns": 90,
+        "essence": 8,
+        "talent_points": 0,
+        "restored_relics": [
+          "R05"
+        ]
+      }
+    },
+    {
+      "id": "Q04",
+      "name": "自护演证",
+      "requires_quest": "Q03",
+      "accepted_skill_grants": [
+        "H"
+      ],
+      "completion_skill_grants": [],
+      "objective": "authored_story_trial",
+      "completion_reward": {
+        "xp": 180,
+        "crowns": 110,
+        "essence": 10,
+        "talent_points": 6,
+        "restored_relics": [
+          "R08"
+        ]
+      }
+    },
+    {
+      "id": "Q05",
+      "name": "代签调查",
+      "requires_quest": "Q04",
+      "accepted_skill_grants": [
+        "I"
+      ],
+      "completion_skill_grants": [],
+      "objective": "authored_story_trial",
+      "completion_reward": {
+        "xp": 220,
+        "crowns": 140,
+        "essence": 12,
+        "talent_points": 0,
+        "restored_relics": [
+          "R09"
+        ]
+      }
+    },
+    {
+      "id": "Q06",
+      "name": "镜匠回声",
+      "requires_quest": "Q05",
+      "accepted_skill_grants": [
+        "R"
+      ],
+      "completion_skill_grants": [],
+      "objective": "authored_story_trial",
+      "completion_reward": {
+        "xp": 260,
+        "crowns": 160,
+        "essence": 14,
+        "talent_points": 8,
+        "restored_relics": [
+          "R03"
+        ]
+      }
+    },
+    {
+      "id": "Q07",
+      "name": "灰烬留证",
+      "requires_quest": "Q06",
+      "accepted_skill_grants": [],
+      "completion_skill_grants": [],
+      "objective": "authored_story_trial",
+      "completion_reward": {
+        "xp": 300,
+        "crowns": 180,
+        "essence": 16,
+        "talent_points": 0,
+        "restored_relics": [
+          "R17"
+        ]
+      }
+    },
+    {
+      "id": "Q08",
+      "name": "闭卷演证",
+      "requires_quest": "Q07",
+      "accepted_skill_grants": [
+        "A"
+      ],
+      "completion_skill_grants": [],
+      "objective": "authored_story_trial",
+      "completion_reward": {
+        "xp": 350,
+        "crowns": 220,
+        "essence": 18,
+        "talent_points": 8,
+        "restored_relics": []
+      }
+    },
+    {
+      "id": "Q09",
+      "name": "联合调查",
+      "requires_quest": "Q08",
+      "accepted_skill_grants": [],
+      "completion_skill_grants": [],
+      "objective": "any_floor_5_cleared",
+      "completion_reward": {
+        "xp": 400,
+        "crowns": 240,
+        "essence": 20,
+        "talent_points": 0,
+        "restored_relics": []
+      }
+    },
+    {
+      "id": "Q10",
+      "name": "晋阶推荐",
+      "requires_quest": "Q09",
+      "accepted_skill_grants": [],
+      "completion_skill_grants": [],
+      "objective": "any_boss_cleared",
+      "completion_reward": {
+        "xp": 450,
+        "crowns": 300,
+        "essence": 24,
+        "talent_points": 0,
+        "restored_relics": []
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "L01",
+      "church": "L",
+      "floor": 1,
+      "name": "封印门廊",
+      "enemies": [
+        "E01"
+      ],
+      "existing_group": null,
+      "requires_quest": "Q01",
+      "requires_node": null,
+      "suggested_duration_seconds": [
+        25,
+        40
+      ],
+      "base_reward": {
+        "xp": 50,
+        "crowns": 32,
+        "essence": 4
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": [
+          "R04"
+        ]
+      },
+      "research_increment": 0,
+      "random_relic_chance": 0.0,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "L02",
+      "church": "L",
+      "floor": 2,
+      "name": "猎犬值守",
+      "enemies": [
+        "E04"
+      ],
+      "existing_group": null,
+      "requires_quest": "Q04",
+      "requires_node": "L01",
+      "suggested_duration_seconds": [
+        30,
+        45
+      ],
+      "base_reward": {
+        "xp": 65,
+        "crowns": 42,
+        "essence": 5
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": [
+          "R12"
+        ]
+      },
+      "research_increment": 0,
+      "random_relic_chance": 0.0,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "L03",
+      "church": "L",
+      "floor": 3,
+      "name": "门禁检验",
+      "enemies": [
+        "E01",
+        "E05"
+      ],
+      "existing_group": "G1",
+      "requires_quest": "Q06",
+      "requires_node": "L02",
+      "suggested_duration_seconds": [
+        35,
+        55
+      ],
+      "base_reward": {
+        "xp": 90,
+        "crowns": 54,
+        "essence": 7
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": [
+          "R07"
+        ]
+      },
+      "research_increment": 1,
+      "random_relic_chance": 0.1,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "L04",
+      "church": "L",
+      "floor": 4,
+      "name": "蜡封火线",
+      "enemies": [
+        "E04",
+        "E07"
+      ],
+      "existing_group": "G3",
+      "requires_quest": "Q06",
+      "requires_node": "L03",
+      "suggested_duration_seconds": [
+        40,
+        65
+      ],
+      "base_reward": {
+        "xp": 110,
+        "crowns": 68,
+        "essence": 9
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": []
+      },
+      "research_increment": 1,
+      "random_relic_chance": 0.1,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "L05",
+      "church": "L",
+      "floor": 5,
+      "name": "重钟与齿轮",
+      "enemies": [
+        "E06",
+        "E05"
+      ],
+      "existing_group": null,
+      "requires_quest": "Q08",
+      "requires_node": "L04",
+      "suggested_duration_seconds": [
+        45,
+        75
+      ],
+      "base_reward": {
+        "xp": 135,
+        "crowns": 84,
+        "essence": 11
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": [
+          "R11"
+        ]
+      },
+      "research_increment": 1,
+      "random_relic_chance": 0.1,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "L06",
+      "church": "L",
+      "floor": 6,
+      "name": "钟门司铎",
+      "enemies": [
+        "B01"
+      ],
+      "existing_group": null,
+      "requires_quest": "Q08",
+      "requires_node": "L05",
+      "suggested_duration_seconds": [
+        60,
+        90
+      ],
+      "base_reward": {
+        "xp": 180,
+        "crowns": 112,
+        "essence": 15
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": []
+      },
+      "research_increment": 1,
+      "random_relic_chance": 0.1,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": true
+    },
+    {
+      "id": "M01",
+      "church": "M",
+      "floor": 1,
+      "name": "青雾灯室",
+      "enemies": [
+        "E02"
+      ],
+      "existing_group": null,
+      "requires_quest": "Q02",
+      "requires_node": null,
+      "suggested_duration_seconds": [
+        25,
+        40
+      ],
+      "base_reward": {
+        "xp": 50,
+        "crowns": 32,
+        "essence": 4
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": []
+      },
+      "research_increment": 0,
+      "random_relic_chance": 0.0,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "M02",
+      "church": "M",
+      "floor": 2,
+      "name": "赤雾侧廊",
+      "enemies": [
+        "E03"
+      ],
+      "existing_group": null,
+      "requires_quest": "Q04",
+      "requires_node": "M01",
+      "suggested_duration_seconds": [
+        30,
+        45
+      ],
+      "base_reward": {
+        "xp": 65,
+        "crowns": 42,
+        "essence": 5
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": []
+      },
+      "research_increment": 0,
+      "random_relic_chance": 0.0,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "M03",
+      "church": "M",
+      "floor": 3,
+      "name": "双色误认",
+      "enemies": [
+        "E02",
+        "E03"
+      ],
+      "existing_group": "G2",
+      "requires_quest": "Q06",
+      "requires_node": "M02",
+      "suggested_duration_seconds": [
+        35,
+        55
+      ],
+      "base_reward": {
+        "xp": 90,
+        "crowns": 54,
+        "essence": 7
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": [
+          "R13"
+        ]
+      },
+      "research_increment": 1,
+      "random_relic_chance": 0.1,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "M04",
+      "church": "M",
+      "floor": 4,
+      "name": "代签队列",
+      "enemies": [
+        "E08",
+        "E07",
+        "E09"
+      ],
+      "existing_group": "G4",
+      "requires_quest": "Q06",
+      "requires_node": "M03",
+      "suggested_duration_seconds": [
+        40,
+        65
+      ],
+      "base_reward": {
+        "xp": 110,
+        "crowns": 68,
+        "essence": 9
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": []
+      },
+      "research_increment": 1,
+      "random_relic_chance": 0.1,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "M05",
+      "church": "M",
+      "floor": 5,
+      "name": "审验镜廊",
+      "enemies": [
+        "E12",
+        "E11"
+      ],
+      "existing_group": "G6",
+      "requires_quest": "Q08",
+      "requires_node": "M04",
+      "suggested_duration_seconds": [
+        45,
+        75
+      ],
+      "base_reward": {
+        "xp": 135,
+        "crowns": 84,
+        "essence": 11
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": [
+          "R15"
+        ]
+      },
+      "research_increment": 1,
+      "random_relic_chance": 0.1,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "M06",
+      "church": "M",
+      "floor": 6,
+      "name": "双名馆长",
+      "enemies": [
+        "B02"
+      ],
+      "existing_group": null,
+      "requires_quest": "Q08",
+      "requires_node": "M05",
+      "suggested_duration_seconds": [
+        60,
+        90
+      ],
+      "base_reward": {
+        "xp": 180,
+        "crowns": 112,
+        "essence": 15
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": []
+      },
+      "research_increment": 1,
+      "random_relic_chance": 0.1,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": true
+    },
+    {
+      "id": "A01",
+      "church": "A",
+      "floor": 1,
+      "name": "未熄信件",
+      "enemies": [
+        "E10"
+      ],
+      "existing_group": null,
+      "requires_quest": "Q02",
+      "requires_node": null,
+      "suggested_duration_seconds": [
+        25,
+        40
+      ],
+      "base_reward": {
+        "xp": 50,
+        "crowns": 32,
+        "essence": 4
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": []
+      },
+      "research_increment": 0,
+      "random_relic_chance": 0.0,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "A02",
+      "church": "A",
+      "floor": 2,
+      "name": "唤影记录",
+      "enemies": [
+        "E09"
+      ],
+      "existing_group": null,
+      "requires_quest": "Q04",
+      "requires_node": "A01",
+      "suggested_duration_seconds": [
+        30,
+        45
+      ],
+      "base_reward": {
+        "xp": 65,
+        "crowns": 42,
+        "essence": 5
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": []
+      },
+      "research_increment": 0,
+      "random_relic_chance": 0.0,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "A03",
+      "church": "A",
+      "floor": 3,
+      "name": "无脸审验",
+      "enemies": [
+        "E12"
+      ],
+      "existing_group": null,
+      "requires_quest": "Q06",
+      "requires_node": "A02",
+      "suggested_duration_seconds": [
+        35,
+        55
+      ],
+      "base_reward": {
+        "xp": 90,
+        "crowns": 54,
+        "essence": 7
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": []
+      },
+      "research_increment": 1,
+      "random_relic_chance": 0.1,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "A04",
+      "church": "A",
+      "floor": 4,
+      "name": "重钟余烬",
+      "enemies": [
+        "E06",
+        "E10"
+      ],
+      "existing_group": "G5",
+      "requires_quest": "Q06",
+      "requires_node": "A03",
+      "suggested_duration_seconds": [
+        40,
+        65
+      ],
+      "base_reward": {
+        "xp": 110,
+        "crowns": 68,
+        "essence": 9
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": []
+      },
+      "research_increment": 1,
+      "random_relic_chance": 0.1,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "A05",
+      "church": "A",
+      "floor": 5,
+      "name": "遗稿围场",
+      "enemies": [
+        "E09",
+        "E10",
+        "E11"
+      ],
+      "existing_group": null,
+      "requires_quest": "Q08",
+      "requires_node": "A04",
+      "suggested_duration_seconds": [
+        45,
+        75
+      ],
+      "base_reward": {
+        "xp": 135,
+        "crowns": 84,
+        "essence": 11
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": [
+          "R16"
+        ]
+      },
+      "research_increment": 1,
+      "random_relic_chance": 0.1,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": false
+    },
+    {
+      "id": "A06",
+      "church": "A",
+      "floor": 6,
+      "name": "失名总登记官",
+      "enemies": [
+        "B03"
+      ],
+      "existing_group": null,
+      "requires_quest": "Q08",
+      "requires_node": "A05",
+      "suggested_duration_seconds": [
+        60,
+        90
+      ],
+      "base_reward": {
+        "xp": 180,
+        "crowns": 112,
+        "essence": 15
+      },
+      "first_clear_bonus": {
+        "crowns": 40,
+        "essence": 5,
+        "restored_relics": []
+      },
+      "research_increment": 1,
+      "random_relic_chance": 0.1,
+      "random_and_choice_unlock_quest": "Q08",
+      "boss_proof": true
+    }
+  ],
+  "relics": [
+    {
+      "id": "R01",
+      "name": "纸人代身",
+      "rarity": "普通",
+      "repair_or_research_claim_cost": {
+        "crowns": 100,
+        "essence": 10
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 2
+      },
+      "mask_rule_dependency": null
+    },
+    {
+      "id": "R02",
+      "name": "补缝针",
+      "rarity": "普通",
+      "repair_or_research_claim_cost": {
+        "crowns": 100,
+        "essence": 10
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 2
+      },
+      "mask_rule_dependency": "experimental_partial_endurance"
+    },
+    {
+      "id": "R03",
+      "name": "两色票根",
+      "rarity": "普通",
+      "repair_or_research_claim_cost": {
+        "crowns": 100,
+        "essence": 10
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 2
+      },
+      "mask_rule_dependency": null
+    },
+    {
+      "id": "R04",
+      "name": "缺角铠钉",
+      "rarity": "普通",
+      "repair_or_research_claim_cost": {
+        "crowns": 100,
+        "essence": 10
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 2
+      },
+      "mask_rule_dependency": null
+    },
+    {
+      "id": "R05",
+      "name": "旧邮戳",
+      "rarity": "普通",
+      "repair_or_research_claim_cost": {
+        "crowns": 100,
+        "essence": 10
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 2
+      },
+      "mask_rule_dependency": null
+    },
+    {
+      "id": "R06",
+      "name": "无客面具",
+      "rarity": "稀有",
+      "repair_or_research_claim_cost": {
+        "crowns": 200,
+        "essence": 20
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 4
+      },
+      "mask_rule_dependency": "experimental_partial_endurance"
+    },
+    {
+      "id": "R07",
+      "name": "候钟怀表",
+      "rarity": "普通",
+      "repair_or_research_claim_cost": {
+        "crowns": 100,
+        "essence": 10
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 2
+      },
+      "mask_rule_dependency": null
+    },
+    {
+      "id": "R08",
+      "name": "冷瓷咖啡杯",
+      "rarity": "普通",
+      "repair_or_research_claim_cost": {
+        "crowns": 100,
+        "essence": 10
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 2
+      },
+      "mask_rule_dependency": null
+    },
+    {
+      "id": "R09",
+      "name": "返潮信封",
+      "rarity": "普通",
+      "repair_or_research_claim_cost": {
+        "crowns": 100,
+        "essence": 10
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 2
+      },
+      "mask_rule_dependency": null
+    },
+    {
+      "id": "R10",
+      "name": "单面镜片",
+      "rarity": "稀有",
+      "repair_or_research_claim_cost": {
+        "crowns": 200,
+        "essence": 20
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 4
+      },
+      "mask_rule_dependency": null
+    },
+    {
+      "id": "R11",
+      "name": "警员哨扣",
+      "rarity": "稀有",
+      "repair_or_research_claim_cost": {
+        "crowns": 200,
+        "essence": 20
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 4
+      },
+      "mask_rule_dependency": null
+    },
+    {
+      "id": "R12",
+      "name": "犬齿封蜡",
+      "rarity": "普通",
+      "repair_or_research_claim_cost": {
+        "crowns": 100,
+        "essence": 10
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 2
+      },
+      "mask_rule_dependency": "experimental_partial_endurance"
+    },
+    {
+      "id": "R13",
+      "name": "双生纽扣",
+      "rarity": "普通",
+      "repair_or_research_claim_cost": {
+        "crowns": 100,
+        "essence": 10
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 2
+      },
+      "mask_rule_dependency": null
+    },
+    {
+      "id": "R14",
+      "name": "断线提偶",
+      "rarity": "稀有",
+      "repair_or_research_claim_cost": {
+        "crowns": 200,
+        "essence": 20
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 4
+      },
+      "mask_rule_dependency": "experimental_partial_endurance"
+    },
+    {
+      "id": "R15",
+      "name": "无名索引",
+      "rarity": "稀有",
+      "repair_or_research_claim_cost": {
+        "crowns": 200,
+        "essence": 20
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 4
+      },
+      "mask_rule_dependency": null
+    },
+    {
+      "id": "R16",
+      "name": "空白终页",
+      "rarity": "稀有",
+      "repair_or_research_claim_cost": {
+        "crowns": 200,
+        "essence": 20
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 4
+      },
+      "mask_rule_dependency": null
+    },
+    {
+      "id": "R17",
+      "name": "灰烬存证盒",
+      "rarity": "普通",
+      "repair_or_research_claim_cost": {
+        "crowns": 100,
+        "essence": 10
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 2
+      },
+      "mask_rule_dependency": null
+    },
+    {
+      "id": "R18",
+      "name": "禁售校样",
+      "rarity": "珍奇",
+      "repair_or_research_claim_cost": {
+        "crowns": 300,
+        "essence": 30
+      },
+      "random_duplicate_dismantle": {
+        "crowns": 0,
+        "essence": 6
+      },
+      "mask_rule_dependency": null
+    }
+  ],
+  "ritual": {
+    "requires_level": 10,
+    "requires_talent_points_earned": 30,
+    "requires_quest": "Q10",
+    "requires_boss_count": 1,
+    "cost": {
+      "crowns": 160,
+      "essence": 24
+    }
+  },
+  "mvp": {
+    "churches": [
+      "L"
+    ],
+    "quests": [
+      "Q01"
+    ],
+    "nodes": [
+      "L01"
+    ],
+    "real_currency_purchases": false,
+    "random_drop": false,
+    "bosses": false
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "owner": "mindstone-create-spell-vfx",
+  "spell": "projectile-fog-chime-v1",
+  "files": {
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/projectile-fog-chime-v1/spell.json": "749eb82916d0bfc3b270caff996082e496baadc2edad63d5bd4a7d799d881ef9",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Registry/projectile-fog-chime-v1.json": "843235cfa11fa75ea557bcb00dba1c31630fb35f204fb7388e062c0c5ffd1b79",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Authoring/projectile-fog-chime-v1/provenance.json": "307f53c742e1b7cae9ac682dcff59527dccfe00fdbd1d7eb25c4e48ae9583b34"
+  }
+}

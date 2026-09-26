@@ -1,0 +1,459 @@
+{
+  "version": "1.2.0",
+  "formula": "See Mistport Chapter 1 Rebuild Design · Fool pathway",
+  "cases": [
+    {
+      "id": "T01",
+      "description": "错认低语基础伤害",
+      "input": {
+        "attack": 100,
+        "skill": "fool_skill_02",
+        "target_defense": 20
+      },
+      "expected": {
+        "damage_hits": [
+          50
+        ],
+        "total_damage": 50
+      }
+    },
+    {
+      "id": "T02",
+      "description": "2层误认下伪证烙印",
+      "input": {
+        "attack": 100,
+        "skill": "fool_skill_05",
+        "target_defense": 20,
+        "illusion": 2
+      },
+      "expected": {
+        "damage_hits": [
+          63
+        ],
+        "total_damage": 63,
+        "illusion_after": 3,
+        "fabricated_evidence_charges": 2
+      }
+    },
+    {
+      "id": "T03",
+      "description": "4层误认和伪证下身份错置",
+      "input": {
+        "attack": 100,
+        "skill": "fool_skill_04",
+        "target_defense": 20,
+        "illusion": 4,
+        "fabricated_evidence_charges": 2
+      },
+      "expected": {
+        "damage_hits": [
+          87
+        ],
+        "total_damage": 87,
+        "illusion_after": 0,
+        "misalignment_after": 2,
+        "fabricated_evidence_charges_after": 1
+      }
+    },
+    {
+      "id": "T04",
+      "description": "2层错位和伪证下错影追猎",
+      "input": {
+        "attack": 100,
+        "skill": "fool_skill_06",
+        "target_defense": 20,
+        "misalignment": 2,
+        "fabricated_evidence_charges": 1
+      },
+      "expected": {
+        "damage_hits": [
+          62,
+          93
+        ],
+        "total_damage": 155,
+        "misalignment_after": 1,
+        "fabricated_evidence_charges_after": 0
+      }
+    },
+    {
+      "id": "T05",
+      "description": "错位目标错步穿行",
+      "input": {
+        "attack": 100,
+        "skill": "fool_skill_01",
+        "target_defense": 20,
+        "misalignment": 1
+      },
+      "expected": {
+        "damage_hits": [
+          115
+        ],
+        "total_damage": 115,
+        "misalignment_after": 1,
+        "finale_ready": true
+      }
+    },
+    {
+      "id": "T06",
+      "description": "1层错位和归结准备下荒谬归结",
+      "input": {
+        "attack": 100,
+        "skill": "fool_skill_07",
+        "target_defense": 20,
+        "misalignment": 1,
+        "finale_ready": true
+      },
+      "expected": {
+        "effective_defense": 14,
+        "damage_hits": [
+          224
+        ],
+        "total_damage": 224,
+        "misalignment_after": 0,
+        "finale_ready_after": false
+      }
+    },
+    {
+      "id": "T07",
+      "description": "完整愚者循环防御20",
+      "input": {
+        "attack": 100,
+        "target_defense": 20,
+        "skills": [
+          2,
+          5,
+          4,
+          6,
+          1,
+          7
+        ]
+      },
+      "expected": {
+        "damage_hits": [
+          50,
+          63,
+          85,
+          71,
+          71,
+          133,
+          178
+        ],
+        "total_damage": 651
+      }
+    },
+    {
+      "id": "T07A",
+      "description": "完整愚者循环防御0",
+      "input": {
+        "attack": 100,
+        "target_defense": 0,
+        "skills": [
+          2,
+          5,
+          4,
+          6,
+          1,
+          7
+        ]
+      },
+      "expected": {
+        "total_damage": 771
+      }
+    },
+    {
+      "id": "T07B",
+      "description": "完整愚者循环防御10",
+      "input": {
+        "attack": 100,
+        "target_defense": 10,
+        "skills": [
+          2,
+          5,
+          4,
+          6,
+          1,
+          7
+        ]
+      },
+      "expected": {
+        "total_damage": 705
+      }
+    },
+    {
+      "id": "T07C",
+      "description": "完整愚者循环防御15",
+      "input": {
+        "attack": 100,
+        "target_defense": 15,
+        "skills": [
+          2,
+          5,
+          4,
+          6,
+          1,
+          7
+        ]
+      },
+      "expected": {
+        "total_damage": 678
+      }
+    },
+    {
+      "id": "T07D",
+      "description": "完整愚者循环防御25",
+      "input": {
+        "attack": 100,
+        "target_defense": 25,
+        "skills": [
+          2,
+          5,
+          4,
+          6,
+          1,
+          7
+        ]
+      },
+      "expected": {
+        "total_damage": 627
+      }
+    },
+    {
+      "id": "T08",
+      "description": "护盾顺序",
+      "input": {
+        "hp": 1000,
+        "shield": 200,
+        "incoming_damage_sequence": [
+          150,
+          100
+        ]
+      },
+      "expected": {
+        "after_first": {
+          "hp": 1000,
+          "shield": 50
+        },
+        "after_second": {
+          "hp": 950,
+          "shield": 0
+        }
+      }
+    },
+    {
+      "id": "T09",
+      "description": "纸人反制",
+      "input": {
+        "player_shield": 200,
+        "incoming_damage": 50,
+        "paper_double_counter": true
+      },
+      "expected": {
+        "player_shield_after": 200,
+        "attacker_illusion_after": 2,
+        "paper_double_counter_after": false
+      }
+    },
+    {
+      "id": "T10",
+      "description": "普通卡按行动索引进入冷却",
+      "input": {
+        "current_player_action_index": 1,
+        "reuse_delay_actions": 2
+      },
+      "expected": {
+        "next_available_action_index": 3,
+        "unavailable_on": [1, 2],
+        "available_on": 3
+      }
+    },
+    {
+      "id": "T11",
+      "description": "终极技能重置",
+      "input": {
+        "current_player_action_index": 10,
+        "living_enemies": 3
+      },
+      "expected": {
+        "skills_next_available": {},
+        "all_enemy_illusion": 4,
+        "finale_ready_duration": 3,
+        "stage_guard_duration_rounds": 3
+      }
+    },
+    {
+      "id": "T12",
+      "description": "Boss抗性错乱",
+      "input": {
+        "enemy_rank": "BOSS",
+        "illusion": 4,
+        "skill": "fool_skill_04"
+      },
+      "expected": {
+        "skip_next_action": false,
+        "misalignment_after": 2,
+        "resistant_disorientation": true,
+        "next_damage_reduction_bp": 2500,
+        "suppress_secondary_effects": true
+      }
+    },
+    {
+      "id": "T13",
+      "description": "确定性命中与防御20",
+      "input": {
+        "attack": 100,
+        "coefficient_bp": 10000,
+        "target_defense": 20,
+        "hit_policy": "DODGEABLE",
+        "evasion_charges": 0
+      },
+      "expected": {
+        "hit_result": "HIT",
+        "damage_hits": [
+          83
+        ],
+        "total_damage": 83,
+        "evasion_charges_after": 0
+      }
+    },
+    {
+      "id": "T14",
+      "description": "单段攻击被主动闪避",
+      "input": {
+        "attack": 100,
+        "coefficient_bp": 10000,
+        "target_defense": 20,
+        "hit_policy": "DODGEABLE",
+        "evasion_charges": 1,
+        "hp": 1000,
+        "shield": 50
+      },
+      "expected": {
+        "hit_result": "DODGED",
+        "damage_hits": [
+          0
+        ],
+        "total_damage": 0,
+        "evasion_charges_after": 0,
+        "hp_after": 1000,
+        "shield_after": 50
+      }
+    },
+    {
+      "id": "T15",
+      "description": "多段攻击按攻击行动整体闪避",
+      "input": {
+        "attack": 100,
+        "hit_coefficients_bp": [
+          7000,
+          13300
+        ],
+        "target_defense": 20,
+        "hit_policy": "DODGEABLE",
+        "evasion_charges": 1
+      },
+      "expected": {
+        "hit_result": "DODGED",
+        "damage_hits": [
+          0,
+          0
+        ],
+        "total_damage": 0,
+        "evasion_charges_after": 0
+      }
+    },
+    {
+      "id": "T16",
+      "description": "不可闪避攻击绕过闪避",
+      "input": {
+        "attack": 100,
+        "coefficient_bp": 10000,
+        "target_defense": 20,
+        "hit_policy": "UNAVOIDABLE",
+        "evasion_charges": 1
+      },
+      "expected": {
+        "hit_result": "HIT",
+        "damage_hits": [
+          83
+        ],
+        "total_damage": 83,
+        "evasion_charges_after": 1
+      }
+    },
+    {
+      "id": "T17",
+      "description": "防御后主动格挡35%",
+      "input": {
+        "attack": 100,
+        "coefficient_bp": 10000,
+        "target_defense": 20,
+        "guard_charges": 1,
+        "guard_reduction_bp": 3500
+      },
+      "expected": {
+        "hit_result": "HIT",
+        "damage_after_defense": [
+          83
+        ],
+        "damage_hits": [
+          54
+        ],
+        "total_damage": 54,
+        "guard_charges_after": 0
+      }
+    },
+    {
+      "id": "T18",
+      "description": "格挡后再由护盾吸收",
+      "input": {
+        "hp": 1000,
+        "shield": 50,
+        "incoming_damage_after_defense": 83,
+        "guard_reduction_bp": 3500
+      },
+      "expected": {
+        "damage_after_reduction": 54,
+        "shield_absorb": 50,
+        "shield_after": 0,
+        "hp_damage": 4,
+        "hp_after": 996
+      }
+    },
+    {
+      "id": "T19",
+      "description": "舞台庇护15%与格挡35%相加",
+      "input": {
+        "attack": 100,
+        "coefficient_bp": 10000,
+        "target_defense": 20,
+        "stage_guard_reduction_bp": 1500,
+        "guard_reduction_bp": 3500
+      },
+      "expected": {
+        "damage_after_defense": 83,
+        "combined_reduction_bp": 5000,
+        "damage_hits": [
+          42
+        ],
+        "total_damage": 42
+      }
+    },
+    {
+      "id": "T20",
+      "description": "闪避不施加ON_HIT状态且普通卡保持可用",
+      "input": {
+        "skill": "fool_skill_05",
+        "target_illusion": 2,
+        "evasion_charges": 1,
+        "current_player_action_index": 2
+      },
+      "expected": {
+        "hit_result": "DODGED",
+        "total_damage": 0,
+        "target_illusion_after": 2,
+        "fabricated_evidence_charges_after": 0,
+        "evasion_charges_after": 0
+      }
+    }
+  ]
+}

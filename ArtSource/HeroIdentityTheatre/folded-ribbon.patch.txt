@@ -1,0 +1,69 @@
+// REVIEW-ONLY PATCH — not applied to Assets or the existing draft.
+// Replace Ribbon declaration and MakeRibbon/UpdateRibbon; retain call sites.
+// Sprites/Default consumes vertex COLOR, so broad fold shading needs no new shader.
+// 85 vertices / 128 triangles per strip. Existing owned cleanup retains ownership.
+sealed class Ribbon
+{
+    public Mesh mesh; public Transform node;
+    public Vector3[] v = new Vector3[17 * 5];
+    public Color[] c = new Color[17 * 5];
+}
+void MakeRibbon(Color color)
+{
+    var go = new GameObject("Folded broad silk");
+    go.transform.SetParent(root.transform, false);
+    var r = new Ribbon { node = go.transform, mesh = new Mesh() };
+    owned.Add(r.mesh); r.mesh.MarkDynamic();
+    var uv = new Vector2[85]; var triangles = new int[16 * 4 * 6];
+    for (int i = 0; i < 17; i++) for (int j = 0; j < 5; j++)
+    {
+        int n = i * 5 + j; uv[n] = new Vector2(i / 16f, j / 4f);
+        r.c[n] = Color.white;
+        if (i < 16 && j < 4)
+        {
+            int k = (i * 4 + j) * 6;
+            triangles[k] = n; triangles[k + 1] = n + 5; triangles[k + 2] = n + 1;
+            triangles[k + 3] = n + 1; triangles[k + 4] = n + 5; triangles[k + 5] = n + 6;
+        }
+    }
+    r.mesh.vertices = r.v; r.mesh.uv = uv; r.mesh.colors = r.c; r.mesh.triangles = triangles;
+    go.AddComponent<MeshFilter>().sharedMesh = r.mesh;
+    go.AddComponent<MeshRenderer>().sharedMaterial = Mat(color);
+    ribbons.Add(r);
+}
+static void UpdateRibbon(Ribbon r, Vector3 a, Vector3 b, Vector3 up,
+    Quaternion face, float time, int seed, float fade, float width)
+{
+    Vector3 cameraUp = face * Vector3.up, depth = face * Vector3.forward;
+    // Cloth has broad rolling bends and one broad crosswise fold, not thin stripes.
+    Vector3 light = (cameraUp * .6f - depth).normalized;
+    for (int i = 0; i < 17; i++)
+    {
+        float t = i / 16f, envelope = Mathf.Sin(t * Mathf.PI);
+        float wave = t * 6.2f - time * 3.4f + seed * 1.7f;
+        Vector3 center = Vector3.Lerp(a, b, t)
+            + up * (Mathf.Sin(wave) * .17f * envelope)
+            + depth * (Mathf.Sin(wave * .72f + .8f) * width * .38f * envelope);
+        float twist = Mathf.Sin(wave * .85f) * .65f;
+        Vector3 across = cameraUp * Mathf.Cos(twist) + depth * Mathf.Sin(twist);
+        Vector3 normal = -depth * Mathf.Cos(twist) + cameraUp * Mathf.Sin(twist);
+        float half = width * (.24f + .76f * envelope) * .5f;
+        for (int j = 0; j < 5; j++)
+        {
+            float s = j / 4f * 2 - 1;
+            float foldPhase = s * Mathf.PI + wave * .45f;
+            float fold = Mathf.Cos(foldPhase) * width * .13f * envelope;
+            int n = i * 5 + j;
+            r.v[n] = center + across * (s * half) + normal * fold;
+            float slope = -Mathf.Sin(foldPhase) * .13f * Mathf.PI * envelope
+                / Mathf.Max(.12f, half / width);
+            Vector3 foldNormal = (normal - across * slope).normalized;
+            float shade = .43f + .69f * Mathf.Max(0, Vector3.Dot(foldNormal, light));
+            // Transparent tail dissolves instead of shrinking the strip into a line.
+            float alpha = fade * Mathf.SmoothStep(0, 1, (1 - t) * 7)
+                * (j == 0 || j == 4 ? .88f : 1);
+            r.c[n] = new Color(shade, shade, shade, alpha);
+        }
+    }
+    r.mesh.vertices = r.v; r.mesh.colors = r.c; r.mesh.RecalculateBounds();
+}

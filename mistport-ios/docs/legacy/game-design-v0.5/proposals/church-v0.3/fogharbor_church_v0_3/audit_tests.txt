@@ -1,0 +1,27 @@
+test_01_three_six_node_routes (__main__.ConfigTests.test_01_three_six_node_routes) ... ok
+test_02_unique_ids (__main__.ConfigTests.test_02_unique_ids) ... ok
+test_03_no_progression_deadlock (__main__.ConfigTests.test_03_no_progression_deadlock) ... ok
+test_04_one_church_is_enough_for_progression (__main__.ConfigTests.test_04_one_church_is_enough_for_progression) ... ok
+test_05_point_milestones (__main__.ConfigTests.test_05_point_milestones) ... ok
+test_06_all_eight_skills_guaranteed (__main__.ConfigTests.test_06_all_eight_skills_guaranteed) ... ok
+test_07_story_xp_reaches_cap_without_repeat_farming (__main__.ConfigTests.test_07_story_xp_reaches_cap_without_repeat_farming) ... ok
+test_08_level_caps_match_combat_benchmark (__main__.ConfigTests.test_08_level_caps_match_combat_benchmark) ... ok
+test_09_all_eighteen_relics_have_a_source (__main__.ConfigTests.test_09_all_eighteen_relics_have_a_source) ... ok
+test_10_all_references_resolve (__main__.ConfigTests.test_10_all_references_resolve) ... ok
+test_11_six_clears_fund_most_expensive_target (__main__.ConfigTests.test_11_six_clears_fund_most_expensive_target) ... ok
+test_12_no_duplicate_profit_from_crafting (__main__.ConfigTests.test_12_no_duplicate_profit_from_crafting) ... ok
+test_13_no_reward_for_failure_or_summons (__main__.ConfigTests.test_13_no_reward_for_failure_or_summons) ... ok
+test_14_research_and_first_claim_are_separate (__main__.ConfigTests.test_14_research_and_first_claim_are_separate) ... ok
+test_15_catalog_requires_completed_story (__main__.ConfigTests.test_15_catalog_requires_completed_story) ... ok
+test_16_only_two_standard_currencies (__main__.ConfigTests.test_16_only_two_standard_currencies) ... ok
+test_17_mvp_progression_is_closed (__main__.ConfigTests.test_17_mvp_progression_is_closed) ... ok
+test_18_one_boss_required_not_three (__main__.ConfigTests.test_18_one_boss_required_not_three) ... ok
+test_19_enemy_group_coverage (__main__.ConfigTests.test_19_enemy_group_coverage) ... ok
+test_20_nonnegative_awards (__main__.ConfigTests.test_20_nonnegative_awards) ... ok
+test_21_manual_battles_and_no_market_in_prototype (__main__.ConfigTests.test_21_manual_battles_and_no_market_in_prototype) ... ok
+test_22_target_progress_is_bounded_by_successful_clears_not_attempts (__main__.ConfigTests.test_22_target_progress_is_bounded_by_successful_clears_not_attempts) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.001s
+
+OK

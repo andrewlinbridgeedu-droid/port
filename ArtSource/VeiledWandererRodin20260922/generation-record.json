@@ -1,0 +1,31 @@
+{
+  "service": "Rodin",
+  "page": "https://hyper3d.ai/workspace/rodin",
+  "reference": "reference.png",
+  "model": "Gen-2.5",
+  "effort": "High",
+  "private": true,
+  "batch_size": 1,
+  "approved_max_credits": 1,
+  "starting_wallet": 54,
+  "generation_displayed_cost": 0.5,
+  "status": "downloaded, Blender reimported and four-view rendered",
+  "recorded_at": "2026-09-22T21:42:33.918089-07:00",
+  "asset_url": "https://hyper3d.ai/workspace/rodin/03b62c22-c7db-48cc-a578-41828e618885",
+  "geometry": "non-symmetric quad mesh with baked normal; requested 50k quads",
+  "material": "Native High, PBR Temperature 7, exported at 2K",
+  "export": [
+    "base_basic_pbr.glb",
+    "base_basic_shaded.glb"
+  ],
+  "final_wallet": 53.5,
+  "charged_credits_observed": 0.5,
+  "blender_inspection": "../../output/veiled-wanderer-rodin-20260922/inspection.json",
+  "sha256": {
+    "reference.png": "188b7d8b7a031e7153608581c4ad0337b8b6e08d5b76061da24846e8f5a7ca68",
+    "rodin-export.zip": "0b541f0e664154625e4c77a936daf079005ca1d64c890ad67df25f2aaa15065a",
+    "base_basic_pbr.glb": "54a88084645264789efd6abc0bbfef8b8377b44e8a343479262d02e101d29717",
+    "base_basic_shaded.glb": "6d45882bbd53e2d411bbbff460d905610775918c75e538aa72d3d0293be1b97b",
+    "VeiledWanderer_Rodin.blend": "d1438e2cca9e40b0ef7abb9a7aff4ebf4a9baf74ae817edcbe02f56de6e54b47"
+  }
+}

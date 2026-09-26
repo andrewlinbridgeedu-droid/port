@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "spell": "slash-arcana-seal-v1",
+  "status": "candidate",
+  "captureTimes": [
+    0.1,
+    0.42,
+    0.72,
+    0.96,
+    1.34
+  ],
+  "frames": [
+    "stage-1.png",
+    "stage-2.png",
+    "stage-3.png",
+    "stage-4.png",
+    "stage-5.png"
+  ]
+}

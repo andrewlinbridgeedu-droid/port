@@ -1,0 +1,13 @@
+{
+  "archetype": "beam",
+  "timeline": {"windup": 0.24, "travel": 0.42, "impact": 0.28, "decay": 0.40},
+  "behavior": {"path": "linear", "arcHeight": 0.0, "startScale": 0.2, "endScale": 1.0, "impactScale": 1.5, "tracking": 1.0, "beamWidth": 0.24, "orbitRadius": 0.0, "spinDegrees": 0.0, "extensionType": ""},
+  "layers": [
+    {"name": "beam-core", "backend": "ribbon", "asset": "", "role": "core", "anchor": "motion", "start": 0.10, "end": 0.72, "color": [0.94, 1.0, 0.62, 1.0], "scale": [1.0, 1.0, 1.0], "startScale": 1.0, "endScale": 1.0, "width": 0.10, "pointCount": 32, "renderQueue": 3500, "sortingOrder": 3, "seedOffset": 5, "fps": 24.0, "loop": false, "faceCamera": true, "frontOfTarget": false, "extensionType": ""},
+    {"name": "beam-glow", "backend": "ribbon", "asset": "", "role": "direction", "anchor": "motion", "start": 0.10, "end": 0.75, "color": [0.45, 0.90, 0.12, 0.62], "scale": [1.0, 1.0, 1.0], "startScale": 1.0, "endScale": 1.0, "width": 0.30, "pointCount": 32, "renderQueue": 3450, "sortingOrder": 1, "seedOffset": 11, "fps": 24.0, "loop": false, "faceCamera": true, "frontOfTarget": false, "extensionType": ""},
+    {"name": "terminal-impact", "backend": "effekseer", "asset": "Effects/Mistport/Official/Ribbon/effect1-2", "role": "impact-front", "anchor": "impact", "start": 0.48, "end": 1.0, "color": [0.72, 1.0, 0.30, 1.0], "scale": [1.2, 1.2, 1.2], "startScale": 0.35, "endScale": 1.5, "width": 0.2, "pointCount": 18, "renderQueue": 4230, "sortingOrder": 10, "seedOffset": 23, "fps": 24.0, "loop": false, "faceCamera": true, "frontOfTarget": true, "extensionType": ""}
+  ],
+  "capture": {"times": [0.12, 0.34, 0.58, 0.86, 1.24], "device": "iPhone 13", "targetFps": 60},
+  "cleanupSeconds": 0.3,
+  "showcase": {"sourceActor": "clockguard", "source": [-3.45, 1.65, 3.8], "target": [-3.45, 0.66, 3.8]}
+}

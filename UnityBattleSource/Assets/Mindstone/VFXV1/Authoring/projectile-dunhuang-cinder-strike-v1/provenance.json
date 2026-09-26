@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "spell": "projectile-dunhuang-cinder-strike-v1",
+  "brief": "Meshy敦煌女战士向右侧目标施放一枚紧凑的金红色火焰冲击，命中时短促压缩后立即爆裂，保留火舌、粒子和镜头震动，避免巨大平面或过曝地面光斑。",
+  "preset": "projectile",
+  "owner": "mindstone-create-spell-vfx",
+  "assets": [
+    {
+      "path": "Assets/Mindstone/VFXV1/Extensions/projectile-dunhuang-cinder-strike-v1/DunhuangCinderStrikeSpellExtension.cs",
+      "origin": "new-spell-private-extension"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/projectile-ember-comet-v1/EmberVolume.shader",
+      "origin": "read-only-reused-project-resource"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/projectile-ember-comet-v1/EmberParticle.shader",
+      "origin": "read-only-reused-project-resource"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/projectile-ember-comet-v1/EmberFlameCard.shader",
+      "origin": "read-only-reused-project-resource"
+    },
+    {
+      "path": "Effects/HellHound/FireOnly",
+      "origin": "existing-project-resource"
+    },
+    {
+      "path": "",
+      "origin": "procedural-runtime"
+    },
+    {
+      "path": "Effects/HellHound/FireOnly",
+      "origin": "existing-project-resource"
+    },
+    {
+      "path": "Effects/HellHound/FireOnly",
+      "origin": "existing-project-resource"
+    }
+  ]
+}

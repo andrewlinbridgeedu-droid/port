@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "spell": "projectile-fog-chime-v1",
+  "brief": "青色幽灵以钟纹蓄能，发射凝聚青色雾核和螺旋声波，主角位置散开冷雾冲击",
+  "preset": "projectile",
+  "owner": "mindstone-create-spell-vfx",
+  "assets": [
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/ArcanaFilament.shader",
+      "origin": "existing-project-resource-read-only"
+    },
+    {
+      "path": "Assets/Mindstone/VFXV1/Extensions/projectile-fog-chime-v1/FogChime.cs",
+      "origin": "procedural-runtime-authored"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/ArcanaBurst.shader",
+      "origin": "existing-project-resource-read-only"
+    }
+  ]
+}

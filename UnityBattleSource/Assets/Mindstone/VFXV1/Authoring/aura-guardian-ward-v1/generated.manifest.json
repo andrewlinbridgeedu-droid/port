@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "owner": "mindstone-create-spell-vfx",
+  "spell": "aura-guardian-ward-v1",
+  "files": {
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/aura-guardian-ward-v1/spell.json": "8fe399330aa61fa1cff4ba2e534060305104f2e2685566233a16ee1ab448b026",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Registry/aura-guardian-ward-v1.json": "a747d6c6761e4d648ae0bb64d60cde57a9b2bdbf41eabf45399739054c0c9d03",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Authoring/aura-guardian-ward-v1/provenance.json": "a55ec0732c13a85969c80450a87fe9373dfca606e022e5163c3d8701223c6586"
+  }
+}

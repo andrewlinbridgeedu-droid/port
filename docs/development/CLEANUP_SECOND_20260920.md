@@ -1,0 +1,1 @@
+清理范围：已导出动态媒体的历史PNG逐帧文件（保留首中尾和文档引用帧）、已有较新主文件的54个Blender .blend1自动备份、Build52/59安装产物、SwiftPM .build可再生成缓存。保留Build60、原始GLB/贴图/主blend工程、源码、存档及backups。hero-anatomy与hero-compact动态PNG页面不删帧。最新48段视频/GIF/封面完整检查通过。详细文件回执见CLEANUP_SECOND_20260920.json。清理后导出脚本如依赖旧完整帧须先重新录制。

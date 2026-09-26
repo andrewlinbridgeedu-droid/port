@@ -1,0 +1,15 @@
+{
+  "path": "ArtSource/GoldContractInk20260925/gold-contract-ink-rgba-v1.png",
+  "size": [
+    1254,
+    1254
+  ],
+  "mode": "RGBA",
+  "alpha_extrema": [
+    0,
+    255
+  ],
+  "sha256": "2cabc3a711322c1ccfa359855efe6626f8904eac2a91a1ddad007f73db748255",
+  "generation": "built-in image_gen",
+  "status": "authored texture; engine review pending"
+}

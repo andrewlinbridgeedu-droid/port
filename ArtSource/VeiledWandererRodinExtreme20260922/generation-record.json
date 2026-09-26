@@ -1,0 +1,30 @@
+{
+  "service": "Rodin",
+  "reference": "reference.png",
+  "reference_sha256": "188b7d8b7a031e7153608581c4ad0337b8b6e08d5b76061da24846e8f5a7ca68",
+  "original_asset_url": "https://hyper3d.ai/workspace/rodin/03b62c22-c7db-48cc-a578-41828e618885",
+  "independent_asset_url": "https://hyper3d.ai/workspace/rodin/ca53b99e-7965-4314-8c90-1b6b5770d9d4",
+  "model": "Gen-2.5",
+  "geometry_effort": "Extreme-High (confirmed by Rodin workbench)",
+  "geometry_advanced_detail": 5,
+  "image_direction": "Front",
+  "geometry_mesh": "Triangle 2,000,000 (maximum enabled in Rodin slider)",
+  "geometry_prompt": "Full-body slender adult male occult notary matching the image. Clearly visible pale face below an upward-tilted torn black-purple wide-brim hat; both eyes, nose and sly smile unobstructed. Long black hair frames the face. Black-violet open robe with gold embroidery and ragged teal inner sleeves, bare marked chest, layered belts, hanging paper talismans and brass bells. Open left hand with separate fingers, right hand holds thin wand and blue tassel. Tattooed legs and black platform sandals. Preserve asymmetrical layered fabric.",
+  "geometry_negative_prompt": "Hidden face, faceless head, opaque black shadow under hat, white blotches on hat, fused fingers, extra limbs, missing wand, missing talismans, stiff rectangular cloth.",
+  "private": true,
+  "material": {
+    "engine": "Native",
+    "effort": "High (highest accessible; Extreme High 12K requires Business subscription)",
+    "generation_options": ["8K", "Face Restore"],
+    "prompt": "Preserve the reference colors and character identity: black-violet torn wide-brim hat with small antique gold markings, not white; pale face with visible eyes and sly smile under black hair, not faceless shadow. Deep purple-black embroidered outer robe with intricate warm gold floral motifs, saturated teal inner sleeves, warm pale bare chest and tattooed legs, aged cream paper talismans, brass bells, turquoise belt jewel, blue wand tassel, black platform sandals. Clean hand-painted anime fantasy material with readable ornaments.",
+    "confirmed": true
+  },
+  "pack_attempts": [
+    "GLB, Shaded plus PBR, 4K: packing completed; no browser download event or local file",
+    "GLB, PBR only, 4K: packing completed; no browser download event or local file",
+    "GLB, Shaded only, 4K: packing completed; no browser download event or local file"
+  ],
+  "pack_8k_option": "visible but did not become selected after UI click; 4K remained selected",
+  "wallet_observed": {"before": 52, "after_reload": 51},
+  "status": "Rodin online model confirmed and visually inspected from front, side and back; no local GLB downloaded, no Blender inspection"
+}

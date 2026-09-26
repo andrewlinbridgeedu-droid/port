@@ -1,0 +1,62 @@
+{
+  "version": "1.0.0",
+  "party_size": 3,
+  "player_slots": 1,
+  "ai_slots": 2,
+  "decision_budget_ms_soft": 10,
+  "decision_budget_ms_hard": 30,
+  "max_candidates_per_ai": 8,
+  "max_joint_plans": 128,
+  "search_horizon": "CURRENT_ALLY_ACTIONS_PLUS_KNOWN_ENEMY_INTENT",
+  "deterministic_tie_break": ["score_desc", "skill_priority_asc", "target_slot_asc", "skill_id_asc"],
+  "score_weights": {
+    "prevent_party_wipe": 5000,
+    "revive_player": 4000,
+    "prevent_certain_death": 3000,
+    "interrupt_lethal_boss_action": 2500,
+    "certain_boss_kill": 2200,
+    "kill_elite": 1000,
+    "kill_normal": 600,
+    "effective_damage_per_point": 1,
+    "effective_heal_per_point": 1,
+    "effective_shield_per_point": 1,
+    "prevented_damage_per_point": 1,
+    "support_player_combo": 150,
+    "protect_player_combo": 120,
+    "advance_own_combo": 80,
+    "overheal_per_point": -1,
+    "ultimate_base_cost": -250
+  },
+  "hard_rules": [
+    "NO_ILLEGAL_ACTION",
+    "NO_DEAD_OR_INVULNERABLE_TARGET",
+    "NO_REDUNDANT_NONSTACKING_BUFF",
+    "NO_HEAL_FULL_HP",
+    "NO_EMPTY_CLEANSE",
+    "NO_CONSUME_PLAYER_RESERVED_STATUS",
+    "PREVENT_PARTY_WIPE",
+    "REVIVE_PLAYER_WHEN_REQUIRED",
+    "HANDLE_LETHAL_BOSS_MECHANIC_UNLESS_CERTAIN_KILL",
+    "NO_DAMAGE_ULTIMATE_DURING_INVULNERABLE_PHASE",
+    "REVALIDATE_SECOND_AI_TARGET",
+    "RESPECT_CONSERVE_TACTIC"
+  ],
+  "tactic_modes": {
+    "BALANCED": {},
+    "FOCUS_FIRE": {"focus_target_score_bonus": 120},
+    "DEFENSIVE": {"heal_shield_prevention_multiplier_bp": 12000},
+    "COMBO_SUPPORT": {"support_player_combo_bonus": 100},
+    "CONSERVE": {"forbid_ultimate": true, "long_cooldown_penalty": -100}
+  },
+  "revive": {
+    "shared_charges_per_dungeon": 1,
+    "revive_hp_percent_bp": 3000,
+    "post_encounter_downed_recovery_bp": 1000
+  },
+  "contribution_targets_bp": {
+    "player_min": 4500,
+    "player_max": 5500,
+    "each_ai_min": 2000,
+    "each_ai_max": 3000
+  }
+}

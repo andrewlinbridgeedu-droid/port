@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "spell": "v1-system-projectile",
+  "brief": "仅用于验证法术工厂运行时、五帧截图和清理流程的内部测试投射物",
+  "preset": "projectile",
+  "owner": "mindstone-create-spell-vfx",
+  "assets": [
+    {
+      "path": "Effects/HellHound/FireOnly",
+      "origin": "existing-project-resource"
+    },
+    {
+      "path": "",
+      "origin": "procedural-runtime"
+    },
+    {
+      "path": "Effects/HellHound/FireOnly",
+      "origin": "existing-project-resource"
+    },
+    {
+      "path": "Effects/HellHound/FireOnly",
+      "origin": "existing-project-resource"
+    }
+  ]
+}

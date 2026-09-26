@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "spell": "replace-with-spell-id",
+  "device": "iPhone 13",
+  "targetFps": 60,
+  "averageFps": -1.0,
+  "p95FrameTimeMs": -1.0,
+  "maxParticles": -1,
+  "maxDrawCalls": -1,
+  "peakMemoryMB": -1.0,
+  "cleanup": {
+    "natural": {
+      "orphanRoots": -1,
+      "orphanLights": -1,
+      "orphanEmitters": -1,
+      "orphanMaterials": -1,
+      "orphanEffekseerHandles": -1
+    },
+    "interrupt": {
+      "orphanRoots": -1,
+      "orphanLights": -1,
+      "orphanEmitters": -1,
+      "orphanMaterials": -1,
+      "orphanEffekseerHandles": -1
+    },
+    "replay": {
+      "orphanRoots": -1,
+      "orphanLights": -1,
+      "orphanEmitters": -1,
+      "orphanMaterials": -1,
+      "orphanEffekseerHandles": -1
+    }
+  }
+}

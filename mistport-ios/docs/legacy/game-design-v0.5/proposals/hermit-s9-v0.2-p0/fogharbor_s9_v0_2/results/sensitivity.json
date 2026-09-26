@@ -1,0 +1,497 @@
+[
+  {
+    "variation": "baseline",
+    "test": "C1",
+    "side": "correct",
+    "hp_start": 2400,
+    "ap": 100.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [],
+    "passive_evidence_gate": {
+      "ineligible": 40
+    },
+    "outcome": "胜利",
+    "time_s": 40.3,
+    "hp_left": 295.5,
+    "phantom_absorbed": 1445.5,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": []
+  },
+  {
+    "variation": "baseline",
+    "test": "C1",
+    "side": "wrong",
+    "hp_start": 2400,
+    "ap": 125.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [
+      "R06",
+      "R15"
+    ],
+    "passive_evidence_gate": {
+      "accepted": 7,
+      "ineligible": 16,
+      "ledger_full": 1
+    },
+    "outcome": "失败",
+    "time_s": 21.0,
+    "hp_left": 0,
+    "phantom_absorbed": 0.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": [
+      {
+        "kind": "guard",
+        "hp": 32.81
+      },
+      {
+        "kind": "gear",
+        "hp": 1500
+      }
+    ]
+  },
+  {
+    "variation": "baseline",
+    "test": "C2",
+    "side": "correct",
+    "hp_start": 2400,
+    "ap": 100.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [],
+    "passive_evidence_gate": {
+      "accepted": 20
+    },
+    "outcome": "胜利",
+    "time_s": 39.3,
+    "hp_left": 845.0,
+    "phantom_absorbed": 2415.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 780.0,
+    "paper_used": false,
+    "enemies_left": []
+  },
+  {
+    "variation": "baseline",
+    "test": "C2",
+    "side": "wrong",
+    "hp_start": 2400,
+    "ap": 125.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [
+      "R06",
+      "R15"
+    ],
+    "passive_evidence_gate": {
+      "ineligible": 9,
+      "accepted": 4
+    },
+    "outcome": "失败",
+    "time_s": 26.0,
+    "hp_left": 0,
+    "phantom_absorbed": 0.0,
+    "healing_received_by_enemies": 520.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": [
+      {
+        "kind": "nurse",
+        "hp": 500.0
+      }
+    ]
+  },
+  {
+    "variation": "baseline",
+    "test": "C3",
+    "side": "correct",
+    "hp_start": 2400,
+    "ap": 100.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [],
+    "passive_evidence_gate": {
+      "accepted": 15,
+      "ineligible": 18
+    },
+    "outcome": "胜利",
+    "time_s": 41.2,
+    "hp_left": 400.0,
+    "phantom_absorbed": 2093.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": []
+  },
+  {
+    "variation": "baseline",
+    "test": "C3",
+    "side": "wrong",
+    "hp_start": 2400,
+    "ap": 125.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [
+      "R06",
+      "R15"
+    ],
+    "passive_evidence_gate": {
+      "accepted": 5,
+      "ineligible": 11
+    },
+    "outcome": "失败",
+    "time_s": 15.5,
+    "hp_left": 0,
+    "phantom_absorbed": 0.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": [
+      {
+        "kind": "ash",
+        "hp": 900.0
+      }
+    ]
+  },
+  {
+    "variation": "hp_minus_5pct",
+    "test": "C1",
+    "side": "correct",
+    "hp_start": 2280,
+    "ap": 100.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [],
+    "passive_evidence_gate": {
+      "ineligible": 40
+    },
+    "outcome": "胜利",
+    "time_s": 40.3,
+    "hp_left": 175.5,
+    "phantom_absorbed": 1445.5,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": []
+  },
+  {
+    "variation": "hp_minus_5pct",
+    "test": "C1",
+    "side": "wrong",
+    "hp_start": 2280,
+    "ap": 125.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [
+      "R06",
+      "R15"
+    ],
+    "passive_evidence_gate": {
+      "accepted": 7,
+      "ineligible": 16,
+      "ledger_full": 1
+    },
+    "outcome": "失败",
+    "time_s": 21.0,
+    "hp_left": 0,
+    "phantom_absorbed": 0.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": [
+      {
+        "kind": "guard",
+        "hp": 32.81
+      },
+      {
+        "kind": "gear",
+        "hp": 1500
+      }
+    ]
+  },
+  {
+    "variation": "hp_minus_5pct",
+    "test": "C2",
+    "side": "correct",
+    "hp_start": 2280,
+    "ap": 100.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [],
+    "passive_evidence_gate": {
+      "accepted": 20
+    },
+    "outcome": "胜利",
+    "time_s": 39.3,
+    "hp_left": 725.0,
+    "phantom_absorbed": 2415.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 780.0,
+    "paper_used": false,
+    "enemies_left": []
+  },
+  {
+    "variation": "hp_minus_5pct",
+    "test": "C2",
+    "side": "wrong",
+    "hp_start": 2280,
+    "ap": 125.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [
+      "R06",
+      "R15"
+    ],
+    "passive_evidence_gate": {
+      "ineligible": 9,
+      "accepted": 3
+    },
+    "outcome": "失败",
+    "time_s": 23.5,
+    "hp_left": 0,
+    "phantom_absorbed": 0.0,
+    "healing_received_by_enemies": 520.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": [
+      {
+        "kind": "nurse",
+        "hp": 625.0
+      }
+    ]
+  },
+  {
+    "variation": "hp_minus_5pct",
+    "test": "C3",
+    "side": "correct",
+    "hp_start": 2280,
+    "ap": 100.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [],
+    "passive_evidence_gate": {
+      "accepted": 15,
+      "ineligible": 18
+    },
+    "outcome": "胜利",
+    "time_s": 41.2,
+    "hp_left": 280.0,
+    "phantom_absorbed": 2093.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": []
+  },
+  {
+    "variation": "hp_minus_5pct",
+    "test": "C3",
+    "side": "wrong",
+    "hp_start": 2280,
+    "ap": 125.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [
+      "R06",
+      "R15"
+    ],
+    "passive_evidence_gate": {
+      "accepted": 5,
+      "ineligible": 10
+    },
+    "outcome": "失败",
+    "time_s": 14.9,
+    "hp_left": 0,
+    "phantom_absorbed": 0.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": [
+      {
+        "kind": "ash",
+        "hp": 975.0
+      }
+    ]
+  },
+  {
+    "variation": "correct_ap_minus_5pct",
+    "test": "C1",
+    "side": "correct",
+    "hp_start": 2400,
+    "ap": 95.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [],
+    "passive_evidence_gate": {
+      "ineligible": 43
+    },
+    "outcome": "胜利",
+    "time_s": 42.2,
+    "hp_left": 191.5,
+    "phantom_absorbed": 1536.5,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": []
+  },
+  {
+    "variation": "correct_ap_minus_5pct",
+    "test": "C1",
+    "side": "wrong",
+    "hp_start": 2400,
+    "ap": 125.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [
+      "R06",
+      "R15"
+    ],
+    "passive_evidence_gate": {
+      "accepted": 7,
+      "ineligible": 16,
+      "ledger_full": 1
+    },
+    "outcome": "失败",
+    "time_s": 21.0,
+    "hp_left": 0,
+    "phantom_absorbed": 0.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": [
+      {
+        "kind": "guard",
+        "hp": 32.81
+      },
+      {
+        "kind": "gear",
+        "hp": 1500
+      }
+    ]
+  },
+  {
+    "variation": "correct_ap_minus_5pct",
+    "test": "C2",
+    "side": "correct",
+    "hp_start": 2400,
+    "ap": 95.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [],
+    "passive_evidence_gate": {
+      "accepted": 22
+    },
+    "outcome": "胜利",
+    "time_s": 41.3,
+    "hp_left": 535.0,
+    "phantom_absorbed": 2595.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 1040.0,
+    "paper_used": false,
+    "enemies_left": []
+  },
+  {
+    "variation": "correct_ap_minus_5pct",
+    "test": "C2",
+    "side": "wrong",
+    "hp_start": 2400,
+    "ap": 125.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [
+      "R06",
+      "R15"
+    ],
+    "passive_evidence_gate": {
+      "ineligible": 9,
+      "accepted": 4
+    },
+    "outcome": "失败",
+    "time_s": 26.0,
+    "hp_left": 0,
+    "phantom_absorbed": 0.0,
+    "healing_received_by_enemies": 520.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": [
+      {
+        "kind": "nurse",
+        "hp": 500.0
+      }
+    ]
+  },
+  {
+    "variation": "correct_ap_minus_5pct",
+    "test": "C3",
+    "side": "correct",
+    "hp_start": 2400,
+    "ap": 95.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [],
+    "passive_evidence_gate": {
+      "accepted": 15,
+      "ineligible": 18
+    },
+    "outcome": "胜利",
+    "time_s": 41.8,
+    "hp_left": 180.0,
+    "phantom_absorbed": 2093.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": []
+  },
+  {
+    "variation": "correct_ap_minus_5pct",
+    "test": "C3",
+    "side": "wrong",
+    "hp_start": 2400,
+    "ap": 125.0,
+    "timing_profile": "synthetic_v0_1_NOT_Unity",
+    "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+    "talent_hooks_implemented": 0,
+    "intentionally_inactive_relics": [
+      "R06",
+      "R15"
+    ],
+    "passive_evidence_gate": {
+      "accepted": 5,
+      "ineligible": 11
+    },
+    "outcome": "失败",
+    "time_s": 15.5,
+    "hp_left": 0,
+    "phantom_absorbed": 0.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": [
+      {
+        "kind": "ash",
+        "hp": 900.0
+      }
+    ]
+  }
+]

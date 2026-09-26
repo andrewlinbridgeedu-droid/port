@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+"""一键复现本设计中实际运行过的检查；仅使用标准库。"""
+from pathlib import Path
+from itertools import product
+from collections import Counter
+import argparse, json, subprocess, sys, io, unittest
+from validate_s9 import allocation_path
+from combat_subset import Combat, TESTS
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--outdir',type=Path,default=Path(__file__).parent/'results')
+    args=parser.parse_args(); args.outdir.mkdir(parents=True,exist_ok=True)
+    here=Path(__file__).resolve().parent
+    for script in ['validate_s9.py','combat_subset.py','verify_properties.py']:
+        subprocess.run([sys.executable,str(here/script),'--outdir',str(args.outdir)],check=True,capture_output=True,text=True)
+    counts=Counter()
+    for vector in product(range(6),repeat=6):
+        try:allocation_path(list(vector))
+        except ValueError:continue
+        counts[sum(vector)]+=1
+    result={'scope':'单系全部46656种配点向量，仅验证可达性',
+            'valid_vectors':sum(counts.values()),'by_points':dict(sorted(counts.items()))}
+    (args.outdir/'allocation_exhaustive.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
+    matrix=[]
+    for label,hp,scale in [('baseline',2400,1.0),('hp_minus_5pct',2280,1.0),('correct_ap_minus_5pct',2400,0.95)]:
+        for test in TESTS:
+            for side in ['correct','wrong']:
+                params=dict(test[side]); params['ap']*=scale if side=='correct' else 1.0
+                result=Combat(test['enemies'],hp=hp,**params).run()
+                matrix.append({'variation':label,'test':test['id'],'side':side,'hp_start':hp,'ap':params['ap'],**result})
+    (args.outdir/'sensitivity.json').write_text(json.dumps(matrix,ensure_ascii=False,indent=2),encoding='utf-8')
+    # Do not require a pre-selected winner. Changes to outcomes are report data, not test failures.
+    suite=unittest.defaultTestLoader.discover(str(here),pattern='test_regression.py')
+    stream=io.StringIO()
+    test_result=unittest.TextTestRunner(stream=stream,verbosity=2).run(suite)
+    (args.outdir/'new_tests.txt').write_text(stream.getvalue(),encoding='utf-8')
+    (args.outdir/'regression_summary.json').write_text(json.dumps({
+        'scope':'参考模块测试，非Unity客户端与完整构筑平衡',
+        'tests_run':test_result.testsRun,'failures':len(test_result.failures),
+        'errors':len(test_result.errors),'skipped':len(test_result.skipped),
+        'passed':test_result.wasSuccessful()},ensure_ascii=False,indent=2),encoding='utf-8')
+    if not test_result.wasSuccessful():
+        print(stream.getvalue());raise SystemExit(1)
+    print(f'新增{test_result.testsRun}项测试通过；原有定向检查通过；单系合法配点{sum(counts.values())}种；合成时序与有限战斗已重跑，胜负不作预设。输出：{args.outdir}')
+if __name__=='__main__':main()

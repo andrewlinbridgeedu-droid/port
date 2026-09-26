@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "status": "approved",
+  "note": "Legacy visual assets and choreography remain owned by MistportSpellShowcaseVFX. This contract locks review count/timing and authored source assets without migrating playback into VFX V1.",
+  "effects": [
+    {
+      "id": "fireball",
+      "captureTimes": [0.12, 0.36, 0.60, 0.84, 1.28],
+      "implementation": "MistportSpellShowcaseVFX.PlayNativeFireballOnly",
+      "implementationRange": {
+        "path": "UnityBattleSource/Assets/Scripts/MistportSpellShowcaseVFX.cs",
+        "start": "    public IEnumerator PlayFireball(",
+        "end": "    /// <summary>\n    /// A short front-facing detonation veil",
+        "sha256": "9cb2c7115e037c52c90dfd0427c9f09abe65ba083183af9b424520dc4f3fa875"
+      },
+      "assets": {
+        "UnityBattleSource/Assets/Resources/Effects/HellHound/FireBall.asset": "03e1bec605b91fdafaeced627b8ecabca9b4dfebb296b15afe7e0105bfef9aec",
+        "UnityBattleSource/Assets/Resources/Effects/HellHound/FireBall.efkproj": "21d7b9cede01b446f6bcbef3411bb5ceb1b7a146fe6894bfe0efbeb11c5801e9"
+      }
+    },
+    {
+      "id": "sword",
+      "captureTimes": [0.10, 0.52, 0.96, 1.18, 1.82],
+      "implementation": "MistportSpellShowcaseVFX.PlaySwordQi",
+      "implementationRange": {
+        "path": "UnityBattleSource/Assets/Scripts/MistportSpellShowcaseVFX.cs",
+        "start": "    public IEnumerator PlaySwordQi(",
+        "end": "    /// <summary>\n    /// A readable animal-shaped variant",
+        "sha256": "2e2f03c48b45e22914b8220d5c110ff26f6cf6467fc129a6e61f41f2a83295db"
+      },
+      "assets": {
+        "UnityBattleSource/Assets/Resources/Effects/HellHound/Texture/Generated/SwordQi_Slash.png": "ee19431e02dd00c3e8fc51f5d60f792e32ee70a5fdc8b8ddcafdaa74d1a77570"
+      }
+    }
+  ]
+}

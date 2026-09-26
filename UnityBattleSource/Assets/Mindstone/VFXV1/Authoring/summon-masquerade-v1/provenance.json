@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "spell": "summon-masquerade-v1",
+  "brief": "金紫色假面谕令：法阵与卡牌揭幕，召出主角侧面的透明幻影，两次承伤，第二击碎成金紫光片。保留原主角待机施法。",
+  "preset": "summon",
+  "owner": "mindstone-create-spell-vfx",
+  "assets": [
+    {
+      "path": "Effects/HellHound/Texture/Generated/SpectralCheetah_Leap",
+      "origin": "existing-project-resource"
+    },
+    {
+      "path": "",
+      "origin": "procedural-runtime"
+    },
+    {
+      "path": "Effects/HellHound/FireOnly",
+      "origin": "existing-project-resource"
+    }
+  ],
+  "reusedAssets": [
+    "Resources/Mindstone/VFXV1/ArcanaFilament.shader (read only)",
+    "Resources/Mindstone/VFXV1/ArcanaBurst.shader (read only)"
+  ],
+  "implementation": "Procedural extension; no changes to locked player spells or Effekseer assets."
+}

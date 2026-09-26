@@ -1,0 +1,67 @@
+import Foundation
+import Testing
+@testable import MistportCombatCore
+
+@Suite("Paper seal state")
+struct PaperSealStateTests {
+    @Test("The equipped paper person intercepts exactly one seal")
+    func substitutionIsConsumedOnce() {
+        var state = PaperSealState(isEquipped: true)
+
+        #expect(state.applySeal(durationSeconds: 3) == .intercepted)
+        #expect(!state.hasSealSubstitution)
+        #expect(!state.skillsAreDisabled)
+
+        #expect(state.applySeal(durationSeconds: 3) == .applied)
+        #expect(state.skillsAreDisabled)
+        #expect(state.remainingSealDuration == 3)
+    }
+
+    @Test("An unequipped paper person never intercepts a seal")
+    func unequippedStateAppliesSeal() {
+        var state = PaperSealState()
+
+        #expect(state.applySeal(durationSeconds: 3) == .applied)
+        #expect(state.skillsAreDisabled)
+        #expect(state.canUseBasicAttack)
+    }
+
+    @Test("Advancing a seal expires it while basic attacks remain available")
+    func durationAdvancesAndExpires() {
+        var state = PaperSealState(isEquipped: true)
+        _ = state.applySeal(durationSeconds: 3)
+
+        state.advance(delta: 1.25)
+        #expect(state.remainingSealDuration == 1.75)
+        #expect(state.skillsAreDisabled)
+        #expect(state.canUseBasicAttack)
+
+        state.advance(delta: 1.75)
+        #expect(state.remainingSealDuration == 0)
+        #expect(!state.skillsAreDisabled)
+    }
+
+    @Test("A new battle restores eligibility and clears an active seal")
+    func resetForNewBattle() {
+        var state = PaperSealState(isEquipped: true)
+        _ = state.applySeal(durationSeconds: 3)
+        state.resetForNewBattle()
+
+        #expect(state.hasSealSubstitution)
+        #expect(state.remainingSealDuration == 0)
+        #expect(state.applySeal(durationSeconds: 3) == .intercepted)
+    }
+
+    @Test("Decoding preserves consumed eligibility and never refreshes it")
+    func decodingPreservesConsumedEligibility() throws {
+        var state = PaperSealState(isEquipped: true)
+        #expect(state.applySeal(durationSeconds: 3) == .intercepted)
+
+        let data = try JSONEncoder().encode(state)
+        var restored = try JSONDecoder().decode(PaperSealState.self, from: data)
+
+        #expect(restored == state)
+        #expect(!restored.hasSealSubstitution)
+        #expect(restored.applySeal(durationSeconds: 3) == .applied)
+    }
+}

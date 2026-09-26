@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "spell": "projectile-azure-ember-v1",
+  "brief": "Portrait mobile RPG skill: blue-violet ember projectile with orange impact, storm-cloud darkening, rain and deterministic lightning branches.",
+  "preset": "projectile",
+  "owner": "mindstone-create-spell-vfx",
+  "assets": [
+    {
+      "path": "Effects/HellHound/FireOnly",
+      "origin": "existing-project-resource"
+    },
+    {
+      "path": "",
+      "origin": "procedural-runtime"
+    },
+    {
+      "path": "Effects/HellHound/FireOnly",
+      "origin": "existing-project-resource"
+    },
+    {
+      "path": "Effects/HellHound/FireOnly",
+      "origin": "existing-project-resource"
+    },
+    {
+      "path": "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/projectile-azure-ember-v1/AzureStormBackdropSpellExtension.cs",
+      "origin": "procedural-runtime",
+      "purpose": "dark storm backdrop, rain veil and deterministic lightning branches"
+    },
+    {
+      "path": "Effects/HellHound/Texture/Smoke_Lighting",
+      "origin": "existing-project-resource",
+      "purpose": "cloud and storm smoke texture"
+    }
+  ]
+}

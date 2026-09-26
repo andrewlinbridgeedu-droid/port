@@ -1,0 +1,15 @@
+{
+  "template": "UnityBattleSource/Assets/Resources/Effects/HellHound/FireOnly.efkproj",
+  "template_sha256": "5e6868672666a433959b0c4b49630e69e004fcefb2fec8013ff60f36e884bf70",
+  "derivation": "Reauthored particle lifetimes, rates, scale, blend, billboard, spatial spread; native Effekseer runtime. No existing assets modified.",
+  "textures": {
+    "Mist": {
+      "source": "Effects/Fool/Effekseer/MaskExplosion/Texture/smoke_tex.png",
+      "sha256": "953d069e80f5374c430ddc278b9e27a9a8480af64615f68803cb6f05c7ac9e51"
+    },
+    "Crystal": {
+      "source": "Effects/Mistport/Official/Slashing/Particle02.png",
+      "sha256": "cf75234356b83cce29d4b44ddfa49928fab6464062d9fb5d4c72a6e1352292fc"
+    }
+  }
+}

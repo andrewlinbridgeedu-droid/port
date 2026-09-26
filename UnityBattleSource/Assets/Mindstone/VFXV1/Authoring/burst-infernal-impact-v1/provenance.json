@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "spell": "burst-infernal-impact-v1",
+  "brief": "保留地狱犬原始火球，新增厚重橙金爆燃云、扩散热浪和立体余烬，增强命中爆炸。",
+  "preset": "burst",
+  "owner": "mindstone-create-spell-vfx",
+  "assets": [
+    {
+      "path": "Effects/HellHound/FireOnly",
+      "origin": "existing-project-resource"
+    },
+    {
+      "path": "Effects/HellHound/FireOnly",
+      "origin": "existing-project-resource"
+    },
+    {
+      "path": "Effects/HellHound/FireOnly",
+      "origin": "existing-project-resource"
+    },
+    {
+      "path": "",
+      "origin": "procedural-runtime"
+    }
+  ],
+  "reusedAssets": [
+    "Resources/Mindstone/VFXV1/ArcanaFilament.shader (read only)",
+    "Resources/Mindstone/VFXV1/ArcanaBurst.shader (read only)"
+  ],
+  "implementation": "Procedural extension; no changes to locked player spells or Effekseer assets."
+}

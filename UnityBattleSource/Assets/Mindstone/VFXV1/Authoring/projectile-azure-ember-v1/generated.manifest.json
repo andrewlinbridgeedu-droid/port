@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "owner": "mindstone-create-spell-vfx",
+  "spell": "projectile-azure-ember-v1",
+  "files": {
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/projectile-azure-ember-v1/spell.json": "48680ca78b21ad9af94725fc4f85e5a98cc18780f76cdea8baf98564c99c62a5",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Registry/projectile-azure-ember-v1.json": "dad1b1bb53237cdf146bac618a4b11b8eb6e041547539b305794ed0b24159526",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Authoring/projectile-azure-ember-v1/provenance.json": "ff02b13ac00157730ddba8ae4e51526d9f714e002249ddaa15243dc73577eea9"
+  }
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Copperback_Behemoth_0921062650",
+    "source": "/Users/andrewlin/Downloads/Meshy_AI_Copperback_Behemoth_0921062650_texture.glb",
+    "archive": "/Users/andrewlin/Downloads/DEV_Projects/mindstone-game/ArtSource/ChurchMinions20260921/Meshy_AI_Copperback_Behemoth_0921062650_texture.glb",
+    "bytes": 38926124,
+    "sha256": "a027df1949f00add93b31a9be100bf8c996d0384f53eac5faeb16dff9f75d329"
+  },
+  {
+    "name": "Crimson_Brute_0921062707",
+    "source": "/Users/andrewlin/Downloads/Meshy_AI_Crimson_Brute_0921062707_texture.glb",
+    "archive": "/Users/andrewlin/Downloads/DEV_Projects/mindstone-game/ArtSource/ChurchMinions20260921/Meshy_AI_Crimson_Brute_0921062707_texture.glb",
+    "bytes": 21215776,
+    "sha256": "1e5f107eda8f4422fccba8996458eeb1c60c4862e523b5e76db93a14bd2073bd"
+  },
+  {
+    "name": "Crimson_Veil_Oracle_0921065936",
+    "source": "/Users/andrewlin/Downloads/Meshy_AI_Crimson_Veil_Oracle_0921065936_texture.glb",
+    "archive": "/Users/andrewlin/Downloads/DEV_Projects/mindstone-game/ArtSource/ChurchMinions20260921/Meshy_AI_Crimson_Veil_Oracle_0921065936_texture.glb",
+    "bytes": 66624332,
+    "sha256": "21db830815dca6b0c1c705ecb4de677d74e12eadab041251398d5ebd342d2955"
+  },
+  {
+    "name": "Golden_Throated_Tree__0921062700",
+    "source": "/Users/andrewlin/Downloads/Meshy_AI_Golden_Throated_Tree__0921062700_texture.glb",
+    "archive": "/Users/andrewlin/Downloads/DEV_Projects/mindstone-game/ArtSource/ChurchMinions20260921/Meshy_AI_Golden_Throated_Tree__0921062700_texture.glb",
+    "bytes": 13987440,
+    "sha256": "6b2dfd51f433a20581cb703220318bc02dcea7b230d41d5b1fdac848f89e355f"
+  },
+  {
+    "name": "Moonfang_Mouse_0921063524",
+    "source": "/Users/andrewlin/Downloads/Meshy_AI_Moonfang_Mouse_0921063524_texture.glb",
+    "archive": "/Users/andrewlin/Downloads/DEV_Projects/mindstone-game/ArtSource/ChurchMinions20260921/Meshy_AI_Moonfang_Mouse_0921063524_texture.glb",
+    "bytes": 41225096,
+    "sha256": "59c4068864f28c39ed1a804d3b3ffd57724cdefe55b46763e7d81da6cc9e7247"
+  }
+]

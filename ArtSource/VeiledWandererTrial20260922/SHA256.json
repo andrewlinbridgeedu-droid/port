@@ -1,0 +1,18 @@
+{
+  "reference.png": {
+    "bytes": 1929080,
+    "sha256": "188b7d8b7a031e7153608581c4ad0337b8b6e08d5b76061da24846e8f5a7ca68"
+  },
+  "VeiledWanderer_Trial.blend": {
+    "bytes": 1403888,
+    "sha256": "0f0834d5c0a2d832393b5f8826feefe0760d4f0a5a74f223518c81978ec6ab00"
+  },
+  "VeiledWanderer_Trial.glb": {
+    "bytes": 13259992,
+    "sha256": "639cbb476eeed1ba9c9e5af3b76b5b0e557df77d1e7719b9a0efc58a31490318"
+  },
+  "build_trial.py": {
+    "bytes": 32483,
+    "sha256": "0188de717ef5dcecaa715deab5cc0dd79ed41bdf00884bcfdbbb932bfacc2eb8"
+  }
+}

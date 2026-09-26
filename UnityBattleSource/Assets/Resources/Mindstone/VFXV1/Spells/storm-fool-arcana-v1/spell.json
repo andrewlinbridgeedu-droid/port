@@ -1,0 +1,174 @@
+{
+  "schema": 1,
+  "id": "storm-fool-arcana-v1",
+  "displayName": "Fool Arcana Tempest",
+  "archetype": "storm",
+  "seed": 73013,
+  "timeline": {
+    "windup": 0.8,
+    "travel": 0,
+    "impact": 4,
+    "decay": 1.2
+  },
+  "anchors": {
+    "origin": "source",
+    "target": "target",
+    "impact": "impact",
+    "ground": "ground",
+    "originOffset": [
+      0,
+      0,
+      0
+    ],
+    "targetOffset": [
+      0,
+      0,
+      0
+    ],
+    "impactOffset": [
+      0,
+      0,
+      0
+    ],
+    "groundOffset": [
+      0,
+      0,
+      0
+    ]
+  },
+  "behavior": {
+    "path": "stationary",
+    "arcHeight": 1.2,
+    "startScale": 0.3,
+    "endScale": 1.0,
+    "impactScale": 1.8,
+    "tracking": 1.0,
+    "beamWidth": 0.0,
+    "orbitRadius": 1.3,
+    "spinDegrees": 720.0,
+    "extensionType": ""
+  },
+  "layers": [
+    {
+      "name": "blender-arcana-vortex",
+      "backend": "extension",
+      "asset": "",
+      "role": "core",
+      "anchor": "ground",
+      "start": 0.0,
+      "end": 1.0,
+      "color": [
+        0.46,
+        0.24,
+        0.92,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "startScale": 1,
+      "endScale": 1,
+      "width": 0.2,
+      "pointCount": 28,
+      "renderQueue": 3160,
+      "sortingOrder": -2,
+      "seedOffset": 9,
+      "fps": 24.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": false,
+      "extensionType": "Mindstone.VFXV1.FoolArcanaTempest"
+    },
+    {
+      "name": "storm-depth",
+      "backend": "effekseer",
+      "asset": "Effects/Mistport/Official/Ribbon/effect1-2",
+      "role": "impact-back",
+      "anchor": "ground",
+      "start": 0.08,
+      "end": 0.9,
+      "color": [
+        0.6,
+        0.35,
+        0.85,
+        0.15
+      ],
+      "scale": [
+        0.15,
+        0.15,
+        0.15
+      ],
+      "startScale": 0.25,
+      "endScale": 1.5,
+      "width": 0.2,
+      "pointCount": 28,
+      "renderQueue": 3140,
+      "sortingOrder": -3,
+      "seedOffset": 15,
+      "fps": 24.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": false,
+      "extensionType": ""
+    },
+    {
+      "name": "storm-flow",
+      "backend": "ribbon",
+      "asset": "",
+      "role": "direction",
+      "anchor": "target",
+      "start": 0.05,
+      "end": 0.86,
+      "color": [
+        0.6,
+        0.35,
+        0.85,
+        0.15
+      ],
+      "scale": [
+        0.15,
+        0.15,
+        0.15
+      ],
+      "startScale": 1.0,
+      "endScale": 1.0,
+      "width": 0.18,
+      "pointCount": 48,
+      "renderQueue": 3480,
+      "sortingOrder": 5,
+      "seedOffset": 21,
+      "fps": 24.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": true,
+      "extensionType": ""
+    }
+  ],
+  "capture": {
+    "times": [
+      0.45,
+      1.2,
+      2.3,
+      3.4,
+      5.45
+    ],
+    "device": "iPhone 13",
+    "targetFps": 60
+  },
+  "cleanupSeconds": 0.5,
+  "showcase": {
+    "sourceActor": "player",
+    "source": [
+      -3.45,
+      1.65,
+      3.8
+    ],
+    "target": [
+      -3.45,
+      0.66,
+      3.8
+    ]
+  }
+}

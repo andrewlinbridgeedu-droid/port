@@ -1,0 +1,274 @@
+--- v0.1/validate_s9.py
++++ v0.2/validate_s9.py
+@@ -10,9 +10,10 @@
+ import argparse, csv, json
+ from dataclasses import dataclass
+ from pathlib import Path
+-from typing import Iterable
++from typing import Iterable, Mapping
+ 
+ TICK = 100
++TIMING_PROFILE_ID = "synthetic_v0_1_NOT_Unity"
+ 
+ @dataclass(frozen=True)
+ class Skill:
+@@ -69,31 +70,61 @@
+             raise ValueError(f'配点不可达: {target}; 可达部分={levels}')
+     return path
+ 
+-def schedule(order: list[str], end: int=2000, mask_cd: int=300) -> list[dict]:
+-    """动作不可被新就绪技能抢占；ready_at较早者优先，不是装备位永远优先。"""
+-    if len(order)!=4 or len(set(order))!=4 or any(s not in SKILLS for s in order):
+-        raise ValueError('必须装备4个不同技能')
+-    ready={s:0 for s in order}; now=0; opening=0; normal_ready=0; result=[]
++def schedule(order: list[str | None], end: int=2000, mask_cd: int | None=None,
++             *, skill_specs: Mapping[str, Skill] | None=None,
++             basic_attack: Skill | None=None) -> list[dict]:
++    """Reference scheduler, NOT a Unity damage clock.
++
++    Accept 1..4 distinct equipped cards. None represents an empty physical slot;
++    empty slots are skipped without consuming an opening action or creating CD.
++    Timing may be injected from a validated fixture. Defaults deliberately retain
++    the old synthetic profile for regression comparison, not for production use.
++    """
++    if not isinstance(order, (list, tuple)) or not 1 <= len(order) <= 4:
++        raise ValueError('需要1至4个物理槽位，其中至少装备一张技能')
++    specs = SKILLS if skill_specs is None else skill_specs
++    equipped = [(slot, sid) for slot, sid in enumerate(order) if sid is not None]
++    if not equipped or any(not isinstance(sid, str) or sid not in specs for _, sid in equipped):
++        raise ValueError('至少装备一张有效技能；空槽使用None')
++    ids = [sid for _, sid in equipped]
++    if len(set(ids)) != len(ids):
++        raise ValueError('不能装备同名技能复本')
++    if type(end) is not int or end < 0:
++        raise ValueError('end必须是非负整数tick')
++    if mask_cd is not None and (type(mask_cd) is not int or mask_cd <= 0):
++        raise ValueError('mask_cd必须是正整数tick')
++    basic = basic_attack or Skill('B', '普攻', 100, '普攻', 30, 50)
++    for spec in [specs[sid] for sid in ids] + [basic]:
++        if any(type(v) is not int for v in (spec.cd, spec.lock, spec.impact_delay)):
++            raise ValueError('CD、动作占用与命中延迟必须使用整数tick')
++        if spec.cd <= 0 or spec.lock <= 0 or spec.impact_delay < 0:
++            raise ValueError('CD和动作占用必须为正，命中延迟不得为负')
++    slot_for = dict((sid, slot) for slot, sid in equipped)
++    ready={sid:0 for sid in ids}; now=0; opening_index=0; normal_ready=0; result=[]
++    profile = TIMING_PROFILE_ID if skill_specs is None and basic_attack is None else 'injected_fixture_NOT_Unity_verified'
+     while now<=end:
+         active=None
+-        if opening<len(order):
+-            active=order[opening]; opening+=1
++        is_opening = opening_index<len(ids)
++        if is_opening:
++            active=ids[opening_index]; opening_index+=1
+         else:
+-            candidates=[s for s in order if ready[s]<=now]
++            candidates=[sid for sid in ids if ready[sid]<=now]
+             if candidates:
+-                active=min(candidates, key=lambda s:(ready[s], order.index(s)))
+-        if active:
+-            spec=SKILLS[active]
+-            cd=mask_cd if active=='M' else spec.cd
++                active=min(candidates, key=lambda sid:(ready[sid], slot_for[sid]))
++        if active is not None:
++            spec=specs[active]
++            cd=mask_cd if active=='M' and mask_cd is not None else spec.cd
+             result.append({'start_tick':now,'impact_tick':now+spec.impact_delay,
+                 'id':active,'name':spec.name,'ready_before_tick':ready[active],
+-                'next_ready_tick':now+cd,'opening':len(result)<4})
++                'next_ready_tick':now+cd,'opening':is_opening,
++                'slot_index':slot_for[active], 'timing_profile':profile})
+             ready[active]=now+cd; now+=spec.lock
+         elif now>=normal_ready:
+-            result.append({'start_tick':now,'impact_tick':now+30,'id':'B',
++            result.append({'start_tick':now,'impact_tick':now+basic.impact_delay,'id':'B',
+                 'name':'普攻','ready_before_tick':normal_ready,
+-                'next_ready_tick':now+100,'opening':False})
+-            normal_ready=now+100; now+=50
++                'next_ready_tick':now+basic.cd,'opening':False,
++                'slot_index':None, 'timing_profile':profile})
++            normal_ready=now+basic.cd; now+=basic.lock
+         else:
+             future=[t for t in ready.values() if t>now]+[normal_ready]
+             now=min(future)
+@@ -206,7 +237,8 @@
+                     'hp_loss':round(loss,2),'absorbed':round(total-loss,2)})
+                 for row in rows:
+                     writer.writerow({'probe':name,'rule':rule,**row})
+-    output={'scope':'配点、调度、独立假面探针；非完整战斗或平衡模拟',
++    output={'scope':'配点、合成时序调度、实验假面探针；非Unity实测或完整战斗平衡',
++        'timing_profile': TIMING_PROFILE_ID,
+         'checks':checks,'builds':BUILDS,'timelines':summary,'mask_probe_summary':probe_summary}
+     (args.outdir/'results.json').write_text(json.dumps(output,ensure_ascii=False,indent=2),encoding='utf-8')
+     print(json.dumps({'checks_passed':len(checks),'timelines':summary,'mask_probe_summary':probe_summary},ensure_ascii=False,indent=2))
+--- v0.1/combat_subset.py
++++ v0.2/combat_subset.py
+@@ -10,7 +10,8 @@
+ import argparse, csv, heapq, json
+ from dataclasses import dataclass
+ from pathlib import Path
+-from validate_s9 import schedule
++from validate_s9 import schedule, TIMING_PROFILE_ID
++from evidence_gate import PassiveEvidenceGate
+ 
+ @dataclass
+ class Enemy:
+@@ -27,7 +28,6 @@
+     proof: int=0
+     ledger_id: int=0
+     stamp_used: bool=False
+-    attack_proof_at: int=-1000
+     dead_at: int=10**9
+ 
+ SPECS={
+@@ -40,10 +40,26 @@
+ }
+ 
+ class Combat:
+-    def __init__(self,kinds,order,relics,ap=100.,hp=2400.,limit=18000):
++    def __init__(self,kinds,order,relics,ap=100.,hp=2400.,limit=18000,
++                 allow_inert_relics=False):
++        if len(relics)>3 or len(set(relics))!=len(relics):
++            raise ValueError('遗落物最多3件，且不可重复')
++        supported={'R01','R02','R04','R05','R17','R18'}
++        # The original intentionally-wrong examples may opt into inert R06/R15.
++        # A missing implementation must NEVER masquerade as an active rare relic.
++        missing_skills={'R06':'M','R15':'I'}
++        self.inactive_relics=[]
++        for relic in relics:
++            if relic in supported:continue
++            if (allow_inert_relics and relic in missing_skills
++                    and missing_skills[relic] not in order):
++                self.inactive_relics.append(relic)
++            else:
++                raise NotImplementedError(f'遗落物未接入有限模型，拒绝静默模拟: {relic}')
+         self.ap=ap; self.hp=hp; self.limit=limit; self.order=order; self.relics=set(relics)
+         self.enemies=[Enemy(i,k,SPECS[k][0],SPECS[k][0],SPECS[k][1]) for i,k in enumerate(kinds)]
+         self.queue=[]; self.serial=0; self.now=0; self.log=[]
++        self.passive_gate = PassiveEvidenceGate()
+         self.mask_uses=0; self.mask_budget=0.; self.mask_end=0
+         self.shield=0.; self.shield_end=0; self.paper_used=False; self.box_next=0
+         self.focus=0; self.outgoing=0.; self.absorbed=0.; self.healed=0.; self.denied_heal=0.
+@@ -74,14 +90,37 @@
+         if skill=='I':return next((e for e in live if e.kind=='nurse'),cur).id
+         if skill=='A':return max(live,key=lambda e:(e.proof,e.id==cur.id,-e.id)).id
+         return cur.id
+-    def evidence(self,e,n):
+-        if e.hp<=0:return
++    def evidence_cap(self):
++        return max(3,6-int('R05' in self.relics)-int('R18' in self.relics))
++    def evidence(self,e,n,source='direct'):
++        if e.hp<=0 or n<=0:return 0
++        before=e.proof
++        if before>=self.evidence_cap():
++            self.record('取证未入账',f'{e.id}; {source}; ledger_full')
++            return 0
++        base=n
++        bonus=0
+         if 'R05' in self.relics and not e.stamp_used:
+-            n+=1; e.stamp_used=True
++            n+=1; bonus=1; e.stamp_used=True
+         if e.proof==0:
+             e.ledger_id+=1; self.push(self.now+600,1,'auto_seal',(e.id,e.ledger_id))
+-        cap=max(3,6-int('R05' in self.relics)-int('R18' in self.relics))
+-        e.proof=min(cap,e.proof+n)
++        e.proof=min(self.evidence_cap(),e.proof+n)
++        added=e.proof-before
++        # Attribute the base award first; bonuses do not count as extra passive triggers.
++        base_added=min(base,added)
++        self.record('证据入账',f'{e.id}; {source}; base={base_added}; relic_bonus={added-base_added}; overflow={n-added}',added)
++        return added
++    def passive_evidence_on_hit(self,e,hit_id,eligible=True):
++        decision=self.passive_gate.attempt(
++            self.now,e.id,hit_id,
++            eligible=eligible and self.hp>0 and e.hp>0 and self.now<e.mark_end,
++            has_capacity=e.proof<self.evidence_cap())
++        if decision.accepted:
++            added=self.evidence(e,1,source='passive_enemy_hit')
++            if added<=0:raise AssertionError('Accepted passive trigger must add its base evidence atomically')
++        elif decision.reason!='ineligible':
++            self.record('被动取证拒绝',f'{e.id}; hit={hit_id}; {decision.reason}')
++        return decision
+     def seal(self,e,coef,delay):
+         n=e.proof
+         if n:
+@@ -191,8 +230,7 @@
+                     next_heal=400 if t<=400 else 400+((t-400+799)//800)*800
+                     if next_heal-120<=t<=next_heal:continue
+                 self.damage_player(damage)
+-                if e.hp>0 and t<e.mark_end and t>=e.attack_proof_at:
+-                    self.evidence(e,1); e.attack_proof_at=t+100
++                self.passive_evidence_on_hit(e,hit_id=('enemy_hit',serial))
+             elif kind=='heal':
+                 nurse=self.enemies[data]
+                 if nurse.hp<=0:continue
+@@ -217,7 +255,12 @@
+                             pending=True;break
+                 if not pending:break
+         outcome='胜利' if self.hp>0 and not self.alive() and self.pending_hazards==0 else ('失败' if self.hp<=0 else '超时')
+-        return {'outcome':outcome,'time_s':round(self.now/100,2),'hp_left':round(max(0,self.hp),2),
++        return {'timing_profile':TIMING_PROFILE_ID,
++                'mask_ruleset':'proposal_v01_partial_NOT_APPROVED',
++                'talent_hooks_implemented':0,
++                'intentionally_inactive_relics':self.inactive_relics,
++                'passive_evidence_gate':dict(self.passive_gate.stats),
++                'outcome':outcome,'time_s':round(self.now/100,2),'hp_left':round(max(0,self.hp),2),
+                 'phantom_absorbed':round(self.absorbed,2),'healing_received_by_enemies':round(self.healed,2),
+                 'healing_denied':round(self.denied_heal,2),'paper_used':self.paper_used,
+                 'enemies_left':[{ 'kind':e.kind,'hp':round(max(0,e.hp),2)} for e in self.enemies if e.hp>0]}
+@@ -225,13 +268,13 @@
+ TESTS=[
+  {'id':'C1','label':'护甲与连击：守卫+齿轮偶','enemies':['guard','gear'],
+   'correct':{'order':['M','F','N','R'],'relics':['R01','R02','R04'],'ap':100.},
+-  'wrong':{'order':['N','E','R','A'],'relics':['R18','R06','R15'],'ap':125.}},
++  'wrong':{'order':['N','E','R','A'],'relics':['R18','R06','R15'],'ap':125.,'allow_inert_relics':True}},
+  {'id':'C2','label':'治疗与重弹：猎犬+蜡封修女','enemies':['hound','nurse'],
+   'correct':{'order':['M','I','E','A'],'relics':['R01','R02','R05'],'ap':100.},
+-  'wrong':{'order':['A','R','E','N'],'relics':['R18','R06','R15'],'ap':125.}},
++  'wrong':{'order':['A','R','E','N'],'relics':['R18','R06','R15'],'ap':125.,'allow_inert_relics':True}},
+  {'id':'C3','label':'死亡余烬：三个灰烬信差','enemies':['ash','ash','ash'],
+   'correct':{'order':['M','E','F','H'],'relics':['R01','R02','R17'],'ap':100.},
+-  'wrong':{'order':['N','E','R','A'],'relics':['R18','R06','R15'],'ap':125.}},
++  'wrong':{'order':['N','E','R','A'],'relics':['R18','R06','R15'],'ap':125.,'allow_inert_relics':True}},
+ ]
+ 
+ def main():
+--- v0.1/run_all.py
++++ v0.2/run_all.py
+@@ -3,7 +3,7 @@
+ from pathlib import Path
+ from itertools import product
+ from collections import Counter
+-import argparse, json, subprocess, sys
++import argparse, json, subprocess, sys, io, unittest
+ from validate_s9 import allocation_path
+ from combat_subset import Combat, TESTS
+ 
+@@ -12,7 +12,7 @@
+     parser.add_argument('--outdir',type=Path,default=Path(__file__).parent/'results')
+     args=parser.parse_args(); args.outdir.mkdir(parents=True,exist_ok=True)
+     here=Path(__file__).resolve().parent
+-    for script in ['validate_s9.py','combat_subset.py']:
++    for script in ['validate_s9.py','combat_subset.py','verify_properties.py']:
+         subprocess.run([sys.executable,str(here/script),'--outdir',str(args.outdir)],check=True,capture_output=True,text=True)
+     counts=Counter()
+     for vector in product(range(6),repeat=6):
+@@ -30,6 +30,17 @@
+                 result=Combat(test['enemies'],hp=hp,**params).run()
+                 matrix.append({'variation':label,'test':test['id'],'side':side,'hp_start':hp,'ap':params['ap'],**result})
+     (args.outdir/'sensitivity.json').write_text(json.dumps(matrix,ensure_ascii=False,indent=2),encoding='utf-8')
+-    assert all(x['outcome']==('胜利' if x['side']=='correct' else '失败') for x in matrix)
+-    print(f'17项定向检查通过；单系合法配点{sum(counts.values())}种；9套20秒调度已导出；3组机制对照及两种敏感性变化符合记录结果。输出：{args.outdir}')
++    # Do not require a pre-selected winner. Changes to outcomes are report data, not test failures.
++    suite=unittest.defaultTestLoader.discover(str(here),pattern='test_regression.py')
++    stream=io.StringIO()
++    test_result=unittest.TextTestRunner(stream=stream,verbosity=2).run(suite)
++    (args.outdir/'new_tests.txt').write_text(stream.getvalue(),encoding='utf-8')
++    (args.outdir/'regression_summary.json').write_text(json.dumps({
++        'scope':'参考模块测试，非Unity客户端与完整构筑平衡',
++        'tests_run':test_result.testsRun,'failures':len(test_result.failures),
++        'errors':len(test_result.errors),'skipped':len(test_result.skipped),
++        'passed':test_result.wasSuccessful()},ensure_ascii=False,indent=2),encoding='utf-8')
++    if not test_result.wasSuccessful():
++        print(stream.getvalue());raise SystemExit(1)
++    print(f'新增{test_result.testsRun}项测试通过；原有定向检查通过；单系合法配点{sum(counts.values())}种；合成时序与有限战斗已重跑，胜负不作预设。输出：{args.outdir}')
+ if __name__=='__main__':main()

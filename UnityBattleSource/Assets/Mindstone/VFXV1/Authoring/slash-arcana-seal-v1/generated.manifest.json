@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "owner": "mindstone-create-spell-vfx",
+  "spell": "slash-arcana-seal-v1",
+  "files": {
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/slash-arcana-seal-v1/spell.json": "fdf80cc44a56a0270ec47101d7e8556e0eb45210590746d5468ca1ba62c961ce",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Registry/slash-arcana-seal-v1.json": "580b516c71d80590e6b2bf1bedadfa088af9a0314b60a1f5819eb36eb72a2d7a",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Authoring/slash-arcana-seal-v1/provenance.json": "943b041f4bf036ea5b8fda6bc8ca248ca0863adbd9858bf250a313a7200aa861",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/slash-arcana-seal-v1/ArcanaSeal.cs": "db2c05f72aa4b609a4e312a1602d5c0fe5559d5c426eacc752422b538b96556c",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/ArcanaFilament.shader": "de57014f5d2fcfe14bbe22a444116c11785da15035af5e9bde1ca07f359f5ae7",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/ArcanaBurst.shader": "7fa747d6789c658b4764c3b16c2806d3b5832bb67433c92538c266f532054240"
+  }
+}

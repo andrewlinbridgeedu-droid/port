@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "spell": "burst-infernal-impact-v1",
+  "status": "candidate",
+  "captureTimes": [
+    0.08,
+    0.3,
+    0.58,
+    0.9,
+    1.28
+  ],
+  "frames": [
+    "stage-1.png",
+    "stage-2.png",
+    "stage-3.png",
+    "stage-4.png",
+    "stage-5.png"
+  ]
+}

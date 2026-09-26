@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "owner": "mindstone-create-spell-vfx",
+  "spell": "storm-fool-arcana-v1",
+  "files": {
+    "ArtSource/FoolArcanaTempest/FoolArcanaTempest.blend": "0f75e72d1820be9e1ec7e3a5f1238d71a7a95a377d77e42ab422eaf57bdf39a8",
+    "ArtSource/FoolArcanaTempest/build_tornado.py": "7534227bb6e0741a65f997aeb996e1f3ec46b6ce403a347700fda2262b9a91a7",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Authoring/storm-fool-arcana-v1/provenance.json": "b44bfd0ff2c16f91f845c317080971c50724aeeb8cd9d45689068c76c8e7c347",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/storm-fool-arcana-v1/Editor.meta": "bca5440ebe5cb784e6b2210dbe64fcc262a843e76212fcbb74170cd59bc727ca",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/storm-fool-arcana-v1/Editor/FoolTempestPreview.cs": "652e2bf32ccf9f801fe93455351b3d6e6e340c954e59d09dd4fd0f837712da06",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/storm-fool-arcana-v1/Editor/FoolTempestPreview.cs.meta": "ba3f00c9cf3140137e372cb4ec7e34580929ddcf274b4f3362dd2ef03aca671f",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/storm-fool-arcana-v1/FoolArcanaTempest.cs": "84b5c6f005c151f906c40a2af61aa6cc5c65040d358cd093afb8905e16637761",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/storm-fool-arcana-v1/FoolArcanaTempest.cs.meta": "7b56f9b5b22dab87ae0a6ba0623e1e01d5f1092ce7e0e47f7573a9110e2ac7f9",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Registry/storm-fool-arcana-v1.json": "1180a9c29c86c379619f6299d773870b51e33cfff5befa037b9dcfbad19dd02a",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-fool-arcana-v1/ArcanaCard.shader": "064ee00ef1e3c36217b5e41640683d57e3a1e559697890057143f56597ca7e58",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-fool-arcana-v1/ArcanaCard.shader.meta": "8512911645a980670289f1066dc4440b7d0b09e2e47e918bed3680caf7f5b8e0",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-fool-arcana-v1/ArcanaSky.shader": "89f3d1f66cf190fff7f52f322fc4daeb430f4420cc60c4b65e336085b607532e",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-fool-arcana-v1/ArcanaSky.shader.meta": "3585e516b58d28f810724523805b60b9cc0454938278c9a530a1b247fd9d9c8f",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-fool-arcana-v1/ArcanaTornado.fbx": "3f0f0cd624136c09fb6829d1a068b85dc837d853e2d5d7c1c71c999ce1a7d245",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-fool-arcana-v1/ArcanaTornado.fbx.meta": "7ea81077eaa3546c81d8114e8e16ff2ede732cf772f41db695c5e1d59bfd4ec3",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-fool-arcana-v1/ArcanaWind.shader": "fcbd3330b45e81d1407037c0ae4a28fec22832285f9580ebfbfc8395d5509716",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-fool-arcana-v1/ArcanaWind.shader.meta": "73a91291ea634b724dde7da2cbf83812c4d3377b86a5e778039affc2ad9759e5",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-fool-arcana-v1/spell.json": "658c7e68c33e76a382fe9c097d4055c4b1372bbdc0cb75ba07c8fb3c891bbead",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-fool-arcana-v1/spell.json.meta": "9e93e6b40fbce5244be3ed4ba69f226d31c7b8b70365b0609fc1ff93ac814237",
+    "ArtSource/FoolArcanaTempest/encode_preview.py": "abe3f95e8d4eef10aba4ecb94d46405b99ab7e575aa55dc4079cfd7e31e17502"
+  }
+}

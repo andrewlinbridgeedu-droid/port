@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "spell": "slash-arcana-seal-v1",
+  "brief": "紫金刻印收束后闪爆，冲击波、体积感光团和碎光向外扩散",
+  "preset": "slash",
+  "owner": "mindstone-create-spell-vfx",
+  "assets": [
+    {
+      "path": "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/slash-arcana-seal-v1/ArcanaSeal.cs",
+      "origin": "authored-procedural-geometry",
+      "description": "Procedural gold seal glyphs, violet card blades and fading slivers."
+    },
+    {
+      "path": "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/ArcanaFilament.shader",
+      "origin": "authored-additive-filament-shader"
+    },
+    {
+      "path": "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/ArcanaBurst.shader",
+      "origin": "authored-procedural-additive-burst-shader"
+    }
+  ]
+}

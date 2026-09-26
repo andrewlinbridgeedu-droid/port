@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "owner": "mindstone-create-spell-vfx",
+  "spell": "projectile-dunhuang-cinder-strike-v1",
+  "files": {
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/projectile-dunhuang-cinder-strike-v1/spell.json": "00b9dda51fba2874d155d142695cb5c790bfa53f2b45e76510077d567335ccf0",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Registry/projectile-dunhuang-cinder-strike-v1.json": "b37eb5b441fce195d0ab92a0ef1a140bedd69e20c72ea8f2abbb91b04b979cdf",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Authoring/projectile-dunhuang-cinder-strike-v1/provenance.json": "ceb8bbac9b224448a1d9b31dda9be6ef7d6998c2fac5f75d6e763cd281979a16"
+  }
+}

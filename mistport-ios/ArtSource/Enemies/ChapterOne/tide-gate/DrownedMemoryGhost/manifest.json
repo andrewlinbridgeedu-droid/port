@@ -1,0 +1,17 @@
+{
+  "actions" : {
+    "cast" : 4,
+    "idle" : 4
+  },
+  "anchor" : "bottom-center",
+  "assetID" : "DrownedMemoryGhost",
+  "canvas" : {
+    "height" : 512,
+    "width" : 512
+  },
+  "commercialStatus" : "project-original technical art; pending final illustration pass",
+  "district" : "tide-gate",
+  "generator" : "art-pipeline\/generate-secondary-enemy-assets.swift",
+  "source" : "deterministic CoreGraphics generator",
+  "version" : "v1"
+}

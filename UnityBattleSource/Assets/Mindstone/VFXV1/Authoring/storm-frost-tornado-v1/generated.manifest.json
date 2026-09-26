@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "owner": "mindstone-create-spell-vfx",
+  "spell": "storm-frost-tornado-v1",
+  "files": {
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-frost-tornado-v1/spell.json": "03d8a1f71a5cbaa9cc228f25e7deda41e64064b0877cc9dfa4788d64d036c25b",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-frost-tornado-v1/FrostTornado.shader": "547cb9b54be987c3f01063dd4747b20337a1b49e9b312171de6660b015226ed3",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-frost-tornado-v1/FrostMist.shader": "4fbf8ee7a39e91846864c52121b147cbeec2e5fa299ecf776390b159dac2dd38",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-frost-tornado-v1/FrostCrystal.shader": "e2bccc7f858cdfb071c6df227d51986640535ee12098299bd9cd394f4bdbb788",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/FrostVortexTravel.efkproj": "1c063515aa47a4a0059bca3ef026fc422b4b60521bdcc35a52090af558ef43b0",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/FrostVortexTravel.asset": "98b3cb217e0148299fee72171533fcc93930e7b06931ce3e31cfffbd097f8540",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/FrostVortexImpactBack.efkproj": "feadf60646143d4e0aefce01e70dde59b9d0817d680cd2123d7eff0a71975999",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/FrostVortexImpactBack.asset": "8808018365df1c2669f61ab5e1cf18c4fb5eb5aa340a94aba8c2f7a7231de068",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/Texture/Particle03.png": "3734dfdba425f96ce5aca1f6682b572a85f73c799a6a615cd5978e16fc3c6e07",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Registry/storm-frost-tornado-v1.json": "1da44363517ff3edeef9f46f65818fd14f2676212f41935cfec38e19892d6a11",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Authoring/storm-frost-tornado-v1/provenance.json": "3b807c66ec9dc91a6ec6bc710943b020587aec7bfb051a9acf160be7e0342645",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/storm-frost-tornado-v1/FrostTornadoSpellExtension.cs": "16c4c4d0f5bc9d26387859bfd86264bfa1289689dd02c4bff681940bfcf2bb75"
+  }
+}

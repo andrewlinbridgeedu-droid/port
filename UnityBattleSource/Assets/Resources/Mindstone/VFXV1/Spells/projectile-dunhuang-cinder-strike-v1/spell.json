@@ -1,0 +1,174 @@
+{
+  "schema": 1,
+  "id": "projectile-dunhuang-cinder-strike-v1",
+  "displayName": "敦煌焰击",
+  "archetype": "projectile",
+  "seed": 73013,
+  "timeline": {
+    "windup": 0.16,
+    "travel": 0.62,
+    "impact": 0.32,
+    "decay": 0.52
+  },
+  "anchors": {
+    "origin": "source",
+    "target": "target",
+    "impact": "impact",
+    "ground": "ground",
+    "originOffset": [
+      0,
+      0,
+      0
+    ],
+    "targetOffset": [
+      0,
+      0,
+      0
+    ],
+    "impactOffset": [
+      0,
+      0,
+      0
+    ],
+    "groundOffset": [
+      0,
+      0,
+      0
+    ]
+  },
+  "behavior": {
+    "path": "bezier",
+    "arcHeight": 0.24,
+    "startScale": 0.50,
+    "endScale": 1.20,
+    "impactScale": 1.05,
+    "tracking": 1.0,
+    "beamWidth": 0.0,
+    "orbitRadius": 0.0,
+    "spinDegrees": 90.0,
+    "extensionType": ""
+  },
+  "layers": [
+    {
+      "name": "projectile-core",
+      "backend": "extension",
+      "asset": "",
+      "role": "core",
+      "anchor": "motion",
+      "start": 0.0,
+      "end": 0.52,
+      "color": [
+        1.0,
+        0.72,
+        0.28,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "startScale": 0.35,
+      "endScale": 1.15,
+      "width": 0.12,
+      "pointCount": 20,
+      "renderQueue": 3400,
+      "sortingOrder": 0,
+      "seedOffset": 11,
+      "fps": 24.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": false,
+      "extensionType": "Mindstone.VFXV1.DunhuangCinderStrikeSpellExtension"
+    },
+    {
+      "name": "travel-ribbon",
+      "backend": "extension",
+      "asset": "",
+      "role": "trail",
+      "anchor": "motion",
+      "start": 0.08,
+      "end": 0.50,
+      "color": [
+        1.0,
+        0.26,
+        0.03,
+        0.72
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "startScale": 0.8,
+      "endScale": 1.0,
+      "width": 0.13,
+      "pointCount": 24,
+      "renderQueue": 3350,
+      "sortingOrder": 0,
+      "seedOffset": 19,
+      "fps": 24.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": false,
+      "extensionType": "Mindstone.VFXV1.DunhuangCinderStrikeSpellExtension"
+    },
+    {
+      "name": "impact-front",
+      "backend": "extension",
+      "asset": "",
+      "role": "impact-front",
+      "anchor": "impact",
+      "start": 0.58,
+      "end": 0.90,
+      "color": [
+        1.0,
+        0.86,
+        0.42,
+        1.0
+      ],
+      "scale": [
+        0.98,
+        0.98,
+        0.98
+      ],
+      "startScale": 0.32,
+      "endScale": 1.20,
+      "width": 0.2,
+      "pointCount": 18,
+      "renderQueue": 4250,
+      "sortingOrder": 12,
+      "seedOffset": 29,
+      "fps": 24.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": true,
+      "extensionType": "Mindstone.VFXV1.DunhuangCinderStrikeSpellExtension"
+    }
+  ],
+  "capture": {
+    "times": [
+      0.10,
+      0.38,
+      0.72,
+      1.02,
+      1.46
+    ],
+    "device": "iPhone 13",
+    "targetFps": 60
+  },
+  "cleanupSeconds": 0.35,
+  "showcase": {
+    "sourceActor": "player",
+    "source": [
+      -3.45,
+      2.1,
+      3.8
+    ],
+    "target": [
+      -3.45,
+      0.66,
+      3.8
+    ]
+  }
+}

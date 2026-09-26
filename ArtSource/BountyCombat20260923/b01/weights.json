@@ -1,0 +1,24 @@
+{
+  "case": "b01",
+  "vertices": 47161,
+  "weighted": 47161,
+  "influences": {
+    "Root": 0,
+    "Pelvis": 24225,
+    "Chest": 32318,
+    "Head": 10768,
+    "UpperArm.L": 1738,
+    "Forearm.L": 2071,
+    "Hand.L": 413,
+    "UpperArm.R": 2732,
+    "Forearm.R": 2690,
+    "Hand.R": 1718,
+    "Thigh.L": 3088,
+    "Shin.L": 2006,
+    "Foot.L": 252,
+    "Thigh.R": 4491,
+    "Shin.R": 3561,
+    "Foot.R": 528
+  },
+  "rigid_weapon_vertices": 1718
+}

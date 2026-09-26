@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "spell": "aura-guardian-ward-v1",
+  "brief": "\u7b2c\u4e00\u5173\u949f\u536b\u6301\u7eed\u7684\u84dd\u91d1\u7b26\u6587\u62a4\u7f69\uff0c\u900f\u660e\u80fd\u91cf\u58f3\u3001\u6d41\u52a8\u661f\u7eb9\u4e0e\u53d7\u51fb\u6d9f\u6f2a\uff0c\u4fdd\u7559\u654c\u4eba\u8f6e\u5ed3\u3002",
+  "preset": "aura",
+  "owner": "mindstone-create-spell-vfx",
+  "assets": [
+    {
+      "path": "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/aura-guardian-ward-v1/GuardianWard.shader",
+      "origin": "procedural-runtime"
+    },
+    {
+      "path": "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/aura-guardian-ward-v1/GuardianWard.cs",
+      "origin": "procedural-runtime"
+    }
+  ]
+}

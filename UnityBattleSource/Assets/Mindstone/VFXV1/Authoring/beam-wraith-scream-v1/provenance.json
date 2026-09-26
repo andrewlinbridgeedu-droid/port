@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "spell": "beam-wraith-scream-v1",
+  "brief": "紫黑与冷青粒子先从外围湍流聚合成一张正面张口嘶喊的人形恶鬼脸；鬼脸短暂实体化后从嘴部连续推出小圈、中圈到大圈的透视椭圆声压震荡。每一发声波由共享有机轮廓的暗紫宽压力环、亮紫主边、冷青裂边和浅紫细丝组成；波环上缘保持在嘴部附近，中心和下缘向目标扩张前移，并通过偏心、半径抖动、粗细变化、破边和顶部自然缺口避免死板的标准圆。使用现有 Effekseer DarkRift 的湍流线束、Aurora、细丝与长声压边纹理增强传播质感；完整 MaskExplosion 因轮廓过于对称而拒用，只复用其高速粒子、烟雾和闪光纹理。命中后释放七段错时扩张的破碎声压裂弧和约十倍密度的微粒爆散；源端鬼脸也以约 960 个不同方向、长度和消失时差的细裂片高速瓦解并彻底消失。要求逼真、阴森、绚丽、手机端清晰。",
+  "preset": "beam",
+  "owner": "mindstone-create-spell-vfx",
+  "meshInspection": {
+    "sourceTaskId": "01a03b36-8712-7f58-b4d7-646644b473cf",
+    "sourceFormat": "glb+fbx",
+    "triangles": 340590,
+    "vertices": 1021770,
+    "meshCount": 1,
+    "materialCount": 1,
+    "hasUV": true,
+    "skins": 0,
+    "animations": 0,
+    "runtimeTreatment": "FBX imported under Resources; custom transparent rim/dissolve/burst shader; existing deterministic 960-fragment release handles particle breakup",
+    "mobileStatus": "candidate hero source; requires LOD or decimation before iPhone lock"
+  },
+  "assets": [
+    {
+      "path": "Assets/Mindstone/VFXV1/Extensions/beam-wraith-scream-v1/WraithScreamSpellExtension.cs",
+      "origin": "new-spell-private-extension"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/WraithScreamVolume.shader",
+      "origin": "new-spell-private-shader"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/WraithScreamSprite.shader",
+      "origin": "new-spell-private-shader"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/WraithScreamWave.shader",
+      "origin": "new-spell-private-shader",
+      "purpose": "soft, irregular paired acoustic pressure bands that move from the ghost mouth toward the target"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/WraithScreamMesh.shader",
+      "origin": "new-spell-private-shader",
+      "purpose": "transparent Meshy hero material with rim light, dissolve, and burst deformation"
+    },
+    {
+      "path": "ArtSource/Meshy/beam-wraith-scream-3d-v1/image.glb",
+      "origin": "meshy-image-to-3d",
+      "taskId": "01a03b36-8712-7f58-b4d7-646644b473cf",
+      "purpose": "preserved high-resolution source model for the wraith scream hero"
+    },
+    {
+      "path": "ArtSource/Meshy/beam-wraith-scream-3d-v1/image.fbx",
+      "origin": "meshy-image-to-3d",
+      "taskId": "01a03b36-8712-7f58-b4d7-646644b473cf",
+      "purpose": "Unity-importable Meshy hero model source"
+    },
+    {
+      "path": "ArtSource/Meshy/beam-wraith-scream-3d-v1/image_texture-0-base_color.png",
+      "origin": "meshy-image-to-3d",
+      "taskId": "01a03b36-8712-7f58-b4d7-646644b473cf",
+      "purpose": "Meshy base-color map used by the runtime hero material"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/Meshy/image.fbx",
+      "origin": "copied-from-meshy-source",
+      "source": "ArtSource/Meshy/beam-wraith-scream-3d-v1/image.fbx",
+      "purpose": "runtime Resources import for the Meshy hero"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/Meshy/image_texture-0-base_color.png",
+      "origin": "copied-from-meshy-source",
+      "source": "ArtSource/Meshy/beam-wraith-scream-3d-v1/image_texture-0-base_color.png",
+      "purpose": "runtime base-color map for the Meshy hero"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/WraithScreamFace-v1.png",
+      "origin": "generated-with-openai-imagegen",
+      "purpose": "front-facing humanoid screaming ghost face with transparent background; sampled into deterministic aggregation and source-burst particles"
+    },
+    {
+      "path": "Effects/HellHound/Texture/Shockwave",
+      "origin": "read-only-reused-project-resource"
+    },
+    {
+      "path": "Effects/Fool/Effekseer/MaskExplosion/Texture/smoke_tex",
+      "origin": "read-only-reused-effekseer-resource"
+    },
+    {
+      "path": "Effects/Fool/Effekseer/MaskExplosion/Texture/glow",
+      "origin": "read-only-reused-effekseer-resource"
+    },
+    {
+      "path": "Effects/Fool/Effekseer/TktkDarkRift/Parts/Distortion",
+      "origin": "read-only-reused-effekseer-resource"
+    },
+    {
+      "path": "Effects/Fool/Effekseer/TktkDarkRift/Parts/Line01",
+      "origin": "read-only-reused-effekseer-resource",
+      "purpose": "fine elongated source-face assembly and disintegration shards"
+    },
+    {
+      "path": "Effects/Fool/Effekseer/TktkDarkRift/Parts/Line6",
+      "origin": "read-only-reused-effekseer-resource",
+      "purpose": "high-frequency luminous filaments inside the acoustic pressure bands"
+    },
+    {
+      "path": "Effects/Fool/Effekseer/MaskExplosion/Texture/Particle01",
+      "origin": "read-only-reused-effekseer-resource",
+      "purpose": "ten-times-denser micro-fragment impact release"
+    },
+    {
+      "path": "Effects/Fool/Effekseer/MaskExplosion/Texture/aurora01",
+      "origin": "read-only-reused-effekseer-resource",
+      "purpose": "turbulent chromatic density within the irregular sound-wave mother shape"
+    },
+    {
+      "path": "Effects/Fool/Effekseer/MaskExplosion/Texture/Shock_wave_ring001_long",
+      "origin": "read-only-reused-effekseer-resource",
+      "purpose": "feathered non-circular pressure edge inside moving curved bands and broken asymmetric impact arcs"
+    },
+    {
+      "path": "Effects/Fool/Effekseer/TktkDarkRift/Dark2",
+      "origin": "read-only-reused-effekseer-effect",
+      "purpose": "small moving turbulence kernel embedded in the travelling scream"
+    }
+  ]
+}

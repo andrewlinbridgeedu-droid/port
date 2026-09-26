@@ -1,0 +1,10 @@
+using UnityEngine;
+// Pure presentation: owns no damage callbacks. Stopped with the combat session.
+public sealed class EarlyContactPolish20260921:MonoBehaviour {
+ LineRenderer[] lines;Material material;Transform recipient;bool core;float age;
+ public static void Play(Transform target,bool memory){if(!target)return;var g=new GameObject(memory?"Memory facets rupture":"Guard red crescent impact");g.AddComponent<EarlyContactPolish20260921>().Build(target,memory);}
+ void Build(Transform target,bool memory){recipient=target;core=memory;material=new Material(Resources.Load<Shader>("Mindstone/VFXV1/ArcanaFilament"));lines=new LineRenderer[core?7:5];for(int i=0;i<lines.Length;i++){var g=new GameObject("Independent impact ribbon");g.transform.SetParent(transform,false);var l=g.AddComponent<LineRenderer>();l.sharedMaterial=material;l.positionCount=28;l.useWorldSpace=true;l.numCapVertices=3;lines[i]=l;}Draw();}
+ void Update(){age+=Time.deltaTime;if(age>.65f||!recipient||!recipient.gameObject.activeInHierarchy){Destroy(gameObject);return;}Draw();}
+ void Draw(){var cam=Camera.main;if(!cam||!recipient)return;var r=cam.transform.right;var u=cam.transform.up;var f=cam.transform.forward;var center=recipient.position+Vector3.up*1.05f;float p=EnemyImpactEnvelope20260921.Sample(age/.65f),open=1-Mathf.Exp(-p*7),fade=Mathf.Pow(1-p,1.5f);for(int i=0;i<lines.Length;i++){var l=lines[i];for(int j=0;j<28;j++){float q=j/27f;Vector3 point;if(core){float a=i*2.39996f;var axis=r*Mathf.Cos(a)+u*Mathf.Sin(a);point=center+axis*(.12f+open*(.8f+i*.18f)+q*.55f)+f*Mathf.Sin(q*3+i)*.23f;}else{float a=(q-.5f)*2.1f+i*.36f;point=center+r*Mathf.Sin(a)*(1+open*1.9f)+u*(Mathf.Cos(a)*(.4f+open*.7f)-.65f+i*.13f)+f*Mathf.Sin(q*4+i)*.2f;}l.SetPosition(j,point);}l.widthMultiplier=(core?.16f:.24f)*fade;l.widthCurve=new AnimationCurve(new Keyframe(0,0),new Keyframe(.45f,1),new Keyframe(1,0));var c=core?new Color(.5f,.65f,1,fade):new Color(1,.15f,.035f,fade);l.startColor=c;l.endColor=new Color(1,.8f,.45f,fade*.3f);}}
+ void OnDestroy(){if(material)Destroy(material);}
+}

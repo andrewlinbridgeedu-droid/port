@@ -1,0 +1,355 @@
+{
+  "referenceWidth": 2048,
+  "referenceHeight": 1143,
+  "walkers": [
+    {
+      "id": "postman",
+      "name": "邮差",
+      "atlasName": "HarborPostmanWalkAtlas",
+      "route": [
+        [
+          805,
+          760
+        ],
+        [
+          940,
+          760
+        ]
+      ],
+      "secondsPerLeg": 8.0,
+      "phase": 0.15,
+      "frameDuration": 0.15,
+      "dialogue": "今天的信里有几封把收件人姓名刮掉了。若你在查通缉案，先去酒馆领卷宗，再来问我路线。"
+    },
+    {
+      "id": "courier",
+      "name": "信使",
+      "atlasName": "HarborCourierWalkAtlas",
+      "route": [
+        [
+          1395,
+          760
+        ],
+        [
+          1485,
+          760
+        ]
+      ],
+      "secondsPerLeg": 6.4,
+      "phase": 0.52,
+      "frameDuration": 0.14,
+      "dialogue": "东岸的货船昨夜绕过了报关钟。我只送信，不替人隐瞒船号。"
+    },
+    {
+      "id": "west-lane",
+      "name": "街坊",
+      "atlasName": "HarborArchiveApprenticeWalkAtlas",
+      "route": [
+        [
+          80,
+          1000
+        ],
+        [
+          135,
+          1000
+        ]
+      ],
+      "secondsPerLeg": 7.4,
+      "phase": 0.33,
+      "frameDuration": 0.18,
+      "dialogue": "旧街最近总有人找同一间空屋，可门牌已经换了。"
+    },
+    {
+      "id": "cafe-lane",
+      "name": "街坊",
+      "atlasName": "HarborCourierWalkAtlas",
+      "route": [
+        [
+          380,
+          1000
+        ],
+        [
+          440,
+          1000
+        ]
+      ],
+      "secondsPerLeg": 5.7,
+      "phase": 1.12,
+      "frameDuration": 0.17,
+      "dialogue": "咖啡馆的灯总比别家晚熄。里面的人听得见港口的钟。"
+    },
+    {
+      "id": "market-lane",
+      "name": "街坊",
+      "atlasName": "HarborFlowerSellerWalkAtlas",
+      "route": [
+        [
+          450,
+          840
+        ],
+        [
+          550,
+          840
+        ]
+      ],
+      "secondsPerLeg": 10.0,
+      "phase": 0.65,
+      "frameDuration": 0.24,
+      "dialogue": "花摊收工后，巷口还有脚步声；不像做买卖的人。"
+    },
+    {
+      "id": "clock-square",
+      "name": "街坊",
+      "atlasName": "HarborSailorWalkAtlas",
+      "route": [
+        [
+          1080,
+          760
+        ],
+        [
+          1150,
+          760
+        ]
+      ],
+      "secondsPerLeg": 9.2,
+      "phase": 0.92,
+      "frameDuration": 0.18,
+      "dialogue": "钟台的指针停过一次，街上的人却都说没看见。"
+    },
+    {
+      "id": "east-houses",
+      "name": "提灯人",
+      "atlasName": "HarborLamplighterWalkAtlas",
+      "route": [
+        [
+          1935,
+          720
+        ],
+        [
+          1995,
+          720
+        ]
+      ],
+      "secondsPerLeg": 5.2,
+      "phase": 0.06,
+      "frameDuration": 0.16,
+      "dialogue": "入夜后，右岸每盏灯都有人点。昨夜有一盏被人提前熄了，我记得位置。"
+    },
+    {
+      "id": "upper-road",
+      "name": "街坊",
+      "atlasName": "HarborLamplighterWalkAtlas",
+      "route": [
+        [
+          1410,
+          380
+        ],
+        [
+          1545,
+          380
+        ]
+      ],
+      "secondsPerLeg": 8.8,
+      "phase": 1.35,
+      "frameDuration": 0.18,
+      "dialogue": "上坡的守卫今天查得很细，连空箱子也要开。"
+    },
+    {
+      "id": "south-quay",
+      "name": "街坊",
+      "atlasName": "HarborArchiveApprenticeWalkAtlas",
+      "route": [
+        [
+          1290,
+          1000
+        ],
+        [
+          1400,
+          1000
+        ]
+      ],
+      "secondsPerLeg": 8.6,
+      "phase": 0.84,
+      "frameDuration": 0.17,
+      "dialogue": "码头账本少了两页。搬货的人不会自己撕掉工资记录。"
+    },
+    {
+      "id": "cathedral-road",
+      "name": "街坊",
+      "atlasName": "HarborCourierWalkAtlas",
+      "route": [
+        [
+          1460,
+          250
+        ],
+        [
+          1535,
+          250
+        ]
+      ],
+      "secondsPerLeg": 10.2,
+      "phase": 0.26,
+      "frameDuration": 0.24,
+      "dialogue": "教会收留过一名伤者；他的姓名至今没有写进登记簿。"
+    },
+    {
+      "id": "flower-seller-walk",
+      "name": "花商",
+      "atlasName": "HarborFlowerSellerWalkAtlas",
+      "route": [
+        [
+          560,
+          880
+        ],
+        [
+          620,
+          880
+        ]
+      ],
+      "secondsPerLeg": 5.8,
+      "phase": 0.41,
+      "frameDuration": 0.17,
+      "dialogue": "白天的紫藤会指向旧街；夜里要看靴底的花粉。"
+    },
+    {
+      "id": "sailor-walk",
+      "name": "水手",
+      "atlasName": "HarborSailorWalkAtlas",
+      "route": [
+        [
+          1360,
+          440
+        ],
+        [
+          1460,
+          440
+        ]
+      ],
+      "secondsPerLeg": 7.3,
+      "phase": 0.67,
+      "frameDuration": 0.16,
+      "dialogue": "有船靠过岸却没敲钟。船上人下船前，把航海图卷了起来。"
+    },
+    {
+      "id": "archive-apprentice-walk",
+      "name": "档案学徒",
+      "atlasName": "HarborArchiveApprenticeWalkAtlas",
+      "route": [
+        [
+          980,
+          1080
+        ],
+        [
+          1050,
+          1080
+        ]
+      ],
+      "secondsPerLeg": 8.0,
+      "phase": 1.21,
+      "frameDuration": 0.17,
+      "dialogue": "我在旧档案里看见两份同日签发的通缉令。日期相同，纸却不同。"
+    }
+  ],
+  "residents": [
+    {
+      "id": "cafe_keeper",
+      "name": "咖啡馆店主",
+      "artName": "HarborNPCCafeKeeper",
+      "point": [
+        240,
+        1060
+      ],
+      "dialogue": "咖啡馆里有人留下一只没喝完的杯子。要查它，先把相关委托接下来。"
+    },
+    {
+      "id": "street_warden",
+      "name": "巡街人",
+      "artName": "HarborNPCStreetWarden",
+      "point": [
+        475,
+        950
+      ],
+      "dialogue": "街面有线索，也有谣言。带着正式通缉卷宗来，我才会说巡逻记录。"
+    },
+    {
+      "id": "florist",
+      "name": "花商",
+      "artName": "HarborNPCFlorist",
+      "point": [
+        700,
+        840
+      ],
+      "dialogue": "紫藤的花瓣能被风吹远，沾在靴底的泥却不会。"
+    },
+    {
+      "id": "musician",
+      "name": "街头乐师",
+      "artName": "HarborNPCMusician",
+      "point": [
+        780,
+        840
+      ],
+      "dialogue": "昨夜钟响三下时，我听见码头那边有人喊停船。"
+    },
+    {
+      "id": "baker",
+      "name": "面包师",
+      "artName": "HarborNPCBaker",
+      "point": [
+        885,
+        680
+      ],
+      "dialogue": "天亮前有人买了整袋硬面包，说是给船上的人。"
+    },
+    {
+      "id": "scholar",
+      "name": "学者",
+      "artName": "HarborNPCScholar",
+      "point": [
+        1040,
+        840
+      ],
+      "dialogue": "同一枚印章有两种磨损。你在档案里看到的未必是原件。"
+    },
+    {
+      "id": "dockworker",
+      "name": "码头工人",
+      "artName": "HarborNPCDockworker",
+      "point": [
+        1200,
+        1000
+      ],
+      "dialogue": "货箱只要换个封条，就能从正门走出去。"
+    },
+    {
+      "id": "merchant",
+      "name": "商人",
+      "artName": "HarborNPCMerchant",
+      "point": [
+        1420,
+        760
+      ],
+      "dialogue": "我认得货物，不一定认得运货的人。先拿出委托再谈。"
+    },
+    {
+      "id": "clockmaker",
+      "name": "钟表匠",
+      "artName": "HarborNPCClockmaker",
+      "point": [
+        1500,
+        520
+      ],
+      "dialogue": "钟针不会自己倒转。有人碰过钟台里的齿轮。"
+    },
+    {
+      "id": "visitor",
+      "name": "旅人",
+      "artName": "HarborNPCVisitor",
+      "point": [
+        1500,
+        320
+      ],
+      "dialogue": "这座城真美，可每个人提到旧港区时都会压低声音。"
+    }
+  ]
+}

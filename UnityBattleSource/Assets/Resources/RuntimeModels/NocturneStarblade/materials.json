@@ -1,0 +1,40 @@
+{
+  "materials": [
+    {
+      "name": "Material_1",
+      "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "painted": true
+    },
+    {
+      "name": "Royal plum silk",
+      "color": [
+        0.10499999672174454,
+        0.02500000037252903,
+        0.2199999988079071,
+        1.0
+      ],
+      "metallic": 0.0,
+      "roughness": 0.5799999833106995,
+      "painted": false
+    },
+    {
+      "name": "Antique gold embroidery",
+      "color": [
+        0.5299999713897705,
+        0.30000001192092896,
+        0.08500000089406967,
+        1.0
+      ],
+      "metallic": 0.7799999713897705,
+      "roughness": 0.3199999928474426,
+      "painted": false
+    }
+  ]
+}

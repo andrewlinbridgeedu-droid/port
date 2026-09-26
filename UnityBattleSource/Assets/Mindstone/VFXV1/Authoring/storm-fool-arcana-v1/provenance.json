@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "spell": "storm-fool-arcana-v1",
+  "brief": "Blender authored volumetric spiral mesh; actual Fool model casting a violet black tornado with gold tarot shards, debris and lightning.",
+  "preset": "storm",
+  "owner": "mindstone-create-spell-vfx",
+  "assets": [
+    {
+      "path": "ArtSource/FoolArcanaTempest/FoolArcanaTempest.blend",
+      "origin": "Blender 5.2 procedural mesh modeling",
+      "purpose": "Eleven independently editable helical wind surfaces; exported as FBX"
+    },
+    {
+      "path": "UnityBattleSource/Assets/Models/Fool",
+      "origin": "existing-game-model",
+      "purpose": "actual Fool rig, texture and spell cast animation"
+    }
+  ]
+}

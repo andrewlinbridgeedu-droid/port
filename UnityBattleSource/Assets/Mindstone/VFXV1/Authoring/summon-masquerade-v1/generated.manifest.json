@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "owner": "mindstone-create-spell-vfx",
+  "spell": "summon-masquerade-v1",
+  "files": {
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/summon-masquerade-v1/spell.json": "3beb10140269b37f4d1288d3cedb2682dfbc1ba690105b3819110bf93ca74e42",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Registry/summon-masquerade-v1.json": "cb9e1b1d1c1f5aaaa773c7ad94b3f0d4979d0f06d632acd318c509e2e0e9715a",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Authoring/summon-masquerade-v1/provenance.json": "cfb4d697791a1d02a0281766f3baa34e3d43eecd2208890ab7cb70687684a10d",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/summon-masquerade-v1/MasqueradePhantom.cs": "30d76d377da20d32820b2fa1fabf89034677852a3c3d3a1145d29720eacb2020",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/summon-masquerade-v1/MasqueradeRitual.cs": "22345378b7a1b3690b95ea1b28972e219b90a45bf092064f222cba562ec51356",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/MasqueradeGhost.shader": "1e332e7f03074a8599e225b8e10eb62e45342934a3eb035f4a8e36b783203e97"
+  }
+}

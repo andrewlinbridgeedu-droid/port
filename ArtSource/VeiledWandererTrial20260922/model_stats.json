@@ -1,0 +1,9 @@
+{
+  "objects": 1730,
+  "mesh_objects": 1432,
+  "curve_objects": 298,
+  "has_armature": false,
+  "reference": "reference.png",
+  "status": "Blender authored trial; back inferred; no game integration",
+  "evaluated_triangles": 644076
+}

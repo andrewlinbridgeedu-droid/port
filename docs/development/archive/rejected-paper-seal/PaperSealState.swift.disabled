@@ -1,0 +1,69 @@
+import Foundation
+
+/// The result of attempting to apply the seal ward's control effect.
+public enum PaperSealOutcome: String, Codable, Equatable, Sendable {
+    /// The paper person signed this seal. No seal duration was applied.
+    case intercepted
+    /// The seal was applied to the player.
+    case applied
+}
+
+/// Per-combat state for the paper person's one-use seal substitution.
+///
+/// This type only models the control effect. It does not alter damage, health,
+/// or any masquerade/mask mitigation state.
+public struct PaperSealState: Codable, Equatable, Sendable {
+    public let isEquipped: Bool
+    public private(set) var hasSealSubstitution: Bool
+    public private(set) var remainingSealDuration: TimeInterval
+
+    public init(
+        isEquipped: Bool = false,
+        hasSealSubstitution: Bool? = nil,
+        remainingSealDuration: TimeInterval = 0
+    ) {
+        precondition(remainingSealDuration >= 0)
+        self.isEquipped = isEquipped
+        self.hasSealSubstitution = hasSealSubstitution ?? isEquipped
+        self.remainingSealDuration = remainingSealDuration
+    }
+
+    /// Whether the player's skills are currently disabled by a seal.
+    public var skillsAreDisabled: Bool {
+        remainingSealDuration > 0
+    }
+
+    /// Basic attacks remain available while a seal is active.
+    public var canUseBasicAttack: Bool {
+        true
+    }
+
+    /// Attempts to apply a seal, consuming the paper person's substitution if
+    /// it is equipped and still available in this combat.
+    @discardableResult
+    public mutating func applySeal(durationSeconds: TimeInterval) -> PaperSealOutcome {
+        precondition(durationSeconds >= 0)
+
+        if isEquipped, hasSealSubstitution {
+            hasSealSubstitution = false
+            return .intercepted
+        }
+
+        remainingSealDuration = durationSeconds
+        return .applied
+    }
+
+    /// Advances the active seal by a non-negative amount of real time.
+    public mutating func advance(delta: TimeInterval) {
+        precondition(delta >= 0)
+        remainingSealDuration = max(0, remainingSealDuration - delta)
+    }
+
+    /// Starts a fresh combat while retaining whether the relic is equipped.
+    /// Loading a serialized state must use `Codable` directly and does not call
+    /// this method, so loading never refreshes the consumed substitution.
+    public mutating func resetForNewBattle() {
+        hasSealSubstitution = isEquipped
+        remainingSealDuration = 0
+    }
+}

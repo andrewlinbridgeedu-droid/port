@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "spell": "projectile-fog-chime-v1",
+  "status": "candidate",
+  "captureTimes": [
+    0.12,
+    0.42,
+    0.76,
+    1.02,
+    1.42
+  ],
+  "frames": [
+    "stage-1.png",
+    "stage-2.png",
+    "stage-3.png",
+    "stage-4.png",
+    "stage-5.png"
+  ]
+}

@@ -1,0 +1,263 @@
+{
+  "scope": "Design consistency and arithmetic only. No combat simulation, implementation, or phone acceptance.",
+  "checks": [
+    {
+      "check": "16 unique chapter models, including one hero and one new boss",
+      "passed": true
+    },
+    {
+      "check": "30 consecutive unique main quests",
+      "passed": true
+    },
+    {
+      "check": "all enemy references use budgeted models",
+      "passed": true
+    },
+    {
+      "check": "all 15 enemy models have a chapter role",
+      "passed": true
+    },
+    {
+      "check": "Q1–15 accepted enemy rosters preserved",
+      "passed": true
+    },
+    {
+      "check": "Q16–30 revised roster exact",
+      "passed": true
+    },
+    {
+      "check": "Q16–30 approved Pro titles preserved",
+      "passed": true
+    },
+    {
+      "check": "boss narrative phases preserved",
+      "passed": true
+    },
+    {
+      "check": "same boss appears Q28/29/30",
+      "passed": true
+    },
+    {
+      "check": "recurring entities follow approved encounters",
+      "passed": true
+    },
+    {
+      "check": "recurring entities use valid models and no more than three encounters",
+      "passed": true
+    },
+    {
+      "check": "evidence obtained before first boss",
+      "passed": true
+    },
+    {
+      "check": "five cycles on first two encounters; only final kills",
+      "passed": true
+    },
+    {
+      "check": "talents follow moved events",
+      "passed": true
+    },
+    {
+      "check": "one-body three-phase boss truly dies, old three endings retired",
+      "passed": true
+    },
+    {
+      "check": "rescue remains real and departure preserves progression",
+      "passed": true
+    },
+    {
+      "check": "breathing bag remains an unvalidated candidate",
+      "passed": true
+    },
+    {
+      "check": "no main quest XP",
+      "passed": true
+    },
+    {
+      "check": "skill grant timing preserved",
+      "passed": true
+    },
+    {
+      "check": "planned relic path available before Q5 without new base defense",
+      "passed": true
+    },
+    {
+      "check": "no tower completion prerequisite for promotion",
+      "passed": true
+    },
+    {
+      "check": "at least 8 relic contracts with anomaly downsides",
+      "passed": true
+    },
+    {
+      "check": "main mission money nonnegative",
+      "passed": true
+    },
+    {
+      "check": "main income matches declared total",
+      "passed": true
+    },
+    {
+      "check": "talents match new design ceiling",
+      "passed": true
+    },
+    {
+      "check": "full talent build before final encounter",
+      "passed": true
+    },
+    {
+      "check": "promotion bill matches itemized sum",
+      "passed": true
+    },
+    {
+      "check": "mandatory purchases affordable at each proposed purchase node",
+      "passed": true
+    },
+    {
+      "check": "tower samples only use seven available masters",
+      "passed": true
+    },
+    {
+      "check": "tower sample waves at most four enemies",
+      "passed": true
+    },
+    {
+      "check": "one healing source per floor sample",
+      "passed": true
+    },
+    {
+      "check": "all seven masters represented across samples",
+      "passed": true
+    },
+    {
+      "check": "tower covers each floor 1–100 once",
+      "passed": true
+    },
+    {
+      "check": "six user-supplied demon masters plus reused hound",
+      "passed": true
+    },
+    {
+      "check": "tower first-clear copper 1700 and merit 320",
+      "passed": true
+    },
+    {
+      "check": "six bounty cases and six underground cases",
+      "passed": true
+    },
+    {
+      "check": "side income 1220 and bounty merit 132",
+      "passed": true
+    },
+    {
+      "check": "no undeclared bounty combat models",
+      "passed": true
+    },
+    {
+      "check": "repeat work accessible without copper or relic",
+      "passed": true
+    },
+    {
+      "check": "borrowed assets cannot be sold, dismantled, or pledged",
+      "passed": true
+    },
+    {
+      "check": "loan payment never reduces earned merit tier",
+      "passed": true
+    },
+    {
+      "check": "new contracts spend copper, not merit, for three battles",
+      "passed": true
+    },
+    {
+      "check": "rent is never refunded and ordinary wear cannot shrink escrow",
+      "passed": true
+    },
+    {
+      "check": "refund not greater than paid deposit",
+      "passed": true
+    },
+    {
+      "check": "all eight loanable relics have one price row",
+      "passed": true
+    },
+    {
+      "check": "deposit and rent follow the approved copper formula",
+      "passed": true
+    },
+    {
+      "check": "mask is never loanable",
+      "passed": true
+    },
+    {
+      "check": "repair then sell cannot earn copper at any durability",
+      "passed": true
+    },
+    {
+      "check": "nonnegative planned budget: main_only",
+      "passed": true
+    },
+    {
+      "check": "nonnegative planned budget: main_one_relic",
+      "passed": true
+    },
+    {
+      "check": "nonnegative planned budget: all_side_three_relics",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "main_copper": 2280,
+  "promotion_copper": 1360,
+  "purchase_node_balances": [
+    {
+      "item": "mirrorMothScale",
+      "q": 17,
+      "balance": 500
+    },
+    {
+      "item": "reverseClockEssence",
+      "q": 20,
+      "balance": 400
+    },
+    {
+      "item": "ownerlessMaskWax",
+      "q": 23,
+      "balance": 220
+    },
+    {
+      "item": "ritual_fee",
+      "q": 30,
+      "balance": 920
+    }
+  ],
+  "talent_total": 30,
+  "budget_scenarios": [
+    {
+      "name": "main_only",
+      "opening": 0,
+      "side_income": 0,
+      "other_spend": 0,
+      "closing_copper": 920
+    },
+    {
+      "name": "main_one_relic",
+      "opening": 0,
+      "side_income": 0,
+      "other_spend": 330,
+      "closing_copper": 590
+    },
+    {
+      "name": "all_side_three_relics",
+      "opening": 0,
+      "side_income": 1220,
+      "other_spend": 1330,
+      "closing_copper": 810
+    }
+  ],
+  "zero_wallet_full_promotion_recovery_jobs": 34,
+  "recovery_minutes": [
+    68,
+    102
+  ]
+}

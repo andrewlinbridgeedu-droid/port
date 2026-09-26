@@ -1,0 +1,104 @@
+{
+  "schema": 1,
+  "spell": "storm-verdant-vortex-v1",
+  "brief": "以用户提供的完整凤凰 FBX 为核心的商业级火焰凤凰扑击：静态模型在 Unity 内按包围盒归一化，使用 Shader 驱动同一网格的翅膀摆动与展开；凤凰从小到大沿攻击路径飞向目标，命中后切换到金橙火焰闪光和粒子化爆炸，不使用旋风、漏斗或风环。保持敌人渲染可见，不改变伤害或回合逻辑。",
+  "preset": "projectile",
+  "owner": "mindstone-create-spell-vfx",
+  "assets": [
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/storm-frost-tornado-v1/FrostAssetSprite.shader",
+      "origin": "existing-project-resource",
+      "purpose": "recolour and organic-edge mask for reused Effekseer sprite materials"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/SnowstormOfficial/Texture/blue_fire",
+      "origin": "existing-effekseer-material",
+      "purpose": "retained Effekseer source for compatibility; no vortex body is rendered by the active Phoenix spell"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/FrostStormImpact/Texture/Wind",
+      "origin": "existing-effekseer-material",
+      "purpose": "retained Effekseer source; no directional wind, funnel, or ring is rendered by the active Phoenix spell"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/FrostStormImpact/Texture/Fire_Single",
+      "origin": "existing-effekseer-material",
+      "purpose": "short fire wake, flame petals, and warm impact detail"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/SnowstormOfficial/Texture/Burst01_2",
+      "origin": "existing-effekseer-material",
+      "purpose": "gold-orange contact flash and release accent"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/storm-verdant-vortex-v1/Phoenix/MeshyPhoenix.fbx",
+      "origin": "user-supplied-static-model",
+      "purpose": "complete phoenix hero mesh; kept as one coherent runtime renderer"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/storm-verdant-vortex-v1/Phoenix/MeshyPhoenix_BaseColor.png",
+      "origin": "user-supplied-texture-map",
+      "purpose": "phoenix base-color and feather detail"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/storm-verdant-vortex-v1/Phoenix/MeshyPhoenix_Normal.png",
+      "origin": "user-supplied-texture-map",
+      "purpose": "phoenix normal detail used by the runtime mesh shader"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/storm-verdant-vortex-v1/Phoenix/MeshyPhoenix_Metallic.png",
+      "origin": "user-supplied-texture-map",
+      "purpose": "phoenix metallic response used by the runtime mesh shader"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/storm-verdant-vortex-v1/Phoenix/MeshyPhoenix_Roughness.png",
+      "origin": "user-supplied-texture-map",
+      "purpose": "phoenix roughness response used by the runtime mesh shader"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/storm-verdant-vortex-v1/Phoenix/PhoenixSpellMesh.shader",
+      "origin": "spell-specific-authored-runtime",
+      "purpose": "gold fire material, normal-map response, fresnel and engine-side wing deformation"
+    },
+    {
+      "path": "Assets/Mindstone/VFXV1/Extensions/storm-verdant-vortex-v1/PhoenixMeshRuntime.cs",
+      "origin": "spell-specific-authored-runtime",
+      "purpose": "loads and centers the static FBX, fits it to the spell, drives wing motion and cleans up runtime materials"
+    },
+    {
+      "path": "Assets/Resources/Effects/HellHound/FireOnly",
+      "origin": "existing-effekseer-effect",
+      "purpose": "confirmed-rendering luminous contact core, recoloured green"
+    },
+    {
+      "path": "Assets/Resources/Shaders/MistportWildRibbon.shader",
+      "origin": "existing-project-resource",
+      "purpose": "preserved source asset; not used by the active Effekseer composition"
+    },
+    {
+      "path": "Assets/Resources/Shaders/MistportFrontRibbon.shader",
+      "origin": "existing-project-resource",
+      "purpose": "preserved source asset; not used by the active Effekseer composition"
+    },
+    {
+      "path": "Effects/HellHound/Texture/ExperimentalNoise",
+      "origin": "existing-project-resource",
+      "purpose": "preserved source asset; not used by the active Effekseer composition"
+    },
+    {
+      "path": "storm-verdant-vortex-v1/VerdantVortexSpellExtension.cs",
+      "origin": "spell-specific-authored-runtime",
+      "purpose": "preserved earlier candidate runtime; not referenced by the active spell spec"
+    },
+    {
+      "path": "storm-verdant-vortex-v1/VerdantEffekseerSpellExtension.cs",
+      "origin": "spell-specific-authored-runtime",
+      "purpose": "deterministic Phoenix-only travel, fire wake, impact flash, particle release, short camera impulse, decay and cleanup"
+    },
+    {
+      "path": "",
+      "origin": "procedural-runtime",
+      "purpose": "deterministic radial fire particles after the complete phoenix mesh reaches the target"
+    }
+  ]
+}

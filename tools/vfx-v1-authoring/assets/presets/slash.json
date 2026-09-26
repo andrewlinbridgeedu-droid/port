@@ -1,0 +1,14 @@
+{
+  "archetype": "slash",
+  "timeline": {"windup": 0.16, "travel": 0.62, "impact": 0.22, "decay": 0.44},
+  "behavior": {"path": "bezier", "arcHeight": 0.18, "startScale": 0.65, "endScale": 1.45, "impactScale": 1.7, "tracking": 1.0, "beamWidth": 0.0, "orbitRadius": 0.0, "spinDegrees": -25.0, "extensionType": ""},
+  "layers": [
+    {"name": "blade-body", "backend": "spriteSequence", "asset": "Effects/HellHound/Texture/Generated/SwordQi_Slash", "role": "core", "anchor": "motion", "start": 0.02, "end": 0.68, "color": [1.0, 0.32, 0.04, 1.0], "scale": [2.2, 0.92, 1.0], "startScale": 0.5, "endScale": 1.2, "width": 0.18, "pointCount": 20, "renderQueue": 3460, "sortingOrder": 3, "seedOffset": 13, "fps": 18.0, "loop": false, "faceCamera": true, "frontOfTarget": false, "extensionType": ""},
+    {"name": "blade-echo", "backend": "spriteSequence", "asset": "Effects/HellHound/Texture/Generated/SwordQi_Slash", "role": "direction", "anchor": "motion", "start": 0.04, "end": 0.62, "color": [0.90, 0.10, 0.02, 0.56], "scale": [2.45, 1.05, 1.0], "startScale": 0.45, "endScale": 1.15, "width": 0.18, "pointCount": 20, "renderQueue": 3430, "sortingOrder": 2, "seedOffset": 15, "fps": 18.0, "loop": false, "faceCamera": true, "frontOfTarget": false, "extensionType": ""},
+    {"name": "blade-trail", "backend": "ribbon", "asset": "", "role": "trail", "anchor": "motion", "start": 0.04, "end": 0.73, "color": [1.0, 0.72, 0.22, 0.8], "scale": [1.0, 1.0, 1.0], "startScale": 1.0, "endScale": 1.0, "width": 0.12, "pointCount": 28, "renderQueue": 3420, "sortingOrder": 1, "seedOffset": 17, "fps": 24.0, "loop": false, "faceCamera": true, "frontOfTarget": false, "extensionType": ""},
+    {"name": "contact", "backend": "effekseer", "asset": "Effects/Mistport/Official/Slashing/effect", "role": "impact-front", "anchor": "impact", "start": 0.52, "end": 1.0, "color": [1.0, 0.50, 0.08, 1.0], "scale": [1.3, 1.3, 1.3], "startScale": 0.6, "endScale": 1.6, "width": 0.16, "pointCount": 18, "renderQueue": 4230, "sortingOrder": 9, "seedOffset": 29, "fps": 24.0, "loop": false, "faceCamera": true, "frontOfTarget": true, "extensionType": ""}
+  ],
+  "capture": {"times": [0.10, 0.42, 0.72, 0.96, 1.34], "device": "iPhone 13", "targetFps": 60},
+  "cleanupSeconds": 0.3,
+  "showcase": {"sourceActor": "clockguard", "source": [-3.45, 1.65, 3.8], "target": [-3.45, 0.66, 3.8]}
+}

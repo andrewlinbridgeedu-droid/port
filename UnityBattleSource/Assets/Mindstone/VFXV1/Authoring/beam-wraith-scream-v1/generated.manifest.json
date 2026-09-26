@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "owner": "mindstone-create-spell-vfx",
+  "spell": "beam-wraith-scream-v1",
+  "files": {
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/spell.json": "e640417d963c9c52ef26e79c9797e19fe9a1a7b31bcf967bbfe083c8be79fadb",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Registry/beam-wraith-scream-v1.json": "33fea6a1d422569106030a77c43d8d4e860a0e0462f49dfb9bf6f240c7be4057",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Authoring/beam-wraith-scream-v1/provenance.json": "a167875e332fcff4a7f2e4ff04e20cff39d70229563c1f57fb5522d0b47b3d08",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/beam-wraith-scream-v1/WraithScreamSpellExtension.cs": "7d7e52b7f2dd976531b6b238342d11d6502a9bf1d22b38412fa229a16922e034",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/WraithScreamVolume.shader": "9c927815f71dcba2fecc10a62bcd29a9cb423e0127710c03ad5240a37e4df60b",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/WraithScreamSprite.shader": "1ed51c1b8512274cf245783b997d7b89b6e72827d7997bf8dced7cf1047533a5",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/WraithScreamWave.shader": "fd083bb1f47e8b30b609d9d3573c1bb1f4002ea4c800cf3840cc69be4f478cf7",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/WraithScreamFace-v1.png": "252deab602dce22fe4571762791908924a83c6068fff6875ba2ce00133be8397",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/WraithScreamFace-v1.png.meta": "b09263d0ea2da99ef4f5e392f97baf57bf4338fa44d4c40b079340e4f92173be",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/WraithScreamMesh.shader": "c2cf52572693d90ce98c59238c2096b4d91668a06ec7b54649482530587d14b6",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/Meshy/image.fbx": "086a943f631a032a609deaa1244e52d224ca0687fbb33a3f544b88c9ddfc8c58",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/beam-wraith-scream-v1/Meshy/image_texture-0-base_color.png": "a56fffd4d1a8481c8841f4d216ff6b10c8e37d8bb05967b5544f2486296d3345",
+    "ArtSource/Meshy/beam-wraith-scream-3d-v1/image.glb": "80eb4b778e81cd6638db13bc7ec7f7383d131593d1df97fc69fe029247591426",
+    "ArtSource/Meshy/beam-wraith-scream-3d-v1/image.fbx": "086a943f631a032a609deaa1244e52d224ca0687fbb33a3f544b88c9ddfc8c58",
+    "ArtSource/Meshy/beam-wraith-scream-3d-v1/image_texture-0-base_color.png": "a56fffd4d1a8481c8841f4d216ff6b10c8e37d8bb05967b5544f2486296d3345",
+    "ArtSource/Meshy/beam-wraith-scream-3d-v1/image_thumbnail.png": "dfc442f956291564c1311cb6cd09560ec7a9442cebf005227862d08b6ce4b629",
+    "ArtSource/Meshy/beam-wraith-scream-3d-v1/meshy-manifest.json": "663cfe3f07dbf02f524909fda02e7b88cca026c48a86dc1887d85abe5233e948"
+  }
+}

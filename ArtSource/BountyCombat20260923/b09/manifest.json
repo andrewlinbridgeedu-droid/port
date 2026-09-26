@@ -1,0 +1,42 @@
+{
+  "id": "b09",
+  "source": "/Users/andrewlin/Downloads/DEV_Projects/mindstone-game/ArtSource/CopperbackBounty20260922/textured-v1/Copperback_Guardian_Textured_v1.glb",
+  "original_triangles": 1723716,
+  "mobile_triangles": 49999,
+  "bones": 18,
+  "clips": {
+    "Idle": [
+      1,
+      121
+    ],
+    "Charge": [
+      122,
+      166
+    ],
+    "Cast": [
+      167,
+      196
+    ],
+    "Hit": [
+      197,
+      208
+    ],
+    "Death": [
+      209,
+      244
+    ],
+    "Charge2": [
+      245,
+      289
+    ],
+    "Cast2": [
+      290,
+      319
+    ],
+    "Retreat": [
+      320,
+      359
+    ]
+  },
+  "source_bytes": 93945580
+}

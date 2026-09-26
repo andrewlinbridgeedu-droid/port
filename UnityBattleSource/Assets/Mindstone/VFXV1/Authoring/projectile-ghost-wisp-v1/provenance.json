@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "spell": "projectile-ghost-wisp-v1",
+  "brief": "紫色幽灵召唤三颗紫罗兰鬼火，交错追踪主角并先后炸成细碎幽光",
+  "preset": "projectile",
+  "owner": "mindstone-create-spell-vfx",
+  "assets": [
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/ArcanaFilament.shader",
+      "origin": "existing-project-resource-read-only"
+    },
+    {
+      "path": "Assets/Mindstone/VFXV1/Extensions/projectile-ghost-wisp-v1/GhostWisp.cs",
+      "origin": "procedural-runtime-authored"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/ArcanaBurst.shader",
+      "origin": "existing-project-resource-read-only"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "version": "v0.2-reference-only",
+  "production_ready": false,
+  "unity_project_modified": false,
+  "timing_profile": "synthetic_v0_1_NOT_Unity",
+  "mask_ruleset": "proposal_v01_partial_NOT_APPROVED",
+  "talent_combat_hooks_implemented": 0,
+  "talent_state_core_implemented": true,
+  "unity_ui_implemented": false,
+  "actual_legacy_save_adapter_implemented": false,
+  "combat_relics_supported": [
+    "R01",
+    "R02",
+    "R04",
+    "R05",
+    "R17",
+    "R18"
+  ],
+  "unknown_active_relics": "fail_fast",
+  "inert_relics_in_historical_wrong_examples": "explicit_opt_in_and_logged"
+}

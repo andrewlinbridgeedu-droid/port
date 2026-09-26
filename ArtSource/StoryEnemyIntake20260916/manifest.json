@@ -1,0 +1,99 @@
+[
+  {
+    "name": "Iron_Star_Sentinel_0916094930",
+    "vertices": 1028572,
+    "triangles": 1933436,
+    "meshes": 1,
+    "armatures": 0,
+    "bounds": [
+      1.2619209289550781,
+      1.0248699188232422,
+      1.899245023727417
+    ],
+    "source": "/Users/andrewlin/Downloads/Meshy_AI_Iron_Star_Sentinel_0916094930_texture.glb",
+    "sha256": "3bc2077d6e5933a510e42bee4e46c0184c2d6423c64545ce5ac58e8c7f19896c",
+    "bytes": 132797192,
+    "status": "reserve",
+    "plannedMissions": [],
+    "integrated": false
+  },
+  {
+    "name": "Iron_Vanguard_0916102127",
+    "vertices": 632498,
+    "triangles": 1195936,
+    "meshes": 1,
+    "armatures": 0,
+    "bounds": [
+      1.3972549438476562,
+      0.835578978061676,
+      1.9000309705734253
+    ],
+    "source": "/Users/andrewlin/Downloads/Meshy_AI_Iron_Vanguard_0916102127_texture.glb",
+    "sha256": "05a56760edf84b75004c123e672619fcbca3928d99a0153478dcff5748e6c86d",
+    "bytes": 104307504,
+    "status": "reserve",
+    "plannedMissions": [],
+    "integrated": false
+  },
+  {
+    "name": "Ironclad_Sentinel_0916101320",
+    "vertices": 1396221,
+    "triangles": 2554054,
+    "meshes": 1,
+    "armatures": 0,
+    "bounds": [
+      0.9225139617919922,
+      0.7115030288696289,
+      1.9022819995880127
+    ],
+    "source": "/Users/andrewlin/Downloads/Meshy_AI_Ironclad_Sentinel_0916101320_texture.glb",
+    "sha256": "4f522a85b7b22cdb14904eda0785efd376988a2642ee4b7771d20bf781403066",
+    "bytes": 144752820,
+    "status": "superseded_source_deleted_user_authorized",
+    "plannedMissions": [],
+    "integrated": false,
+    "replacement": "ArtSource/CodexExecutor20260916/CodexExecutor_Combat.glb"
+  },
+  {
+    "name": "The_Burdened_Brawler_0916102202",
+    "vertices": 902817,
+    "triangles": 1716672,
+    "meshes": 1,
+    "armatures": 0,
+    "bounds": [
+      1.0834319591522217,
+      1.1473619937896729,
+      1.9007749557495117
+    ],
+    "source": "/Users/andrewlin/Downloads/Meshy_AI_The_Burdened_Brawler_0916102202_texture.glb",
+    "sha256": "b2a52eab8e56f9cde60a283557955b78e311c9dae116b2b59306dd166e5a10df",
+    "bytes": 113374940,
+    "status": "selected",
+    "plannedMissions": [
+      13
+    ],
+    "integrated": false
+  },
+  {
+    "name": "The_Marionette_Schola_0916102225",
+    "vertices": 1005940,
+    "triangles": 1802396,
+    "meshes": 1,
+    "armatures": 0,
+    "bounds": [
+      1.0654239654541016,
+      0.6960099935531616,
+      1.9040910005569458
+    ],
+    "source": "/Users/andrewlin/Downloads/Meshy_AI_The_Marionette_Schola_0916102225_texture.glb",
+    "sha256": "51d088c4f2bfca352b05f34de6fcfd2894df189630210a1af04d2698da85ed96",
+    "bytes": 104472556,
+    "status": "selected",
+    "plannedMissions": [
+      9,
+      12,
+      14
+    ],
+    "integrated": false
+  }
+]

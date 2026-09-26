@@ -1,0 +1,25 @@
+{
+  "case": "b08",
+  "vertices": 45166,
+  "weighted": 45166,
+  "influences": {
+    "Root": 0,
+    "Pelvis": 14380,
+    "Chest": 35600,
+    "Head": 23447,
+    "UpperArm.L": 1255,
+    "Forearm.L": 994,
+    "Hand.L": 0,
+    "UpperArm.R": 1537,
+    "Forearm.R": 1462,
+    "Hand.R": 0,
+    "Coat.L": 364,
+    "Coat.R": 418,
+    "Thigh.L": 1197,
+    "Shin.L": 1371,
+    "Foot.L": 809,
+    "Thigh.R": 2994,
+    "Shin.R": 3176,
+    "Foot.R": 1328
+  }
+}

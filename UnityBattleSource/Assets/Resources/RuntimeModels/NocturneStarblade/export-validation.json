@@ -1,0 +1,30 @@
+{
+  "source": "Meshy_AI_Nocturne_Starblade_biped.zip + approved ribbon morphs",
+  "vertices": 47779,
+  "ribbons": [
+    {
+      "name": "FoolRibbonLeft",
+      "shape_keys": [
+        "Basis",
+        "Wind cosine",
+        "Wind sine",
+        "Edge curl cosine",
+        "Edge curl sine"
+      ],
+      "pinned_vertices": 228,
+      "max_anchor_delta": 0.0
+    },
+    {
+      "name": "FoolRibbonRight",
+      "shape_keys": [
+        "Basis",
+        "Wind cosine",
+        "Wind sine",
+        "Edge curl cosine",
+        "Edge curl sine"
+      ],
+      "pinned_vertices": 368,
+      "max_anchor_delta": 0.0
+    }
+  ]
+}

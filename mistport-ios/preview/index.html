@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>秘仪：雾港升序 · iPhone 预览</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="preview-stage">
+    <section class="preview-copy">
+      <p class="kicker">MISTPORT · IOS PREVIEW</p>
+      <h1>秘仪：雾港升序</h1>
+      <p>这是使用正式 iOS 素材、六条路径与九联邦设定渲染的可点击产品原型。</p>
+      <nav aria-label="预览页面">
+        <button class="nav-button active" data-screen="title">启动页</button>
+        <button class="nav-button" data-screen="paths">路径选择</button>
+        <button class="nav-button" data-screen="city">主城场景</button>
+        <button class="nav-button" data-screen="adventure">战斗副本</button>
+        <button class="nav-button" data-screen="world">世界路线</button>
+        <button class="nav-button" data-screen="expedition">临时远征</button>
+      </nav>
+    </section>
+
+    <section class="phone-wrap" aria-label="iPhone 游戏预览">
+      <div class="phone">
+        <div class="dynamic-island"></div>
+        <div id="screen" class="phone-screen screen-title"></div>
+        <div class="home-indicator"></div>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="./preview.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37a667ac56a6d66d9173dafa6228d4fa, type: 3}
+  m_Name: VisualProfile
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyVisualProfile
+  enemyId: bounty-b10
+  prefab: {fileID: 1214883727152556674, guid: 305f886dac1904361b4d70618b938273, type: 3}
+  animatorController: {fileID: 9100000, guid: 87c2416f2d26043eea48d66353810730, type: 2}
+  orientationSteps:
+  - axis: 1
+    degrees: 180
+  referenceHeightRatio: 0.5
+  defaultSlotId: FrontCenter
+  slotOffset: {x: 0, y: 0, z: 0}
+  hover:
+    enabled: 0
+    amplitude: 0
+    period: 4
+  anchors:
+    shield: {x: 0, y: 0.90999997, z: 0}
+    target: {x: 0, y: 0.02, z: 0}
+    healthBar: {x: 0, y: 1.91, z: 0}
+    damageText: {x: 0, y: 1.3825, z: 0}
+    effect: {x: 0, y: 0.92749995, z: 0}

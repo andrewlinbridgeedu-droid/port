@@ -1,0 +1,62 @@
+{
+  "preserved_latest_app": "/Users/andrewlin/Downloads/DEV_Projects/mindstone-game/artifacts/releases/Build40/Mistport.app",
+  "removed": [
+    {
+      "path": "/tmp/mistport-seq9-integration-audit",
+      "logical_bytes": 296293396
+    },
+    {
+      "path": "/tmp/mistport-early-relic-native-products",
+      "logical_bytes": 470819505
+    },
+    {
+      "path": "/tmp/mistport-auger-v3.app",
+      "logical_bytes": 554167784
+    },
+    {
+      "path": "/tmp/mistport-heal-check.app",
+      "logical_bytes": 554169832
+    },
+    {
+      "path": "/tmp/mistport-character-delivery.app",
+      "logical_bytes": 645169511
+    },
+    {
+      "path": "/tmp/mistport-character-art-verified.app",
+      "logical_bytes": 655313641
+    },
+    {
+      "path": "/tmp/mistport-character-art.app",
+      "logical_bytes": 655313641
+    },
+    {
+      "path": "/tmp/mistport-model-optimized.app",
+      "logical_bytes": 654655703
+    },
+    {
+      "path": "/tmp/mistport-hero-quality.app",
+      "logical_bytes": 683697433
+    },
+    {
+      "path": "/tmp/mistport-hero-premium.app",
+      "logical_bytes": 782681193
+    },
+    {
+      "path": "/tmp/mistport-early-relic-native-objects",
+      "logical_bytes": 784122684
+    },
+    {
+      "path": "/tmp/mistport-chapter30-build",
+      "logical_bytes": 1727050967
+    },
+    {
+      "path": "/Users/andrewlin/Downloads/DEV_Projects/mindstone-game/mistport-ios/MistportCombatCore/.build",
+      "logical_bytes": 319287875
+    },
+    {
+      "path": "/Users/andrewlin/Downloads/DEV_Projects/mindstone-game/.simulator-logs",
+      "logical_bytes": 58550117
+    }
+  ],
+  "total_logical_bytes": 8841293282
+}

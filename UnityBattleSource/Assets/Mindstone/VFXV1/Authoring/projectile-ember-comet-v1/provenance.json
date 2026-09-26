@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "spell": "projectile-ember-comet-v1",
+  "brief": "全新的 Three.js 思路 Unity 移植候选：体积噪声火焰核心，GPU 风格粒子尾迹，命中时强烈冲击闪光、火焰碎片爆发和短促镜头震动；不修改凤凰法术和旧锁定效果。",
+  "preset": "projectile",
+  "owner": "mindstone-create-spell-vfx",
+  "assets": [
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/projectile-ember-comet-v1/EmberVolume.shader",
+      "origin": "spell-specific-authored-runtime",
+      "purpose": "procedural noisy fire-volume shell translated from the referenced Three.js GLSL approach"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/projectile-ember-comet-v1/EmberParticle.shader",
+      "origin": "spell-specific-authored-runtime",
+      "purpose": "soft additive ember particle shading"
+    },
+    {
+      "path": "Assets/Resources/Mindstone/VFXV1/Spells/projectile-ember-comet-v1/EmberFlameCard.shader",
+      "origin": "spell-specific-authored-runtime",
+      "purpose": "billboard flame and radial detonation card with procedural noise and spoke breakup"
+    },
+    {
+      "path": "Assets/Mindstone/VFXV1/Extensions/projectile-ember-comet-v1/EmberCometSpellExtension.cs",
+      "origin": "spell-specific-authored-runtime",
+      "purpose": "procedural core, trail, impact burst, deterministic particles, and bounded camera impulse"
+    },
+    {
+      "path": "Three.js references: AvatarCastingAbilitiesThreeJS and LinearAbiltyCastingThreeJS",
+      "origin": "reference-only",
+      "purpose": "noise, particle, impact, and camera-feedback design patterns; no Three.js runtime or external asset copied"
+    }
+  ]
+}

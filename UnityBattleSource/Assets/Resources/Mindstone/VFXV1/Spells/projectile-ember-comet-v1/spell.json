@@ -1,0 +1,174 @@
+{
+  "schema": 1,
+  "id": "projectile-ember-comet-v1",
+  "displayName": "体积火焰陨星",
+  "archetype": "projectile",
+  "seed": 73013,
+  "timeline": {
+    "windup": 0.18,
+    "travel": 0.72,
+    "impact": 0.24,
+    "decay": 0.42
+  },
+  "anchors": {
+    "origin": "source",
+    "target": "target",
+    "impact": "impact",
+    "ground": "ground",
+    "originOffset": [
+      0,
+      0,
+      0
+    ],
+    "targetOffset": [
+      0,
+      0,
+      0
+    ],
+    "impactOffset": [
+      0,
+      0,
+      0
+    ],
+    "groundOffset": [
+      0,
+      0,
+      0
+    ]
+  },
+  "behavior": {
+    "path": "bezier",
+    "arcHeight": 0.35,
+    "startScale": 0.45,
+    "endScale": 1.25,
+    "impactScale": 1.8,
+    "tracking": 1.0,
+    "beamWidth": 0.0,
+    "orbitRadius": 0.0,
+    "spinDegrees": 90.0,
+    "extensionType": ""
+  },
+  "layers": [
+    {
+      "name": "projectile-core",
+      "backend": "extension",
+      "asset": "",
+      "role": "core",
+      "anchor": "motion",
+      "start": 0.0,
+      "end": 0.74,
+      "color": [
+        1.0,
+        0.72,
+        0.28,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "startScale": 0.35,
+      "endScale": 1.15,
+      "width": 0.12,
+      "pointCount": 20,
+      "renderQueue": 3400,
+      "sortingOrder": 0,
+      "seedOffset": 11,
+      "fps": 24.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": false,
+      "extensionType": "Mindstone.VFXV1.EmberCometSpellExtension"
+    },
+    {
+      "name": "travel-ribbon",
+      "backend": "extension",
+      "asset": "",
+      "role": "trail",
+      "anchor": "motion",
+      "start": 0.08,
+      "end": 0.72,
+      "color": [
+        1.0,
+        0.26,
+        0.03,
+        0.72
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "startScale": 0.8,
+      "endScale": 1.0,
+      "width": 0.13,
+      "pointCount": 24,
+      "renderQueue": 3350,
+      "sortingOrder": 0,
+      "seedOffset": 19,
+      "fps": 24.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": false,
+      "extensionType": "Mindstone.VFXV1.EmberCometSpellExtension"
+    },
+    {
+      "name": "impact-front",
+      "backend": "extension",
+      "asset": "",
+      "role": "impact-front",
+      "anchor": "impact",
+      "start": 0.58,
+      "end": 0.94,
+      "color": [
+        1.0,
+        0.86,
+        0.42,
+        1.0
+      ],
+      "scale": [
+        1.6,
+        1.6,
+        1.6
+      ],
+      "startScale": 0.45,
+      "endScale": 2.0,
+      "width": 0.2,
+      "pointCount": 18,
+      "renderQueue": 4250,
+      "sortingOrder": 12,
+      "seedOffset": 29,
+      "fps": 24.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": true,
+      "extensionType": "Mindstone.VFXV1.EmberCometSpellExtension"
+    }
+  ],
+  "capture": {
+    "times": [
+      0.12,
+      0.42,
+      0.76,
+      1.02,
+      1.42
+    ],
+    "device": "iPhone 13",
+    "targetFps": 60
+  },
+  "cleanupSeconds": 0.35,
+  "showcase": {
+    "sourceActor": "hellhound",
+    "source": [
+      -3.45,
+      2.1,
+      3.8
+    ],
+    "target": [
+      -3.45,
+      0.66,
+      3.8
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37a667ac56a6d66d9173dafa6228d4fa, type: 3}
+  m_Name: VisualProfile
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyVisualProfile
+  enemyId: boneclaw
+  prefab: {fileID: 220748703306119255, guid: fcf3e0f43eaaa45ba9c307d59b8668ad, type: 3}
+  animatorController: {fileID: 9100000, guid: ef8b7a140feb847ec95acbba4b2223bd, type: 2}
+  orientationSteps:
+  - axis: 1
+    degrees: 180
+  referenceHeightRatio: 1
+  defaultSlotId: FrontCenter
+  slotOffset: {x: 0, y: 0, z: 0}
+  hover:
+    enabled: 0
+    amplitude: 0
+    period: 4
+  anchors:
+    shield: {x: 0, y: 1, z: 0}
+    target: {x: 0, y: 0.02, z: 0}
+    healthBar: {x: 0, y: 2.3, z: 0}
+    damageText: {x: 0, y: 1.8, z: 0}
+    effect: {x: 0, y: 1.15, z: 0}

@@ -1,0 +1,98 @@
+test_01_three_six_node_routes (__main__.ConfigTests.test_01_three_six_node_routes) ... ok
+test_02_unique_ids (__main__.ConfigTests.test_02_unique_ids) ... ok
+test_03_no_progression_deadlock (__main__.ConfigTests.test_03_no_progression_deadlock) ... ok
+test_04_one_church_is_enough_for_progression (__main__.ConfigTests.test_04_one_church_is_enough_for_progression) ... ok
+test_05_point_milestones (__main__.ConfigTests.test_05_point_milestones) ... ok
+test_06_all_eight_skills_guaranteed (__main__.ConfigTests.test_06_all_eight_skills_guaranteed) ... ok
+test_07_story_xp_reaches_cap_without_repeat_farming (__main__.ConfigTests.test_07_story_xp_reaches_cap_without_repeat_farming) ... ok
+test_08_level_caps_match_combat_benchmark (__main__.ConfigTests.test_08_level_caps_match_combat_benchmark) ... ok
+test_09_all_eighteen_relics_have_a_source (__main__.ConfigTests.test_09_all_eighteen_relics_have_a_source) ... ok
+test_10_all_references_resolve (__main__.ConfigTests.test_10_all_references_resolve) ... ok
+test_11_six_clears_fund_most_expensive_target (__main__.ConfigTests.test_11_six_clears_fund_most_expensive_target) ... ok
+test_12_no_duplicate_profit_from_crafting (__main__.ConfigTests.test_12_no_duplicate_profit_from_crafting) ... ok
+test_13_no_reward_for_failure_or_summons (__main__.ConfigTests.test_13_no_reward_for_failure_or_summons) ... ok
+test_14_research_and_first_claim_are_separate (__main__.ConfigTests.test_14_research_and_first_claim_are_separate) ... ok
+test_15_catalog_requires_completed_story (__main__.ConfigTests.test_15_catalog_requires_completed_story) ... ok
+test_16_only_two_standard_currencies (__main__.ConfigTests.test_16_only_two_standard_currencies) ... ok
+test_17_mvp_progression_is_closed (__main__.ConfigTests.test_17_mvp_progression_is_closed) ... ok
+test_18_one_boss_required_not_three (__main__.ConfigTests.test_18_one_boss_required_not_three) ... ok
+test_19_enemy_group_coverage (__main__.ConfigTests.test_19_enemy_group_coverage) ... ok
+test_20_nonnegative_awards (__main__.ConfigTests.test_20_nonnegative_awards) ... ok
+test_21_manual_battles_and_no_market_in_prototype (__main__.ConfigTests.test_21_manual_battles_and_no_market_in_prototype) ... ok
+test_22_target_progress_is_bounded_by_successful_clears_not_attempts (__main__.ConfigTests.test_22_target_progress_is_bounded_by_successful_clears_not_attempts) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.001s
+
+OK
+
+{
+  "scope": "static_config_and_arithmetic_only",
+  "combat_simulated": false,
+  "unity_modified": false,
+  "transaction_implementation_tested": false,
+  "story_completion_rewards": {
+    "xp": 2490,
+    "crowns": 1580,
+    "essence": 132
+  },
+  "story_xp_cap": 2340,
+  "story_xp_surplus": 150,
+  "talent_points": 30,
+  "one_route_base_rewards": {
+    "xp": 630,
+    "crowns": 392,
+    "essence": 51
+  },
+  "one_route_first_clear_bonus": {
+    "xp": 0,
+    "crowns": 240,
+    "essence": 30
+  },
+  "story_plus_one_route": {
+    "xp": 3120,
+    "crowns": 2212,
+    "essence": 213
+  },
+  "six_A03_clears_including_first_bonus": {
+    "xp": 540,
+    "crowns": 364,
+    "essence": 47
+  },
+  "six_A03_clears_then_R18_research_claim": {
+    "xp": 540,
+    "crowns": 64,
+    "essence": 17
+  },
+  "chance_any_random_relic_by_six_eligible_clears": 0.46855899999999995,
+  "chance_no_random_relic_by_six_eligible_clears": 0.531441,
+  "deterministic_target_successful_clear_limit": 6,
+  "target_time_efficiency_not_measured": [
+    {
+      "floor": 1,
+      "essence_per_minute_at_midpoint_target_duration": 7.3846
+    },
+    {
+      "floor": 2,
+      "essence_per_minute_at_midpoint_target_duration": 8.0
+    },
+    {
+      "floor": 3,
+      "essence_per_minute_at_midpoint_target_duration": 9.3333
+    },
+    {
+      "floor": 4,
+      "essence_per_minute_at_midpoint_target_duration": 10.2857
+    },
+    {
+      "floor": 5,
+      "essence_per_minute_at_midpoint_target_duration": 11.0
+    },
+    {
+      "floor": 6,
+      "essence_per_minute_at_midpoint_target_duration": 12.0
+    }
+  ],
+  "test_count": 22,
+  "tests_passed": true
+}

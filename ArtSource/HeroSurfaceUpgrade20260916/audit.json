@@ -1,0 +1,14 @@
+[
+  {
+    "name": "char1",
+    "vertices": 5575,
+    "faces": 9653,
+    "materials": [
+      "Material_1"
+    ],
+    "custom": true,
+    "smooth": 9653,
+    "shallow_edges": 10118,
+    "discontinuous_shallow_edges": 927
+  }
+]

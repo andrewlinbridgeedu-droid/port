@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0",
+  "tests": [
+    {"id": "P01", "given": "player_reserved_dislocation_on_boss", "expect": "no_ai_action_consumes_status"},
+    {"id": "P02", "given": "player_hp_20_percent_and_boss_heavy_attack", "expect": "protector_uses_protection"},
+    {"id": "P03", "given": "player_full_hp_and_sufficient_shield", "expect": "healer_does_not_heal_player"},
+    {"id": "P04", "given": "boss_invulnerable", "expect": "no_damage_ultimate"},
+    {"id": "P05", "given": "ally_a_heals_player_to_safe_threshold", "expect": "ally_b_replans_and_avoids_overheal"},
+    {"id": "P06", "given": "player_downed_and_shared_revive_available", "expect": "surviving_ai_revives_player"},
+    {"id": "P07", "given": "ally_a_kills_focus_target", "expect": "ally_b_selects_new_legal_target"},
+    {"id": "P08", "given": "certain_boss_kill_before_enemy_action", "expect": "offense_can_override_nonlethal_defense"},
+    {"id": "P09", "given": "equal_score_actions", "expect": "deterministic_tie_break"},
+    {"id": "P10", "given": "more_than_128_joint_plans", "expect": "plans_pruned_to_128_or_less"},
+    {"id": "P11", "given": "planner_reaches_30ms_budget", "expect": "returns_best_scored_plan_without_blocking"},
+    {"id": "P12", "given": "tactic_mode_conserve", "expect": "no_ultimate_or_long_cooldown_action"},
+    {"id": "P13", "given": "ally_consumable_status", "expect": "ai_may_consume_when_highest_legal_score"},
+    {"id": "P14", "given": "ally_forbidden_reserved_status", "expect": "candidate_removed_by_hard_filter"},
+    {"id": "P15", "given": "same_state_repeated_100_times", "expect": "identical_actions_all_runs"}
+  ]
+}

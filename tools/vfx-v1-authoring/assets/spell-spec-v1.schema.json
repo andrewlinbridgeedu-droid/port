@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Mindstone SpellSpec v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "id", "displayName", "archetype", "seed", "timeline", "anchors", "behavior", "layers", "capture", "cleanupSeconds", "showcase"],
+  "properties": {
+    "schema": {"const": 1},
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]{2,63}$"},
+    "displayName": {"type": "string", "minLength": 1, "maxLength": 80},
+    "archetype": {"enum": ["projectile", "slash", "burst", "beam", "aura", "storm", "summon"]},
+    "seed": {"type": "integer", "minimum": 1},
+    "timeline": {"$ref": "#/$defs/timeline"},
+    "anchors": {"$ref": "#/$defs/anchors"},
+    "behavior": {"$ref": "#/$defs/behavior"},
+    "layers": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/layer"}},
+    "capture": {"$ref": "#/$defs/capture"},
+    "cleanupSeconds": {"type": "number", "minimum": 0, "maximum": 3},
+    "showcase": {"$ref": "#/$defs/showcase"}
+  },
+  "$defs": {
+    "vec3": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+    "color": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number", "minimum": 0, "maximum": 1}},
+    "timeline": {
+      "type": "object", "additionalProperties": false,
+      "required": ["windup", "travel", "impact", "decay"],
+      "properties": {"windup": {"type": "number", "minimum": 0}, "travel": {"type": "number", "minimum": 0}, "impact": {"type": "number", "minimum": 0}, "decay": {"type": "number", "minimum": 0}}
+    },
+    "anchors": {
+      "type": "object", "additionalProperties": false,
+      "required": ["origin", "target", "impact", "ground", "originOffset", "targetOffset", "impactOffset", "groundOffset"],
+      "properties": {
+        "origin": {"enum": ["source", "target", "weapon", "mouth", "impact", "ground", "motion"]},
+        "target": {"enum": ["source", "target", "weapon", "mouth", "impact", "ground", "motion"]},
+        "impact": {"enum": ["source", "target", "weapon", "mouth", "impact", "ground", "motion"]},
+        "ground": {"enum": ["source", "target", "weapon", "mouth", "impact", "ground", "motion"]},
+        "originOffset": {"$ref": "#/$defs/vec3"}, "targetOffset": {"$ref": "#/$defs/vec3"},
+        "impactOffset": {"$ref": "#/$defs/vec3"}, "groundOffset": {"$ref": "#/$defs/vec3"}
+      }
+    },
+    "behavior": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "arcHeight", "startScale", "endScale", "impactScale", "tracking", "beamWidth", "orbitRadius", "spinDegrees", "extensionType"],
+      "properties": {
+        "path": {"enum": ["linear", "bezier", "stationary", "orbit"]},
+        "arcHeight": {"type": "number"}, "startScale": {"type": "number", "minimum": 0},
+        "endScale": {"type": "number", "minimum": 0}, "impactScale": {"type": "number", "minimum": 0},
+        "tracking": {"type": "number", "minimum": 0, "maximum": 1}, "beamWidth": {"type": "number", "minimum": 0},
+        "orbitRadius": {"type": "number", "minimum": 0}, "spinDegrees": {"type": "number"}, "extensionType": {"type": "string"}
+      }
+    },
+    "layer": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "backend", "asset", "role", "anchor", "start", "end", "color", "scale", "startScale", "endScale", "width", "pointCount", "renderQueue", "sortingOrder", "seedOffset", "fps", "loop", "faceCamera", "frontOfTarget", "extensionType"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1}, "backend": {"enum": ["effekseer", "prefab", "spriteSequence", "ribbon", "extension"]},
+        "asset": {"type": "string"}, "role": {"enum": ["core", "direction", "trail", "impact-front", "impact-back", "debris", "smoke", "ground", "accent"]},
+        "anchor": {"enum": ["source", "target", "weapon", "mouth", "impact", "ground", "motion"]},
+        "start": {"type": "number", "minimum": 0, "maximum": 1}, "end": {"type": "number", "minimum": 0, "maximum": 1},
+        "color": {"$ref": "#/$defs/color"}, "scale": {"$ref": "#/$defs/vec3"},
+        "startScale": {"type": "number", "minimum": 0}, "endScale": {"type": "number", "minimum": 0},
+        "width": {"type": "number", "minimum": 0}, "pointCount": {"type": "integer", "minimum": 2, "maximum": 128},
+        "renderQueue": {"type": "integer", "minimum": 2500, "maximum": 5000}, "sortingOrder": {"type": "integer"},
+        "seedOffset": {"type": "integer"}, "fps": {"type": "number", "minimum": 1, "maximum": 120},
+        "loop": {"type": "boolean"}, "faceCamera": {"type": "boolean"}, "frontOfTarget": {"type": "boolean"}, "extensionType": {"type": "string"}
+      }
+    },
+    "capture": {
+      "type": "object", "additionalProperties": false, "required": ["times", "device", "targetFps"],
+      "properties": {"times": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"type": "number", "exclusiveMinimum": 0}}, "device": {"const": "iPhone 13"}, "targetFps": {"const": 60}}
+    },
+    "showcase": {
+      "type": "object", "additionalProperties": false, "required": ["sourceActor", "source", "target"],
+      "properties": {"sourceActor": {"enum": ["clockguard", "hellhound", "player"]}, "source": {"$ref": "#/$defs/vec3"}, "target": {"$ref": "#/$defs/vec3"}}
+    }
+  }
+}

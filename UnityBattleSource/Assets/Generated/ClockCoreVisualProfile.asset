@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37a667ac56a6d66d9173dafa6228d4fa, type: 3}
+  m_Name: ClockCoreVisualProfile
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyVisualProfile
+  enemyId: clock-core
+  prefab: {fileID: 4092640286103389048, guid: 6b0d49417eb8c411493bcc5f455d417c, type: 3}
+  animatorController: {fileID: 0}
+  orientationSteps:
+  - axis: 0
+    degrees: -15
+  - axis: 1
+    degrees: 90
+  - axis: 2
+    degrees: 90
+  - axis: 1
+    degrees: 90
+  referenceHeightRatio: 0.5865
+  defaultSlotId: AirRearLeft
+  slotOffset: {x: 0, y: 0, z: 0}
+  hover:
+    enabled: 1
+    amplitude: 0.055
+    period: 4.2
+  anchors:
+    shield: {x: 0, y: 0.72, z: 0}
+    target: {x: 0, y: 0, z: 0}
+    healthBar: {x: 0, y: 1.66, z: 0}
+    damageText: {x: 0, y: 1.3, z: 0}
+    effect: {x: 0, y: 0.72, z: 0}

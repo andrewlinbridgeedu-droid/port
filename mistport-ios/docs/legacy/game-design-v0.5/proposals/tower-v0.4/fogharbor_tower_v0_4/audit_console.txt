@@ -1,0 +1,110 @@
+test_01_count_unique (__main__.StaticTests.test_01_count_unique) ... ok
+test_02_each_tower_contiguous (__main__.StaticTests.test_02_each_tower_contiguous) ... ok
+test_03_floor_types (__main__.StaticTests.test_03_floor_types) ... ok
+test_04_predecessor_chain (__main__.StaticTests.test_04_predecessor_chain) ... ok
+test_05_story_gates (__main__.StaticTests.test_05_story_gates) ... ok
+test_06_optional_tower_not_campaign (__main__.StaticTests.test_06_optional_tower_not_campaign) ... ok
+test_07_hp_budget (__main__.StaticTests.test_07_hp_budget) ... ok
+test_08_actor_references (__main__.StaticTests.test_08_actor_references) ... ok
+test_09_actor_limit (__main__.StaticTests.test_09_actor_limit) ... ok
+test_10_affix_eligibility (__main__.StaticTests.test_10_affix_eligibility) ... ok
+test_11_no_implicit_scaling (__main__.StaticTests.test_11_no_implicit_scaling) ... ok
+test_12_damage_scale_bounds (__main__.StaticTests.test_12_damage_scale_bounds) ... ok
+test_13_first_clear_totals (__main__.StaticTests.test_13_first_clear_totals) ... ok
+test_14_no_talent_or_random_rewards (__main__.StaticTests.test_14_no_talent_or_random_rewards) ... ok
+test_15_repeat_rewards_zero (__main__.StaticTests.test_15_repeat_rewards_zero) ... ok
+test_16_milestone_only_research (__main__.StaticTests.test_16_milestone_only_research) ... ok
+test_17_calibration_cost_total (__main__.StaticTests.test_17_calibration_cost_total) ... ok
+test_18_calibration_grind_arithmetic (__main__.StaticTests.test_18_calibration_grind_arithmetic) ... ok
+test_19_legacy_caps (__main__.StaticTests.test_19_legacy_caps) ... ok
+test_20_manual_start_no_resets (__main__.StaticTests.test_20_manual_start_no_resets) ... ok
+test_21_all_draft_gated (__main__.StaticTests.test_21_all_draft_gated) ... ok
+test_22_currency_types (__main__.StaticTests.test_22_currency_types) ... ok
+test_23_no_calibration_hard_gate (__main__.StaticTests.test_23_no_calibration_hard_gate) ... ok
+test_24_boss_profiles (__main__.StaticTests.test_24_boss_profiles) ... ok
+test_25_snapshot_reproducible (__main__.StaticTests.test_25_snapshot_reproducible) ... ok
+test_26_per_tower_60_budget (__main__.StaticTests.test_26_per_tower_60_budget) ... ok
+test_27_duration_arithmetic_not_simulation (__main__.StaticTests.test_27_duration_arithmetic_not_simulation) ... ok
+test_49_research_is_not_cross_church_currency (__main__.StaticTests.test_49_research_is_not_cross_church_currency) ... ok
+test_28_same_receipt_no_double_reward (__main__.ReferenceAccountingTests.test_28_same_receipt_no_double_reward) ... ok
+test_29_new_battle_same_floor_no_repeat_reward (__main__.ReferenceAccountingTests.test_29_new_battle_same_floor_no_repeat_reward) ... ok
+test_30_rule_version_no_refirst_clear (__main__.ReferenceAccountingTests.test_30_rule_version_no_refirst_clear) ... ok
+test_31_conflicting_receipt_rejected (__main__.ReferenceAccountingTests.test_31_conflicting_receipt_rejected) ... ok
+test_32_failure_no_reward (__main__.ReferenceAccountingTests.test_32_failure_no_reward) ... ok
+test_33_skip_rejected (__main__.ReferenceAccountingTests.test_33_skip_rejected) ... ok
+test_34_story_lock (__main__.ReferenceAccountingTests.test_34_story_lock) ... ok
+test_35_three_tower_independence (__main__.ReferenceAccountingTests.test_35_three_tower_independence) ... ok
+test_36_all_300_replay (__main__.ReferenceAccountingTests.test_36_all_300_replay) ... ok
+test_37_shared_research_threshold (__main__.ReferenceAccountingTests.test_37_shared_research_threshold) ... ok
+test_38_calibration_purchase_refund (__main__.ReferenceAccountingTests.test_38_calibration_purchase_refund) ... ok
+test_39_calibration_refund_historical_prices (__main__.ReferenceAccountingTests.test_39_calibration_refund_historical_prices) ... ok
+test_40_calibration_insufficient_atomic_model (__main__.ReferenceAccountingTests.test_40_calibration_insufficient_atomic_model) ... ok
+test_41_calibration_battle_lock (__main__.ReferenceAccountingTests.test_41_calibration_battle_lock) ... ok
+test_42_calibration_gate_and_bounds (__main__.ReferenceAccountingTests.test_42_calibration_gate_and_bounds) ... ok
+test_43_do_not_infer_tower_from_campaign (__main__.ReferenceAccountingTests.test_43_do_not_infer_tower_from_campaign) ... ok
+test_44_bad_progress_no_silent_repair (__main__.ReferenceAccountingTests.test_44_bad_progress_no_silent_repair) ... ok
+test_45_xp_cap_and_repeated_receipt (__main__.ReferenceAccountingTests.test_45_xp_cap_and_repeated_receipt) ... ok
+test_46_cosmetics_unique_and_once (__main__.ReferenceAccountingTests.test_46_cosmetics_unique_and_once) ... ok
+test_47_same_archetype_two_logical_actors (__main__.ReferenceAccountingTests.test_47_same_archetype_two_logical_actors) ... ok
+test_48_calibration_level_gate (__main__.ReferenceAccountingTests.test_48_calibration_level_gate) ... ok
+
+----------------------------------------------------------------------
+Ran 49 tests in 0.903s
+
+OK
+
+{
+  "version": "tower_s9_proposal_0.4",
+  "tests_run": 49,
+  "passed": true,
+  "failures": 0,
+  "errors": 0,
+  "floor_count": 300,
+  "per_tower_rewards": {
+    "xp": 360,
+    "crowns": 1150,
+    "essence": 210,
+    "research": 10
+  },
+  "all_towers_rewards": {
+    "xp": 1080,
+    "crowns": 3450,
+    "essence": 630,
+    "research": 30
+  },
+  "research_tracks_separate": true,
+  "selections_from_tower_research_alone": 3,
+  "research_remainder_each_church": 4,
+  "calibration_max_stats": {
+    "hp": 2640,
+    "attack": 110
+  },
+  "calibration_total_cost": {
+    "crowns": 2700,
+    "essence": 340
+  },
+  "isolated_repeat_node3_wins_for_all_calibration_costs": 50,
+  "assumed_victory_time_sum_seconds": [
+    9000,
+    18000
+  ],
+  "first_60_floor_rewards": {
+    "xp": 360,
+    "crowns": 570,
+    "essence": 98,
+    "research": 6
+  },
+  "implemented": "static configuration and pure in-memory reference transitions",
+  "not_implemented": [
+    "combat simulation",
+    "Unity animation bindings",
+    "actual 300 playable floors",
+    "real player win rate",
+    "persistent atomic save transactions",
+    "network concurrency",
+    "anti-cheat",
+    "live economy",
+    "safe area rendering"
+  ],
+  "do_not_infer": "Configuration reachability does not prove any build can win."
+}

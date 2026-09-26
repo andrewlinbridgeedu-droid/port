@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "owner": "mindstone-create-spell-vfx",
+  "spell": "burst-infernal-impact-v1",
+  "files": {
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/burst-infernal-impact-v1/spell.json": "e19845d6e92bdc5691404524243017e8ce42098fe8f930ff9d89c076a1c00dbc",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Registry/burst-infernal-impact-v1.json": "dcd6934002d5e8af2fd2ccb4b8f6fb4c41b2492f98bfd932c857cd261b095a01",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Authoring/burst-infernal-impact-v1/provenance.json": "cf22f2698c781a31f8d43cf13ffcc26415f8ff05fc36628f5fb19f528ea6b2be",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/burst-infernal-impact-v1/InfernalImpact.cs": "244b973c988fdad47cfd0b399d3504429ca7ac6f02ee9c33c82b793c7855e262"
+  }
+}

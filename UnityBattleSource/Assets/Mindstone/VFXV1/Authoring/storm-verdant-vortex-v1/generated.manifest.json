@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "owner": "mindstone-create-spell-vfx",
+  "spell": "storm-verdant-vortex-v1",
+  "files": {
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-verdant-vortex-v1/spell.json": "96507c4175a795fc0812764601036ee690ce988ad8f6ec27a1f632c82047778f",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Registry/storm-verdant-vortex-v1.json": "14430ff0f07ee630eab757472356d3e6e3b0dc54c14d4e5c69c8619d43b52c1b",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Authoring/storm-verdant-vortex-v1/provenance.json": "557ccd4da7ba7cdfe2552480890729712523f7e058936bb4619998fa7e5b740e",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/storm-verdant-vortex-v1/VerdantVortexSpellExtension.cs": "f94422fabb982582c61b566ab0b7bcb2831aaa43a3f3f3f5784a11f046026209",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/storm-verdant-vortex-v1/VerdantEffekseerSpellExtension.cs": "4574f9fa12d744de843528343eedfc63200f7082e16286927791da005919d69f",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/storm-verdant-vortex-v1/PhoenixMeshRuntime.cs": "0f8f2ce8d2c6633b66f7e95829c066e525e0e373ad4390d9602062931fbc9113",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-verdant-vortex-v1/Phoenix/PhoenixSpellMesh.shader": "4154d2da01fca90015a6a23d29d8c0cbdab74948aed70390913b88c05bec9cd8",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-verdant-vortex-v1/Phoenix/MeshyPhoenix.fbx": "3ed8167c84303a2660c98ba593587822a10ed8cfa96c422b2de7b3a8607fade4",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-verdant-vortex-v1/Phoenix/MeshyPhoenix_BaseColor.png": "c8eb0a9ec409a6298dd7a02b631a2c7ebea637cdc4c7d348cf123548838fe38d",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-verdant-vortex-v1/Phoenix/MeshyPhoenix_Normal.png": "fbe81bff6e52e98ba2679f5e7480ed84adc167d7e52d20cad3ac95dde9f98c9c",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-verdant-vortex-v1/Phoenix/MeshyPhoenix_Metallic.png": "8454ee6257c6b4349cc3a176bda948d08ea6728d2c111c71d299dc50271d9691",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/storm-verdant-vortex-v1/Phoenix/MeshyPhoenix_Roughness.png": "87a35033d7d9b75979f67e5453dc69c4d41ff4ee4b1acdfc8692ab62dcfd9cca"
+  }
+}

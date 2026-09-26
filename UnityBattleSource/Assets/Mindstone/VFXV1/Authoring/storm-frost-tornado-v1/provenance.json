@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "spell": "storm-frost-tornado-v1",
+  "brief": "敌人释放压缩冰霜涡流，连续飞向主角；命中后展开成冰霜龙卷风并以前景体积淹没主角，角色 Renderer 保持启用。",
+  "preset": "storm",
+  "owner": "mindstone-create-spell-vfx",
+  "assets": [
+    {
+      "path": "UnityBattleSource/Assets/Mindstone/VFXV1/Extensions/storm-frost-tornado-v1/FrostTornadoSpellExtension.cs",
+      "origin": "spell-specific-procedural-runtime",
+      "purpose": "continuous projectile-to-upright-vortex motion, dynamic meshes, deterministic Unity particles, and foreground engulfing"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/FrostTornado",
+      "origin": "spell-specific-authored-shader",
+      "purpose": "premultiplied dynamic frost ribbons and ground response"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/FrostMist",
+      "origin": "spell-specific-authored-shader",
+      "purpose": "soft procedural volume and short-lived foreground snow veil"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/FrostCrystal",
+      "origin": "spell-specific-authored-shader",
+      "purpose": "single-draw-call faceted ice crystal highlights for impact and decay"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/FrostAssetSprite",
+      "origin": "spell-specific-authored-shader",
+      "purpose": "recolor, crop, UV-flow, premultiply and softly erode mature Effekseer texture layers without exposing static sprite borders"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/SnowstormOfficial/Texture/blue_fire",
+      "origin": "effekseer-1.80.6-cc0-sample",
+      "source": "Sample/01_Suzuki01/003_snowstorm_effect/Texture/blue_fire.png",
+      "purpose": "primary organic travel body, actor-engulfing impact mass and upward-scattering remnants"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/HolySandstorm/Texture/Fire",
+      "origin": "effekseer-1.80.6-cc0-sample",
+      "source": "Sample/01_Pierre01/HolySandstorm/Texture/Fire.png",
+      "purpose": "four-crop aurora flame atlas recolored into violet, jade, cyan and rare gold tongues for travel, engulfment and outward breakup"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/FrostStormImpact/Texture/Wind",
+      "origin": "effekseer-1.80.6-cc0-sample",
+      "source": "Sample/01_Pierre02/Sword_Storm/Texture/Wind.png",
+      "purpose": "one to three low-opacity broken rotation cues during travel only; excluded from impact to prevent coarse horizontal lines"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/SnowstormOfficial/Texture/Burst01_2",
+      "origin": "effekseer-1.80.6-cc0-sample",
+      "source": "Sample/01_Suzuki01/003_snowstorm_effect/Texture/Burst01_2.png",
+      "purpose": "single short-lived additive white-hot contact core"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/MagicCold/Texture/SnowCrystals_M",
+      "origin": "effekseer-1.80.6-cc0-sample",
+      "source": "Sample/01_NextSoft01/MagicCold/Texture/SnowCrystals_M.png",
+      "purpose": "deterministic three-wave ice-crystal burst and final upward scatter"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/FrostVortexTravel",
+      "origin": "adapted-effekseer-1.80.6-cc0-sample",
+      "source": "Sample/01_NextSoft01/MagicTornade.efkproj",
+      "purpose": "spell-private travel vortex particle ribbons"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/FrostVortexImpactBack",
+      "origin": "adapted-effekseer-1.80.6-cc0-sample",
+      "source": "Sample/01_NextSoft01/MagicTornade.efkproj",
+      "purpose": "superseded comparison copy retained until the snowstorm impact passes visual review"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/SnowstormOfficial/snowstorm11",
+      "origin": "effekseer-1.80.6-cc0-sample",
+      "source": "Sample/01_Suzuki01/003_snowstorm_effect/snowstorm11.efkproj",
+      "purpose": "official multi-emitter snowstorm, blue-fire and needle-particle impact-back layer"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/HolySandstorm/HolySandstorm",
+      "origin": "adapted-effekseer-1.80.6-cc0-sample",
+      "source": "Sample/01_Pierre01/HolySandstorm.efkproj",
+      "purpose": "accelerated multi-node impact volume using smoke, wind-ring, wind-sprite, particle and fire surfaces"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/MagicCold/MagicCold",
+      "origin": "adapted-effekseer-1.80.6-cc0-sample",
+      "source": "Sample/01_NextSoft01/MagicCold.efkproj",
+      "purpose": "secondary ice fog and snow-crystal collapse layered into the detonation and decay"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/FrostStormImpact/FrostStormImpact",
+      "origin": "adapted-effekseer-1.80.6-cc0-sample",
+      "source": "Sample/01_Pierre02/Sword_Storm.efkproj#Finish",
+      "purpose": "commercial multi-emitter impact volume; sword, charge, star-ray and long tracker nodes removed, retaining shockwave, smoke, wind pressure and soft burst layers"
+    },
+    {
+      "path": "Effects/HellHound/FrostTornadoFinalBurst",
+      "origin": "spell-private-derived-effekseer-effect",
+      "source": "Effects/HellHound/FireBall.efkproj#Finish (approved source remains unchanged)",
+      "purpose": "two staggered frost-palette copies of the mature volumetric fireball Finish branch, retaining flashes, smoke, flame volume and outward debris while excluding charge and travel"
+    },
+    {
+      "path": "Mindstone/VFXV1/Spells/storm-frost-tornado-v1/Effekseer/Texture/Particle03",
+      "origin": "effekseer-1.80.6-cc0-sample",
+      "source": "Sample/00_Basic/Texture/Particle02.png",
+      "purpose": "soft vortex particle kernel; private copy retained at the imported project path"
+    }
+  ]
+}

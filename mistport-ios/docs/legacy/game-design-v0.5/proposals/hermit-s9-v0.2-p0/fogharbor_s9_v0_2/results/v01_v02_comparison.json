@@ -1,0 +1,188 @@
+{
+  "scope": "合成时序、实验假面、0天赋子模型",
+  "original_zip_sha256": "edb4a9a66e77d04795fab29f23c6ebfce080383627ece49842174cedd786209e",
+  "three_marked_enemies_same_tick": {
+    "v01_evidence": [
+      1,
+      1,
+      1
+    ],
+    "v02_evidence": [
+      1,
+      1,
+      0
+    ],
+    "reproduction": "3 guard enemies, marked before tick 100, clear initial queue, enqueue one enemy_hit each at tick 100; hp=10000; no relics"
+  },
+  "nine_synthetic_timelines_unchanged": true,
+  "comparisons": [
+    {
+      "source": "combat_subset_results.json",
+      "test": "C1",
+      "side": "correct",
+      "variation": "baseline",
+      "changes": {}
+    },
+    {
+      "source": "combat_subset_results.json",
+      "test": "C1",
+      "side": "wrong",
+      "variation": "baseline",
+      "changes": {}
+    },
+    {
+      "source": "combat_subset_results.json",
+      "test": "C2",
+      "side": "correct",
+      "variation": "baseline",
+      "changes": {}
+    },
+    {
+      "source": "combat_subset_results.json",
+      "test": "C2",
+      "side": "wrong",
+      "variation": "baseline",
+      "changes": {}
+    },
+    {
+      "source": "combat_subset_results.json",
+      "test": "C3",
+      "side": "correct",
+      "variation": "baseline",
+      "changes": {}
+    },
+    {
+      "source": "combat_subset_results.json",
+      "test": "C3",
+      "side": "wrong",
+      "variation": "baseline",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C1",
+      "side": "correct",
+      "variation": "baseline",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C1",
+      "side": "wrong",
+      "variation": "baseline",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C2",
+      "side": "correct",
+      "variation": "baseline",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C2",
+      "side": "wrong",
+      "variation": "baseline",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C3",
+      "side": "correct",
+      "variation": "baseline",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C3",
+      "side": "wrong",
+      "variation": "baseline",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C1",
+      "side": "correct",
+      "variation": "hp_minus_5pct",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C1",
+      "side": "wrong",
+      "variation": "hp_minus_5pct",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C2",
+      "side": "correct",
+      "variation": "hp_minus_5pct",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C2",
+      "side": "wrong",
+      "variation": "hp_minus_5pct",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C3",
+      "side": "correct",
+      "variation": "hp_minus_5pct",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C3",
+      "side": "wrong",
+      "variation": "hp_minus_5pct",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C1",
+      "side": "correct",
+      "variation": "correct_ap_minus_5pct",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C1",
+      "side": "wrong",
+      "variation": "correct_ap_minus_5pct",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C2",
+      "side": "correct",
+      "variation": "correct_ap_minus_5pct",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C2",
+      "side": "wrong",
+      "variation": "correct_ap_minus_5pct",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C3",
+      "side": "correct",
+      "variation": "correct_ap_minus_5pct",
+      "changes": {}
+    },
+    {
+      "source": "sensitivity.json",
+      "test": "C3",
+      "side": "wrong",
+      "variation": "correct_ap_minus_5pct",
+      "changes": {}
+    }
+  ]
+}

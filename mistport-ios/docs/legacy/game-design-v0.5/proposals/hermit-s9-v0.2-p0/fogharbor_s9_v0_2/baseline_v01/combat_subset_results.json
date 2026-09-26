@@ -1,0 +1,171 @@
+[
+  {
+    "test": "C1",
+    "label": "护甲与连击：守卫+齿轮偶",
+    "side": "correct",
+    "order": [
+      "M",
+      "F",
+      "N",
+      "R"
+    ],
+    "relics": [
+      "R01",
+      "R02",
+      "R04"
+    ],
+    "ap": 100.0,
+    "outcome": "胜利",
+    "time_s": 40.3,
+    "hp_left": 295.5,
+    "phantom_absorbed": 1445.5,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": []
+  },
+  {
+    "test": "C1",
+    "label": "护甲与连击：守卫+齿轮偶",
+    "side": "wrong",
+    "order": [
+      "N",
+      "E",
+      "R",
+      "A"
+    ],
+    "relics": [
+      "R18",
+      "R06",
+      "R15"
+    ],
+    "ap": 125.0,
+    "outcome": "失败",
+    "time_s": 21.0,
+    "hp_left": 0,
+    "phantom_absorbed": 0.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": [
+      {
+        "kind": "guard",
+        "hp": 32.81
+      },
+      {
+        "kind": "gear",
+        "hp": 1500
+      }
+    ]
+  },
+  {
+    "test": "C2",
+    "label": "治疗与重弹：猎犬+蜡封修女",
+    "side": "correct",
+    "order": [
+      "M",
+      "I",
+      "E",
+      "A"
+    ],
+    "relics": [
+      "R01",
+      "R02",
+      "R05"
+    ],
+    "ap": 100.0,
+    "outcome": "胜利",
+    "time_s": 39.3,
+    "hp_left": 845.0,
+    "phantom_absorbed": 2415.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 780.0,
+    "paper_used": false,
+    "enemies_left": []
+  },
+  {
+    "test": "C2",
+    "label": "治疗与重弹：猎犬+蜡封修女",
+    "side": "wrong",
+    "order": [
+      "A",
+      "R",
+      "E",
+      "N"
+    ],
+    "relics": [
+      "R18",
+      "R06",
+      "R15"
+    ],
+    "ap": 125.0,
+    "outcome": "失败",
+    "time_s": 26.0,
+    "hp_left": 0,
+    "phantom_absorbed": 0.0,
+    "healing_received_by_enemies": 520.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": [
+      {
+        "kind": "nurse",
+        "hp": 500.0
+      }
+    ]
+  },
+  {
+    "test": "C3",
+    "label": "死亡余烬：三个灰烬信差",
+    "side": "correct",
+    "order": [
+      "M",
+      "E",
+      "F",
+      "H"
+    ],
+    "relics": [
+      "R01",
+      "R02",
+      "R17"
+    ],
+    "ap": 100.0,
+    "outcome": "胜利",
+    "time_s": 41.2,
+    "hp_left": 400.0,
+    "phantom_absorbed": 2093.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": []
+  },
+  {
+    "test": "C3",
+    "label": "死亡余烬：三个灰烬信差",
+    "side": "wrong",
+    "order": [
+      "N",
+      "E",
+      "R",
+      "A"
+    ],
+    "relics": [
+      "R18",
+      "R06",
+      "R15"
+    ],
+    "ap": 125.0,
+    "outcome": "失败",
+    "time_s": 15.5,
+    "hp_left": 0,
+    "phantom_absorbed": 0.0,
+    "healing_received_by_enemies": 0.0,
+    "healing_denied": 0.0,
+    "paper_used": false,
+    "enemies_left": [
+      {
+        "kind": "ash",
+        "hp": 900.0
+      }
+    ]
+  }
+]

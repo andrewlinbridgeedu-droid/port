@@ -1,0 +1,92 @@
+# Local secrets and machine-specific configuration
+.env
+.env.*
+!.env.example
+
+# macOS and editor state
+.DS_Store
+.playwright-mcp/
+
+# Local dependencies and generated output (the phone game is the shipped product)
+/node_modules/
+/.pnpm-store/
+/dist/
+
+# Local build, simulator, package-manager, and test caches
+.simulator-logs/
+.simulator-devices/
+**/Build/
+**/build/
+**/.build/
+**/.swiftpm/
+**/DerivedData/
+**/SourcePackages/
+**/Library/
+**/Temp/
+**/Logs/
+**/*.xcuserstate
+
+# Generated Unity iOS export; rebuild from UnityBattleSource when needed.
+mistport-ios/UnityBuild/
+
+# Image/PDF scratch output and local workbench intermediates
+/tmp/
+**/tmp/
+/output/
+tools/gorest/
+
+# Historical prototypes are not part of the Mistport iOS product.
+/archive/
+
+# Additional local-only state.
+/.vercel/
+*.log
+
+# Delivery exclusions: local evidence, saves, releases and credentials
+/backups/
+/artifacts/
+/.log
+/.codex-work/
+**/node_modules/
+**/xcuserdata/
+**/__pycache__/
+**/*.pyc
+**/*.blend1
+**/*.p12
+**/*.p8
+**/*.pem
+**/*.key
+**/*.mobileprovision
+**/Preferences/
+**/docs/development/backups/
+
+# External/local symlinks; materialize intentionally before sharing.
+/ArtSource/ArchiveAdjudicator20260916
+/ArtSource/ArchiveConvoy20260916
+/ArtSource/ArchivistSentinelRig
+/ArtSource/ArmoredHellhoundRig
+/ArtSource/ChapterOneBoss20260916
+/ArtSource/CharacterRework
+/ArtSource/ChurchDemons20260916
+/ArtSource/ChurchDemonsCombat20260917
+/ArtSource/ClockPlaza3D
+/ArtSource/ClockworkVeilMatriarchRig
+/ArtSource/CodexExecutor20260916
+/ArtSource/CrimsonThreadweaverRig
+/ArtSource/EarlyCharacterNormalRefinement20260916
+/ArtSource/EmeraldEncoreRework
+/ArtSource/HellhoundSentinelRig
+/ArtSource/HeroAnatomy20260917
+/ArtSource/HeroPremium20260917
+/ArtSource/HeroQualitySample20260916
+/ArtSource/InfernalWarhoundRig
+/ArtSource/IronVaultSentinelRig
+/ArtSource/IronclawSpell20260918
+/ArtSource/Meshy
+/ArtSource/NamelessDeclarationMask
+/ArtSource/NamelessHoundMeshy
+/ArtSource/RescueBearer20260916
+/ArtSource/StonehideRig20260917
+/ArtSource/TranscriptionScribe20260916
+/ArtSource/WisteriaMap3D
+/UnityBattleSource/Library

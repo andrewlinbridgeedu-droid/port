@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "spell": "beam-wraith-scream-v1",
+  "status": "candidate",
+  "captureTimes": [
+    0.1,
+    0.26,
+    0.63,
+    0.88,
+    1.02
+  ],
+  "frames": [
+    "stage-1.png",
+    "stage-2.png",
+    "stage-3.png",
+    "stage-4.png",
+    "stage-5.png"
+  ]
+}

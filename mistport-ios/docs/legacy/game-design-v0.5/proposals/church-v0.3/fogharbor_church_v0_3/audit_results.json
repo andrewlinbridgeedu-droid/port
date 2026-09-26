@@ -1,0 +1,70 @@
+{
+  "scope": "static_config_and_arithmetic_only",
+  "combat_simulated": false,
+  "unity_modified": false,
+  "transaction_implementation_tested": false,
+  "story_completion_rewards": {
+    "xp": 2490,
+    "crowns": 1580,
+    "essence": 132
+  },
+  "story_xp_cap": 2340,
+  "story_xp_surplus": 150,
+  "talent_points": 30,
+  "one_route_base_rewards": {
+    "xp": 630,
+    "crowns": 392,
+    "essence": 51
+  },
+  "one_route_first_clear_bonus": {
+    "xp": 0,
+    "crowns": 240,
+    "essence": 30
+  },
+  "story_plus_one_route": {
+    "xp": 3120,
+    "crowns": 2212,
+    "essence": 213
+  },
+  "six_A03_clears_including_first_bonus": {
+    "xp": 540,
+    "crowns": 364,
+    "essence": 47
+  },
+  "six_A03_clears_then_R18_research_claim": {
+    "xp": 540,
+    "crowns": 64,
+    "essence": 17
+  },
+  "chance_any_random_relic_by_six_eligible_clears": 0.46855899999999995,
+  "chance_no_random_relic_by_six_eligible_clears": 0.531441,
+  "deterministic_target_successful_clear_limit": 6,
+  "target_time_efficiency_not_measured": [
+    {
+      "floor": 1,
+      "essence_per_minute_at_midpoint_target_duration": 7.3846
+    },
+    {
+      "floor": 2,
+      "essence_per_minute_at_midpoint_target_duration": 8.0
+    },
+    {
+      "floor": 3,
+      "essence_per_minute_at_midpoint_target_duration": 9.3333
+    },
+    {
+      "floor": 4,
+      "essence_per_minute_at_midpoint_target_duration": 10.2857
+    },
+    {
+      "floor": 5,
+      "essence_per_minute_at_midpoint_target_duration": 11.0
+    },
+    {
+      "floor": 6,
+      "essence_per_minute_at_midpoint_target_duration": 12.0
+    }
+  ],
+  "test_count": 22,
+  "tests_passed": true
+}

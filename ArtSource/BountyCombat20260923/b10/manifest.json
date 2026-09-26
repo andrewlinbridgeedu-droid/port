@@ -1,0 +1,42 @@
+{
+  "id": "b10",
+  "source": "/Users/andrewlin/Downloads/DEV_Projects/mindstone-game/ArtSource/BountyIntake20260922/originals/Meshy_AI_Crimson_Moon_Empress_0923021014_texture.glb",
+  "original_triangles": 3258458,
+  "mobile_triangles": 50000,
+  "bones": 18,
+  "clips": {
+    "Idle": [
+      1,
+      121
+    ],
+    "Charge": [
+      122,
+      166
+    ],
+    "Cast": [
+      167,
+      196
+    ],
+    "Hit": [
+      197,
+      208
+    ],
+    "Death": [
+      209,
+      244
+    ],
+    "Charge2": [
+      245,
+      289
+    ],
+    "Cast2": [
+      290,
+      319
+    ],
+    "Retreat": [
+      320,
+      359
+    ]
+  },
+  "source_bytes": 106533100
+}

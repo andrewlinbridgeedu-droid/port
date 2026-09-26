@@ -1,0 +1,53 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>雾港 · 全法术第二轮实录</title>
+<style>
+[hidden]{display:none!important}
+:root{color-scheme:dark;font:15px/1.65 system-ui,-apple-system,sans-serif;background:#11121b;color:#e4e1dd}*{box-sizing:border-box}body{margin:0}header{padding:22px 30px;border-bottom:1px solid #32313c}h1{font-size:24px;font-weight:600;margin:0}header p{margin:5px 0 0;color:#afabbc;font-size:13px}main{display:grid;grid-template-columns:250px 1fr;min-height:90vh}aside{border-right:1px solid #32313c;padding:18px;height:calc(100vh - 110px);position:sticky;top:0;overflow:auto}input,select,button{font:inherit;color:inherit;background:#22222f;border:1px solid #44404f;border-radius:7px;padding:7px 10px}input,aside select{width:100%;margin-bottom:12px}button{cursor:pointer}button:hover{background:#3b3549}nav button{display:block;text-align:left;width:100%;font-size:12px;margin:4px 0;border-color:transparent}nav button.active{color:#e8c58a;background:#342c40;border-color:#746047}nav small{display:block;color:#8e899c}article{padding:23px 30px;max-width:1350px}h2{margin:0;font-size:24px}.muted{color:#aaa3b7;font-size:13px}.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:15px 0}.stage{display:grid;grid-template-columns:minmax(250px,430px) minmax(250px,540px);gap:22px;align-items:start}.full{width:100%;max-height:75vh;background:#08090e}.close{width:100%;background:#08090e}video{border-radius:8px}figure{margin:0}figcaption{color:#bdb5c9;font-size:12px;margin:4px 0 10px}.badge{color:#e7bd83;font-size:12px}.side p{font-size:13px;color:#bfb8c9}.prior{max-width:250px;max-height:50vh;display:block;margin-top:10px}details{margin:20px 0;border-top:1px solid #32313c;padding-top:12px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.85 system-ui;background:#191923;padding:18px}a{color:#d8b684}.empty{padding:35px;background:#1e1c29;color:#aaa3b7}.notes{margin-top:12px}.receipt{display:inline-block;font-size:12px;margin:6px 12px 0 0}@media(max-width:820px){main{grid-template-columns:1fr}aside{height:auto;position:static;border-right:0;border-bottom:1px solid #32313c}nav{display:flex;max-height:125px;overflow:auto;flex-wrap:wrap}nav button{width:auto}article{padding:20px}.stage{grid-template-columns:1fr 1fr}header{padding:18px}}@media(max-width:550px){.stage{grid-template-columns:1fr}.close{max-width:350px}}
+</style><header><h1>雾港 · 全法术第二轮</h1><p id="summary"></p><p>实际 Unity 画面 · 完整施放 + 动作近景 · 新视觉待你复核 · 尚未装机</p></header><main><aside><input id="search" placeholder="搜索名称 / 编号"><select id="group"><option value="">全部分组</option></select><nav id="nav"></nav></aside><article><span class="badge" id="badge"></span><h2 id="title"></h2><div id="scope" class="muted"></div><div class="bar"><button id="prev">← 上一招</button><button id="play">同时播放 / 暂停</button><button id="next">下一招 →</button><select id="variant"></select><select id="speed"><option value="1">原速</option><option value="0.5">0.5 倍</option><option value="0.25">0.25 倍</option></select></div><div class="stage" id="stage"><figure><video id="full" class="full" controls playsinline muted loop></video><figcaption>本轮 · 全景连续实录</figcaption></figure><div class="side"><figure><video id="close" class="close" controls playsinline muted loop></video><figcaption>同一帧 · 施法者动作近景</figcaption></figure><p id="cue"></p><p>所有镜头由同一引擎帧渲染。近景只改变观察机位；伤害、冷却、首现层、接触时刻与目标契约不因画面优化改变。</p><details><summary>查看上一轮实录</summary><select id="priorSelect"></select><video id="prior" class="prior" controls muted loop playsinline></video><p>旧片可能分开录制蓄力或命中，时长与本轮不同，不伪装成同步对比。</p></details></div></div><div id="empty" class="empty" hidden></div><details class="notes"><summary>本组逐招观察与修改记录</summary><pre id="notes"></pre></details><details><summary>本轮技术检查回执（不是视觉认可）</summary><div id="receipts"></div></details></article></main>
+<script>const D=__ROUND2_DATA__;let current,filtered=D.rows;const $=id=>document.getElementById(id);const allVideos=[$('full'),$('close')];$('summary').textContent=`${D.rows.filter(r=>r.clips.length).length} 项已有本轮录像 · ${D.rows.reduce((n,r)=>n+r.clips.length,0)} 组全景/近景 · 含新增五恶魔十招`;for(const g of new Set(D.rows.map(r=>r.group))){let o=new Option(g,g);$('group').add(o)}function nav(){let q=$('search').value.toLowerCase(),g=$('group').value;filtered=D.rows.filter(r=>(!g||r.group===g)&&(!q||(r.id+r.name).toLowerCase().includes(q)));$('nav').replaceChildren(...filtered.map(r=>{let b=document.createElement('button');b.textContent=r.id+' '+r.name;b.className=current===r?'active':'';b.onclick=()=>location.hash=r.id;return b}))}function clip(){let c=current.clips[Number($('variant').value)||0];allVideos.forEach(v=>v.pause());$('stage').hidden=!c;$('empty').hidden=!!c;if(!c){$('empty').textContent=current.id.startsWith('R')?'此项为原生契约附效，旧总览没有独立法术实录。本轮不凭空补成伤害爆炸，也不计作已经录制。':'本项新录像尚未生成，不以旧片充作新版。';return}['full','close'].forEach(k=>{$(k).src=c[k];$(k).load();$(k).playbackRate=Number($('speed').value)});$('cue').textContent=`时长 ${c.seconds.toFixed(1)} 秒；${c.expected} 次表现接触回执（回执不等于伤害次数）。${current.boundary}。`}function show(){current=D.rows.find(r=>r.id===location.hash.slice(1))||D.rows.find(r=>r.clips.length)||D.rows[0];$('title').textContent=current.name;$('badge').textContent=current.id+' · '+current.group;$('scope').textContent=current.scope+' · '+current.boundary;$('variant').replaceChildren(...current.clips.map((c,i)=>new Option(c.key,i)));$('prior').pause();$('priorSelect').replaceChildren(...current.before.map((p,i)=>new Option(p.name,i)));$('priorSelect').onchange=()=>{$('prior').src=current.before[Number($('priorSelect').value)||0]?.url||''};if(current.before.length)$('priorSelect').onchange();else $('prior').removeAttribute('src');$('notes').textContent=D.reports[current.report]||'本项没有独立整招实录；只核对原有真实反馈，不把候选方案写为已完成。';clip();nav()}$('variant').onchange=clip;$('group').onchange=nav;$('search').oninput=nav;$('play').onclick=()=>{if(!current.clips.length)return;let playing=!$('full').paused;allVideos.forEach(v=>{if(playing)v.pause();else{v.currentTime=$('full').currentTime;v.play().catch(()=>{})}})};$('speed').onchange=()=>allVideos.forEach(v=>v.playbackRate=Number($('speed').value));$('full').addEventListener('seeked',()=>{if(Math.abs($('close').currentTime-$('full').currentTime)>.08)$('close').currentTime=$('full').currentTime});function step(n){let i=filtered.indexOf(current);location.hash=filtered[(i+n+filtered.length)%filtered.length]?.id||current.id}$('prev').onclick=()=>step(-1);$('next').onclick=()=>step(1);$('receipts').replaceChildren(...D.receipts.map(p=>{let a=document.createElement('a');a.className='receipt';a.href=p;a.textContent=p;return a}));window.addEventListener('hashchange',show);show();</script></html>
+<script>
+// The optional recipient camera is additional evidence, not the caster camera.
+function updateCloseLabel(){
+  const basicLabels={'H00':'单次普攻 · 短动作版','H00-followup-basic':'连续三次普攻 · 0.6秒间隔测试','H00-followup-skill':'普攻紧接荒谬归结 · 衔接测试'};
+  if(current?.id==='H00')current.clips.forEach((clip,i)=>{document.getElementById('variant').options[i].textContent=basicLabels[clip.key]||clip.key;});
+  const selected=current?.clips[Number(document.getElementById('variant').value)||0];
+  const caption=document.getElementById('close').parentElement.querySelector('figcaption');
+  if(caption)caption.textContent='同一帧 · '+(selected?.closeLabel||'施法者动作近景');
+}
+window.addEventListener('hashchange',updateCloseLabel);
+document.getElementById('variant').addEventListener('change',updateCloseLabel);
+updateCloseLabel();
+// Full view owns the playback clock. Independent media decoders may start or
+// loop a few frames apart even though both recordings contain the same frames.
+let playbackStarting=false;
+function syncClosePlayback(force=false){
+  const master=document.getElementById('full'),detail=document.getElementById('close');
+  if(playbackStarting||detail.readyState<1||detail.seeking)return;
+  const drift=master.currentTime-detail.currentTime;
+  if(force){
+    detail.playbackRate=master.playbackRate;
+    if(Math.abs(drift)>.0001)detail.currentTime=master.currentTime;
+  }else if(!master.paused){
+    // Repeated seeks can starve the follower decoder. Correct small drift with
+    // playback rate, reserving a seek for the loop boundary or explicit pause.
+    if(Number.isFinite(master.duration)&&Math.abs(drift)>master.duration*.5)detail.currentTime=master.currentTime;
+    else detail.playbackRate=master.playbackRate*(Math.abs(drift)<.025?1:Math.max(.8,Math.min(1.2,1+drift*2)));
+  }
+}
+document.getElementById('full').addEventListener('timeupdate',()=>syncClosePlayback());
+document.getElementById('close').addEventListener('seeked',()=>{if(document.getElementById('full').paused)syncClosePlayback(true);});
+function followRecordedFrame(){
+  syncClosePlayback();
+  const master=document.getElementById('full');
+  if(typeof master.requestVideoFrameCallback==='function')master.requestVideoFrameCallback(followRecordedFrame);
+  else requestAnimationFrame(followRecordedFrame);
+}
+followRecordedFrame();
+document.getElementById('play').onclick=async()=>{
+  if(!current.clips.length)return;
+  if(!document.getElementById('full').paused){allVideos.forEach(v=>v.pause());syncClosePlayback(true);return;}
+  syncClosePlayback(true);
+  playbackStarting=true;
+  try{await Promise.all(allVideos.map(v=>v.play()));playbackStarting=false;syncClosePlayback(true);}
+  catch{playbackStarting=false;allVideos.forEach(v=>v.pause());}
+};
+</script>

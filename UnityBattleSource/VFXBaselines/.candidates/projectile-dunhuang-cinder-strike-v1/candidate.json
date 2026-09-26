@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "spell": "projectile-dunhuang-cinder-strike-v1",
+  "status": "candidate",
+  "captureTimes": [
+    0.1,
+    0.38,
+    0.72,
+    1.02,
+    1.46
+  ],
+  "frames": [
+    "stage-1.png",
+    "stage-2.png",
+    "stage-3.png",
+    "stage-4.png",
+    "stage-5.png"
+  ]
+}

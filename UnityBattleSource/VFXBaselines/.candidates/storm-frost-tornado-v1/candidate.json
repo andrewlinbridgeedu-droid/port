@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "spell": "storm-frost-tornado-v1",
+  "status": "candidate",
+  "captureTimes": [
+    0.183333,
+    0.516667,
+    0.833333,
+    1.266667,
+    1.633333
+  ],
+  "frames": [
+    "stage-1.png",
+    "stage-2.png",
+    "stage-3.png",
+    "stage-4.png",
+    "stage-5.png"
+  ]
+}

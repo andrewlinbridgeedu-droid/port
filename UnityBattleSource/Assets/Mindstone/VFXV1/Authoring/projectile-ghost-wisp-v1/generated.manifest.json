@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "owner": "mindstone-create-spell-vfx",
+  "spell": "projectile-ghost-wisp-v1",
+  "files": {
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/projectile-ghost-wisp-v1/spell.json": "712dcb1593a6300153c4b89ed9a9d2f4471898e48d4c588bb27d1080ed014665",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Registry/projectile-ghost-wisp-v1.json": "e56d0d562bc9e032fe81b92ecbcb7358cfe3e08616deff7d9d55ab6fee593378",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Authoring/projectile-ghost-wisp-v1/provenance.json": "d068cdcfc4c69133ad3e70dabee2474e7bdc9cdd9ac1476e14161ea252b6b597"
+  }
+}

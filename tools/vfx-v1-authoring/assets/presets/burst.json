@@ -1,0 +1,14 @@
+{
+  "archetype": "burst",
+  "timeline": {"windup": 0.20, "travel": 0.0, "impact": 0.34, "decay": 0.62},
+  "behavior": {"path": "stationary", "arcHeight": 0.0, "startScale": 0.25, "endScale": 1.0, "impactScale": 2.2, "tracking": 1.0, "beamWidth": 0.0, "orbitRadius": 0.0, "spinDegrees": 30.0, "extensionType": ""},
+  "layers": [
+    {"name": "back-mass", "backend": "effekseer", "asset": "Effects/HellHound/FireOnly", "role": "core", "anchor": "impact", "start": 0.08, "end": 1.0, "color": [1.0, 0.16, 0.02, 1.0], "scale": [1.7, 1.7, 1.7], "startScale": 0.2, "endScale": 2.1, "width": 0.2, "pointCount": 20, "renderQueue": 3140, "sortingOrder": -3, "seedOffset": 7, "fps": 24.0, "loop": false, "faceCamera": true, "frontOfTarget": false, "extensionType": ""},
+    {"name": "back-depth", "backend": "effekseer", "asset": "Effects/HellHound/FireOnly", "role": "impact-back", "anchor": "impact", "start": 0.10, "end": 0.88, "color": [0.92, 0.06, 0.01, 0.9], "scale": [1.4, 1.4, 1.4], "startScale": 0.25, "endScale": 1.8, "width": 0.2, "pointCount": 20, "renderQueue": 3120, "sortingOrder": -4, "seedOffset": 13, "fps": 24.0, "loop": false, "faceCamera": true, "frontOfTarget": false, "extensionType": ""},
+    {"name": "front-mass", "backend": "effekseer", "asset": "Effects/HellHound/FireOnly", "role": "impact-front", "anchor": "impact", "start": 0.10, "end": 0.82, "color": [1.0, 0.74, 0.24, 1.0], "scale": [1.9, 1.9, 1.9], "startScale": 0.2, "endScale": 2.4, "width": 0.2, "pointCount": 20, "renderQueue": 4280, "sortingOrder": 14, "seedOffset": 19, "fps": 24.0, "loop": false, "faceCamera": true, "frontOfTarget": true, "extensionType": ""},
+    {"name": "ground-trail", "backend": "ribbon", "asset": "", "role": "ground", "anchor": "ground", "start": 0.12, "end": 0.72, "color": [1.0, 0.34, 0.05, 0.7], "scale": [1.0, 1.0, 1.0], "startScale": 1.0, "endScale": 1.0, "width": 0.20, "pointCount": 32, "renderQueue": 3200, "sortingOrder": -1, "seedOffset": 31, "fps": 24.0, "loop": false, "faceCamera": false, "frontOfTarget": false, "extensionType": ""}
+  ],
+  "capture": {"times": [0.08, 0.24, 0.44, 0.72, 1.08], "device": "iPhone 13", "targetFps": 60},
+  "cleanupSeconds": 0.42,
+  "showcase": {"sourceActor": "clockguard", "source": [-3.45, 1.65, 3.8], "target": [-3.45, 0.66, 3.8]}
+}

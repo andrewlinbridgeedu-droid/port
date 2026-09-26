@@ -1,0 +1,504 @@
+{
+  "schema_version": "1.1.0",
+  "balance_version": "fool-combat-1.1.0",
+  "percentage_scale": 10000,
+  "rounding": "HALF_UP_PER_HIT",
+  "player": {
+    "max_hp": 1000,
+    "attack": 100,
+    "defense": 11,
+    "max_shield": 400,
+    "normal_skill_slots": 6
+  },
+  "combat": {
+    "turn_order": "PLAYER_THEN_ENEMIES_BY_SLOT",
+    "max_enemies": 3,
+    "damage_reduction_cap_bp": 6000,
+    "minimum_positive_damage": 1,
+    "hit_resolution_mode": "DETERMINISTIC",
+    "hit_results": [
+      "HIT",
+      "DODGED",
+      "IMMUNE",
+      "INVALID"
+    ],
+    "default_hit_policy": "DODGEABLE",
+    "dodge_scope": "ATTACK_ACTION",
+    "guard_scope": "ATTACK_ACTION",
+    "guard_reduction_bp": 3500,
+    "damage_pipeline": [
+      "COEFFICIENT_AND_ATTACK",
+      "OUTGOING_BONUS",
+      "DEFENSE_AND_PENETRATION",
+      "ROUND_HALF_UP",
+      "INCOMING_REDUCTION_AND_GUARD",
+      "ROUND_HALF_UP",
+      "SHIELD",
+      "HP"
+    ]
+  },
+  "statuses": {
+    "illusion": {
+      "clock": "PLAYER_ACTION_END",
+      "duration": 3,
+      "max_stacks": 4,
+      "damage_bonus_per_stack_bp": 500,
+      "cleansable": true
+    },
+    "misalignment": {
+      "clock": "PLAYER_ACTION_END",
+      "duration": 3,
+      "max_stacks": 2,
+      "cleansable": false
+    },
+    "fabricated_evidence": {
+      "clock": "PLAYER_ACTION_END",
+      "duration": 3,
+      "charges": 2,
+      "damage_bonus_bp": 1500,
+      "consume_per_skill": 1
+    },
+    "finale_ready": {
+      "clock": "PLAYER_ACTION_END",
+      "default_duration": 1
+    },
+    "weaken_next_action": {
+      "clock": "CHARGE_ONLY",
+      "charges": 1,
+      "outgoing_damage_reduction_bp": 1000
+    },
+    "paper_double_counter": {
+      "clock": "ROUND_END",
+      "duration": 2,
+      "charges": 1,
+      "illusion_on_trigger": 2
+    },
+    "normal_disorientation": {
+      "clock": "ENEMY_ACTION_END",
+      "duration": 1,
+      "skip_harmful_action": true
+    },
+    "resistant_disorientation": {
+      "clock": "CHARGE_ONLY",
+      "charges": 1,
+      "outgoing_damage_reduction_bp": 2500,
+      "suppress_secondary_effects": true
+    },
+    "enhanced_setup": {
+      "clock": "PLAYER_ACTION_END",
+      "duration": 1,
+      "charges": 1,
+      "extra_illusion": 1
+    },
+    "stage_guard": {
+      "clock": "ROUND_END",
+      "duration": 3,
+      "incoming_damage_reduction_bp": 1500
+    },
+    "evasion": {
+      "clock": "CHARGE_ONLY",
+      "charges": 1,
+      "applicable_hit_policy": "DODGEABLE",
+      "scope": "ATTACK_ACTION"
+    },
+    "guard": {
+      "clock": "CHARGE_ONLY",
+      "charges": 1,
+      "incoming_damage_reduction_bp": 3500,
+      "scope": "ATTACK_ACTION"
+    }
+  },
+  "skills": [
+    {
+      "id": "fool_skill_01",
+      "name": "错步刺击",
+      "unlock_step": 1,
+      "target": "SINGLE_ENEMY",
+      "reuse_delay_actions": 0,
+      "base_coefficient_bp": 12000,
+      "misalignment_coefficient_bp": 16800,
+      "grants_finale_ready_duration": 1,
+      "hit_policy": "DODGEABLE",
+      "damage_type": "STANDARD",
+      "on_hit_required_for_target_effects": true
+    },
+    {
+      "id": "fool_skill_02",
+      "name": "假面低语",
+      "unlock_step": 1,
+      "target": "SINGLE_ENEMY",
+      "reuse_delay_actions": 2,
+      "base_coefficient_bp": 5000,
+      "illusion_after_damage": 2,
+      "weaken_next_action_bp": 1000,
+      "hit_policy": "DODGEABLE",
+      "damage_type": "STANDARD",
+      "on_hit_required_for_target_effects": true
+    },
+    {
+      "id": "fool_skill_03",
+      "name": "纸人替身",
+      "unlock_step": 1,
+      "target": "SELF",
+      "reuse_delay_actions": 3,
+      "shield": 200,
+      "shield_cap": 400,
+      "counter_duration_rounds": 2,
+      "counter_illusion": 2
+    },
+    {
+      "id": "fool_skill_04",
+      "name": "身份错置",
+      "unlock_step": 3,
+      "target": "SINGLE_ENEMY",
+      "reuse_delay_actions": 3,
+      "base_coefficient_bp": 8000,
+      "required_illusion_stacks": 4,
+      "consume_illusion_after_damage": true,
+      "misalignment_after_damage": 2,
+      "hit_policy": "DODGEABLE",
+      "damage_type": "STANDARD",
+      "on_hit_required_for_target_effects": true
+    },
+    {
+      "id": "fool_skill_05",
+      "name": "伪证植入",
+      "unlock_step": 2,
+      "target": "SINGLE_ENEMY",
+      "reuse_delay_actions": 2,
+      "base_coefficient_bp": 6000,
+      "illusion_after_damage": 2,
+      "fabricated_evidence_charges": 2,
+      "fabricated_evidence_duration": 3,
+      "hit_policy": "DODGEABLE",
+      "damage_type": "STANDARD",
+      "on_hit_required_for_target_effects": true
+    },
+    {
+      "id": "fool_skill_06",
+      "name": "镜像追击",
+      "unlock_step": 4,
+      "target": "SINGLE_ENEMY",
+      "reuse_delay_actions": 2,
+      "hits": [
+        7000,
+        7000
+      ],
+      "empowered_second_hit_bp": 13300,
+      "consume_misalignment": 1,
+      "hit_policy": "DODGEABLE",
+      "damage_type": "STANDARD",
+      "on_hit_required_for_target_effects": true
+    },
+    {
+      "id": "fool_skill_07",
+      "name": "荒谬终幕",
+      "unlock_step": 5,
+      "target": "SINGLE_ENEMY",
+      "reuse_delay_actions": 5,
+      "base_coefficient_bp": 18000,
+      "per_misalignment_stack_bp": 10000,
+      "finale_ready_bonus_bp": 8000,
+      "armor_penetration_bp": 3000,
+      "consume_all_misalignment": true,
+      "hit_policy": "DODGEABLE",
+      "damage_type": "STANDARD",
+      "on_hit_required_for_target_effects": true
+    },
+    {
+      "id": "fool_skill_08",
+      "name": "反客为主",
+      "unlock_step": 6,
+      "target": "SINGLE_ENEMY",
+      "reuse_delay_actions": 4,
+      "base_coefficient_bp": 7000,
+      "no_buff_illusion": 2,
+      "no_buff_shield": 100,
+      "buff_priority": [
+        "ATTACK_UP",
+        "DEFENSE_UP",
+        "DAMAGE_REDUCTION",
+        "REGEN",
+        "OTHER"
+      ],
+      "hit_policy": "DODGEABLE",
+      "damage_type": "STANDARD",
+      "on_hit_required_for_target_effects": true
+    },
+    {
+      "id": "fool_skill_09",
+      "name": "幕后换场",
+      "unlock_step": 7,
+      "target": "SELF",
+      "reuse_delay_actions": 5,
+      "cooldown_reduction_skill_ids": [
+        "fool_skill_02",
+        "fool_skill_04",
+        "fool_skill_05"
+      ],
+      "cooldown_reduction_actions": 1,
+      "cleanse_priority": [
+        "STUN",
+        "SILENCE",
+        "DAMAGE_DOWN",
+        "DEFENSE_DOWN",
+        "DOT",
+        "OTHER"
+      ],
+      "grants_enhanced_setup": true
+    },
+    {
+      "id": "fool_skill_10",
+      "name": "无名舞台",
+      "unlock_step": 8,
+      "target": "ALL_ENEMIES_AND_SELF",
+      "max_uses_per_battle": 1,
+      "set_illusion_stacks": 4,
+      "reset_skill_ids": [
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "finale_ready_duration": 3,
+      "stage_guard_duration_rounds": 3
+    }
+  ],
+  "unlock_steps": [
+    {
+      "step": 1,
+      "skills": [
+        "fool_skill_01",
+        "fool_skill_02",
+        "fool_skill_03"
+      ],
+      "normal_slots": 3
+    },
+    {
+      "step": 2,
+      "skills": [
+        "fool_skill_05"
+      ],
+      "normal_slots": 4
+    },
+    {
+      "step": 3,
+      "skills": [
+        "fool_skill_04"
+      ],
+      "normal_slots": 4
+    },
+    {
+      "step": 4,
+      "skills": [
+        "fool_skill_06"
+      ],
+      "normal_slots": 5
+    },
+    {
+      "step": 5,
+      "skills": [
+        "fool_skill_07"
+      ],
+      "normal_slots": 6
+    },
+    {
+      "step": 6,
+      "skills": [
+        "fool_skill_08"
+      ],
+      "normal_slots": 6
+    },
+    {
+      "step": 7,
+      "skills": [
+        "fool_skill_09"
+      ],
+      "normal_slots": 6
+    },
+    {
+      "step": 8,
+      "skills": [
+        "fool_skill_10"
+      ],
+      "normal_slots": 6
+    }
+  ],
+  "enemy_templates": [
+    {
+      "id": "weak_minion",
+      "rank": "NORMAL",
+      "max_hp": 150,
+      "attack": 35,
+      "defense": 0,
+      "ai": [
+        {
+          "type": "DAMAGE",
+          "coefficient_bp": 10000,
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        },
+        {
+          "type": "WAIT"
+        }
+      ]
+    },
+    {
+      "id": "standard_minion",
+      "rank": "NORMAL",
+      "max_hp": 300,
+      "attack": 55,
+      "defense": 10,
+      "ai": [
+        {
+          "type": "DAMAGE",
+          "coefficient_bp": 10000,
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        },
+        {
+          "type": "BUFF",
+          "buff": "DAMAGE_REDUCTION",
+          "magnitude_bp": 2000,
+          "duration_rounds": 1
+        },
+        {
+          "type": "DAMAGE",
+          "coefficient_bp": 10000,
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        }
+      ]
+    },
+    {
+      "id": "sturdy_minion",
+      "rank": "NORMAL",
+      "max_hp": 480,
+      "attack": 65,
+      "defense": 15,
+      "ai": [
+        {
+          "type": "DAMAGE",
+          "coefficient_bp": 9000,
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        },
+        {
+          "type": "CHARGE"
+        },
+        {
+          "type": "DAMAGE",
+          "coefficient_bp": 16000,
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        }
+      ]
+    },
+    {
+      "id": "elite_enemy",
+      "rank": "ELITE",
+      "max_hp": 900,
+      "attack": 80,
+      "defense": 20,
+      "ai": [
+        {
+          "type": "DAMAGE",
+          "coefficient_bp": 10000,
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        },
+        {
+          "type": "BUFF",
+          "buff": "ATTACK_UP",
+          "magnitude_bp": 1500,
+          "duration_rounds": 2
+        },
+        {
+          "type": "DAMAGE",
+          "coefficient_bp": 17000,
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        },
+        {
+          "type": "CLEANSE_OR_SHIELD",
+          "cleanse_status": "illusion",
+          "max_stacks": 2,
+          "fallback_shield": 100
+        }
+      ]
+    },
+    {
+      "id": "region_boss",
+      "rank": "BOSS",
+      "max_hp": 1800,
+      "attack": 90,
+      "defense": 20,
+      "ai": [
+        {
+          "type": "DAMAGE",
+          "coefficient_bp": 10000,
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        },
+        {
+          "type": "DAMAGE",
+          "coefficient_bp": 6000,
+          "secondary": "DAMAGE_DOWN_1000_ONE_PLAYER_ACTION",
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        },
+        {
+          "type": "DAMAGE",
+          "coefficient_bp": 18000,
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        },
+        {
+          "type": "DAMAGE_AND_BUFF",
+          "coefficient_bp": 4000,
+          "buff": "DEFENSE_UP",
+          "flat_defense": 10,
+          "duration_rounds": 1,
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        }
+      ]
+    },
+    {
+      "id": "chapter_boss",
+      "rank": "BOSS",
+      "max_hp": 2300,
+      "attack": 95,
+      "defense": 25,
+      "ai": [
+        {
+          "type": "DAMAGE",
+          "coefficient_bp": 10000,
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        },
+        {
+          "type": "DAMAGE",
+          "coefficient_bp": 6000,
+          "secondary": "DAMAGE_DOWN_1000_ONE_PLAYER_ACTION",
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        },
+        {
+          "type": "DAMAGE",
+          "coefficient_bp": 18000,
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        },
+        {
+          "type": "DAMAGE_AND_BUFF",
+          "coefficient_bp": 4000,
+          "buff": "DEFENSE_UP",
+          "flat_defense": 10,
+          "duration_rounds": 1,
+          "hit_policy": "DODGEABLE",
+          "damage_type": "STANDARD"
+        }
+      ]
+    }
+  ]
+}

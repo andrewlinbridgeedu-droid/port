@@ -1,0 +1,27 @@
+{
+  "Moonfang": {
+    "fbx": "ArtSource/ChurchMinionsCombat20260921/Moonfang/Moonfang_Combat.fbx",
+    "bytes": 2917260,
+    "sha256": "93d9c80d67d8537a03de1d13d687ba9bfd4684e63925b101a3198e3579aec50e"
+  },
+  "CrimsonBrute": {
+    "fbx": "ArtSource/ChurchMinionsCombat20260921/CrimsonBrute/CrimsonBrute_Combat.fbx",
+    "bytes": 2621964,
+    "sha256": "2caa69e024c411c40d02370d1755dc1a1467cff9888169edfee37bb60ddc8427"
+  },
+  "GoldenThroat": {
+    "fbx": "ArtSource/ChurchMinionsCombat20260921/GoldenThroat/GoldenThroat_Combat.fbx",
+    "bytes": 2674812,
+    "sha256": "78a7ad0df76949172eb0557fec913ebb65b77b08b5bcbb685e6201ffb9321535"
+  },
+  "VeilOracle": {
+    "fbx": "ArtSource/ChurchMinionsCombat20260921/VeilOracle/VeilOracle_Combat.fbx",
+    "bytes": 2907932,
+    "sha256": "0af8b335cc7c90416b35d5dcbcf82d4197e06b2b7cd78ac94c22bb6dcaa716e7"
+  },
+  "Copperback": {
+    "fbx": "ArtSource/ChurchMinionsCombat20260921/Copperback/Copperback_Combat.fbx",
+    "bytes": 2851692,
+    "sha256": "a29fb0e6c9ead6ccc0dac3166ee22ed197643e68e25b74e4cc1624fc3adb3503"
+  }
+}

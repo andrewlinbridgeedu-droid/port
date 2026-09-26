@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "owner": "mindstone-create-spell-vfx",
+  "spell": "v1-system-projectile",
+  "files": {
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Spells/v1-system-projectile/spell.json": "81c3bc5fbe0f5abc8b0bcaa94e55578332ad309b7b016e88709ace67b7d217ac",
+    "UnityBattleSource/Assets/Resources/Mindstone/VFXV1/Registry/v1-system-projectile.json": "6f0f95e160d7cb7fe1d4aac92e29f5fc06346c7df423d3b0d8bbeb8f6d7f4c4c",
+    "UnityBattleSource/Assets/Mindstone/VFXV1/Authoring/v1-system-projectile/provenance.json": "0708fe3291b35b8a1f1c74ea8c19f9bb61303e2df4466c5144f87ce9d4424f6e"
+  }
+}

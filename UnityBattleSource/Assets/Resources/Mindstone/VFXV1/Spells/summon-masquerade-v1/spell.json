@@ -1,0 +1,174 @@
+{
+  "schema": 1,
+  "id": "summon-masquerade-v1",
+  "displayName": "假面谕令",
+  "archetype": "summon",
+  "seed": 73013,
+  "timeline": {
+    "windup": 0.12,
+    "travel": 0.26,
+    "impact": 0.28,
+    "decay": 0.74
+  },
+  "anchors": {
+    "origin": "source",
+    "target": "target",
+    "impact": "impact",
+    "ground": "ground",
+    "originOffset": [
+      0,
+      0,
+      0
+    ],
+    "targetOffset": [
+      0,
+      0,
+      0
+    ],
+    "impactOffset": [
+      0,
+      0,
+      0
+    ],
+    "groundOffset": [
+      0,
+      0,
+      0
+    ]
+  },
+  "behavior": {
+    "path": "bezier",
+    "arcHeight": 0.35,
+    "startScale": 0.45,
+    "endScale": 1.25,
+    "impactScale": 1.8,
+    "tracking": 1.0,
+    "beamWidth": 0.0,
+    "orbitRadius": 0.0,
+    "spinDegrees": 90.0,
+    "extensionType": ""
+  },
+  "layers": [
+    {
+      "name": "core",
+      "backend": "extension",
+      "asset": "",
+      "role": "core",
+      "anchor": "motion",
+      "start": 0,
+      "end": 1,
+      "color": [
+        1.0,
+        0.72,
+        0.28,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "startScale": 0.35,
+      "endScale": 1.15,
+      "width": 0.12,
+      "pointCount": 20,
+      "renderQueue": 3400,
+      "sortingOrder": 0,
+      "seedOffset": 11,
+      "fps": 24.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": false,
+      "extensionType": "Mindstone.VFXV1.MasqueradeRitual"
+    },
+    {
+      "name": "direction",
+      "backend": "extension",
+      "asset": "",
+      "role": "direction",
+      "anchor": "motion",
+      "start": 0,
+      "end": 1,
+      "color": [
+        1.0,
+        0.26,
+        0.03,
+        0.72
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "startScale": 0.8,
+      "endScale": 1.0,
+      "width": 0.13,
+      "pointCount": 24,
+      "renderQueue": 3350,
+      "sortingOrder": 0,
+      "seedOffset": 19,
+      "fps": 24.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": false,
+      "extensionType": "Mindstone.VFXV1.MasqueradeRitual"
+    },
+    {
+      "name": "impact-front",
+      "backend": "extension",
+      "asset": "",
+      "role": "impact-front",
+      "anchor": "impact",
+      "start": 0,
+      "end": 1,
+      "color": [
+        1.0,
+        0.2,
+        0.02,
+        1.0
+      ],
+      "scale": [
+        1.4,
+        1.4,
+        1.4
+      ],
+      "startScale": 0.55,
+      "endScale": 1.8,
+      "width": 0.2,
+      "pointCount": 18,
+      "renderQueue": 3150,
+      "sortingOrder": -2,
+      "seedOffset": 23,
+      "fps": 24.0,
+      "loop": false,
+      "faceCamera": true,
+      "frontOfTarget": false,
+      "extensionType": "Mindstone.VFXV1.MasqueradeRitual"
+    }
+  ],
+  "capture": {
+    "times": [
+      0.08,
+      0.3,
+      0.58,
+      0.9,
+      1.28
+    ],
+    "device": "iPhone 13",
+    "targetFps": 60
+  },
+  "cleanupSeconds": 0.35,
+  "showcase": {
+    "sourceActor": "player",
+    "source": [
+      -3.45,
+      1.1,
+      3.8
+    ],
+    "target": [
+      -3.45,
+      1.1,
+      3.8
+    ]
+  }
+}
