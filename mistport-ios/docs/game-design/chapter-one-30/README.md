@@ -42,7 +42,9 @@ Q1–8失名与诊所 → Q9–16假家庭、错误救援与终止旧犬 → Q17
 | [四项审查与后续计划](CHAPTER1_REVIEW_AND_PLAN_20260925.md) | 本轮总结果、证据层级、优先级与验收顺序 |
 | [全法术命中华彩层 9/26](../../../../docs/development/SPELL_SPECTACLE_20260926.md)（89组Unity实录，未装机、待视觉认可）／[法术强度返工](../../../../docs/development/SPELL_IMPACT_GRADE_20260925.md)／[M12/M15与Build126](../../../../docs/development/SPELL_IMPACT_DEVICE_20260925.md)／[M12二次展开补修](../../../../docs/development/M12_DEPLOY_GRADE_20260926.md)／[受创反馈](../../../../docs/development/PLAYER_IMPACT_FEEDBACK_20260925.md) | 原批82段Unity实录、M12/M15补修片与正式受创桥接分批核对；Build126已装机、Q6旧蓝盾仍偏平，M12加强版正式录制、设备导出和签名Build127完成但未装机，M15/H10及用户视觉认可仍未完成 |
 | [高塔／十案战场Debug直达入口](../../../../docs/development/CHAPTER1_AUDIT_DIRECT_PREVIEW_20260925.md) | Build126已编入隔离战场夹具并装机，但该入口尚未真机实玩；不能当塔百层或十案自然通关 |
-| [四工艺与配方买卖接入规格](CRAFTING_INTEGRATION_SPEC_20260926.md) | 当前优先：塔材→四工艺→有限订单/自用药；8配方、12订单与商店数值已核验；未接游戏，SQLite迁移先行 |
+| [世界事件与经济](WORLD_EVENTS_AND_ECONOMY_20260926.md) | 当前收敛中：永久建设/临时冲击、有限采购、世界进度及事务接口；Pro事件v2回复尚未取得，未定案未实施 |
+| [工艺市场与熟练度](CRAFTING_MARKET_AND_PROFICIENCY_20260926.md) | 最新方向：免费/月卡生活补给＋制作商品赚钱；取消工资，高级配方要求角色等级与工艺熟练度；数值待重算、未实施 |
+| [历史工艺规格v1](CRAFTING_INTEGRATION_SPEC_20260926.md) | 配方组合与事务设计可参考；12工资单、400铜预算及F10门槛已被最新方向覆盖 |
 | [玩家工作与工资](PLAYER_WORK_AND_WAGES_20260926.md) | 战斗委托保留备选；用户最新工艺方向见上一行；工资/产业原型不等于游戏实装 |
 | [银行与产业投资](BANK_AND_INDUSTRY_DESIGN_20260925.md) | 新经济系统方案、经营决策、候选数值、亏损与离港承接；未实施 |
 | [完整规划与Pro交接](ECONOMY_PRO_CONSULTATION_20260925.md) | 18份输入包、A–H回答来源、采纳与候选边界 |

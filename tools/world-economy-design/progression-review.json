@@ -1,0 +1,36 @@
+{
+  "status": "candidate arithmetic only; costs and materials are assumptions, not recipe catalog or drop measurements",
+  "stages": [
+    {
+      "start": 0,
+      "end": 20,
+      "crafts": 8,
+      "towerMaterialUnits": 16,
+      "copper": 72
+    },
+    {
+      "start": 20,
+      "end": 45,
+      "crafts": 13,
+      "towerMaterialUnits": 39,
+      "copper": 203
+    },
+    {
+      "start": 45,
+      "end": 70,
+      "crafts": 13,
+      "towerMaterialUnits": 52,
+      "copper": 289
+    },
+    {
+      "start": 70,
+      "end": 100,
+      "crafts": 18,
+      "towerMaterialUnits": 90,
+      "copper": 470
+    }
+  ],
+  "crafts": 52,
+  "units": 197,
+  "copper": 1034
+}
