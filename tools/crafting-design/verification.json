@@ -1,0 +1,1142 @@
+{
+  "recipe_textile_layered_coat_01": {
+    "solutionCount": 8,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          null
+        ],
+        "process": "textile_cross",
+        "stats": [
+          3,
+          4,
+          0
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ],
+        "process": "textile_cross",
+        "stats": [
+          3,
+          4,
+          1
+        ],
+        "tags": [
+          "showy"
+        ],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          },
+          null
+        ],
+        "process": "textile_cross",
+        "stats": [
+          3,
+          4,
+          0
+        ],
+        "tags": [],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "recipe_leather_tool_harness_01": {
+    "solutionCount": 8,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          null
+        ],
+        "process": "leather_double",
+        "stats": [
+          5,
+          2,
+          0
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ],
+        "process": "leather_double",
+        "stats": [
+          5,
+          2,
+          2
+        ],
+        "tags": [
+          "showy"
+        ],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_shell_chip",
+            "quantity": 1
+          },
+          null
+        ],
+        "process": "leather_oil",
+        "stats": [
+          3,
+          3,
+          0
+        ],
+        "tags": [],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "recipe_metal_riveted_blade_01": {
+    "solutionCount": 3,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_copper_scale",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          }
+        ],
+        "process": "metal_polish",
+        "stats": [
+          3,
+          2,
+          3
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_copper_scale",
+            "quantity": 1
+          },
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          }
+        ],
+        "process": "metal_harden",
+        "stats": [
+          4,
+          3,
+          1
+        ],
+        "tags": [
+          "rigid"
+        ],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_saline_powder",
+            "quantity": 1
+          },
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          }
+        ],
+        "process": "metal_harden",
+        "stats": [
+          4,
+          2,
+          1
+        ],
+        "tags": [
+          "rigid"
+        ],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "recipe_alchemy_pain_salve_01": {
+    "solutionCount": 3,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_restorative_gel",
+            "quantity": 1
+          },
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 1
+          }
+        ],
+        "process": "alchemy_soak",
+        "stats": [
+          3,
+          3,
+          1
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_restorative_gel",
+            "quantity": 1
+          },
+          {
+            "id": "craft_saline_powder",
+            "quantity": 1
+          }
+        ],
+        "process": "alchemy_extract",
+        "stats": [
+          4,
+          2,
+          1
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_restorative_gel",
+            "quantity": 1
+          },
+          {
+            "id": "craft_saline_powder",
+            "quantity": 1
+          }
+        ],
+        "process": "alchemy_soak",
+        "stats": [
+          3,
+          5,
+          1
+        ],
+        "tags": [],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "recipe_textile_mistcoat_02": {
+    "solutionCount": 4,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ],
+        "process": "textile_finish",
+        "stats": [
+          2,
+          2,
+          5
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          },
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ],
+        "process": "textile_finish",
+        "stats": [
+          2,
+          2,
+          5
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 2
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ],
+        "process": "textile_layer",
+        "stats": [
+          3,
+          3,
+          3
+        ],
+        "tags": [
+          "showy"
+        ],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "recipe_leather_courier_case_02": {
+    "solutionCount": 4,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ],
+        "process": "leather_double",
+        "stats": [
+          5,
+          2,
+          3
+        ],
+        "tags": [
+          "showy"
+        ],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_shell_chip",
+            "quantity": 1
+          },
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ],
+        "process": "leather_oil",
+        "stats": [
+          3,
+          3,
+          3
+        ],
+        "tags": [
+          "showy"
+        ],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ],
+        "process": "leather_double",
+        "stats": [
+          5,
+          2,
+          3
+        ],
+        "tags": [
+          "showy"
+        ],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "recipe_metal_balanced_blade_02": {
+    "solutionCount": 3,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_copper_scale",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          }
+        ],
+        "process": "metal_polish",
+        "stats": [
+          4,
+          3,
+          3
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_shell_chip",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          }
+        ],
+        "process": "metal_polish",
+        "stats": [
+          3,
+          4,
+          2
+        ],
+        "tags": [
+          "rigid"
+        ],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_shell_chip",
+            "quantity": 1
+          },
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          }
+        ],
+        "process": "metal_polish",
+        "stats": [
+          3,
+          3,
+          3
+        ],
+        "tags": [
+          "rigid"
+        ],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "recipe_alchemy_salt_tea_01": {
+    "solutionCount": 2,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_saline_powder",
+            "quantity": 1
+          }
+        ],
+        "process": "alchemy_extract",
+        "stats": [
+          2,
+          3,
+          5
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_restorative_gel",
+            "quantity": 1
+          },
+          {
+            "id": "craft_saline_powder",
+            "quantity": 1
+          }
+        ],
+        "process": "alchemy_filter",
+        "stats": [
+          2,
+          4,
+          4
+        ],
+        "tags": [],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "craft_order_tutorial_textile_01": {
+    "solutionCount": 8,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          null
+        ],
+        "process": "textile_cross",
+        "stats": [
+          3,
+          4,
+          0
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ],
+        "process": "textile_cross",
+        "stats": [
+          3,
+          4,
+          1
+        ],
+        "tags": [
+          "showy"
+        ],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "craft_order_tutorial_leather_01": {
+    "solutionCount": 8,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          null
+        ],
+        "process": "leather_double",
+        "stats": [
+          5,
+          2,
+          0
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ],
+        "process": "leather_double",
+        "stats": [
+          5,
+          2,
+          2
+        ],
+        "tags": [
+          "showy"
+        ],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "craft_order_tutorial_metal_01": {
+    "solutionCount": 3,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_copper_scale",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          }
+        ],
+        "process": "metal_polish",
+        "stats": [
+          3,
+          2,
+          3
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_copper_scale",
+            "quantity": 1
+          },
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          }
+        ],
+        "process": "metal_harden",
+        "stats": [
+          4,
+          3,
+          1
+        ],
+        "tags": [
+          "rigid"
+        ],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "craft_order_tutorial_alchemy_01": {
+    "solutionCount": 3,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_restorative_gel",
+            "quantity": 1
+          },
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 1
+          }
+        ],
+        "process": "alchemy_soak",
+        "stats": [
+          3,
+          3,
+          1
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_restorative_gel",
+            "quantity": 1
+          },
+          {
+            "id": "craft_saline_powder",
+            "quantity": 1
+          }
+        ],
+        "process": "alchemy_extract",
+        "stats": [
+          4,
+          2,
+          1
+        ],
+        "tags": [],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "craft_order_textile_watchcoat_01": {
+    "solutionCount": 4,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          null
+        ],
+        "process": "textile_cross",
+        "stats": [
+          3,
+          4,
+          0
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          },
+          null
+        ],
+        "process": "textile_cross",
+        "stats": [
+          3,
+          4,
+          0
+        ],
+        "tags": [],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "craft_order_textile_mistcoat_02": {
+    "solutionCount": 4,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ],
+        "process": "textile_finish",
+        "stats": [
+          2,
+          2,
+          5
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          },
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ],
+        "process": "textile_finish",
+        "stats": [
+          2,
+          2,
+          5
+        ],
+        "tags": [],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "craft_order_leather_tool_harness_01": {
+    "solutionCount": 4,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          null
+        ],
+        "process": "leather_double",
+        "stats": [
+          5,
+          2,
+          0
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_shell_chip",
+            "quantity": 1
+          },
+          null
+        ],
+        "process": "leather_oil",
+        "stats": [
+          3,
+          3,
+          0
+        ],
+        "tags": [],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "craft_order_leather_courier_case_02": {
+    "solutionCount": 4,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ],
+        "process": "leather_double",
+        "stats": [
+          5,
+          2,
+          3
+        ],
+        "tags": [
+          "showy"
+        ],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_shell_chip",
+            "quantity": 1
+          },
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ],
+        "process": "leather_oil",
+        "stats": [
+          3,
+          3,
+          3
+        ],
+        "tags": [
+          "showy"
+        ],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "craft_order_metal_work_blade_01": {
+    "solutionCount": 3,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_copper_scale",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          }
+        ],
+        "process": "metal_polish",
+        "stats": [
+          3,
+          2,
+          3
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_copper_scale",
+            "quantity": 1
+          },
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          }
+        ],
+        "process": "metal_harden",
+        "stats": [
+          4,
+          3,
+          1
+        ],
+        "tags": [
+          "rigid"
+        ],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "craft_order_metal_balanced_blade_02": {
+    "solutionCount": 3,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_copper_scale",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          }
+        ],
+        "process": "metal_polish",
+        "stats": [
+          4,
+          3,
+          3
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_shell_chip",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          }
+        ],
+        "process": "metal_polish",
+        "stats": [
+          3,
+          4,
+          2
+        ],
+        "tags": [
+          "rigid"
+        ],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "craft_order_alchemy_pain_salve_01": {
+    "solutionCount": 3,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_restorative_gel",
+            "quantity": 1
+          },
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 1
+          }
+        ],
+        "process": "alchemy_soak",
+        "stats": [
+          3,
+          3,
+          1
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_restorative_gel",
+            "quantity": 1
+          },
+          {
+            "id": "craft_saline_powder",
+            "quantity": 1
+          }
+        ],
+        "process": "alchemy_extract",
+        "stats": [
+          4,
+          2,
+          1
+        ],
+        "tags": [],
+        "referenceCost": 0
+      }
+    ]
+  },
+  "craft_order_alchemy_salt_tea_02": {
+    "solutionCount": 2,
+    "examples": [
+      {
+        "materials": [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_saline_powder",
+            "quantity": 1
+          }
+        ],
+        "process": "alchemy_extract",
+        "stats": [
+          2,
+          3,
+          5
+        ],
+        "tags": [],
+        "referenceCost": 0
+      },
+      {
+        "materials": [
+          {
+            "id": "craft_restorative_gel",
+            "quantity": 1
+          },
+          {
+            "id": "craft_saline_powder",
+            "quantity": 1
+          }
+        ],
+        "process": "alchemy_filter",
+        "stats": [
+          2,
+          4,
+          4
+        ],
+        "tags": [],
+        "referenceCost": 0
+      }
+    ]
+  }
+}

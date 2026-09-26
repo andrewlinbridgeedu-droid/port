@@ -1,0 +1,37 @@
+{
+  "scope": "material pool accessibility only; not drop guarantee, battle difficulty or recipe unlock",
+  "recipes": {
+    "recipe_textile_layered_coat_01": {
+      "firstFloorWithTwoMaterialSolutions": 4,
+      "solutions": 2
+    },
+    "recipe_leather_tool_harness_01": {
+      "firstFloorWithTwoMaterialSolutions": 4,
+      "solutions": 4
+    },
+    "recipe_metal_riveted_blade_01": {
+      "firstFloorWithTwoMaterialSolutions": 4,
+      "solutions": 3
+    },
+    "recipe_alchemy_pain_salve_01": {
+      "firstFloorWithTwoMaterialSolutions": 4,
+      "solutions": 2
+    },
+    "recipe_metal_balanced_blade_02": {
+      "firstFloorWithTwoMaterialSolutions": 4,
+      "solutions": 3
+    },
+    "recipe_alchemy_salt_tea_01": {
+      "firstFloorWithTwoMaterialSolutions": 6,
+      "solutions": 2
+    },
+    "recipe_textile_mistcoat_02": {
+      "firstFloorWithTwoMaterialSolutions": 10,
+      "solutions": 4
+    },
+    "recipe_leather_courier_case_02": {
+      "firstFloorWithTwoMaterialSolutions": 10,
+      "solutions": 4
+    }
+  }
+}

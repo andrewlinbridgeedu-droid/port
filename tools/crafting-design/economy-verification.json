@@ -1,0 +1,7 @@
+{
+  "orderCount": 12,
+  "maximumOrderWages": 400,
+  "initialMerchantCash": 0,
+  "moduleMaximumNetTransfer": 400,
+  "scope": "finite local module; excludes old rewards and all price stability claims"
+}
