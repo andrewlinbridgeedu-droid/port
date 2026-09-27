@@ -1,0 +1,59 @@
+{
+  "baseline_sha256": "819169ddf3b440e4c93bb62fa4f9a9af6cd13cb944ce4148d1b863eeb4dd4271",
+  "variant_sha256": "a7bb3d9fcaa26caa97aa05247017f6a50250524df6429a352372e296ec7111b3",
+  "replacements": [
+    [
+      "item=min([k for k in range(24,28) if k in available] or [24],key=lambda k:self.ref[k])\n                ceiling=math.ceil(30*wealth)\n                requests[item].append((i,a.need,ceiling))",
+      "ceiling=math.ceil(30*wealth)\n                for item in range(24,28):\n                    requests[item].append((i,a.need,ceiling))"
+    ],
+    [
+      "for item in sorted(keys):",
+      "for item in sorted(keys,key=lambda k:(1,self.ref[k],k) if k>=24 else (0,k,k)):"
+    ],
+    [
+      "for buyer,qty,ceiling in bids:\n                while qty",
+      "for buyer,qty,ceiling in bids:\n                if item>=24 and buyer<self.c.n:\n                    owner=self.p[buyer]\n                    qty=min(qty,max(0,owner.need-sum(owner.inv[24:28])))\n                while qty"
+    ],
+    [
+      "offers=[];want=sum(q for _,q,_ in bids)",
+      "offers=[]\n            want=sum(min(q,max(0,self.p[i].need-sum(self.p[i].inv[24:28]))) if item>=24 and i<self.c.n else q for i,q,_ in bids)"
+    ],
+    [
+      "if a.cash<1 or a.inv[item]>=8 or any(a.inv[k]<q for k,q in recipe.items()):continue",
+      "if a.cash<1 or a.inv[item]>=8 or any(a.inv[k]<q for k,q in recipe.items()):continue\n            opportunity_cost=1+sum((P0[k] if k>=8 else self.ref[k])*q for k,q in recipe.items())\n            self_use=(a.prof==3 and a.need>sum(a.inv[24:28])) or (a.prof==0 and a.gear[0]<t) or (a.prof==2 and a.gear[1]<t)\n            training=a.skill-STAGES[t]<30\n            if not training and not self_use and self.ref[item]*(1-self.c.fee_bps/10000)<opportunity_cost:continue"
+    ],
+    [
+      "    repeat_rate:float=.25",
+      "    expense_stress:bool=False\n    repeat_count:int=1\n    repeat_rate:float=.25"
+    ],
+    [
+      "    battles:int=0",
+      "    battles:int=0\n    advancement:set=field(default_factory=set)\n    advancement_wait:int=0"
+    ],
+    [
+      "                a.cash=int(self.r.lognormvariate",
+      "                a.advancement={17,20,23} # assumed already owned by initialized veterans\n                a.cash=int(self.r.lognormvariate"
+    ],
+    [
+      "                self.issue_to(a,SOURCE['q_repeat'][q],'q_repeat')",
+      "                self.issue_to(a,SOURCE['q_repeat'][q]*self.c.repeat_count,'q_repeat')"
+    ],
+    [
+      "            for j,b in enumerate(SOURCE['bounty']):",
+      "            if self.c.expense_stress:\n                for unlock,price in [(17, 260), (20, 340), (23, 480)]:\n                    if a.q>=unlock and unlock not in a.advancement:\n                        if a.cash>=price:\n                            self.retire(a,price,'advancement');a.advancement.add(unlock)\n                        else:a.advancement_wait+=1\n            for j,b in enumerate(SOURCE['bounty']):"
+    ],
+    [
+      "    repeat_count:int=1",
+      "    repeat_count:int=1\n    repeat_window:int=0"
+    ],
+    [
+      "    advancement_wait:int=0",
+      "    advancement_wait:int=0\n    last_repeat_block:int=-1"
+    ],
+    [
+      "                self.issue_to(a,SOURCE['q_repeat'][q]*self.c.repeat_count,'q_repeat')",
+      "                block=(self.day-1)//self.c.repeat_window if self.c.repeat_window else -1\n                if not self.c.repeat_window or a.last_repeat_block!=block:\n                    self.issue_to(a,SOURCE['q_repeat'][q]*self.c.repeat_count,'q_repeat')\n                    a.last_repeat_block=block"
+    ]
+  ],
+  "note": "All accounts mature, no arrivals. One successful Q30 per active cycle assumption. Windows are server-calendar fixed blocks; first active eligible clear pays 105 once, no carry, unused periods expire. Other economy rules unchanged; not a product change. End includes partial final block."
+}

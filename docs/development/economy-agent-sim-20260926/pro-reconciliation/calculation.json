@@ -1,0 +1,234 @@
+{
+  "observed_metrics": {
+    "total_issuance": 42252583.333333336,
+    "q30_issuance": 38405850,
+    "other_issuance": 3846733.333333336,
+    "sinks": 938116,
+    "implied_daily_active": 1002.1095890410959,
+    "net_money_growth": 41314467.333333336,
+    "net_growth_per_active_cycle": 112.95203907738015,
+    "craft_initial_increment_profit": 34.5,
+    "gather_plus_craft_cash_net": 54.5,
+    "gather_plus_craft_minutes": 5.9
+  },
+  "analytical_claims": [
+    {
+      "n": 2000,
+      "activity_setting": 0.2,
+      "expected_dau": 399.99999999999994,
+      "days": 180,
+      "window": 0,
+      "expected_q30_issuance": 7559999.999999998
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.2,
+      "expected_dau": 399.99999999999994,
+      "days": 180,
+      "window": 7,
+      "expected_q30_issuance": 4075169.3481087233
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.2,
+      "expected_dau": 399.99999999999994,
+      "days": 180,
+      "window": 14,
+      "expected_q30_issuance": 2490183.389358612
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.2,
+      "expected_dau": 399.99999999999994,
+      "days": 365,
+      "window": 0,
+      "expected_q30_issuance": 15329999.999999996
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.2,
+      "expected_dau": 399.99999999999994,
+      "days": 365,
+      "window": 7,
+      "expected_q30_issuance": 8237381.145191773
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.2,
+      "expected_dau": 399.99999999999994,
+      "days": 365,
+      "window": 14,
+      "expected_q30_issuance": 5034064.355306711
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.2,
+      "expected_dau": 399.99999999999994,
+      "days": 730,
+      "window": 0,
+      "expected_q30_issuance": 30659999.999999993
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.2,
+      "expected_dau": 399.99999999999994,
+      "days": 730,
+      "window": 7,
+      "expected_q30_issuance": 16465179.290679254
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.2,
+      "expected_dau": 399.99999999999994,
+      "days": 730,
+      "window": 14,
+      "expected_q30_issuance": 10058545.710909154
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.5,
+      "expected_dau": 1000.0,
+      "days": 180,
+      "window": 0,
+      "expected_q30_issuance": 18900000.0
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.5,
+      "expected_dau": 1000.0,
+      "days": 180,
+      "window": 7,
+      "expected_q30_issuance": 5226360.440225043
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.5,
+      "expected_dau": 1000.0,
+      "days": 180,
+      "window": 14,
+      "expected_q30_issuance": 2713533.7738736984
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.5,
+      "expected_dau": 1000.0,
+      "days": 365,
+      "window": 0,
+      "expected_q30_issuance": 38325000.0
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.5,
+      "expected_dau": 1000.0,
+      "days": 365,
+      "window": 7,
+      "expected_q30_issuance": 10574340.069144124
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.5,
+      "expected_dau": 1000.0,
+      "days": 365,
+      "window": 14,
+      "expected_q30_issuance": 5533739.446347752
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.5,
+      "expected_dau": 1000.0,
+      "days": 730,
+      "window": 0,
+      "expected_q30_issuance": 76650000.0
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.5,
+      "expected_dau": 1000.0,
+      "days": 730,
+      "window": 7,
+      "expected_q30_issuance": 21088786.3901367
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.5,
+      "expected_dau": 1000.0,
+      "days": 730,
+      "window": 14,
+      "expected_q30_issuance": 11007585.14454393
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.8,
+      "expected_dau": 1495.2885000000058,
+      "days": 180,
+      "window": 0,
+      "expected_q30_issuance": 28260952.65000011
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.8,
+      "expected_dau": 1495.2885000000058,
+      "days": 180,
+      "window": 7,
+      "expected_q30_issuance": 5409739.8288242435
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.8,
+      "expected_dau": 1495.2885000000058,
+      "days": 180,
+      "window": 14,
+      "expected_q30_issuance": 2728612.7445659675
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.8,
+      "expected_dau": 1495.2885000000058,
+      "days": 365,
+      "window": 0,
+      "expected_q30_issuance": 57306931.76250022
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.8,
+      "expected_dau": 1495.2885000000058,
+      "days": 365,
+      "window": 7,
+      "expected_q30_issuance": 10982216.114975763
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.8,
+      "expected_dau": 1495.2885000000058,
+      "days": 365,
+      "window": 14,
+      "expected_q30_issuance": 5614469.851501262
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.8,
+      "expected_dau": 1495.2885000000058,
+      "days": 730,
+      "window": 0,
+      "expected_q30_issuance": 114613863.52500044
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.8,
+      "expected_dau": 1495.2885000000058,
+      "days": 730,
+      "window": 7,
+      "expected_q30_issuance": 21835292.590569083
+    },
+    {
+      "n": 2000,
+      "activity_setting": 0.8,
+      "expected_dau": 1495.2885000000058,
+      "days": 730,
+      "window": 14,
+      "expected_q30_issuance": 11099800.063621057
+    }
+  ],
+  "formula": "105 * sum_i(sum_blocks(1-(1-p_i)^block_length))); independent activity per cycle, all 2000 eligible and one clear whenever active, no carry, fixed server blocks, incomplete final blocks included",
+  "note": "Analytic expected issuance only; not new executed trades or observed behavior. Full market experiment in sibling entitlement folder."
+}

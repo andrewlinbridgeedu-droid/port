@@ -45,6 +45,7 @@ Q1–8失名与诊所 → Q9–16假家庭、错误救援与终止旧犬 → Q17
 | [世界事件与经济](WORLD_EVENTS_AND_ECONOMY_20260926.md) | Pro v2审核包已取得并本地复跑19,710日行；先做雾潮/泵站闭环，伤患潮需盐茶产业前置；结构候选可开发，经济稳定性未通过、未实施 |
 | [2000独立账户多场景实验](../../../../docs/development/economy-agent-sim-20260926/RESULTS.md)／[图表](../../../../docs/development/economy-agent-sim-20260926/index.html) | 220次运行、87,600模拟日、约2610万笔成交，钱账复核通过；修正策略后双倍供给药品履约94.54%，完整经济门槛未通过；原始控制组与模型限制均保留 |
 | [晋阶采购与成熟服追加实验](../../../../docs/development/economy-agent-sim-20260926/followup/RESULTS.md)／[继续研究议题](../../../../docs/development/economy-agent-sim-20260926/NEXT_RESEARCH.md) | 额外12次、4,380模拟日，采购压力下药品履约94.31%；成熟服持续刷关发行显著超过当前模型销毁，不能靠一次性晋阶费解决；未改游戏奖励，Pro本轮未连通 |
+| [Pro最新回复复核](../../../../docs/development/economy-agent-sim-20260926/pro-reconciliation/RESULTS.md)／[9次周期额度实验](../../../../docs/development/economy-agent-sim-20260926/entitlement/RESULTS.md) | 已通过用户粘贴取得回复；纠正发行基数和除7算法，每7周期一次仍总发行约1441万/年、原模型销毁约93万，未通过完整稳定性门槛；非游戏规则修改 |
 | [工艺市场与熟练度](CRAFTING_MARKET_AND_PROFICIENCY_20260926.md) | 最新方向：免费/月卡生活补给＋制作商品赚钱；取消工资，高级配方要求角色等级与工艺熟练度；v2候选28+28铜/7周期及等级/熟练度已模拟，尚未通过平衡验收、未实施 |
 | [历史工艺规格v1](CRAFTING_INTEGRATION_SPEC_20260926.md) | 配方组合与事务设计可参考；12工资单、400铜预算及F10门槛已被最新方向覆盖 |
 | [玩家工作与工资](PLAYER_WORK_AND_WAGES_20260926.md) | 战斗委托保留备选；用户最新工艺方向见上一行；工资/产业原型不等于游戏实装 |

@@ -76,3 +76,17 @@ python3 tools/economy-agent-sim/report_followup.py
 ```
 
 运行器拒绝覆盖已有批次；复现时在独立检出中运行或先修改输出目录，不删除原始证据。该批次独立报告，不追加进原220次汇总以免混淆不同模型。新测试检查三材不重复扣款、余额不足不发权利、成熟服发行与活跃次数一致。
+
+## Pro回复复核与周期额度
+
+`reconcile_pro_reply.py`核对总发行/重复发行、工艺利润口径，并解析计算27项活跃参数×时长×领取规则的期望值；不是27次服务器模拟。`audit_recipe_viability.py`静态核算16张占位配方，不把报价当成交。
+
+`run_entitlement.py`在保持原模拟市场和NPC账目规则下，新增3规则×3种子×365周期的独立账户实验。固定服务器7/14周期分段，首次合格Q30领取一次，未领不补发，年末短周期可领。并非滚动冷却，也未覆盖其它重复入口、迁服、新账号或Pro候选进口成本。无游戏源码改动。
+
+```sh
+python3 tools/economy-agent-sim/audit_recipe_viability.py
+python3 tools/economy-agent-sim/reconcile_pro_reply.py
+python3 tools/economy-agent-sim/run_entitlement.py
+python3 tools/economy-agent-sim/audit_results.py docs/development/economy-agent-sim-20260926/entitlement
+python3 tools/economy-agent-sim/report_entitlement.py
+```
