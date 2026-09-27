@@ -63,3 +63,16 @@ python3 tools/economy-agent-sim/report.py
 ```
 
 完整实际运行数最终由RESULTS.md统计，不把未结束的批次提前算为完成。两年批次的新玩家入场窗口由总时长决定，和一年不是完全相同轨迹续跑；只能作为不同长期人口节奏的情景。
+
+## 晋阶采购与成熟服追加研究
+
+`run_followup.py`保留原模型，以精确补丁加入源码三材一次性采购压力与成熟服重复刷Q30的发行压力；4情景×3种子×365周期。成熟服3/10次只放大铜币，不假装模拟额外战斗时间和成本。初始老玩家已持有三材，不能重复收费。晋阶采购不阻断故事，因此不作剧情可达性证明。详细假设见`docs/development/economy-agent-sim-20260926/NEXT_RESEARCH.md`。
+
+```sh
+python3 -m unittest discover -s tools/economy-agent-sim -v
+python3 tools/economy-agent-sim/run_followup.py
+python3 tools/economy-agent-sim/audit_results.py docs/development/economy-agent-sim-20260926/followup
+python3 tools/economy-agent-sim/report_followup.py
+```
+
+运行器拒绝覆盖已有批次；复现时在独立检出中运行或先修改输出目录，不删除原始证据。该批次独立报告，不追加进原220次汇总以免混淆不同模型。新测试检查三材不重复扣款、余额不足不发权利、成熟服发行与活跃次数一致。
