@@ -1,0 +1,23 @@
+{
+  "baseline_sha256": "819169ddf3b440e4c93bb62fa4f9a9af6cd13cb944ce4148d1b863eeb4dd4271",
+  "variant_sha256": "117c6d8ecc6868caa499850e7ad1ca45acdb0c14abae5fa137ad561b920689e8",
+  "replacements": [
+    [
+      "item=min([k for k in range(24,28) if k in available] or [24],key=lambda k:self.ref[k])\n                ceiling=math.ceil(30*wealth)\n                requests[item].append((i,a.need,ceiling))",
+      "ceiling=math.ceil(30*wealth)\n                for item in range(24,28):\n                    requests[item].append((i,a.need,ceiling))"
+    ],
+    [
+      "for item in sorted(keys):",
+      "for item in sorted(keys,key=lambda k:(1,self.ref[k],k) if k>=24 else (0,k,k)):"
+    ],
+    [
+      "for buyer,qty,ceiling in bids:\n                while qty",
+      "for buyer,qty,ceiling in bids:\n                if item>=24 and buyer<self.c.n:\n                    owner=self.p[buyer]\n                    qty=min(qty,max(0,owner.need-sum(owner.inv[24:28])))\n                while qty"
+    ],
+    [
+      "offers=[];want=sum(q for _,q,_ in bids)",
+      "offers=[]\n            want=sum(min(q,max(0,self.p[i].need-sum(self.p[i].inv[24:28]))) if item>=24 and i<self.c.n else q for i,q,_ in bids)"
+    ]
+  ],
+  "note": "All potion tiers substitute for one optional battle use in this simplified model. Orders cannot overbuy; materials and monetary rules unchanged. Profit option suppresses mature loss-making crafts, not training or self-use."
+}

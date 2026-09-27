@@ -43,6 +43,7 @@ Q1–8失名与诊所 → Q9–16假家庭、错误救援与终止旧犬 → Q17
 | [全法术命中华彩层 9/26](../../../../docs/development/SPELL_SPECTACLE_20260926.md)（89组Unity实录，未装机、待视觉认可）／[法术强度返工](../../../../docs/development/SPELL_IMPACT_GRADE_20260925.md)／[M12/M15与Build126](../../../../docs/development/SPELL_IMPACT_DEVICE_20260925.md)／[M12二次展开补修](../../../../docs/development/M12_DEPLOY_GRADE_20260926.md)／[受创反馈](../../../../docs/development/PLAYER_IMPACT_FEEDBACK_20260925.md) | 原批82段Unity实录、M12/M15补修片与正式受创桥接分批核对；Build126已装机、Q6旧蓝盾仍偏平，M12加强版正式录制、设备导出和签名Build127完成但未装机，M15/H10及用户视觉认可仍未完成 |
 | [高塔／十案战场Debug直达入口](../../../../docs/development/CHAPTER1_AUDIT_DIRECT_PREVIEW_20260925.md) | Build126已编入隔离战场夹具并装机，但该入口尚未真机实玩；不能当塔百层或十案自然通关 |
 | [世界事件与经济](WORLD_EVENTS_AND_ECONOMY_20260926.md) | Pro v2审核包已取得并本地复跑19,710日行；先做雾潮/泵站闭环，伤患潮需盐茶产业前置；结构候选可开发，经济稳定性未通过、未实施 |
+| [2000独立账户多场景实验](../../../../docs/development/economy-agent-sim-20260926/RESULTS.md)／[图表](../../../../docs/development/economy-agent-sim-20260926/index.html) | 220次运行、87,600模拟日、约2610万笔成交，钱账复核通过；修正策略后双倍供给药品履约94.54%，完整经济门槛未通过；原始控制组与模型限制均保留 |
 | [工艺市场与熟练度](CRAFTING_MARKET_AND_PROFICIENCY_20260926.md) | 最新方向：免费/月卡生活补给＋制作商品赚钱；取消工资，高级配方要求角色等级与工艺熟练度；v2候选28+28铜/7周期及等级/熟练度已模拟，尚未通过平衡验收、未实施 |
 | [历史工艺规格v1](CRAFTING_INTEGRATION_SPEC_20260926.md) | 配方组合与事务设计可参考；12工资单、400铜预算及F10门槛已被最新方向覆盖 |
 | [玩家工作与工资](PLAYER_WORK_AND_WAGES_20260926.md) | 战斗委托保留备选；用户最新工艺方向见上一行；工资/产业原型不等于游戏实装 |
