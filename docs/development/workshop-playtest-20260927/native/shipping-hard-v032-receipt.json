@@ -1,0 +1,1450 @@
+{
+  "battles" : [
+    {
+      "encounter" : "church_tower_001",
+      "events" : [
+
+      ],
+      "id" : "trial-battle-1",
+      "initialEnemyIDs" : [
+        "church_d01_shield_jaw_f01_s0"
+      ],
+      "medicineUsed" : 0,
+      "purpose" : "tower",
+      "seconds" : 13.55,
+      "won" : true
+    },
+    {
+      "encounter" : "sandbox_campaign_guardHard",
+      "events" : [
+        {
+          "amount" : 0,
+          "at" : 0,
+          "detail" : "rules-v2.1; gear=30; passive=relic_salt_sealed_breathing_bag; medicine=2; medal=true",
+          "id" : 0,
+          "kind" : "start",
+          "target" : ""
+        },
+        {
+          "amount" : 0,
+          "at" : 0.9,
+          "detail" : "",
+          "id" : 1,
+          "kind" : "medal",
+          "target" : ""
+        },
+        {
+          "amount" : 0,
+          "at" : 2.0500000000000003,
+          "detail" : "",
+          "id" : 2,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 55,
+          "at" : 2.85,
+          "detail" : "",
+          "id" : 3,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 3.0500000000000003,
+          "detail" : "",
+          "id" : 4,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 3.5500000000000003,
+          "detail" : "fool_skill_05",
+          "id" : 5,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 30,
+          "at" : 3.85,
+          "detail" : "",
+          "id" : 6,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 4.05,
+          "detail" : "",
+          "id" : 7,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 136,
+          "at" : 4.1000000000000005,
+          "detail" : "",
+          "id" : 8,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 30,
+          "at" : 4.8500000000000005,
+          "detail" : "",
+          "id" : 9,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 0,
+          "at" : 5.800000000000001,
+          "detail" : "fool_skill_04",
+          "id" : 10,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 191,
+          "at" : 6.25,
+          "detail" : "",
+          "id" : 11,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 0,
+          "at" : 6.65,
+          "detail" : "",
+          "id" : 12,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 40,
+          "at" : 7.45,
+          "detail" : "",
+          "id" : 13,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 8.05,
+          "detail" : "",
+          "id" : 14,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 8.05,
+          "detail" : "fool_skill_06",
+          "id" : 15,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 430,
+          "at" : 8.8,
+          "detail" : "",
+          "id" : 16,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 15,
+          "at" : 8.85,
+          "detail" : "",
+          "id" : 17,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 9.05,
+          "detail" : "",
+          "id" : 18,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 30,
+          "at" : 9.850000000000001,
+          "detail" : "",
+          "id" : 19,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 0,
+          "at" : 10.25,
+          "detail" : "fool_skill_07",
+          "id" : 20,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 311,
+          "at" : 11.15,
+          "detail" : "",
+          "id" : 21,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 0,
+          "at" : 11.25,
+          "detail" : "",
+          "id" : 22,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 332,
+          "at" : 11.55,
+          "detail" : "",
+          "id" : 23,
+          "kind" : "medicine",
+          "target" : ""
+        },
+        {
+          "amount" : 40,
+          "at" : 12.05,
+          "detail" : "",
+          "id" : 24,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 13.05,
+          "detail" : "",
+          "id" : 25,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 30,
+          "at" : 13.850000000000001,
+          "detail" : "",
+          "id" : 26,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 14.05,
+          "detail" : "",
+          "id" : 27,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 0,
+          "at" : 14.350000000000001,
+          "detail" : "fool_skill_05",
+          "id" : 28,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 30,
+          "at" : 14.850000000000001,
+          "detail" : "",
+          "id" : 29,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 32,
+          "at" : 14.9,
+          "detail" : "",
+          "id" : 30,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_add#2"
+        },
+        {
+          "amount" : 0,
+          "at" : 14.9,
+          "detail" : "",
+          "id" : 31,
+          "kind" : "target",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 15.850000000000001,
+          "detail" : "",
+          "id" : 32,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 16.55,
+          "detail" : "fool_skill_04",
+          "id" : 33,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 40,
+          "at" : 16.650000000000002,
+          "detail" : "",
+          "id" : 34,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 146,
+          "at" : 17,
+          "detail" : "",
+          "id" : 35,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 18.05,
+          "detail" : "",
+          "id" : 36,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 30,
+          "at" : 18.85,
+          "detail" : "",
+          "id" : 37,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 18.85,
+          "detail" : "fool_skill_06",
+          "id" : 38,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 195,
+          "at" : 19.6,
+          "detail" : "",
+          "id" : 39,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 20.450000000000003,
+          "detail" : "",
+          "id" : 40,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 21.05,
+          "detail" : "basic",
+          "id" : 41,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 40,
+          "at" : 21.25,
+          "detail" : "",
+          "id" : 42,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 84,
+          "at" : 21.650000000000002,
+          "detail" : "",
+          "id" : 43,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 23.05,
+          "detail" : "",
+          "id" : 44,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 23.200000000000003,
+          "detail" : "fool_skill_05",
+          "id" : 45,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 124,
+          "at" : 23.75,
+          "detail" : "",
+          "id" : 46,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 15,
+          "at" : 23.85,
+          "detail" : "",
+          "id" : 47,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 24,
+          "detail" : "4秒：击杀护卫；无护卫时打掉核心8%生命",
+          "id" : 48,
+          "kind" : "charge_start",
+          "target" : ""
+        },
+        {
+          "amount" : 40,
+          "at" : 28,
+          "detail" : "6次，每秒一次；核心恢复6秒",
+          "id" : 49,
+          "kind" : "charge_release",
+          "target" : ""
+        },
+        {
+          "amount" : 0,
+          "at" : 28.05,
+          "detail" : "",
+          "id" : 50,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 30,
+          "at" : 28.85,
+          "detail" : "",
+          "id" : 51,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 16,
+          "at" : 29,
+          "detail" : "原始40",
+          "id" : 52,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 16,
+          "at" : 30,
+          "detail" : "原始40",
+          "id" : 53,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 16,
+          "at" : 31,
+          "detail" : "原始40",
+          "id" : 54,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 16,
+          "at" : 32,
+          "detail" : "原始40",
+          "id" : 55,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 16,
+          "at" : 33,
+          "detail" : "原始40",
+          "id" : 56,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 0,
+          "at" : 33.050000000000004,
+          "detail" : "",
+          "id" : 57,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 30,
+          "at" : 33.85,
+          "detail" : "",
+          "id" : 58,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 16,
+          "at" : 34,
+          "detail" : "原始39",
+          "id" : 59,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 0,
+          "at" : 34.75,
+          "detail" : "",
+          "id" : 60,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 55,
+          "at" : 35.550000000000004,
+          "detail" : "",
+          "id" : 61,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 38.050000000000004,
+          "detail" : "",
+          "id" : 62,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 30,
+          "at" : 38.85,
+          "detail" : "",
+          "id" : 63,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 39.35,
+          "detail" : "",
+          "id" : 64,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 55,
+          "at" : 40.150000000000006,
+          "detail" : "",
+          "id" : 65,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 43.050000000000004,
+          "detail" : "",
+          "id" : 66,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 30,
+          "at" : 43.85,
+          "detail" : "",
+          "id" : 67,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 43.95,
+          "detail" : "",
+          "id" : 68,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 55,
+          "at" : 44.75,
+          "detail" : "",
+          "id" : 69,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 46.85,
+          "detail" : "fool_skill_07",
+          "id" : 70,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 393,
+          "at" : 47.75,
+          "detail" : "",
+          "id" : 71,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 48,
+          "detail" : "4秒：击杀护卫；无护卫时打掉核心8%生命",
+          "id" : 72,
+          "kind" : "charge_start",
+          "target" : ""
+        },
+        {
+          "amount" : 0,
+          "at" : 48.050000000000004,
+          "detail" : "",
+          "id" : 73,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 15,
+          "at" : 48.85,
+          "detail" : "",
+          "id" : 74,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 49.2,
+          "detail" : "fool_skill_04",
+          "id" : 75,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 158,
+          "at" : 49.650000000000006,
+          "detail" : "",
+          "id" : 76,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 49.650000000000006,
+          "detail" : "护卫在蓄力期死亡",
+          "id" : 77,
+          "kind" : "charge_interrupt",
+          "target" : "sandbox_campaign_guardHard_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 49.650000000000006,
+          "detail" : "",
+          "id" : 78,
+          "kind" : "target",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 51.5,
+          "detail" : "fool_skill_06",
+          "id" : 79,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 166,
+          "at" : 52.25,
+          "detail" : "",
+          "id" : 80,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 53.400000000000006,
+          "detail" : "",
+          "id" : 81,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 53.75,
+          "detail" : "fool_skill_05",
+          "id" : 82,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 40,
+          "at" : 54.2,
+          "detail" : "",
+          "id" : 83,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 133,
+          "at" : 54.300000000000004,
+          "detail" : "",
+          "id" : 84,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 329,
+          "at" : 57.650000000000006,
+          "detail" : "",
+          "id" : 85,
+          "kind" : "medicine",
+          "target" : ""
+        },
+        {
+          "amount" : 0,
+          "at" : 58,
+          "detail" : "",
+          "id" : 86,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 55,
+          "at" : 58.800000000000004,
+          "detail" : "",
+          "id" : 87,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 61.150000000000006,
+          "detail" : "fool_skill_04",
+          "id" : 88,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 136,
+          "at" : 61.6,
+          "detail" : "",
+          "id" : 89,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 62.6,
+          "detail" : "",
+          "id" : 90,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 40,
+          "at" : 63.400000000000006,
+          "detail" : "",
+          "id" : 91,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 63.5,
+          "detail" : "fool_skill_06",
+          "id" : 92,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 236,
+          "at" : 64.25,
+          "detail" : "",
+          "id" : 93,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 66,
+          "detail" : "fool_skill_05",
+          "id" : 94,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 160,
+          "at" : 66.55,
+          "detail" : "",
+          "id" : 95,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 67.2,
+          "detail" : "",
+          "id" : 96,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 25,
+          "at" : 68,
+          "detail" : "",
+          "id" : 97,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 68.65,
+          "detail" : "fool_skill_07",
+          "id" : 98,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 431,
+          "at" : 69.55,
+          "detail" : "",
+          "id" : 99,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 71,
+          "detail" : "basic",
+          "id" : 100,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 84,
+          "at" : 71.60000000000001,
+          "detail" : "",
+          "id" : 101,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 71.8,
+          "detail" : "",
+          "id" : 102,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 72,
+          "detail" : "4秒：击杀护卫；无护卫时打掉核心8%生命",
+          "id" : 103,
+          "kind" : "charge_start",
+          "target" : ""
+        },
+        {
+          "amount" : 0,
+          "at" : 72,
+          "detail" : "",
+          "id" : 104,
+          "kind" : "attack_cancel",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 73.4,
+          "detail" : "fool_skill_04",
+          "id" : 105,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 162,
+          "at" : 73.85000000000001,
+          "detail" : "",
+          "id" : 106,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 75.65,
+          "detail" : "fool_skill_06",
+          "id" : 107,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 40,
+          "at" : 76,
+          "detail" : "6次，每秒一次；核心恢复6秒",
+          "id" : 108,
+          "kind" : "charge_release",
+          "target" : ""
+        },
+        {
+          "amount" : 274,
+          "at" : 76.4,
+          "detail" : "",
+          "id" : 109,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 77,
+          "detail" : "原始40",
+          "id" : 110,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 0,
+          "at" : 77.9,
+          "detail" : "fool_skill_05",
+          "id" : 111,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 2,
+          "at" : 78,
+          "detail" : "原始40",
+          "id" : 112,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 105,
+          "at" : 78.45,
+          "detail" : "",
+          "id" : 113,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 16,
+          "at" : 79,
+          "detail" : "原始40",
+          "id" : 114,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 16,
+          "at" : 80,
+          "detail" : "原始40",
+          "id" : 115,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 16,
+          "at" : 81,
+          "detail" : "原始40",
+          "id" : 116,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 0,
+          "at" : 81.7,
+          "detail" : "basic",
+          "id" : 117,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 15,
+          "at" : 82,
+          "detail" : "原始36",
+          "id" : 118,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 84,
+          "at" : 82.30000000000001,
+          "detail" : "",
+          "id" : 119,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 83.9,
+          "detail" : "fool_skill_07",
+          "id" : 120,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 415,
+          "at" : 84.80000000000001,
+          "detail" : "",
+          "id" : 121,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 84.80000000000001,
+          "detail" : "",
+          "id" : 122,
+          "kind" : "half_health",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 85.95,
+          "detail" : "",
+          "id" : 123,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 86.15,
+          "detail" : "fool_skill_04",
+          "id" : 124,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 176,
+          "at" : 86.60000000000001,
+          "detail" : "",
+          "id" : 125,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 25,
+          "at" : 86.75,
+          "detail" : "",
+          "id" : 126,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 88.4,
+          "detail" : "fool_skill_06",
+          "id" : 127,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 208,
+          "at" : 89.15,
+          "detail" : "",
+          "id" : 128,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 90.55000000000001,
+          "detail" : "",
+          "id" : 129,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 90.7,
+          "detail" : "fool_skill_05",
+          "id" : 130,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 145,
+          "at" : 91.25,
+          "detail" : "",
+          "id" : 131,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 25,
+          "at" : 91.35000000000001,
+          "detail" : "",
+          "id" : 132,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 92.95,
+          "detail" : "basic",
+          "id" : 133,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 84,
+          "at" : 93.55000000000001,
+          "detail" : "",
+          "id" : 134,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 95.15,
+          "detail" : "",
+          "id" : 135,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 95.2,
+          "detail" : "fool_skill_04",
+          "id" : 136,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 228,
+          "at" : 95.65,
+          "detail" : "",
+          "id" : 137,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 95.95,
+          "detail" : "",
+          "id" : 138,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 96,
+          "detail" : "4秒：击杀护卫；无护卫时打掉核心8%生命",
+          "id" : 139,
+          "kind" : "charge_start",
+          "target" : ""
+        },
+        {
+          "amount" : 0,
+          "at" : 97.95,
+          "detail" : "fool_skill_06",
+          "id" : 140,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 279,
+          "at" : 98.7,
+          "detail" : "",
+          "id" : 141,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 40,
+          "at" : 100,
+          "detail" : "6次，每秒一次；核心恢复6秒",
+          "id" : 142,
+          "kind" : "charge_release",
+          "target" : ""
+        },
+        {
+          "amount" : 1,
+          "at" : 101,
+          "detail" : "原始40",
+          "id" : 143,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 16,
+          "at" : 102,
+          "detail" : "原始40",
+          "id" : 144,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 16,
+          "at" : 103,
+          "detail" : "原始40",
+          "id" : 145,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 16,
+          "at" : 104,
+          "detail" : "原始40",
+          "id" : 146,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 0,
+          "at" : 104.45,
+          "detail" : "fool_skill_07",
+          "id" : 147,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 16,
+          "at" : 105,
+          "detail" : "原始40",
+          "id" : 148,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 366,
+          "at" : 105.35000000000001,
+          "detail" : "",
+          "id" : 149,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 14,
+          "at" : 106,
+          "detail" : "原始34",
+          "id" : 150,
+          "kind" : "poison_tick",
+          "target" : ""
+        },
+        {
+          "amount" : 0,
+          "at" : 106.75,
+          "detail" : "",
+          "id" : 151,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 107.25,
+          "detail" : "fool_skill_05",
+          "id" : 152,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 55,
+          "at" : 107.55000000000001,
+          "detail" : "",
+          "id" : 153,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 148,
+          "at" : 107.80000000000001,
+          "detail" : "",
+          "id" : 154,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 109.9,
+          "detail" : "fool_skill_04",
+          "id" : 155,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 156,
+          "at" : 110.35000000000001,
+          "detail" : "",
+          "id" : 156,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 111.35000000000001,
+          "detail" : "",
+          "id" : 157,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 40,
+          "at" : 112.15,
+          "detail" : "",
+          "id" : 158,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 112.65,
+          "detail" : "fool_skill_06",
+          "id" : 159,
+          "kind" : "cast",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 24,
+          "at" : 113.4,
+          "detail" : "",
+          "id" : 160,
+          "kind" : "damage",
+          "target" : "sandbox_campaign_guardHard_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 113.4,
+          "detail" : "victory",
+          "id" : 161,
+          "kind" : "outcome",
+          "target" : ""
+        }
+      ],
+      "id" : "trial-battle-2",
+      "initialEnemyIDs" : [
+        "sandbox_campaign_guardHard_core",
+        "sandbox_campaign_guardHard_add",
+        "sandbox_campaign_guardHard_add"
+      ],
+      "medicineUsed" : 2,
+      "purpose" : "hard",
+      "seconds" : 113.4,
+      "won" : true
+    }
+  ],
+  "closed" : true,
+  "copper" : 35,
+  "entries" : [
+    {
+      "external" : 0,
+      "id" : 0,
+      "kind" : "fixture",
+      "player" : 48,
+      "project" : 498,
+      "text" : "已有11套组具安装；最后一套的布与锡罐已付款入库，只缺2条绑带。有预算18铜。"
+    },
+    {
+      "external" : 0,
+      "id" : 1,
+      "kind" : "side",
+      "player" : 48,
+      "project" : 498,
+      "text" : "关注灰帆联营的供能计划；不收报名费，也不发工资。"
+    },
+    {
+      "external" : 0,
+      "id" : 2,
+      "kind" : "battle_start",
+      "player" : 48,
+      "project" : 498,
+      "text" : "开始教会塔F1重玩。只测试新增材料，不结算旧首通铜币、功勋或装备。"
+    },
+    {
+      "external" : 0,
+      "id" : 3,
+      "kind" : "battle_end",
+      "player" : 48,
+      "project" : 498,
+      "text" : "胜利，用时13秒，实际用药0瓶。材料需凭这一次胜利领取。"
+    },
+    {
+      "external" : 0,
+      "id" : 4,
+      "kind" : "loot",
+      "player" : 48,
+      "project" : 498,
+      "text" : "从本次盾颚魔残骸取得1份韧皮。候选材料掉落；不重复发放旧塔权益。"
+    },
+    {
+      "external" : 13,
+      "id" : 5,
+      "kind" : "craft",
+      "player" : 35,
+      "project" : 498,
+      "text" : "消耗1份韧皮、12铜底料和1铜工坊耗材，制成3条维修绑带；皮革熟练度+1。"
+    },
+    {
+      "external" : 13,
+      "id" : 6,
+      "kind" : "sale",
+      "player" : 53,
+      "project" : 480,
+      "text" : "项目买入2条绑带，支付18铜；这是已有预算转移，尚未安装。"
+    },
+    {
+      "external" : 13,
+      "id" : 7,
+      "kind" : "install",
+      "player" : 53,
+      "project" : 480,
+      "text" : "2条绑带与已入库的2过滤布、2锡罐组成最后一套组具，安装在12号滤筒位；工程12\/12验收。"
+    },
+    {
+      "external" : 13,
+      "id" : 8,
+      "kind" : "medicine_purchase",
+      "player" : 44,
+      "project" : 480,
+      "text" : "花9铜购买1瓶止痛膏。未使用不消耗；商人收到的钱仍在系统内，不当销毁。"
+    },
+    {
+      "external" : 13,
+      "id" : 9,
+      "kind" : "medicine_purchase",
+      "player" : 35,
+      "project" : 480,
+      "text" : "花9铜购买1瓶止痛膏。未使用不消耗；商人收到的钱仍在系统内，不当销毁。"
+    },
+    {
+      "external" : 13,
+      "id" : 10,
+      "kind" : "battle_start",
+      "player" : 35,
+      "project" : 480,
+      "text" : "已冻结本次公共行动；正常失败或撤退同样占用唯一尝试。"
+    },
+    {
+      "external" : 13,
+      "id" : 11,
+      "kind" : "battle_end",
+      "player" : 35,
+      "project" : 480,
+      "text" : "胜利，用时113秒，实际用药2瓶。本次贡献2点。"
+    },
+    {
+      "external" : 13,
+      "id" : 12,
+      "kind" : "world_close",
+      "player" : 35,
+      "project" : 480,
+      "text" : "本试玩没有核心人物战，双方NPC存活。灰帆联营依工程及公共成果取得合同；你的施工和交货记录永久保留在本次试玩导出中。"
+    }
+  ],
+  "external" : 13,
+  "fixtureNotice" : "第二章资格与30层装备为隔离快照；本方此前3名玩家5点、对方4名玩家4点及11套工程为预置。非联网，非正式存档。",
+  "hide" : 0,
+  "installed" : 12,
+  "medicines" : 0,
+  "proficiency" : 1,
+  "projectCash" : 480,
+  "publicPoints" : 2,
+  "side" : "shipping",
+  "straps" : 1,
+  "supplierCash" : 720,
+  "version" : "workshop-playtest-v1",
+  "winner" : "shipping"
+}

@@ -46,32 +46,42 @@
     原因：旧代码里的水珠被接触放大系数一起放大。
     做法：水珠做小、做多。
 
+11. **护盾像 CT 片 / 像肺**（M12 封存装甲），改成钢板后又被说"太实、不好看"
+    原因：两片光滑、近乎对称的叶片夹着身体，加上暗蓝半透明底和分叉的亮纹，就是胸部 CT 的样子。但改成不透明钢甲也不对：用户认为法术应该是虚幻的。
+    做法：保留"虚"，去掉"CT"。具体是：
+    - 错落叠压的羽刃外形，不要光滑的器官状双叶；
+    - 饱和的青→蓝→紫能量体，配细白亮边和辉光；
+    - 用华彩层的金色卷纹和鳞片纹，不要分叉纹；
+    - 尖端消散，加漂浮和呼吸；
+    - 金色要直接替换底色，叠加到青色上会变白。
+    见 `ArchiveEncounterPresentation.BuildSealedPlates` 和 `ArchiveAegis.shader`。着色器里别用 `line` 当变量名，它是 HLSL 保留字，会编译失败并显示洋红色。
+
 ## 录制与工具
 
-11. **补录卡住不动，输出目录只有日志**
+12. **补录卡住不动，输出目录只有日志**
     原因：输出目录里没有 `capture-plan.json`。录制器从 `--round2-output` 目录读计划。
     做法：用 `scripts/record.sh`，它会自动复制 `assets/capture-plan-98.json`。
 
-12. **强制结束 Unity 后，下一次启动报 `No valid Unity Editor license`**
+13. **强制结束 Unity 后，下一次启动报 `No valid Unity Editor license`**
     原因：许可证客户端状态没恢复。等一会儿重跑就好了。
     做法：不要中途杀 Unity。`record.sh` 遇到这个错误会等 30 秒自动重试一次。
 
-13. **同一时间只能有一个 Unity 打开这个项目**。项目的 `Library` 是指向外置 SSD 的符号链接，SSD 没挂载时不能录，也**不要删除或重建这个链接**。
+14. **同一时间只能有一个 Unity 打开这个项目**。项目的 `Library` 是指向外置 SSD 的符号链接，SSD 没挂载时不能录，也**不要删除或重建这个链接**。
 
-14. **录制器编码器路径写死为** `/tmp/mistport-vfx-encode/imageio_ffmpeg/binaries/ffmpeg-macos-aarch64-v7.1`。
+15. **录制器编码器路径写死为** `/tmp/mistport-vfx-encode/imageio_ffmpeg/binaries/ffmpeg-macos-aarch64-v7.1`。
     重启后 `/tmp` 会清空。`record.sh` 会重建 venv 和软链。
 
-15. **展示视频里中文标签显示为方框**
+16. **展示视频里中文标签显示为方框**
     原因：ffmpeg drawtext 的字体路径不存在（PingFang 不在 `/System/Library/Fonts` 根目录）。
     做法：`showcase.py` 依次尝试 `STHeiti Medium.ttc`、`Hiragino Sans GB.ttc`、`Arial Unicode.ttf`。
 
-16. **拼接视频的预览图里很多格没有特效**
+17. **拼接视频的预览图里很多格没有特效**
     原因：按段长度推算时间偏了。
     做法：预览图直接从原片按 `peak_seconds` 取帧，不要从拼好的视频里推算。
 
-17. **近景机位看不到命中**
+18. **近景机位看不到命中**
     原因：敌人招式的近景对准施法者，命中在主角身上。
     做法：看全景片，或者录 `*-recipient` 受体机位行。
 
-18. **原总览录制计划缺 B07–B10**
+19. **原总览录制计划缺 B07–B10**
     这 9 组来自 `output/tower-bounty-growth-20260924/capture-plan.json`，已经并进 `assets/capture-plan-98.json`。

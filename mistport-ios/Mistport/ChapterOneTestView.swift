@@ -7872,6 +7872,9 @@ private struct ChurchTowerBattleView: View {
                     Image("BattleVictoryCrest").resizable().scaledToFit().frame(height: 140)
                     Text("第 \(floor) 层封堵完成").font(.title.bold()).foregroundStyle(.yellow)
                     Text(awarded ? "+\(MPCChurchTowerCatalog.floor(number: floor)?.firstClearReward.coins ?? 0) 铜币    +\(MPCChurchTowerCatalog.floor(number: floor)?.firstClearReward.merit ?? 0) 功勋" : "已领取过首通奖励")
+                    if game.localWorkshop.materialReceipts.contains(loanBattleID) {
+                        Text("获得盾颚韧皮 ×1 · 已收入背包").foregroundStyle(.mint)
+                    }
                     if awarded, let drop = MPCChurchGearCatalog.towerDrop(floor: floor) {
                         Text("获得装备 · \(drop.name)").foregroundStyle(.cyan)
                     }

@@ -1002,6 +1002,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     private var talentMaskReady = false
     private var talentEvidenceReady = false
 
+    public private(set) var campaignPrototype: MPCCampaignBattleState? = nil
     public let encounter: MPCEncounterContent
     public private(set) var waveIndex: Int
     public private(set) var enemies: [MPCRuntimeEnemy]
@@ -1208,9 +1209,11 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         party: MPCPartyPersistentState = MPCPartyPersistentState(),
         consumables: [String: Int] = [:],
         companionIDs: [String]? = nil,
-        loadout: MPCChapterOneLoadout = MPCChapterOneLoadout()
+        loadout: MPCChapterOneLoadout = MPCChapterOneLoadout(),
+        campaignPrototype: MPCCampaignScenario? = nil
     ) throws -> Self {
-        guard let encounter = (MPCChapterOneCatalog.encounters.first(where: { $0.id == encounterID }) ?? MPCChurchTowerCatalog.encounter(id: encounterID) ?? MPCChurchBountyCatalog.encounter(id: encounterID) ?? MPCChurchMaintenanceCatalog.encounter(id: encounterID)) else {
+        if let campaignPrototype, campaignPrototype.id != encounterID { throw MPCEncounterRuntimeError.unknownEncounter }
+        guard let encounter = (MPCChapterOneCatalog.encounters.first(where: { $0.id == encounterID }) ?? MPCChurchTowerCatalog.encounter(id: encounterID) ?? MPCChurchBountyCatalog.encounter(id: encounterID) ?? MPCChurchMaintenanceCatalog.encounter(id: encounterID) ?? campaignPrototype?.encounter) else {
             throw MPCEncounterRuntimeError.unknownEncounter
         }
         // Reject the retired paper relic in all formal battles. Ownership is
@@ -1296,6 +1299,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             q4LastFinishingRound: nil,
             houndNameHuntStacks: 0
         )
+        session.campaignPrototype = campaignPrototype.map { MPCCampaignBattleState($0) }
         session.loadWave(0)
         return session
     }
@@ -1395,7 +1399,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         _ = advanceUsurpedLifeMedal(at: now)
         guard isOwned, outcome == .inProgress, playerHP > 0, !isUsurpedLifeMedalActive,
               loadout.selectedActiveRelicID == MPCChapterOneCatalog.usurpedLifeMedalRelicID,
-              ((MPCChapterOneCatalog.mission(forEncounterID: encounter.id)?.number ?? 0) >= 5 || isChurchCombat),
+              ((MPCChapterOneCatalog.mission(forEncounterID: encounter.id)?.number ?? 0) >= 5 || isChurchCombat || campaignPrototype != nil),
               now >= usurpedLifeMedalReadyAt, masqueradeCharges == 0 else { return false }
         combatHasBegun = true
         usurpedLifeMedalActivationID = UUID()
@@ -1658,7 +1662,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
 
             // 错步穿行会同时撕开最多两个目标的错误方位。第二个目标
             // 独立保存状态和承受伤害，避免表现层把它当作第一只敌人的复制品。
-            if skillID == .sidestepStrike,
+            if outcome == .inProgress, skillID == .sidestepStrike,
                let secondary = secondaryAtImpact {
                 let secondaryState = foolStates[secondary.id]
                     ?? .init(targetDefense: secondary.defense)
@@ -1869,6 +1873,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
            sequenceNineRelics.deferSkillDamage(finalDamage, targetID: enemyID, baseHP: playerBaseMaxHP, at: relicClock) {
             return 0
         }
+        finalDamage = campaignMitigatedDamage(finalDamage, to: enemyID)
         // Ordinary gift shields sit behind true immunity. Guard-phase zeroes returned above
         // cannot remove this debt, and the debt never expires merely with time.
         if [17,22].contains(chapterMissionNumber), enemies[index].currentIntent == "calibration", finalDamage > 0 {
@@ -1894,8 +1899,10 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             updateChapterObjective()
             return 0 // This breaks the transport/contract, not the living body.
         }
-        damageBySource[activeDamageSource, default: 0] += min(enemies[index].hp, max(0, finalDamage))
+        let campaignHealthDamage = min(enemies[index].hp, max(0, finalDamage))
+        damageBySource[activeDamageSource, default: 0] += campaignHealthDamage
         enemies[index].hp = max(0, enemies[index].hp - finalDamage)
+        campaignObserveDamage(to: enemyID, amount: campaignHealthDamage)
         clearDefeatedTowerEffects()
         if !enemies[index].isAlive, encoreDebtEnemyID == enemies[index].id {
             encoreDebtEnemyID = nil
@@ -1986,6 +1993,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         var correctlyAnsweredStrongAttack = false
 
         for index in enemies.indices where (enemies[index].isAlive || committedEnemyImpacts.contains(enemies[index].id)) && (actingEnemyID == nil || enemies[index].id == actingEnemyID) {
+            if campaignPrototype != nil, outcome != .inProgress { break }
             let wasCommitted = committedEnemyImpacts.remove(enemies[index].id) != nil
             if !wasCommitted && enemies[index].delayedRounds > 0 {
                 enemies[index].delayedRounds -= 1
@@ -2099,6 +2107,9 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                         }
                     }
                 }
+                // A prototype core killed by reflected damage ends combat before
+                // the remainder of this contact can hurt the player.
+                if campaignPrototype != nil, outcome != .inProgress { break }
                 if resolvedDamage > 0, freeEvasionCharges == 0,
                    loadout.relicIDs.contains("relic_return_gift_clasp"), returnGiftClaspIsReady {
                     let contained = min(resolvedDamage, playerBaseMaxHP * 30 / 100)
@@ -2253,7 +2264,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         towerCommittedEmpowerCasters.removeAll()
         towerEmpowers.removeAll()
         enemies = enemyIDs.enumerated().compactMap { slot, contentID in
-            guard let content = (MPCChapterOneCatalog.enemies.first(where: { $0.id == contentID }) ?? MPCChurchTowerCatalog.enemyDefinition(id: contentID) ?? MPCChurchBountyCatalog.enemyDefinition(id: contentID)) else { return nil }
+            guard let content = (MPCChapterOneCatalog.enemies.first(where: { $0.id == contentID }) ?? MPCChurchTowerCatalog.enemyDefinition(id: contentID) ?? MPCChurchBountyCatalog.enemyDefinition(id: contentID) ?? campaignPrototype?.scenario.enemy(contentID)) else { return nil }
             // The reusable hound content uses one memory-breath intent for its
             // pressure encounters. The rain-bell investigation authors a
             // separate wind-up beat followed by a pounce, so keep that
@@ -3094,5 +3105,126 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             foolStates[id]?.finaleReady = false
         }
         finaleReadyExpiresAtAction = nil
+    }
+}
+
+// MARK: - Isolated campaign mechanics (explicit opt-in; no rewards/save writes)
+extension MPCChapterOneEncounterSession {
+    public mutating func campaignRecord(_ kind: String, target: String = "", amount: Int = 0, detail: String = "") {
+        campaignPrototype?.record(kind, target: target, amount: amount, detail: detail)
+    }
+    public mutating func campaignFinishRecord() {
+        guard outcome != .inProgress, let state = campaignPrototype, !state.events.contains(where: { $0.kind == "outcome" }) else { return }
+        campaignRecord("outcome", detail: outcome.rawValue)
+        finishRelicBattle()
+    }
+    public func campaignActorPaused(_ id: String) -> Bool {
+        guard let state = campaignPrototype, let enemy = enemies.first(where: { $0.id == id }) else { return false }
+        if enemy.contentID == state.scenario.coreID { return state.chargeUntil != nil || state.now < state.recoveryUntil }
+        return state.channels[id] != nil
+    }
+    private func campaignMitigatedDamage(_ damage: Int, to id: String) -> Int {
+        guard let state = campaignPrototype, state.scenario.isGuard,
+              enemies.contains(where: { $0.id == id && $0.contentID == state.scenario.coreID }) else { return damage }
+        let count = enemies.filter { $0.isAlive && $0.contentID == state.scenario.addID }.count
+        return damage * (count >= 2 ? 40 : count == 1 ? 75 : 100) / 100
+    }
+    private mutating func campaignObserveDamage(to id: String, amount: Int) {
+        guard var state = campaignPrototype, let target = enemies.first(where: { $0.id == id }),
+              let core = enemies.first(where: { $0.contentID == state.scenario.coreID }) else { return }
+        state.record("damage", target: id, amount: amount)
+        if !core.isAlive {
+            state.chargeUntil = nil; state.channels.removeAll(); state.reserveAt = nil; state.poisonRemaining = 0
+            campaignPrototype = state; outcome = .victory; campaignFinishRecord(); return
+        }
+        let adds = enemies.filter { $0.isAlive && $0.contentID == state.scenario.addID }
+        if state.scenario.isGuard {
+            if state.chargeUntil != nil {
+                if target.contentID == state.scenario.coreID { state.chargeDamage += amount }
+                let guardKilled = target.contentID == state.scenario.addID && !target.isAlive
+                if guardKilled || (adds.isEmpty && state.chargeDamage >= (core.maxHP * 8 + 99) / 100) {
+                    state.chargeUntil = nil; state.recoveryUntil = state.now + 3
+                    state.record("charge_interrupt", target: id, detail: guardKilled ? "护卫在蓄力期死亡" : "核心有效伤害达到8%")
+                }
+            }
+            if adds.isEmpty, state.reserveAt != nil { state.reserveAt = nil; state.record("reserve_cancel", detail: "到达前清空护卫") }
+        } else if var channel = state.channels[id] {
+            channel.damage += amount
+            if !target.isAlive || channel.damage >= (target.maxHP * 15 + 99) / 100 {
+                state.channels[id] = nil; state.record("channel_interrupt", target: id, amount: channel.damage)
+            } else { state.channels[id] = channel }
+        }
+        if !state.phaseTriggered, core.hp * 2 <= core.maxHP {
+            state.phaseTriggered = true
+            state.record("half_health", target: core.id)
+            if state.scenario.isGuard {
+                if adds.count == 1 { state.reserveAt = state.now + 4; state.record("reserve_warning", detail: "4秒后护卫抵达；清空护卫可取消") }
+            } else {
+                state.channels.removeAll(); state.recoveryUntil = state.now + 8
+                state.nextMechanic = state.recoveryUntil + 20
+                state.record("recovery", amount: 8, detail: "核心暂停攻击，取消所有回流；28秒后下一次回流")
+                if adds.count < 2 { state.reserveAt = state.now + 4; state.record("reserve_warning", detail: "4秒后新支援者抵达") }
+            }
+        }
+        campaignPrototype = state
+    }
+    /// Driver supplies fixed ticks. Repeated/backward/non-finite timestamps cannot replay an event.
+    public mutating func advanceCampaignPrototype(at now: Double) {
+        guard var state = campaignPrototype, now.isFinite, now > state.now, outcome == .inProgress else { return }
+        state.now = now; campaignPrototype = state
+        if now >= 180 {
+            outcome = .defeat; campaignRecord("timeout"); campaignFinishRecord(); return
+        }
+        _ = advanceRelicClock(at: now)
+        guard outcome == .inProgress, var current = campaignPrototype else { campaignFinishRecord(); return }
+        // Deferred real skill hits may change phases at this tick. Read the updated state.
+        if let due = current.reserveAt, now + 0.000001 >= due {
+            current.reserveAt = nil
+            if let content = current.scenario.enemy(current.scenario.addID) {
+                let id = content.id + "#reserve"
+                enemies.append(.init(id: id, contentID: content.id, name: content.name + "·援军", maxHP: content.maxHP, hp: content.maxHP, attack: content.attack, defense: content.defense, intentPattern: ["strike"], intentIndex: 0, delayedRounds: 0))
+                foolStates[id] = .init(targetDefense: content.defense)
+                current.record("reserve_arrive", target: id)
+            }
+        }
+        if let due = current.chargeUntil, now + 0.000001 >= due {
+            current.chargeUntil = nil; current.recoveryUntil = now + 6
+            current.poisonRemaining = 6; current.poisonAt = now + 1
+            current.poisonDamage = max(1, (playerNormalMaxHP * 3 + 99) / 100)
+            current.poisonBudget = playerNormalMaxHP * 18 / 100
+            current.record("charge_release", amount: current.poisonDamage, detail: "6次，每秒一次；核心恢复6秒")
+        }
+        for id in current.channels.keys.sorted() {
+            guard let channel = current.channels[id], now + 0.000001 >= channel.until else { continue }
+            current.channels[id] = nil
+            guard enemies.contains(where: { $0.id == id && $0.isAlive }),
+                  let coreIndex = enemies.firstIndex(where: { $0.contentID == current.scenario.coreID && $0.isAlive }) else { continue }
+            let attempted = (enemies[coreIndex].maxHP * 6 + 99) / 100
+            let actual = min(attempted, enemies[coreIndex].maxHP - enemies[coreIndex].hp)
+            enemies[coreIndex].hp += actual
+            current.record("core_heal", target: id, amount: actual, detail: "上限\(attempted)，溢出\(attempted - actual)")
+        }
+        if now + 0.000001 >= current.nextMechanic, now >= current.recoveryUntil {
+            if current.scenario.isGuard {
+                current.nextMechanic += 24; current.chargeUntil = now + 4; current.chargeDamage = 0
+                current.record("charge_start", detail: "4秒：击杀护卫；无护卫时打掉核心8%生命")
+            } else {
+                current.nextMechanic += 20
+                for add in enemies where add.isAlive && add.contentID == current.scenario.addID {
+                    current.channels[add.id] = .init(until: now + 5)
+                    current.record("channel_start", target: add.id, detail: "5秒内造成其最大生命15%的有效伤害可打断")
+                }
+            }
+        }
+        campaignPrototype = current
+        if current.poisonRemaining > 0, now + 0.000001 >= current.poisonAt {
+            campaignPrototype?.poisonRemaining -= 1; campaignPrototype?.poisonAt += 1
+            let before = playerHP
+            let rawDamage = min(current.poisonDamage, current.poisonBudget)
+            campaignPrototype?.poisonBudget -= rawDamage
+            absorbPlayerDamage(rawDamage, isDamageOverTime: true)
+            campaignRecord("poison_tick", amount: before - playerHP, detail: "原始\(rawDamage)")
+            if playerHP <= 0 { outcome = .defeat; campaignFinishRecord() }
+        }
     }
 }

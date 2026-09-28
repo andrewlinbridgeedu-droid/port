@@ -1,0 +1,83 @@
+{
+  "status": "offline_candidate_not_implemented",
+  "retail": [
+    8,
+    10,
+    12,
+    6
+  ],
+  "import_cost": [
+    7,
+    9,
+    11,
+    5
+  ],
+  "capacity": [
+    20,
+    30,
+    40,
+    80
+  ],
+  "stock_cap": [
+    60,
+    90,
+    120,
+    240
+  ],
+  "initial_stock": [
+    20,
+    30,
+    40,
+    80
+  ],
+  "merchant_opening_cash": 1500,
+  "lead_cycles": 1,
+  "outputs": [
+    4,
+    3,
+    4,
+    2
+  ],
+  "product_test_prices": [
+    4,
+    6,
+    5,
+    16
+  ],
+  "fee_rate": 0.05,
+  "craft_fee": 2,
+  "full_import_cost": 1250,
+  "salve_capacity": 160,
+  "annual_max_import_outflow": 456250,
+  "coverage_if_one_dose_per_dau": 0.15966317631298357,
+  "maximum_daily_demand_for_90pct": 177.77777777777777,
+  "salve_policy": {
+    "case": "CURRENT_SYSTEM_GUARANTEE_WITH_SHARED_PROVENANCE_CANDIDATE",
+    "system_price": 30,
+    "zero_total_salve_inventory_required": true,
+    "shop_unlock_required": true,
+    "system_bound": true,
+    "system_can_trade": false,
+    "system_can_deliver_event": false,
+    "system_can_craft": false,
+    "retirement_per_purchase": 30,
+    "legacy_unknown_usable_not_attributed_to_craft": true,
+    "self_use_market_max_if_guarantee_available": 30,
+    "finite_npc_pharmacy": "separate_unimplemented_control",
+    "report_by_plan": [
+      "free",
+      "subscription"
+    ],
+    "metrics": [
+      "craft_fill",
+      "guarantee_fill",
+      "legacy_fill",
+      "total_fill",
+      "player_sales",
+      "player_gross",
+      "system_retired",
+      "unmet_affordability",
+      "unmet_access_or_supply"
+    ]
+  }
+}

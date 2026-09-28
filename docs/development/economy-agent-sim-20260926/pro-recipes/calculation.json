@@ -1,0 +1,168 @@
+{
+  "recipes": [
+    {
+      "vector": "pro",
+      "product": "filter",
+      "output": 4,
+      "price": 4,
+      "cash_profit": 5.2,
+      "opportunity_profit": 1.2,
+      "break_even": 3.68421052631579
+    },
+    {
+      "vector": "pro",
+      "product": "wrap",
+      "output": 3,
+      "price": 6,
+      "cash_profit": 5.1,
+      "opportunity_profit": 1.1,
+      "break_even": 5.614035087719299
+    },
+    {
+      "vector": "pro",
+      "product": "tin",
+      "output": 4,
+      "price": 5,
+      "cash_profit": 5.0,
+      "opportunity_profit": 1.0,
+      "break_even": 4.736842105263158
+    },
+    {
+      "vector": "pro",
+      "product": "salve",
+      "output": 2,
+      "price": 18,
+      "cash_profit": 12.2,
+      "opportunity_profit": 6.2,
+      "break_even": 14.73684210526316
+    },
+    {
+      "vector": "import12_retail14",
+      "product": "filter",
+      "output": 4,
+      "price": 4,
+      "cash_profit": -0.8,
+      "opportunity_profit": -4.8,
+      "break_even": 5.2631578947368425
+    },
+    {
+      "vector": "import12_retail14",
+      "product": "wrap",
+      "output": 3,
+      "price": 6,
+      "cash_profit": 1.1,
+      "opportunity_profit": -2.9,
+      "break_even": 7.017543859649123
+    },
+    {
+      "vector": "import12_retail14",
+      "product": "tin",
+      "output": 4,
+      "price": 5,
+      "cash_profit": 3.0,
+      "opportunity_profit": -1.0,
+      "break_even": 5.2631578947368425
+    },
+    {
+      "vector": "import12_retail14",
+      "product": "salve",
+      "output": 2,
+      "price": 18,
+      "cash_profit": 4.2,
+      "opportunity_profit": -1.8,
+      "break_even": 18.947368421052634
+    },
+    {
+      "vector": "import6_retail8",
+      "product": "filter",
+      "output": 4,
+      "price": 4,
+      "cash_profit": 5.2,
+      "opportunity_profit": 1.2,
+      "break_even": 3.68421052631579
+    },
+    {
+      "vector": "import6_retail8",
+      "product": "wrap",
+      "output": 3,
+      "price": 6,
+      "cash_profit": 7.1,
+      "opportunity_profit": 3.1,
+      "break_even": 4.912280701754386
+    },
+    {
+      "vector": "import6_retail8",
+      "product": "tin",
+      "output": 4,
+      "price": 5,
+      "cash_profit": 9.0,
+      "opportunity_profit": 5.0,
+      "break_even": 3.68421052631579
+    },
+    {
+      "vector": "import6_retail8",
+      "product": "salve",
+      "output": 2,
+      "price": 18,
+      "cash_profit": 10.2,
+      "opportunity_profit": 4.2,
+      "break_even": 15.789473684210527
+    }
+  ],
+  "leather": [
+    {
+      "output": 1,
+      "value": 6,
+      "break_even": 16.842105263157894,
+      "positive_interval": false
+    },
+    {
+      "output": 1,
+      "value": 8,
+      "break_even": 16.842105263157894,
+      "positive_interval": false
+    },
+    {
+      "output": 1,
+      "value": 10,
+      "break_even": 16.842105263157894,
+      "positive_interval": false
+    },
+    {
+      "output": 3,
+      "value": 6,
+      "break_even": 5.614035087719299,
+      "positive_interval": true
+    },
+    {
+      "output": 3,
+      "value": 8,
+      "break_even": 5.614035087719299,
+      "positive_interval": true
+    },
+    {
+      "output": 3,
+      "value": 10,
+      "break_even": 5.614035087719299,
+      "positive_interval": true
+    },
+    {
+      "output": 6,
+      "value": 6,
+      "break_even": 2.8070175438596494,
+      "positive_interval": true
+    },
+    {
+      "output": 6,
+      "value": 8,
+      "break_even": 2.8070175438596494,
+      "positive_interval": true
+    },
+    {
+      "output": 6,
+      "value": 10,
+      "break_even": 2.8070175438596494,
+      "positive_interval": true
+    }
+  ]
+}

@@ -47,6 +47,9 @@ struct MistportApp: App {
             return UserDefaults(suiteName: "mistport.player-test-01-15")!
         }
         #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--verify-local-workshop") {
+            return UserDefaults(suiteName: "mistport.local-workshop-verification-shell")!
+        }
         if ProcessInfo.processInfo.arguments.contains("--preview-bounty-poker") {
             return UserDefaults(suiteName: "mistport.bounty-card-modes-preview-20260925")!
         }
@@ -75,7 +78,10 @@ struct MistportApp: App {
     var body: some Scene {
         WindowGroup {
             #if DEBUG
-            if ProcessInfo.processInfo.arguments.contains("--preview-bounty-poker") {
+            if ProcessInfo.processInfo.arguments.contains("--verify-local-workshop") {
+                Text("工坊结算验证 · 隔离存档")
+                    .task { await GameStore.verifyLocalWorkshopIntegration() }
+            } else if ProcessInfo.processInfo.arguments.contains("--preview-bounty-poker") {
                 BountyPokerPreviewHost(game: game)
             } else if ProcessInfo.processInfo.arguments.contains("--preview-tavern") {
                 TavernInteriorView(game: game, onBack: {})

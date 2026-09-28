@@ -11,6 +11,7 @@ private enum AppSheet: String, Identifiable {
     case missions
     case profile
     case build
+    case workshop
     case advancement
     case inventory
 
@@ -134,7 +135,7 @@ struct ContentView: View {
                             }
                         },
                         onProfile: { isProfilePresented = true },
-                        onBuild: { if game.cityServiceIsUnlocked(.workshop) { isProfilePresented = true } },
+                        onBuild: { if game.cityServiceIsUnlocked(.workshop) { presentedSheet = .workshop } },
                         onAdvancement: { presentedSheet = .advancement },
                         onSupply: {
                             guard game.venueIsUnlocked("midnight-clock-cafe") else { return }
@@ -309,6 +310,8 @@ struct ContentView: View {
                 } else {
                     Text("教会尚未开放 · 随主线推进解锁").padding()
                 }
+            case .workshop:
+                LocalWorkshopView(game: game)
             case .world:
                 WorldRouteView()
             case .expedition:

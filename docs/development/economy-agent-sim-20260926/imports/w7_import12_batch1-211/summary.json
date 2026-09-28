@@ -1,0 +1,246 @@
+{
+  "config": {
+    "name": "w7_import12_batch1",
+    "n": 2000,
+    "days": 365,
+    "activity": 0.5,
+    "pass_share": 0.3,
+    "allowance": 28,
+    "pass_extra": 28,
+    "bundle": 4,
+    "base_capacity": 2,
+    "fee_bps": 500,
+    "crafting": 0.45,
+    "tower_rate": 0.65,
+    "expense_stress": true,
+    "repeat_count": 1,
+    "repeat_window": 7,
+    "import_cost": 12,
+    "retail_margin": 2,
+    "craft_fee": 2,
+    "leather_batch": 1,
+    "repeat_rate": 1,
+    "repeat_strategy": "best",
+    "drug_need": 0.18,
+    "demand_elasticity": 0.15,
+    "event_mode": "two",
+    "veterans": 1,
+    "newcomers": 0,
+    "churn": 0.0,
+    "hoard": false,
+    "dump": false,
+    "shortage": false,
+    "price_response": 0.025
+  },
+  "seed": 211,
+  "trades": 125681,
+  "gross": 2348515,
+  "opening_money": 5257369,
+  "issuance": {
+    "free_allowance": 2937060,
+    "q_repeat": 10568775,
+    "pass_allowance": 917812
+  },
+  "sinks": {
+    "external_import": 754200,
+    "trade_fee": 74303,
+    "craft": 120238,
+    "repair": 806720
+  },
+  "end_money": 17925555,
+  "free_cash_p10": 5835,
+  "free_cash_p50": 6945,
+  "paid_cash_p50": 8504,
+  "free_fill_last90": 0.937345763641349,
+  "paid_fill_last90": 0.9990947495473748,
+  "free_cash_blocked_last90": 0,
+  "free_median_delta_last3": [
+    447,
+    525,
+    451
+  ],
+  "material_fill": 0.7706734193242067,
+  "basket_index_30d": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ],
+  "basket_coverage_30d": [
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.4
+  ],
+  "max_30d_change": null,
+  "events": [
+    {
+      "kind": "mist",
+      "start": 35,
+      "state": "not_ready"
+    },
+    {
+      "kind": "pump",
+      "start": 135,
+      "state": "not_ready"
+    }
+  ],
+  "checks": {
+    "accounting": true,
+    "free_drug_fill_90pct": true,
+    "free_cash_unmet_zero": true,
+    "free_median_30d_cash_nonnegative": true,
+    "price_coverage_complete": false,
+    "price_change_20pct": false
+  },
+  "all_checks_pass": false,
+  "profession": [
+    {
+      "prof": "textile",
+      "crafts": 5999,
+      "skill_median": 67.0,
+      "sales": 253982,
+      "purchases": 463759
+    },
+    {
+      "prof": "leather",
+      "crafts": 8963,
+      "skill_median": 75.0,
+      "sales": 62677,
+      "purchases": 558938
+    },
+    {
+      "prof": "metal",
+      "crafts": 5997,
+      "skill_median": 66.0,
+      "sales": 324665,
+      "purchases": 446932
+    },
+    {
+      "prof": "alchemy",
+      "crafts": 39160,
+      "skill_median": 75.0,
+      "sales": 770446,
+      "purchases": 878886
+    }
+  ],
+  "flows": {
+    "pass->pass": [
+      157169,
+      7903,
+      0,
+      0
+    ],
+    "free->pass": [
+      339007,
+      16889,
+      0,
+      0
+    ],
+    "free->free": [
+      685457,
+      34266,
+      0,
+      0
+    ],
+    "pass->free": [
+      304440,
+      15245,
+      0,
+      0
+    ],
+    "free->npc": [
+      585844,
+      0,
+      0,
+      0
+    ],
+    "pass->npc": [
+      276598,
+      0,
+      0,
+      0
+    ]
+  },
+  "wealth_flows": {
+    "top1->p50_90": 7317,
+    "p90_99->p50_90": 64303,
+    "p90_99->bottom50": 44155,
+    "p50_90->p90_99": 73863,
+    "p50_90->bottom50": 223177,
+    "p90_99->p90_99": 20679,
+    "p50_90->p50_90": 322416,
+    "p50_90->top1": 11312,
+    "bottom50->bottom50": 252756,
+    "bottom50->p50_90": 369853,
+    "bottom50->p90_99": 76131,
+    "top1->bottom50": 4992,
+    "p90_99->npc": 81452,
+    "p50_90->npc": 386036,
+    "bottom50->npc": 384958,
+    "top1->npc": 9996,
+    "top1->p90_99": 2044,
+    "top1->top1": 922,
+    "p90_99->top1": 3250,
+    "bottom50->top1": 8903
+  },
+  "end_player_cash": 17367313,
+  "end_npc_cash": [
+    208242,
+    200000,
+    120000,
+    0,
+    30000
+  ],
+  "professions": [
+    {
+      "profession": 0,
+      "craft_batches": 5999,
+      "sold_units": 1533,
+      "net_sales": 227878,
+      "sold_opportunity_cost": 56734.18890388138,
+      "unsold_units": 3999
+    },
+    {
+      "profession": 1,
+      "craft_batches": 8963,
+      "sold_units": 8715,
+      "net_sales": 23149,
+      "sold_opportunity_cost": 181358.68965766058,
+      "unsold_units": 1
+    },
+    {
+      "profession": 2,
+      "craft_batches": 5997,
+      "sold_units": 1595,
+      "net_sales": 286838,
+      "sold_opportunity_cost": 47655.990832471645,
+      "unsold_units": 3997
+    },
+    {
+      "profession": 3,
+      "craft_batches": 39160,
+      "sold_units": 34111,
+      "net_sales": 738459,
+      "sold_opportunity_cost": 635054.6803365973,
+      "unsold_units": 28
+    }
+  ],
+  "runtime_seconds": 86.81
+}

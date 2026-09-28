@@ -1,0 +1,368 @@
+{
+  "nodes": [
+    {
+      "depth": 0,
+      "i": 0,
+      "role": "AXApplication",
+      "title": "雾港工坊试玩"
+    },
+    {
+      "depth": 1,
+      "i": 1,
+      "identifier": "campaign-sandbox",
+      "role": "AXWindow",
+      "title": "雾港 · 世界事件演练"
+    },
+    {
+      "depth": 2,
+      "i": 2,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 3,
+      "enabled": "1",
+      "i": 3,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 4,
+      "role": "AXStaticText",
+      "value": "我的这次参与"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 5,
+      "role": "AXStaticText",
+      "value": "泵站联合会"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 6,
+      "role": "AXStaticText",
+      "value": "35 铜"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 7,
+      "role": "AXStaticText",
+      "value": "韧皮 0 · 绑带 1 · 药品 1"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 8,
+      "role": "AXStaticText",
+      "value": "皮革熟练度 1 / 20"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 9,
+      "role": "AXStaticText",
+      "value": "取材 → 制作 → 有预算交货 → 安装 → 公共行动 → 结果"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 10,
+      "role": "AXProgressIndicator",
+      "value": "1"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 11,
+      "role": "AXStaticText",
+      "value": "本方工程 12/12 · 我的贡献 0点"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 12,
+      "role": "AXStaticText",
+      "value": "本项目订单已收满，不再追加采购。余下成品仍属于你。"
+    },
+    {
+      "depth": 4,
+      "description": "导出本次试玩回执",
+      "enabled": "1",
+      "i": 13,
+      "role": "AXButton"
+    },
+    {
+      "depth": 4,
+      "description": "从头体验另一条路线",
+      "enabled": "1",
+      "i": 14,
+      "role": "AXButton"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 15,
+      "role": "AXStaticText",
+      "value": "第二章资格与30层装备为隔离快照；本方此前3名玩家5点、对方4名玩家4点及11套工程为预置。非联网，非正式存档。"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 16,
+      "role": "AXStaticText",
+      "value": "钱账守恒：通过"
+    },
+    {
+      "depth": 4,
+      "i": 17,
+      "role": "AXScrollArea"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 18,
+      "role": "AXStaticText",
+      "value": "雾港公报 / 第三夜熄灯"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 19,
+      "role": "AXStaticText",
+      "value": "谁让雾港重新亮灯"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 20,
+      "role": "AXStaticText",
+      "value": "诊所依靠备用灯，工坊取消了夜班。两派争夺有限的供能经营权。你不需要投资，也能让一处工程继续向前。"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 21,
+      "role": "AXStaticText",
+      "value": "外港吊机重新转动"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 22,
+      "role": "AXStaticText",
+      "value": "灰帆联营取得本轮合同。双方负责人仍存活；这条试玩只验证生产与公共行动，没有替其他人编造核心击杀。"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 23,
+      "role": "AXStaticText",
+      "value": "你交出的2条绑带已经留在12号滤筒上。即使阵营落败，这处施工也不会被抹掉。"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 24,
+      "role": "AXStaticText",
+      "value": "制作支付"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 25,
+      "role": "AXStaticText",
+      "value": "13铜"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 26,
+      "role": "AXStaticText",
+      "value": "实际卖货收入"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 27,
+      "role": "AXStaticText",
+      "value": "18铜"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 28,
+      "role": "AXStaticText",
+      "value": "已购药品"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 29,
+      "role": "AXStaticText",
+      "value": "18铜"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 30,
+      "role": "AXStaticText",
+      "value": "现金变化（不估值余货）"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 31,
+      "role": "AXStaticText",
+      "value": "-13铜"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 32,
+      "role": "AXStaticText",
+      "value": "仍属你的库存"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 33,
+      "role": "AXStaticText",
+      "value": "绑带1条 · 药品1瓶"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 34,
+      "role": "AXStaticText",
+      "value": "我的公共贡献"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 35,
+      "role": "AXStaticText",
+      "value": "0点"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 36,
+      "role": "AXStaticText",
+      "value": "待验证的玩家问题：你是否理解为什么支持这一派？余下的绑带是否让你愿意寻找别的买家？准备是否改变了战斗体验？这三点不能由程序替真人回答。"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 37,
+      "role": "AXStaticText",
+      "value": "本次已结算钱物与战斗回执已导出；正在进行的战斗未结算，试玩已暂停。"
+    },
+    {
+      "depth": 5,
+      "description": "钱物回执 · 每笔都能对上",
+      "enabled": "1",
+      "i": 38,
+      "role": "AXDisclosureTriangle",
+      "value": "0"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 39,
+      "role": "AXStaticText",
+      "value": "隔离内容试玩：使用Swift正式战斗规则；材料/配方/项目为首测候选，Unity演出与共享服务器尚未接入。"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 40,
+      "role": "AXStaticText",
+      "value": "/Users/andrewlin/Downloads/DEV_Projects/mindstone-game/output/workshop-playtest-20260927/Records/workshop-0A0C368D-F512-4573-B046-3FAE032598C5.json"
+    },
+    {
+      "depth": 2,
+      "i": 41,
+      "role": "AXToolbar"
+    },
+    {
+      "depth": 3,
+      "i": 42,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 43,
+      "role": "AXRadioGroup",
+      "value": "<AXUIElement 0xc81018360> {pid=60015}"
+    },
+    {
+      "depth": 5,
+      "description": "事件试玩",
+      "enabled": "1",
+      "i": 44,
+      "role": "AXRadioButton",
+      "value": "1"
+    },
+    {
+      "depth": 5,
+      "description": "机制对照（开发）",
+      "enabled": "1",
+      "i": 45,
+      "role": "AXRadioButton",
+      "value": "0"
+    },
+    {
+      "depth": 2,
+      "enabled": "1",
+      "i": 46,
+      "role": "AXButton"
+    },
+    {
+      "depth": 2,
+      "enabled": "1",
+      "i": 47,
+      "role": "AXButton"
+    },
+    {
+      "depth": 3,
+      "i": 48,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 4,
+      "i": 49,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 2,
+      "enabled": "1",
+      "i": 50,
+      "role": "AXButton"
+    }
+  ],
+  "pid": 60015,
+  "windows": [
+    {
+      "kCGWindowAlpha": 1,
+      "kCGWindowBounds": {
+        "Height": 163,
+        "Width": 131,
+        "X": 16,
+        "Y": 192
+      },
+      "kCGWindowIsOnscreen": true,
+      "kCGWindowLayer": 0,
+      "kCGWindowMemoryUsage": 2368,
+      "kCGWindowName": "雾港 · 世界事件演练",
+      "kCGWindowNumber": 17920,
+      "kCGWindowOwnerName": "雾港工坊试玩",
+      "kCGWindowOwnerPID": 60015,
+      "kCGWindowSharingState": 1,
+      "kCGWindowStoreType": 1
+    }
+  ]
+}

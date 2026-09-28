@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>雾港 · 世界事件推演室</title><link rel="stylesheet" href="/style.css"></head>
+<body>
+<header><div><span class="eyebrow">MISTPORT / DESIGN LAB 01</span><h1>让一座城重新亮灯</h1><p>先看已完成的验证与首测建议。无需自己调参。</p></div><span class="status">设计验证 · 不连接游戏存档</span></header>
+<nav aria-label="推演视角"><button data-tab="decision" aria-pressed="true">定案建议</button><button data-tab="event" aria-pressed="false">世界走向</button><button data-tab="project" aria-pressed="false">生意与物资</button><button data-tab="money" aria-pressed="false">货币收支</button></nav>
+<div class="workspace"><aside><div class="section-title"><h2>已准备好的情景</h2><button id="reset" class="quiet">恢复首测方案</button></div>
+<label class="field">查看对照<select id="preset"><option value="recommended">建议首测 · 限预算＋开机检查</option><option value="base">原40铜组具 · 无开机检查</option><option value="minority">少数派 · 更好准备与操作</option><option value="shortage">多数派 · 工程缺料</option><option value="idle">合同到手 · 没有客户</option></select></label>
+<details id="advanced"><summary>高级参数 · 可不操作</summary><form id="controls"></form></details><button id="run" class="primary">复算当前情景</button><p id="status" role="status" aria-live="polite">正在计算首测方案…</p><p class="small">场景已由模型批量对照。成功率与客户数仍是假设，试玩后用真实数据替换。</p></aside>
+<main><div class="main-title"><div><span id="view-label" class="eyebrow"></span><h2 id="view-title"></h2></div><button id="export" disabled>导出本次结果</button></div><div id="results" aria-live="polite"></div></main></div>
+<footer>LIGHTS LAB 1.0 · 本地可复算模型 · 公共行动抽样 + 核心战条件概率 + 有限钱包核账。没有模拟市场价格，不能据此宣称无通胀。</footer>
+<script src="/app.js"></script></body></html>

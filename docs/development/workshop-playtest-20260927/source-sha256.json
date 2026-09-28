@@ -1,0 +1,9 @@
+{
+  "tools/campaign-sandbox/Sources/CampaignSandboxApp.swift": "37085c076cfb78fe42c127ab60e0eff45a9b819d3d32229e7dcd7d0895c4f631",
+  "tools/campaign-sandbox/Sources/WorkshopPlaytestView.swift": "df9f4f23aba26c4ef00a7f95fc47055a5c7389eb85719eeed5894b7ba7420254",
+  "tools/campaign-sandbox/build_and_run.sh": "d29e17cbbffef406e9449f3ea10d21f7244b9f6b92415c5fc084465ce8450f72",
+  "tools/campaign-sandbox/check_workshop.sh": "2c8db1cd3f6e11bcad493d5bbca64405ad671195f5d8d93b4d999b32fe0620a0",
+  "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/CampaignBattleSandbox.swift": "76f280b34a790ecaee81a1d4a3a9cea3f5c384ca15b655a18516086055be7bed",
+  "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/WorkshopPlaytest.swift": "1627c7d36625b449cf017e571eb92117b4ca1ea3908d31bbde4454b5dc201678",
+  "mistport-ios/MistportCombatCore/Tests/MistportCombatCoreTests/WorkshopPlaytestTests.swift": "6f94adba460b86f4d7cb625145100765f05d40753d274af1c3f3416389c010ed"
+}
