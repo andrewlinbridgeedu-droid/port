@@ -1,6 +1,6 @@
 """Cloud and rain textures for the home harbour (all procedural).
 
-usage: make_weather_textures.py <out_dir> [<day_plate.jpg> <skyline.txt>]
+usage: make_weather_textures.py <out_dir> [<plates_dir> <skyline.txt>]
 
 Clouds (tileable left-right, RGBA, 2048×640):
   CityCloudStorm   dense rain/storm cloud: ragged, billowing, dark bases,
@@ -106,68 +106,164 @@ def rain(h, w, count, length, width, blur, alpha, seed):
     return (np.dstack([rgb, tile]) * 255 + 0.5).astype(np.uint8)
 
 
-def storm_sky(day_path, skyline_path, out):
-    """The painting's own clouds, turned into a storm sky.
+def sky_band(day_path, skyline_path, band_frac=0.30):
+    """Sky pixels of a day painting above the (padded) skyline.
 
-    From the day painting's sky: blue sky becomes the dark body of the storm
-    cloud, the painted white clouds become its lighter billows, so the storm
-    keeps the painting's brushwork. Alpha covers the sky above the skyline
-    (256-column trace), feathered, fading out a little below it.
+    Returns the band (BGR 0..1), a soft sky alpha, and the height H.
+    Sky is blue or cloud-white; the bell tower's pale stone, the blossom
+    branch and the mountains are neither, so they stay out.
     """
     import ast
     day = cv2.imread(day_path).astype(np.float32) / 255
     H, W = day.shape[:2]
-    band = int(0.30 * H)
+    band = int(band_frac * H)
     sky = day[:band]
-    hsv = cv2.cvtColor((sky * 255).astype(np.uint8), cv2.COLOR_BGR2HSV).astype(np.float32) / 255
-    lum = 0.114 * sky[..., 0] + 0.587 * sky[..., 1] + 0.299 * sky[..., 2]
-    white = smoothstep(0.35, 0.05, hsv[..., 1]) * smoothstep(0.45, 0.85, lum)
-    white = cv2.GaussianBlur(white, (0, 0), 2)
-    shade = cv2.GaussianBlur(lum, (0, 0), 1.2)
-    dark = np.array([0.30, 0.27, 0.25], np.float32)        # BGR: slate
-    light = np.array([0.66, 0.64, 0.62], np.float32)
-    col = dark + (light - dark) * (0.25 * shade[..., None] + 0.75 * white[..., None])
-    # darker toward the top of the sky, like the underside of a heavy deck
-    y = np.arange(band, dtype=np.float32)[:, None] / H
-    col *= (0.78 + 0.35 * np.clip(y / 0.25, 0, 1))[..., None]
+    hsv = cv2.cvtColor((sky * 255).astype(np.uint8), cv2.COLOR_BGR2HSV).astype(np.float32)
+    hue, sat, val = hsv[..., 0], hsv[..., 1] / 255, hsv[..., 2] / 255
+    blue = (hue > 95) & (hue < 128) & (sat > 0.20) & (val > 0.35)
+    cloud = (sat < 0.16) & (val > 0.72)
+    skyish = blue | cloud
     line = np.array(ast.literal_eval(open(skyline_path).read()))
     sky_y = np.interp(np.arange(W), (np.arange(len(line)) + 0.5) / len(line) * W, line * H)
+    # a little below the traced line; beside the bell tower, where the trace
+    # hugs the spire loosely, the sky colour alone decides
+    k = int(0.02 * H)
+    padded = sky_y.copy()
+    for i in range(int(0.44 * H), int(0.58 * H)):
+        padded[i] = sky_y[max(0, i - k):i + k + 1].max()
     rows = np.arange(band, dtype=np.float32)[:, None]
-    alpha = np.clip((sky_y[None, :] + 0.012 * H - rows) / (0.02 * H), 0, 1)
-    # Leave out what is not sky or cloud (the blossom branch in the corner):
-    # sky is blue, clouds are pale; branches and blossom are neither.
-    hue, sat = hsv[..., 0] * 255, hsv[..., 1]          # OpenCV 8-bit hue runs 0..179
-    skyish = ((hue > 88) & (hue < 128) & (sat > 0.18)) | ((sat < 0.22) & (lum > 0.55))
-    keep = cv2.morphologyEx(skyish.astype(np.uint8), cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
-    keep = cv2.erode(keep, np.ones((5, 5), np.uint8))
-    alpha *= cv2.GaussianBlur(keep.astype(np.float32), (0, 0), 2.5)
-    rgba = np.dstack([np.clip(col, 0, 1), alpha])
-    small = cv2.resize(rgba, (2048, int(2048 * band / W)), interpolation=cv2.INTER_AREA)
-    cv2.imwrite(f"{out}/CityStormSky.png", (small * 255 + 0.5).astype(np.uint8))
+    above = rows < padded[None, :] + 0.005 * H
+    # Above the traced skyline everything is sky (painted clouds included),
+    # except where something solid stands in it: the bell tower and the
+    # blossom branch in the top-left corner. Only there does colour decide.
+    xs = np.arange(W, dtype=np.float32)[None, :] / H
+    ys = rows / H
+    tower_zone = (xs > 0.44) & (xs < 0.58)
+    corner_zone = (xs < 0.46) & (ys < 0.17)
+    # The tower is warm stone and gold with dark openings; the branch is dark
+    # bark and pink blossom. Cloud edges are pale blue-grey: neither.
+    tower_solid = (((hue < 40) | (hue > 160)) & (sat > 0.10)) | (val < 0.45)
+    corner_solid = (val < 0.55) | ((hue > 140) & (hue < 178) & (sat > 0.12))
+    notsky = (above & ((tower_zone & tower_solid) | (corner_zone & corner_solid))).astype(np.uint8)
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(notsky, 8)
+    tiny = np.zeros(count, bool)
+    tiny[1:] = stats[1:, cv2.CC_STAT_AREA] < (0.004 * H) ** 2
+    notsky[tiny[labels]] = 0
+    # Close the tower's own gaps (glazing highlights in the dome).
+    notsky = cv2.morphologyEx(notsky, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7)))
+    mask = (above & (notsky == 0)).astype(np.uint8)
+    alpha = cv2.GaussianBlur(mask.astype(np.float32), (0, 0), 1.2)
+    return sky, alpha, H, W
 
 
-def main(out, day_path=None, skyline_path=None):
+def sky_mask(day_path, skyline_path, out, name):
+    """Where the sky is (alpha), 2048 wide, for clipping drawn weather."""
+    _, alpha, H, W = sky_band(day_path, skyline_path)
+    small = cv2.resize(alpha, (2048, int(2048 * alpha.shape[0] / W)), interpolation=cv2.INTER_AREA)
+    rgba = np.dstack([np.ones_like(small), np.ones_like(small), np.ones_like(small), small])
+    cv2.imwrite(f"{out}/{name}.png", (rgba * 255 + 0.5).astype(np.uint8))
+
+
+# Where distant land ends and the near town begins, traced by the user on
+# the phone (2026-09-28): under cloud or rain the far mountains, islands
+# and sea horizon above this line fade into the cloud; below it nothing is
+# touched. Painting units (x across, y down).
+FAR_LINE = [(0.0, 0.145), (0.183, 0.150), (0.272, 0.178), (0.371, 0.218), (0.470, 0.231), (0.569, 0.221),
+            (0.733, 0.208), (0.782, 0.153), (0.866, 0.158), (0.945, 0.203), (1.054, 0.168), (1.178, 0.215),
+            (1.371, 0.203), (1.480, 0.213), (1.534, 0.251), (1.569, 0.260), (1.592, 0.254), (1.604, 0.220),
+            (1.622, 0.206), (1.667, 0.208), (1.725, 0.220), (1.777, 0.238)]
+
+
+def far_mask(day_path, lights_path, skyline_path, out, name):
+    """How much of the cloud reaches down over the distant land: 0.85 at the
+    skyline fading smoothly to 0 at FAR_LINE. Warm stone (the bell tower,
+    the castle, the lighthouse) and every lamp and lit window stay clear."""
+    import ast
+    day = cv2.imread(day_path)
+    H, W = day.shape[:2]
+    band = int(0.30 * H)
+    line = np.array(ast.literal_eval(open(skyline_path).read()))
+    sky_y = np.interp(np.arange(W), (np.arange(len(line)) + 0.5) / len(line) * W, line * H)
+    far_y = np.interp(np.arange(W) / H, [p[0] for p in FAR_LINE], [p[1] for p in FAR_LINE]) * H
+    rows = np.arange(band, dtype=np.float32)[:, None]
+    depth = np.maximum(far_y - sky_y, 1)[None, :]
+    t = np.clip((rows - sky_y[None, :]) / depth, 0, 1)
+    alpha = 0.85 * (1 - smoothstep(0, 1, t))
+    alpha[(rows < sky_y[None, :]) | (far_y[None, :] <= sky_y[None, :] + 2)] = 0
+    hsv = cv2.cvtColor(day[:band], cv2.COLOR_BGR2HSV).astype(np.float32)
+    hue, sat, val = hsv[..., 0], hsv[..., 1] / 255, hsv[..., 2] / 255
+    stone = ((hue < 32) | (hue > 165)) & (sat > 0.08) & (val > 0.55)
+    lights = cv2.imread(lights_path, cv2.IMREAD_GRAYSCALE)[:band].astype(np.float32) / 255
+    keep = (stone | (lights > 0.06)).astype(np.uint8)
+    keep = cv2.morphologyEx(keep, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
+    keep = cv2.dilate(keep, np.ones((5, 5), np.uint8))
+    alpha *= 1 - cv2.GaussianBlur(keep.astype(np.float32), (0, 0), 2.0)
+    alpha = cv2.GaussianBlur(alpha, (0, 0), 1.5)
+    small = cv2.resize(alpha, (2048, int(2048 * band / W)), interpolation=cv2.INTER_AREA)
+    rgba = np.dstack([np.ones_like(small), np.ones_like(small), np.ones_like(small), small])
+    cv2.imwrite(f"{out}/{name}.png", (np.clip(rgba, 0, 1) * 255 + 0.5).astype(np.uint8))
+
+
+def storm_clouds(day_path, skyline_path, out):
+    """The painting's own clouds as a grey storm deck (tileable left-right).
+
+    Everything that is not sky (tower, mountains, branch) is filled in from
+    the surrounding sky, blue becomes the dark body of the cloud and the
+    painted white clouds its lighter billows, then the band is mirrored so it
+    tiles seamlessly as it drifts.
+    """
+    sky, alpha, H, W = sky_band(day_path, skyline_path)
+    # Only the clean open sky: above the mountains, right of the bell tower
+    # and clear of the blossom branch. The few small holes (spires, the
+    # castle dome) are filled in from around them.
+    top = int(0.125 * H)
+    x0 = int(0.60 * H)
+    src = sky[:top, x0:]
+    holes = (alpha[:top, x0:] < 0.5).astype(np.uint8) * 255
+    filled = cv2.inpaint((src * 255).astype(np.uint8), holes, 9, cv2.INPAINT_TELEA).astype(np.float32) / 255
+    hsv = cv2.cvtColor((filled * 255).astype(np.uint8), cv2.COLOR_BGR2HSV).astype(np.float32) / 255
+    lum = 0.114 * filled[..., 0] + 0.587 * filled[..., 1] + 0.299 * filled[..., 2]
+    white = smoothstep(0.30, 0.06, hsv[..., 1]) * smoothstep(0.50, 0.88, lum)
+    white = cv2.GaussianBlur(white, (0, 0), 1.5)
+    shade = cv2.GaussianBlur(lum, (0, 0), 1.0)
+    dark = np.array([0.33, 0.30, 0.28], np.float32)        # BGR: slate
+    light = np.array([0.70, 0.68, 0.66], np.float32)
+    col = dark + (light - dark) * (0.30 * shade[..., None] + 0.70 * white[..., None])
+    # Below the painted clouds the deck thins into rain haze toward the horizon.
+    deck_h = int(0.30 * H)
+    haze = col[-8:].mean(axis=(0, 1)) * 1.12
+    deck = np.empty((deck_h, col.shape[1], 3), np.float32)
+    deck[:top] = col
+    deck[top:] = haze
+    y = np.arange(deck_h, dtype=np.float32)[:, None] / H
+    edge = np.concatenate([col, np.repeat(col[-1:], deck_h - top, axis=0)], axis=0)
+    blend = smoothstep(0.085, 0.135, y)[..., None]
+    deck = edge * (1 - blend) + haze * blend
+    deck *= (0.82 + 0.26 * np.clip(y / 0.25, 0, 1))[..., None]
+    # Seamless left-right: the last quarter fades into the first.
+    n = deck.shape[1]
+    q = n // 4
+    ramp = np.linspace(0, 1, q, dtype=np.float32)[None, :, None]
+    tile = deck[:, :n - q].copy()
+    tile[:, :q] = deck[:, :q] * ramp + deck[:, n - q:] * (1 - ramp)
+    width_px = int(round(4096 * tile.shape[1] / W))
+    small = cv2.resize(np.clip(tile, 0, 1), (width_px, int(width_px * deck_h / tile.shape[1])), interpolation=cv2.INTER_AREA)
+    cv2.imwrite(f"{out}/CityStormClouds.jpg", (small * 255 + 0.5).astype(np.uint8), [cv2.IMWRITE_JPEG_QUALITY, 90])
+
+
+def main(out, plates_dir=None, skyline_path=None):
+    """With a plates directory (CitySpringDay.jpg …): the sky masks per set and
+    the storm clouds from spring; always the rain textures."""
     os.makedirs(out, exist_ok=True)
-    if day_path:
-        storm_sky(day_path, skyline_path, out)
-    H, W = 640, 2048
-    # Storm cloud: dense over the top of the band, ragged toward the bottom.
-    storm = clouds(H, W, 11, 0.78, np.array([0.30, 0.32, 0.37]), np.array([0.62, 0.64, 0.70]),
-                   np.array([0.40, 0.41, 0.46]), lambda y: 1.25 - 0.9 * y ** 1.5)
-    cv2.imwrite(f"{out}/CityCloudStorm.png", storm)
-    night = clouds(H, W, 23, 0.52, np.array([0.10, 0.11, 0.16]), np.array([0.21, 0.22, 0.29]),
-                   np.array([0.27, 0.23, 0.25]), lambda y: 1.1 - 0.5 * y)
-    cv2.imwrite(f"{out}/CityCloudNight.png", night)
-    cv2.imwrite(f"{out}/CityRainFar.png", rain(512, 512, 900, 26, 1, 0.3, 0.55, 31))
-    cv2.imwrite(f"{out}/CityRainMid.png", rain(512, 512, 320, 48, 1.6, 0.5, 0.65, 32))
-    cv2.imwrite(f"{out}/CityRainNear.png", rain(512, 512, 70, 110, 3, 1.4, 0.55, 33))
-    # previews on a dark sky
-    for name in ["CityCloudStorm", "CityCloudNight", "CityRainFar", "CityRainMid", "CityRainNear"] + \
-            (["CityStormSky"] if day_path else []):
-        img = cv2.imread(f"{out}/{name}.png", cv2.IMREAD_UNCHANGED).astype(np.float32) / 255
-        bg = np.ones_like(img[..., :3]) * np.array([0.55, 0.45, 0.35], np.float32)
-        comp = bg * (1 - img[..., 3:]) + img[..., :3] * img[..., 3:]
-        cv2.imwrite(f"{out}/preview-{name}.jpg", (comp * 255).astype(np.uint8))
+    if plates_dir:
+        storm_clouds(f"{plates_dir}/CitySpringDay.jpg", skyline_path, out)
+        for prefix in ["CitySpring", "CitySummer", "CityAutumn", "CityWinter", "CityWinterSnow"]:
+            sky_mask(f"{plates_dir}/{prefix}Day.jpg", skyline_path, out, prefix + "SkyMask")
+            far_mask(f"{plates_dir}/{prefix}Day.jpg", f"{plates_dir}/{prefix}Lights.jpg", skyline_path, out,
+                     prefix + "FarMask")
+    cv2.imwrite(f"{out}/CityRainFar.png", rain(512, 512, 700, 30, 1, 0.3, 0.55, 31))
+    cv2.imwrite(f"{out}/CityRainMid.png", rain(512, 512, 260, 56, 1.6, 0.5, 0.65, 32))
+    cv2.imwrite(f"{out}/CityRainNear.png", rain(512, 512, 60, 120, 3, 1.4, 0.55, 33))
 
 
 if __name__ == "__main__":

@@ -92,6 +92,20 @@ public struct MPCChurchGearLedger: Codable, Equatable, Sendable {
         if item.slot == .weapon { equippedWeaponID = id } else { equippedArmorID = id }
         return true
     }
+    /// Bounty cases stopped paying weapon and armor on 2026-09-28. Removes those
+    /// pieces and wears the strongest remaining piece in each slot; returns what was removed.
+    @discardableResult public mutating func retireBountyGear() -> [String] {
+        let retired = ownedIDs.filter { MPCChurchGearCatalog.item($0)?.source.hasPrefix("通缉") == true }.sorted()
+        guard !retired.isEmpty else { return [] }
+        ownedIDs.subtract(retired)
+        let remaining = ownedIDs.compactMap(MPCChurchGearCatalog.item)
+        func strongest(_ slot: MPCChurchGearItem.Slot) -> String? {
+            remaining.filter { $0.slot == slot }.max { $0.strength < $1.strength }?.id
+        }
+        if let id = equippedWeaponID, retired.contains(id) { equippedWeaponID = strongest(.weapon) }
+        if let id = equippedArmorID, retired.contains(id) { equippedArmorID = strongest(.armor) }
+        return retired
+    }
     public var stats: MPCChurchGearStats {
         let weapon = equippedWeaponID.flatMap(MPCChurchGearCatalog.item)?.stats ?? .init()
         let armor = equippedArmorID.flatMap(MPCChurchGearCatalog.item)?.stats ?? .init()

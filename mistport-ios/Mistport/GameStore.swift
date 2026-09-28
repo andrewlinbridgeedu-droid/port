@@ -187,6 +187,9 @@ final class GameStore {
     private(set) var clues = 0
     private(set) var materials = 0
     private(set) var advancementIngredients: Set<AdvancementIngredient> = []
+    /// Sequence 8 reached by the qualification-only ritual; combat still reads `currentSequence`.
+    private(set) var sequenceEightRitual: MPCSequenceEightRitual.Receipt?
+    private(set) var chapterTwoBridge = MPCChapterTwoBridge()
     private(set) var instability = 0
     private(set) var abilityUsed = false
     private(set) var abilityEnabled = false
@@ -275,6 +278,7 @@ final class GameStore {
             defaults.removeObject(forKey: PersistenceKey.foolSkillLevels)
             defaults.removeObject(forKey: Self.skillUpgradeJournalKey)
             defaults.removeObject(forKey: PersistenceKey.currentSequence)
+            for key in Self.sequenceEightRitualKeys { defaults.removeObject(forKey: key) }
             defaults.removeObject(forKey: PersistenceKey.materials)
             defaults.removeObject(forKey: PersistenceKey.advancementIngredients)
             defaults.removeObject(forKey: PersistenceKey.equippedWeaponID)
@@ -307,6 +311,9 @@ final class GameStore {
                 PersistenceKey.foolSkillLevels,
                 Self.skillUpgradeJournalKey,
                 PersistenceKey.currentSequence,
+                Self.sequenceEightRitualKey,
+                Self.sequenceEightRitualCommitKey,
+                Self.chapterTwoBridgeKey,
                 PersistenceKey.materials,
                 PersistenceKey.advancementIngredients,
                 PersistenceKey.equippedWeaponID,
@@ -346,6 +353,9 @@ final class GameStore {
                 PersistenceKey.foolSkillLevels,
                 Self.skillUpgradeJournalKey,
                 PersistenceKey.currentSequence,
+                Self.sequenceEightRitualKey,
+                Self.sequenceEightRitualCommitKey,
+                Self.chapterTwoBridgeKey,
                 PersistenceKey.materials,
                 PersistenceKey.advancementIngredients,
                 PersistenceKey.equippedWeaponID,
@@ -455,6 +465,11 @@ final class GameStore {
         let restoredStoryEvidence = chapterOneCampaign.restoreClaimStoryEvidence(completedMissionNumbers: completedStoryNumbers)
         if grantedMedal || restoredStoryEvidence || savedActiveRelic != nil { persistChapterProgress() }
         recoverEarlyRelicPurchase()
+        sequenceEightRitual = defaults.data(forKey: Self.sequenceEightRitualKey)
+            .flatMap { try? JSONDecoder().decode(MPCSequenceEightRitual.Receipt.self, from: $0) }
+        recoverSequenceEightRitual()
+        chapterTwoBridge = defaults.data(forKey: Self.chapterTwoBridgeKey)
+            .flatMap { try? JSONDecoder().decode(MPCChapterTwoBridge.self, from: $0) } ?? MPCChapterTwoBridge()
         postalJobSerial = defaults.integer(forKey: "mistport.postal-serial.v1")
         postalJobStep = min(2, max(0, defaults.integer(forKey: "mistport.postal-step.v1")))
         recoverPostalSettlement()
@@ -569,6 +584,9 @@ final class GameStore {
         if launchArguments.contains("--verify-p0") { Self.verifySettlementRecovery() }
         if launchArguments.contains("--verify-early-relic-shop") { Self.verifyEarlyRelicShop(); Self.verifyAdvancementProcurement() }
         if launchArguments.contains("--verify-q5-migration") { Self.verifyEncoreBellMigration() }
+        if launchArguments.contains("--verify-sequence8-ritual") { Self.verifySequenceEightRitual() }
+        if launchArguments.contains("--verify-chapter2-bridge") { Self.verifyChapterTwoBridge() }
+        if launchArguments.contains("--verify-lights-local") { Self.verifyLightsLocalEvent() }
         if launchArguments.contains("--preview-p0-settlement") {
             selectedPathID = .fool
             phase = .cityHub
@@ -1375,17 +1393,89 @@ final class GameStore {
         return true
     }
 
+    /// The Black Salt Shore ritual, qualification only: materials and fee are spent
+    /// once through a written commit; no Sequence 8 combat rule is granted.
     func performAdvancement() {
         guard currentSequence == 9 else {
             featureMessage = "当前序列权益保留；后续晋阶将在黑盐岸开放。"
             return
         }
-        // Chapter One prepares ingredients and evidence only. Never use the
-        // obsolete 100-mission branch as a free promotion back door.
-        if advancementIngredients.count < AdvancementIngredient.allCases.count {
-            featureMessage = "晋阶主材尚缺：\(missingAdvancementIngredientNames.joined(separator: "、"))。按调查进度采购，黑盐岸仪式开放后再提交。"
-        } else {
-            featureMessage = "三份晋阶主材已备齐。黑盐岸仪式开放后再核验演证并提交；现在不扣材料与铜币。"
+        var coins = venueCoins
+        var ingredients = Set(advancementIngredients.map(\.rawValue))
+        do {
+            let receipt = try MPCSequenceEightRitual.perform(id: UUID().uuidString,
+                completedMissions: churchTowerMissionNumbers, coins: &coins, ingredients: &ingredients,
+                inventory: chapterOneCampaign.inventory, existing: sequenceEightRitual)
+            let commit = SequenceEightRitualCommit(receipt: receipt, coins: coins, ingredients: ingredients.sorted())
+            guard let data = try? JSONEncoder().encode(commit) else { return }
+            defaults.set(data, forKey: Self.sequenceEightRitualCommitKey)
+            recoverSequenceEightRitual()
+            featureMessage = "序列 8 仪式完成：已交付三份主材与\(receipt.fee)铜币。新能力随后续剧情开放。"
+        } catch MPCSequenceEightRitual.Failure.completed {
+            featureMessage = "序列 8 仪式已完成；新能力随后续剧情开放。"
+        } catch MPCSequenceEightRitual.Failure.locked {
+            featureMessage = "第30关后抵达黑盐岸，才能举行序列 8 仪式。"
+        } catch MPCSequenceEightRitual.Failure.materials {
+            featureMessage = "晋阶主材尚缺：\(missingAdvancementIngredientNames.joined(separator: "、"))。"
+        } catch MPCSequenceEightRitual.Failure.proofs {
+            featureMessage = "剧情凭证尚缺：\(missingSequenceEightProofNames.joined(separator: "、"))。"
+        } catch {
+            featureMessage = "铜币不足，还需要\(max(0, MPCSequenceEightRitual.fee - venueCoins))枚。"
+        }
+    }
+
+    /// Shown sequence: the qualification ritual records Sequence 8 without S8 combat rules.
+    var displayedSequence: Int { sequenceEightRitual == nil ? currentSequence : min(currentSequence, 8) }
+
+    /// Old saves already at Sequence 8 keep it and are never charged again.
+    var sequenceEightQualified: Bool { currentSequence <= 8 || sequenceEightRitual != nil }
+
+    var missingSequenceEightProofNames: [String] {
+        MPCSequenceEightRitual.proofIDs.filter { chapterOneCampaign.inventory[$0, default: 0] == 0 }
+            .map { id in MPCChapterOneCatalog.items.first { $0.id == id }?.name ?? id }
+    }
+
+    var sequenceEightRitualStatus: String {
+        if sequenceEightRitual != nil { return "已完成：三份主材与\(MPCSequenceEightRitual.fee)铜币已交付，记为序列 8。新能力随后续剧情开放。" }
+        if currentSequence <= 8 { return "已是序列 8，原有权益保留。" }
+        guard churchTowerMissionNumbers.contains(MPCSequenceEightRitual.storyMission) else {
+            return "第30关后抵达黑盐岸举行。需三份主材、个人演证、悖论见证、无主回响，提交时扣\(MPCSequenceEightRitual.fee)铜币。"
+        }
+        let missing = missingAdvancementIngredientNames + missingSequenceEightProofNames
+        return missing.isEmpty
+            ? "主材与凭证齐备；提交时扣三份主材与\(MPCSequenceEightRitual.fee)铜币，凭证保留。"
+            : "尚缺：\(missing.joined(separator: "、"))。"
+    }
+
+    // MARK: Chapter Two bridge (Black Salt Shore → transfer station → shore)
+
+    var chapterTwoBridgeOpen: Bool {
+        MPCChapterTwoBridge.isOpen(q30Complete: churchHasDepartedMistport, ritualComplete: sequenceEightQualified)
+    }
+
+    var chapterTwoBridgeStatus: String {
+        guard churchHasDepartedMistport else { return "第30关后前往黑盐岸。" }
+        guard sequenceEightQualified else { return "先在黑盐岸举行序列 8 仪式，再前往外港转运站。仪式可在角色页举行。" }
+        if chapterTwoBridge.worldEventStoryReady { return "已见过两位负责人。转运站的维修与采购尚未开放。" }
+        return "外港转运站在前方航线上。两家为供能检修权来到这里。"
+    }
+
+    func travelToSaltportStation() { updateChapterTwoBridge { try $0.travelToStation(q30Complete: $1, ritualComplete: $2) } }
+    func meetSaltportContact(_ contact: MPCChapterTwoBridge.Contact) {
+        updateChapterTwoBridge { try $0.meet(contact, q30Complete: $1, ritualComplete: $2) }
+    }
+    func returnToBlackSaltShore() { updateChapterTwoBridge { bridge, _, _ in bridge.returnToShore() } }
+
+    /// Only the bridge record is written; Chapter One progress is never touched.
+    private func updateChapterTwoBridge(_ change: (inout MPCChapterTwoBridge, Bool, Bool) throws -> Bool) {
+        var bridge = chapterTwoBridge
+        do {
+            guard try change(&bridge, churchHasDepartedMistport, sequenceEightQualified),
+                  let data = try? JSONEncoder().encode(bridge) else { return }
+            defaults.set(data, forKey: Self.chapterTwoBridgeKey)
+            chapterTwoBridge = bridge
+        } catch {
+            featureMessage = chapterTwoBridgeStatus
         }
     }
 
@@ -1790,6 +1880,9 @@ final class GameStore {
         skillLevels = [.strike: 1, .mobility: 1, .control: 1, .ward: 1, .ultimate: 1]
         foolSkillLevels = [:]
         currentSequence = 9
+        sequenceEightRitual = nil
+        chapterTwoBridge = MPCChapterTwoBridge()
+        for key in Self.sequenceEightRitualKeys { defaults.removeObject(forKey: key) }
         equippedWeaponID = "silver-lie-blade"
         equippedSecondaryRelicID = "paper-moon-token"
         selectedPassiveIDs = ["marked-deck", "false-exit"]
@@ -1896,6 +1989,9 @@ final class GameStore {
         materials = 0
         advancementIngredients = []
         currentSequence = 9
+        sequenceEightRitual = nil
+        chapterTwoBridge = MPCChapterTwoBridge()
+        for key in Self.sequenceEightRitualKeys { defaults.removeObject(forKey: key) }
         skillLevels = [.strike: 1, .mobility: 1, .control: 1, .ward: 1, .ultimate: 1]
         foolSkillLevels = [:]
         equippedWeaponID = "silver-lie-blade"
@@ -1979,6 +2075,30 @@ final class GameStore {
         var painSalveCount: Int? = nil
     }
     private static let earlyRelicPurchaseKey = "mistport.early-relic-purchase.v1"
+    private static let sequenceEightRitualKey = "mistport.sequence8-ritual.v1"
+    private static let sequenceEightRitualCommitKey = "mistport.sequence8-ritual.pending.v1"
+    /// The Chapter Two bridge depends on the ritual, so it is cleared with it.
+    private static let chapterTwoBridgeKey = "mistport.chapter2-bridge.v1"
+    private static let sequenceEightRitualKeys = [sequenceEightRitualKey, sequenceEightRitualCommitKey, chapterTwoBridgeKey]
+
+    /// Absolute state after the ritual, so applying it again changes nothing.
+    private struct SequenceEightRitualCommit: Codable {
+        let receipt: MPCSequenceEightRitual.Receipt
+        let coins: Int
+        let ingredients: [String]
+    }
+
+    private func recoverSequenceEightRitual() {
+        guard let data = defaults.data(forKey: Self.sequenceEightRitualCommitKey),
+              let commit = try? JSONDecoder().decode(SequenceEightRitualCommit.self, from: data),
+              let receiptData = try? JSONEncoder().encode(commit.receipt) else { return }
+        venueCoins = commit.coins
+        advancementIngredients = Set(commit.ingredients.compactMap(AdvancementIngredient.init(rawValue:)))
+        sequenceEightRitual = commit.receipt
+        defaults.set(receiptData, forKey: Self.sequenceEightRitualKey)
+        persistChapterProgress()
+        defaults.removeObject(forKey: Self.sequenceEightRitualCommitKey)
+    }
 
     /// One absolute journal prevents a restart between payment and delivery
     /// from either charging twice or losing the purchased item.
@@ -2326,8 +2446,9 @@ extension GameStore {
         var ownedCondition = MPCChurchOwnedRelicLedger()
         var gear = MPCChurchGearLedger()
         var workshop = MPCLocalWorkshopLedger()
+        var lightsEvent = MPCLightsLocalEvent()
         init() {}
-        private enum CodingKeys: String, CodingKey { case loans, bounties, dailyBountyIssue, bountyCarriedRelics, bountyDefeatLosses, pokerActiveRounds, pokerSettlements, pokerSimpleAttempts, douActiveGames, douSettlements, tavernPrizeCheckedDay, tavernDailyPrize, tavernPrizeResolvedDays, tavernFeaturedGames, tavernPrizePaidGames, equippedLoanIDs, maintenance, ownedCondition, gear, workshop }
+        private enum CodingKeys: String, CodingKey { case loans, bounties, dailyBountyIssue, bountyCarriedRelics, bountyDefeatLosses, pokerActiveRounds, pokerSettlements, pokerSimpleAttempts, douActiveGames, douSettlements, tavernPrizeCheckedDay, tavernDailyPrize, tavernPrizeResolvedDays, tavernFeaturedGames, tavernPrizePaidGames, equippedLoanIDs, maintenance, ownedCondition, gear, workshop, lightsEvent }
         init(from decoder: Decoder) throws {
             let c = try decoder.container(keyedBy: CodingKeys.self)
             loans = try c.decodeIfPresent(MPCChurchLoanLedger.self, forKey: .loans) ?? .init()
@@ -2351,6 +2472,7 @@ extension GameStore {
             ownedCondition = try c.decodeIfPresent(MPCChurchOwnedRelicLedger.self, forKey: .ownedCondition) ?? .init()
             gear = try c.decodeIfPresent(MPCChurchGearLedger.self, forKey: .gear) ?? .init()
             workshop = try c.decodeIfPresent(MPCLocalWorkshopLedger.self, forKey: .workshop) ?? .init()
+            lightsEvent = try c.decodeIfPresent(MPCLightsLocalEvent.self, forKey: .lightsEvent) ?? .init()
         }
     }
     private struct BountyRelicSnapshot: Codable {
@@ -3273,8 +3395,319 @@ extension GameStore {
     }
 }
 
+// MARK: Lights event, local loop at the transfer station
+// Eligibility is the Chapter Two story (ritual + both contacts met). Coins,
+// inventory and the event ledger are committed in one church-services receipt.
+extension GameStore {
+    var lightsEvent: MPCLightsLocalEvent { churchServices.lightsEvent }
+    var lightsEventEligible: Bool { chapterTwoBridgeOpen && chapterTwoBridge.worldEventStoryReady }
+    var lightsHideCount: Int { chapterOneCampaign.inventory[MPCLocalWorkshopLedger.hideID, default: 0] }
+    var lightsStrapCount: Int { chapterOneCampaign.inventory[MPCLightsLocalEvent.strapID, default: 0] }
+
+    func chooseLightsSide(_ side: MPCLightsLocalEvent.Faction) throws {
+        let eligible = lightsEventEligible
+        try updateChurchServices { state in _ = try state.lightsEvent.choose(side, id: "side", eligible: eligible) }
+    }
+    /// The station workbench runs the same leather recipe as the paused Mistport workshop.
+    func craftStrapsAtStation(transactionID: String = UUID().uuidString) throws {
+        guard lightsEventEligible else { throw MPCLightsLocalEvent.Failure.locked }
+        var ledger = localWorkshop, coins = venueCoins
+        var inventory = chapterOneCampaign.inventory
+        if !ledger.learnedBasics { try ledger.learnBasics(completedMissions: churchTowerMissionNumbers) }
+        _ = try ledger.craft(id: transactionID, completedMissions: churchTowerMissionNumbers, coins: &coins, inventory: &inventory)
+        try updateChurchServices(inventory: inventory) { state in
+            state.workshop = ledger; state.loans.coins = coins
+        }
+    }
+    func deliverLightsStraps(transactionID: String = UUID().uuidString) throws {
+        var event = lightsEvent, coins = venueCoins
+        var inventory = chapterOneCampaign.inventory
+        _ = try event.deliver(id: transactionID, eligible: lightsEventEligible, coins: &coins, inventory: &inventory)
+        try updateChurchServices(inventory: inventory) { state in
+            state.lightsEvent = event; state.loans.coins = coins
+        }
+    }
+    func installLightsKit(transactionID: String = UUID().uuidString) throws {
+        let eligible = lightsEventEligible
+        try updateChurchServices { state in _ = try state.lightsEvent.install(id: transactionID, eligible: eligible) }
+    }
+    /// Setup preview only; nothing is written until the battle starts.
+    func lightsPublicPreview(battleID: String) throws -> MPCChapterOneEncounterSession {
+        guard let side = lightsEvent.side else { throw MPCLightsLocalEvent.Failure.locked }
+        return try MPCChapterOneEncounterSession.start(encounterID: MPCLightsPublicTarget.encounterID(side: side, ticket: battleID),
+            party: chapterOneCampaign.party, consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: churchBattleCampaign.loadout)
+    }
+    /// The world ticket and the equipment receipt are written together before combat.
+    func beginLightsPublic(battleID: String, skills: [FoolSkillID]) throws -> MPCChapterOneEncounterSession {
+        var loadout = churchBattleCampaign.loadout
+        var legalSkills: [FoolSkillID] = []
+        for skill in skills where skill != .maskedWhisper && chapterOneCampaign.unlockedSkillIDs.contains(skill) {
+            if !legalSkills.contains(skill) { legalSkills.append(skill) }
+        }
+        loadout.normalSkillIDs = Array(legalSkills.prefix(chapterOneLoadoutSlotCapacity))
+        loadout.talents = hermitTalents; loadout.skillLevels = foolSkillLevels
+        var event = lightsEvent
+        let encounterID = try event.beginPublic(id: battleID, eligible: lightsEventEligible)
+        let session = try MPCChapterOneEncounterSession.start(encounterID: encounterID, party: chapterOneCampaign.party,
+            consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: loadout)
+        try updateChurchServices { state in
+            try beginChurchGear(&state, battleID: battleID, loadout: loadout)
+            state.lightsEvent = event
+        }
+        return session
+    }
+    func settleLightsPublic(battleID: String, session: MPCChapterOneEncounterSession) {
+        try? updateChurchServices { state in
+            try settleChurchGear(&state, battleID: battleID, outcome: session.outcome == .victory ? .victory : .defeat)
+            _ = try state.lightsEvent.settlePublic(id: battleID, session: session)
+        }
+    }
+    func abandonLightsPublic(battleID: String, defeated: Bool) {
+        try? updateChurchServices { state in
+            try settleChurchGear(&state, battleID: battleID, outcome: defeated ? .defeat : .retreat)
+            state.lightsEvent.abandonPublic(id: battleID, defeated: defeated)
+        }
+    }
+}
+
 #if DEBUG
 extension GameStore {
+    /// The workshop device walk plays in its own suite and never opens the player's.
+    static let workshopDeviceWalkSuite = "mistport.workshop-device-walk"
+
+    /// Opens the walk suite, seeding it once as a player who has just cleared Q16.
+    static func workshopDeviceWalkDefaults() -> UserDefaults {
+        let storage = UserDefaults(suiteName: workshopDeviceWalkSuite)!
+        let seededKey = "mistport.workshop-device-walk.seeded"
+        guard !storage.bool(forKey: seededKey) else { return storage }
+        GameStore(launchArguments: [], defaults: storage).debugJumpToOldClockMission(17, enterImmediately: false)
+        storage.set(Pathway.ID.fool.rawValue, forKey: PersistenceKey.selectedPathID)
+        storage.set(CharacterGender.male.rawValue, forKey: PersistenceKey.selectedCharacterGender)
+        storage.set(true, forKey: seededKey)
+        return storage
+    }
+
+    /// The Chapter Two bridge walk: its own suite, seeded once as a player who
+    /// has just cleared Q30 with the three materials and 1000 copper in hand.
+    static let chapterTwoBridgeWalkSuite = "mistport.chapter2-bridge-walk"
+
+    static func chapterTwoBridgeWalkDefaults() -> UserDefaults {
+        let storage = UserDefaults(suiteName: chapterTwoBridgeWalkSuite)!
+        let seededKey = "mistport.chapter2-bridge-walk.seeded"
+        guard !storage.bool(forKey: seededKey) else { return storage }
+        GameStore(launchArguments: [], defaults: storage).debugJumpToOldClockMission(30, enterImmediately: false)
+        storage.set((1...30).map { "old-clock-\($0)" }, forKey: PersistenceKey.completedChapterMissionIDs)
+        storage.set(1000, forKey: PersistenceKey.venueCoins)
+        storage.set(AdvancementIngredient.allCases.map(\.rawValue), forKey: PersistenceKey.advancementIngredients)
+        storage.set(Pathway.ID.fool.rawValue, forKey: PersistenceKey.selectedPathID)
+        storage.set(CharacterGender.male.rawValue, forKey: PersistenceKey.selectedCharacterGender)
+        storage.set(true, forKey: seededKey)
+        return storage
+    }
+
+    /// Sequence 8 ritual transaction on disposable suites; the report goes to Documents.
+    static func verifySequenceEightRitual() {
+        let suites = ["main", "interrupted", "legacy"].map { "mistport.sequence8-check.\($0)." + UUID().uuidString }
+        defer { suites.forEach { UserDefaults(suiteName: $0)?.removePersistentDomain(forName: $0) } }
+        var checks: [String] = []
+        func check(_ condition: Bool, _ label: String) throws {
+            guard condition else { throw NSError(domain: "SequenceEightRitualVerification", code: 1, userInfo: [NSLocalizedDescriptionKey: label]) }
+            checks.append(label)
+        }
+        func seed(_ storage: UserDefaults, through mission: Int, coins: Int, materials: [AdvancementIngredient] = AdvancementIngredient.allCases) {
+            storage.set((1...mission).map { "old-clock-\($0)" }, forKey: PersistenceKey.completedChapterMissionIDs)
+            storage.set(coins, forKey: PersistenceKey.venueCoins)
+            storage.set(materials.map(\.rawValue), forKey: PersistenceKey.advancementIngredients)
+        }
+        var report: [String: Any] = ["scope": "Production GameStore on disposable suites; player save untouched"]
+        do {
+            let storage = UserDefaults(suiteName: suites[0])!
+            seed(storage, through: 29, coins: 1000)
+            var store = GameStore(launchArguments: [], defaults: storage)
+            store.performAdvancement()
+            try check(store.sequenceEightRitual == nil && store.venueCoins == 1000 && store.advancementIngredients.count == 3, "before Q30 nothing is spent")
+            seed(storage, through: 30, coins: 279)
+            store = GameStore(launchArguments: [], defaults: storage)
+            try check(store.missingSequenceEightProofNames.isEmpty, "Q25/26/30 proofs come from story progress")
+            store.performAdvancement()
+            try check(store.sequenceEightRitual == nil && store.venueCoins == 279 && store.advancementIngredients.count == 3, "279 copper: refused, nothing spent")
+            seed(storage, through: 30, coins: 1000, materials: [.mirrorMothScale, .reverseClockEssence])
+            store = GameStore(launchArguments: [], defaults: storage)
+            store.performAdvancement()
+            try check(store.sequenceEightRitual == nil && store.venueCoins == 1000 && store.advancementIngredients.count == 2, "missing material: refused, nothing spent")
+            seed(storage, through: 30, coins: 1000)
+            store = GameStore(launchArguments: [], defaults: storage)
+            store.performAdvancement()
+            try check(store.venueCoins == 720 && store.advancementIngredients.isEmpty && store.sequenceEightRitual?.fee == 280, "ritual spends three materials and 280 once")
+            try check(store.missingSequenceEightProofNames.isEmpty, "proofs are checked, not consumed")
+            try check(store.currentSequence == 9 && store.displayedSequence == 8 && store.sequenceEightQualified, "shows Sequence 8; combat sequence unchanged")
+            store.performAdvancement()
+            try check(store.venueCoins == 720, "second tap is not charged")
+            let reloaded = GameStore(launchArguments: [], defaults: storage)
+            try check(reloaded.venueCoins == 720 && reloaded.advancementIngredients.isEmpty && reloaded.displayedSequence == 8, "receipt and balances survive reload")
+            reloaded.restart()
+            try check(reloaded.sequenceEightRitual == nil && storage.data(forKey: sequenceEightRitualKey) == nil, "restart clears the ritual record")
+
+            let interrupted = UserDefaults(suiteName: suites[1])!
+            seed(interrupted, through: 30, coins: 1000)
+            var coins = 1000, ingredients = Set(AdvancementIngredient.allCases.map(\.rawValue))
+            let receipt = try MPCSequenceEightRitual.perform(id: "interrupted", completedMissions: Set(1...30), coins: &coins,
+                ingredients: &ingredients, inventory: Dictionary(uniqueKeysWithValues: MPCSequenceEightRitual.proofIDs.map { ($0, 1) }), existing: nil)
+            interrupted.set(try JSONEncoder().encode(SequenceEightRitualCommit(receipt: receipt, coins: coins, ingredients: ingredients.sorted())),
+                            forKey: sequenceEightRitualCommitKey)
+            let recovered = GameStore(launchArguments: [], defaults: interrupted)
+            try check(recovered.venueCoins == 720 && recovered.advancementIngredients.isEmpty && recovered.sequenceEightRitual?.id == "interrupted"
+                      && interrupted.object(forKey: sequenceEightRitualCommitKey) == nil, "commit written before a crash is applied exactly once")
+
+            let legacy = UserDefaults(suiteName: suites[2])!
+            seed(legacy, through: 30, coins: 1000)
+            legacy.set(8, forKey: PersistenceKey.currentSequence)
+            let old = GameStore(launchArguments: [], defaults: legacy)
+            old.performAdvancement()
+            try check(old.venueCoins == 1000 && old.advancementIngredients.count == 3 && old.displayedSequence == 8, "old Sequence 8 save is kept and never charged")
+            report["passed"] = true
+        } catch {
+            report["passed"] = false
+            report["failure"] = error.localizedDescription
+        }
+        report["checks"] = checks
+        if let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first,
+           let data = try? JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys]) {
+            try? data.write(to: folder.appendingPathComponent("sequence8-ritual-verification.json"))
+        }
+    }
+
+    /// Chapter Two bridge on a disposable suite: gates, contacts, return path,
+    /// reload, restart, and Chapter One progress byte-identical throughout.
+    static func verifyChapterTwoBridge() {
+        let suite = "mistport.chapter2-bridge-check." + UUID().uuidString
+        let storage = UserDefaults(suiteName: suite)!
+        defer { storage.removePersistentDomain(forName: suite) }
+        var checks: [String] = []
+        func check(_ condition: Bool, _ label: String) throws {
+            guard condition else { throw NSError(domain: "ChapterTwoBridgeVerification", code: 1, userInfo: [NSLocalizedDescriptionKey: label]) }
+            checks.append(label)
+        }
+        struct ChapterOneSnapshot: Equatable {
+            let missionIDs: Set<String>
+            let campaign: MPCChapterOneCampaignState
+        }
+        func chapterOneSnapshot(_ store: GameStore) -> ChapterOneSnapshot {
+            ChapterOneSnapshot(missionIDs: store.completedChapterMissionIDs, campaign: store.chapterOneCampaign)
+        }
+        var report: [String: Any] = ["scope": "Production GameStore on a disposable suite; player save untouched"]
+        do {
+            storage.set((1...29).map { "old-clock-\($0)" }, forKey: PersistenceKey.completedChapterMissionIDs)
+            storage.set(1000, forKey: PersistenceKey.venueCoins)
+            storage.set(AdvancementIngredient.allCases.map(\.rawValue), forKey: PersistenceKey.advancementIngredients)
+            var store = GameStore(launchArguments: [], defaults: storage)
+            store.travelToSaltportStation()
+            try check(!store.chapterTwoBridgeOpen && store.chapterTwoBridge.location == .shore, "before Q30 the station is closed")
+            storage.set((1...30).map { "old-clock-\($0)" }, forKey: PersistenceKey.completedChapterMissionIDs)
+            store = GameStore(launchArguments: [], defaults: storage)
+            store.travelToSaltportStation()
+            try check(!store.chapterTwoBridgeOpen && store.chapterTwoBridge.location == .shore, "after Q30 without the ritual the station is closed")
+            store.performAdvancement()
+            try check(store.sequenceEightRitual != nil && store.chapterTwoBridgeOpen, "ritual opens the bridge")
+            let chapterOne = chapterOneSnapshot(store)
+            let coins = store.venueCoins
+            store.meetSaltportContact(.aidaVein)
+            try check(store.chapterTwoBridge.metContacts.isEmpty, "contacts are met only at the station")
+            store.travelToSaltportStation()
+            store.meetSaltportContact(.aidaVein)
+            store.meetSaltportContact(.rowanKell)
+            store.meetSaltportContact(.aidaVein)
+            try check(store.chapterTwoBridge.metContacts == [.aidaVein, .rowanKell] && store.chapterTwoBridge.worldEventStoryReady, "both contacts met once each")
+            store.returnToBlackSaltShore()
+            try check(store.chapterTwoBridge.location == .shore, "return path leads back to the shore")
+            try check(chapterOneSnapshot(store) == chapterOne && store.venueCoins == coins && store.churchHasDepartedMistport,
+                      "Q30 outcome, Chapter One campaign and copper unchanged")
+            let reloaded = GameStore(launchArguments: [], defaults: storage)
+            try check(reloaded.chapterTwoBridge == store.chapterTwoBridge && chapterOneSnapshot(reloaded) == chapterOne, "bridge survives reload")
+            reloaded.restart()
+            try check(reloaded.chapterTwoBridge == MPCChapterTwoBridge() && storage.data(forKey: chapterTwoBridgeKey) == nil, "restart clears the bridge")
+            report["passed"] = true
+        } catch {
+            report["passed"] = false
+            report["failure"] = error.localizedDescription
+        }
+        report["checks"] = checks
+        if let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first,
+           let data = try? JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys]) {
+            try? data.write(to: folder.appendingPathComponent("chapter2-bridge-verification.json"))
+        }
+    }
+
+    /// Lights local loop on a disposable suite: story gate, workbench, funded
+    /// delivery, installation, one real public battle, reload and restart.
+    static func verifyLightsLocalEvent() {
+        let suite = "mistport.lights-local-check." + UUID().uuidString
+        let storage = UserDefaults(suiteName: suite)!
+        defer { storage.removePersistentDomain(forName: suite) }
+        var checks: [String] = []
+        func check(_ condition: Bool, _ label: String) throws {
+            guard condition else { throw NSError(domain: "LightsLocalVerification", code: 1, userInfo: [NSLocalizedDescriptionKey: label]) }
+            checks.append(label)
+        }
+        var report: [String: Any] = ["scope": "Production GameStore on a disposable suite; player save untouched"]
+        do {
+            storage.set((1...30).map { "old-clock-\($0)" }, forKey: PersistenceKey.completedChapterMissionIDs)
+            storage.set(1000, forKey: PersistenceKey.venueCoins)
+            storage.set(AdvancementIngredient.allCases.map(\.rawValue), forKey: PersistenceKey.advancementIngredients)
+            storage.set([MPCLocalWorkshopLedger.hideID: 1], forKey: "mistport.campaign-inventory.v1")
+            var store = GameStore(launchArguments: [], defaults: storage)
+            try check((try? store.chooseLightsSide(.pumps)) == nil && store.lightsEvent.side == nil, "closed before the ritual and both contacts")
+            store.performAdvancement()
+            store.travelToSaltportStation()
+            store.meetSaltportContact(.aidaVein); store.meetSaltportContact(.rowanKell)
+            try check(store.lightsEventEligible, "ritual and both contacts open the event")
+            try store.chooseLightsSide(.pumps)
+            try store.craftStrapsAtStation(transactionID: "craft-1")
+            try check(store.venueCoins == 707 && store.lightsHideCount == 0 && store.lightsStrapCount == 3, "workbench: 1 hide + 13 copper -> 3 straps")
+            try store.deliverLightsStraps(transactionID: "deliver-1")
+            try store.deliverLightsStraps(transactionID: "deliver-1")
+            try check(store.venueCoins == 725 && store.lightsStrapCount == 1 && store.lightsEvent.projectCash == 0, "delivery pays 18 once from the project budget")
+            try check((try? store.deliverLightsStraps(transactionID: "deliver-2")) == nil && store.venueCoins == 725, "full order refuses more straps")
+            try store.installLightsKit(transactionID: "install-1")
+            try check(store.lightsEvent.installedKits == 12, "installation completes 12/12")
+            store = GameStore(launchArguments: [], defaults: storage)
+            try check(store.lightsEvent.installedKits == 12 && store.venueCoins == 725 && store.lightsStrapCount == 1, "ledger, copper and straps survive reload")
+            var battle = try store.beginLightsPublic(battleID: "public-1", skills: [])
+            for step in 0..<400 where battle.outcome == .inProgress {
+                if battle.isAwaitingTowerWave {
+                    let now = Double(step) * 2 + 10
+                    _ = battle.advanceRelicClock(at: now); battle.advanceChurchTowerEffects(at: now)
+                }
+                for enemy in battle.enemies.filter(\.isAlive) where battle.outcome == .inProgress {
+                    _ = try battle.applyPartyDamage(99_999, to: enemy.id)
+                    if battle.outcome == .inProgress, battle.enemies.contains(where: { $0.id == enemy.id && $0.isAlive }) {
+                        battle.commitEnemyImpact(from: enemy.id)
+                        try? battle.endRound(actingEnemyID: enemy.id, at: Double(step))
+                    }
+                }
+            }
+            try check(battle.outcome == .victory, "public target is a real runtime battle won by damage")
+            try check((try? store.beginLightsPublic(battleID: "public-2", skills: [])) == nil, "second attempt refused while the first is open")
+            store.settleLightsPublic(battleID: "public-1", session: battle)
+            store.settleLightsPublic(battleID: "public-1", session: battle)
+            try check(store.lightsEvent.publicWon && store.lightsEvent.closed && store.lightsEvent.contract == .awarded(.pumps), "victory: own side qualifies and leads")
+            try check(store.venueCoins == 725, "the result pays no victory bonus")
+            let reloaded = GameStore(launchArguments: [], defaults: storage)
+            try check(reloaded.lightsEvent == store.lightsEvent && (try? reloaded.beginLightsPublic(battleID: "public-3", skills: [])) == nil, "result survives reload; no new attempt")
+            reloaded.restart()
+            try check(GameStore(launchArguments: [], defaults: storage).lightsEvent == MPCLightsLocalEvent(), "restart clears the event")
+            report["passed"] = true
+        } catch {
+            report["passed"] = false
+            report["failure"] = error.localizedDescription
+        }
+        report["checks"] = checks
+        if let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first,
+           let data = try? JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys]) {
+            try? data.write(to: folder.appendingPathComponent("lights-local-verification.json"))
+        }
+    }
+
     /// Production GameStore exercised only against a fresh, disposable defaults suite.
     static func verifyLocalWorkshopIntegration() async {
         let suite = "mistport.local-workshop-check." + UUID().uuidString

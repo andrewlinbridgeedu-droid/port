@@ -3,9 +3,16 @@ import AVFoundation
 /// Harbour ambience under the hub music. Loops (sea, breeze, storm wind,
 /// drizzle, downpour, crickets) follow the harbour hour, season and weather;
 /// one-shots are scattered over them: gulls by day, songbirds at dawn in
-/// spring and summer, an owl late at night, thunder a few seconds after each
-/// lightning strike (see HarborLightning), and the clock tower striking at
-/// 00:00, 06:00, 12:00 and 18:00. All sounds are synthesised
+/// spring and summer, an owl late at night, waves slapping the quay, gusts,
+/// ships' timber and ropes creaking, a ship's bell across the water by day,
+/// thunder a few seconds after each lightning strike (see HarborLightning),
+/// and the clock tower striking at 00:00, 06:00, 12:00 and 18:00.
+///
+/// So that it never sounds like a loop: every loop has two takes of
+/// different length (41 s and 53 s for the sea, …) streamed from disk side by
+/// side and cross-faded slowly, each drifting a little in pitch and across the
+/// stereo field; every one-shot picks one of several takes and plays it at a
+/// slightly different pitch, level and place. All sounds are synthesised
 /// (tools/city-daynight/make_ambience.py) and live in the "Ambience" folder.
 @MainActor
 final class CityAmbience {
@@ -13,24 +20,57 @@ final class CityAmbience {
     static let volumeKey = "mistport.ambience.volume"
 
     private static let loopNames = ["sea", "wind_soft", "wind_strong", "rain_light", "rain_heavy", "crickets"]
-    private static let shotNames = ["thunder_near_1", "thunder_near_2", "thunder_far_1", "thunder_far_2",
-                                    "gull_1", "gull_2", "gull_3", "songbird_1", "songbird_2", "songbird_3",
-                                    "owl_1", "bell"]
+    /// One-shot families and how many takes each has (<family>_1 … <family>_n).
+    private static let shotTakes: [String: Int] = [
+        "thunder_near": 3, "thunder_far": 3, "gull": 6, "songbird": 6, "owl": 2,
+        "splash": 3, "gust": 3, "creak": 3, "shipbell": 2]
+    /// Per loop: pitch drift (± share of speed), stereo spread of the two
+    /// takes, and how far each take wanders from its side.
+    private static let character: [String: (depth: Double, spread: Double, swing: Double)] = [
+        "sea": (0.05, 0.25, 0.15), "wind_soft": (0.07, 0.35, 0.40), "wind_strong": (0.06, 0.30, 0.40),
+        "rain_light": (0.03, 0.20, 0.10), "rain_heavy": (0.03, 0.20, 0.10), "crickets": (0.015, 0.50, 0.10)]
+
+    /// One sound path: player → varispeed (pitch) → its own mixer (level and
+    /// pan at the bus; effects cannot pan, so the pan sits after them).
+    private final class Voice {
+        let player = AVAudioPlayerNode()
+        let speed = AVAudioUnitVarispeed()
+        let mix = AVAudioMixerNode()
+        var busyUntil = 0.0
+    }
+
+    /// A loop take streamed from disk, re-queued whenever a copy is consumed.
+    private struct Take {
+        let voice: Voice
+        let file: AVAudioFile
+        var queued = 0
+    }
+
+    /// Slow random motions of one loop: periods (seconds) and phases.
+    private struct Drift {
+        let periods: [Double]
+        let phases: [Double]
+        init() {
+            periods = (0..<9).map { _ in Double.random(in: 40...140) }
+            phases = (0..<9).map { _ in Double.random(in: 0..<(2 * .pi)) }
+        }
+        func wave(_ i: Int, _ t: Double) -> Double { sin(2 * .pi * t / periods[i] + phases[i]) }
+    }
 
     private let engine = AVAudioEngine()
     private let bus = AVAudioMixerNode()
-    private var loops: [String: AVAudioPlayerNode] = [:]
+    private var takes: [String: [Take]] = [:]
+    private var drifts: [String: Drift] = [:]
     private var levels: [String: Float] = [:]
-    private var shots: [AVAudioPlayerNode] = []
-    private var nextShot = 0
-    private var buffers: [String: AVAudioPCMBuffer] = [:]
+    private var shots: [Voice] = []
+    private var urls: [String: URL] = [:]
     private var timer: Timer?
     private var users = 0
-    private var loading = false
     private var wired = false
     private var heardStrikes: Set<Int> = []
     private var lastHour: Int?
     private var nextGull = 0.0, nextSongbird = 0.0, nextOwl = 0.0
+    private var nextSplash = 0.0, nextGust = 0.0, nextCreak = 0.0, nextShipBell = 0.0
     /// Rain, wind and sea step back while thunder rolls: target gain and
     /// until when (reference seconds), and the smoothed gain applied.
     private var duckTarget: Float = 1, duckUntil = 0.0, duck: Float = 1
@@ -53,21 +93,8 @@ final class CityAmbience {
             try session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
             try session.setActive(true)
         } catch { return }
-        if buffers.isEmpty && !loading {
-            loading = true
-            Task { @MainActor in
-                // Decode one file per turn of the main actor so the hub stays smooth.
-                for name in Self.loopNames + Self.shotNames {
-                    self.load(name)
-                    await Task.yield()
-                }
-                self.loading = false
-                self.wire()
-                if self.users > 0 { self.resume() }
-            }
-        } else if wired {
-            resume()
-        }
+        if !wired { wire() }
+        resume()
     }
 
     func stop() {
@@ -91,33 +118,41 @@ final class CityAmbience {
 
     // MARK: Setup
 
-    private func load(_ name: String) {
-        guard let url = Bundle.main.url(forResource: name, withExtension: "caf", subdirectory: "Ambience"),
-              let file = try? AVAudioFile(forReading: url),
-              let buffer = AVAudioPCMBuffer(pcmFormat: file.processingFormat, frameCapacity: AVAudioFrameCount(file.length))
-        else { return }
-        do { try file.read(into: buffer) } catch { return }
-        buffers[name] = buffer
+    private func url(_ name: String) -> URL? {
+        Bundle.main.url(forResource: name, withExtension: "caf", subdirectory: "Ambience")
     }
 
     private func wire() {
-        guard !wired, let format = buffers["sea"]?.format else { return }
+        guard let first = url("sea_a"), let probe = try? AVAudioFile(forReading: first) else { return }
+        let format = probe.processingFormat
         engine.attach(bus)
         engine.connect(bus, to: engine.mainMixerNode, format: nil)
-        for name in Self.loopNames where buffers[name] != nil {
-            let node = AVAudioPlayerNode()
-            engine.attach(node)
-            engine.connect(node, to: bus, format: format)
-            node.volume = 0
-            loops[name] = node
+        func voice() -> Voice {
+            let v = Voice()
+            engine.attach(v.player)
+            engine.attach(v.speed)
+            engine.attach(v.mix)
+            engine.connect(v.player, to: v.speed, format: format)
+            engine.connect(v.speed, to: v.mix, format: format)
+            engine.connect(v.mix, to: bus, format: format)
+            v.mix.volume = 0
+            return v
+        }
+        for name in Self.loopNames {
+            let pair = ["a", "b"].compactMap { take -> Take? in
+                guard let u = url("\(name)_\(take)"), let file = try? AVAudioFile(forReading: u) else { return nil }
+                return Take(voice: voice(), file: file)
+            }
+            guard !pair.isEmpty else { continue }
+            takes[name] = pair
+            drifts[name] = Drift()
             levels[name] = 0
         }
-        for _ in 0..<6 {
-            let node = AVAudioPlayerNode()
-            engine.attach(node)
-            engine.connect(node, to: bus, format: format)
-            shots.append(node)
+        for _ in 0..<10 { shots.append(voice()) }
+        for (family, count) in Self.shotTakes {
+            for k in 1...count { urls["\(family)_\(k)"] = url("\(family)_\(k)") }
         }
+        urls["bell"] = url("bell")
         wired = true
     }
 
@@ -128,11 +163,7 @@ final class CityAmbience {
         if !engine.isRunning {
             do { try engine.start() } catch { return }
         }
-        for (name, node) in loops where !node.isPlaying {
-            guard let buffer = buffers[name] else { continue }
-            node.scheduleBuffer(buffer, at: nil, options: .loops)
-            node.play()
-        }
+        keepLoopsPlaying()
         timer?.invalidate()
         let timer = Timer(timeInterval: 0.25, repeats: true) { _ in
             Task { @MainActor in CityAmbience.shared.tick() }
@@ -142,6 +173,30 @@ final class CityAmbience {
         tick()
     }
 
+    /// Two copies of every take stay queued; the player streams them from disk.
+    private func keepLoopsPlaying() {
+        for (name, pair) in takes {
+            for index in pair.indices {
+                while (takes[name]?[index].queued ?? 2) < 2 { queue(name, index) }
+                if let player = takes[name]?[index].voice.player, !player.isPlaying { player.play() }
+            }
+        }
+    }
+
+    private func queue(_ name: String, _ index: Int) {
+        guard let take = takes[name]?[index] else { return }
+        take.voice.player.scheduleFile(take.file, at: nil, completionCallbackType: .dataConsumed) { [weak self] _ in
+            Task { @MainActor in self?.consumed(name, index) }
+        }
+        takes[name]?[index].queued += 1
+    }
+
+    private func consumed(_ name: String, _ index: Int) {
+        guard takes[name] != nil else { return }
+        takes[name]?[index].queued -= 1
+        if users > 0, (takes[name]?[index].queued ?? 2) < 2 { queue(name, index) }
+    }
+
     // MARK: Mixing
 
     private func tick() {
@@ -149,6 +204,7 @@ final class CityAmbience {
         if !engine.isRunning {
             // Recover after an audio interruption (call, backgrounding).
             do { try engine.start() } catch { return }
+            keepLoopsPlaying()
         }
         let now = Date()
         let t = now.timeIntervalSinceReferenceDate
@@ -175,19 +231,30 @@ final class CityAmbience {
         // Ducking: quick to drop when the thunder hits, slow to come back.
         let wantDuck: Float = t < duckUntil ? duckTarget : 1
         duck += (wantDuck - duck) * (wantDuck < duck ? 0.6 : 0.12)
-        for (name, node) in loops {
+        for (name, pair) in takes {
+            guard let drift = drifts[name], let look = Self.character[name] else { continue }
             let target = Float(targets[name] ?? 0)
             let level = (levels[name] ?? 0) + (target - (levels[name] ?? 0)) * 0.08
             levels[name] = level
-            node.volume = name == "crickets" ? level : level * duck
+            // Equal-power cross-fade between the two takes, and a slow swell.
+            let theta = .pi / 4 + .pi / 4 * (0.7 * drift.wave(0, t) + 0.3 * drift.wave(1, t))
+            let swell = 0.85 + 0.15 * drift.wave(2, t)
+            let gain = level * (name == "crickets" ? 1 : duck) * Float(swell)
+            for (i, take) in pair.enumerated() {
+                let weight = i == 0 ? cos(theta) : sin(theta)
+                take.voice.mix.volume = gain * Float(weight)
+                take.voice.speed.rate = Float(1 + look.depth * (0.6 * drift.wave(3 + i, t) + 0.4 * drift.wave(5 + i, t)))
+                let side = i == 0 ? -look.spread : look.spread
+                take.voice.mix.pan = Float(max(-1, min(1, side + look.swing * drift.wave(7 + i, t))))
+            }
         }
 
         // Gulls by day, fewer in rain or snow.
         let gulls = day * (1 - wet) * (snow ? 0.6 : 1)
         if t >= nextGull {
             if gulls > 0.05 {
-                play("gull_\(1 + Int.random(in: 0...2))", volume: Float(0.25 + 0.35 * Double.random(in: 0...1) * gulls),
-                     pan: Float.random(in: -0.7...0.7))
+                play("gull", volume: Float(0.25 + 0.35 * Double.random(in: 0...1) * gulls),
+                     pan: Float.random(in: -0.7...0.7), rate: 0.9...1.12)
             }
             nextGull = t + Double.random(in: 7...22) / max(gulls, 0.25)
         }
@@ -197,8 +264,7 @@ final class CityAmbience {
         let songbirds = (0.8 * dawn + 0.25 * day) * chorusSeason * (1 - wet)
         if t >= nextSongbird {
             if songbirds > 0.05 {
-                play("songbird_\(1 + Int.random(in: 0...2))", volume: Float(0.18 + 0.3 * songbirds),
-                     pan: Float.random(in: -0.8...0.8))
+                play("songbird", volume: Float(0.18 + 0.3 * songbirds), pan: Float.random(in: -0.8...0.8), rate: 0.92...1.1)
             }
             nextSongbird = t + Double.random(in: 3...9) / max(songbirds, 0.2)
         }
@@ -206,9 +272,36 @@ final class CityAmbience {
         let deep = hour >= 21.5 || hour < 4.5 ? dark : 0
         if t >= nextOwl {
             if deep > 0.5 && wet < 0.1 {
-                play("owl_1", volume: 0.3, pan: Float.random(in: -0.6...0.6))
+                play("owl", volume: Float.random(in: 0.22...0.34), pan: Float.random(in: -0.6...0.6), rate: 0.95...1.05)
             }
             nextOwl = t + Double.random(in: 40...95)
+        }
+        // Waves slapping the quay, more when the wind is up.
+        let waves = targets["sea"] ?? 0.4
+        if t >= nextSplash {
+            play("splash", volume: Float(0.14 + 0.22 * Double.random(in: 0...1) * min(1, waves + 0.3 * weather.gust)),
+                 pan: Float.random(in: -0.8...0.8), rate: 0.85...1.15)
+            nextSplash = t + Double.random(in: 4...12) / max(0.5, waves + weather.gust)
+        }
+        // Single gusts passing through, when there is wind.
+        if t >= nextGust {
+            let wind = max(weather.gust, snow ? 0.35 : 0)
+            if wind > 0.2 {
+                play("gust", volume: Float(0.10 + 0.30 * wind), pan: Float.random(in: -0.8...0.8), rate: 0.8...1.2)
+            }
+            nextGust = t + Double.random(in: 6...18) / max(0.3, wind)
+        }
+        // Ships' timber and mooring ropes working, out in the harbour (right).
+        if t >= nextCreak {
+            play("creak", volume: Float.random(in: 0.10...0.24), pan: Float.random(in: 0.0...0.9), rate: 0.8...1.25)
+            nextCreak = t + Double.random(in: 10...30)
+        }
+        // Now and then a ship's bell across the water by day.
+        if t >= nextShipBell {
+            if hour >= 7 && hour < 20 && wet < 0.5 {
+                play("shipbell", volume: Float.random(in: 0.12...0.2), pan: Float.random(in: 0.3...0.9), rate: 0.97...1.03)
+            }
+            nextShipBell = t + Double.random(in: 70...160)
         }
         // Thunder follows each lightning strike: sound travels ~340 m/s.
         let slot = Int(floor(t / HarborLightning.slot))
@@ -218,12 +311,12 @@ final class CityAmbience {
             let wait = strike.time + delay - t
             guard wait > -0.3 else { heardStrikes.insert(k); continue }
             heardStrikes.insert(k)
-            let name = strike.near ? "thunder_near_\(1 + k % 2)" : "thunder_far_\(1 + k % 2)"
             let near = strike.near
             let pan = Float((strike.x / HarborPainting.aspect - 0.5) * 1.4)
             DispatchQueue.main.asyncAfter(deadline: .now() + max(0, wait)) { [weak self] in
                 guard let self, self.users > 0 else { return }
-                self.play(name, volume: near ? 1.0 : 0.85, pan: pan)
+                self.play(near ? "thunder_near" : "thunder_far", volume: near ? 1.0 : 0.85, pan: pan,
+                          rate: 0.9...1.05, priority: true)
                 let now = Date().timeIntervalSinceReferenceDate
                 self.duckTarget = min(self.duck, near ? 0.45 : 0.65)
                 self.duckUntil = now + (near ? 3.5 : 2.5)
@@ -238,21 +331,36 @@ final class CityAmbience {
             for i in 0..<strikes {
                 DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 2.3) { [weak self] in
                     guard let self, self.users > 0 else { return }
-                    self.play("bell", volume: 0.42 - Float(i) * 0.012, pan: -0.1)
+                    self.play("bell", volume: 0.42 - Float(i) * 0.012, pan: -0.1, rate: 1...1, priority: true)
                 }
             }
         }
         lastHour = whole
     }
 
-    private func play(_ name: String, volume: Float, pan: Float) {
-        guard let buffer = buffers[name], !shots.isEmpty, engine.isRunning else { return }
-        let node = shots[nextShot % shots.count]
-        nextShot += 1
-        node.stop()
-        node.volume = volume
-        node.pan = max(-1, min(1, pan))
-        node.scheduleBuffer(buffer, at: nil)
-        node.play()
+    /// Plays a random take of a family on a free voice, at a random speed in
+    /// `rate`. With every voice busy, ordinary sounds are skipped; thunder and
+    /// the clock take over the voice that frees soonest.
+    private func play(_ family: String, volume: Float, pan: Float, rate: ClosedRange<Float>, priority: Bool = false) {
+        let count = Self.shotTakes[family] ?? 0
+        let name = count > 0 ? "\(family)_\(Int.random(in: 1...count))" : family
+        guard engine.isRunning, let u = urls[name], let file = try? AVAudioFile(forReading: u) else { return }
+        let now = Date().timeIntervalSinceReferenceDate
+        let voice: Voice
+        if let free = shots.first(where: { $0.busyUntil <= now }) {
+            voice = free
+        } else if priority, let soonest = shots.min(by: { $0.busyUntil < $1.busyUntil }) {
+            voice = soonest
+        } else {
+            return
+        }
+        let speed = Float.random(in: rate)
+        voice.player.stop()
+        voice.speed.rate = speed
+        voice.mix.volume = volume
+        voice.mix.pan = max(-1, min(1, pan))
+        voice.player.scheduleFile(file, at: nil)
+        voice.player.play()
+        voice.busyUntil = now + Double(file.length) / file.fileFormat.sampleRate / Double(speed) + 0.1
     }
 }

@@ -141,12 +141,23 @@ def light_groups(lit, lights, seed):
     street = set(street)
     for i in range(1, count):
         if 1.72 < cx[i] < 1.77 and 0.24 < cy[i] < 0.30:          # the lighthouse
-            on[i], off[i] = 0.0, 0.998
+            on[i], off[i] = 0.0, 0.99
         elif i in street:
-            on[i], off[i] = rng.uniform(0.02, 0.30), rng.uniform(0.82, 0.99)
+            on[i], off[i] = rng.uniform(0.02, 0.30), rng.uniform(0.84, 0.97)
         else:
             on[i] = rng.uniform(0.04, 1.0) ** 0.8
-            off[i] = rng.uniform(0.82, 0.99) if rng.uniform() < 0.12 else rng.uniform(0.02, 0.78)
+            # Share of windows that burn all night: the palace and the noble
+            # houses on the castle hill keep many lit, the middle-class
+            # quarter on the left some, the harbour and works few.
+            if 1.06 < cx[i] < 1.44 and cy[i] < 0.215:
+                keep = 0.50          # the palace on the castle hill
+            elif 0.98 < cx[i] < 1.50 and cy[i] < 0.33:
+                keep = 0.25          # noble houses around it
+            elif cx[i] < 0.70:
+                keep = 0.125         # middle-class quarter on the left
+            else:
+                keep = 0.0625        # harbour, works and market
+            off[i] = rng.uniform(0.82, 0.99) if rng.uniform() < keep else rng.uniform(0.02, 0.78)
     lamps = sorted((round(float(cx[i]), 3), round(float(cy[i]), 3)) for i in street)
     return label, on, off, lamps
 

@@ -94,6 +94,11 @@ struct HarborPlateSet: Equatable {
     var plates: [String] { ["Day", "Sunset", "Night", "Night"].map { prefix + $0 } }
     var lights: String { prefix + "Lights" }
     var lightOrder: String { prefix + "LightOrder" }
+    /// Where the painting shows sky (alpha): drawn weather stays off the
+    /// towers, mountains and branches.
+    var skyMask: String { prefix + "SkyMask" }
+    /// How far the cloud reaches down over the distant mountains and islands.
+    var farMask: String { prefix + "FarMask" }
 
     /// Winter with snow lying, revealed over the bare winter set as it settles.
     static let winterSnow = HarborPlateSet(prefix: "CityWinterSnow")
@@ -227,13 +232,28 @@ struct HarborWeather {
         return list
     }
 
+    /// How hard it rains inside a shower, relative to its strength: slow
+    /// swells between a spitting lull and a steady fall (about a minute and
+    /// a half apart in real time), a rarer easing to a drizzle, and short hard
+    /// bursts. 0.08 … about 1.4; a shower of strength 0.7 is mostly light to
+    /// moderate (0.2–0.5), with a heavy burst now and then.
+    static func pulse(_ g: Double, seed: Int) -> Double {
+        let s = Double(seed)
+        let swell = 0.5 + 0.5 * sin(g * 9.1 + s * 1.7) * sin(g * 3.7 + s)
+        let lull = 0.40 + 0.60 * smooth((sin(g * 1.6 + s * 0.9) + 0.45) / 0.8)
+        let burst = pow(max(0, sin(g * 23 + s * 2.3)), 6)
+        return max(0.08, (0.25 + 0.85 * pow(swell, 1.2)) * lull + 0.35 * burst)
+    }
+
     init(gameHours g: Double) {
         nightCloud = HarborWeather.nightCloud(g)
         #if DEBUG
         if let forced = HarborClockDebug.rain {
+            // A forced shower still comes and goes around its level.
             storm = HarborClockDebug.storm ?? 0
             gust = HarborClockDebug.gust ?? min(1, 0.15 + 0.5 * forced + 0.4 * storm)
-            rain = forced; wind = storm > 0 || gust > 0.6 ? 0.8 : 0.35
+            rain = min(1, forced * HarborWeather.pulse(g, seed: 7))
+            wind = storm > 0 || gust > 0.6 ? 0.8 : 0.35
             return
         }
         #endif
@@ -244,11 +264,8 @@ struct HarborWeather {
                 let envelope = smooth((g - spell.start) / min(0.5, spell.length * 0.3))
                     * (1 - smooth((g - (spell.start + spell.length - 0.5)) / 0.5))
                 guard envelope > 0 else { continue }
-                // Rain comes and goes inside a shower: slow swells plus short bursts.
-                let seed = Double(spell.seed)
-                let swell = 0.5 + 0.5 * sin(g * 9.1 + seed * 1.7) * sin(g * 3.7 + seed)
-                let burst = pow(max(0, sin(g * 23 + seed * 2.3)), 6)
-                let level = spell.strength * envelope * (0.55 + 0.35 * swell + 0.25 * burst)
+                let swell = 0.5 + 0.5 * sin(g * 9.1 + Double(spell.seed) * 1.7) * sin(g * 3.7 + Double(spell.seed))
+                let level = spell.strength * envelope * HarborWeather.pulse(g, seed: spell.seed)
                 if level > amount {
                     amount = min(1, level)
                     slant = spell.slant
@@ -414,14 +431,16 @@ struct HarborLight {
         return 1
     }
 
-    /// Progress along the switch-off ramp: most windows go dark between 22:00
-    /// and 01:30 (0 … 0.8); street lamps, the lighthouse and the last windows
-    /// go out at dawn, 04:30–06:06 (0.8 … 1).
+    /// Progress along the switch-off ramp: many windows go dark between 22:00
+    /// and 01:30 (0 … 0.8); the windows that burn all night (half the palace,
+    /// a quarter of the noble houses, an eighth of the middle-class quarter),
+    /// the street lamps and the lighthouse go out as it grows light,
+    /// 04:45–05:45 (0.8 … 1).
     static func lampsOff(_ h: Double) -> Double {
         if h >= 6.2 && h < 22.0 { return 0 }
         let late = h < 12 ? h + 24 : h
-        if late < 28.5 { return 0.8 * clamp((late - 22.0) / 3.5) }
-        return 0.8 + 0.2 * clamp((late - 28.5) / 1.6)
+        if late < 28.75 { return 0.8 * clamp((late - 22.0) / 3.5) }
+        return 0.8 + 0.2 * clamp((late - 28.75) / 1.0)
     }
 
     /// Plate that will be needed within the next half hour (decoded ahead).
@@ -483,7 +502,9 @@ struct CityLivingScene: View {
                                                         snow: season == .winter, lightning: lightning,
                                                         sunsetX: season.sunsetX, still: reduceMotion,
                                                         moon: context.resolve(Image("CityBloodMoon")))
-                            painter.cloudImage = context.resolve(Image("CityCloudNight"))
+                            painter.cloudImage = context.resolve(Image("CityStormClouds"))
+                            painter.skyMask = context.resolve(Image(season.plateSet.skyMask))
+                            painter.farMask = context.resolve(Image(season.plateSet.farMask))
                             painter.draw(in: &context)
                         }
                         let autumn = (season == .autumn ? seasons.mix : 0) + (seasons.previous == .autumn ? 1 - seasons.mix : 0)
@@ -516,7 +537,8 @@ struct CityLivingScene: View {
                                            startPoint: .top, endPoint: .bottom)
                         } else {
                             Canvas { context, size in
-                                HarborOvercast(size: size, t: t, cover: cover, storm: storm, wind: weather.wind, light: light)
+                                HarborOvercast(size: size, t: t, cover: cover, storm: storm, wind: weather.wind, light: light,
+                                               skyMask: season.plateSet.skyMask, farMask: season.plateSet.farMask)
                                     .draw(in: context)
                             }
                         }
@@ -534,10 +556,11 @@ struct CityLivingScene: View {
                     if let lightning, lightning.1 > 0.01 {
                         // The bolt and its cloud glow, above the storm cloud and the rain.
                         Canvas { context, size in
-                            HarborPainter(size: size, hour: hour, t: t, light: light, rain: cover, nightCloud: 0, wind: 0,
-                                          snow: false, lightning: lightning, sunsetX: season.sunsetX, still: reduceMotion,
-                                          moon: context.resolve(Image("CityBloodMoon")))
-                                .drawLightning(context)
+                            var bolt = HarborPainter(size: size, hour: hour, t: t, light: light, rain: cover, nightCloud: 0, wind: 0,
+                                                     snow: false, lightning: lightning, sunsetX: season.sunsetX, still: reduceMotion,
+                                                     moon: context.resolve(Image("CityBloodMoon")))
+                            bolt.skyMask = context.resolve(Image(season.plateSet.skyMask))
+                            bolt.drawLightning(context)
                         }
                     }
                     if flash > 0.01 {
@@ -704,9 +727,9 @@ private struct HarborRain {
         let shear = CGFloat(wind * (0.10 + 0.32 * gust))
         // (tile size in view heights, fall in tiles per second, opacity)
         let layers: [(CGFloat, Double, Double)] = [
-            (0.30, 2.6, 0.30 + 0.45 * r),
-            (0.52, 2.1, r < 0.08 ? 0 : 0.12 + 0.62 * r),
-            (0.95, 1.6, 0.80 * pow(r, 1.2))]
+            (0.30, 2.6, 0.10 + 0.24 * r),
+            (0.52, 2.1, r < 0.20 ? 0 : 0.04 + 0.32 * r),
+            (0.95, 1.6, 0.50 * pow(r, 1.8))]
         let reach = abs(shear) * size.height
         for (i, layer) in layers.enumerated() where i < textures.count {
             let (scale, speed, alpha) = layer
@@ -715,17 +738,17 @@ private struct HarborRain {
             var g = context
             g.addFilter(.colorMultiply(colour.color()))
             g.concatenate(CGAffineTransform(a: 1, b: 0, c: shear, d: 1, tx: 0, ty: 0))
-            let passes = i < 2 && r > 0.45 ? 2 : 1
+            let passes = i == 1 && r > 0.85 ? 2 : 1
             for pass in 0..<passes {
                 var sheet = g
-                sheet.opacity = min(1, alpha) * (pass == 0 ? 1 : min(1, (r - 0.45) * 1.8))
+                sheet.opacity = min(1, alpha) * (pass == 0 ? 1 : min(0.6, (r - 0.85) * 4))
                 let fall = fract(t * speed * (pass == 0 ? 1 : 1.09) + (pass == 0 ? 0 : 0.37)) * h
                 let dx = pass == 0 ? 0 : w * 0.5
                 var y = -h + fall
                 while y < size.height {
                     var x = floor((-reach - dx) / w) * w + dx
                     while x < size.width + reach {
-                        sheet.draw(textures[i], in: CGRect(x: x, y: y, width: w, height: h))
+                        sheet.draw(textures[i], in: CGRect(x: x - 0.5, y: y - 0.5, width: w + 1, height: h + 1))
                         x += w
                     }
                     y += h
@@ -733,7 +756,7 @@ private struct HarborRain {
             }
         }
         // Curtains of rain in heavy downpours, driven across by the wind.
-        let curtains = clamp((r - 0.55) / 0.45) * (0.5 + 0.5 * gust)
+        let curtains = clamp((r - 0.75) / 0.25) * (0.5 + 0.5 * gust)
         guard curtains > 0.01 else { return }
         let wide = max(1, Double(size.width / size.height))
         let slant = wind * (0.12 + 0.35 * gust) / wide
@@ -758,9 +781,10 @@ private struct HarborRain {
 // MARK: - Rain cloud
 
 /// The deck of rain cloud over the harbour: the painting's own clouds turned
-/// grey (CityStormSky, made from the day painting's sky, so it keeps the
-/// painting's brushwork), and over it a thin sheet of drifting cloud so the
-/// sky moves. Grey by day, darker in a storm, warm at sunset, dark at night.
+/// grey (CityStormClouds, taken from the open sky of the day painting, so it
+/// keeps the painting's brushwork), drifting slowly with the wind and
+/// thinning into rain haze toward the horizon. Drawn only where the painting
+/// shows sky. Grey by day, darker in a storm, warm at sunset, dark at night.
 private struct HarborOvercast {
     let size: CGSize
     let t: Double
@@ -768,28 +792,29 @@ private struct HarborOvercast {
     let storm: Double
     let wind: Double
     let light: HarborLight
+    let skyMask: String
+    let farMask: String
 
     func draw(in context: GraphicsContext) {
         let rect = HarborPainting.rect(in: size)
         let unit = rect.height
-        let tint = RGB(1, 1, 1).mix(RGB(0.70, 0.72, 0.78), storm)
+        let band = CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: unit * 0.30)
+        let tint = RGB(1, 1, 1).mix(RGB(0.66, 0.68, 0.74), storm)
             .mix(RGB(1.0, 0.80, 0.68), 0.5 * light.sunset)
-            .mix(RGB(0.22, 0.24, 0.32), light.dark)
-        var deck = context
-        deck.opacity = min(1, cover * 1.25)
-        deck.addFilter(.colorMultiply(tint.color()))
-        deck.draw(context.resolve(Image("CityStormSky")),
-                  in: CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: unit * 0.30))
-        let mist = context.resolve(Image("CityCloudStorm"))
-        let h = unit * 0.40, w = h * 3.2
-        let drift = fract(t * (0.006 + 0.012 * abs(wind)) * unit / w) * w
-        var sheet = context
-        sheet.opacity = min(1, cover) * (0.28 + 0.27 * storm)
-        sheet.addFilter(.colorMultiply(tint.color()))
-        var x = rect.minX - drift
-        while x < rect.maxX {
-            sheet.draw(mist, in: CGRect(x: x, y: rect.minY - unit * 0.03, width: w, height: h))
-            x += w
+            .mix(RGB(0.20, 0.22, 0.30), light.dark)
+        let clouds = context.resolve(Image("CityStormClouds"))
+        let drift = t * (0.004 + 0.010 * abs(wind))
+        // The sky, and the same cloud drawn down over the distant mountains
+        // and islands, fading out toward the town, so there is no edge where
+        // the cloud meets the land.
+        for (maskName, strength) in [(skyMask, 1.3), (farMask, 1.1)] {
+            var g = context
+            let mask = context.resolve(Image(maskName))
+            g.clipToLayer { $0.draw(mask, in: band) }
+            g.opacity = min(1, cover * strength)
+            g.addFilter(.colorMultiply(tint.color()))
+            g.addFilter(.blur(radius: unit * 0.0018))
+            HarborPainter.drawDeck(g, clouds: clouds, rect: rect, drift: drift)
         }
     }
 }
@@ -948,8 +973,36 @@ private struct HarborPainter {
     let sunsetX: Double
     let still: Bool
     let moon: GraphicsContext.ResolvedImage
-    /// Drifting night cloud texture (CityCloudNight).
+    /// The painting's clouds as a grey deck (CityStormClouds), for night cloud.
     var cloudImage: GraphicsContext.ResolvedImage?
+    /// The season's sky mask; without it the traced skyline clips the sky.
+    var skyMask: GraphicsContext.ResolvedImage?
+    /// How far cloud reaches down over the distant land (see HarborOvercast).
+    var farMask: GraphicsContext.ResolvedImage?
+
+    /// Clips to the sky: the painting's own sky pixels when the mask is known.
+    func clipToSky(_ context: inout GraphicsContext) {
+        if let skyMask {
+            let r = CGRect(x: origin.x, y: origin.y, width: len(aspect), height: len(0.30))
+            context.clipToLayer { $0.draw(skyMask, in: r) }
+        } else {
+            context.clip(to: skyPath())
+        }
+    }
+
+    /// The cloud deck tiled across the painting, drifting `drift` painting
+    /// units to the left (clouds come in from the sea on the right).
+    static func drawDeck(_ context: GraphicsContext, clouds: GraphicsContext.ResolvedImage, rect: CGRect, drift: Double) {
+        let h = rect.height * 0.30
+        let w = h * clouds.size.width / max(clouds.size.height, 1)
+        let offset = CGFloat(drift) * rect.height
+        var x = rect.minX - offset.truncatingRemainder(dividingBy: w)
+        while x < rect.maxX {
+            // Overlap by a point so no hairline of the painting shows between tiles.
+            context.draw(clouds, in: CGRect(x: x - 1, y: rect.minY, width: w + 2, height: h))
+            x += w
+        }
+    }
 
     init(size: CGSize, hour: Double, t: Double, light: HarborLight, rain: Double, nightCloud: Double, wind: Double,
          snow: Bool, lightning: (HarborLightning.Strike, Double)?, sunsetX: Double, still: Bool,
@@ -974,10 +1027,11 @@ private struct HarborPainter {
         var sky = context
         sky.opacity = clear
         drawDawn(sky)
-        sky.clip(to: skyPath())
+        clipToSky(&sky)
         drawSun(sky)
         drawMoon(sky)
         drawNightClouds(sky)
+        drawFarNightCloud(context)
         var water = context
         water.opacity = (1 - rain) * (1 - nightCloud)
         drawReflections(water)
@@ -1142,34 +1196,36 @@ private struct HarborPainter {
         }
     }
 
-    /// Heavy night cloud drifting over the sky: a veil darkens the whole sky
-    /// (lighter toward the horizon, where the town's lamps glow on the cloud
-    /// base), and two sheets of cloud texture drift across it, a high far one
-    /// and a lower, nearer, faster one. Where they cross the moon it goes out.
+    /// Heavy night cloud: the painting's own clouds as a dark deck, drifting
+    /// slowly over the sky, with the town's lamplight warm on its base. Where
+    /// it crosses the moon the moon dims (see drawMoon).
     func drawNightClouds(_ context: GraphicsContext) {
-        guard nightCloud > 0.01 else { return }
-        let top = RGB(0.07, 0.08, 0.13)
-        let base = RGB(0.24, 0.20, 0.22)
-        let c = nightCloud
-        context.fill(Path(CGRect(x: p(0, -0.2).x, y: p(0, -0.2).y, width: len(aspect), height: len(0.46))),
-                     with: .linearGradient(Gradient(stops: [.init(color: top.color(0.55 * c), location: 0),
-                                                            .init(color: top.mix(base, 0.4).color(0.42 * c), location: 0.72),
-                                                            .init(color: base.color(0.30 * c), location: 1)]),
-                                           startPoint: p(0, -0.2), endPoint: p(0, 0.26)))
-        guard let cloud = cloudImage else { return }
-        // (height, top, drift in painting units per second, opacity)
-        let sheets: [(Double, Double, Double, Double)] = [(0.22, -0.02, 0.0016, 0.85), (0.30, 0.01, 0.0030, 0.80)]
-        for (height, top, speed, alpha) in sheets {
-            let w = height * 3.2
-            let drift = fract(t * speed * (0.6 + wind) / w) * w
-            var g = context
-            g.opacity = c * alpha
-            var x = -drift
-            while x < aspect {
-                g.draw(cloud, in: CGRect(x: p(x, top).x, y: p(x, top).y, width: len(w), height: len(height)))
-                x += w
-            }
-        }
+        guard nightCloud > 0.01, let cloud = cloudImage else { return }
+        var g = context
+        g.opacity = min(1, nightCloud * 1.05)
+        g.addFilter(.colorMultiply(RGB(0.24, 0.25, 0.33).color()))
+        g.addFilter(.blur(radius: len(0.003)))
+        let rect = CGRect(x: origin.x, y: origin.y, width: len(aspect), height: side)
+        Self.drawDeck(g, clouds: cloud, rect: rect, drift: t * (0.003 + 0.006 * abs(wind)))
+        var warm = context
+        warm.blendMode = .screen
+        warm.fill(Path(CGRect(x: origin.x, y: p(0, 0.12).y, width: len(aspect), height: len(0.14))),
+                  with: .linearGradient(Gradient(colors: [.clear, RGB(0.30, 0.18, 0.12).color(0.35 * nightCloud)]),
+                                        startPoint: p(0, 0.12), endPoint: p(0, 0.26)))
+    }
+
+    /// The night cloud carried down over the distant mountains and islands,
+    /// fading toward the town, so the cloud has no edge along the ridges.
+    func drawFarNightCloud(_ context: GraphicsContext) {
+        guard nightCloud > 0.01, let cloud = cloudImage, let farMask else { return }
+        var g = context
+        let band = CGRect(x: origin.x, y: origin.y, width: len(aspect), height: len(0.30))
+        g.clipToLayer { $0.draw(farMask, in: band) }
+        g.opacity = min(1, nightCloud * 1.05)
+        g.addFilter(.colorMultiply(RGB(0.24, 0.25, 0.33).color()))
+        g.addFilter(.blur(radius: len(0.003)))
+        Self.drawDeck(g, clouds: cloud, rect: CGRect(x: origin.x, y: origin.y, width: len(aspect), height: side),
+                      drift: t * (0.003 + 0.006 * abs(wind)))
     }
 
     /// The bolt of a near strike, from the cloud base down behind the far
@@ -1178,7 +1234,7 @@ private struct HarborPainter {
     func drawLightning(_ base: GraphicsContext) {
         guard let (strike, level) = lightning, level > 0.01 else { return }
         var context = base
-        context.clip(to: skyPath())
+        clipToSky(&context)
         // The storm cloud lights up from inside in uneven cells.
         var glow = context
         glow.blendMode = .screen
@@ -1244,8 +1300,6 @@ private struct HarborPainter {
          (1.509, 0.410), (1.345, 0.410), (1.345, 0.310), (1.400, 0.280), (1.440, 0.265)],
         [(0.385, 0.407), (0.465, 0.407), (0.478, 0.425), (0.460, 0.440), (0.390, 0.437)],
         [(0.388, 0.455), (0.440, 0.458), (0.440, 0.486), (0.388, 0.486)]]
-    /// Rain rings per water at full rain, roughly by area.
-    static let waterDrops = [12, 5, 18, 50, 5, 4]
 
     /// Things standing in front of the water: ships pass behind them and no
     /// reflection falls on them.
@@ -1320,28 +1374,81 @@ private struct HarborPainter {
         ([(1.30, 0.72), (1.60, 0.70), (1.66, 0.80), (1.60, 0.95), (1.28, 0.95)], 0.040, 0.050), // market square
         ([(0.92, 0.66), (1.15, 0.66), (1.15, 0.74), (0.92, 0.745)], 0.024, 0.027)]       // lower courtyard
 
-    /// Rings on the bay, the harbour and the canal, and drops bursting on the
-    /// walk, the market street and the courtyard.
+    /// Rain on the water and the paving. On the bay, the harbour, the open sea
+    /// and the canal every drop throws up a bright fleck, then two rings
+    /// spread from it and fade, flattened by the low view: small and dense
+    /// out toward the horizon, larger and sparser close by. The whole surface
+    /// takes a pale, broken sheen. On the walk, the market square and the
+    /// courtyard drops burst into little crowns.
     func splashWater(_ context: GraphicsContext) {
         guard rain > 0.02 else { return }
-        let colour = RGB(0.86, 0.90, 0.95).mix(RGB(0.7, 0.72, 0.8), light.dark)
-        var rings = Path()
-        for (w, water) in Self.waters.enumerated() {
-            let (x0, x1, y0, y1) = bounds(water)
-            for i in 0..<Int(Double(Self.waterDrops[w]) * rain) {
-                let cycle = 0.7 + 0.5 * hash01(i, w, 5)
+        var water = context
+        var surface = Path()
+        for outline in Self.waters { surface.addPath(polygon(outline)) }
+        water.clip(to: surface)
+        water.clip(to: occluders(), options: .inverse)
+        let sheen = RGB(0.78, 0.82, 0.88).mix(RGB(0.30, 0.34, 0.44), light.dark)
+        water.fill(surface, with: .color(sheen.color(0.14 * rain)))
+        let colour = RGB(0.92, 0.95, 0.99).mix(RGB(0.52, 0.57, 0.70), light.dark)
+        // Rings sorted by age (fading) and distance (line weight).
+        var rings = Array(repeating: Path(), count: 8)
+        var flecks = Path()
+        for (w, outline) in Self.waters.enumerated() {
+            let (x0, x1, y0, y1) = bounds(outline)
+            let count = Int(min(340, (x1 - x0) * (y1 - y0) * 8000 * rain))
+            for i in 0..<count {
+                let cycle = 0.75 + 0.55 * hash01(i, w, 5)
                 let k = floor(t / cycle + hash01(i, w, 6))
                 let phase = fract(t / cycle + hash01(i, w, 6))
+                // Far water is seen compressed: put more drops toward the top.
                 let x = x0 + (x1 - x0) * hash01(i, Int(k), w * 7 + 1)
-                let y = y0 + (y1 - y0) * hash01(i, Int(k), w * 7 + 2)
-                guard Self.inside(water, x, y) else { continue }
-                let size = 0.003 + 0.010 * clamp((y - 0.2) / 0.3)
-                let r = size * (0.2 + 0.8 * phase) * (0.5 + 0.8 * hash01(i, Int(k), w * 7 + 3))
+                let y = y0 + (y1 - y0) * pow(hash01(i, Int(k), w * 7 + 2), 1.35)
+                guard Self.inside(outline, x, y) else { continue }
+                let depth = clamp((y - 0.20) / 0.30)
+                let size = (0.0018 + 0.0095 * depth) * (0.45 + 1.1 * pow(hash01(i, Int(k), w * 7 + 3), 1.6))
                 let c = p(x, y)
-                rings.addEllipse(in: CGRect(x: c.x - len(r), y: c.y - len(r * 0.3), width: len(r * 2), height: len(r * 0.6)))
+                if phase < 0.10 {
+                    let d = len(0.0006 + 0.0012 * depth)
+                    flecks.addEllipse(in: CGRect(x: c.x - d, y: c.y - d * 0.8, width: d * 2, height: d * 1.6))
+                }
+                let age = min(3, Int(phase * 4))
+                let bucket = age * 2 + (depth > 0.45 ? 1 : 0)
+                let spread = sqrt(phase)
+                let second = hash01(i, Int(k), w * 7 + 4) < 0.45
+                for (lag, scale) in [(0.0, 1.0), (0.18, 0.55)] where phase > lag && (lag == 0 || second) {
+                    let r = size * (0.10 + 0.90 * (spread - lag * 0.8)) * scale
+                    guard r > 0 else { continue }
+                    rings[bucket].addEllipse(in: CGRect(x: c.x - len(r), y: c.y - len(r * 0.30),
+                                                        width: len(r * 2), height: len(r * 0.60)))
+                }
             }
         }
-        context.stroke(rings, with: .color(colour.color(0.16 * rain)), lineWidth: 0.5)
+        // Tiny dimples all over the surface catch the light for a moment.
+        var dimples = Path()
+        for (w, outline) in Self.waters.enumerated() {
+            let (x0, x1, y0, y1) = bounds(outline)
+            let count = Int(min(260, (x1 - x0) * (y1 - y0) * 6000 * rain))
+            let tick = Int(floor(t / 0.18))
+            for i in 0..<count {
+                let x = x0 + (x1 - x0) * hash01(i, tick, w * 11 + 90)
+                let y = y0 + (y1 - y0) * pow(hash01(i, tick, w * 11 + 91), 1.35)
+                guard Self.inside(outline, x, y) else { continue }
+                let depth = clamp((y - 0.20) / 0.30)
+                let c = p(x, y)
+                let d = len(0.0004 + 0.0010 * depth)
+                dimples.addEllipse(in: CGRect(x: c.x - d * 1.6, y: c.y - d * 0.5, width: d * 3.2, height: d))
+            }
+        }
+        let strength = min(1, rain * 1.5)
+        water.fill(dimples, with: .color(colour.color(0.30 * strength)))
+        for age in 0..<4 {
+            let alpha = 0.42 * pow(1 - (Double(age) + 0.5) / 4, 1.3) * strength
+            for near in 0..<2 {
+                water.stroke(rings[age * 2 + near], with: .color(colour.color(alpha)),
+                             lineWidth: near == 1 ? max(0.7, len(0.0008)) : max(0.5, len(0.00045)))
+            }
+        }
+        water.fill(flecks, with: .color(colour.color(0.70 * strength)))
         var crowns = Path()
         for (g, ground) in Self.pavements.enumerated() {
             let (x0, x1, y0, y1) = bounds(ground.outline)
@@ -1742,9 +1849,9 @@ private struct HarborPainter {
         // from the arched door down the terrace walk and back, then over the bridge
         [(0.563, 0.497, 0.017), (0.535, 0.494, 0.017), (0.518, 0.500, 0.018), (0.514, 0.525, 0.020),
          (0.510, 0.550, 0.027), (0.505, 0.575, 0.035), (0.500, 0.600, 0.044), (0.490, 0.624, 0.053),
-         (0.470, 0.638, 0.058), (0.448, 0.636, 0.058), (0.442, 0.622, 0.053), (0.462, 0.604, 0.046),
-         (0.482, 0.584, 0.039), (0.490, 0.560, 0.030), (0.497, 0.534, 0.022), (0.503, 0.510, 0.019),
-         (0.495, 0.482, 0.016), (0.474, 0.466, 0.014), (0.452, 0.456, 0.013), (0.425, 0.447, 0.012),
+         (0.470, 0.638, 0.058), (0.448, 0.636, 0.058), (0.442, 0.622, 0.053), (0.470, 0.607, 0.047),
+         (0.500, 0.593, 0.041), (0.516, 0.568, 0.032), (0.520, 0.542, 0.024), (0.513, 0.515, 0.019),
+         (0.503, 0.498, 0.017), (0.495, 0.482, 0.016), (0.474, 0.466, 0.014), (0.452, 0.456, 0.013), (0.425, 0.447, 0.012),
          (0.395, 0.439, 0.011), (0.381, 0.432, 0.011), (0.382, 0.420, 0.010), (0.400, 0.411, 0.010),
          (0.458, 0.407, 0.009)],
         // lower courtyard: out of the house door, round the planter, behind the big leaves
@@ -1773,6 +1880,7 @@ private struct HarborPainter {
         (0.497, [(0.532, 0.460), (0.538, 0.460), (0.538, 0.497), (0.532, 0.497)]),      // tree by the arched door
         (0.612, [(0.390, 0.535), (0.430, 0.528), (0.455, 0.545), (0.475, 0.553), (0.475, 0.590),
                  (0.455, 0.612), (0.390, 0.612)]),                                      // planters left of the walk
+        (0.566, [(0.458, 0.500), (0.494, 0.500), (0.496, 0.566), (0.458, 0.566)]),      // shrub beside the walk
         (0.615, [(0.300, 0.520), (0.395, 0.520), (0.395, 0.615), (0.300, 0.615)]),      // garden gate and stair
         (0.700, [(0.538, 0.500), (0.600, 0.500), (0.600, 0.700), (0.538, 0.700)]),      // lamps and plants right of the walk
         (0.830, [(0.928, 0.714), (0.966, 0.714), (0.990, 0.730), (1.027, 0.755), (1.060, 0.755),
@@ -1783,7 +1891,7 @@ private struct HarborPainter {
                  (1.645, 0.780)]),                                                      // red roof over the works road
         (0.727, [(1.538, 0.660), (1.598, 0.660), (1.598, 0.727), (1.538, 0.727)]),      // stall on the works road
         (0.763, [(1.584, 0.706), (1.657, 0.706), (1.657, 0.763), (1.584, 0.763)]),      // winch
-        (0.803, [(1.424, 0.735), (1.492, 0.735), (1.492, 0.803), (1.424, 0.803)]),      // covered stall
+        (0.803, [(1.424, 0.726), (1.506, 0.726), (1.506, 0.803), (1.424, 0.803)]),      // covered stall
         (0.828, [(1.452, 0.778), (1.531, 0.778), (1.531, 0.828), (1.452, 0.828)]),      // crate stacks
         (0.819, [(1.400, 0.794), (1.430, 0.794), (1.430, 0.819), (1.400, 0.819)]),      // rocks by the corner house
         (0.884, [(1.362, 0.825), (1.443, 0.825), (1.443, 0.884), (1.362, 0.884)]),      // big crate stack

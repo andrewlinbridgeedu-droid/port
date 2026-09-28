@@ -13,8 +13,18 @@ struct LocalWorkshopView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
-                    Text("把塔里的残料，做成有人需要的东西。")
-                        .font(.title2.bold())
+                    HStack(spacing: 16) {
+                        Image("GameNavWorkshopAnime")
+                            .resizable().scaledToFit().frame(width: 84, height: 84)
+                            .accessibilityHidden(true)
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("凭手艺赚铜币").font(.title2.bold())
+                            Text("取材 · 制作 · 交货")
+                                .font(.subheadline).foregroundStyle(.secondary)
+                        }
+                    }
+                    Text("先看工坊需要什么，再把塔里的材料做成货物。")
+                        .font(.callout)
                     HStack {
                         Label("\(game.venueCoins) 铜", systemImage: "circle.circle")
                         Spacer()
@@ -41,7 +51,7 @@ struct LocalWorkshopView: View {
                 }.padding(20)
             }
             .background(Color(red: 0.055, green: 0.08, blue: 0.12))
-            .navigationTitle("皮革工坊")
+            .navigationTitle("百工坊")
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("返回", action: { dismiss() }) } }
         }
         .preferredColorScheme(.dark)
@@ -65,7 +75,7 @@ struct LocalWorkshopView: View {
         }
     }
     private var recipe: some View {
-        GroupBox("02 · 维修绑带") {
+        GroupBox("02 · 皮革制作　维修绑带") {
             VStack(alignment: .leading, spacing: 12) {
                 Text("1份韧皮 + 12铜底料 + 1铜耗材 → 3条绑带")
                 Text("每成功制作一批，皮革熟练度+1，本阶段上限20。高级配方另需序列8、熟练度20和对应图纸，当前尚未开放。")

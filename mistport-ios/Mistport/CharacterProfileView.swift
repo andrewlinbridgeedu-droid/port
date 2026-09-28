@@ -473,6 +473,19 @@ struct CharacterProfileView: View {
                             .accessibilityLabel("\(ingredient.name)，\(ingredient.purchaseOffer.price)铜币，第\(ingredient.purchaseOffer.unlockMission)关后开放")
                     }
                 }
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("黑盐岸 · 序列 8 仪式").font(.subheadline.bold())
+                    Text(game.sequenceEightRitualStatus)
+                        .font(.caption).foregroundStyle(.secondary)
+                    Button(game.sequenceEightQualified ? "已完成" : "举行仪式 · \(MPCSequenceEightRitual.fee) 铜币") {
+                        game.performAdvancement()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(game.sequenceEightQualified
+                              || !game.churchTowerMissionNumbers.contains(MPCSequenceEightRitual.storyMission))
+                    .accessibilityLabel("举行序列8仪式，交付三份主材与\(MPCSequenceEightRitual.fee)铜币")
+                }
+                .padding(.top, 4)
                 Divider()
                 VStack(alignment: .leading, spacing: 8) {
                     Text("邮务核对 · 第\(game.postalJobSerial + 1)单").font(.headline)

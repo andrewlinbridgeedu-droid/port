@@ -84,6 +84,8 @@ public struct MPCChapterOneLoadout: Equatable, Sendable {
     public var skillLevels: [FoolSkillID: Int] = [:]
     public var churchGear = MPCChurchGearStats()
     public var outfit: MPCOutfit? = nil
+    /// The separate bounty slot (MPCBountyRelicCatalog); independent of shop relics.
+    public var bountyRelicID: String? = nil
 
     public var outfitBonus: MPCOutfitBonus { outfit?.bonus ?? .none }
 
@@ -1094,6 +1096,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     public private(set) var returnGiftClaspReadyAt: TimeInterval = 0
     private var returnGiftClaspDebtorID: String?
     private var relicClock: TimeInterval = 0
+    private var brokenSwordReadyAt: [String: TimeInterval] = [:]
     public var returnGiftClaspIsReady: Bool {
         relicClock >= returnGiftClaspReadyAt && (returnGiftClaspDebtorID == nil ||
             !enemies.contains { $0.id == returnGiftClaspDebtorID && $0.isAlive && enemyGiftShields[$0.id, default: 0] > 0 })
@@ -1834,7 +1837,16 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         if isTrueImmune(enemies[index]) { return 0 }
         if sequenceNineRelics.blankCardBlocks(enemyID, at: relicClock) { return 0 }
         let defenseIntents = ["guard", "fortify", "calibrate", "架起防御"]
-        let guarded = !resolvingDeferredDamage && isBasicAttack && defenseIntents.contains(enemies[index].currentIntent)
+        var brokeDefense = false
+        if !resolvingDeferredDamage, loadout.bountyRelicID == MPCBountyRelicCatalog.brokenSword,
+           enemyDefenseBoosts[enemyID] != nil || defenseIntents.contains(enemies[index].currentIntent),
+           relicClock >= brokenSwordReadyAt[enemyID, default: 0] {
+            brokenSwordReadyAt[enemyID] = relicClock + MPCProgressionWalls.brokenSwordCooldown
+            if enemyDefenseBoosts.removeValue(forKey: enemyID) != nil { foolStates[enemyID]?.targetDefense = enemies[index].defense }
+            brokeDefense = true
+            triggeredEffects.append("七号缺齿剑：打破防御")
+        }
+        let guarded = !brokeDefense && !resolvingDeferredDamage && isBasicAttack && defenseIntents.contains(enemies[index].currentIntent)
         let clampedDefenseIgnore = min(10_000, max(0, defenseIgnoreBP))
         let effectiveReductionBP = guarded
             ? (encounter.id == "chapter01_q06_encounter" ? 7_500 : 5_000) * (10_000 - clampedDefenseIgnore) / 10_000
@@ -1850,6 +1862,9 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         if !resolvingDeferredDamage,
            (isBasicAttack || FoolSkillID(rawValue: activeDamageSource) != nil) {
             finalDamage = finalDamage * (10_000 + loadout.churchGear.attackBP + loadout.outfitBonus.attackBP) / 10_000
+        }
+        if !resolvingDeferredDamage, chapterMissionNumber == 12, enemyDefenseBoosts[enemyID] != nil {
+            finalDamage = finalDamage * (100 - MPCProgressionWalls.q12FortifyReductionPercent) / 100
         }
         if !resolvingDeferredDamage, (enemies[index].contentID == "bounty_b06_dark_hold_captain" || MPCChurchTowerCatalog.isShieldJaw(enemies[index].contentID) || enemies[index].contentID == "enemy_archive_gatekeeper"), enemies[index].currentIntent == "recover" {
             finalDamage = finalDamage * 175 / 100
@@ -1877,7 +1892,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         // Ordinary gift shields sit behind true immunity. Guard-phase zeroes returned above
         // cannot remove this debt, and the debt never expires merely with time.
         if [17,22].contains(chapterMissionNumber), enemies[index].currentIntent == "calibration", finalDamage > 0 {
-            chapterVerificationHits += 1
+            chapterVerificationHits += loadout.bountyRelicID == MPCBountyRelicCatalog.reverseSeal ? 2 : 1
         }
         let giftAbsorbed = min(enemyGiftShields[enemyID, default: 0], finalDamage)
         enemyGiftShields[enemyID, default: 0] -= giftAbsorbed
@@ -2161,10 +2176,14 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             if enemies[index].contentID == "boss_chronarch_sovereign",
                enemies[index].intentIndex.isMultiple(of: bossCycleLength) {
                 completedBossCycles += 1
+                if loadout.bountyRelicID == MPCBountyRelicCatalog.lifeLedger, playerHP > 0 {
+                    let heal = min(playerBaseMaxHP * MPCProgressionWalls.lifeLedgerCycleHealPercent / 100, max(0, playerMaxHP - playerHP))
+                    if heal > 0 { playerHP += heal; triggeredEffects.append("绯月寿账签：回复\(heal)生命") }
+                }
                 if [28,29].contains(chapterMissionNumber), completedBossCycles >= 5 { enemies[index].hasDeparted = true }
             }
             if [17,22].contains(chapterMissionNumber), intent == "calibration" {
-                chapterVerificationFailed = chapterVerificationHits < 2
+                chapterVerificationFailed = chapterVerificationHits < MPCProgressionWalls.verificationHitsRequired
                 chapterVerificationHits = 0
             }
             if chapterMissionNumber == 19, intent == "recover" {
@@ -2838,15 +2857,23 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         default: return fallback
         }
     }
+    /// A failed Q17/Q22 verification empowers the next blow; the reverse seal caps it.
+    private func verificationBlowPercent() -> Int {
+        guard chapterVerificationFailed else { return 100 }
+        let failed = MPCProgressionWalls.verificationFailPercent[chapterMissionNumber] ?? 100
+        return loadout.bountyRelicID == MPCBountyRelicCatalog.reverseSeal ? min(failed, MPCProgressionWalls.reverseSealFailPercent) : failed
+    }
+
     private mutating func resolveChapterThirtyIntent(enemy: MPCRuntimeEnemy, intent: String) -> MPCResolvedEnemyIntent? {
         if enemy.contentID == "boss_chronarch_sovereign" {
-            let multiplier = chapterMissionNumber == 30 ? (enemy.hp * 3 < enemy.maxHP ? 125 : 100)
+            let enraged = enemy.hp * 3 < enemy.maxHP && loadout.bountyRelicID != MPCBountyRelicCatalog.lifeLedger
+            let multiplier = chapterMissionNumber == 30 ? (enraged ? MPCProgressionWalls.q30EnragePercent : 100)
                 : chapterMissionNumber == 29 ? 65 : 100
             let base: Int = switch intent { case "strike": 65; case "thirteenth_charge": 85; case "slam": 110; default: 0 }
             return .attack(base * multiplier / 100)
         }
         if enemy.contentID == "enemy_codex_executor", intent == "slam" {
-            return .attack(enemy.attack * (chapterVerificationFailed ? 180 : 100) / 100)
+            return .attack(enemy.attack * verificationBlowPercent() / 100)
         }
         if ["enemy_archive_adjudicator", "enemy_archive_convoy"].contains(enemy.contentID) {
             if intent == "memory_breath" { queueFiniteDamage(source: enemy.id, damage: 45); return .attack(0) }
@@ -2856,7 +2883,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         }
         if [22,25].contains(chapterMissionNumber), enemy.contentID == "enemy_hollow_clockmaker" {
             if intent == "memory_breath" { queueFiniteDamage(source: enemy.id, damage: 40); return .attack(0) }
-            if intent == "strike" { return .attack(enemy.attack * (chapterVerificationFailed ? 160 : 100) / 100) }
+            if intent == "strike" { return .attack(enemy.attack * verificationBlowPercent() / 100) }
             return .attack(0)
         }
         return nil

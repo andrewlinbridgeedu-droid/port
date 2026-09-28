@@ -40,6 +40,15 @@ enum MistportOrientation {
 struct MistportApp: App {
     @UIApplicationDelegateAdaptor(MistportOrientationDelegate.self) private var orientationDelegate
     private static var playerDefaults: UserDefaults {
+        #if DEBUG
+        // Checked first so the workshop device walk can never open the player's own suite.
+        if ProcessInfo.processInfo.arguments.contains("--workshop-device-walk") {
+            return GameStore.workshopDeviceWalkDefaults()
+        }
+        if ProcessInfo.processInfo.arguments.contains("--chapter2-bridge-walk") {
+            return GameStore.chapterTwoBridgeWalkDefaults()
+        }
+        #endif
         if ProcessInfo.processInfo.arguments.contains("--player-test-audit") {
             return UserDefaults(suiteName: "mistport.player-test-01-15.audit")!
         }
