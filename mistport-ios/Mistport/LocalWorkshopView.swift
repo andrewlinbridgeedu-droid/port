@@ -197,6 +197,11 @@ struct LocalWorkshopView: View {
                         Text(recipe.name)
                         Text("库存 \(game.chapterOneCampaign.inventory[recipe.output, default: 0]) · 每件 \(MPCWorkshopOrderBoard.prices[recipe.output, default: 0]) 铜")
                             .font(.caption).foregroundStyle(.secondary)
+                        if game.chapterOneCampaign.inventory[recipe.output, default: 0] == 0 {
+                            Text("没有库存，请先制作。").font(.caption).foregroundStyle(.yellow)
+                        } else if game.workshopOrders.budget < MPCWorkshopOrderBoard.prices[recipe.output, default: 0] {
+                            Text("今日订单预算不足这一件的单价，明天再来。").font(.caption).foregroundStyle(.yellow)
+                        }
                     }
                     Spacer()
                     Button("交 1 件") {

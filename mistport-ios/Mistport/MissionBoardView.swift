@@ -1741,8 +1741,8 @@ private struct DistrictMissionRow: View {
         .buttonStyle(.plain)
         .disabled(!isAvailable)
         .opacity(isAvailable ? 1 : 0.48)
-        .accessibilityLabel("任务 \(mission.number)，\(mission.title)，\(isCompleted ? "已完成" : (isAvailable ? "可挑战" : "未开放"))")
-        .accessibilityHint(isCompleted ? "可以重复挑战，不重复获得声望" : "进入战斗副本")
+        .accessibilityLabel("任务 \(mission.number)，\(mission.title)，\(isCompleted ? "已完成" : (isAvailable ? "可挑战" : lockReason ?? "完成前置主线后开放"))")
+        .accessibilityHint(isAvailable ? (isCompleted ? "可以重复挑战，不重复获得声望" : "进入战斗副本") : (lockReason ?? "完成前置主线后开放"))
     }
 
     private var stateColor: Color {
