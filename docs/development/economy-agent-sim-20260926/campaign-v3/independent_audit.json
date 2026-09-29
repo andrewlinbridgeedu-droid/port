@@ -1,0 +1,8 @@
+{
+  "runs": 27,
+  "days": 9855,
+  "trades": 2516108,
+  "money_and_transaction_arithmetic": true,
+  "inventory": "Daily internal conservation checks; independent full-inventory replay not available.",
+  "conclusion": "Accounting checks only, not an economic balance certification."
+}

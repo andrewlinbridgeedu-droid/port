@@ -1,0 +1,1 @@
+Stopped before completion: purchased product cost basis was missing from resale contribution diagnostics. Money and item identities unaffected, but contribution metrics are invalid. Excluded from final results. Replaced by imports batch with buyer weighted-average acquisition basis.

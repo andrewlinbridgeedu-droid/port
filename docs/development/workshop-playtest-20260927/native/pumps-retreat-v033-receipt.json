@@ -1,0 +1,248 @@
+{
+  "battles" : [
+    {
+      "encounter" : "church_tower_001",
+      "events" : [
+
+      ],
+      "id" : "trial-battle-1",
+      "initialEnemyIDs" : [
+        "church_d01_shield_jaw_f01_s0"
+      ],
+      "medicineUsed" : 0,
+      "purpose" : "tower",
+      "seconds" : 1.05,
+      "won" : false
+    },
+    {
+      "encounter" : "church_tower_001",
+      "events" : [
+
+      ],
+      "id" : "trial-battle-2",
+      "initialEnemyIDs" : [
+        "church_d01_shield_jaw_f01_s0"
+      ],
+      "medicineUsed" : 0,
+      "purpose" : "tower",
+      "seconds" : 55.550000000000004,
+      "won" : true
+    },
+    {
+      "encounter" : "sandbox_campaign_relayOrdinary",
+      "events" : [
+        {
+          "amount" : 0,
+          "at" : 0,
+          "detail" : "rules-v2.1; gear=30; passive=none; medicine=2; medal=false",
+          "id" : 0,
+          "kind" : "start",
+          "target" : ""
+        },
+        {
+          "amount" : 0,
+          "at" : 2.0500000000000003,
+          "detail" : "",
+          "id" : 1,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_relayOrdinary_core#0"
+        },
+        {
+          "amount" : 30,
+          "at" : 2.85,
+          "detail" : "",
+          "id" : 2,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_relayOrdinary_core#0"
+        },
+        {
+          "amount" : 0,
+          "at" : 3.0500000000000003,
+          "detail" : "",
+          "id" : 3,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_relayOrdinary_add#1"
+        },
+        {
+          "amount" : 15,
+          "at" : 3.85,
+          "detail" : "",
+          "id" : 4,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_relayOrdinary_add#1"
+        },
+        {
+          "amount" : 0,
+          "at" : 4.05,
+          "detail" : "",
+          "id" : 5,
+          "kind" : "attack_windup",
+          "target" : "sandbox_campaign_relayOrdinary_add#2"
+        },
+        {
+          "amount" : 15,
+          "at" : 4.8500000000000005,
+          "detail" : "",
+          "id" : 6,
+          "kind" : "enemy_hit",
+          "target" : "sandbox_campaign_relayOrdinary_add#2"
+        },
+        {
+          "amount" : 60,
+          "at" : 5,
+          "detail" : "",
+          "id" : 7,
+          "kind" : "medicine",
+          "target" : ""
+        }
+      ],
+      "id" : "trial-battle-3",
+      "initialEnemyIDs" : [
+        "sandbox_campaign_relayOrdinary_core",
+        "sandbox_campaign_relayOrdinary_add",
+        "sandbox_campaign_relayOrdinary_add"
+      ],
+      "medicineUsed" : 1,
+      "purpose" : "ordinary",
+      "seconds" : 5.95,
+      "won" : false
+    }
+  ],
+  "closed" : true,
+  "copper" : 35,
+  "entries" : [
+    {
+      "external" : 0,
+      "id" : 0,
+      "kind" : "fixture",
+      "player" : 48,
+      "project" : 498,
+      "text" : "已有11套组具安装；最后一套的布与锡罐已付款入库，只缺2条绑带。有预算18铜。"
+    },
+    {
+      "external" : 0,
+      "id" : 1,
+      "kind" : "side",
+      "player" : 48,
+      "project" : 498,
+      "text" : "关注泵站联合会的供能计划；不收报名费，也不发工资。"
+    },
+    {
+      "external" : 0,
+      "id" : 2,
+      "kind" : "battle_start",
+      "player" : 48,
+      "project" : 498,
+      "text" : "开始教会塔F1重玩。只测试新增材料，不结算旧首通铜币、功勋或装备。"
+    },
+    {
+      "external" : 0,
+      "id" : 3,
+      "kind" : "battle_end",
+      "player" : 48,
+      "project" : 498,
+      "text" : "未完成，用时1秒，实际用药0瓶。材料需凭这一次胜利领取。"
+    },
+    {
+      "external" : 0,
+      "id" : 4,
+      "kind" : "battle_start",
+      "player" : 48,
+      "project" : 498,
+      "text" : "开始教会塔F1重玩。只测试新增材料，不结算旧首通铜币、功勋或装备。"
+    },
+    {
+      "external" : 0,
+      "id" : 5,
+      "kind" : "battle_end",
+      "player" : 48,
+      "project" : 498,
+      "text" : "胜利，用时55秒，实际用药0瓶。材料需凭这一次胜利领取。"
+    },
+    {
+      "external" : 0,
+      "id" : 6,
+      "kind" : "loot",
+      "player" : 48,
+      "project" : 498,
+      "text" : "从本次盾颚魔残骸取得1份韧皮。候选材料掉落；不重复发放旧塔权益。"
+    },
+    {
+      "external" : 13,
+      "id" : 7,
+      "kind" : "craft",
+      "player" : 35,
+      "project" : 498,
+      "text" : "消耗1份韧皮、12铜底料和1铜工坊耗材，制成3条维修绑带；皮革熟练度+1。"
+    },
+    {
+      "external" : 13,
+      "id" : 8,
+      "kind" : "sale",
+      "player" : 53,
+      "project" : 480,
+      "text" : "项目买入2条绑带，支付18铜；这是已有预算转移，尚未安装。"
+    },
+    {
+      "external" : 13,
+      "id" : 9,
+      "kind" : "install",
+      "player" : 53,
+      "project" : 480,
+      "text" : "2条绑带与已入库的2过滤布、2锡罐组成最后一套组具，安装在12号滤筒位；工程12\/12验收。"
+    },
+    {
+      "external" : 13,
+      "id" : 10,
+      "kind" : "medicine_purchase",
+      "player" : 44,
+      "project" : 480,
+      "text" : "花9铜购买1瓶止痛膏。未使用不消耗；商人收到的钱仍在系统内，不当销毁。"
+    },
+    {
+      "external" : 13,
+      "id" : 11,
+      "kind" : "medicine_purchase",
+      "player" : 35,
+      "project" : 480,
+      "text" : "花9铜购买1瓶止痛膏。未使用不消耗；商人收到的钱仍在系统内，不当销毁。"
+    },
+    {
+      "external" : 13,
+      "id" : 12,
+      "kind" : "battle_start",
+      "player" : 35,
+      "project" : 480,
+      "text" : "已冻结本次公共行动；正常失败或撤退同样占用唯一尝试。"
+    },
+    {
+      "external" : 13,
+      "id" : 13,
+      "kind" : "battle_end",
+      "player" : 35,
+      "project" : 480,
+      "text" : "未完成，用时5秒，实际用药1瓶。本次贡献0点。"
+    },
+    {
+      "external" : 13,
+      "id" : 14,
+      "kind" : "world_close",
+      "player" : 35,
+      "project" : 480,
+      "text" : "本试玩没有核心人物战，双方NPC存活。灰帆联营依工程及公共成果取得合同；你的施工和交货记录永久保留在本次试玩导出中。"
+    }
+  ],
+  "external" : 13,
+  "fixtureNotice" : "第二章资格与30层装备为隔离快照；本方此前3名玩家5点、对方4名玩家4点及11套工程为预置。非联网，非正式存档。",
+  "hide" : 0,
+  "installed" : 12,
+  "medicines" : 1,
+  "proficiency" : 1,
+  "projectCash" : 480,
+  "publicPoints" : 0,
+  "side" : "pumps",
+  "straps" : 1,
+  "supplierCash" : 720,
+  "version" : "workshop-playtest-v1",
+  "winner" : "shipping"
+}

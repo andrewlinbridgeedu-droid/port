@@ -1,3 +1,4 @@
+import MistportCombatCore
 import SwiftUI
 
 struct WorldRouteView: View {
@@ -533,5 +534,746 @@ private struct ExpeditionMemberRow: View {
         .padding(.vertical, 4)
         .opacity(member.isLocalPlayer || isReady ? 1 : 0.52)
         .accessibilityElement(children: .combine)
+    }
+}
+
+/// Chapter Two's minimal bridge: the Black Salt Shore pier, the outer-harbour
+/// transfer station and its two event contacts, and the way back to the pier.
+/// Names and places are provisional; no portraits exist yet, so none are drawn.
+struct BlackSaltShoreView: View {
+    @Bindable var game: GameStore
+    @Environment(\.dismiss) private var dismiss
+    @State private var openContact: MPCChapterTwoBridge.Contact?
+    @State private var showsEvent = ProcessInfo.processInfo.arguments.contains("--preview-lights-event")
+    @State private var showsWork = ProcessInfo.processInfo.arguments.contains("--preview-lights-work")
+    @State private var notice = ""
+
+    private var atStation: Bool { game.chapterTwoBridge.location == .station }
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                Image(decorative: atStation ? "SaltportStationBackdrop" : "BlackSaltShoreBackdrop")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .clipped()
+                    .ignoresSafeArea()
+                LinearGradient(colors: [.black.opacity(0.65), .clear, .black.opacity(0.18), .black.opacity(0.78)],
+                               startPoint: .top, endPoint: .bottom)
+                    .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        blackSaltHeader
+                        Spacer(minLength: atStation ? max(120, geometry.size.height * 0.18) : max(160, geometry.size.height * 0.26))
+                        if atStation { station } else { shore }
+                        if !notice.isEmpty {
+                            Text(notice)
+                                .font(.footnote)
+                                .foregroundStyle(.orange)
+                                .padding(.top, 12)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
+                    .padding(.bottom, 36)
+                    .frame(maxWidth: .infinity, minHeight: geometry.size.height, alignment: .top)
+                }
+            }
+        }
+        .foregroundStyle(.white)
+        .preferredColorScheme(.dark)
+        .fullScreenCover(isPresented: $showsEvent) { LightsEventPreviewView() }
+        .background(Color.clear.fullScreenCover(isPresented: $showsWork) { LightsLocalEventView(game: game) })
+    }
+
+    private var blackSaltHeader: some View {
+        HStack(alignment: .center, spacing: 14) {
+            Button { dismiss() } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 17, weight: .semibold))
+                    .frame(width: 44, height: 44)
+                    .background(.black.opacity(0.55), in: Circle())
+                    .overlay(Circle().stroke(ChurchGold.opacity(0.7), lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("返回")
+            VStack(alignment: .leading, spacing: 3) {
+                Text(atStation ? "盐岸外港转运站" : "黑盐岸 · 检疫码头")
+                    .font(.system(size: 24, weight: .bold, design: .serif))
+                    .foregroundStyle(ChurchGold)
+                    .minimumScaleFactor(0.75)
+                    .lineLimit(1)
+                Text("第二章")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.7))
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.vertical, 8)
+    }
+
+    private var shore: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 8) {
+                Rectangle().fill(ChurchGold).frame(width: 22, height: 1)
+                Text("退潮后的黑盐岸")
+                    .font(.caption.weight(.semibold))
+                    .tracking(2)
+                    .foregroundStyle(ChurchGold)
+            }
+            Text("潮水退去，码头木桩上结着一层黑盐。雾港的灯已经看不见了。")
+                .font(.system(size: 19, design: .serif))
+                .lineSpacing(4)
+                .fixedSize(horizontal: false, vertical: true)
+            Text("获救的居民仍然自由，伊恩回到了诊所，替代封口依旧有效。")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.78))
+                .lineSpacing(4)
+                .fixedSize(horizontal: false, vertical: true)
+            Rectangle().fill(ChurchGold.opacity(0.35)).frame(height: 1)
+            Text(game.sequenceEightRitualStatus)
+                .font(.footnote)
+                .foregroundStyle(ChurchGold)
+                .fixedSize(horizontal: false, vertical: true)
+            if !game.sequenceEightQualified {
+                blackSaltAction(title: "举行序列 8 仪式", detail: "\(MPCSequenceEightRitual.fee) 铜币",
+                                plate: .ritual, enabled: game.churchHasDepartedMistport) {
+                    game.performAdvancement()
+                    notice = game.featureMessage
+                }
+            } else {
+                Text("外港转运站在前方航线上。驶向雾港的燃料和检修货物都在那里换船。")
+                    .font(.subheadline).foregroundStyle(.white.opacity(0.78)).lineSpacing(4)
+                blackSaltAction(title: "前往外港转运站", plate: .saltportRoute) {
+                    game.travelToSaltportStation()
+                    notice = game.chapterTwoBridgeOpen ? "" : game.chapterTwoBridgeStatus
+                }
+            }
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(red: 0.035, green: 0.055, blue: 0.08).opacity(0.9),
+                    in: RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(ChurchGold.opacity(0.36), lineWidth: 1))
+    }
+
+    private func blackSaltAction(title: String, detail: String? = nil, plate: PlateButton.Plate,
+                                 enabled: Bool = true, action: @escaping () -> Void) -> some View {
+        PlateButton(title: detail.map { "\(title) · \($0)" } ?? title, plate: plate, enabled: enabled, action: action)
+    }
+
+    private var station: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("转运站只有一套主接驳装置，接下来三十天只能交给一家。")
+                .font(.body).foregroundStyle(.white.opacity(0.85)).lineSpacing(5)
+                .padding(14)
+                .background(Color(red: 0.035, green: 0.055, blue: 0.08).opacity(0.88), in: RoundedRectangle(cornerRadius: 12))
+            ForEach(MPCChapterTwoBridge.Contact.allCases, id: \.self) { contact in
+                contactCard(contact)
+            }
+            Text(game.chapterTwoBridge.worldEventStoryReady
+                 ? "两份计划你都听过了。"
+                 : "两家负责人都在站内。先听听他们各自的打算。")
+                .font(.footnote).foregroundStyle(.white.opacity(0.6))
+            if game.chapterTwoBridge.worldEventStoryReady {
+                blackSaltAction(title: "转运站检修单", detail: game.lightsEvent.closed ? "已结束" : "进行中", plate: .saltportRoute) { showsWork = true }
+                blackSaltAction(title: "供能争端 · 事件预告", detail: "预告", plate: .saltportNews) { showsEvent = true }
+            }
+            PlateButton(title: "返回黑盐岸码头", plate: .saltportRoute) { game.returnToBlackSaltShore() }
+        }
+    }
+
+    private func contactCard(_ contact: MPCChapterTwoBridge.Contact) -> some View {
+        let met = game.chapterTwoBridge.metContacts.contains(contact)
+        let expanded = openContact == contact || met
+        return Button {
+            GameInterfaceSound.shared.playClick()
+            game.meetSaltportContact(contact)
+            openContact = contact
+        } label: {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 12) {
+                    Image(decorative: contact == .aidaVein ? "SaltportAidaPortrait" : "SaltportRowanPortrait")
+                        .resizable().scaledToFill()
+                        .frame(width: expanded ? 96 : 64, height: expanded ? 96 : 64, alignment: .top)
+                        .background(Color(red: 0.08, green: 0.10, blue: 0.13))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(ChurchGold.opacity(0.45)))
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(contact.name).font(.system(size: 19, weight: .bold, design: .serif)).foregroundStyle(ChurchGold)
+                        Text(contact.role).font(.caption).foregroundStyle(.white.opacity(0.6))
+                    }
+                    Spacer()
+                    Text(met ? "已交谈" : "交谈").font(.caption.bold())
+                        .foregroundStyle(met ? .white.opacity(0.5) : ChurchGold)
+                }
+                if expanded {
+                    ForEach(contact.lines, id: \.self) { line in
+                        Text(line).font(.system(size: 15, design: .serif)).lineSpacing(4)
+                            .foregroundStyle(.white.opacity(0.85))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+            }
+            .padding(16)
+            .background(Color(red: 0.035, green: 0.055, blue: 0.08).opacity(0.9), in: RoundedRectangle(cornerRadius: 10))
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(ChurchGold.opacity(0.35)))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("与\(contact.name)交谈，\(contact.role)")
+    }
+}
+
+/// Content preview of 《谁让雾港重新亮灯》 driven by a hypothetical snapshot.
+/// Read-only: no investing, selling or fighting from here. Debug builds can
+/// switch snapshots; that switch never touches story eligibility or saves.
+struct LightsEventPreviewView: View {
+    typealias P = MPCLightsEventPreview
+    enum Tab: String, CaseIterable { case overview = "总览", news = "公报", ledger = "项目账", result = "结果" }
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var snapshotID = Self.initialSnapshotID
+    @State private var tab = Self.initialTab
+    @State private var openArticle: String? = Self.initialArticle
+
+    private static var initialSnapshotID: String {
+        #if DEBUG
+        if let id = UserDefaults.standard.string(forKey: "MistportLightsSnapshot"),
+           P.fixtures.contains(where: { $0.id == id }) { return id }
+        #endif
+        return P.fixtures[0].id
+    }
+    private static var initialTab: Tab {
+        #if DEBUG
+        if let raw = UserDefaults.standard.string(forKey: "MistportLightsTab"),
+           let tab = Tab.allCases.first(where: { "\($0)" == raw }) { return tab }
+        #endif
+        return .overview
+    }
+    private static var initialArticle: String? {
+        #if DEBUG
+        return UserDefaults.standard.string(forKey: "MistportLightsArticle")
+        #else
+        return nil
+        #endif
+    }
+    private var snapshot: P.Snapshot { P.fixtures.first { $0.id == snapshotID } ?? P.fixtures[0] }
+    private let muted = Color.white.opacity(0.65)
+
+    var body: some View {
+        ZStack {
+            LinearGradient(colors: [Color(red: 0.03, green: 0.05, blue: 0.07), Color(red: 0.07, green: 0.08, blue: 0.09)],
+                           startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    header
+                    hypotheticalBanner
+                    Picker("页面", selection: $tab) {
+                        ForEach(Tab.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                    switch tab {
+                    case .overview: overview
+                    case .news: news
+                    case .ledger: ledgers
+                    case .result: result
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+            }
+        }
+        .foregroundStyle(.white)
+        .preferredColorScheme(.dark)
+    }
+
+    private var header: some View {
+        HStack(spacing: 14) {
+            Button { dismiss() } label: {
+                Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
+                    .frame(width: 44, height: 44)
+                    .background(.black.opacity(0.55), in: Circle())
+                    .overlay(Circle().stroke(ChurchGold.opacity(0.7), lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("返回")
+            VStack(alignment: .leading, spacing: 3) {
+                Text("谁让雾港重新亮灯").font(.system(size: 24, weight: .bold, design: .serif)).foregroundStyle(ChurchGold)
+                    .lineLimit(1).minimumScaleFactor(0.75)
+                Text("盐岸外港转运站 · 供能争端").font(.caption).foregroundStyle(muted)
+            }
+            Spacer(minLength: 0)
+        }
+    }
+
+    private var hypotheticalBanner: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("预告 · \(snapshot.phase.title)").font(.subheadline.bold()).foregroundStyle(.orange)
+            Text("以下是示例数字。事件开放前不能投资、交货或参战。")
+                .font(.caption).foregroundStyle(muted).fixedSize(horizontal: false, vertical: true)
+            #if DEBUG
+            Menu {
+                ForEach(P.fixtures) { fixture in
+                    Button(fixture.label) { snapshotID = fixture.id; openArticle = nil }
+                }
+            } label: {
+                Label("开发：切换快照 · \(snapshot.label)", systemImage: "slider.horizontal.3")
+                    .font(.caption).foregroundStyle(ChurchGold).multilineTextAlignment(.leading)
+            }
+            #endif
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.orange.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [5, 4])))
+    }
+
+    // MARK: Overview
+
+    private var newsHeader: some View {
+        Image(decorative: "LightsNewsHeader")
+            .resizable().scaledToFill()
+            .frame(maxWidth: .infinity).frame(height: 128)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+
+    private var overview: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            newsHeader
+            Text("转运站只有一套主接驳装置。三十日经营权只能给一家；落败的一方照常做原来的生意。")
+                .font(.body).foregroundStyle(.white.opacity(0.85)).lineSpacing(4)
+            planCard(.pumps, lead: "工程监理 艾妲·维恩", aim: "先恢复住宅与诊所的药基处理；账册公开。",
+                     cost: "分流给民用线路后，可收费的工坊服务容量较少，回本取决于需求。",
+                     win: "住宅线路亮灯，诊所新增稳定工作台。")
+            planCard(.shipping, lead: "护航总管 罗文·凯尔", aim: "先恢复燃料周转与工坊生产。",
+                     cost: "工业先行会延后部分住宅增量供能；运输与货源中断风险较高。",
+                     win: "码头吊机和炉火恢复，货船班次牌更新。")
+            Text("时间表：准备 7 日 → 公共行动 48 小时 → 决战 24 小时 → 经营 30 日。")
+                .font(.footnote).foregroundStyle(muted)
+            linkButton("看最新公报", .news)
+        }
+    }
+
+    private func planCard(_ f: P.Faction, lead: String, aim: String, cost: String, win: String) -> some View {
+        let l = snapshot.ledger(f)
+        return VStack(alignment: .leading, spacing: 6) {
+            Text(P.sideName(f)).font(.system(size: 19, weight: .bold, design: .serif)).foregroundStyle(ChurchGold)
+            Text(lead).font(.caption).foregroundStyle(muted)
+            row("主张", aim); row("代价", cost); row("胜出后", win)
+            Text("已筹 \(l.raised)/\(P.fundingCap) 铜 · 已安装 \(l.installedKits)/\(P.kitSlots) 处")
+                .font(.caption.monospacedDigit()).foregroundStyle(.orange.opacity(0.9))
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 10))
+    }
+
+    private func row(_ label: String, _ text: String) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text(label).font(.caption.bold()).foregroundStyle(muted).frame(width: 44, alignment: .leading)
+            Text(text).font(.subheadline).fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    // MARK: News
+
+    private var news: some View {
+        let articles = P.articles(for: snapshot)
+        return VStack(alignment: .leading, spacing: 12) {
+            Text("已发布 \(articles.count) 篇。")
+                .font(.caption).foregroundStyle(muted)
+            ForEach(articles.reversed()) { article in
+                articleCard(article)
+            }
+        }
+    }
+
+    private func articleCard(_ article: P.Article) -> some View {
+        let open = openArticle == article.id
+        return VStack(alignment: .leading, spacing: 8) {
+            Button { openArticle = open ? nil : article.id } label: {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(article.day).font(.caption).foregroundStyle(muted)
+                    Text(article.headline).font(.system(size: 17, weight: .bold, design: .serif))
+                        .foregroundStyle(ChurchGold).multilineTextAlignment(.leading)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .buttonStyle(.plain)
+            if open {
+                if article.id == "L01" { newsHeader }
+                ForEach(article.paragraphs, id: \.self) {
+                    Text($0).font(.system(size: 15, design: .serif)).lineSpacing(4).fixedSize(horizontal: false, vertical: true)
+                }
+                VStack(spacing: 8) {
+                    ForEach(article.links, id: \.self) { link in
+                        switch link {
+                        case .plans: linkButton("比较两份计划", .overview)
+                        case .ledger: linkButton("查看项目账", .ledger)
+                        case .result: linkButton("看结果", .result)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(14)
+        .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 10))
+    }
+
+    private func linkButton(_ title: String, _ target: Tab) -> some View {
+        PlateButton(title: title, plate: .saltportNews, height: 50) { tab = target; openArticle = nil }
+    }
+
+    // MARK: Ledger
+
+    private var ledgers: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            ForEach(P.Faction.allCases, id: \.self) { ledgerCard($0) }
+            Text("一套组具 \(P.kitPrice) 铜（过滤布、维修绑带、锡罐各 2 件）。每人最多投 \(P.perAccountCap) 铜，按收益分成，不保本。")
+                .font(.caption).foregroundStyle(muted).fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private func ledgerCard(_ f: P.Faction) -> some View {
+        let l = snapshot.ledger(f)
+        let showsPublic = snapshot.phase.dayIndex >= 8
+        return VStack(alignment: .leading, spacing: 8) {
+            Text(P.projectName(f)).font(.system(size: 18, weight: .bold, design: .serif)).foregroundStyle(ChurchGold)
+            amount("已筹资金", "\(l.raised) / \(P.fundingCap) 铜 · \(l.investors) 人")
+            amount("已安装", "\(l.installedKits) / \(P.kitSlots) 处 · 已花 \(l.spent) 铜")
+            amount("未完成订单", "\(l.orderedKits) 套 · \(l.committed) 铜")
+            amount("账上现金", "\(l.cash) 铜")
+            amount("尚未下单", l.missingKits == 0 ? "无" : "\(l.missingKits) 套 · 现金可再付 \(l.fundableKits) 套")
+            if showsPublic {
+                amount("公共贡献", "\(l.publicScore) 点 · \(l.successfulAccounts) 个账号成功")
+                amount("工程资格", l.qualified ? "已取得" : l.worksComplete ? "成功账号不足 \(P.minimumSuccessfulAccounts) 个" : "工程未完成")
+            }
+            Text("核对：\(l.spent) + \(l.committed) + \(l.cash) = \(l.raised) 铜")
+                .font(.caption2.monospacedDigit()).foregroundStyle(muted)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 10))
+    }
+
+    private func amount(_ label: String, _ value: String) -> some View {
+        HStack {
+            Text(label).font(.subheadline).foregroundStyle(muted)
+            Spacer()
+            Text(value).font(.subheadline.monospacedDigit())
+        }
+    }
+
+    // MARK: Result
+
+    @ViewBuilder private var result: some View {
+        if let contract = snapshot.contract {
+            VStack(alignment: .leading, spacing: 12) {
+                Text(contractTitle(contract)).font(.system(size: 20, weight: .bold, design: .serif)).foregroundStyle(ChurchGold)
+                Text(P.npcResult(aidaDead: snapshot.aidaDead, rowanDead: snapshot.rowanDead)).font(.body)
+                Text("公共贡献：\(P.sideName(.pumps)) \(snapshot.pumps.publicScore) 点，\(P.sideName(.shipping)) \(snapshot.shipping.publicScore) 点。")
+                    .font(.subheadline).foregroundStyle(muted)
+                ForEach(["我的公共行动", "我的货物去了哪里", "我的突破", "我的项目账"], id: \.self) { title in
+                    amount(title, "无记录")
+                }
+                Text("事件结束后，这里会列出你的记录。").font(.caption).foregroundStyle(muted)
+            }
+        } else {
+            Text("还没结算，事件结束后公布。")
+                .font(.body).foregroundStyle(muted)
+        }
+    }
+
+    private func contractTitle(_ contract: P.Contract) -> String {
+        switch contract {
+        case .awarded(let f): "\(P.sideName(f))取得三十日经营权"
+        case .interim(.tie): "临时接管：公共分相同"
+        case .interim(.noneQualified): "临时接管：没有合格经营者"
+        case .interim(.bothDead): "临时接管：两位负责人均死亡"
+        }
+    }
+}
+
+/// The one real loop of the lights event on this save: side, workbench,
+/// delivery, installation, one ordinary public attempt and the local result.
+struct LightsLocalEventView: View {
+    typealias E = MPCLightsLocalEvent
+    typealias P = MPCLightsEventPreview
+    @Bindable var game: GameStore
+    @Environment(\.dismiss) private var dismiss
+    @State private var notice = ""
+    @State private var battleID: String?
+    private let muted = Color.white.opacity(0.65)
+    private var event: E { game.lightsEvent }
+
+    var body: some View {
+        ZStack {
+            LinearGradient(colors: [Color(red: 0.03, green: 0.05, blue: 0.07), Color(red: 0.07, green: 0.08, blue: 0.09)],
+                           startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 14) {
+                    header
+                    Text(E.fixtureNotice).font(.caption).foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(10)
+                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.orange.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [5, 4])))
+                    step(1, "选择支持", done: event.side != nil) { sideStep }
+                    step(2, "准备维修绑带", done: game.lightsStrapCount >= E.strapsPerKit || event.projectStraps > 0 || event.worksComplete) { craftStep }
+                    step(3, "交货", done: !event.orderOpen) { deliverStep }
+                    step(4, "安装组具", done: event.worksComplete) { installStep }
+                    step(5, "公共行动", done: event.closed) { publicStep }
+                    if event.closed { resultCard }
+                    if !notice.isEmpty { Text(notice).font(.footnote).foregroundStyle(.orange) }
+                    if !event.entries.isEmpty { logCard }
+                }
+                .padding(.horizontal, 20).padding(.vertical, 12)
+            }
+        }
+        .foregroundStyle(.white)
+        .preferredColorScheme(.dark)
+        .fullScreenCover(item: Binding(get: { battleID.map(BattleTicket.init) }, set: { battleID = $0?.id })) { ticket in
+            LightsPublicBattleView(game: game, battleID: ticket.id, onClose: { battleID = nil })
+        }
+    }
+
+    private struct BattleTicket: Identifiable { let id: String }
+
+    private var header: some View {
+        HStack(spacing: 14) {
+            Button { dismiss() } label: {
+                Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
+                    .frame(width: 44, height: 44).background(.black.opacity(0.55), in: Circle())
+                    .overlay(Circle().stroke(ChurchGold.opacity(0.7), lineWidth: 1))
+            }.buttonStyle(.plain).accessibilityLabel("返回")
+            VStack(alignment: .leading, spacing: 3) {
+                Text("转运站检修单").font(.system(size: 24, weight: .bold, design: .serif)).foregroundStyle(ChurchGold)
+                Text("谁让雾港重新亮灯").font(.caption).foregroundStyle(muted)
+            }
+            Spacer(minLength: 0)
+        }
+    }
+
+    private func step<Content: View>(_ n: Int, _ title: String, done: Bool, @ViewBuilder _ content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("\(n)").font(.caption.bold()).frame(width: 22, height: 22)
+                    .background(done ? ChurchGold : Color.white.opacity(0.12), in: Circle())
+                    .foregroundStyle(done ? .black : .white)
+                Text(title).font(.system(size: 17, weight: .bold, design: .serif)).foregroundStyle(ChurchGold)
+                Spacer()
+                if done { Image(systemName: "checkmark").foregroundStyle(ChurchGold) }
+            }
+            content()
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 10))
+    }
+
+    private func holding(_ art: String, _ text: String) -> some View {
+        HStack(spacing: 5) {
+            Image(decorative: art).resizable().scaledToFit().frame(width: 22, height: 22)
+            Text(text)
+        }
+    }
+
+    private func action(_ title: String, plate: PlateButton.Plate = .workshopPrimary, emblem: String? = nil,
+                        enabled: Bool = true, _ run: @escaping () throws -> Void) -> some View {
+        PlateButton(title: title, plate: plate, emblem: emblem, enabled: enabled) {
+            do { try run(); notice = "" } catch { notice = message(error) }
+        }
+    }
+
+    private func message(_ error: Error) -> String {
+        switch error {
+        case E.Failure.locked: return "先在转运站见过两位负责人，并选择支持一方。"
+        case E.Failure.stock, MPCLocalWorkshopLedger.Failure.stock: return "材料不足。"
+        case E.Failure.funds, MPCLocalWorkshopLedger.Failure.funds: return "铜币不足。"
+        case E.Failure.order: return "这张订单已经收满。"
+        case E.Failure.attempted: return "这次行动的机会已经用过了。"
+        default: return "没有完成，钱和东西都没动。"
+        }
+    }
+
+    @ViewBuilder private var sideStep: some View {
+        if let side = event.side {
+            Text("你支持\(P.sideName(side))，这次事件里不能再换。").font(.subheadline).foregroundStyle(muted)
+        } else {
+            Text("选一方支持，不收钱。选定后这次事件里不能换。").font(.subheadline).foregroundStyle(muted)
+            VStack(spacing: 10) {
+                action("泵站联合会", plate: .sideChoice, emblem: "EmblemPumpsUnion") { try game.chooseLightsSide(.pumps) }
+                action("灰帆联营", plate: .sideChoice, emblem: "EmblemGreySail") { try game.chooseLightsSide(.shipping) }
+            }
+        }
+    }
+
+    @ViewBuilder private var craftStep: some View {
+        Text("维修绑带：1 份韧皮 + 13 铜 → 3 条。在教会塔第 1 层打败盾颚魔可得韧皮。")
+            .font(.subheadline).foregroundStyle(muted).fixedSize(horizontal: false, vertical: true)
+        HStack(spacing: 14) {
+            holding("ItemShieldJawHide", "韧皮 \(game.lightsHideCount)")
+            holding("ItemRepairStrap", "绑带 \(game.lightsStrapCount)")
+            holding("RewardCoin", "\(game.venueCoins) 铜")
+        }
+        .font(.subheadline.monospacedDigit())
+        .accessibilityElement(children: .combine)
+        if !event.worksComplete {
+            action("制作一批 · 13 铜", enabled: event.side != nil && game.lightsHideCount > 0) { try game.craftStrapsAtStation() }
+        }
+    }
+
+    @ViewBuilder private var deliverStep: some View {
+        if event.orderOpen {
+            Text("\(event.side.map(P.projectName) ?? "项目")要 \(E.strapsPerKit) 条绑带，每条 \(E.strapPrice) 铜。")
+                .font(.subheadline).foregroundStyle(muted)
+            action("交 \(E.strapsPerKit) 条 · 收 \(E.orderBudget) 铜", enabled: event.side != nil && game.lightsStrapCount >= E.strapsPerKit) {
+                try game.deliverLightsStraps()
+            }
+        } else {
+            Text("订单收满了，多的绑带留在你背包里。").font(.subheadline).foregroundStyle(muted)
+        }
+    }
+
+    @ViewBuilder private var installStep: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(decorative: "ItemFilterKit").resizable().scaledToFit().frame(width: 40, height: 40)
+            Text("工程 \(event.installedKits)/\(P.kitSlots)。绑带配上过滤布和锡罐，装好这一套。")
+                .font(.subheadline).foregroundStyle(muted).fixedSize(horizontal: false, vertical: true)
+        }
+        if !event.worksComplete {
+            action("安装", enabled: event.projectStraps == E.strapsPerKit) { try game.installLightsKit() }
+        }
+    }
+
+    @ViewBuilder private var publicStep: some View {
+        if let side = event.side {
+            Text("\(MPCLightsPublicTarget.title(side))：只有一次机会，输了或撤退也算用掉。打赢记 1 点公共贡献。")
+                .font(.subheadline).foregroundStyle(muted).fixedSize(horizontal: false, vertical: true)
+        }
+        if event.closed {
+            Text(event.publicWon ? "已完成：胜利，记 1 点。" : "已完成：未胜利，不记贡献。").font(.subheadline)
+        } else if let pending = event.activeTicket {
+            action("放弃这次行动", plate: .workshopSecondary) { game.abandonLightsPublic(battleID: pending, defeated: false) }
+        } else {
+            action("进入战斗", plate: .battle, enabled: event.worksComplete) { battleID = UUID().uuidString }
+        }
+    }
+
+    private var resultCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("本地结果").font(.caption.bold()).foregroundStyle(muted)
+            Text(contractTitle).font(.system(size: 20, weight: .bold, design: .serif)).foregroundStyle(ChurchGold)
+            ForEach(E.Faction.allCases, id: \.self) { f in
+                let l = event.ledger(f)
+                HStack {
+                    Text(P.sideName(f) + (f == event.side ? "（本方）" : "")).font(.subheadline)
+                    Spacer()
+                    Text("\(l.publicScore) 点 · 工程 \(l.installedKits)/12")
+                        .font(.caption.monospacedDigit()).foregroundStyle(muted)
+                }
+            }
+            Text("两位负责人都还活着。").font(.caption).foregroundStyle(muted)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(ChurchGold.opacity(0.5)))
+    }
+
+    private var contractTitle: String {
+        switch event.contract {
+        case .awarded(let f)?: return "\(P.sideName(f))取得三十日经营权"
+        case .interim?: return "临时接管"
+        case nil: return "待结算"
+        }
+    }
+
+    private var logCard: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("回执").font(.caption.bold()).foregroundStyle(muted)
+            ForEach(Array(event.entries.enumerated()), id: \.offset) { _, entry in
+                HStack(alignment: .firstTextBaseline) {
+                    Text(entry.text).font(.caption).fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 8)
+                    if entry.playerCopperDelta != 0 {
+                        Text("\(entry.playerCopperDelta > 0 ? "+" : "")\(entry.playerCopperDelta) 铜").font(.caption.monospacedDigit()).foregroundStyle(ChurchGold)
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// Ordinary public battle, run through the shipped church-maintenance presentation.
+struct LightsPublicBattleView: View {
+    @Bindable var game: GameStore
+    let battleID: String
+    let onClose: () -> Void
+    @State private var started = false
+    @State private var finished = false
+    @State private var won = false
+    @State private var skills: [FoolSkillID] = []
+    @State private var reordered = true
+    @State private var configuredSession: MPCChapterOneEncounterSession?
+    @State private var previewSession: MPCChapterOneEncounterSession?
+    @State private var startError = ""
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            if let initial = configuredSession ?? previewSession {
+                ChapterOneEncounterTestView(initialSession: initial,
+                    campaign: game.churchBattleCampaign, playerSequence: game.currentSequence,
+                    battleIsActive: started, automatesSkillSequence: true,
+                    showsStandaloneOpeningBattleButton: false,
+                    onVictory: { result in
+                        guard !finished else { return }
+                        game.settleLightsPublic(battleID: battleID, session: result)
+                        won = true; finished = true
+                    }, onExit: {
+                        if started && !finished { game.abandonLightsPublic(battleID: battleID, defeated: false) }
+                        onClose()
+                    },
+                    onDefeat: {
+                        guard !finished else { return }
+                        game.abandonLightsPublic(battleID: battleID, defeated: true)
+                        finished = true
+                    },
+                    onRetrySetup: { onClose() },
+                    onSequenceChanged: { skills = $0 },
+                    onSelectActiveRelic: game.selectCampaignActiveRelic,
+                    onSelectPassiveRelic: game.toggleCampaignRelic,
+                    onUseManualMask: { game.recordManualMaskUse(encounterID: initial.encounter.id) },
+                    onConsumeSupply: game.consumeCampaignSupply)
+            }
+            if !started && !finished {
+                ChapterOneBattleSetupOverlay(
+                    availableSkills: MPCChapterOneCatalog.visibleSkills.filter {
+                        game.chapterOneCampaign.unlockedSkillIDs.contains($0.id) && $0.id != .maskedWhisper
+                    }, relics: [], selectedSkillIDs: $skills,
+                    requiresFirstReorder: false, slotCapacity: game.chapterOneLoadoutSlotCapacity,
+                    hasCompletedFirstReorder: $reordered, usesEarlyTutorialLayout: true,
+                    showsStartTutorialHint: false,
+                    onStart: {
+                        game.saveChapterOneBattleLoadout(skills)
+                        do {
+                            configuredSession = try game.beginLightsPublic(battleID: battleID, skills: skills)
+                            started = true
+                        } catch { startError = "无法开始：这次行动的机会可能已经用过了。" }
+                    })
+                if !startError.isEmpty { Text(startError).foregroundStyle(.orange) }
+            }
+            if finished {
+                Color.black.opacity(0.8).ignoresSafeArea()
+                VStack(spacing: 16) {
+                    Text(won ? "阻碍已解除" : "行动未完成").font(.title.bold()).foregroundStyle(won ? .yellow : .orange)
+                    Text(won ? "记 1 点公共贡献。" : "机会已用掉，不记贡献。")
+                    ChurchActionButton(title: "返回检修单") { onClose() }
+                }
+                .foregroundStyle(.white).padding(24)
+            }
+        }
+        .preferredColorScheme(.dark).buttonStyle(.plain)
+        .task { if previewSession == nil { previewSession = try? game.lightsPublicPreview(battleID: battleID) } }
     }
 }

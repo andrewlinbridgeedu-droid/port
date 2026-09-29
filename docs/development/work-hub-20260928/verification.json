@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-28",
+  "build": "passed",
+  "native_ui_observed": [
+    "home_workshop_button_opens_LocalWorkshopView",
+    "workshop_back_returns_home",
+    "home_tavern_opens_TavernInteriorView"
+  ],
+  "cafe": "existing_release_gate_kept_closed",
+  "physical_device_installed": false,
+  "asset_generation": "built-in imagegen",
+  "asset_alpha": "RGBA 0...255",
+  "screenshots": [
+    "home.png",
+    "workshop.png",
+    "tavern-from-home.png"
+  ],
+  "sha256": {
+    "mistport-ios/Mistport/SceneViews.swift": "859a43ebe1ec8ceaa70c642ba209ac4c36620a0a534279937a7ce9d426624dc9",
+    "mistport-ios/Mistport/ContentView.swift": "24030500c189565aa030f610fa7148dc358e2be6c3d9e3afb85dd6b480306820",
+    "mistport-ios/Mistport/LocalWorkshopView.swift": "eb2c997210e3948efeaaf2a5820c28e373c90d1c3a8a9864a70362067b89c545",
+    "mistport-ios/Mistport/Assets.xcassets/GameNavWorkshopAnime.imageset/art.png": "3f2db4d84da0bc73d81c4d9ee064cd8e0fd380c02ccbfba70b6b002a489a508f"
+  }
+}

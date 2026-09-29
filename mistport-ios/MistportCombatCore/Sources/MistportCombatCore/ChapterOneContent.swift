@@ -397,6 +397,17 @@ public enum MPCChapterOneCatalog {
     ]
 
     public static let items: [MPCItemContent] = [
+        item(MPCLocalWorkshopLedger.hideID, "盾颚韧皮", .material, .common, "工坊开放后，从教会塔第1层的新胜利中取得。1份韧皮可加工3条维修绑带。", Int.max, false, .investigationOne),
+        item(MPCLocalWorkshopLedger.strapID, "维修绑带", .material, .common, "皮革工坊制品。检修单只采购2条，交货后安装才消耗；剩余成品可以保存。", Int.max, false, .investigationOne),
+        item(MPCTowerMaterials.gland, "盐囊腺", .material, .common, "盐囊瘴魔的材料，教会塔每次胜利都会掉落。药剂工坊用它熬止痛膏。", Int.max, false, .investigationOne),
+        item(MPCTowerMaterials.membrane, "寄囊膜", .material, .common, "囊背寄魔的材料。用于第30层档的工坊装备。", Int.max, false, .investigationOne),
+        item(MPCTowerMaterials.chitin, "剪刃甲片", .material, .common, "剪肢螳魔的材料。用于第50层档起的工坊装备。", Int.max, false, .investigationOne),
+        item(MPCTowerMaterials.silk, "共鸣丝", .material, .common, "裂冠啸魔的材料。用于第50层档起的工坊装备。", Int.max, false, .investigationOne),
+        item(MPCTowerMaterials.talon, "骨爪", .material, .common, "骨爪掠魔的材料。用于第70层档起的工坊装备。", Int.max, false, .investigationOne),
+        item(MPCTowerMaterials.fiber, "蛙喉丝", .material, .common, "金喉树蛙的材料。织造工坊用它织过滤布。", Int.max, false, .investigationOne),
+        item(MPCTowerMaterials.scale, "杂鳞", .material, .common, "塔里小恶魔的鳞片。金属工坊用它打修甲片和低档刃。", Int.max, false, .investigationOne),
+        item(MPCChurchGearLedger.bladeKitID, "修甲片", .material, .common, "金属工坊制品。修理工坊刃的耐久；诊所、港务处和教会也会收购。", Int.max, false, .investigationOne),
+        item(MPCCraftingCatalog.clothID, "过滤布", .material, .common, "织造工坊制品。泵站和诊所收购。", Int.max, false, .investigationOne),
         item("chapter30_e02", "寻人退件索引", .keyItem, .story, "绑定调查物证。用于核验认领、签发与押运记录；不可装备、消耗或出售。", 1, false, .investigationOne),
         item("chapter30_e03", "具名项圈拓印", .keyItem, .story, "绑定调查物证。用于核验认领、签发与押运记录；不可装备、消耗或出售。", 1, false, .investigationOne),
         item("chapter30_e05", "召回节律手记", .keyItem, .story, "绑定调查物证。用于核验认领、签发与押运记录；不可装备、消耗或出售。", 1, false, .investigationOne),

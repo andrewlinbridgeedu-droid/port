@@ -2,7 +2,7 @@
 
 用户给出三张参考图（彩虹鳞片冲浪、金纹祥云龙卷、彩虹穹顶斩），要求**所有**法术达到同等的绚丽、炸裂和丰富度。本批给全部正式入口加了一层按身份区分的命中华彩层，并修了三处旧问题。**这是本轮可评审版本，尚未取得用户视觉认可，也没有做设备导出、签名构建或装机。**
 
-当前版本：[全身份峰值网格](../../output/spell-spectacle-20260926/variety-round7.jpg) · [签名招式并排视频](../../output/spell-spectacle-20260926/showcase-signature.mp4) · 全部录像 `output/spell-spectacle-20260926/round7/after/`（98组×双机位=196段）。下面按三次迭代顺序记录；第一次交付的对比图和 round2 录像已被后两次取代。
+当前版本：[全身份峰值网格](../../output/spell-spectacle-20260926/variety-round7.jpg) · [签名招式并排视频](../../output/spell-spectacle-20260926/showcase-signature.mp4) · 全部录像 `output/spell-spectacle-20260926/round7/after/`（98组×双机位=196段）。下面按三次迭代顺序记录。**2026-09-26 已按用户要求清理中间产物**：第一、二次迭代的录像（round1–round6、probe*、round3-*、round4-b06g、diag-off）、旧对比图和旧并排视频都已删除，下文提到的这些目录只作为当时的检查记录，文件已不在。保留的是 round7、`showcase-signature.mp4`、`variety-round7.jpg`、`new-files-sha256.txt`，以及 `backups/spell-spectacle-20260926/` 的改前原件。
 
 ## 做了什么
 
@@ -48,7 +48,7 @@
 
 改前副本另加 `HeroSpellVolume.shader`、`HeroSpellVolume.cs`、`SpellSceneLighting.cs`、`ChurchStatusPresentation20260917.cs`，都在 `backups/spell-spectacle-20260926/original/`。
 
-展示：[改前/改后峰值对比（第三轮）](../../output/spell-spectacle-20260926/before-after-round3.jpg) · [并排视频（原速 + 0.4 倍慢放）](../../output/spell-spectacle-20260926/showcase-round3.mp4)。
+展示：第二次迭代的对比图和并排视频已在清理中删除，以当前版本（round7）为准。
 
 ## 第三次：用户认为"缺乏创意、比较雷同"，要求设计旋风、剑气等招式
 

@@ -1,0 +1,6 @@
+{
+  "tools/campaign-sandbox/Sources/CampaignSandboxApp.swift": "14abab245d1eb21b5104d63c496f6cd81eee18a2f0293fa3110385bd40d532d2",
+  "tools/campaign-sandbox/Sources/WorkshopPlaytestView.swift": "9ab7b3298488be2f149be9f9035a64886a9295dcbf3fbdfa6a00f0ed722687ea",
+  "tools/campaign-sandbox/build_and_run.sh": "b1d3775a157792748b208eeca4533d76b026055b6f87fb0247e4817c5ade9c25",
+  "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/CampaignBattleSandbox.swift": "d31fe5b401a730e770537f3c8fb8ca640789a5299b8415e9e459589a1b59e636"
+}

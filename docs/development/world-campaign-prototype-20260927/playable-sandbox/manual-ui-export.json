@@ -1,0 +1,426 @@
+{
+  "events" : [
+    {
+      "amount" : 0,
+      "at" : 0,
+      "detail" : "rules-v2.1; gear=30; passive=none; medicine=3; medal=true",
+      "id" : 0,
+      "kind" : "start",
+      "target" : ""
+    },
+    {
+      "amount" : 0,
+      "at" : 2.0500000000000003,
+      "detail" : "",
+      "id" : 1,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_core#0"
+    },
+    {
+      "amount" : 30,
+      "at" : 2.85,
+      "detail" : "",
+      "id" : 2,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_core#0"
+    },
+    {
+      "amount" : 0,
+      "at" : 3.0500000000000003,
+      "detail" : "",
+      "id" : 3,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_add#1"
+    },
+    {
+      "amount" : 15,
+      "at" : 3.85,
+      "detail" : "",
+      "id" : 4,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_add#1"
+    },
+    {
+      "amount" : 0,
+      "at" : 4.05,
+      "detail" : "",
+      "id" : 5,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 15,
+      "at" : 4.8500000000000005,
+      "detail" : "",
+      "id" : 6,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 0,
+      "at" : 6.65,
+      "detail" : "",
+      "id" : 7,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_core#0"
+    },
+    {
+      "amount" : 30,
+      "at" : 7.45,
+      "detail" : "",
+      "id" : 8,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_core#0"
+    },
+    {
+      "amount" : 0,
+      "at" : 8.05,
+      "detail" : "",
+      "id" : 9,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_add#1"
+    },
+    {
+      "amount" : 15,
+      "at" : 8.85,
+      "detail" : "",
+      "id" : 10,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_add#1"
+    },
+    {
+      "amount" : 0,
+      "at" : 9.05,
+      "detail" : "",
+      "id" : 11,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 15,
+      "at" : 9.850000000000001,
+      "detail" : "",
+      "id" : 12,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 0,
+      "at" : 11.25,
+      "detail" : "",
+      "id" : 13,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_core#0"
+    },
+    {
+      "amount" : 30,
+      "at" : 12.05,
+      "detail" : "",
+      "id" : 14,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_core#0"
+    },
+    {
+      "amount" : 0,
+      "at" : 13.05,
+      "detail" : "",
+      "id" : 15,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_add#1"
+    },
+    {
+      "amount" : 0,
+      "at" : 13.65,
+      "detail" : "",
+      "id" : 16,
+      "kind" : "medal",
+      "target" : ""
+    },
+    {
+      "amount" : 15,
+      "at" : 13.850000000000001,
+      "detail" : "",
+      "id" : 17,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_add#1"
+    },
+    {
+      "amount" : 0,
+      "at" : 14.05,
+      "detail" : "",
+      "id" : 18,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 15,
+      "at" : 14.850000000000001,
+      "detail" : "",
+      "id" : 19,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 0,
+      "at" : 15.850000000000001,
+      "detail" : "",
+      "id" : 20,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_core#0"
+    },
+    {
+      "amount" : 0,
+      "at" : 16,
+      "detail" : "fool_skill_05",
+      "id" : 21,
+      "kind" : "cast",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 136,
+      "at" : 16.55,
+      "detail" : "",
+      "id" : 22,
+      "kind" : "damage",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 30,
+      "at" : 16.650000000000002,
+      "detail" : "",
+      "id" : 23,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_core#0"
+    },
+    {
+      "amount" : 0,
+      "at" : 18.05,
+      "detail" : "",
+      "id" : 24,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_add#1"
+    },
+    {
+      "amount" : 15,
+      "at" : 18.85,
+      "detail" : "",
+      "id" : 25,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_add#1"
+    },
+    {
+      "amount" : 0,
+      "at" : 19.05,
+      "detail" : "",
+      "id" : 26,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 15,
+      "at" : 19.85,
+      "detail" : "",
+      "id" : 27,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 0,
+      "at" : 20.450000000000003,
+      "detail" : "",
+      "id" : 28,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_core#0"
+    },
+    {
+      "amount" : 30,
+      "at" : 21.25,
+      "detail" : "",
+      "id" : 29,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_core#0"
+    },
+    {
+      "amount" : 0,
+      "at" : 23.05,
+      "detail" : "",
+      "id" : 30,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_add#1"
+    },
+    {
+      "amount" : 15,
+      "at" : 23.85,
+      "detail" : "",
+      "id" : 31,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_add#1"
+    },
+    {
+      "amount" : 0,
+      "at" : 24,
+      "detail" : "4秒：击杀护卫；无护卫时打掉核心8%生命",
+      "id" : 32,
+      "kind" : "charge_start",
+      "target" : ""
+    },
+    {
+      "amount" : 0,
+      "at" : 24.05,
+      "detail" : "",
+      "id" : 33,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 15,
+      "at" : 24.85,
+      "detail" : "",
+      "id" : 34,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 40,
+      "at" : 28,
+      "detail" : "6次，每秒一次；核心恢复6秒",
+      "id" : 35,
+      "kind" : "charge_release",
+      "target" : ""
+    },
+    {
+      "amount" : 0,
+      "at" : 28.05,
+      "detail" : "",
+      "id" : 36,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_add#1"
+    },
+    {
+      "amount" : 15,
+      "at" : 28.85,
+      "detail" : "",
+      "id" : 37,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_add#1"
+    },
+    {
+      "amount" : 40,
+      "at" : 29,
+      "detail" : "原始40",
+      "id" : 38,
+      "kind" : "poison_tick",
+      "target" : ""
+    },
+    {
+      "amount" : 0,
+      "at" : 29.05,
+      "detail" : "",
+      "id" : 39,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 15,
+      "at" : 29.85,
+      "detail" : "",
+      "id" : 40,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 40,
+      "at" : 30,
+      "detail" : "原始40",
+      "id" : 41,
+      "kind" : "poison_tick",
+      "target" : ""
+    },
+    {
+      "amount" : 40,
+      "at" : 31,
+      "detail" : "原始40",
+      "id" : 42,
+      "kind" : "poison_tick",
+      "target" : ""
+    },
+    {
+      "amount" : 40,
+      "at" : 32,
+      "detail" : "原始40",
+      "id" : 43,
+      "kind" : "poison_tick",
+      "target" : ""
+    },
+    {
+      "amount" : 40,
+      "at" : 33,
+      "detail" : "原始40",
+      "id" : 44,
+      "kind" : "poison_tick",
+      "target" : ""
+    },
+    {
+      "amount" : 0,
+      "at" : 33.050000000000004,
+      "detail" : "",
+      "id" : 45,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_add#1"
+    },
+    {
+      "amount" : 15,
+      "at" : 33.85,
+      "detail" : "",
+      "id" : 46,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_add#1"
+    },
+    {
+      "amount" : 39,
+      "at" : 34,
+      "detail" : "原始39",
+      "id" : 47,
+      "kind" : "poison_tick",
+      "target" : ""
+    },
+    {
+      "amount" : 0,
+      "at" : 34.050000000000004,
+      "detail" : "",
+      "id" : 48,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 0,
+      "at" : 34.75,
+      "detail" : "",
+      "id" : 49,
+      "kind" : "attack_windup",
+      "target" : "sandbox_campaign_guardOrdinary_core#0"
+    },
+    {
+      "amount" : 15,
+      "at" : 34.85,
+      "detail" : "",
+      "id" : 50,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_add#2"
+    },
+    {
+      "amount" : 30,
+      "at" : 35.550000000000004,
+      "detail" : "",
+      "id" : 51,
+      "kind" : "enemy_hit",
+      "target" : "sandbox_campaign_guardOrdinary_core#0"
+    }
+  ],
+  "minimumHP" : 466,
+  "outcome" : "inProgress",
+  "scenario" : "sandbox_campaign_guardOrdinary",
+  "time" : 36.25,
+  "timeBelowQuarterHP" : 0,
+  "version" : "sandbox-v2.1"
+}

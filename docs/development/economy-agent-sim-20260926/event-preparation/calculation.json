@@ -1,0 +1,137 @@
+{
+  "status": "analytic_assumptions_only",
+  "combat": [
+    {
+      "participants": 200,
+      "attempts_per_person": 3,
+      "win_probability": 0.25,
+      "expected_wins": 150.0,
+      "old_fog_gate": 480,
+      "mean_reaches_old_gate": false,
+      "expected_wear_per_equipped_copy": 12.75
+    },
+    {
+      "participants": 200,
+      "attempts_per_person": 3,
+      "win_probability": 0.45,
+      "expected_wins": 270.0,
+      "old_fog_gate": 480,
+      "mean_reaches_old_gate": false,
+      "expected_wear_per_equipped_copy": 10.95
+    },
+    {
+      "participants": 200,
+      "attempts_per_person": 3,
+      "win_probability": 0.65,
+      "expected_wins": 390.0,
+      "old_fog_gate": 480,
+      "mean_reaches_old_gate": false,
+      "expected_wear_per_equipped_copy": 9.149999999999999
+    },
+    {
+      "participants": 400,
+      "attempts_per_person": 3,
+      "win_probability": 0.25,
+      "expected_wins": 300.0,
+      "old_fog_gate": 480,
+      "mean_reaches_old_gate": false,
+      "expected_wear_per_equipped_copy": 12.75
+    },
+    {
+      "participants": 400,
+      "attempts_per_person": 3,
+      "win_probability": 0.45,
+      "expected_wins": 540.0,
+      "old_fog_gate": 480,
+      "mean_reaches_old_gate": true,
+      "expected_wear_per_equipped_copy": 10.95
+    },
+    {
+      "participants": 400,
+      "attempts_per_person": 3,
+      "win_probability": 0.65,
+      "expected_wins": 780.0,
+      "old_fog_gate": 480,
+      "mean_reaches_old_gate": true,
+      "expected_wear_per_equipped_copy": 9.149999999999999
+    },
+    {
+      "participants": 600,
+      "attempts_per_person": 3,
+      "win_probability": 0.25,
+      "expected_wins": 450.0,
+      "old_fog_gate": 480,
+      "mean_reaches_old_gate": false,
+      "expected_wear_per_equipped_copy": 12.75
+    },
+    {
+      "participants": 600,
+      "attempts_per_person": 3,
+      "win_probability": 0.45,
+      "expected_wins": 810.0,
+      "old_fog_gate": 480,
+      "mean_reaches_old_gate": true,
+      "expected_wear_per_equipped_copy": 10.95
+    },
+    {
+      "participants": 600,
+      "attempts_per_person": 3,
+      "win_probability": 0.65,
+      "expected_wins": 1170.0,
+      "old_fog_gate": 480,
+      "mean_reaches_old_gate": true,
+      "expected_wear_per_equipped_copy": 9.149999999999999
+    }
+  ],
+  "supply": [
+    {
+      "baseline_doses_per_cycle": 117.45,
+      "cycles": 3,
+      "capacity_per_cycle": 160,
+      "event_extra_doses": 300,
+      "net_surplus": -172.35000000000002
+    },
+    {
+      "baseline_doses_per_cycle": 117.45,
+      "cycles": 10,
+      "capacity_per_cycle": 160,
+      "event_extra_doses": 300,
+      "net_surplus": 125.5
+    },
+    {
+      "baseline_doses_per_cycle": 160,
+      "cycles": 3,
+      "capacity_per_cycle": 160,
+      "event_extra_doses": 300,
+      "net_surplus": -300
+    },
+    {
+      "baseline_doses_per_cycle": 160,
+      "cycles": 10,
+      "capacity_per_cycle": 160,
+      "event_extra_doses": 300,
+      "net_surplus": -300
+    },
+    {
+      "baseline_doses_per_cycle": 200,
+      "cycles": 3,
+      "capacity_per_cycle": 160,
+      "event_extra_doses": 300,
+      "net_surplus": -420
+    },
+    {
+      "baseline_doses_per_cycle": 200,
+      "cycles": 10,
+      "capacity_per_cycle": 160,
+      "event_extra_doses": 300,
+      "net_surplus": -700
+    }
+  ],
+  "caveats": [
+    "3 attempts is an assumed time budget, not a new live participation limit.",
+    "Expected wins do not certify event success probability; no correlated failures modeled.",
+    "160 doses is a perfect-chain upper bound, not measured production.",
+    "300 event doses is a sizing probe, not approved demand; excludes extra battle medicine.",
+    "No guarantee-source doses may satisfy tradable event delivery."
+  ]
+}

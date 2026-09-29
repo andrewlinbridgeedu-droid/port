@@ -1,0 +1,26 @@
+{
+  "date": "2026-09-28",
+  "bundle": "local.mistport.workshop-integration",
+  "simulator": "4355D11F-63D1-4874-BAC6-E5E372D40EA7",
+  "store_checks": 17,
+  "store_checks_passed": true,
+  "core_tests": 5,
+  "physical_device_verified": false,
+  "unity_play_verified": false,
+  "sha256": {
+    "mistport-ios/Mistport/GameStore.swift": "e4e8e5db7deb8df191bbee8201033e8325410e83e1162f507f0173ff80f94767",
+    "mistport-ios/Mistport/LocalWorkshopView.swift": "3e2c30424448b445034f801bd614d33ccf1aef127bf425a87c926672c8bbf71f",
+    "mistport-ios/Mistport/ContentView.swift": "baec4e5146cad0c44ebab8f239f818022fcc29e8d7b53a459412438e9a404deb",
+    "mistport-ios/Mistport/SceneViews.swift": "16f6f634e79d8f3c7b4d8fc9af7fb948003d7e300038bd697d2f6cfc0e2ac86d",
+    "mistport-ios/Mistport/ChapterOneTestView.swift": "c4375ec599cb1097c26cfbb026db2e39613159602d9ba46bd0907bdcaec2b597",
+    "mistport-ios/Mistport/MistportApp.swift": "638cb882787abfd99c382deb57b505db10bece7514734089126542dd5e5a12db",
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/LocalWorkshop.swift": "d09ddedbdae474140a84e76d94b479f68c70d91ba14467524655e30db978f011",
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChapterOneContent.swift": "f4fcf4d9d89d94c4fb741c495aa68428ab2e2c54377ed091438f0a406bac7c54",
+    "mistport-ios/MistportCombatCore/Tests/MistportCombatCoreTests/LocalWorkshopTests.swift": "163c160ef4dae483a23e23069c08d56460717f901a048d9cb8467af0e63985b9",
+    "mistport-ios/Mistport.xcodeproj/project.pbxproj": "48277404c3461f1aadd708c17247b4b97c01617153ef3b2a132aef2460c90233"
+  },
+  "host_binary_sha256": {
+    "Mistport": "f57dc4b0df2cbe6dc6bdffbecab80c461f9d9bb1cb19d9d6e0f30f93c2355df1",
+    "Mistport.debug.dylib": "16c3ee4891fd6689489a0b8afe74687ba7aa55a70e102cfe2afe7aa71f150780"
+  }
+}

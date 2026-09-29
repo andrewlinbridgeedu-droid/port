@@ -1,0 +1,210 @@
+{
+  "kind": "isolated fixture, not player data",
+  "state": {
+    "accounts": {
+      "boundOnly": {
+        "boundMedicine": 99,
+        "copper": 0,
+        "tradeableKits": 0
+      },
+      "p": {
+        "boundMedicine": 0,
+        "copper": 100,
+        "tradeableKits": 0
+      },
+      "p2": {
+        "boundMedicine": 0,
+        "copper": 0,
+        "tradeableKits": 0
+      },
+      "s": {
+        "boundMedicine": 0,
+        "copper": 100,
+        "tradeableKits": 0
+      },
+      "seller": {
+        "boundMedicine": 99,
+        "copper": 64,
+        "tradeableKits": 0
+      }
+    },
+    "affiliations": {
+      "p": "pumps",
+      "p2": "pumps",
+      "s": "shipping"
+    },
+    "clock": 33,
+    "commands": {
+      "goods-p": {
+        "account": "seller",
+        "faction": "pumps",
+        "kind": "sell",
+        "quantity": 2
+      },
+      "goods-s": {
+        "account": "seller",
+        "faction": "shipping",
+        "kind": "sell",
+        "quantity": 2
+      }
+    },
+    "definition": {
+      "actionEnd": 30,
+      "actionStart": 10,
+      "grace": 2,
+      "id": "fixture",
+      "perimeterWins": 1,
+      "seedPerFaction": 100,
+      "supplyPrice": 16,
+      "supplyTarget": 2,
+      "ticketLifetime": 10
+    },
+    "news": [
+      {
+        "at": 0,
+        "fact": "准备期开放；双方采购预算已由财政转入。",
+        "id": "fixture:opened",
+        "kind": "opened",
+        "worldVersion": 0
+      },
+      {
+        "at": 1,
+        "fact": "工程物料 2 份已验收，已支付 32 铜。",
+        "faction": "pumps",
+        "id": "fixture:sale:goods-p",
+        "kind": "procurement",
+        "worldVersion": 4
+      },
+      {
+        "at": 1,
+        "fact": "工程物料 2 份已验收，已支付 32 铜。",
+        "faction": "shipping",
+        "id": "fixture:sale:goods-s",
+        "kind": "procurement",
+        "worldVersion": 5
+      },
+      {
+        "at": 11,
+        "fact": "外围突破，已使用工程物料建立通道；核心挑战开放。",
+        "faction": "shipping",
+        "id": "fixture:exposed:shipping",
+        "kind": "exposed",
+        "worldVersion": 7
+      },
+      {
+        "at": 13,
+        "fact": "关键NPC死亡已确认；项目等待继任与结算。",
+        "faction": "shipping",
+        "id": "fixture:death:shipping",
+        "kind": "death",
+        "worldVersion": 10
+      },
+      {
+        "at": 13,
+        "fact": "启动接管；未花资金与物资仍在项目账内。",
+        "faction": "shipping",
+        "id": "fixture:successor:shipping",
+        "kind": "successor",
+        "worldVersion": 10
+      },
+      {
+        "at": 33,
+        "fact": "独占合同已结算；仅退未花本金，不自动生成分红。",
+        "faction": "pumps",
+        "id": "fixture:settlement",
+        "kind": "settlement",
+        "worldVersion": 12
+      }
+    ],
+    "openingKits": 4,
+    "openingMoney": 400,
+    "projects": [
+      "pumps",
+      {
+        "cash": 0,
+        "consumedForBreach": 2,
+        "exposed": false,
+        "investments": {},
+        "npcDead": false,
+        "perimeterVictories": 1,
+        "purchased": 2,
+        "stock": 0,
+        "successorRequired": false
+      },
+      "shipping",
+      {
+        "cash": 0,
+        "consumedForBreach": 0,
+        "exposed": true,
+        "investments": {},
+        "npcDead": true,
+        "perimeterVictories": 0,
+        "purchased": 2,
+        "stock": 2,
+        "successorRequired": true
+      }
+    ],
+    "receipts": {
+      "fixture:battle:1": {
+        "changedWorld": true,
+        "outcome": "victory",
+        "ticketID": "fixture:battle:1"
+      },
+      "fixture:battle:2": {
+        "changedWorld": true,
+        "outcome": "victory",
+        "ticketID": "fixture:battle:2"
+      },
+      "fixture:battle:3": {
+        "changedWorld": false,
+        "outcome": "victory",
+        "ticketID": "fixture:battle:3"
+      }
+    },
+    "settlement": {
+      "refunds": {},
+      "retainedKits": [
+        "pumps",
+        0,
+        "shipping",
+        2
+      ],
+      "treasuryReturned": 136,
+      "winner": "pumps"
+    },
+    "tickets": {
+      "fixture:battle:1": {
+        "accountID": "p",
+        "encounterID": "church_bounty_b01",
+        "expiresAt": 20,
+        "faction": "pumps",
+        "id": "fixture:battle:1",
+        "issuedAt": 10,
+        "issuedWorldVersion": 6,
+        "route": "perimeter"
+      },
+      "fixture:battle:2": {
+        "accountID": "p",
+        "encounterID": "church_bounty_b03",
+        "expiresAt": 22,
+        "faction": "pumps",
+        "id": "fixture:battle:2",
+        "issuedAt": 12,
+        "issuedWorldVersion": 8,
+        "route": "core"
+      },
+      "fixture:battle:3": {
+        "accountID": "p2",
+        "encounterID": "church_bounty_b03",
+        "expiresAt": 22,
+        "faction": "pumps",
+        "id": "fixture:battle:3",
+        "issuedAt": 12,
+        "issuedWorldVersion": 9,
+        "route": "core"
+      }
+    },
+    "treasury": 136,
+    "worldVersion": 12
+  }
+}

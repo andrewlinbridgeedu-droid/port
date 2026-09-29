@@ -176,6 +176,8 @@ struct ProgressionBalance20260915Tests {
                     let seq: [FoolSkillID] = q == 10 ? [.sidestepStrike,.identityDisplacement] : q == 11 ? [.fabricatedEvidence,.identityDisplacement,.mirrorPursuit,.sidestepStrike] : [.fabricatedEvidence,.identityDisplacement,.mirrorPursuit,.absurdFinale]
                     var loadout = MPCChapterOneLoadout(normalSkillIDs:seq,isUltimateUnlocked:q>=14,passiveIDs:[],relicIDs:[])
                     loadout.talents = .restored((0...3).map { "\(branch).\($0)" },budget:4)
+                    loadout.churchGear = EarnedChapterAuditFixture.wallGear(beforeOrAt: q)
+                    loadout.bountyRelicID = EarnedChapterAuditFixture.wallRelic(q)
                     #expect(loadout.talents.learned.count == 4)
                     if upgrade {
                         // Q9 earns 30 dust: one Lv2. Q14 earns the next 30:
@@ -233,6 +235,8 @@ struct ProgressionBalance20260915Tests {
                 for offset in q >= 5 ? [6.0,14.0] : [0.0] {
                     var loadout = MPCChapterOneLoadout(normalSkillIDs:chosen,isUltimateUnlocked:q>=14,passiveIDs:[],relicIDs:relic.isEmpty ? [] : [relic])
                     if q >= 10 { loadout.talents = .restored((0...3).map { "trickery.\($0)" },budget:4) }
+                    loadout.churchGear = EarnedChapterAuditFixture.wallGear(beforeOrAt: q)
+                    loadout.bountyRelicID = EarnedChapterAuditFixture.wallRelic(q)
                     candidates.append(try NewMaskBalanceSimulator.run(q:q,sequence:chosen,mask:q<=4,
                         consumables:items,ultimate:q>=14,loadout:loadout,medalOffset:q>=5 ? offset : nil,precise:true))
                 }

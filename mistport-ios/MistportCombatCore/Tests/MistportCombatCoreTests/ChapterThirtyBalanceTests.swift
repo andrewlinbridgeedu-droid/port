@@ -39,7 +39,8 @@ struct ChapterThirtyBalanceTests {
             var loadout = MPCChapterOneLoadout(normalSkillIDs: sequence, isUltimateUnlocked: true,
                                                passiveIDs: [], relicIDs: ["relic_return_gift_clasp"])
             loadout.talents = talents
-            loadout.churchGear = firstTenTowerGear
+            loadout.churchGear = EarnedChapterAuditFixture.wallGear(beforeOrAt: q)
+            loadout.bountyRelicID = EarnedChapterAuditFixture.wallRelic(q)
             for offset in [6.0, 14.0] {
                 let result = try NewMaskBalanceSimulator.run(
                     q: q, sequence: sequence, mask: false,
@@ -100,7 +101,9 @@ struct ChapterThirtyBalanceTests {
                     for offset in [6.0,14.0] {
                         var loadout = MPCChapterOneLoadout(normalSkillIDs:sequence,isUltimateUnlocked:q>=14,passiveIDs:[],relicIDs:[passive])
                         loadout.talents = talents
-                        if q >= 27 { loadout.churchGear = firstTenTowerGear }
+                        // Story walls (2026-09-28): the floors and bounty relic they name.
+                        loadout.churchGear = EarnedChapterAuditFixture.wallGear(beforeOrAt: q)
+                        loadout.bountyRelicID = EarnedChapterAuditFixture.wallRelic(q)
                         let r = try NewMaskBalanceSimulator.run(q:q,sequence:sequence,mask:false,consumables:["consumable_pain_salve":1],loadout:loadout,medalOffset:offset)
                         bestRemaining = min(bestRemaining,r.session.enemies.filter(\.isAlive).reduce(0) {$0+$1.hp})
                         if r.session.outcome == .victory { wins.append("seq\(index):\(passive):\(offset):\(Int(r.seconds))s:\(r.session.playerHP)HP") }

@@ -84,6 +84,8 @@ public struct MPCChapterOneLoadout: Equatable, Sendable {
     public var skillLevels: [FoolSkillID: Int] = [:]
     public var churchGear = MPCChurchGearStats()
     public var outfit: MPCOutfit? = nil
+    /// The separate bounty slot (MPCBountyRelicCatalog); independent of shop relics.
+    public var bountyRelicID: String? = nil
 
     public var outfitBonus: MPCOutfitBonus { outfit?.bonus ?? .none }
 
@@ -1002,6 +1004,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     private var talentMaskReady = false
     private var talentEvidenceReady = false
 
+    public private(set) var campaignPrototype: MPCCampaignBattleState? = nil
     public let encounter: MPCEncounterContent
     public private(set) var waveIndex: Int
     public private(set) var enemies: [MPCRuntimeEnemy]
@@ -1093,6 +1096,9 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     public private(set) var returnGiftClaspReadyAt: TimeInterval = 0
     private var returnGiftClaspDebtorID: String?
     private var relicClock: TimeInterval = 0
+    private var brokenSwordReadyAt: [String: TimeInterval] = [:]
+    /// Q12 wall: fortify stacks per puppet (MPCProgressionWalls.q12FortifyStackPercent).
+    public private(set) var q12FortifyStacks: [String: Int] = [:]
     public var returnGiftClaspIsReady: Bool {
         relicClock >= returnGiftClaspReadyAt && (returnGiftClaspDebtorID == nil ||
             !enemies.contains { $0.id == returnGiftClaspDebtorID && $0.isAlive && enemyGiftShields[$0.id, default: 0] > 0 })
@@ -1208,9 +1214,11 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         party: MPCPartyPersistentState = MPCPartyPersistentState(),
         consumables: [String: Int] = [:],
         companionIDs: [String]? = nil,
-        loadout: MPCChapterOneLoadout = MPCChapterOneLoadout()
+        loadout: MPCChapterOneLoadout = MPCChapterOneLoadout(),
+        campaignPrototype: MPCCampaignScenario? = nil
     ) throws -> Self {
-        guard let encounter = (MPCChapterOneCatalog.encounters.first(where: { $0.id == encounterID }) ?? MPCChurchTowerCatalog.encounter(id: encounterID) ?? MPCChurchBountyCatalog.encounter(id: encounterID) ?? MPCChurchMaintenanceCatalog.encounter(id: encounterID)) else {
+        if let campaignPrototype, campaignPrototype.id != encounterID { throw MPCEncounterRuntimeError.unknownEncounter }
+        guard let encounter = (MPCChapterOneCatalog.encounters.first(where: { $0.id == encounterID }) ?? MPCChurchTowerCatalog.encounter(id: encounterID) ?? MPCChurchBountyCatalog.encounter(id: encounterID) ?? MPCChurchMaintenanceCatalog.encounter(id: encounterID) ?? campaignPrototype?.encounter) else {
             throw MPCEncounterRuntimeError.unknownEncounter
         }
         // Reject the retired paper relic in all formal battles. Ownership is
@@ -1296,6 +1304,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             q4LastFinishingRound: nil,
             houndNameHuntStacks: 0
         )
+        session.campaignPrototype = campaignPrototype.map { MPCCampaignBattleState($0) }
         session.loadWave(0)
         return session
     }
@@ -1395,7 +1404,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         _ = advanceUsurpedLifeMedal(at: now)
         guard isOwned, outcome == .inProgress, playerHP > 0, !isUsurpedLifeMedalActive,
               loadout.selectedActiveRelicID == MPCChapterOneCatalog.usurpedLifeMedalRelicID,
-              ((MPCChapterOneCatalog.mission(forEncounterID: encounter.id)?.number ?? 0) >= 5 || isChurchCombat),
+              ((MPCChapterOneCatalog.mission(forEncounterID: encounter.id)?.number ?? 0) >= 5 || isChurchCombat || campaignPrototype != nil),
               now >= usurpedLifeMedalReadyAt, masqueradeCharges == 0 else { return false }
         combatHasBegun = true
         usurpedLifeMedalActivationID = UUID()
@@ -1658,7 +1667,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
 
             // 错步穿行会同时撕开最多两个目标的错误方位。第二个目标
             // 独立保存状态和承受伤害，避免表现层把它当作第一只敌人的复制品。
-            if skillID == .sidestepStrike,
+            if outcome == .inProgress, skillID == .sidestepStrike,
                let secondary = secondaryAtImpact {
                 let secondaryState = foolStates[secondary.id]
                     ?? .init(targetDefense: secondary.defense)
@@ -1830,7 +1839,18 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         if isTrueImmune(enemies[index]) { return 0 }
         if sequenceNineRelics.blankCardBlocks(enemyID, at: relicClock) { return 0 }
         let defenseIntents = ["guard", "fortify", "calibrate", "架起防御"]
-        let guarded = !resolvingDeferredDamage && isBasicAttack && defenseIntents.contains(enemies[index].currentIntent)
+        var brokeDefense = false
+        if !resolvingDeferredDamage, loadout.bountyRelicID == MPCBountyRelicCatalog.brokenSword,
+           enemyDefenseBoosts[enemyID] != nil || q12FortifyStacks[enemyID, default: 0] > 0
+            || defenseIntents.contains(enemies[index].currentIntent),
+           relicClock >= brokenSwordReadyAt[enemyID, default: 0] {
+            brokenSwordReadyAt[enemyID] = relicClock + MPCProgressionWalls.brokenSwordCooldown
+            q12FortifyStacks.removeValue(forKey: enemyID)
+            if enemyDefenseBoosts.removeValue(forKey: enemyID) != nil { foolStates[enemyID]?.targetDefense = enemies[index].defense }
+            brokeDefense = true
+            triggeredEffects.append("七号缺齿剑：打破防御")
+        }
+        let guarded = !brokeDefense && !resolvingDeferredDamage && isBasicAttack && defenseIntents.contains(enemies[index].currentIntent)
         let clampedDefenseIgnore = min(10_000, max(0, defenseIgnoreBP))
         let effectiveReductionBP = guarded
             ? (encounter.id == "chapter01_q06_encounter" ? 7_500 : 5_000) * (10_000 - clampedDefenseIgnore) / 10_000
@@ -1846,6 +1866,10 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         if !resolvingDeferredDamage,
            (isBasicAttack || FoolSkillID(rawValue: activeDamageSource) != nil) {
             finalDamage = finalDamage * (10_000 + loadout.churchGear.attackBP + loadout.outfitBonus.attackBP) / 10_000
+        }
+        if !resolvingDeferredDamage, chapterMissionNumber == 12, let stacks = q12FortifyStacks[enemyID], stacks > 0 {
+            let cut = min(MPCProgressionWalls.q12FortifyMaxPercent, stacks * MPCProgressionWalls.q12FortifyStackPercent)
+            finalDamage = finalDamage * (100 - cut) / 100
         }
         if !resolvingDeferredDamage, (enemies[index].contentID == "bounty_b06_dark_hold_captain" || MPCChurchTowerCatalog.isShieldJaw(enemies[index].contentID) || enemies[index].contentID == "enemy_archive_gatekeeper"), enemies[index].currentIntent == "recover" {
             finalDamage = finalDamage * 175 / 100
@@ -1869,10 +1893,11 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
            sequenceNineRelics.deferSkillDamage(finalDamage, targetID: enemyID, baseHP: playerBaseMaxHP, at: relicClock) {
             return 0
         }
+        finalDamage = campaignMitigatedDamage(finalDamage, to: enemyID)
         // Ordinary gift shields sit behind true immunity. Guard-phase zeroes returned above
         // cannot remove this debt, and the debt never expires merely with time.
         if [17,22].contains(chapterMissionNumber), enemies[index].currentIntent == "calibration", finalDamage > 0 {
-            chapterVerificationHits += 1
+            chapterVerificationHits += loadout.bountyRelicID == MPCBountyRelicCatalog.reverseSeal ? 2 : 1
         }
         let giftAbsorbed = min(enemyGiftShields[enemyID, default: 0], finalDamage)
         enemyGiftShields[enemyID, default: 0] -= giftAbsorbed
@@ -1894,8 +1919,10 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             updateChapterObjective()
             return 0 // This breaks the transport/contract, not the living body.
         }
-        damageBySource[activeDamageSource, default: 0] += min(enemies[index].hp, max(0, finalDamage))
+        let campaignHealthDamage = min(enemies[index].hp, max(0, finalDamage))
+        damageBySource[activeDamageSource, default: 0] += campaignHealthDamage
         enemies[index].hp = max(0, enemies[index].hp - finalDamage)
+        campaignObserveDamage(to: enemyID, amount: campaignHealthDamage)
         clearDefeatedTowerEffects()
         if !enemies[index].isAlive, encoreDebtEnemyID == enemies[index].id {
             encoreDebtEnemyID = nil
@@ -1986,6 +2013,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         var correctlyAnsweredStrongAttack = false
 
         for index in enemies.indices where (enemies[index].isAlive || committedEnemyImpacts.contains(enemies[index].id)) && (actingEnemyID == nil || enemies[index].id == actingEnemyID) {
+            if campaignPrototype != nil, outcome != .inProgress { break }
             let wasCommitted = committedEnemyImpacts.remove(enemies[index].id) != nil
             if !wasCommitted && enemies[index].delayedRounds > 0 {
                 enemies[index].delayedRounds -= 1
@@ -2099,6 +2127,9 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                         }
                     }
                 }
+                // A prototype core killed by reflected damage ends combat before
+                // the remainder of this contact can hurt the player.
+                if campaignPrototype != nil, outcome != .inProgress { break }
                 if resolvedDamage > 0, freeEvasionCharges == 0,
                    loadout.relicIDs.contains("relic_return_gift_clasp"), returnGiftClaspIsReady {
                     let contained = min(resolvedDamage, playerBaseMaxHP * 30 / 100)
@@ -2150,10 +2181,14 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             if enemies[index].contentID == "boss_chronarch_sovereign",
                enemies[index].intentIndex.isMultiple(of: bossCycleLength) {
                 completedBossCycles += 1
+                if loadout.bountyRelicID == MPCBountyRelicCatalog.lifeLedger, playerHP > 0 {
+                    let heal = min(playerBaseMaxHP * MPCProgressionWalls.lifeLedgerCycleHealPercent / 100, max(0, playerMaxHP - playerHP))
+                    if heal > 0 { playerHP += heal; triggeredEffects.append("绯月寿账签：回复\(heal)生命") }
+                }
                 if [28,29].contains(chapterMissionNumber), completedBossCycles >= 5 { enemies[index].hasDeparted = true }
             }
             if [17,22].contains(chapterMissionNumber), intent == "calibration" {
-                chapterVerificationFailed = chapterVerificationHits < 2
+                chapterVerificationFailed = chapterVerificationHits < MPCProgressionWalls.verificationHitsRequired[chapterMissionNumber, default: 2]
                 chapterVerificationHits = 0
             }
             if chapterMissionNumber == 19, intent == "recover" {
@@ -2253,7 +2288,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         towerCommittedEmpowerCasters.removeAll()
         towerEmpowers.removeAll()
         enemies = enemyIDs.enumerated().compactMap { slot, contentID in
-            guard let content = (MPCChapterOneCatalog.enemies.first(where: { $0.id == contentID }) ?? MPCChurchTowerCatalog.enemyDefinition(id: contentID) ?? MPCChurchBountyCatalog.enemyDefinition(id: contentID)) else { return nil }
+            guard let content = (MPCChapterOneCatalog.enemies.first(where: { $0.id == contentID }) ?? MPCChurchTowerCatalog.enemyDefinition(id: contentID) ?? MPCChurchBountyCatalog.enemyDefinition(id: contentID) ?? campaignPrototype?.scenario.enemy(contentID)) else { return nil }
             // The reusable hound content uses one memory-breath intent for its
             // pressure encounters. The rain-bell investigation authors a
             // separate wind-up beat followed by a pounce, so keep that
@@ -2304,31 +2339,35 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             case "chapter01_q04_encounter": 2200
             case "chapter01_q06_encounter": 1500
             case "chapter01_q07_encounter": 650
-            case "chapter01_q08_encounter": 1600
+            case "chapter01_q08_encounter": MPCProgressionWalls.q8LeechHP
             case "chapter01_q09_encounter": contentID == "enemy_memory_leech_node" ? 850 : 1300
             case "chapter01_q10_encounter": contentID == "enemy_clockwork_hound" ? 1050 : 1200
             case "chapter01_q11_encounter": contentID == "enemy_memory_leech" ? 1050 : 900
-            case "chapter01_q12_encounter": 1350
+            case "chapter01_q12_encounter": MPCProgressionWalls.q12PuppetHP
+            case "chapter01_q18_encounter": MPCProgressionWalls.q18AdjudicatorHP
             case "chapter01_q13_encounter": contentID == "enemy_memory_leech_node" ? 750 : 1800
             case "chapter01_q14_encounter": contentID == "enemy_memory_leech" ? 1200 : 1600
             case "chapter01_q15_encounter": contentID == "enemy_memory_leech_node" ? 700 : 1800
             case "chapter01_q16_encounter": 2100
             case "chapter01_q21_encounter": contentID == "enemy_memory_leech_node" ? 850 : 2200
-            case "chapter01_q22_encounter": 2500
+            case "chapter01_q22_encounter": MPCProgressionWalls.q22ClockmakerHP
+            case "chapter01_q26_encounter": contentID == "enemy_archive_convoy" ? MPCProgressionWalls.q26ConvoyHP : content.maxHP
             case "chapter01_q24_encounter": contentID == "enemy_clockwork_hound" ? 2000 : 900
             case "chapter01_q27_encounter": contentID == "enemy_archive_gatekeeper" ? 2200 : 1800
             case "chapter01_q29_encounter": contentID == "boss_chronarch_sovereign" ? content.maxHP : contentID == "enemy_codex_executor" ? 1800 : 900
-            case "chapter01_q30_encounter": contentID == "boss_chronarch_sovereign" ? 4000 : content.maxHP
+            case "chapter01_q30_encounter": contentID == "boss_chronarch_sovereign" ? MPCProgressionWalls.q30SovereignHP : content.maxHP
             default: content.maxHP
             }
             let localAttack: Int = switch encounter.id {
             case "chapter01_q06_encounter": 200
             case "chapter01_q07_encounter": contentID == "enemy_memory_leech_node" ? 70 : 65
-            case "chapter01_q08_encounter": 100
+            case "chapter01_q08_encounter": MPCProgressionWalls.q8LeechAttack
             case "chapter01_q09_encounter": contentID == "enemy_memory_leech_node" ? 100 : 120
             case "chapter01_q10_encounter": contentID == "enemy_clockwork_hound" ? 88 : 105
             case "chapter01_q11_encounter": contentID == "enemy_memory_leech" ? 76 : 100
-            case "chapter01_q12_encounter": 100
+            case "chapter01_q12_encounter": MPCProgressionWalls.q12PuppetAttack
+            case "chapter01_q18_encounter": MPCProgressionWalls.q18AdjudicatorAttack
+            case "chapter01_q26_encounter": contentID == "enemy_archive_convoy" ? MPCProgressionWalls.q26ConvoyAttack : content.attack
             case "chapter01_q13_encounter": contentID == "enemy_memory_leech_node" ? 100 : 130
             case "chapter01_q14_encounter": contentID == "enemy_memory_leech" ? 90 : 115
             case "chapter01_q15_encounter": contentID == "enemy_memory_leech_node" ? 90 : 120
@@ -2649,9 +2688,10 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             enemies[index].hp += restored
             return .init(damage: 0, missedBossMechanic: false, healedTargetID: enemies[index].id, healing: restored)
         }
-        if encounter.id == "chapter01_q08_encounter", intent == "parasite" { return .attack(110) }
+        if encounter.id == "chapter01_q08_encounter", intent == "parasite" { return .attack(MPCProgressionWalls.q8ParasiteDamage) }
         if encounter.id == "chapter01_q08_encounter", intent == "name_devour" {
-            let damage = playerBaseMaxHP * (45 + min(nameDevourCount, 4) * 10) / 100
+            let devour = MPCProgressionWalls.q8DevourPercent
+            let damage = playerBaseMaxHP * min(devour.max, devour.start + nameDevourCount * devour.step) / 100
             nameDevourCount += 1
             return .attack(damage)
         }
@@ -2671,6 +2711,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
            ["enemy_calibration_puppet", "elite_clock_chaser"].contains(enemy.contentID),
            let index = enemies.firstIndex(where: { $0.id == enemy.id && $0.isAlive }) {
             applyEnemyDefenseBoost(to: index, bonusBP: 5_000)
+            if missionNumber == 12, MPCProgressionWalls.q12FortifyStackPercent > 0 { q12FortifyStacks[enemy.id, default: 0] += 1 }
             return .init(damage: 0, missedBossMechanic: false, defenseBoostBP: 5_000)
         }
         let attackPower = authoredAttackPower(for: enemy)
@@ -2678,7 +2719,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
            ["chapter01_q03_encounter", "chapter01_q04_encounter"].contains(encounter.id) {
             // Fixed damage belongs to the early hound lessons only. Later
             // formations use the authored enemy attack and skill multiplier.
-            return .attack(260)
+            // Q3 is the first lesson and must stay winnable for slow hands (sim 2026-09-29).
+            return .attack(encounter.id == "chapter01_q03_encounter" ? MPCProgressionWalls.q3BreathDamage : 260)
         }
         if enemy.contentID == "enemy_clockwork_hound", intent != "name_hunt" {
             houndNameHuntStacks = 0
@@ -2821,31 +2863,67 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         case "enemy_archive_convoy": return chapterMissionNumber == 26 ? ["guard", "strike", "slam", "recover"] : ["guard", "slam", "calibration", "recover"]
         case "elite_clock_chaser": return ["fortify", "thirteenth_charge", "strike", "recover"]
         case "enemy_memory_leech_node": return ["repair_guard", "memory_strike"]
-        case "enemy_hollow_clockmaker" where [22,25].contains(chapterMissionNumber): return ["calibration", "strike", "memory_breath", "recover"]
+        case "enemy_hollow_clockmaker" where chapterMissionNumber == 22: return ["calibration", "strike", "memory_breath", "calibration", "strike", "recover"]
+        case "enemy_hollow_clockmaker" where chapterMissionNumber == 25: return ["calibration", "strike", "memory_breath", "recover"]
         case "enemy_emerald_revenant": return ["memory_breath", "charge", "emerald_burst", "recover"]
         case "enemy_clockwork_hound": return chapterMissionNumber == 16 ? ["memory_breath", "charge", "pounce", "recover"] : ["memory_breath", "pounce", "recover"]
         default: return fallback
         }
     }
+    /// A failed Q17/Q22 verification empowers the next blow; the reverse seal caps it.
+    private func verificationBlowPercent() -> Int {
+        guard chapterVerificationFailed else { return 100 }
+        let failed = MPCProgressionWalls.verificationFailPercent[chapterMissionNumber] ?? 100
+        return loadout.bountyRelicID == MPCBountyRelicCatalog.reverseSeal ? min(failed, MPCProgressionWalls.reverseSealFailPercent) : failed
+    }
+
     private mutating func resolveChapterThirtyIntent(enemy: MPCRuntimeEnemy, intent: String) -> MPCResolvedEnemyIntent? {
         if enemy.contentID == "boss_chronarch_sovereign" {
-            let multiplier = chapterMissionNumber == 30 ? (enemy.hp * 3 < enemy.maxHP ? 125 : 100)
+            let enraged = enemy.hp * 100 < enemy.maxHP * MPCProgressionWalls.q30EnrageBelowPercent
+                && loadout.bountyRelicID != MPCBountyRelicCatalog.lifeLedger
+            let multiplier = chapterMissionNumber == 30 ? (enraged ? MPCProgressionWalls.q30EnragePercent : 100)
                 : chapterMissionNumber == 29 ? 65 : 100
             let base: Int = switch intent { case "strike": 65; case "thirteenth_charge": 85; case "slam": 110; default: 0 }
+            // Q30 wall, tower half: without F90-or-deeper gear the slam takes a share of health.
+            if chapterMissionNumber == 30, intent == "slam",
+               !MPCProgressionWalls.meetsTowerFloor(mission: 30, gear: loadout.churchGear),
+               let share = MPCProgressionWalls.towerCheckBlowHealthPercent[30] {
+                return .attack(max(base * multiplier / 100, playerBaseMaxHP * share / 100))
+            }
+            // Q30 wall: enraged blows take a share of the player's health, so gear cannot race past them.
+            if chapterMissionNumber == 30, enraged, base > 0, MPCProgressionWalls.q30EnragedBlowHealthPercent > 0 {
+                return .attack(max(base * multiplier / 100, playerBaseMaxHP * MPCProgressionWalls.q30EnragedBlowHealthPercent / 100))
+            }
             return .attack(base * multiplier / 100)
         }
         if enemy.contentID == "enemy_codex_executor", intent == "slam" {
-            return .attack(enemy.attack * (chapterVerificationFailed ? 180 : 100) / 100)
+            return .attack(enemy.attack * verificationBlowPercent() / 100)
         }
         if ["enemy_archive_adjudicator", "enemy_archive_convoy"].contains(enemy.contentID) {
             if intent == "memory_breath" { queueFiniteDamage(source: enemy.id, damage: 45); return .attack(0) }
-            if intent == "thirteenth_charge" || intent == "slam" { return .attack(enemy.attack * 2) }
+            if intent == "thirteenth_charge" || intent == "slam" {
+                // Q18/Q26 walls: without deep enough tower gear the heavy blow takes a share of health.
+                if !MPCProgressionWalls.meetsTowerFloor(mission: chapterMissionNumber, gear: loadout.churchGear),
+                   let share = MPCProgressionWalls.towerCheckBlowHealthPercent[chapterMissionNumber] {
+                    return .attack(playerBaseMaxHP * share / 100)
+                }
+                let percent = chapterMissionNumber == 18 ? MPCProgressionWalls.q18ChargePercent
+                    : chapterMissionNumber == 26 ? MPCProgressionWalls.q26SlamPercent : 200
+                return .attack(enemy.attack * percent / 100)
+            }
             if ["guard", "calibration", "recover"].contains(intent) { return .attack(0) }
             return .attack(enemy.attack)
         }
         if [22,25].contains(chapterMissionNumber), enemy.contentID == "enemy_hollow_clockmaker" {
             if intent == "memory_breath" { queueFiniteDamage(source: enemy.id, damage: 40); return .attack(0) }
-            if intent == "strike" { return .attack(enemy.attack * (chapterVerificationFailed ? 160 : 100) / 100) }
+            if intent == "strike" {
+                // Q22 wall: a failed verification without the reverse seal hits for a share
+                // of the player's health, so armor and tower weapons cannot outpace it.
+                if chapterMissionNumber == 22, chapterVerificationFailed, loadout.bountyRelicID != MPCBountyRelicCatalog.reverseSeal {
+                    return .attack(playerBaseMaxHP * MPCProgressionWalls.q22FailedBlowHealthPercent / 100)
+                }
+                return .attack(enemy.attack * verificationBlowPercent() / 100)
+            }
             return .attack(0)
         }
         return nil
@@ -3094,5 +3172,126 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             foolStates[id]?.finaleReady = false
         }
         finaleReadyExpiresAtAction = nil
+    }
+}
+
+// MARK: - Isolated campaign mechanics (explicit opt-in; no rewards/save writes)
+extension MPCChapterOneEncounterSession {
+    public mutating func campaignRecord(_ kind: String, target: String = "", amount: Int = 0, detail: String = "") {
+        campaignPrototype?.record(kind, target: target, amount: amount, detail: detail)
+    }
+    public mutating func campaignFinishRecord() {
+        guard outcome != .inProgress, let state = campaignPrototype, !state.events.contains(where: { $0.kind == "outcome" }) else { return }
+        campaignRecord("outcome", detail: outcome.rawValue)
+        finishRelicBattle()
+    }
+    public func campaignActorPaused(_ id: String) -> Bool {
+        guard let state = campaignPrototype, let enemy = enemies.first(where: { $0.id == id }) else { return false }
+        if enemy.contentID == state.scenario.coreID { return state.chargeUntil != nil || state.now < state.recoveryUntil }
+        return state.channels[id] != nil
+    }
+    private func campaignMitigatedDamage(_ damage: Int, to id: String) -> Int {
+        guard let state = campaignPrototype, state.scenario.isGuard,
+              enemies.contains(where: { $0.id == id && $0.contentID == state.scenario.coreID }) else { return damage }
+        let count = enemies.filter { $0.isAlive && $0.contentID == state.scenario.addID }.count
+        return damage * (count >= 2 ? 40 : count == 1 ? 75 : 100) / 100
+    }
+    private mutating func campaignObserveDamage(to id: String, amount: Int) {
+        guard var state = campaignPrototype, let target = enemies.first(where: { $0.id == id }),
+              let core = enemies.first(where: { $0.contentID == state.scenario.coreID }) else { return }
+        state.record("damage", target: id, amount: amount)
+        if !core.isAlive {
+            state.chargeUntil = nil; state.channels.removeAll(); state.reserveAt = nil; state.poisonRemaining = 0
+            campaignPrototype = state; outcome = .victory; campaignFinishRecord(); return
+        }
+        let adds = enemies.filter { $0.isAlive && $0.contentID == state.scenario.addID }
+        if state.scenario.isGuard {
+            if state.chargeUntil != nil {
+                if target.contentID == state.scenario.coreID { state.chargeDamage += amount }
+                let guardKilled = target.contentID == state.scenario.addID && !target.isAlive
+                if guardKilled || (adds.isEmpty && state.chargeDamage >= (core.maxHP * 8 + 99) / 100) {
+                    state.chargeUntil = nil; state.recoveryUntil = state.now + 3
+                    state.record("charge_interrupt", target: id, detail: guardKilled ? "护卫在蓄力期死亡" : "核心有效伤害达到8%")
+                }
+            }
+            if adds.isEmpty, state.reserveAt != nil { state.reserveAt = nil; state.record("reserve_cancel", detail: "到达前清空护卫") }
+        } else if var channel = state.channels[id] {
+            channel.damage += amount
+            if !target.isAlive || channel.damage >= (target.maxHP * 15 + 99) / 100 {
+                state.channels[id] = nil; state.record("channel_interrupt", target: id, amount: channel.damage)
+            } else { state.channels[id] = channel }
+        }
+        if !state.phaseTriggered, core.hp * 2 <= core.maxHP {
+            state.phaseTriggered = true
+            state.record("half_health", target: core.id)
+            if state.scenario.isGuard {
+                if adds.count == 1 { state.reserveAt = state.now + 4; state.record("reserve_warning", detail: "4秒后护卫抵达；清空护卫可取消") }
+            } else {
+                state.channels.removeAll(); state.recoveryUntil = state.now + 8
+                state.nextMechanic = state.recoveryUntil + 20
+                state.record("recovery", amount: 8, detail: "核心暂停攻击，取消所有回流；28秒后下一次回流")
+                if adds.count < 2 { state.reserveAt = state.now + 4; state.record("reserve_warning", detail: "4秒后新支援者抵达") }
+            }
+        }
+        campaignPrototype = state
+    }
+    /// Driver supplies fixed ticks. Repeated/backward/non-finite timestamps cannot replay an event.
+    public mutating func advanceCampaignPrototype(at now: Double) {
+        guard var state = campaignPrototype, now.isFinite, now > state.now, outcome == .inProgress else { return }
+        state.now = now; campaignPrototype = state
+        if now >= 180 {
+            outcome = .defeat; campaignRecord("timeout"); campaignFinishRecord(); return
+        }
+        _ = advanceRelicClock(at: now)
+        guard outcome == .inProgress, var current = campaignPrototype else { campaignFinishRecord(); return }
+        // Deferred real skill hits may change phases at this tick. Read the updated state.
+        if let due = current.reserveAt, now + 0.000001 >= due {
+            current.reserveAt = nil
+            if let content = current.scenario.enemy(current.scenario.addID) {
+                let id = content.id + "#reserve"
+                enemies.append(.init(id: id, contentID: content.id, name: content.name + "·援军", maxHP: content.maxHP, hp: content.maxHP, attack: content.attack, defense: content.defense, intentPattern: ["strike"], intentIndex: 0, delayedRounds: 0))
+                foolStates[id] = .init(targetDefense: content.defense)
+                current.record("reserve_arrive", target: id)
+            }
+        }
+        if let due = current.chargeUntil, now + 0.000001 >= due {
+            current.chargeUntil = nil; current.recoveryUntil = now + 6
+            current.poisonRemaining = 6; current.poisonAt = now + 1
+            current.poisonDamage = max(1, (playerNormalMaxHP * 3 + 99) / 100)
+            current.poisonBudget = playerNormalMaxHP * 18 / 100
+            current.record("charge_release", amount: current.poisonDamage, detail: "6次，每秒一次；核心恢复6秒")
+        }
+        for id in current.channels.keys.sorted() {
+            guard let channel = current.channels[id], now + 0.000001 >= channel.until else { continue }
+            current.channels[id] = nil
+            guard enemies.contains(where: { $0.id == id && $0.isAlive }),
+                  let coreIndex = enemies.firstIndex(where: { $0.contentID == current.scenario.coreID && $0.isAlive }) else { continue }
+            let attempted = (enemies[coreIndex].maxHP * 6 + 99) / 100
+            let actual = min(attempted, enemies[coreIndex].maxHP - enemies[coreIndex].hp)
+            enemies[coreIndex].hp += actual
+            current.record("core_heal", target: id, amount: actual, detail: "上限\(attempted)，溢出\(attempted - actual)")
+        }
+        if now + 0.000001 >= current.nextMechanic, now >= current.recoveryUntil {
+            if current.scenario.isGuard {
+                current.nextMechanic += 24; current.chargeUntil = now + 4; current.chargeDamage = 0
+                current.record("charge_start", detail: "4秒：击杀护卫；无护卫时打掉核心8%生命")
+            } else {
+                current.nextMechanic += 20
+                for add in enemies where add.isAlive && add.contentID == current.scenario.addID {
+                    current.channels[add.id] = .init(until: now + 5)
+                    current.record("channel_start", target: add.id, detail: "5秒内造成其最大生命15%的有效伤害可打断")
+                }
+            }
+        }
+        campaignPrototype = current
+        if current.poisonRemaining > 0, now + 0.000001 >= current.poisonAt {
+            campaignPrototype?.poisonRemaining -= 1; campaignPrototype?.poisonAt += 1
+            let before = playerHP
+            let rawDamage = min(current.poisonDamage, current.poisonBudget)
+            campaignPrototype?.poisonBudget -= rawDamage
+            absorbPlayerDamage(rawDamage, isDamageOverTime: true)
+            campaignRecord("poison_tick", amount: before - playerHP, detail: "原始\(rawDamage)")
+            if playerHP <= 0 { outcome = .defeat; campaignFinishRecord() }
+        }
     }
 }

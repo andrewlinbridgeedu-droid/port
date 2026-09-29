@@ -634,6 +634,7 @@ private struct BattleDefeatOverlay: View {
     let painSalveRemaining: Int
     let maskCracks: Int
     let bountyLossText: String?
+    var wallHintText: String? = nil
     let retry: () -> Void
     let exit: () -> Void
 
@@ -733,6 +734,14 @@ private struct BattleDefeatOverlay: View {
                         .font(.system(size: 13, weight: .bold, design: .serif))
                         .multilineTextAlignment(.center)
                         .foregroundStyle(Color(red: 1, green: 0.76, blue: 0.62))
+                        .padding(.horizontal, 12)
+                }
+                if let wallHintText {
+                    Text(wallHintText)
+                        .font(.system(size: 14, weight: .semibold, design: .serif))
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(ChurchGold)
+                        .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, 12)
                 }
                 BattleDamageSummary(damage: damageBySource)
@@ -1009,6 +1018,7 @@ struct ChapterOneEncounterTestView: View {
     let onExit: () -> Void
     let onDefeat: () -> Void
     let bountyLossText: String?
+    let wallHintText: String?
     let onRetrySetup: () -> Void
     let onSequenceChanged: ([FoolSkillID]) -> Void
     let onSelectActiveRelic: (String) -> Void
@@ -1040,6 +1050,7 @@ struct ChapterOneEncounterTestView: View {
         onExit: @escaping () -> Void,
         onDefeat: @escaping () -> Void = {},
         bountyLossText: String? = nil,
+        wallHintText: String? = nil,
         onRetrySetup: @escaping () -> Void = {},
         onSequenceChanged: @escaping ([FoolSkillID]) -> Void = { _ in },
         onSelectActiveRelic: @escaping (String) -> Void = { _ in },
@@ -1119,6 +1130,7 @@ struct ChapterOneEncounterTestView: View {
         self.onVictory = onVictory
         self.onDefeat = onDefeat
         self.bountyLossText = bountyLossText
+        self.wallHintText = wallHintText
         self.onExit = onExit
         self.onRetrySetup = onRetrySetup
         self.onSelectActiveRelic = onSelectActiveRelic
@@ -1291,6 +1303,7 @@ struct ChapterOneEncounterTestView: View {
                         painSalveRemaining: campaign.inventory["consumable_pain_salve", default: 0],
                         maskCracks: maskCrackCount,
                         bountyLossText: bountyLossText,
+                        wallHintText: wallHintText,
                         retry: restartEncounter,
                         exit: exitBattleSettlingMedal
                     )
@@ -6617,6 +6630,7 @@ struct ChapterOneMissionBridgeView: View {
                     onVictory: completeEncounter,
                     onExit: { game.finishChurchLoanBattle(loanBattleID, outcome: .retreat); game.returnToCity() },
                     onDefeat: { game.finishChurchLoanBattle(loanBattleID, outcome: .defeat) },
+                    wallHintText: game.activeChapterMission.flatMap { game.wallDefeatHint(missionNumber: $0.number) },
                     onRetrySetup: {
                         game.finishChurchLoanBattle(loanBattleID, outcome: .retreat)
                         loanBattleID = UUID().uuidString
@@ -7584,7 +7598,7 @@ struct ChurchTowerView: View {
     private let sealPoints: [CGPoint] = [CGPoint(x: 0.246, y: 0.183), CGPoint(x: 0.659, y: 0.25), CGPoint(x: 0.279, y: 0.31), CGPoint(x: 0.74, y: 0.375), CGPoint(x: 0.278, y: 0.44), CGPoint(x: 0.699, y: 0.502), CGPoint(x: 0.325, y: 0.569), CGPoint(x: 0.739, y: 0.637), CGPoint(x: 0.347, y: 0.702), CGPoint(x: 0.68, y: 0.777)]
     private let tierNames = ["井口封线", "盐雾渗层", "回生暗渠", "双刃断桥", "冠鸣回廊", "骨爪深穴", "交错封锁", "沉井围阵", "裂隙王庭", "最后界碑"]
     private var floor: MPCChurchTowerCatalog.Floor { MPCChurchTowerCatalog.floor(number: selected)! }
-    private var available: Bool { game.churchRemoteServicesAvailable && game.churchTowerProgress.canEnter(selected, completedMissionNumbers: game.churchTowerMissionNumbers) }
+    private var available: Bool { game.churchRemoteServicesAvailable && game.churchTowerProgress.canEnter(selected, completedMissionNumbers: game.churchTowerMissionNumbers) && game.towerFloorIsOpenToday(selected) }
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -7627,7 +7641,7 @@ struct ChurchTowerView: View {
                             enabled: available
                         ) { launch(selected) }
                         if !available {
-                            Text(!game.churchRemoteServicesAvailable ? game.churchRemoteContactPauseReason : floor.requiredMission > 0 && !game.churchTowerMissionNumbers.contains(floor.requiredMission) ? "完成主线第 \(floor.requiredMission) 关后取得下井许可" : "先封堵上一层").font(.caption).foregroundStyle(.white.opacity(0.65))
+                            Text(!game.churchRemoteServicesAvailable ? game.churchRemoteContactPauseReason : floor.requiredMission > 0 && !game.churchTowerMissionNumbers.contains(floor.requiredMission) ? "完成主线第 \(floor.requiredMission) 关后取得下井许可" : !game.churchTowerProgress.canEnter(selected, completedMissionNumbers: game.churchTowerMissionNumbers) ? "先封堵上一层" : game.towerPacingLockText ?? "").font(.caption).foregroundStyle(.white.opacity(0.65))
                         }
                         if !error.isEmpty { Text(error).font(.caption).foregroundStyle(.orange) }
                     }.padding(20).frame(maxWidth: .infinity).background(.black.opacity(0.65)).overlay(alignment: .top) { Rectangle().fill(ChurchGold.opacity(0.6)).frame(height: 1) }
@@ -7666,7 +7680,7 @@ struct ChurchTowerView: View {
             selected = number; tier = (number - 1) / 10
             battleDestination = BattleDestination(floor: number, session: prepared)
         }
-        catch { self.error = "封线暂不可进入，请检查前层与主线许可。" }
+        catch { self.error = game.towerFloorIsOpenToday(number) ? "封线暂不可进入，请检查前层与主线许可。" : (game.towerPacingLockText ?? "") }
     }
 }
 
@@ -7872,11 +7886,17 @@ private struct ChurchTowerBattleView: View {
                     Image("BattleVictoryCrest").resizable().scaledToFit().frame(height: 140)
                     Text("第 \(floor) 层封堵完成").font(.title.bold()).foregroundStyle(.yellow)
                     Text(awarded ? "+\(MPCChurchTowerCatalog.floor(number: floor)?.firstClearReward.coins ?? 0) 铜币    +\(MPCChurchTowerCatalog.floor(number: floor)?.firstClearReward.merit ?? 0) 功勋" : "已领取过首通奖励")
+                    if game.localWorkshop.materialReceipts.contains(loanBattleID) {
+                        Text("获得盾颚韧皮 ×1 · 已收入背包").foregroundStyle(.mint)
+                    }
                     if awarded, let drop = MPCChurchGearCatalog.towerDrop(floor: floor) {
                         Text("获得装备 · \(drop.name)").foregroundStyle(.cyan)
                     }
-                    if game.churchTowerProgress.canEnter(floor + 1, completedMissionNumbers: game.churchTowerMissionNumbers) {
+                    if game.churchTowerProgress.canEnter(floor + 1, completedMissionNumbers: game.churchTowerMissionNumbers),
+                       game.towerFloorIsOpenToday(floor + 1) {
                         ChurchTowerArtButton(title: .nextFloor) { onNext() }
+                    } else if let lock = game.towerPacingLockText, !game.churchTowerProgress.clearedFloors.contains(floor + 1) {
+                        Text(lock).font(.caption).foregroundStyle(.white.opacity(0.65))
                     }
                     ChurchTowerArtButton(title: .backToWell) { onExit() }
                 }.foregroundStyle(.white)
@@ -8039,6 +8059,68 @@ private struct ChurchGearChoiceRow: View {
     }
 }
 
+/// The separate bounty slot: one relic from a closed case, worn in every battle.
+struct BountyRelicSlotSection: View {
+    @Bindable var game: GameStore
+    @State private var notice = ""
+
+    var body: some View {
+        let ledger = game.churchServices.bountyRelics
+        let owned = MPCBountyRelicCatalog.all.filter { ledger.ownedIDs.contains($0.id) }
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("通缉栏")
+                    .font(.system(size: 20, weight: .semibold, design: .serif))
+                    .foregroundStyle(ChurchGold)
+                Spacer()
+                Text(ledger.equippedID.flatMap { MPCBountyRelicCatalog.relic($0) }?.name ?? "未装备")
+                    .font(.caption.bold())
+                    .foregroundStyle(.white.opacity(0.78))
+            }
+            Text("结案得到的遗落物放在这里，一次带一件，专门对付某种敌人手段。")
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.68))
+                .fixedSize(horizontal: false, vertical: true)
+            if owned.isEmpty {
+                Text("还没有遗落物。在悬赏卷宗里接案、结案就能拿到。")
+                    .font(.footnote)
+                    .foregroundStyle(.white.opacity(0.6))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(14)
+                    .background(Color.black.opacity(0.48), in: RoundedRectangle(cornerRadius: 12))
+            }
+            ForEach(owned) { relic in
+                let worn = ledger.equippedID == relic.id
+                Button {
+                    GameInterfaceSound.shared.playClick()
+                    do { try game.equipBountyRelic(worn ? nil : relic.id); notice = "" }
+                    catch { notice = "没换成，稍后再试。" }
+                } label: {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: worn ? "checkmark.seal.fill" : "seal")
+                            .foregroundStyle(worn ? ChurchGold : .white.opacity(0.5))
+                            .accessibilityHidden(true)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(relic.name).font(.subheadline.bold()).foregroundStyle(.white)
+                            Text(relic.detail).font(.caption).foregroundStyle(.white.opacity(0.72))
+                                .multilineTextAlignment(.leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        Spacer(minLength: 0)
+                        Text(worn ? "取下" : "装上").font(.caption.bold()).foregroundStyle(ChurchGold)
+                    }
+                    .padding(12)
+                    .background(Color.black.opacity(worn ? 0.62 : 0.42), in: RoundedRectangle(cornerRadius: 12))
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(ChurchGold.opacity(worn ? 0.7 : 0.18), lineWidth: 1))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("\(relic.name)，\(worn ? "已装备，点按取下" : "点按装上")")
+            }
+            if !notice.isEmpty { Text(notice).font(.footnote).foregroundStyle(ChurchGold) }
+        }
+    }
+}
+
 struct ChurchGearArmoryView: View {
     @Bindable var game: GameStore
     let onBack: () -> Void
@@ -8124,7 +8206,7 @@ struct ChurchGearArmoryView: View {
                                     .accessibilityHidden(true)
                                 Text(owned.isEmpty ? "尚未取得封线装备" : "这一栏暂无可替换装备")
                                     .foregroundStyle(.white.opacity(0.82))
-                                Text(owned.isEmpty ? "封堵深井第 2 层可获得首件武器；第 4 层可获得护甲。" : "继续封堵深井或完成通缉卷宗，就能取得更多装备。")
+                                Text(owned.isEmpty ? "封堵深井第 2 层可获得首件武器；第 4 层可获得护甲。" : "继续封堵深井，就能取得更多装备。")
                                     .font(.caption)
                                     .foregroundStyle(.white.opacity(0.58))
                                     .multilineTextAlignment(.center)
@@ -8141,6 +8223,9 @@ struct ChurchGearArmoryView: View {
                         }
                     }
                     .padding(.horizontal, 20)
+
+                    BountyRelicSlotSection(game: game)
+                        .padding(.horizontal, 20)
                 }
                 .padding(.top, 16)
                 .padding(.bottom, 24)
@@ -8422,7 +8507,7 @@ struct ChurchBountyBoard: View {
                                     .frame(width: 24, height: 24)
                                     .overlay(Circle().stroke(crimson.opacity(0.75)))
                                     .accessibilityHidden(true)
-                                Text("接案前请辨认罪行与招式。阵亡可重试；每次战败有 35% 概率遗失随身铜币，12% 概率遗失一件随身普通遗落物。剧情物品与教会借物不掉落。")
+                                Text("接案前请辨认罪行与招式。阵亡可重试；每次战败有 35% 概率遗失随身铜币，随身遗落物不会遗失。")
                                     .font(.system(size: 12, weight: .medium, design: .serif))
                                     .fixedSize(horizontal: false, vertical: true)
                             }
@@ -8698,12 +8783,13 @@ private struct ChurchBountyDossier: View {
                             Text("本案今日未张贴。明日告示更新后可再查看。").font(.footnote).foregroundStyle(ChurchGold)
                         }
                         if !progress.claimed {
-                            Text("战败可重试，但每次阵亡有 35% 概率遗失最多 60 铜币，12% 概率遗失一件随身普通遗落物。关键物品与借物不掉落。")
+                            Text("战败可重试，但每次阵亡有 35% 概率遗失最多 60 铜币。随身遗落物不会遗失。")
                                 .font(.footnote).foregroundStyle(Color(red: 1, green: 0.67, blue: 0.58))
                         }
-                        if let drop = MPCChurchGearCatalog.bountyDrop(caseID: bounty.id) {
-                            Text(progress.claimed ? "结案装备已获得 · \(drop.name)" : "结案装备 · \(drop.name)")
+                        if let relic = MPCBountyRelicCatalog.relic(forCase: bounty.id) {
+                            Text(progress.claimed ? "结案遗落物已获得 · \(relic.name)" : "结案遗落物 · \(relic.name)")
                                 .font(.footnote.bold()).foregroundStyle(.cyan)
+                            Text(relic.detail).font(.footnote).foregroundStyle(.white.opacity(0.75))
                         }
                         if progress.claimed { Text(bounty.closure).font(.body).foregroundStyle(.white.opacity(0.85)) }
                         else {
@@ -8713,7 +8799,7 @@ private struct ChurchBountyDossier: View {
                                 }
                             }
                             if progress.victoriousBattleID != nil {
-                                Text("现场已收押。请回教会或酒馆柜台陈述案情，报酬与装备在交案时一次领取。")
+                                Text("现场已收押。回教会或酒馆柜台交案，报酬和遗落物一起领。")
                                     .font(.footnote).foregroundStyle(ChurchGold)
                                 ChurchActionButton(title: "交案并领取报酬",
                                                    enabled: ["教会", "酒馆"].contains(progress.currentLocation)) {

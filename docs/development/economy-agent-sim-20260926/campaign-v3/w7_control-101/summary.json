@@ -1,0 +1,158 @@
+{
+  "config": {
+    "name": "w7_control",
+    "n": 2000,
+    "days": 365,
+    "cash_window": 7,
+    "war": false,
+    "preparation": 7,
+    "procurement_mint": false,
+    "faction_share": 0.5,
+    "participation": 0.35,
+    "win_chance": 0.45,
+    "craft_chance": 0.45,
+    "campaign_starts": [
+      120,
+      240
+    ]
+  },
+  "seed": 101,
+  "opening_money": 4925445,
+  "end_money": 18213568,
+  "mint": {
+    "free_allowance": 2938124,
+    "q30_repeat": 10576125,
+    "pass_allowance": 877884
+  },
+  "outflow": {
+    "import_outflow": 369302,
+    "craft": 99820,
+    "repair": 583316,
+    "system_guarantee": 5310,
+    "trade_fee": 46262
+  },
+  "gross": 925250,
+  "npc_gross": 417548,
+  "trade_count": 92108,
+  "metrics": {
+    "normal": {
+      "free": {
+        "demand": 29977,
+        "craft_fill": 0.9956633418954531,
+        "guarantee_fill": 0.004336658104546819,
+        "total_fill": 1.0
+      },
+      "paid": {
+        "demand": 12654,
+        "craft_fill": 0.9962857594436542,
+        "guarantee_fill": 0.0037142405563458194,
+        "total_fill": 1.0
+      }
+    }
+  },
+  "professions": [
+    {
+      "prof": 0,
+      "produced": 28636,
+      "first_sale_units": 23233,
+      "sell_through": 0.8113214136052521,
+      "cash_trading_contribution": 18526.5,
+      "shelf_blocked": 10795,
+      "craft_opportunities": 41952
+    },
+    {
+      "prof": 1,
+      "produced": 20007,
+      "first_sale_units": 11328,
+      "sell_through": 0.5662018293597241,
+      "cash_trading_contribution": 16177.666666666668,
+      "shelf_blocked": 29959,
+      "craft_opportunities": 40621
+    },
+    {
+      "prof": 2,
+      "produced": 51396,
+      "first_sale_units": 46466,
+      "sell_through": 0.9040781383765274,
+      "cash_trading_contribution": 37498.0,
+      "shelf_blocked": 16437,
+      "craft_opportunities": 41288
+    },
+    {
+      "prof": 3,
+      "produced": 46466,
+      "first_sale_units": 32777,
+      "sell_through": 0.7053974949425387,
+      "cash_trading_contribution": 73076.0,
+      "shelf_blocked": 15667,
+      "craft_opportunities": 40938
+    }
+  ],
+  "items": [
+    {
+      "item": 12,
+      "gross": 92932,
+      "quantity": 23233,
+      "median_price": 4,
+      "no_trade_cycles": 1,
+      "median_first_sale_delay": 7,
+      "inventory": 5403
+    },
+    {
+      "item": 13,
+      "gross": 67968,
+      "quantity": 11328,
+      "median_price": 6.0,
+      "no_trade_cycles": 18,
+      "median_first_sale_delay": 47.0,
+      "inventory": 5110
+    },
+    {
+      "item": 14,
+      "gross": 232330,
+      "quantity": 46466,
+      "median_price": 5,
+      "no_trade_cycles": 1,
+      "median_first_sale_delay": 7.0,
+      "inventory": 4930
+    },
+    {
+      "item": 15,
+      "gross": 524432,
+      "quantity": 32777,
+      "median_price": 16,
+      "no_trade_cycles": 1,
+      "median_first_sale_delay": 14,
+      "inventory": 4012
+    }
+  ],
+  "wallets": {
+    "free": {
+      "p10": 6648,
+      "p50": 7476.5,
+      "median_cash_delta_excluding_mint": -521.5
+    },
+    "paid": {
+      "p10": 8074,
+      "p50": 8921.0,
+      "median_cash_delta_excluding_mint": -491.5
+    }
+  },
+  "repair_savings": 119176,
+  "median_repair_value": 8,
+  "events": [],
+  "investment_paid": 0,
+  "investment_refunded": 0,
+  "raw_opportunity_value": "UNKNOWN; fixed raw quote is not executable counterfactual depth",
+  "limitations": [
+    "Mature-only, equal profession population; no new recipe/skill progression.",
+    "Fixed candidate quotes; actual transfers are observed but no price stability conclusion is possible.",
+    "Combat participation, wins and drug use are exogenous; wealth does not cause victory in this model.",
+    "No investment operating revenue or dividends simulated; only funded procurement and remaining cash refund.",
+    "Only ordinary relic wear/copper repair/wrap modeled; no newly invented relic activation fees.",
+    "Two campaign logistics probes, not the full six-event or NPC death narrative implementation.",
+    "Manufacturing cost basis is actual cash only; self-gathered raw opportunity cost remains unknown.",
+    "Trade contribution includes raw/component resale; not pure crafting RPM or net annual professional profit."
+  ],
+  "runtime_seconds": 37.884042583999985
+}

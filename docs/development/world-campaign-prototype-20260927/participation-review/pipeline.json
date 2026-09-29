@@ -1,0 +1,1342 @@
+{
+  "status": "conditional_analytical_prototype_not_live_economy_or_human_win_rate",
+  "rows": [
+    {
+      "population": 20,
+      "n_A": 14,
+      "n_B": 6,
+      "scenario": "equal_ordinary",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.35,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 0.018825531005859375,
+        "0/4": 0.0067234039306640625,
+        "0/5": 0.002689361572265625,
+        "0/6": 0.0004482269287109375,
+        "4/0": 0.04009437561035156,
+        "4/4": 0.014319419860839844,
+        "4/5": 0.0057277679443359375,
+        "4/6": 0.0028638839721679688,
+        "5/0": 0.08018875122070312,
+        "5/4": 0.028638839721679688,
+        "5/5": 0.014319419860839844,
+        "6/0": 0.5171413421630859,
+        "6/4": 0.2680196762084961
+      },
+      "world_outcomes": {
+        "A": 0.09926080076667751,
+        "B": 0.006271587435296197,
+        "both": 9.69856351885721e-05,
+        "neither": 0.8943706261628378
+      }
+    },
+    {
+      "population": 20,
+      "n_A": 14,
+      "n_B": 6,
+      "scenario": "equal_ordinary",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.5,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 0.018825531005859375,
+        "0/4": 0.0067234039306640625,
+        "0/5": 0.002689361572265625,
+        "0/6": 0.0004482269287109375,
+        "4/0": 0.04009437561035156,
+        "4/4": 0.014319419860839844,
+        "4/5": 0.0057277679443359375,
+        "4/6": 0.0028638839721679688,
+        "5/0": 0.08018875122070312,
+        "5/4": 0.028638839721679688,
+        "5/5": 0.014319419860839844,
+        "6/0": 0.5171413421630859,
+        "6/4": 0.2680196762084961
+      },
+      "world_outcomes": {
+        "A": 0.2903521154075861,
+        "B": 0.02352301962673664,
+        "both": 0.0015279948711395264,
+        "neither": 0.6845968700945377
+      }
+    },
+    {
+      "population": 20,
+      "n_A": 14,
+      "n_B": 6,
+      "scenario": "equal_ordinary",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.65,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 0.018825531005859375,
+        "0/4": 0.0067234039306640625,
+        "0/5": 0.002689361572265625,
+        "0/6": 0.0004482269287109375,
+        "4/0": 0.04009437561035156,
+        "4/4": 0.014319419860839844,
+        "4/5": 0.0057277679443359375,
+        "4/6": 0.0028638839721679688,
+        "5/0": 0.08018875122070312,
+        "5/4": 0.028638839721679688,
+        "5/5": 0.014319419860839844,
+        "6/0": 0.5171413421630859,
+        "6/4": 0.2680196762084961
+      },
+      "world_outcomes": {
+        "A": 0.5362027343481378,
+        "B": 0.05592820280148217,
+        "both": 0.01153351057128852,
+        "neither": 0.39633555227909145
+      }
+    },
+    {
+      "population": 20,
+      "n_A": 14,
+      "n_B": 6,
+      "scenario": "skilled_minority_hard",
+      "public_p_A": 0.5,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.35,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 0.010123899936676024,
+        "0/4": 0.009409329843521119,
+        "0/5": 0.006989787883758546,
+        "0/6": 0.0021635057735443124,
+        "4/0": 0.021561752843856807,
+        "4/4": 0.18894735119819642,
+        "4/5": 0.2147946944789887,
+        "4/6": 0.07276744525146486,
+        "5/0": 0.043123505687713615,
+        "5/4": 0.06011961174488068,
+        "5/5": 0.015305652546882632,
+        "6/0": 0.2781056852817535,
+        "6/4": 0.07658777752876282
+      },
+      "world_outcomes": {
+        "A": 0.05520127101695725,
+        "B": 0.026223549695431038,
+        "both": 0.00016483474387517707,
+        "neither": 0.9184103445437365
+      }
+    },
+    {
+      "population": 20,
+      "n_A": 14,
+      "n_B": 6,
+      "scenario": "skilled_minority_hard",
+      "public_p_A": 0.5,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.5,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 0.010123899936676024,
+        "0/4": 0.009409329843521119,
+        "0/5": 0.006989787883758546,
+        "0/6": 0.0021635057735443124,
+        "4/0": 0.021561752843856807,
+        "4/4": 0.18894735119819642,
+        "4/5": 0.2147946944789887,
+        "4/6": 0.07276744525146486,
+        "5/0": 0.043123505687713615,
+        "5/4": 0.06011961174488068,
+        "5/5": 0.015305652546882632,
+        "6/0": 0.2781056852817535,
+        "6/4": 0.07658777752876282
+      },
+      "world_outcomes": {
+        "A": 0.17065337857929988,
+        "B": 0.08538232793081553,
+        "both": 0.00269431696459651,
+        "neither": 0.7412699765252883
+      }
+    },
+    {
+      "population": 20,
+      "n_A": 14,
+      "n_B": 6,
+      "scenario": "skilled_minority_hard",
+      "public_p_A": 0.5,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.65,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 0.010123899936676024,
+        "0/4": 0.009409329843521119,
+        "0/5": 0.006989787883758546,
+        "0/6": 0.0021635057735443124,
+        "4/0": 0.021561752843856807,
+        "4/4": 0.18894735119819642,
+        "4/5": 0.2147946944789887,
+        "4/6": 0.07276744525146486,
+        "5/0": 0.043123505687713615,
+        "5/4": 0.06011961174488068,
+        "5/5": 0.015305652546882632,
+        "6/0": 0.2781056852817535,
+        "6/4": 0.07658777752876282
+      },
+      "world_outcomes": {
+        "A": 0.33845945654981224,
+        "B": 0.17253583858549643,
+        "both": 0.02098344957576648,
+        "neither": 0.46802125528892474
+      }
+    },
+    {
+      "population": 20,
+      "n_A": 14,
+      "n_B": 6,
+      "scenario": "equal_hard",
+      "public_p_A": 0.65,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        2,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.35,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 0.0003904079950077397,
+        "0/4": 0.00036285202555860904,
+        "0/5": 0.00026954721898639534,
+        "0/6": 8.343128206721763e-05,
+        "4/0": 0.0017395538319989006,
+        "4/4": 0.0016167717863885653,
+        "4/5": 0.0012010304698886487,
+        "4/6": 0.0017525240530007838,
+        "5/0": 0.006461199947424489,
+        "5/4": 0.006005152349443243,
+        "5/5": 0.008307419212276443,
+        "6/0": 0.3443236819755689,
+        "6/4": 0.6274864278523906
+      },
+      "world_outcomes": {
+        "A": 0.11419971067241506,
+        "B": 0.010113395663415702,
+        "both": 0.00015820043425453923,
+        "neither": 0.8755286932299152
+      }
+    },
+    {
+      "population": 20,
+      "n_A": 14,
+      "n_B": 6,
+      "scenario": "equal_hard",
+      "public_p_A": 0.65,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        2,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.5,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 0.0003904079950077397,
+        "0/4": 0.00036285202555860904,
+        "0/5": 0.00026954721898639534,
+        "0/6": 8.343128206721763e-05,
+        "4/0": 0.0017395538319989006,
+        "4/4": 0.0016167717863885653,
+        "4/5": 0.0012010304698886487,
+        "4/6": 0.0017525240530007838,
+        "5/0": 0.006461199947424489,
+        "5/4": 0.006005152349443243,
+        "5/5": 0.008307419212276443,
+        "6/0": 0.3443236819755689,
+        "6/4": 0.6274864278523906
+      },
+      "world_outcomes": {
+        "A": 0.32455263948643787,
+        "B": 0.039421659862446966,
+        "both": 0.002654683603798805,
+        "neither": 0.6333710170473169
+      }
+    },
+    {
+      "population": 20,
+      "n_A": 14,
+      "n_B": 6,
+      "scenario": "equal_hard",
+      "public_p_A": 0.65,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        2,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.65,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 0.0003904079950077397,
+        "0/4": 0.00036285202555860904,
+        "0/5": 0.00026954721898639534,
+        "0/6": 8.343128206721763e-05,
+        "4/0": 0.0017395538319989006,
+        "4/4": 0.0016167717863885653,
+        "4/5": 0.0012010304698886487,
+        "4/6": 0.0017525240530007838,
+        "5/0": 0.006461199947424489,
+        "5/4": 0.006005152349443243,
+        "5/5": 0.008307419212276443,
+        "6/0": 0.3443236819755689,
+        "6/4": 0.6274864278523906
+      },
+      "world_outcomes": {
+        "A": 0.564630859319883,
+        "B": 0.0971268204422224,
+        "both": 0.021115058029274814,
+        "neither": 0.3171272622086203
+      }
+    },
+    {
+      "population": 20,
+      "n_A": 14,
+      "n_B": 6,
+      "scenario": "equal_ordinary_attendance75",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 0.75,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.35,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 0.1430713822086582,
+        "0/4": 0.019422539595923993,
+        "0/5": 0.004661409503021758,
+        "0/6": 0.0004661409503021758,
+        "4/0": 0.15366764791177928,
+        "4/4": 0.020861027062884,
+        "4/5": 0.00500664649509216,
+        "4/6": 0.0011014622289202752,
+        "5/0": 0.18440117749413512,
+        "5/4": 0.025033232475460798,
+        "5/5": 0.006548693615580545,
+        "6/0": 0.37239830556902104,
+        "6/4": 0.06336033488922055
+      },
+      "world_outcomes": {
+        "A": 0.06539381826225053,
+        "B": 0.0029452245434676066,
+        "both": 3.742179260938857e-05,
+        "neither": 0.9316235354016724
+      }
+    },
+    {
+      "population": 20,
+      "n_A": 14,
+      "n_B": 6,
+      "scenario": "equal_ordinary_attendance75",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 0.75,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.5,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 0.1430713822086582,
+        "0/4": 0.019422539595923993,
+        "0/5": 0.004661409503021758,
+        "0/6": 0.0004661409503021758,
+        "4/0": 0.15366764791177928,
+        "4/4": 0.020861027062884,
+        "4/5": 0.00500664649509216,
+        "4/6": 0.0011014622289202752,
+        "5/0": 0.18440117749413512,
+        "5/4": 0.025033232475460798,
+        "5/5": 0.006548693615580545,
+        "6/0": 0.37239830556902104,
+        "6/4": 0.06336033488922055
+      },
+      "world_outcomes": {
+        "A": 0.19963963414523236,
+        "B": 0.010933647555170985,
+        "both": 0.0005785397313651582,
+        "neither": 0.7888481785682313
+      }
+    },
+    {
+      "population": 20,
+      "n_A": 14,
+      "n_B": 6,
+      "scenario": "equal_ordinary_attendance75",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 0.75,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.65,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 0.1430713822086582,
+        "0/4": 0.019422539595923993,
+        "0/5": 0.004661409503021758,
+        "0/6": 0.0004661409503021758,
+        "4/0": 0.15366764791177928,
+        "4/4": 0.020861027062884,
+        "4/5": 0.00500664649509216,
+        "4/6": 0.0011014622289202752,
+        "5/0": 0.18440117749413512,
+        "5/4": 0.025033232475460798,
+        "5/5": 0.006548693615580545,
+        "6/0": 0.37239830556902104,
+        "6/4": 0.06336033488922055
+      },
+      "world_outcomes": {
+        "A": 0.39574589918843783,
+        "B": 0.026030288263603797,
+        "both": 0.004293638042566271,
+        "neither": 0.5739301745053919
+      }
+    },
+    {
+      "population": 100,
+      "n_A": 70,
+      "n_B": 30,
+      "scenario": "equal_ordinary",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.35,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 2.0431882093801592e-22,
+        "0/4": 1.2371536208144777e-21,
+        "0/5": 6.433198828235284e-21,
+        "0/6": 4.8464432768304603e-17,
+        "4/0": 3.2736676567287964e-21,
+        "4/4": 1.982210829267624e-20,
+        "4/5": 1.0307496312191645e-19,
+        "4/6": 1.6080007647784595e-05,
+        "5/0": 4.321241306882011e-20,
+        "5/4": 2.616518294633264e-19,
+        "5/5": 2.3170690580135164e-05,
+        "6/0": 4.215165972709612e-06,
+        "6/4": 0.9999565341358019
+      },
+      "world_outcomes": {
+        "A": 0.11565871673973138,
+        "B": 0.01478347751486732,
+        "both": 0.00022522186185498961,
+        "neither": 0.8693325838835488
+      }
+    },
+    {
+      "population": 100,
+      "n_A": 70,
+      "n_B": 30,
+      "scenario": "equal_ordinary",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.5,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 2.0431882093801592e-22,
+        "0/4": 1.2371536208144777e-21,
+        "0/5": 6.433198828235284e-21,
+        "0/6": 4.8464432768304603e-17,
+        "4/0": 3.2736676567287964e-21,
+        "4/4": 1.982210829267624e-20,
+        "4/5": 1.0307496312191645e-19,
+        "4/6": 1.6080007647784595e-05,
+        "5/0": 4.321241306882011e-20,
+        "5/4": 2.616518294633264e-19,
+        "5/5": 2.3170690580135164e-05,
+        "6/0": 4.215165972709612e-06,
+        "6/4": 0.9999565341358019
+      },
+      "world_outcomes": {
+        "A": 0.3222577195282725,
+        "B": 0.0586000961366475,
+        "both": 0.003906595576548244,
+        "neither": 0.6152355887585343
+      }
+    },
+    {
+      "population": 100,
+      "n_A": 70,
+      "n_B": 30,
+      "scenario": "equal_ordinary",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.65,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 2.0431882093801592e-22,
+        "0/4": 1.2371536208144777e-21,
+        "0/5": 6.433198828235284e-21,
+        "0/6": 4.8464432768304603e-17,
+        "4/0": 3.2736676567287964e-21,
+        "4/4": 1.982210829267624e-20,
+        "4/5": 1.0307496312191645e-19,
+        "4/6": 1.6080007647784595e-05,
+        "5/0": 4.321241306882011e-20,
+        "5/4": 2.616518294633264e-19,
+        "5/5": 2.3170690580135164e-05,
+        "6/0": 4.215165972709612e-06,
+        "6/4": 0.9999565341358019
+      },
+      "world_outcomes": {
+        "A": 0.5315650993084523,
+        "B": 0.1466506501398225,
+        "both": 0.03186579408617674,
+        "neither": 0.289918456465551
+      }
+    },
+    {
+      "population": 100,
+      "n_A": 70,
+      "n_B": 30,
+      "scenario": "skilled_minority_hard",
+      "public_p_A": 0.5,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.35,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 2.804470641990954e-26,
+        "0/4": 3.3170046483899277e-25,
+        "0/5": 3.2032787747308455e-24,
+        "0/6": 4.84723038765506e-17,
+        "4/0": 4.493421013679614e-25,
+        "4/4": 7.783945669818216e-21,
+        "4/5": 4.243915606128928e-18,
+        "4/6": 0.7013813863877011,
+        "5/0": 5.93131573805709e-24,
+        "5/4": 5.471933716155616e-20,
+        "5/5": 0.04908421494877979,
+        "6/0": 5.78571722727862e-10,
+        "6/4": 0.2495343980849462
+      },
+      "world_outcomes": {
+        "A": 0.04176590455737245,
+        "B": 0.08734856814020527,
+        "both": 0.00029990685707305474,
+        "neither": 0.8705856204453479
+      }
+    },
+    {
+      "population": 100,
+      "n_A": 70,
+      "n_B": 30,
+      "scenario": "skilled_minority_hard",
+      "public_p_A": 0.5,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.5,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 2.804470641990954e-26,
+        "0/4": 3.3170046483899277e-25,
+        "0/5": 3.2032787747308455e-24,
+        "0/6": 4.84723038765506e-17,
+        "4/0": 4.493421013679614e-25,
+        "4/4": 7.783945669818216e-21,
+        "4/5": 4.243915606128928e-18,
+        "4/6": 0.7013813863877011,
+        "5/0": 5.93131573805709e-24,
+        "5/4": 5.471933716155616e-20,
+        "5/5": 0.04908421494877979,
+        "6/0": 5.78571722727862e-10,
+        "6/4": 0.2495343980849462
+      },
+      "world_outcomes": {
+        "A": 0.1293740683657729,
+        "B": 0.24851341078577935,
+        "both": 0.004673190856314634,
+        "neither": 0.617439329992132
+      }
+    },
+    {
+      "population": 100,
+      "n_A": 70,
+      "n_B": 30,
+      "scenario": "skilled_minority_hard",
+      "public_p_A": 0.5,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.65,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 2.804470641990954e-26,
+        "0/4": 3.3170046483899277e-25,
+        "0/5": 3.2032787747308455e-24,
+        "0/6": 4.84723038765506e-17,
+        "4/0": 4.493421013679614e-25,
+        "4/4": 7.783945669818216e-21,
+        "4/5": 4.243915606128928e-18,
+        "4/6": 0.7013813863877011,
+        "5/0": 5.93131573805709e-24,
+        "5/4": 5.471933716155616e-20,
+        "5/5": 0.04908421494877979,
+        "6/0": 5.78571722727862e-10,
+        "6/4": 0.2495343980849462
+      },
+      "world_outcomes": {
+        "A": 0.24970759356867658,
+        "B": 0.4236391522667854,
+        "both": 0.03493000564632106,
+        "neither": 0.29172324851821585
+      }
+    },
+    {
+      "population": 100,
+      "n_A": 70,
+      "n_B": 30,
+      "scenario": "equal_hard",
+      "public_p_A": 0.65,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        2,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.35,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 2.5253165203195273e-36,
+        "0/4": 2.986833419161451e-35,
+        "0/5": 2.8844277019330586e-34,
+        "0/6": 4.364742063069039e-27,
+        "4/0": 7.670455630943632e-35,
+        "4/4": 9.07227788451593e-34,
+        "4/5": 8.761228357046815e-33,
+        "4/6": 1.409648315541853e-08,
+        "5/0": 1.8803574089570392e-33,
+        "5/4": 2.2240041214041915e-32,
+        "5/5": 3.276417334612807e-08,
+        "6/0": 5.785717227278675e-10,
+        "6/4": 0.9999999525607689
+      },
+      "world_outcomes": {
+        "A": 0.11566181023979319,
+        "B": 0.014781065083725679,
+        "both": 0.00022518758880805712,
+        "neither": 0.8693319370876702
+      }
+    },
+    {
+      "population": 100,
+      "n_A": 70,
+      "n_B": 30,
+      "scenario": "equal_hard",
+      "public_p_A": 0.65,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        2,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.5,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 2.5253165203195273e-36,
+        "0/4": 2.986833419161451e-35,
+        "0/5": 2.8844277019330586e-34,
+        "0/6": 4.364742063069039e-27,
+        "4/0": 7.670455630943632e-35,
+        "4/4": 9.07227788451593e-34,
+        "4/5": 8.761228357046815e-33,
+        "4/6": 1.409648315541853e-08,
+        "5/0": 1.8803574089570392e-33,
+        "5/4": 2.2240041214041915e-32,
+        "5/5": 3.276417334612807e-08,
+        "6/0": 5.785717227278675e-10,
+        "6/4": 0.9999999525607689
+      },
+      "world_outcomes": {
+        "A": 0.3222656159842035,
+        "B": 0.05859375701055664,
+        "both": 0.003906250509680151,
+        "neither": 0.6152343764955569
+      }
+    },
+    {
+      "population": 100,
+      "n_A": 70,
+      "n_B": 30,
+      "scenario": "equal_hard",
+      "public_p_A": 0.65,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        2,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.65,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 2.5253165203195273e-36,
+        "0/4": 2.986833419161451e-35,
+        "0/5": 2.8844277019330586e-34,
+        "0/6": 4.364742063069039e-27,
+        "4/0": 7.670455630943632e-35,
+        "4/4": 9.07227788451593e-34,
+        "4/5": 8.761228357046815e-33,
+        "4/6": 1.409648315541853e-08,
+        "5/0": 1.8803574089570392e-33,
+        "5/4": 2.2240041214041915e-32,
+        "5/5": 3.276417334612807e-08,
+        "6/0": 5.785717227278675e-10,
+        "6/4": 0.9999999525607689
+      },
+      "world_outcomes": {
+        "A": 0.5315763982858555,
+        "B": 0.14664177873248763,
+        "both": 0.03186448331689277,
+        "neither": 0.2899173396647612
+      }
+    },
+    {
+      "population": 100,
+      "n_A": 70,
+      "n_B": 30,
+      "scenario": "equal_ordinary_attendance75",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 0.75,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.35,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 5.191463803778641e-14,
+        "0/4": 1.7517727915097435e-13,
+        "0/5": 5.465531109510399e-13,
+        "0/6": 6.478688384514641e-11,
+        "4/0": 4.843655000893387e-13,
+        "4/4": 1.634410517482427e-12,
+        "4/5": 5.099360814545171e-12,
+        "4/6": 0.0005573299459979872,
+        "5/0": 3.836174760707564e-12,
+        "5/4": 1.2944531298460825e-11,
+        "5/5": 0.0006109984459583038,
+        "6/0": 0.0007918581293245099,
+        "6/4": 0.9980398133891595
+      },
+      "world_outcomes": {
+        "A": 0.11556789826166887,
+        "B": 0.01484813285980673,
+        "both": 0.00022593932570150896,
+        "neither": 0.8693580295528226
+      }
+    },
+    {
+      "population": 100,
+      "n_A": 70,
+      "n_B": 30,
+      "scenario": "equal_ordinary_attendance75",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 0.75,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.5,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 5.191463803778641e-14,
+        "0/4": 1.7517727915097435e-13,
+        "0/5": 5.465531109510399e-13,
+        "0/6": 6.478688384514641e-11,
+        "4/0": 4.843655000893387e-13,
+        "4/4": 1.634410517482427e-12,
+        "4/5": 5.099360814545171e-12,
+        "4/6": 0.0005573299459979872,
+        "5/0": 3.836174760707564e-12,
+        "5/4": 1.2944531298460825e-11,
+        "5/5": 0.0006109984459583038,
+        "6/0": 0.0007918581293245099,
+        "6/4": 0.9980398133891595
+      },
+      "world_outcomes": {
+        "A": 0.3220366367434995,
+        "B": 0.058756358843144355,
+        "both": 0.00391270365462745,
+        "neither": 0.6152943007587284
+      }
+    },
+    {
+      "population": 100,
+      "n_A": 70,
+      "n_B": 30,
+      "scenario": "equal_ordinary_attendance75",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 0.75,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.65,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 5.191463803778641e-14,
+        "0/4": 1.7517727915097435e-13,
+        "0/5": 5.465531109510399e-13,
+        "0/6": 6.478688384514641e-11,
+        "4/0": 4.843655000893387e-13,
+        "4/4": 1.634410517482427e-12,
+        "4/5": 5.099360814545171e-12,
+        "4/6": 0.0005573299459979872,
+        "5/0": 3.836174760707564e-12,
+        "5/4": 1.2944531298460825e-11,
+        "5/5": 0.0006109984459583038,
+        "6/0": 0.0007918581293245099,
+        "6/4": 0.9980398133891595
+      },
+      "world_outcomes": {
+        "A": 0.53130542552174,
+        "B": 0.14682746238975117,
+        "both": 0.031877408669446126,
+        "neither": 0.28998970341906244
+      }
+    },
+    {
+      "population": 400,
+      "n_A": 280,
+      "n_B": 120,
+      "scenario": "equal_ordinary",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.35,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 4.08222707626563e-109,
+        "0/4": 1.1639577812600218e-107,
+        "0/5": 2.7003820525232507e-106,
+        "0/6": 1.8834403611662165e-78,
+        "4/0": 2.7965465836726263e-107,
+        "4/4": 7.973741038677285e-106,
+        "4/5": 1.8499079209731302e-104,
+        "4/6": 1.6229650967488743e-16,
+        "5/0": 1.5436937141872897e-105,
+        "5/4": 4.4015050533498615e-104,
+        "5/5": 2.2101920778108952e-16,
+        "6/0": 2.1674310269840097e-31,
+        "6/4": 0.9999999999999947
+      },
+      "world_outcomes": {
+        "A": 0.11566181375683535,
+        "B": 0.01478106246093745,
+        "both": 0.00022518753906249924,
+        "neither": 0.8693319362431597
+      }
+    },
+    {
+      "population": 400,
+      "n_A": 280,
+      "n_B": 120,
+      "scenario": "equal_ordinary",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.5,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 4.08222707626563e-109,
+        "0/4": 1.1639577812600218e-107,
+        "0/5": 2.7003820525232507e-106,
+        "0/6": 1.8834403611662165e-78,
+        "4/0": 2.7965465836726263e-107,
+        "4/4": 7.973741038677285e-106,
+        "4/5": 1.8499079209731302e-104,
+        "4/6": 1.6229650967488743e-16,
+        "5/0": 1.5436937141872897e-105,
+        "5/4": 4.4015050533498615e-104,
+        "5/5": 2.2101920778108952e-16,
+        "6/0": 2.1674310269840097e-31,
+        "6/4": 0.9999999999999947
+      },
+      "world_outcomes": {
+        "A": 0.32226562499999833,
+        "B": 0.05859374999999978,
+        "both": 0.003906249999999984,
+        "neither": 0.6152343749999969
+      }
+    },
+    {
+      "population": 400,
+      "n_A": 280,
+      "n_B": 120,
+      "scenario": "equal_ordinary",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.65,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 4.08222707626563e-109,
+        "0/4": 1.1639577812600218e-107,
+        "0/5": 2.7003820525232507e-106,
+        "0/6": 1.8834403611662165e-78,
+        "4/0": 2.7965465836726263e-107,
+        "4/4": 7.973741038677285e-106,
+        "4/5": 1.8499079209731302e-104,
+        "4/6": 1.6229650967488743e-16,
+        "5/0": 1.5436937141872897e-105,
+        "5/4": 4.4015050533498615e-104,
+        "5/5": 2.2101920778108952e-16,
+        "6/0": 2.1674310269840097e-31,
+        "6/4": 0.9999999999999947
+      },
+      "world_outcomes": {
+        "A": 0.5315764115771456,
+        "B": 0.14664176871093687,
+        "both": 0.031864481289062364,
+        "neither": 0.2899173384228501
+      }
+    },
+    {
+      "population": 400,
+      "n_A": 280,
+      "n_B": 120,
+      "scenario": "skilled_minority_hard",
+      "public_p_A": 0.5,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.35,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 6.6691493374454545e-127,
+        "0/4": 3.5734135418151134e-125,
+        "0/5": 1.539630748873484e-123,
+        "0/6": 1.8834403611662144e-78,
+        "4/0": 4.5687284041771065e-125,
+        "4/4": 2.487581014746928e-118,
+        "4/5": 1.1139585878956131e-113,
+        "4/6": 0.876172805851599,
+        "5/0": 2.5219380791057626e-123,
+        "5/4": 8.272825846772057e-117,
+        "5/5": 0.014480152316639893,
+        "6/0": 3.5409400132616626e-49,
+        "6/4": 0.10934704183175838
+      },
+      "world_outcomes": {
+        "A": 0.026346514816992912,
+        "B": 0.10370447400436576,
+        "both": 0.0002472302081528352,
+        "neither": 0.8697017809704858
+      }
+    },
+    {
+      "population": 400,
+      "n_A": 280,
+      "n_B": 120,
+      "scenario": "skilled_minority_hard",
+      "public_p_A": 0.5,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.5,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 6.6691493374454545e-127,
+        "0/4": 3.5734135418151134e-125,
+        "0/5": 1.539630748873484e-123,
+        "0/6": 1.8834403611662144e-78,
+        "4/0": 4.5687284041771065e-125,
+        "4/4": 2.487581014746928e-118,
+        "4/5": 1.1139585878956131e-113,
+        "4/6": 0.876172805851599,
+        "5/0": 2.5219380791057626e-123,
+        "5/4": 8.272825846772057e-117,
+        "5/5": 0.014480152316639893,
+        "6/0": 3.5409400132616626e-49,
+        "6/4": 0.10934704183175838
+      },
+      "world_outcomes": {
+        "A": 0.08889613001514174,
+        "B": 0.29108651701256066,
+        "both": 0.004132502379947487,
+        "neither": 0.6158848505923473
+      }
+    },
+    {
+      "population": 400,
+      "n_A": 280,
+      "n_B": 120,
+      "scenario": "skilled_minority_hard",
+      "public_p_A": 0.5,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        1,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.65,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 6.6691493374454545e-127,
+        "0/4": 3.5734135418151134e-125,
+        "0/5": 1.539630748873484e-123,
+        "0/6": 1.8834403611662144e-78,
+        "4/0": 4.5687284041771065e-125,
+        "4/4": 2.487581014746928e-118,
+        "4/5": 1.1139585878956131e-113,
+        "4/6": 0.876172805851599,
+        "5/0": 2.5219380791057626e-123,
+        "5/4": 8.272825846772057e-117,
+        "5/5": 0.014480152316639893,
+        "6/0": 3.5409400132616626e-49,
+        "6/4": 0.10934704183175838
+      },
+      "world_outcomes": {
+        "A": 0.19080163742919337,
+        "B": 0.48597943904278,
+        "both": 0.032768830272472856,
+        "neither": 0.29045009325555093
+      }
+    },
+    {
+      "population": 400,
+      "n_A": 280,
+      "n_B": 120,
+      "scenario": "equal_hard",
+      "public_p_A": 0.65,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        2,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.35,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 1.8025556214615828e-169,
+        "0/4": 9.658318237739505e-168,
+        "0/5": 4.1613554007174797e-166,
+        "0/6": 5.090613268540506e-121,
+        "4/0": 2.3047710735365792e-167,
+        "4/4": 1.2349251378608417e-165,
+        "4/5": 5.320763165411856e-164,
+        "4/6": 3.659636158502086e-28,
+        "5/0": 2.3627196033854993e-165,
+        "5/4": 1.2659746841842001e-163,
+        "5/5": 8.180311734270971e-28,
+        "6/0": 3.540940013261654e-49,
+        "6/4": 0.9999999999999939
+      },
+      "world_outcomes": {
+        "A": 0.11566181375683524,
+        "B": 0.014781062460937409,
+        "both": 0.00022518753906249862,
+        "neither": 0.8693319362431587
+      }
+    },
+    {
+      "population": 400,
+      "n_A": 280,
+      "n_B": 120,
+      "scenario": "equal_hard",
+      "public_p_A": 0.65,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        2,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.5,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 1.8025556214615828e-169,
+        "0/4": 9.658318237739505e-168,
+        "0/5": 4.1613554007174797e-166,
+        "0/6": 5.090613268540506e-121,
+        "4/0": 2.3047710735365792e-167,
+        "4/4": 1.2349251378608417e-165,
+        "4/5": 5.320763165411856e-164,
+        "4/6": 3.659636158502086e-28,
+        "5/0": 2.3627196033854993e-165,
+        "5/4": 1.2659746841842001e-163,
+        "5/5": 8.180311734270971e-28,
+        "6/0": 3.540940013261654e-49,
+        "6/4": 0.9999999999999939
+      },
+      "world_outcomes": {
+        "A": 0.32226562499999806,
+        "B": 0.05859374999999964,
+        "both": 0.003906249999999976,
+        "neither": 0.6152343749999962
+      }
+    },
+    {
+      "population": 400,
+      "n_A": 280,
+      "n_B": 120,
+      "scenario": "equal_hard",
+      "public_p_A": 0.65,
+      "public_p_B": 0.65,
+      "public_attendance": 1,
+      "points_per_win": [
+        2,
+        2
+      ],
+      "conditional_core_win_probability_both": 0.65,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 1.8025556214615828e-169,
+        "0/4": 9.658318237739505e-168,
+        "0/5": 4.1613554007174797e-166,
+        "0/6": 5.090613268540506e-121,
+        "4/0": 2.3047710735365792e-167,
+        "4/4": 1.2349251378608417e-165,
+        "4/5": 5.320763165411856e-164,
+        "4/6": 3.659636158502086e-28,
+        "5/0": 2.3627196033854993e-165,
+        "5/4": 1.2659746841842001e-163,
+        "5/5": 8.180311734270971e-28,
+        "6/0": 3.540940013261654e-49,
+        "6/4": 0.9999999999999939
+      },
+      "world_outcomes": {
+        "A": 0.5315764115771452,
+        "B": 0.14664176871093662,
+        "both": 0.03186448128906231,
+        "neither": 0.2899173384228498
+      }
+    },
+    {
+      "population": 400,
+      "n_A": 280,
+      "n_B": 120,
+      "scenario": "equal_ordinary_attendance75",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 0.75,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.35,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 1.1334105037424634e-71,
+        "0/4": 1.9060757405846275e-70,
+        "0/5": 2.6532574308938014e-69,
+        "0/6": 5.589181801851098e-52,
+        "4/0": 4.625134988542371e-70,
+        "4/4": 7.778168253673546e-69,
+        "4/5": 1.0827210209113575e-67,
+        "4/6": 9.77016525596898e-11,
+        "5/0": 1.5318447082052332e-68,
+        "5/4": 2.576129325616679e-67,
+        "5/5": 9.877330623009233e-11,
+        "6/0": 2.0278648001163327e-20,
+        "6/4": 0.9999999998035217
+      },
+      "world_outcomes": {
+        "A": 0.11566181374066059,
+        "B": 0.01478106247443924,
+        "both": 0.00022518753921285867,
+        "neither": 0.8693319362456841
+      }
+    },
+    {
+      "population": 400,
+      "n_A": 280,
+      "n_B": 120,
+      "scenario": "equal_ordinary_attendance75",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 0.75,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.5,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 1.1334105037424634e-71,
+        "0/4": 1.9060757405846275e-70,
+        "0/5": 2.6532574308938014e-69,
+        "0/6": 5.589181801851098e-52,
+        "4/0": 4.625134988542371e-70,
+        "4/4": 7.778168253673546e-69,
+        "4/5": 1.0827210209113575e-67,
+        "4/6": 9.77016525596898e-11,
+        "5/0": 1.5318447082052332e-68,
+        "5/4": 2.576129325616679e-67,
+        "5/5": 9.877330623009233e-11,
+        "6/0": 2.0278648001163327e-20,
+        "6/4": 0.9999999998035217
+      },
+      "world_outcomes": {
+        "A": 0.3222656249582257,
+        "B": 0.05859375003579265,
+        "both": 0.00390625000154332,
+        "neither": 0.615234375004435
+      }
+    },
+    {
+      "population": 400,
+      "n_A": 280,
+      "n_B": 120,
+      "scenario": "equal_ordinary_attendance75",
+      "public_p_A": 0.5,
+      "public_p_B": 0.5,
+      "public_attendance": 0.75,
+      "points_per_win": [
+        1,
+        1
+      ],
+      "conditional_core_win_probability_both": 0.65,
+      "supplies": "both already meet requirement (assumed)",
+      "core_attendance": "all assigned candidates start (assumed)",
+      "opportunity_distribution": {
+        "0/0": 1.1334105037424634e-71,
+        "0/4": 1.9060757405846275e-70,
+        "0/5": 2.6532574308938014e-69,
+        "0/6": 5.589181801851098e-52,
+        "4/0": 4.625134988542371e-70,
+        "4/4": 7.778168253673546e-69,
+        "4/5": 1.0827210209113575e-67,
+        "4/6": 9.77016525596898e-11,
+        "5/0": 1.5318447082052332e-68,
+        "5/4": 2.576129325616679e-67,
+        "5/5": 9.877330623009233e-11,
+        "6/0": 2.0278648001163327e-20,
+        "6/4": 0.9999999998035217
+      },
+      "world_outcomes": {
+        "A": 0.5315764115156258,
+        "B": 0.14664176876265494,
+        "both": 0.03186448129523122,
+        "neither": 0.2899173384264847
+      }
+    }
+  ],
+  "source_sha256": {
+    "tools/economy-agent-sim/audit_campaign_pipeline.py": "1428e1c2271daf5054582a2cd5476a903bf57cff5ef433010c6bb3cda0c7dadf",
+    "tools/economy-agent-sim/campaign_participation.py": "638604924b8302b914a8613f7d32e4cca3afb635621c9b904585c5f3ee500615",
+    "tools/economy-agent-sim/campaign_core_race.py": "482dd59fa949af68ee7b0cb8b3cb0dc4dde3bed114379663c8e43087614cff2f"
+  }
+}

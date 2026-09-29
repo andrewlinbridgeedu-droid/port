@@ -90,3 +90,14 @@ tools/gorest/
 /ArtSource/TranscriptionScribe20260916
 /ArtSource/WisteriaMap3D
 /UnityBattleSource/Library
+
+# Large source art, generated textures and walkthrough captures stay local/SSD.
+# Runtime copies live in mistport-ios/Mistport/Assets.xcassets and are tracked.
+/ArtSource/CityDayNight20260926/
+/ArtSource/CityDayNight20260927-new/
+/ArtSource/CityDayNight20260927-seasons/
+/ArtSource/Saltport20260928/
+/ArtSource/WorkshopUI20260928/
+tools/city-daynight/textures/out/
+docs/development/**/*.png
+docs/development/economy-agent-sim-20260926/**/trades.jsonl.gz
