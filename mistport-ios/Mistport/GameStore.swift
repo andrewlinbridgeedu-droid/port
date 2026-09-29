@@ -790,6 +790,8 @@ final class GameStore {
         storage.set(try! JSONEncoder().encode(MPCChurchTowerProgress(clearedFloors: [1, 2, 3, 4])),
                     forKey: "mistport.church-tower.progress.v1")
         assert(reopened.towerFloorIsOpenToday(4) && !reopened.towerFloorIsOpenToday(5) && reopened.towerPacingLockText != nil)
+        assert((try? reopened.churchTowerSession(floor: 5)) == nil)
+        assert((try? reopened.churchTowerSession(floor: 4)) != nil)
         old.set((1...17).map { "old-clock-\($0)" }, forKey: PersistenceKey.completedChapterMissionIDs)
         let migrated = GameStore(launchArguments: [], defaults: old)
         assert(migrated.dailyPacingStart?.origin == .migrated && migrated.missionIsAvailable(all[17]))
@@ -799,6 +801,19 @@ final class GameStore {
         migrated.restart()
         assert(migrated.dailyPacingStart?.origin == .newSave && migrated.pacingDay == 1)
         NSLog("DAILY_PACING_VERIFY_PASS: new save day 1, Q4 tomorrow, replay open, next day, reopen, tower 4/day, migration once, restart")
+    }
+
+    /// Explicit DEBUG walk only. Never seed or reset either player-owned suite.
+    static func dailyPacingDeviceWalkDefaults() -> UserDefaults {
+        let suite = "mistport.daily-pacing-device-walk.v1"
+        let storage = UserDefaults(suiteName: suite)!
+        storage.removePersistentDomain(forName: suite)
+        let seed = GameStore(launchArguments: [], defaults: storage)
+        seed.debugJumpToOldClockMission(4, enterImmediately: false)
+        storage.set(try! JSONEncoder().encode(MPCChurchTowerProgress(clearedFloors: [1, 2, 3, 4])),
+                    forKey: "mistport.church-tower.progress.v1")
+        seed.debugSetPacingDay(1)
+        return storage
     }
 
     private static func verifyEncoreBellMigration() {

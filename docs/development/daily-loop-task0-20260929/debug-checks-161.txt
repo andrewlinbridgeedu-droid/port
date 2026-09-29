@@ -1,0 +1,5 @@
+2026-09-29 01:53:46.546 Mistport[25312:811430] BOUNTY_DAILY_RISK_VERIFY_PASS: no mission gate, daily issue, copper-only loss, relic kept, reload, no double charge, evidence retained
+2026-09-29 01:53:46.570 Mistport[25312:811430] CHURCH_TOWER_VERIFY_PASS: unlock, defeat rejection, first clear, duplicate, restore, mismatched battle, journal recovery
+2026-09-29 01:53:46.591 Mistport[25312:811430] PLAYER_GROWTH_VERIFY_PASS: locked card, debit, no funds, restore, battle level, Q30 release boundary, interrupted upgrade, reset
+2026-09-29 01:53:46.614 Mistport[25312:811430] DAILY_PACING_VERIFY_PASS: new save day 1, Q4 tomorrow, replay open, next day, reopen, tower 4/day, migration once, restart
+P0_VERIFY_PASS: commit, duplicate, interruption recovery, acknowledge, replay, auto-exit

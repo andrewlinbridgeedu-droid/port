@@ -1,5 +1,9 @@
 # 交接：墙关调数、按天推进与每日玩法 · 2026-09-29（第四轮）
 
+## Mac 最新验证（2026-09-29）
+
+每日玩法任务 0 已完成编译、自检及存档差异核对，Build 161 已装 iPhone 13；516 个规则测试及五组 DEBUG 自检通过。修正深井地图层号未按每日额度变灰的问题。详情、截图、真实旧档通缉迁移的额外变化和待用户验收项见 [任务 0 记录](daily-loop-task0-20260929/README.md)。以下云端“未编译”记录保留为历史，不代表当前构建状态。
+
 接手前按顺序读：本页 → [每日玩法第二阶段记录](daily-content-phase2-20260929/README.md) → [第一阶段记录](workshop-phase1-20260929/README.md) → [每日玩法与经济设计](../../mistport-ios/docs/game-design/chapter-one-30/DAILY_LOOP_AND_ECONOMY_20260929.md) → [按天推进报告](progression-sim-20260929-daily-pacing/README.md) → [第二轮调数报告](progression-sim-20260929-tower-check/README.md) → [第一轮调数报告](progression-sim-20260929/README.md) → [HANDOFF_PROGRESSION_UI_20260928.md](HANDOFF_PROGRESSION_UI_20260928.md) → [HANDOFF_M0_20260928.md](HANDOFF_M0_20260928.md)。回复用户用中文。
 
 ## 仓库与分支
