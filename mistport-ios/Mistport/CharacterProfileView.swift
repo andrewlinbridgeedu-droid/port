@@ -370,6 +370,7 @@ struct CharacterProfileView: View {
     private var weaponPanel: some View {
         let owned = MPCChapterOneCatalog.relics.filter { MPCChapterOneCatalog.isRelicEnabled($0.id) && game.chapterOneCampaign.ownedRelicIDs.contains($0.id) }
         return VStack(spacing: 10) {
+            WorkshopGearCareSection(game: game)
             if owned.isEmpty {
                 Text("尚未获得遗落物")
                     .font(.headline).foregroundStyle(.primary)

@@ -1,0 +1,33 @@
+{
+  "beforeFiles": 103,
+  "afterFiles": 114,
+  "playerByteIdentical": false,
+  "addedPlayerKeys": [
+    "mistport.daily-workshop.v1"
+  ],
+  "changedOrRemovedPlayerKeys": [],
+  "changedOrRemovedOtherFiles": [
+    "mistport.daily-pacing-device-walk.v1.plist",
+    "mistport.local-workshop-verification-shell.plist",
+    "mistport.player-test-01-15.audit.plist"
+  ],
+  "allowedTestSuiteChanges": [
+    "mistport.daily-pacing-device-walk.v1.plist",
+    "mistport.local-workshop-verification-shell.plist",
+    "mistport.player-test-01-15.audit.plist"
+  ],
+  "newFiles": [
+    "mistport.bounty-daily-risk-check.B5E540A3-2FC3-437E-BA76-7104B6341CA1.plist",
+    "mistport.church-tower-check.383F9637-198F-4DA5-84CC-6A4C64AEF065.plist",
+    "mistport.daily-pacing.75A4D84B-7EAD-442D-819A-D800525583BA.old.plist",
+    "mistport.daily-pacing.75A4D84B-7EAD-442D-819A-D800525583BA.plist",
+    "mistport.daily-work-check.066E8398-3685-4A9B-8388-5D74F1377A00.plist",
+    "mistport.daily-workshop-check.845CF921-E618-4AC1-9BBE-FA55875DD73F.plist",
+    "mistport.local-workshop-check.E104C392-F2DB-4462-BBCF-EC01926E71D4.first-clear.plist",
+    "mistport.local-workshop-check.E104C392-F2DB-4462-BBCF-EC01926E71D4.plist",
+    "mistport.p0-verification.209453F6-FA17-411A-B00F-81D09C9638AC.plist",
+    "mistport.player-growth-check.A06F3BAC-09C1-4D1A-9402-BA65E142D94A.gap.plist",
+    "mistport.player-growth-check.A06F3BAC-09C1-4D1A-9402-BA65E142D94A.plist"
+  ],
+  "passed": true
+}

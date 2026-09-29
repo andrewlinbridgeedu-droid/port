@@ -8169,7 +8169,7 @@ struct ChurchGearArmoryView: View {
                             ChurchGearEquippedCard(slot: .weapon, item: weapon)
                             ChurchGearEquippedCard(slot: .armor, item: armor)
                         }
-                        Text("武器、护甲各穿一件。新获得更强装备会自动穿上；旧装备可随时换回。")
+                        Text("武器、护甲各穿一件。深井新装备更强时会自动穿上；工坊装备需手动穿戴，并定期修理。")
                             .font(.caption)
                             .foregroundStyle(.white.opacity(0.73))
                             .fixedSize(horizontal: false, vertical: true)
@@ -8225,6 +8225,8 @@ struct ChurchGearArmoryView: View {
                     }
                     .padding(.horizontal, 20)
 
+                    WorkshopGearCareSection(game: game)
+                        .padding(.horizontal, 20)
                     BountyRelicSlotSection(game: game)
                         .padding(.horizontal, 20)
                 }

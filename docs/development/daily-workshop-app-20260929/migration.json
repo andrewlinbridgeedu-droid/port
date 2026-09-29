@@ -1,0 +1,13 @@
+{
+  "beforeFiles": 103,
+  "afterFiles": 103,
+  "playerByteIdentical": false,
+  "addedPlayerKeys": [
+    "mistport.daily-workshop.v1"
+  ],
+  "changedOrRemovedPlayerKeys": [],
+  "changedOrRemovedOtherFiles": [],
+  "allowedTestSuiteChanges": [],
+  "newFiles": [],
+  "passed": true
+}
