@@ -3,6 +3,19 @@ import Testing
 
 /// Core campaign plus a paid shop ledger; no native UI or device-play claim.
 enum EarnedChapterAuditFixture {
+    /// Tower gear for every floor the walls up to `q` name.
+    static func wallGear(beforeOrAt q: Int) -> MPCChurchGearStats {
+        let floor = MPCProgressionWalls.walls.filter { $0.mission <= q }.compactMap(\.towerFloor).max() ?? 0
+        var ledger = MPCChurchGearLedger()
+        if floor > 0 { for f in 1...floor { if let drop = MPCChurchGearCatalog.towerDrop(floor: f) { ledger.grant(drop.id) } } }
+        return ledger.stats
+    }
+
+    /// The bounty relic a mechanism wall at `q` asks for, if any.
+    static func wallRelic(_ q: Int) -> String? {
+        MPCProgressionWalls.wall(mission: q)?.caseID.flatMap { MPCBountyRelicCatalog.relic(forCase: $0)?.id }
+    }
+
     static func run(through last: Int) throws -> MPCChapterOneCampaignState {
         var campaign = MPCChapterOneCampaignState.chapterStartState
         var wallet = 180 // Native new-save starting copper.
@@ -35,6 +48,9 @@ enum EarnedChapterAuditFixture {
             try #require(cards.count <= campaign.loadoutSlotCapacity)
             try #require(cards.allSatisfy { campaign.unlockedSkillIDs.contains($0) || mission.trialSkillID == $0 })
             base.talents = .restored((0...5).map { "trickery.\($0)" } + (0...5).map { "omen.\($0)" }, budget: campaign.chapterTalentPointsEarned)
+            // Story walls (2026-09-28) ask for side content: the tower floors and bounty relic they name.
+            base.churchGear = wallGear(beforeOrAt: q)
+            base.bountyRelicID = wallRelic(q)
             let passives = q < 5 ? [""] : [MPCChapterOneCatalog.saltSealedBreathingBagRelicID, MPCChapterOneCatalog.returnGiftClaspRelicID]
             var winner: NewMaskBalanceSimulator.Report?
             for passive in passives where winner == nil {

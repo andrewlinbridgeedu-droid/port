@@ -103,3 +103,45 @@ enum WallProbe {
         return out
     }
 }
+
+/// Tuning only: `WALLS="q8LeechHP=2000,q12FortifyStackPercent=30"` overrides MPCProgressionWalls.
+enum WallTuning {
+    static func apply(_ text: String?) {
+        guard let text, !text.isEmpty else { return }
+        for pair in text.split(separator: ",") {
+            let kv = pair.split(separator: "="); guard kv.count == 2, let v = Int(kv[1]) else { continue }
+            typealias W = MPCProgressionWalls
+            switch kv[0] {
+            case "q8LeechHP": W.q8LeechHP = v
+            case "q8LeechAttack": W.q8LeechAttack = v
+            case "q8ParasiteDamage": W.q8ParasiteDamage = v
+            case "q8DevourStart": W.q8DevourPercent.start = v
+            case "q8DevourStep": W.q8DevourPercent.step = v
+            case "q8DevourMax": W.q8DevourPercent.max = v
+            case "q12PuppetHP": W.q12PuppetHP = v
+            case "q12PuppetAttack": W.q12PuppetAttack = v
+            case "q12FortifyStackPercent": W.q12FortifyStackPercent = v
+            case "q12FortifyMaxPercent": W.q12FortifyMaxPercent = v
+            case "q17Fail": W.verificationFailPercent[17] = v
+            case "q22Fail": W.verificationFailPercent[22] = v
+            case "q22Hits": W.verificationHitsRequired[22] = v
+            case "q22FailHP": W.q22FailedBlowHealthPercent = v
+            case "q17Hits": W.verificationHitsRequired[17] = v
+            case "reverseSealFail": W.reverseSealFailPercent = v
+            case "q18AdjudicatorHP": W.q18AdjudicatorHP = v
+            case "q18AdjudicatorAttack": W.q18AdjudicatorAttack = v
+            case "q18ChargePercent": W.q18ChargePercent = v
+            case "q22ClockmakerHP": W.q22ClockmakerHP = v
+            case "q26ConvoyHP": W.q26ConvoyHP = v
+            case "q26ConvoyAttack": W.q26ConvoyAttack = v
+            case "q26SlamPercent": W.q26SlamPercent = v
+            case "q30SovereignHP": W.q30SovereignHP = v
+            case "q30EnragePercent": W.q30EnragePercent = v
+            case "q30EnragedHP": W.q30EnragedBlowHealthPercent = v
+            case "q30EnrageBelow": W.q30EnrageBelowPercent = v
+            case "lifeLedgerHeal": W.lifeLedgerCycleHealPercent = v
+            default: print("unknown wall knob \(kv[0])")
+            }
+        }
+    }
+}

@@ -3,7 +3,25 @@ import MistportCombatCore
 
 // Usage: swift run -c release ProgressionSim <output-dir> [start-offsets comma separated]
 //        swift run -c release ProgressionSim walls <output-dir> [missions comma separated] [profiles comma separated]
+WallTuning.apply(ProcessInfo.processInfo.environment["WALLS"])
 var arguments = CommandLine.arguments
+if arguments.count > 5 && arguments[1] == "fight" {
+    // fight <mission> <profile> <floor> <bounty relic id or -> : every shop relic, medal time and salve choice.
+    let q = Int(arguments[2])!, profile = Profile.all.first { $0.name == arguments[3] }!, floor = Int(arguments[4])!
+    let relic = arguments[5] == "-" ? nil : arguments[5]
+    let owned = Shop.passives.filter { q - 1 >= $0.unlock }.map { Optional($0.id) }
+    for (n, sequence) in cards(forMission: q).enumerated() {
+        for passive in q >= 5 && !owned.isEmpty ? owned : [nil] {
+            for offset in q >= 5 ? [6.0, 14.0] as [Double?] : [nil] {
+                for salve in [false, true] {
+                    let f = WallProbe.fight(q, profile, floor: floor, relic: relic, passive: passive, sequence: sequence, offset: offset, salve: salve)
+                    print("cards#\(n) \((passive ?? "-").padding(toLength: 34, withPad: " ", startingAt: 0)) medal \(offset.map { String(Int($0)) } ?? "-") salve \(salve ? "y" : "n")  \(f.won ? "WIN " : "lose") hp \(f.hpPercent)% \(Int(f.seconds))s")
+                }
+            }
+        }
+    }
+    exit(0)
+}
 if arguments.count > 1 && arguments[1] == "walls" {
     arguments.remove(at: 1)
     let destination = URL(fileURLWithPath: arguments.count > 1 ? arguments[1] : FileManager.default.currentDirectoryPath)

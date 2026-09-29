@@ -39,9 +39,16 @@ struct BountyRelicTests {
             var s = try session(22, relic: relic)
             let clockmaker = s.enemies.first { $0.contentID == "enemy_hollow_clockmaker" }!
             #expect(clockmaker.currentIntent == "calibration")
-            _ = try s.useBasicAction(.damage, targetID: clockmaker.id)
+            // Three hits: short of the five the Q22 wall asks for, unless each counts twice.
+            for _ in 0..<3 { _ = try s.useBasicAction(.damage, targetID: clockmaker.id) }
             try act(&s, clockmaker.id, at: 4.2)
             #expect(s.chapterVerificationFailed == (relic == nil))
+            #expect(s.enemies.first { $0.id == clockmaker.id }!.currentIntent == "strike")
+            let hp = s.playerHP
+            try act(&s, clockmaker.id, at: 5.2)
+            // Without the seal the failed blow takes a share of health that no gear outgrows.
+            if relic == nil { #expect(s.playerHP <= max(0, hp - s.playerBaseMaxHP * MPCProgressionWalls.q22FailedBlowHealthPercent / 100 + s.playerMaxHP / 2)) }
+            else { #expect(hp - s.playerHP < s.playerBaseMaxHP / 4) }
         }
     }
 
@@ -65,15 +72,21 @@ struct BountyRelicTests {
         for relic in [nil, MPCBountyRelicCatalog.lifeLedger] {
             var s = try session(30, relic: relic)
             let boss = s.enemies.first { $0.contentID == "boss_chronarch_sovereign" }!
-            while let hp = s.enemies.first(where: { $0.id == boss.id })?.hp, hp * 3 >= boss.maxHP {
+            while let hp = s.enemies.first(where: { $0.id == boss.id })?.hp,
+                  hp * 100 >= boss.maxHP * MPCProgressionWalls.q30EnrageBelowPercent {
                 _ = try s.useBasicAction(.damage, targetID: boss.id)
             }
             let hp = s.playerHP
             try act(&s, boss.id, at: 2)
             taken.append(hp - s.playerHP)
+            guard relic != nil else {
+                // Enraged blows take a share of health, not of the boss's attack.
+                #expect(taken[0] >= s.playerBaseMaxHP * MPCProgressionWalls.q30EnragedBlowHealthPercent / 100 * 3 / 4)
+                continue
+            }
             for step in 1...3 { try act(&s, boss.id, at: 2 + Double(step) * 3) }
             #expect(s.completedBossCycles == 1)
-            #expect(s.triggeredEffects.contains { $0.hasPrefix("绯月寿账签") } == (relic != nil))
+            #expect(s.triggeredEffects.contains { $0.hasPrefix("绯月寿账签") })
         }
         #expect(taken[0] > taken[1])
     }

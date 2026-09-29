@@ -18,7 +18,7 @@ public enum MPCBountyRelicCatalog {
 
     public static let all: [Relic] = [
         .init(id: brokenSword, caseID: "b01", name: "七号缺齿剑",
-              detail: "命中处于强化或守势的敌人时，打破它这次的强化，这一击也不受守势减伤。每个敌人8秒一次。", hasEffect: true),
+              detail: "命中处于强化或守势的敌人时，打破它身上全部强化，这一击也不受守势减伤。每个敌人8秒一次。", hasEffect: true),
         .init(id: "bounty_relic_b02_backframe", caseID: "b02", name: "收尸人外锁架", detail: "克制记忆节点的修复。效果随后开放。", hasEffect: false),
         .init(id: "bounty_relic_b03_tide_anchor", caseID: "b03", name: "溺钟潮锚", detail: "克制记忆吐息的持续伤害。效果随后开放。", hasEffect: false),
         .init(id: reverseSeal, caseID: "b04", name: "伪造者倒签笔",
@@ -70,18 +70,45 @@ public struct MPCBountyRelicLedger: Codable, Equatable, Sendable {
 
 /// Story hard walls agreed 2026-09-28 (PROGRESSION_WALLS_AND_BOUNTY_RELICS_20260928.md).
 /// Values are tuned with tools/progression-sim; change them here, not at call sites.
+/// They are `var` only so the simulator can sweep them (`WALLS=` in tools/progression-sim);
+/// the game never writes them.
 public enum MPCProgressionWalls {
-    /// Q12: while a puppet is fortified, all damage it takes is reduced by this percentage.
-    public static let q12FortifyReductionPercent = 0
+    // Wall enemies. Each value applies only in its own mission.
+    nonisolated(unsafe) public static var q8LeechHP = 1900
+    nonisolated(unsafe) public static var q8LeechAttack = 100
+    nonisolated(unsafe) public static var q8ParasiteDamage = 110
+    /// Name devour hits for start% of base health, +step% each time, up to max%.
+    nonisolated(unsafe) public static var q8DevourPercent = (start: 45, step: 10, max: 85)
+    nonisolated(unsafe) public static var q12PuppetHP = 1200
+    nonisolated(unsafe) public static var q12PuppetAttack = 60
+    /// Q12: every fortify leaves a stack that does not fade; each cuts all damage the
+    /// puppet takes by this percentage, up to the cap. The broken sword clears them.
+    nonisolated(unsafe) public static var q12FortifyStackPercent = 50
+    nonisolated(unsafe) public static var q12FortifyMaxPercent = 90
+    nonisolated(unsafe) public static var q18AdjudicatorHP = 2400
+    nonisolated(unsafe) public static var q18AdjudicatorAttack = 112
+    /// Q18 thirteenth blow and Q26 slam, percent of attack.
+    nonisolated(unsafe) public static var q18ChargePercent = 200
+    nonisolated(unsafe) public static var q22ClockmakerHP = 3500
+    /// Q22: a failed verification without the reverse seal hits for this share of base health.
+    nonisolated(unsafe) public static var q22FailedBlowHealthPercent = 110
+    nonisolated(unsafe) public static var q26ConvoyHP = 3200
+    nonisolated(unsafe) public static var q26ConvoyAttack = 120
+    nonisolated(unsafe) public static var q26SlamPercent = 200
+    nonisolated(unsafe) public static var q30SovereignHP = 5200
+    /// Q30: the sovereign enrages below this share of its health.
+    nonisolated(unsafe) public static var q30EnrageBelowPercent = 67
+    /// Q30: while enraged (below a third), each blow takes at least this share of base health.
+    nonisolated(unsafe) public static var q30EnragedBlowHealthPercent = 70
     /// Q17/Q22: hits needed while the enemy calibrates, and the failed blow's multiplier.
-    public static let verificationHitsRequired = 2
-    public static let verificationFailPercent: [Int: Int] = [17: 180, 22: 160]
+    nonisolated(unsafe) public static var verificationHitsRequired: [Int: Int] = [17: 2, 22: 5]
+    nonisolated(unsafe) public static var verificationFailPercent: [Int: Int] = [17: 180, 22: 160]
     /// The reverse seal's cap on a failed-verification blow.
-    public static let reverseSealFailPercent = 120
+    nonisolated(unsafe) public static var reverseSealFailPercent = 120
     /// Q30: the sovereign's damage below a third of its health.
-    public static let q30EnragePercent = 125
+    nonisolated(unsafe) public static var q30EnragePercent = 125
     /// The life ledger heals this share of entry health per completed boss cycle.
-    public static let lifeLedgerCycleHealPercent = 5
+    nonisolated(unsafe) public static var lifeLedgerCycleHealPercent = 5
     /// Broken-sword cooldown per enemy, in seconds.
     public static let brokenSwordCooldown: TimeInterval = 8
 
@@ -96,11 +123,11 @@ public enum MPCProgressionWalls {
     }
     public static let walls: [Wall] = [
         .init(mission: 8, towerFloor: 10, caseID: nil, cause: "吞名一次比一次痛，拖得越久越难撑。"),
-        .init(mission: 12, towerFloor: nil, caseID: "b01", cause: "校准人偶强化后几乎打不动。"),
+        .init(mission: 12, towerFloor: nil, caseID: "b01", cause: "校准人偶的强化层层叠加，越打越打不动。"),
         .init(mission: 18, towerFloor: 50, caseID: nil, cause: "裁定者的第十三击太重。"),
         .init(mission: 22, towerFloor: nil, caseID: "b04", cause: "钟匠校准时命中不够，校验失败的重击扛不住。"),
         .init(mission: 26, towerFloor: 70, caseID: nil, cause: "押运车太硬，猛砸太重。"),
-        .init(mission: 30, towerFloor: 90, caseID: "b10", cause: "总签官低血后狂暴，伤害太高。"),
+        .init(mission: 30, towerFloor: 90, caseID: "b10", cause: "总签官掉到三分之二血后狂暴，每一击都按你的生命算。"),
     ]
     public static func wall(mission: Int) -> Wall? { walls.first { $0.mission == mission } }
 

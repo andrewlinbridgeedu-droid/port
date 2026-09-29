@@ -1097,6 +1097,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     private var returnGiftClaspDebtorID: String?
     private var relicClock: TimeInterval = 0
     private var brokenSwordReadyAt: [String: TimeInterval] = [:]
+    /// Q12 wall: fortify stacks per puppet (MPCProgressionWalls.q12FortifyStackPercent).
+    public private(set) var q12FortifyStacks: [String: Int] = [:]
     public var returnGiftClaspIsReady: Bool {
         relicClock >= returnGiftClaspReadyAt && (returnGiftClaspDebtorID == nil ||
             !enemies.contains { $0.id == returnGiftClaspDebtorID && $0.isAlive && enemyGiftShields[$0.id, default: 0] > 0 })
@@ -1839,9 +1841,11 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         let defenseIntents = ["guard", "fortify", "calibrate", "架起防御"]
         var brokeDefense = false
         if !resolvingDeferredDamage, loadout.bountyRelicID == MPCBountyRelicCatalog.brokenSword,
-           enemyDefenseBoosts[enemyID] != nil || defenseIntents.contains(enemies[index].currentIntent),
+           enemyDefenseBoosts[enemyID] != nil || q12FortifyStacks[enemyID, default: 0] > 0
+            || defenseIntents.contains(enemies[index].currentIntent),
            relicClock >= brokenSwordReadyAt[enemyID, default: 0] {
             brokenSwordReadyAt[enemyID] = relicClock + MPCProgressionWalls.brokenSwordCooldown
+            q12FortifyStacks.removeValue(forKey: enemyID)
             if enemyDefenseBoosts.removeValue(forKey: enemyID) != nil { foolStates[enemyID]?.targetDefense = enemies[index].defense }
             brokeDefense = true
             triggeredEffects.append("七号缺齿剑：打破防御")
@@ -1863,8 +1867,9 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
            (isBasicAttack || FoolSkillID(rawValue: activeDamageSource) != nil) {
             finalDamage = finalDamage * (10_000 + loadout.churchGear.attackBP + loadout.outfitBonus.attackBP) / 10_000
         }
-        if !resolvingDeferredDamage, chapterMissionNumber == 12, enemyDefenseBoosts[enemyID] != nil {
-            finalDamage = finalDamage * (100 - MPCProgressionWalls.q12FortifyReductionPercent) / 100
+        if !resolvingDeferredDamage, chapterMissionNumber == 12, let stacks = q12FortifyStacks[enemyID], stacks > 0 {
+            let cut = min(MPCProgressionWalls.q12FortifyMaxPercent, stacks * MPCProgressionWalls.q12FortifyStackPercent)
+            finalDamage = finalDamage * (100 - cut) / 100
         }
         if !resolvingDeferredDamage, (enemies[index].contentID == "bounty_b06_dark_hold_captain" || MPCChurchTowerCatalog.isShieldJaw(enemies[index].contentID) || enemies[index].contentID == "enemy_archive_gatekeeper"), enemies[index].currentIntent == "recover" {
             finalDamage = finalDamage * 175 / 100
@@ -2183,7 +2188,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 if [28,29].contains(chapterMissionNumber), completedBossCycles >= 5 { enemies[index].hasDeparted = true }
             }
             if [17,22].contains(chapterMissionNumber), intent == "calibration" {
-                chapterVerificationFailed = chapterVerificationHits < MPCProgressionWalls.verificationHitsRequired
+                chapterVerificationFailed = chapterVerificationHits < MPCProgressionWalls.verificationHitsRequired[chapterMissionNumber, default: 2]
                 chapterVerificationHits = 0
             }
             if chapterMissionNumber == 19, intent == "recover" {
@@ -2334,31 +2339,35 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             case "chapter01_q04_encounter": 2200
             case "chapter01_q06_encounter": 1500
             case "chapter01_q07_encounter": 650
-            case "chapter01_q08_encounter": 1600
+            case "chapter01_q08_encounter": MPCProgressionWalls.q8LeechHP
             case "chapter01_q09_encounter": contentID == "enemy_memory_leech_node" ? 850 : 1300
             case "chapter01_q10_encounter": contentID == "enemy_clockwork_hound" ? 1050 : 1200
             case "chapter01_q11_encounter": contentID == "enemy_memory_leech" ? 1050 : 900
-            case "chapter01_q12_encounter": 1350
+            case "chapter01_q12_encounter": MPCProgressionWalls.q12PuppetHP
+            case "chapter01_q18_encounter": MPCProgressionWalls.q18AdjudicatorHP
             case "chapter01_q13_encounter": contentID == "enemy_memory_leech_node" ? 750 : 1800
             case "chapter01_q14_encounter": contentID == "enemy_memory_leech" ? 1200 : 1600
             case "chapter01_q15_encounter": contentID == "enemy_memory_leech_node" ? 700 : 1800
             case "chapter01_q16_encounter": 2100
             case "chapter01_q21_encounter": contentID == "enemy_memory_leech_node" ? 850 : 2200
-            case "chapter01_q22_encounter": 2500
+            case "chapter01_q22_encounter": MPCProgressionWalls.q22ClockmakerHP
+            case "chapter01_q26_encounter": contentID == "enemy_archive_convoy" ? MPCProgressionWalls.q26ConvoyHP : content.maxHP
             case "chapter01_q24_encounter": contentID == "enemy_clockwork_hound" ? 2000 : 900
             case "chapter01_q27_encounter": contentID == "enemy_archive_gatekeeper" ? 2200 : 1800
             case "chapter01_q29_encounter": contentID == "boss_chronarch_sovereign" ? content.maxHP : contentID == "enemy_codex_executor" ? 1800 : 900
-            case "chapter01_q30_encounter": contentID == "boss_chronarch_sovereign" ? 4000 : content.maxHP
+            case "chapter01_q30_encounter": contentID == "boss_chronarch_sovereign" ? MPCProgressionWalls.q30SovereignHP : content.maxHP
             default: content.maxHP
             }
             let localAttack: Int = switch encounter.id {
             case "chapter01_q06_encounter": 200
             case "chapter01_q07_encounter": contentID == "enemy_memory_leech_node" ? 70 : 65
-            case "chapter01_q08_encounter": 100
+            case "chapter01_q08_encounter": MPCProgressionWalls.q8LeechAttack
             case "chapter01_q09_encounter": contentID == "enemy_memory_leech_node" ? 100 : 120
             case "chapter01_q10_encounter": contentID == "enemy_clockwork_hound" ? 88 : 105
             case "chapter01_q11_encounter": contentID == "enemy_memory_leech" ? 76 : 100
-            case "chapter01_q12_encounter": 100
+            case "chapter01_q12_encounter": MPCProgressionWalls.q12PuppetAttack
+            case "chapter01_q18_encounter": MPCProgressionWalls.q18AdjudicatorAttack
+            case "chapter01_q26_encounter": contentID == "enemy_archive_convoy" ? MPCProgressionWalls.q26ConvoyAttack : content.attack
             case "chapter01_q13_encounter": contentID == "enemy_memory_leech_node" ? 100 : 130
             case "chapter01_q14_encounter": contentID == "enemy_memory_leech" ? 90 : 115
             case "chapter01_q15_encounter": contentID == "enemy_memory_leech_node" ? 90 : 120
@@ -2679,9 +2688,10 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             enemies[index].hp += restored
             return .init(damage: 0, missedBossMechanic: false, healedTargetID: enemies[index].id, healing: restored)
         }
-        if encounter.id == "chapter01_q08_encounter", intent == "parasite" { return .attack(110) }
+        if encounter.id == "chapter01_q08_encounter", intent == "parasite" { return .attack(MPCProgressionWalls.q8ParasiteDamage) }
         if encounter.id == "chapter01_q08_encounter", intent == "name_devour" {
-            let damage = playerBaseMaxHP * (45 + min(nameDevourCount, 4) * 10) / 100
+            let devour = MPCProgressionWalls.q8DevourPercent
+            let damage = playerBaseMaxHP * min(devour.max, devour.start + nameDevourCount * devour.step) / 100
             nameDevourCount += 1
             return .attack(damage)
         }
@@ -2701,6 +2711,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
            ["enemy_calibration_puppet", "elite_clock_chaser"].contains(enemy.contentID),
            let index = enemies.firstIndex(where: { $0.id == enemy.id && $0.isAlive }) {
             applyEnemyDefenseBoost(to: index, bonusBP: 5_000)
+            if missionNumber == 12, MPCProgressionWalls.q12FortifyStackPercent > 0 { q12FortifyStacks[enemy.id, default: 0] += 1 }
             return .init(damage: 0, missedBossMechanic: false, defenseBoostBP: 5_000)
         }
         let attackPower = authoredAttackPower(for: enemy)
@@ -2851,7 +2862,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         case "enemy_archive_convoy": return chapterMissionNumber == 26 ? ["guard", "strike", "slam", "recover"] : ["guard", "slam", "calibration", "recover"]
         case "elite_clock_chaser": return ["fortify", "thirteenth_charge", "strike", "recover"]
         case "enemy_memory_leech_node": return ["repair_guard", "memory_strike"]
-        case "enemy_hollow_clockmaker" where [22,25].contains(chapterMissionNumber): return ["calibration", "strike", "memory_breath", "recover"]
+        case "enemy_hollow_clockmaker" where chapterMissionNumber == 22: return ["calibration", "strike", "memory_breath", "calibration", "strike", "recover"]
+        case "enemy_hollow_clockmaker" where chapterMissionNumber == 25: return ["calibration", "strike", "memory_breath", "recover"]
         case "enemy_emerald_revenant": return ["memory_breath", "charge", "emerald_burst", "recover"]
         case "enemy_clockwork_hound": return chapterMissionNumber == 16 ? ["memory_breath", "charge", "pounce", "recover"] : ["memory_breath", "pounce", "recover"]
         default: return fallback
@@ -2866,10 +2878,15 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
 
     private mutating func resolveChapterThirtyIntent(enemy: MPCRuntimeEnemy, intent: String) -> MPCResolvedEnemyIntent? {
         if enemy.contentID == "boss_chronarch_sovereign" {
-            let enraged = enemy.hp * 3 < enemy.maxHP && loadout.bountyRelicID != MPCBountyRelicCatalog.lifeLedger
+            let enraged = enemy.hp * 100 < enemy.maxHP * MPCProgressionWalls.q30EnrageBelowPercent
+                && loadout.bountyRelicID != MPCBountyRelicCatalog.lifeLedger
             let multiplier = chapterMissionNumber == 30 ? (enraged ? MPCProgressionWalls.q30EnragePercent : 100)
                 : chapterMissionNumber == 29 ? 65 : 100
             let base: Int = switch intent { case "strike": 65; case "thirteenth_charge": 85; case "slam": 110; default: 0 }
+            // Q30 wall: enraged blows take a share of the player's health, so gear cannot race past them.
+            if chapterMissionNumber == 30, enraged, base > 0, MPCProgressionWalls.q30EnragedBlowHealthPercent > 0 {
+                return .attack(max(base * multiplier / 100, playerBaseMaxHP * MPCProgressionWalls.q30EnragedBlowHealthPercent / 100))
+            }
             return .attack(base * multiplier / 100)
         }
         if enemy.contentID == "enemy_codex_executor", intent == "slam" {
@@ -2877,13 +2894,24 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         }
         if ["enemy_archive_adjudicator", "enemy_archive_convoy"].contains(enemy.contentID) {
             if intent == "memory_breath" { queueFiniteDamage(source: enemy.id, damage: 45); return .attack(0) }
-            if intent == "thirteenth_charge" || intent == "slam" { return .attack(enemy.attack * 2) }
+            if intent == "thirteenth_charge" || intent == "slam" {
+                let percent = chapterMissionNumber == 18 ? MPCProgressionWalls.q18ChargePercent
+                    : chapterMissionNumber == 26 ? MPCProgressionWalls.q26SlamPercent : 200
+                return .attack(enemy.attack * percent / 100)
+            }
             if ["guard", "calibration", "recover"].contains(intent) { return .attack(0) }
             return .attack(enemy.attack)
         }
         if [22,25].contains(chapterMissionNumber), enemy.contentID == "enemy_hollow_clockmaker" {
             if intent == "memory_breath" { queueFiniteDamage(source: enemy.id, damage: 40); return .attack(0) }
-            if intent == "strike" { return .attack(enemy.attack * verificationBlowPercent() / 100) }
+            if intent == "strike" {
+                // Q22 wall: a failed verification without the reverse seal hits for a share
+                // of the player's health, so armor and tower weapons cannot outpace it.
+                if chapterMissionNumber == 22, chapterVerificationFailed, loadout.bountyRelicID != MPCBountyRelicCatalog.reverseSeal {
+                    return .attack(playerBaseMaxHP * MPCProgressionWalls.q22FailedBlowHealthPercent / 100)
+                }
+                return .attack(enemy.attack * verificationBlowPercent() / 100)
+            }
             return .attack(0)
         }
         return nil

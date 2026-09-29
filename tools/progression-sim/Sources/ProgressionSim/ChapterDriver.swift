@@ -7,6 +7,7 @@ import MistportCombatCore
 /// Enemy callback delays use sampled Unity timing (30 fps); player contacts use
 /// the authored VFX contact constants. A 50 ms step is a model, not device input.
 enum ChapterDriver {
+    static let trace = ProcessInfo.processInfo.environment["TRACE"] != nil
     struct Report {
         let session: MPCChapterOneEncounterSession
         let seconds: Double
@@ -80,6 +81,7 @@ enum ChapterDriver {
                 pending[id] = nil
                 guard let e = s.enemies.first(where: { $0.id == id }) else { continue }
                 try s.endRound(actingEnemyID: id, at: now)
+                if trace { print(String(format: "%6.2f", now), e.currentIntent, "hp", s.playerHP, "hits", s.chapterVerificationHits, "failed", s.chapterVerificationFailed, "enemyHP", s.enemies.map(\.hp)) }
                 if q == 4 && e.currentIntent == "q4_flame_second" { cycle += 20 }
                 if q == 6 { ready[id] = now }
                 if let delay = s.authoredRecoveryDelay(after: e.currentIntent, enemyID: id) { ready[id] = now + delay }
