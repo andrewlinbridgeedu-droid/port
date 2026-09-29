@@ -168,6 +168,11 @@ struct DailyContentSummary: Codable {
     let storiesUnlocked: Int
     /// Errands offered on a day the run finished but not done that day, by errand ID.
     let missedErrands: [String]
+    /// City contribution at the end (MPCCityContributionLedger) and the day each tier was reached.
+    let contribution: Int
+    let contributionTierDays: [String: Int]
+    /// Contribution at the end of each day, day 1 first.
+    let contributionByDay: [Int]
 }
 
 struct WorkshopSummary: Codable {
@@ -218,6 +223,9 @@ final class Campaign {
     var neighbors = MPCNeighborLedger()
     var tickets = 0, errandsDone = 0, remnantsDone = 0
     var missedErrands: [String] = []
+    var contribution = MPCCityContributionLedger()
+    var contributionTierDays: [String: Int] = [:]
+    var contributionByDay: [Int] = []
     var usesDailyContent: Bool { usesWorkshop }
     var city: MPCCityEvent.Effects { events.effects(day: dayNumber) }
     var salvePrice: Int { Shop.salve + city.salveSurcharge }
@@ -303,11 +311,24 @@ final class Campaign {
 
     /// J0 seal checks until `target` copper, paid through the day's taper. A player stops
     /// once a job would pay only a tenth; if that leaves them short, they wait for tomorrow.
+    func contribute(_ receiptID: String, _ source: MPCCityContribution.Source) {
+        contribution.record(receiptID: receiptID, source: source, day: dayNumber)
+        while contributionByDay.count < dayNumber { contributionByDay.append(contributionByDay.last ?? 0) }
+        contributionByDay[dayNumber - 1] = contribution.points
+        let tier = contribution.tier
+        if contributionTierDays["\(tier.level)"] == nil {
+            for t in MPCCityContribution.tiers where t.level <= tier.level && contributionTierDays["\(t.level)"] == nil {
+                contributionTierDays["\(t.level)"] = dayNumber
+            }
+        }
+    }
+
     @discardableResult func postal(upTo target: Int) -> Bool {
         while copper < target && work.preview(day: dayNumber, copper: Shop.postalPay) * 2 >= Shop.postalPay {
             postalJobs += 1
             let pay = work.settle(receiptID: "postal-\(postalJobs)", day: dayNumber, copper: Shop.postalPay, merit: 0)
             copper += pay.copper; earned["postal", default: 0] += pay.copper
+            contribute("postal-\(postalJobs)", .post)
             busy("postal", model.map { total($0.postal) } ?? assumptions.postalSeconds)
         }
         if copper < target { copperShort = true }
@@ -440,7 +461,7 @@ final class Campaign {
             }
             busy("errand", model.map { total($0.errand(errand, asker: offer.neighborID)) }
                  ?? assumptions.errandSeconds + (errand.kind == .message ? assumptions.messageWalkSeconds : 0))
-            if let reward { errandsDone += 1; earned["errand", default: 0] += reward.copper }
+            if let reward { errandsDone += 1; earned["errand", default: 0] += reward.copper; contribute("errand-\(offer.id)", .errand) }
             if let m = model, let story = reward?.story { busy("errand", total([m.story(story)])) }
         }
         if let event = MPCCityEventCatalog.running(day: dayNumber) {
@@ -451,9 +472,11 @@ final class Campaign {
                 let ticket = "event-\(tickets)"
                 guard let id = try? events.beginBattle(ticket: ticket, eventID: event.id, day: dayNumber) else { break }
                 let fight = streetFight(id, kind: "event")
-                let before = copper
+                let before = copper, winsBefore = events.progress[event.id]?.wins ?? 0
                 _ = try? events.settleBattle(ticket: ticket, session: fight.session, day: dayNumber, coins: &copper)
                 earned["event", default: 0] += copper - before
+                if (events.progress[event.id]?.wins ?? 0) > winsBefore { contribute(ticket, .eventBattle) }
+                if events.status(event.id, day: dayNumber) == .succeeded { contribute("event-success-\(event.id)", .eventSuccess) }
             }
         }
         if let job = try? remnants.accept(day: dayNumber, closedCaseIDs: cleared, highestTowerFloor: tower), !job.claimed {
@@ -468,6 +491,7 @@ final class Campaign {
             }
             if let payout = try? remnants.claim(day: dayNumber, today: dayNumber, work: &work, coins: &copper, inventory: &inventory) {
                 remnantsDone += 1; earned["remnant", default: 0] += payout.copper
+                contribute("remnant-day-\(dayNumber)", .remnant)
             }
         }
     }
@@ -529,6 +553,7 @@ final class Campaign {
                 let reward = MPCChapterOneThirtyMissionContract.firstClear(for: mission)!
                 copper += reward.copper; merit += reward.merit; earned["main", default: 0] += reward.copper
                 q = mission
+                contribute("mission-\(mission)", .mission)
                 visit("main", key, won: true, attempts: attempts, seconds: total)
                 milestones.append(.init(mission: q, day: day, minutes: seconds.values.reduce(0, +) / 60,
                                         towerFloor: tower, bountiesCleared: cleared.count, copper: copper,
@@ -595,6 +620,7 @@ final class Campaign {
                 wear(passive, won: won)
                 if won {
                     cleared.insert(id)
+                    contribute("bounty-\(id)", .bounty)
                     copper += bounty.copper; merit += bounty.merit; earned["bounty", default: 0] += bounty.copper
                     relics.grant(caseID: id)
                     visit("bounty", key, won: true, attempts: attempts, seconds: total)
@@ -762,7 +788,9 @@ final class Campaign {
                                       eventWins: Dictionary(uniqueKeysWithValues: MPCCityEventCatalog.all.map { ($0.id, events.progress[$0.id]?.wins ?? 0) }),
                                       eventStatus: Dictionary(uniqueKeysWithValues: MPCCityEventCatalog.all.map { ($0.id, events.status($0.id, day: dayNumber).rawValue) }),
                                       storiesUnlocked: MPCNeighborCatalog.all.reduce(0) { $0 + neighbors.stories($1.id).count },
-                                      missedErrands: missedErrands),
+                                      missedErrands: missedErrands,
+                                      contribution: contribution.points, contributionTierDays: contributionTierDays,
+                                      contributionByDay: contributionByDay),
                          merit: merit, towerFloor: tower, bountiesCleared: cleared.sorted(),
                          passives: passives, bountyRelics: relics.ownedIDs.sorted(), milestones: milestones, visits: visits)
     }
