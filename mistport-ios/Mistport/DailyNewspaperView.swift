@@ -17,6 +17,7 @@ struct DailyNewspaperView: View {
                     row("主线进展", destination: .story) {
                         if let next = game.nextChapterMission {
                             Text("\(next.title) · \(game.missionLockText(next) ?? "今天可以推进")")
+                            if game.missionLockText(next) != nil { Text("前往可重访已开放关卡；新关等待日限开放。") }
                         } else { Text("本章主线已完成，可回访旧关。") }
                     }
                     row("深井封堵", destination: .tower) {
@@ -25,6 +26,7 @@ struct DailyNewspaperView: View {
                     }
                     row("通缉日刊", destination: .bounties) {
                         let offers = game.previewChurchBountyIssue().offerIDs.compactMap(MPCChurchBountyCatalog.bounty(id:))
+                            .filter { game.churchServices.bounties.cases[$0.id]?.claimed != true }
                         Text(offers.isEmpty ? "当前没有新的通缉，已接案卷可继续。" : offers.map(\.title).joined(separator: " · "))
                     }
                     row("工坊订单", destination: .workshop, locked: game.cityServiceIsUnlocked(.workshop) ? nil : "完成 Q5 后开放工坊") {
@@ -33,12 +35,13 @@ struct DailyNewspaperView: View {
                     }
                     row("城市事件", destination: .events) {
                         if let event = MPCCityEventCatalog.running(day: game.pacingDay) {
-                            Text("\(event.title) · 第 \(event.firstDay)–\(event.lastDay) 天")
+                            Text("\(event.title) · 第 \(event.firstDay)–\(event.lastDay) 天 · \(game.cityEvents.status(event.id, day: game.pacingDay) == .succeeded ? "已完成" : "进行中")")
                             Text("还需 \(game.cityEvents.winsLeft(event)) 场胜利；今天已记 \(game.cityEvents.winsCounted(event.id, day: game.pacingDay))/2 场。")
                         } else { Text(game.pacingDay < 4 ? "第一场事件在第 4 天开始。" : "本章事件已结束，可查看城市变化。") }
                     }
-                    row("酒馆彩头", destination: .tavern, locked: game.tavernPokerUnlocked ? nil : "酒馆牌桌尚未开放") {
-                        if let prize = game.newspaperTavernPrize { Text("今日彩头：\(prize.name)；到牌桌确认本局规则。") }
+                    row("酒馆彩头", destination: .tavern, locked: game.tavernPokerUnlocked ? nil : "完成 B08 通缉案结案领奖后开放牌桌") {
+                        if !game.tavernPokerUnlocked { Text("先完成酒馆相关通缉案，日后可在这里查看彩头。") }
+                        else if let prize = game.newspaperTavernPrize { Text("今日彩头：\(prize.name)；到牌桌确认本局规则。") }
                         else { Text("今天暂无可领取的额外彩头，仍可按牌桌规则游玩。") }
                     }
                     row("街坊委托", destination: .neighbors) {
