@@ -13,6 +13,7 @@ private enum AppSheet: String, Identifiable {
     case build
     case workshop
     case cityEvents
+    case dailyTower, dailyBounties, dailyNeighbors, dailyRemnants, dailyWork
     case advancement
     case inventory
 
@@ -22,6 +23,9 @@ private enum AppSheet: String, Identifiable {
 struct ContentView: View {
     @Bindable var game: GameStore
     @Bindable var storefront: Storefront
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var newspaperPresented = false
+    @State private var newspaperDestination: DailyNewspaperDestination?
     @State private var blackSaltShorePresented = ProcessInfo.processInfo.arguments.contains("--preview-black-salt-shore")
     @State private var churchPresented = (ProcessInfo.processInfo.arguments.contains("--preview-church") || ProcessInfo.processInfo.arguments.contains("--verify-church-entry"))
     @State private var tavernBountyPresented = false
@@ -51,6 +55,28 @@ struct ContentView: View {
     @State private var launchLoadingProgress = 0.0
     @State private var launchLoadingMessage = "雾门响应中"
     @AppStorage(HomeMusicController.isEnabledKey, store: .standard) private var musicEnabled = true
+
+    private func presentDailyNewspaperIfNeeded() {
+        guard game.phase == .cityHub, game.shouldShowDailyNewspaper, !newspaperPresented,
+              presentedSheet == nil, !churchPresented, !blackSaltShorePresented, !tavernBountyPresented,
+              !isProfilePresented, !isVenuePresented, !isTurnBasedBattlePresented else { return }
+        newspaperPresented = true
+    }
+    private func openNewspaperDestination() {
+        guard let destination = newspaperDestination else { return }
+        newspaperDestination = nil
+        switch destination {
+        case .story: game.enterDistrictMap()
+        case .tower: presentedSheet = .dailyTower
+        case .bounties: presentedSheet = .dailyBounties
+        case .workshop: presentedSheet = .workshop
+        case .events: presentedSheet = .cityEvents
+        case .tavern: tavernBountyPresented = true
+        case .neighbors: presentedSheet = .dailyNeighbors
+        case .remnants: presentedSheet = .dailyRemnants
+        case .work: presentedSheet = .dailyWork
+        }
+    }
 
     private var isDirectChapterOnePreview: Bool {
         #if DEBUG
@@ -156,7 +182,7 @@ struct ContentView: View {
                         ) : nil
                     )
                     .safeAreaInset(edge: .bottom) {
-                        Button("城市事件板 · 第 \(game.pacingDay) 天") { presentedSheet = .cityEvents }
+                        Button("雾港日刊 · 第 \(game.pacingDay) 天") { newspaperPresented = true }
                             .buttonStyle(.borderedProminent).padding(.bottom, 4)
                     }
                 case .districtMap:
@@ -293,9 +319,19 @@ struct ContentView: View {
         }
         .onAppear {
             HomeMusicController.shared.update(for: game.phase)
+            presentDailyNewspaperIfNeeded()
         }
         .onChange(of: game.phase) { _, phase in
             HomeMusicController.shared.update(for: phase)
+            if phase == .dungeon && presentedSheet == .dailyNeighbors { presentedSheet = nil }
+            presentDailyNewspaperIfNeeded()
+        }
+        .onChange(of: scenePhase) { _, phase in if phase == .active { presentDailyNewspaperIfNeeded() } }
+        .fullScreenCover(isPresented: $newspaperPresented, onDismiss: openNewspaperDestination) {
+            DailyNewspaperView(game: game) { destination in
+                newspaperDestination = destination
+                newspaperPresented = false
+            }
         }
         .fullScreenCover(isPresented: $churchPresented) { ChurchSanctuaryView(game: game) }
         .fullScreenCover(isPresented: $blackSaltShorePresented) { BlackSaltShoreView(game: game) }
@@ -318,6 +354,18 @@ struct ContentView: View {
                 } else {
                     Text("教会尚未开放 · 随主线推进解锁").padding()
                 }
+            case .dailyTower:
+                ChurchTowerView(game: game)
+            case .dailyBounties:
+                ChurchBountyBoard(game: game, onBack: { presentedSheet = nil })
+            case .dailyRemnants:
+                RemnantCasesView(game: game)
+            case .dailyWork:
+                ChurchMaintenanceView(game: game, onBack: { presentedSheet = nil })
+            case .dailyNeighbors:
+                DistrictLocationMapView(game: game, onExit: { presentedSheet = nil },
+                    onOpenExpedition: { presentedSheet = .expedition },
+                    onEnterVenue: { id in presentedSheet = nil; game.prepareVenue(id); isVenuePresented = true })
             case .cityEvents:
                 CityEventsView(game: game)
             case .workshop:

@@ -1,0 +1,13 @@
+{
+  "beforeFiles": 155,
+  "afterFiles": 155,
+  "playerByteIdentical": false,
+  "addedPlayerKeys": [
+    "mistport.newspaper.v1"
+  ],
+  "changedOrRemovedPlayerKeys": [],
+  "changedOrRemovedOtherFiles": [],
+  "allowedTestSuiteChanges": [],
+  "newFiles": [],
+  "passed": true
+}

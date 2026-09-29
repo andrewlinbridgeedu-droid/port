@@ -163,6 +163,7 @@ final class GameStore {
         static let cityEvents = "mistport.city-events.v1"
         static let neighbors = "mistport.neighbors.v1"
         static let remnants = "mistport.remnants.v1"
+        static let newspaper = "mistport.newspaper.v1"
         static let selectedChapterDistrictID = "chapter-one.selected-district-id"
         static let venueCoins = "economy.venue-coins"
         static let ownedVenueItems = "economy.owned-venue-items"
@@ -343,6 +344,7 @@ final class GameStore {
                 PersistenceKey.cityEvents,
                 PersistenceKey.neighbors,
                 PersistenceKey.remnants,
+                PersistenceKey.newspaper,
                 PersistenceKey.selectedChapterDistrictID,
                 PersistenceKey.venueCoins,
                 PersistenceKey.ownedVenueItems,
@@ -391,6 +393,7 @@ final class GameStore {
                 PersistenceKey.cityEvents,
                 PersistenceKey.neighbors,
                 PersistenceKey.remnants,
+                PersistenceKey.newspaper,
                 PersistenceKey.selectedChapterDistrictID,
                 PersistenceKey.venueCoins,
                 PersistenceKey.ownedVenueItems,
@@ -534,6 +537,7 @@ final class GameStore {
         if defaults.object(forKey: PersistenceKey.cityEvents) == nil { defaults.set(try? JSONEncoder().encode(CityEventRecord()), forKey: PersistenceKey.cityEvents) }
         if defaults.object(forKey: PersistenceKey.neighbors) == nil { defaults.set(try? JSONEncoder().encode(NeighborRecord()), forKey: PersistenceKey.neighbors) }
         if defaults.object(forKey: PersistenceKey.remnants) == nil { defaults.set(try? JSONEncoder().encode(RemnantRecord()), forKey: PersistenceKey.remnants) }
+        if defaults.object(forKey: PersistenceKey.newspaper) == nil { defaults.set(try? JSONEncoder().encode(NewspaperRecord()), forKey: PersistenceKey.newspaper) }
 
         #if DEBUG
         if launchArguments.contains("--preview-path") {
@@ -636,6 +640,7 @@ final class GameStore {
         if launchArguments.contains("--verify-player-growth") { Self.verifyPlayerGrowthPersistence() }
         if launchArguments.contains("--verify-daily-pacing") { Self.verifyDailyPacing() }
         if launchArguments.contains("--verify-daily-work") { Self.verifyDailyWorkIntegration() }
+        if launchArguments.contains("--verify-newspaper") { Self.verifyNewspaperIntegration() }
         if launchArguments.contains("--verify-remnants") { Self.verifyRemnantsIntegration() }
         if launchArguments.contains("--verify-neighbors") { Self.verifyNeighborsIntegration() }
         if launchArguments.contains("--verify-city-events") { Self.verifyCityEventsIntegration() }
@@ -869,6 +874,12 @@ final class GameStore {
             var work = seed.dailyWorkRecord
             for n in 1...6 { _ = work.ledger.settle(receiptID: "preview-\(n)", day: 1, copper: 40, merit: 6) }
             seed.persistDailyWork(work)
+        }
+        if ProcessInfo.processInfo.arguments.contains("--daily-newspaper-preview") {
+            let day = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--daily-day=") }).flatMap { Int($0.dropFirst(12)) } ?? 4
+            let completed = min(29, MPCDailyPacing.highestOpenMission(day: day) - 1)
+            seed.debugJumpToOldClockMission(completed + 1, enterImmediately: false)
+            seed.debugSetPacingDay(day)
         }
         if ProcessInfo.processInfo.arguments.contains("--daily-remnants-preview") {
             seed.debugJumpToOldClockMission(6, enterImmediately: false)
@@ -2049,6 +2060,7 @@ final class GameStore {
         defaults.set(try? JSONEncoder().encode(NeighborRecord()), forKey: PersistenceKey.neighbors)
         talkingNeighborID = nil
         defaults.set(try? JSONEncoder().encode(RemnantRecord()), forKey: PersistenceKey.remnants)
+        defaults.set(try? JSONEncoder().encode(NewspaperRecord()), forKey: PersistenceKey.newspaper)
         defaults.removeObject(forKey: PersistenceKey.dailyPacingStart)
         dailyPacingStart = nil
         resolveDailyPacingStart()
@@ -2890,7 +2902,7 @@ extension GameStore {
             state.loans.coins -= receipt.copperCost
         }
     }
-    func refreshChurchBountyBoard(asOf date: Date = Date()) {
+    func previewChurchBountyIssue(asOf date: Date = Date()) -> MPCDailyBountyIssue {
         let today = MPCDailyBountyRotation.dayOrdinal(for: date)
         func eligible(_ state: ChurchServicesState, _ id: String) -> Bool {
             let progress = state.bounties.cases[id]
@@ -2904,17 +2916,16 @@ extension GameStore {
             return id
         }
         let current = churchServices
-        if let previous = current.dailyBountyIssue, previous.dayOrdinal >= today,
-           previous.guaranteeing(guaranteed(current)) == previous { return }
-        try? updateChurchServices { state in
-            if let previous = state.dailyBountyIssue, previous.dayOrdinal >= today {
-                state.dailyBountyIssue = previous.guaranteeing(guaranteed(state))
-                return
-            }
-            let ids = MPCChurchBountyCatalog.all.map(\.id).filter { eligible(state, $0) }
-            state.dailyBountyIssue = MPCDailyBountyRotation.issue(dayOrdinal: today, eligibleIDs: ids)
-                .guaranteeing(guaranteed(state))
+        if let previous = current.dailyBountyIssue, previous.dayOrdinal >= today {
+            return previous.guaranteeing(guaranteed(current))
         }
+        let ids = MPCChurchBountyCatalog.all.map(\.id).filter { eligible(current, $0) }
+        return MPCDailyBountyRotation.issue(dayOrdinal: today, eligibleIDs: ids).guaranteeing(guaranteed(current))
+    }
+    func refreshChurchBountyBoard(asOf date: Date = Date()) {
+        let issue = previewChurchBountyIssue(asOf: date)
+        guard churchServices.dailyBountyIssue != issue else { return }
+        try? updateChurchServices { $0.dailyBountyIssue = issue }
     }
     func acceptChurchBounty(_ id: String) throws {
         refreshChurchBountyBoard()
@@ -4859,3 +4870,67 @@ extension GameStore {
     }
 }
 #endif
+
+// MARK: Reading the newspaper changes only its own seen-day receipt
+extension GameStore {
+    private struct NewspaperRecord: Codable {
+        let migratedAt: Date
+        var lastSeenDay = 0
+        init() { migratedAt = Date() }
+    }
+    var shouldShowDailyNewspaper: Bool {
+        _ = churchServicesRevision
+        guard let data = defaults.data(forKey: PersistenceKey.newspaper),
+              let record = try? JSONDecoder().decode(NewspaperRecord.self, from: data) else { return false }
+        return record.lastSeenDay < pacingDay
+    }
+    func markDailyNewspaperSeen() {
+        guard let data = defaults.data(forKey: PersistenceKey.newspaper),
+              var record = try? JSONDecoder().decode(NewspaperRecord.self, from: data), record.lastSeenDay < pacingDay else { return }
+        record.lastSeenDay = pacingDay
+        defaults.set(try? JSONEncoder().encode(record), forKey: PersistenceKey.newspaper)
+        churchServicesRevision += 1
+    }
+    var newspaperNeighborOffers: [MPCNeighborLedger.Offer] {
+        var ledger = neighbors
+        return ledger.open(day: pacingDay, completedMissions: churchTowerMissionNumbers)
+    }
+    var newspaperTavernPrize: MPCTavernPrize? {
+        guard tavernPokerUnlocked else { return nil }
+        let day = MPCDailyBountyRotation.dayOrdinal(for: Date())
+        if (churchServices.tavernPrizeCheckedDay ?? 0) >= day { return availableTavernPrize }
+        return MPCTavernPrizeRotation.offer(dayOrdinal: day, completedMissions: churchTowerMissionNumbers,
+            ownedRelicIDs: chapterOneCampaign.ownedRelicIDs, ownedMaterialIDs: Set(advancementIngredients.map(\.rawValue)))
+    }
+    #if DEBUG
+    private static func verifyNewspaperIntegration() {
+        let suite = "mistport.newspaper-check." + UUID().uuidString
+        let storage = UserDefaults(suiteName: suite)!
+        defer { storage.removePersistentDomain(forName: suite) }
+        var store = GameStore(launchArguments: [], defaults: storage)
+        let migration = storage.data(forKey: PersistenceKey.newspaper)!
+        store = GameStore(launchArguments: [], defaults: storage)
+        assert(storage.data(forKey: PersistenceKey.newspaper) == migration && store.shouldShowDailyNewspaper)
+        for day in [4,11,18,25] {
+            store.debugSetPacingDay(day)
+            assert(store.shouldShowDailyNewspaper)
+            let old = storage.dictionaryRepresentation()
+            _ = store.todayPacingSummary; _ = store.workshopOrders; _ = store.newspaperNeighborOffers
+            let issue = store.previewChurchBountyIssue(); _ = store.newspaperTavernPrize; _ = store.todayRemnant
+            assert((3...6).contains(issue.offerIDs.count))
+            assert(MPCCityEventCatalog.running(day: day) != nil)
+            store.markDailyNewspaperSeen(); store.markDailyNewspaperSeen()
+            assert(!store.shouldShowDailyNewspaper)
+            let new = storage.dictionaryRepresentation()
+            for key in old.keys where key != PersistenceKey.newspaper {
+                assert(NSDictionary(dictionary: [key: old[key]!]).isEqual(to: [key: new[key]!]), "newspaper unexpectedly wrote \(key)")
+            }
+            store = GameStore(launchArguments: [], defaults: storage)
+            assert(!store.shouldShowDailyNewspaper)
+        }
+        store.debugSetPacingDay(24); assert(!store.shouldShowDailyNewspaper)
+        store.restart(); assert(store.shouldShowDailyNewspaper)
+        NSLog("NEWSPAPER_VERIFY_PASS: migrate once, days 4/11/18/25, first opening only, repeat read, relaunch, clock rollback, summaries do not mutate gameplay ledgers, restart")
+    }
+    #endif
+}
