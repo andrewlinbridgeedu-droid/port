@@ -160,6 +160,7 @@ final class GameStore {
         static let dailyPacingStart = "mistport.daily-pacing.start.v1"
         static let dailyWork = "mistport.daily-work.v1"
         static let dailyWorkshop = "mistport.daily-workshop.v1"
+        static let cityEvents = "mistport.city-events.v1"
         static let selectedChapterDistrictID = "chapter-one.selected-district-id"
         static let venueCoins = "economy.venue-coins"
         static let ownedVenueItems = "economy.owned-venue-items"
@@ -336,6 +337,7 @@ final class GameStore {
                 PersistenceKey.dailyPacingStart,
                 PersistenceKey.dailyWork,
                 PersistenceKey.dailyWorkshop,
+                PersistenceKey.cityEvents,
                 PersistenceKey.selectedChapterDistrictID,
                 PersistenceKey.venueCoins,
                 PersistenceKey.ownedVenueItems,
@@ -381,6 +383,7 @@ final class GameStore {
                 PersistenceKey.dailyPacingStart,
                 PersistenceKey.dailyWork,
                 PersistenceKey.dailyWorkshop,
+                PersistenceKey.cityEvents,
                 PersistenceKey.selectedChapterDistrictID,
                 PersistenceKey.venueCoins,
                 PersistenceKey.ownedVenueItems,
@@ -521,6 +524,7 @@ final class GameStore {
         resolveDailyPacingStart()
         if defaults.object(forKey: PersistenceKey.dailyWork) == nil { persistDailyWork(DailyWorkRecord()) }
         if defaults.object(forKey: PersistenceKey.dailyWorkshop) == nil { persistDailyWorkshop(DailyWorkshopRecord()) }
+        if defaults.object(forKey: PersistenceKey.cityEvents) == nil { defaults.set(try? JSONEncoder().encode(CityEventRecord()), forKey: PersistenceKey.cityEvents) }
 
         #if DEBUG
         if launchArguments.contains("--preview-path") {
@@ -623,6 +627,7 @@ final class GameStore {
         if launchArguments.contains("--verify-player-growth") { Self.verifyPlayerGrowthPersistence() }
         if launchArguments.contains("--verify-daily-pacing") { Self.verifyDailyPacing() }
         if launchArguments.contains("--verify-daily-work") { Self.verifyDailyWorkIntegration() }
+        if launchArguments.contains("--verify-city-events") { Self.verifyCityEventsIntegration() }
         if launchArguments.contains("--verify-daily-workshop") { Self.verifyDailyWorkshopIntegration() }
         if launchArguments.contains("--verify-p0") { Self.verifySettlementRecovery() }
         if launchArguments.contains("--verify-early-relic-shop") { Self.verifyEarlyRelicShop(); Self.verifyAdvancementProcurement() }
@@ -853,6 +858,13 @@ final class GameStore {
             var work = seed.dailyWorkRecord
             for n in 1...6 { _ = work.ledger.settle(receiptID: "preview-\(n)", day: 1, copper: 40, merit: 6) }
             seed.persistDailyWork(work)
+        }
+        if ProcessInfo.processInfo.arguments.contains("--daily-events-preview") {
+            seed.debugJumpToOldClockMission(6, enterImmediately: false)
+            let day = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--daily-day=") }).flatMap { Int($0.dropFirst(12)) } ?? 4
+            seed.debugSetPacingDay(day)
+            for recipe in MPCCraftingCatalog.basics { seed.chapterOneCampaign.inventory[recipe.output] = 20 }
+            seed.persistChapterProgress()
         }
         if ProcessInfo.processInfo.arguments.contains("--daily-workshop-preview") {
             seed.debugJumpToOldClockMission(6, enterImmediately: false)
@@ -2010,6 +2022,7 @@ final class GameStore {
         // A new save starts a new calendar and repeat-work ledger.
         persistDailyWork(DailyWorkRecord())
         persistDailyWorkshop(DailyWorkshopRecord())
+        defaults.set(try? JSONEncoder().encode(CityEventRecord()), forKey: PersistenceKey.cityEvents)
         defaults.removeObject(forKey: PersistenceKey.dailyPacingStart)
         dailyPacingStart = nil
         resolveDailyPacingStart()
@@ -2288,14 +2301,15 @@ final class GameStore {
         featureMessage = "已购入\(ingredient.name)，保留至黑盐岸晋阶仪式。"
     }
 
+    var painSalvePrice: Int { max(0, 30 + dailyCityEffects.salveSurcharge) }
     var painSalveStock: Int { chapterOneCampaign.inventory["consumable_pain_salve", default: 0] }
 
     /// One ready supply at a time: a second tap cannot debit a second purchase.
     /// Historical larger stacks are preserved and used before buying another.
     func purchasePainSalve() {
         guard earlyRelicShopUnlocked, painSalveStock == 0 else { return }
-        guard venueCoins >= 30 else { featureMessage = "铜币不足，还需要\(30 - venueCoins)枚。"; return }
-        let purchase = EarlyRelicPurchase(coins: venueCoins - 30,
+        guard venueCoins >= painSalvePrice else { featureMessage = "铜币不足，还需要\(painSalvePrice - venueCoins)枚。"; return }
+        let purchase = EarlyRelicPurchase(coins: venueCoins - painSalvePrice,
             relicIDs: Array(chapterOneCampaign.ownedRelicIDs), painSalveCount: 1)
         guard let data = try? JSONEncoder().encode(purchase) else { return }
         defaults.set(data, forKey: Self.earlyRelicPurchaseKey)
@@ -2689,6 +2703,7 @@ extension GameStore {
         let state: ChurchServicesState
         var dailyWork: DailyWorkRecord? = nil
         var dailyWorkshop: DailyWorkshopRecord? = nil
+        var cityEvents: CityEventRecord? = nil
         let coins: Int
         let lifetime: Int
         let available: Int
@@ -2747,6 +2762,7 @@ extension GameStore {
         venueCoins = receipt.coins
         if let work = receipt.dailyWork { persistDailyWork(work) }
         if let workshop = receipt.dailyWorkshop { persistDailyWorkshop(workshop) }
+        if let events = receipt.cityEvents { defaults.set(try? JSONEncoder().encode(events), forKey: PersistenceKey.cityEvents) }
         chapterOneCampaign.lifetimeChurchMerit = receipt.lifetime
         chapterOneCampaign.spendableChurchMerit = receipt.available
         if let relics = receipt.relicSnapshot {
@@ -2764,7 +2780,7 @@ extension GameStore {
         defaults.removeObject(forKey: "mistport.church.services.pending.v1")
         churchServicesRevision += 1
     }
-    private func updateChurchServices(dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil, _ change: (inout ChurchServicesState) throws -> Void) throws {
+    private func updateChurchServices(cityEvents: CityEventRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil, _ change: (inout ChurchServicesState) throws -> Void) throws {
         // Never replace an unreadable financial ledger with the default empty state.
         guard workshopLedgerIsReadable else { throw MPCLocalWorkshopLedger.Failure.locked }
         var state = churchServices
@@ -2772,10 +2788,10 @@ extension GameStore {
         state.loans.lifetimeMerit = chapterOneCampaign.lifetimeChurchMerit
         state.loans.availableMerit = chapterOneCampaign.spendableChurchMerit
         try change(&state)
-        try commitChurchServices(state, dailyWorkshop: dailyWorkshop, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
+        try commitChurchServices(state, cityEvents: cityEvents, dailyWorkshop: dailyWorkshop, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
     }
-    private func commitChurchServices(_ state: ChurchServicesState, dailyWork: DailyWorkRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil) throws {
-        let receipt = ChurchServicesReceipt(state: state, dailyWork: dailyWork, dailyWorkshop: dailyWorkshop, coins: state.loans.coins, lifetime: state.loans.lifetimeMerit, available: state.loans.availableMerit, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
+    private func commitChurchServices(_ state: ChurchServicesState, cityEvents: CityEventRecord? = nil, dailyWork: DailyWorkRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil) throws {
+        let receipt = ChurchServicesReceipt(state: state, dailyWork: dailyWork, dailyWorkshop: dailyWorkshop, cityEvents: cityEvents, coins: state.loans.coins, lifetime: state.loans.lifetimeMerit, available: state.loans.availableMerit, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
         defaults.set(try JSONEncoder().encode(receipt), forKey: "mistport.church.services.pending.v1")
         recoverChurchServices()
         preparedChapterOneSession = nil
@@ -4200,9 +4216,9 @@ extension GameStore {
         board.open(day: pacingDay, bonus: dailyCityEffects.orderBudgetBonus)
         return board
     }
-    // The event board supplies these effects when its persisted ledger is present.
-    // Until task 1.4 installs that ledger, no inaccessible event can penalize crafting.
+    // Persisted city effects also apply outside the event board.
     var dailyCityEffects: MPCCityEvent.Effects {
+        _ = churchServicesRevision
         guard let data = defaults.data(forKey: "mistport.city-events.v1"),
               let record = try? JSONDecoder().decode(CityEventRecord.self, from: data) else { return .init() }
         return record.ledger.effects(day: pacingDay)
@@ -4210,6 +4226,7 @@ extension GameStore {
     private struct CityEventRecord: Codable {
         let migratedAt: Date
         var ledger: MPCCityEventLedger
+        var battleDay: Int? = nil
         init() { migratedAt = Date(); ledger = .init() }
     }
     private var dailyWorkshopIsReadable: Bool {
@@ -4366,3 +4383,120 @@ extension GameStore {
     }
 }
 #endif
+
+// MARK: Local city events — inventory, wallet and event receipts commit together
+extension GameStore {
+    private func readCityEvents() throws -> CityEventRecord {
+        guard let data = defaults.data(forKey: PersistenceKey.cityEvents),
+              let record = try? JSONDecoder().decode(CityEventRecord.self, from: data) else {
+            throw MPCCityEventLedger.Failure.conflict
+        }
+        return record
+    }
+    var cityEvents: MPCCityEventLedger {
+        _ = churchServicesRevision
+        return (try? readCityEvents().ledger) ?? .init()
+    }
+    func deliverCityEvent(_ eventID: String, itemID: String, count: Int = 1, receiptID: String = UUID().uuidString) throws {
+        var record = try readCityEvents(), inventory = chapterOneCampaign.inventory, coins = venueCoins
+        try record.ledger.deliver(id: receiptID, eventID: eventID, itemID: itemID, count: count,
+            day: pacingDay, coins: &coins, inventory: &inventory)
+        try updateChurchServices(cityEvents: record, inventory: inventory) { $0.loans.coins = coins }
+    }
+    func cityEventPreview(eventID: String, ticket: String) throws -> MPCChapterOneEncounterSession {
+        try MPCChapterOneEncounterSession.start(encounterID: MPCCityEventCatalog.encounterID(eventID: eventID, ticket: ticket),
+            party: chapterOneCampaign.party, consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: churchBattleCampaign.loadout)
+    }
+    func beginCityEvent(eventID: String, ticket: String, skills: [FoolSkillID]) throws -> MPCChapterOneEncounterSession {
+        var record = try readCityEvents(), loadout = churchBattleCampaign.loadout
+        var legal: [FoolSkillID] = []
+        for skill in skills where skill != .maskedWhisper && chapterOneCampaign.unlockedSkillIDs.contains(skill) && !legal.contains(skill) { legal.append(skill) }
+        loadout.normalSkillIDs = Array(legal.prefix(chapterOneLoadoutSlotCapacity))
+        loadout.talents = hermitTalents; loadout.skillLevels = foolSkillLevels
+        let encounterID = try record.ledger.beginBattle(ticket: ticket, eventID: eventID, day: pacingDay)
+        if record.battleDay == nil { record.battleDay = pacingDay }
+        let session = try MPCChapterOneEncounterSession.start(encounterID: encounterID, party: chapterOneCampaign.party,
+            consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: loadout)
+        try updateChurchServices(cityEvents: record) { try beginChurchGear(&$0, battleID: ticket, loadout: loadout) }
+        return session
+    }
+    func settleCityEvent(ticket: String, session: MPCChapterOneEncounterSession) throws {
+        var record = try readCityEvents(), coins = venueCoins
+        let changed = try record.ledger.settleBattle(ticket: ticket, session: session, day: record.battleDay ?? pacingDay, coins: &coins)
+        guard changed else { return }
+        record.battleDay = nil
+        try updateChurchServices(cityEvents: record) { state in
+            state.loans.coins = coins
+            try settleChurchGear(&state, battleID: ticket, outcome: session.outcome == .victory ? .victory : .defeat)
+        }
+    }
+    func abandonCityEvent(ticket: String, defeated: Bool = false) throws {
+        var record = try readCityEvents()
+        guard record.ledger.activeTicket == ticket else { return }
+        record.ledger.abandonBattle(ticket: ticket); record.battleDay = nil
+        try updateChurchServices(cityEvents: record) { state in
+            try settleChurchGear(&state, battleID: ticket, outcome: defeated ? .defeat : .retreat)
+        }
+    }
+    #if DEBUG
+    private static func verifyCityEventsIntegration() {
+        let suite = "mistport.city-events-check." + UUID().uuidString
+        let storage = UserDefaults(suiteName: suite)!
+        defer { storage.removePersistentDomain(forName: suite) }
+        var store = GameStore(launchArguments: [], defaults: storage)
+        let migration = storage.data(forKey: PersistenceKey.cityEvents)!
+        store = GameStore(launchArguments: [], defaults: storage)
+        assert(storage.data(forKey: PersistenceKey.cityEvents) == migration && store.cityEvents.entries.isEmpty)
+        store.debugJumpToOldClockMission(6, enterImmediately: false)
+        store.debugSetPacingDay(4)
+        let event = MPCCityEventCatalog.all[0]
+        for delivery in event.deliveries { store.chapterOneCampaign.inventory[delivery.itemID] = delivery.quantity }
+        let before = store.venueCoins
+        for delivery in event.deliveries {
+            let id = "delivery-" + delivery.itemID.replacingOccurrences(of: "_", with: "-")
+            try! store.deliverCityEvent(event.id, itemID: delivery.itemID, count: 999, receiptID: id)
+            let coins = store.venueCoins
+            try! store.deliverCityEvent(event.id, itemID: delivery.itemID, count: 999, receiptID: id)
+            assert(store.venueCoins == coins && store.chapterOneCampaign.inventory[delivery.itemID] == 0)
+        }
+        assert(store.venueCoins == before + 93)
+        for n in 0..<6 {
+            store.debugSetPacingDay(4 + n / 2)
+            let ticket = "city-win-\(n)"
+            var battle = try! store.beginCityEvent(eventID: event.id, ticket: ticket, skills: [])
+            assert((try? store.beginCityEvent(eventID: event.id, ticket: "parallel", skills: [])) == nil)
+            for step in 0..<400 where battle.outcome == .inProgress {
+                if battle.isAwaitingTowerWave {
+                    let now = Double(step) * 2 + 10
+                    _ = battle.advanceRelicClock(at: now); battle.advanceChurchTowerEffects(at: now)
+                }
+                for enemy in battle.enemies.filter(\.isAlive) where battle.outcome == .inProgress {
+                    _ = try! battle.applyPartyDamage(99_999, to: enemy.id)
+                    if battle.outcome == .inProgress, battle.enemies.contains(where: { $0.id == enemy.id && $0.isAlive }) {
+                        battle.commitEnemyImpact(from: enemy.id)
+                        try? battle.endRound(actingEnemyID: enemy.id, at: Double(step))
+                    }
+                }
+            }
+            assert(battle.outcome == .victory)
+            if n == 5 { store.debugSetPacingDay(11) } // Reward uses the valid start-day ticket, including after reboot.
+            store = GameStore(launchArguments: [], defaults: storage)
+            try! store.settleCityEvent(ticket: ticket, session: battle)
+            let paid = store.venueCoins
+            try! store.settleCityEvent(ticket: ticket, session: battle)
+            assert(store.venueCoins == paid)
+            if n == 1 { assert((try? store.beginCityEvent(eventID: event.id, ticket: "daily-cap", skills: [])) == nil) }
+        }
+        assert(store.cityEvents.status(event.id, day: 11) == .succeeded && store.venueCoins == before + event.escrow)
+        assert(store.dailyCityEffects.orderBudgetBonus == 10 && store.painSalvePrice == 30)
+        store.debugSetPacingDay(18)
+        assert(store.dailyCityEffects.craftSurcharge == 2)
+        _ = try! store.beginCityEvent(eventID: "harbor-blockade", ticket: "retreat", skills: [])
+        try! store.abandonCityEvent(ticket: "retreat")
+        assert(store.cityEvents.activeTicket == nil)
+        store.restart(); store.debugSetPacingDay(11)
+        assert(store.cityEvents.entries.isEmpty && store.painSalvePrice == 40)
+        NSLog("CITY_EVENTS_VERIFY_PASS: migrate once, delivery receipts, finite escrow, real runtime victories, daily cap, persisted start day, cross-day victory payout, duplicate settlement, success/failure prices, retreat, reset")
+    }
+    #endif
+}

@@ -112,3 +112,5 @@ python3 tools/progression-sim/report.py <输出目录>
 ## 在 Linux 云端跑 Swift
 
 官方下载被网络策略拦截。从 `archive.ubuntu.com/ubuntu/pool/universe/s/swiftlang/` 取 `swiftlang`、`libswiftlang` 的 6.0.3 deb（`6.0.3-2build1`），再从 `pool/main/libx/libxml2/` 取 `libxml2-16`（`2.14.5+dfsg-0.2ubuntu0.2`），`dpkg -x` 解到临时目录，设 `PATH=<目录>/usr/libexec/swift/bin:$PATH` 和 `LD_LIBRARY_PATH=<目录>/usr/lib/x86_64-linux-gnu:<目录>/usr/lib`。`S9TalentEditorTests` 里一个 `@MainActor` 测试在 Linux 的测试自动发现下编不过：跑测试时在临时副本里去掉这个文件，它只在 Mac 上跑。
+
+每日玩法任务 1.4 已接入：城市事件板、交货和战斗回执、三处城市价格效果。当前装机 Build165；8 项自检通过，事件板四日期截图和存档比较见 `daily-city-events-app-20260929/README.md`。为使日刊入口都有实际目标，先做 1.4–1.6 再汇总 1.3。Unity 三类街头战演出复看、用户视觉认可及任务 2 正常游玩计时仍未完成。

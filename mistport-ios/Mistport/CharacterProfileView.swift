@@ -434,9 +434,9 @@ struct CharacterProfileView: View {
                             .font(.caption).foregroundStyle(.secondary)
                     }
                     Spacer()
-                    Button(game.painSalveStock > 0 ? "已备妥" : "30 铜币") { game.purchasePainSalve() }
+                    Button(game.painSalveStock > 0 ? "已备妥" : "\(game.painSalvePrice) 铜币") { game.purchasePainSalve() }
                         .buttonStyle(.bordered).disabled(game.painSalveStock > 0)
-                        .accessibilityLabel("采购止痛膏，30铜币，恢复25%生命")
+                        .accessibilityLabel("采购止痛膏，\(game.painSalvePrice)铜币，恢复25%生命")
                 }
                 Divider()
                 Text("遗落物采购 · 铜币 \(game.venueCoins)").font(.headline)

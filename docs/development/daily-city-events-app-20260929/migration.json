@@ -1,0 +1,13 @@
+{
+  "beforeFiles": 114,
+  "afterFiles": 114,
+  "playerByteIdentical": false,
+  "addedPlayerKeys": [
+    "mistport.city-events.v1"
+  ],
+  "changedOrRemovedPlayerKeys": [],
+  "changedOrRemovedOtherFiles": [],
+  "allowedTestSuiteChanges": [],
+  "newFiles": [],
+  "passed": true
+}
