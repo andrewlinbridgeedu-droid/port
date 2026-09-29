@@ -27,6 +27,8 @@ enum Policy: String, CaseIterable, Sendable {
 struct Assumptions: Codable, Sendable {
     var battleOverheadSeconds = 20.0
     var postalSeconds = 150.0
+    var craftSeconds = 60.0
+    var saleSeconds = 20.0
     var maxWaitDays = 10
     /// A run that has not finished by this day is reported as stuck.
     var maxDays = 120
@@ -130,6 +132,10 @@ struct RunResult: Codable {
     let defeatCopperLost: Int
     let relicsLost: [String]
     let copper: Int
+    /// Copper earned by source: main, tower, bounty (first clears), postal (J0 after the
+    /// daily taper) and workshop (NPC orders, before base-stock costs).
+    let copperBySource: [String: Int]
+    let workshop: WorkshopSummary
     let merit: Int
     let towerFloor: Int
     let bountiesCleared: [String]
@@ -137,6 +143,17 @@ struct RunResult: Codable {
     let bountyRelics: [String]
     let milestones: [Milestone]
     let visits: [Visit]
+}
+
+struct WorkshopSummary: Codable {
+    let crafts: Int
+    let salvesCrafted: Int
+    let salvesUsedFromStock: Int
+    let unitsSold: Int
+    let boardPaid: Int
+    let baseStockCopper: Int
+    let replays: Int
+    let proficiency: [String: Int]
 }
 
 /// One new save played in order. Every battle is the shipping combat core
@@ -158,6 +175,18 @@ final class Campaign {
     var salvesUsed = 0, postalJobs = 0, repairCopper = 0, defeatCopperLost = 0, serial = 0
     var relicsLost: [String] = []
     var visits: [Visit] = [], milestones: [Milestone] = []
+    /// Repeatable pay taper, workshop and its orders (MPCDailyWorkLedger, MPCCraftingLedger, MPCWorkshopOrderBoard).
+    var work = MPCDailyWorkLedger()
+    var crafting = MPCCraftingLedger()
+    var orders = MPCWorkshopOrderBoard()
+    var inventory: [String: Int] = [:]
+    var earned: [String: Int] = [:]
+    var crafts = 0, salvesCrafted = 0, salvesFromStock = 0, unitsSold = 0, baseStockCopper = 0, replays = 0
+    /// Set when today's J0 pay has tapered off before the copper needed was reached.
+    var copperShort = false
+    /// Policies that use the workshop: it needs tower materials and is optional content.
+    var usesWorkshop: Bool { policy == .all || policy == .completionist }
+    var completedMissions: Set<Int> { q > 0 ? Set(1...q) : [] }
     /// States already known to lose a target; the bots are deterministic.
     var failed: [String: Set<String>] = [:]
 
@@ -192,30 +221,108 @@ final class Campaign {
     }
 
     /// Normal wear 2 per win, 5 per defeat, repaired at ceil(value * wear / 200).
+    /// Repair is optional in the game: with no copper left the relic is simply not mended yet.
     func wear(_ passive: String?, won: Bool) {
         guard let passive else { return }
-        let cost = (Shop.value(passive) * (won ? 2 : 5) + 199) / 200
+        let cost = min(max(0, copper), (Shop.value(passive) * (won ? 2 : 5) + 199) / 200)
         copper -= cost; repairCopper += cost
     }
 
     func shop() {
         guard q >= 4 else { return }
+        if salve == 0, inventory[MPCCraftingCatalog.salveID, default: 0] > 0 {
+            inventory[MPCCraftingCatalog.salveID, default: 0] -= 1; salve = 1; salvesFromStock += 1
+        }
         if salve == 0 && copper >= Shop.salve { copper -= Shop.salve; salve = 1 }
         for relic in Shop.passives where q >= relic.unlock && !passives.contains(relic.id) && copper - relic.price >= Shop.salve {
             copper -= relic.price; passives.append(relic.id)
         }
     }
 
-    func postal(jobs: Int) {
-        guard jobs > 0 else { return }
-        postalJobs += jobs; copper += jobs * Shop.postalPay
-        seconds["postal", default: 0] += Double(jobs) * assumptions.postalSeconds
-        dayMinutes[day] += Double(jobs) * assumptions.postalSeconds / 60
+    /// Time spent outside battles (crafting, selling), counted like battle time.
+    func busy(_ kind: String, _ seconds: Double) {
+        self.seconds[kind, default: 0] += seconds
+        dayMinutes[day] += seconds / 60
+    }
+
+    /// J0 seal checks until `target` copper, paid through the day's taper. A player stops
+    /// once a job would pay only a tenth; if that leaves them short, they wait for tomorrow.
+    @discardableResult func postal(upTo target: Int) -> Bool {
+        while copper < target && work.preview(day: dayNumber, copper: Shop.postalPay) * 2 >= Shop.postalPay {
+            postalJobs += 1
+            let pay = work.settle(receiptID: "postal-\(postalJobs)", day: dayNumber, copper: Shop.postalPay, merit: 0)
+            copper += pay.copper; earned["postal", default: 0] += pay.copper
+            busy("postal", assumptions.postalSeconds)
+        }
+        if copper < target { copperShort = true }
+        return copper >= target
     }
 
     func nextDay() {
+        workshopSession()
         day += 1; dayMinutes.append(0)
         if churchOpen { refreshBoard() }
+    }
+
+    /// The day's workshop visit (workshop policies, from Q5): keep three salves of our own,
+    /// then make goods for what the NPC orders can still pay today, replaying a low floor
+    /// (at most twice) when materials run short.
+    func workshopSession() {
+        guard usesWorkshop, MPCCraftingCatalog.isUnlocked(completedMissions: completedMissions) else { return }
+        orders.open(day: dayNumber)
+        func craft(_ recipeID: String) -> Bool {
+            let cost = MPCCraftingCatalog.recipe(recipeID)!.copper
+            guard copper - cost >= Shop.salve else { return false }
+            let made = (try? crafting.craft(receiptID: "craft-\(crafts)", recipeID: recipeID, day: dayNumber,
+                                            completedMissions: completedMissions, coins: &copper,
+                                            inventory: &inventory, gear: &gear)) == true
+            if made { crafts += 1; baseStockCopper += cost; busy("workshop", assumptions.craftSeconds) }
+            return made
+        }
+        func sell(_ item: String, keeping keep: Int) -> Bool {
+            let spare = inventory[item, default: 0] - keep
+            guard spare > 0 else { return false }
+            let units = (try? orders.sell(receiptID: "sale-\(unitsSold)-\(item)", itemID: item, count: spare,
+                                           day: dayNumber, coins: &copper, inventory: &inventory)) ?? 0
+            guard units > 0 else { return false }
+            unitsSold += units
+            earned["workshop", default: 0] += units * MPCWorkshopOrderBoard.prices[item]!
+            busy("workshop", assumptions.saleSeconds)
+            return true
+        }
+        let salveID = MPCCraftingCatalog.salveID
+        while inventory[salveID, default: 0] < 3 && craft("recipe_pain_salve") { salvesCrafted += 1 }
+        // Best copper per material first: salves, straps, then patches and cloth.
+        let goods: [(recipe: String, item: String)] = [("recipe_pain_salve", salveID), ("recipe_repair_strap", MPCCraftingCatalog.strapID),
+                                                      ("recipe_armor_patch", MPCCraftingCatalog.patchID), ("recipe_filter_cloth", MPCCraftingCatalog.clothID)]
+        let cheapest = MPCWorkshopOrderBoard.prices.values.min()!
+        var replaysToday = 0
+        while orders.budget >= cheapest {
+            var progressed = false
+            for good in goods where orders.budget >= MPCWorkshopOrderBoard.prices[good.item]! {
+                let keep = good.item == salveID ? 3 : 0
+                if inventory[good.item, default: 0] > keep {
+                    if sell(good.item, keeping: keep) { progressed = true }
+                } else if craft(good.recipe) {
+                    if good.item == salveID { salvesCrafted += 1 }
+                    progressed = true
+                }
+            }
+            if progressed { continue }
+            guard replaysToday < 2, tower >= 1 else { break }
+            replaysToday += 1
+            replayForMaterials()
+        }
+    }
+
+    /// Replays the richest low floor already cleared for materials (no first-clear reward).
+    func replayForMaterials() {
+        let floor = min(tower, 10)
+        let l = loadout(mission: q + 1, gear: stats, passive: passives.last, sequence: cards(forMission: q + 1)[0], bountyRelic: worn)
+        guard let report = try? TowerDriver.run(number: floor, medalOffset: 6, suppliedLoadout: l, actionDelay: profile.actionDelay) else { return }
+        spend("workshop", report.seconds); replays += 1
+        guard report.session.outcome == .victory else { return }
+        for (id, n) in MPCTowerMaterials.drops(floor: floor) { inventory[id, default: 0] += n }
     }
 
     /// The daily board offers 3-6 unaccepted cases; accepting keeps them across days.
@@ -262,7 +369,7 @@ final class Campaign {
             wear(passive, won: won)
             if won {
                 let reward = MPCChapterOneThirtyMissionContract.firstClear(for: mission)!
-                copper += reward.copper; merit += reward.merit
+                copper += reward.copper; merit += reward.merit; earned["main", default: 0] += reward.copper
                 q = mission
                 visit("main", key, won: true, attempts: attempts, seconds: total)
                 milestones.append(.init(mission: q, day: day, minutes: seconds.values.reduce(0, +) / 60,
@@ -297,7 +404,8 @@ final class Campaign {
                 if won {
                     tower = floor
                     let reward = MPCChurchTowerCatalog.floor(number: floor)!.firstClearReward
-                    copper += reward.coins; merit += reward.merit
+                    copper += reward.coins; merit += reward.merit; earned["tower", default: 0] += reward.coins
+                    for (id, n) in MPCTowerMaterials.drops(floor: floor) { inventory[id, default: 0] += n }
                     if let drop = MPCChurchGearCatalog.towerDrop(floor: floor) { gear.grant(drop.id) }
                     visit("tower", key, won: true, attempts: attempts, seconds: total)
                     return true
@@ -327,7 +435,7 @@ final class Campaign {
                 wear(passive, won: won)
                 if won {
                     cleared.insert(id)
-                    copper += bounty.copper; merit += bounty.merit
+                    copper += bounty.copper; merit += bounty.merit; earned["bounty", default: 0] += bounty.copper
                     relics.grant(caseID: id)
                     visit("bounty", key, won: true, attempts: attempts, seconds: total)
                     return true
@@ -353,7 +461,7 @@ final class Campaign {
     /// Earn copper at J0 for the next unlocked shop relic, then buy it.
     func buyNextRelicWithPostal() -> Bool {
         guard let next = Shop.passives.first(where: { q >= $0.unlock && !passives.contains($0.id) }) else { return false }
-        postal(jobs: max(0, (next.price + Shop.salve - copper + Shop.postalPay - 1) / Shop.postalPay))
+        postal(upTo: next.price + Shop.salve)
         shop()
         return passives.contains(next.id)
     }
@@ -418,7 +526,7 @@ final class Campaign {
     func retryWithFreshSalves() -> Bool {
         defer { rotation = 0 }
         for retry in 1...8 where q >= 4 {
-            if salve == 0 { postal(jobs: max(0, (Shop.salve - copper + Shop.postalPay - 1) / Shop.postalPay)) }
+            if salve == 0 { postal(upTo: Shop.salve) }
             rotation = retry
             if attemptMain(stopAfterSalve: true) { return true }
         }
@@ -427,9 +535,12 @@ final class Campaign {
 
     func run() -> RunResult {
         var stuckAt: Int?
+        // Days waited for J0 pay since the story last moved; three in a row with nothing new is stuck.
+        var copperWaits = 0, lastMission = q
         while q < 30 {
+            if q != lastMission { lastMission = q; copperWaits = 0 }
             if dayNumber > assumptions.maxDays { stuckAt = q + 1; break }
-            towerGated = false
+            towerGated = false; copperShort = false
             if policy == .completionist { clearAvailableSide() }
             // The next mission opens on a later day: today's usual side content, then tomorrow.
             if !storyOpen {
@@ -472,6 +583,8 @@ final class Campaign {
             if !advanced && towerGated { nextDay(); continue }
             // Side content may have made a plan winnable that only works with the salve.
             if !advanced { advanced = retryWithFreshSalves() }
+            // Out of today's J0 work before the copper was there: tomorrow pays in full again.
+            if !advanced && copperShort && copperWaits < 3 { copperWaits += 1; nextDay(); continue }
             if !advanced { stuckAt = q + 1; break }
         }
         return RunResult(policy: policy.rawValue, profile: profile.name, startOffset: startOffset, assumptions: assumptions,
@@ -480,7 +593,11 @@ final class Campaign {
                          minutesByDay: dayMinutes.map { ($0 * 10).rounded() / 10 },
                          battles: battles, losses: losses, salvesUsed: salvesUsed, postalJobs: postalJobs,
                          repairCopper: repairCopper, defeatCopperLost: defeatCopperLost, relicsLost: relicsLost,
-                         copper: copper, merit: merit, towerFloor: tower, bountiesCleared: cleared.sorted(),
+                         copper: copper, copperBySource: earned,
+                         workshop: .init(crafts: crafts, salvesCrafted: salvesCrafted, salvesUsedFromStock: salvesFromStock,
+                                         unitsSold: unitsSold, boardPaid: orders.paid, baseStockCopper: baseStockCopper,
+                                         replays: replays, proficiency: crafting.proficiency),
+                         merit: merit, towerFloor: tower, bountiesCleared: cleared.sorted(),
                          passives: passives, bountyRelics: relics.ownedIDs.sorted(), milestones: milestones, visits: visits)
     }
 }

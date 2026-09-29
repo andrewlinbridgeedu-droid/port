@@ -57,5 +57,16 @@ if paced:
         result = f"卡在 Q{r['stuckAt']}" if r.get("stuckAt") else "通关"
         lines.append(f"| {r['policy']} | {r['profile']} | {r['startOffset']} | {result} | {r['days']} | {max(by_day):.0f} | "
                      f"{sum(1 for m in by_day if m > CAP)} | {capped_days(by_day)} |")
+sourced = [r for r in runs if r["policy"] in ("all", "completionist") and "copperBySource" in r]
+if sourced:
+    lines += ["", "铜币来源与工坊（J0 按单递减；工坊卖给每天 60 铜的 NPC 订单，含底料成本前）", "",
+              "| 策略 | 熟练 | 起始日 | 主线 | 塔 | 通缉 | 邮务 J0 | 工坊销售 | 工坊底料 | 自熬止痛膏用掉 | 工坊分钟/天 | 章末铜 |",
+              "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    for r in sourced:
+        src, ws = r["copperBySource"], r["workshop"]
+        per_day = r["minutes"].get("workshop", 0) / max(1, r["days"])
+        lines.append(f"| {r['policy']} | {r['profile']} | {r['startOffset']} | {src.get('main', 0)} | {src.get('tower', 0)} | "
+                     f"{src.get('bounty', 0)} | {src.get('postal', 0)} | {src.get('workshop', 0)} | {ws['baseStockCopper']} | "
+                     f"{ws['salvesUsedFromStock']} | {per_day:.1f} | {r['copper']} |")
 (folder / "summary.md").write_text("\n".join(lines) + "\n")
 print("\n".join(lines))
