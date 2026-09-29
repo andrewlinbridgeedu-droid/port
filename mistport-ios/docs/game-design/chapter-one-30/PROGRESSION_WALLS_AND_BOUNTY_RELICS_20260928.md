@@ -1,6 +1,8 @@
 # 主线硬墙与通缉克制遗落物 · 设计稿
 
-2026-09-28。**待用户审阅，尚未实装。** 依据[串行成长模拟基线](../../../../docs/development/progression-sim-20260928/README.md)和规则库现有机制。数值都是候选，实装时用[模拟器](../../../../tools/progression-sim/README.md)调定。
+2026-09-28。用户已批准，第一批已实装。**2026-09-29 调数结果：** Q8、Q12、Q22、Q30 已是墙，Q18、Q26 做不成数值墙，需要用户定方向，见[调数报告](../../../../docs/development/progression-sim-20260929/README.md)。以下为原设计，Q12、Q22、Q30 的具体机制以调数报告为准。
+
+原稿： 依据[串行成长模拟基线](../../../../docs/development/progression-sim-20260928/README.md)和规则库现有机制。数值都是候选，实装时用[模拟器](../../../../tools/progression-sim/README.md)调定。
 
 ## 1. 用户已定的方向
 

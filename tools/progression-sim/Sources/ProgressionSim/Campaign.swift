@@ -162,7 +162,13 @@ final class Campaign {
     var signature: String {
         "\(stats.attackBP)/\(stats.maxHP)/\(stats.damageReductionBP)|\(passives.sorted().joined(separator: ","))|\(relics.ownedIDs.sorted().joined(separator: ","))|\(q)|\(salve)"
     }
-    var passiveCandidates: [String?] { passives.isEmpty ? [nil] : passives.map { Optional($0) } }
+    /// A retry leads with a different relic, as a player changing plan would.
+    var rotation = 0
+    var passiveCandidates: [String?] {
+        guard !passives.isEmpty else { return [nil] }
+        let shift = rotation % passives.count
+        return (passives[shift...] + passives[..<shift]).map { Optional($0) }
+    }
     /// Towers and cases wear one bounty relic; the story swaps in the wall's counter.
     var worn: String? { bountyRelicCandidates(mission: q + 1, owned: relics.ownedIDs)[0] }
 
@@ -377,6 +383,15 @@ final class Campaign {
             if attemptMain() { continue }
             var advanced = false
             while !advanced && buyNextRelicWithPostal() { advanced = attemptMain() }
+            if advanced { continue }
+            // Out of salve and copper: a player runs J0 for one more and retries.
+            // Each retry may spend the salve on a losing relic before the winning one comes up.
+            for retry in 1...4 where !advanced && q >= 4 && salve == 0 {
+                postal(jobs: max(0, (Shop.salve - copper + Shop.postalPay - 1) / Shop.postalPay))
+                rotation = retry
+                advanced = attemptMain()
+            }
+            rotation = 0
             if advanced { continue }
             switch policy {
             case .mainOnly: break

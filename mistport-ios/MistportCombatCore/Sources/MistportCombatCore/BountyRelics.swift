@@ -73,14 +73,16 @@ public struct MPCBountyRelicLedger: Codable, Equatable, Sendable {
 /// They are `var` only so the simulator can sweep them (`WALLS=` in tools/progression-sim);
 /// the game never writes them.
 public enum MPCProgressionWalls {
+    /// Q3 is not a wall: its fixed hound breath is kept low enough for slow players.
+    nonisolated(unsafe) public static var q3BreathDamage = 180
     // Wall enemies. Each value applies only in its own mission.
     nonisolated(unsafe) public static var q8LeechHP = 1900
     nonisolated(unsafe) public static var q8LeechAttack = 100
     nonisolated(unsafe) public static var q8ParasiteDamage = 110
     /// Name devour hits for start% of base health, +step% each time, up to max%.
     nonisolated(unsafe) public static var q8DevourPercent = (start: 45, step: 10, max: 85)
-    nonisolated(unsafe) public static var q12PuppetHP = 1200
-    nonisolated(unsafe) public static var q12PuppetAttack = 60
+    nonisolated(unsafe) public static var q12PuppetHP = 1300
+    nonisolated(unsafe) public static var q12PuppetAttack = 55
     /// Q12: every fortify leaves a stack that does not fade; each cuts all damage the
     /// puppet takes by this percentage, up to the cap. The broken sword clears them.
     nonisolated(unsafe) public static var q12FortifyStackPercent = 50

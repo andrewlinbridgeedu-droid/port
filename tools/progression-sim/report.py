@@ -26,9 +26,9 @@ lines = ["| 策略 | 熟练 | 起始日 | 结果 | 总分钟 | 主线 | 塔 | �
 for row in rows:
     result = f"卡在 Q{row[4]}" if row[4] else "通关"
     lines.append(f"| {row[0]} | {row[1]} | {row[2]} | {result} | {row[6]} | {row[7]} | {row[8]} | {row[9]} | {row[10]} | {row[11]} | {row[12]} | {row[14]} | {row[15]} |")
-lines += ["", "| 熟练 | 不靠教会装备过不去的关（所需最低塔层 / 当时开放到 / 只有通缉装备能否过） |", "|---|---|"]
+lines += ["", "| 熟练 | 不靠教会装备过不去的关（所需最低塔层 / 当时开放到 / 只有通缉遗落物能否过） |", "|---|---|"]
 for profile in ["high", "medium", "low"]:
-    need = [f"Q{g['mission']}: F{g['minTowerFloor'] if g.get('minTowerFloor') is not None else '>100'} / F{g['towerFloorOpenAtThisPoint']} / {'能' if g['winsWithAllBountyGear'] else '不能'}"
+    need = [f"Q{g['mission']}: F{g['minTowerFloor'] if g.get('minTowerFloor') is not None else '>100'} / F{g['towerFloorOpenAtThisPoint']} / {'能' if g['winsWithAllBountyRelics'] else '不能'}"
             for g in gates if g["profile"] == profile and not g["winsWithoutChurchGear"]]
     lines.append(f"| {profile} | {'；'.join(need) or '无'} |")
 (folder / "summary.md").write_text("\n".join(lines) + "\n")

@@ -2719,7 +2719,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
            ["chapter01_q03_encounter", "chapter01_q04_encounter"].contains(encounter.id) {
             // Fixed damage belongs to the early hound lessons only. Later
             // formations use the authored enemy attack and skill multiplier.
-            return .attack(260)
+            // Q3 is the first lesson and must stay winnable for slow hands (sim 2026-09-29).
+            return .attack(encounter.id == "chapter01_q03_encounter" ? MPCProgressionWalls.q3BreathDamage : 260)
         }
         if enemy.contentID == "enemy_clockwork_hound", intent != "name_hunt" {
             houndNameHuntStacks = 0
