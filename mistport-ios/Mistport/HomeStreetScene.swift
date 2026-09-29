@@ -440,7 +440,7 @@ struct HomeSceneRoom {
         case "post": Self(backgroundArt: "HomePostOfficeEmpty20260929", counterEdge: [.init(x: 0, y: 0.69), .init(x: 1, y: 0.74)])
         case "police": Self(backgroundArt: "HomePoliceOfficeEmpty20260929", counterEdge: [.init(x: 0, y: 0.63), .init(x: 1, y: 0.86)])
         case "clinic": Self(backgroundArt: "HomeClinicEmpty20260929", counterEdge: [.init(x: 0, y: 0.71), .init(x: 1, y: 0.77)])
-        case "oldstreet": Self(backgroundArt: "HomeOldStreetShopsEmpty20260929", counterEdge: [.init(x: 0, y: 0.64), .init(x: 0.43, y: 0.71), .init(x: 0.57, y: 0.89), .init(x: 1, y: 0.66)])
+        case "oldstreet": Self(backgroundArt: "HomeOldStreetShopsEmpty20260929", counterEdge: [.init(x: 0, y: 0.64), .init(x: 0.43, y: 0.71), .init(x: 0.57, y: 0.89), .init(x: 1, y: 0.66)], actorX: 0.24)
         case "merchant": Self(backgroundArt: "HomeCopperMerchantEmpty20260929")
         default: Self.counter("cityhall")
         }
@@ -570,6 +570,11 @@ struct HomeCounterView: View {
         return inside + posts + (buildingID == "post" ? ["邮务柜台"] : buildingID == "board" ? ["委托板登记员"] : [])
     }
     private var activeStaffName: String { selectedStaffName ?? staffNames.first ?? "柜台" }
+    private var room: HomeSceneRoom {
+        var value = HomeSceneRoom.counter(buildingID)
+        if buildingID == "oldstreet", activeStaffName == "木工" { value.actorX = 0.80 }
+        return value
+    }
     private func staffArt(_ name: String) -> String {
         if name.contains("档案员") { return "HomeArchivist20260929" }
         if name.contains("奥黛尔") { return "HomeOdelle20260929" }
@@ -606,7 +611,7 @@ struct HomeCounterView: View {
     }
     var body: some View {
         let building = HomeMapLayout.current.building(buildingID)!
-        HomeCounterScene(title: building.name!, room: .counter(buildingID), actorArt: staffArt(activeStaffName)) {
+        HomeCounterScene(title: building.name!, room: room, actorArt: staffArt(activeStaffName)) {
                 Text(greeting.isEmpty ? "\(activeStaffName) · 请问有什么事？" : greeting).font(.callout)
                 ForEach(staffNames, id: \.self) { name in
                     HomeCounterAction(title: name, detail: activeStaffName == name ? "正在接待" : nil) { selectStaff(name) }

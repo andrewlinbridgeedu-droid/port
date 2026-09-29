@@ -321,4 +321,3 @@ Extract ONLY the female bartender on the left of the reference into a standalone
 ```text
 Create one transparent character layer for a fantasy harbor game: an elderly dock sailor with windburned face, bushy grey beard, weathered blue pea coat, knitted dark cap and white sea scarf, friendly shrewd eyes. Holding a small fan of plain old playing cards at waist height. Warm detailed painterly semi realistic illustration matching historic European coastal harbor interiors, golden light from upper left. Full head to mid-thigh, both arms and hands fully included, centered with transparent margin. Actual alpha transparency, no floor, backdrop, scenery, counter or other people, no text or watermark.
 ```
-
