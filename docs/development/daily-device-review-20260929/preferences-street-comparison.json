@@ -1,0 +1,15 @@
+{
+  "beforeFiles": 168,
+  "afterFiles": 168,
+  "playerByteIdentical": true,
+  "addedPlayerKeys": [],
+  "changedOrRemovedPlayerKeys": [],
+  "changedOrRemovedOtherFiles": [
+    "mistport.daily-pacing-device-walk.v1.plist"
+  ],
+  "allowedTestSuiteChanges": [
+    "mistport.daily-pacing-device-walk.v1.plist"
+  ],
+  "newFiles": [],
+  "passed": true
+}

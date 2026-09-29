@@ -1776,21 +1776,67 @@ private struct WisteriaStreetWebView: UIViewRepresentable {
         false
         #endif
     }
+    private var debugWalkTarget: String? {
+        #if DEBUG
+        let args = ProcessInfo.processInfo.arguments
+        guard args.contains("--daily-pacing-device-walk"), args.contains("--daily-map-walk") else { return nil }
+        return args.contains("--daily-map-recipient") ? "west-lane" : "postman"
+        #else
+        return nil
+        #endif
+    }
     func makeCoordinator() -> Coordinator { Coordinator() }
     final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         var onNeighbor: ((String) -> Void)?
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--daily-map-walk") {
+                NSLog("DAILY_MAP_MESSAGE: main=%@ url=%@ body=%@", message.frameInfo.isMainFrame ? "true" : "false", message.frameInfo.request.url?.absoluteString ?? "nil", String(describing: message.body))
+            }
+            #endif
             guard message.name == "neighborArrival", message.frameInfo.isMainFrame,
                   message.frameInfo.request.url?.scheme == "mistport-map",
-                  let body = message.body as? [String: Any], let id = body["id"] as? String,
-                  let distance = body["distance"] as? Double, distance >= 0, distance <= 2.5,
-                  MPCNeighborCatalog.neighbor(id) != nil else { return }
+                  let body = message.body as? [String: Any] else { return }
+            #if DEBUG
+            if body["kind"] as? String == "ready", let ids = body["ids"] as? [String] {
+                let complete = Set(ids) == Set(MPCNeighborCatalog.all.map(\.id)) && ids.count == 23
+                NSLog("DAILY_MAP_ROSTER: complete=%@ count=%d", complete ? "true" : "false", ids.count)
+                Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(2))
+                    saveDailyLoopReviewFrame("map-street-loaded")
+                }
+                return
+            }
+            #endif
+            guard let id = body["id"] as? String, let distance = body["distance"] as? Double,
+                  distance >= 0, distance <= 2.5, MPCNeighborCatalog.neighbor(id) != nil else { return }
+            #if DEBUG
+            NSLog("DAILY_MAP_NEIGHBOR_ARRIVAL: %@ distance=%.3f", id, distance)
+            #endif
             onNeighbor?(id)
         }
         var completed = 0
         var bypass = false
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             webView.evaluateJavaScript("window.setMapProgress?.(\(completed), \(bypass));", completionHandler: nil)
+            #if DEBUG
+            NSLog("DAILY_MAP_PAGE_FINISHED: %@", webView.url?.absoluteString ?? "nil")
+            if ProcessInfo.processInfo.arguments.contains("--daily-map-walk") {
+                Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(12))
+                    saveDailyLoopReviewFrame("map-after-load")
+                    webView.evaluateJavaScript("document.body.innerText") { result, error in
+                        NSLog("DAILY_MAP_PAGE_TEXT: %@ error=%@", String(describing: result), String(describing: error))
+                    }
+                }
+            }
+            #endif
+        }
+        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+            NSLog("Mistport street navigation failed: %@", String(describing: error))
+        }
+        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+            NSLog("Mistport street load failed: %@", String(describing: error))
         }
     }
     func makeUIView(context: Context) -> WKWebView {
@@ -1798,7 +1844,7 @@ private struct WisteriaStreetWebView: UIViewRepresentable {
         configuration.userContentController.add(context.coordinator, name: "neighborArrival")
         configuration.setURLSchemeHandler(WisteriaBundleHandler(), forURLScheme: "mistport-map")
         configuration.userContentController.addUserScript(WKUserScript(
-            source: "window.__mapProgress = \(completedMissions); window.__mapBypass = \(testBypass);",
+            source: "window.__mapProgress = \(completedMissions); window.__mapBypass = \(testBypass); window.__neighborWalkTarget = '\(debugWalkTarget ?? "")';",
             injectionTime: .atDocumentStart, forMainFrameOnly: true))
         context.coordinator.onNeighbor = onNeighbor
         context.coordinator.completed = completedMissions
@@ -1832,12 +1878,19 @@ private struct WisteriaStreetWebView: UIViewRepresentable {
 private final class WisteriaBundleHandler: NSObject, WKURLSchemeHandler {
     func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         guard let url = urlSchemeTask.request.url,
-              let root = Bundle.main.resourceURL?.appendingPathComponent("WisteriaMap") else {
+              let root = Bundle.main.resourceURL?.appendingPathComponent("WisteriaMap").resolvingSymlinksInPath().standardizedFileURL else {
             urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist)); return
         }
-        let file = root.appendingPathComponent(url.path).standardizedFileURL
-        guard file.path.hasPrefix(root.path + "/"), let data = try? Data(contentsOf: file) else {
-            urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist)); return
+        let file = root.appendingPathComponent(url.path).resolvingSymlinksInPath().standardizedFileURL
+        guard file.path.hasPrefix(root.path + "/") else {
+            NSLog("Mistport street resource outside bundle: %@", url.path)
+            urlSchemeTask.didFailWithError(URLError(.noPermissionsToReadFile)); return
+        }
+        let data: Data
+        do { data = try Data(contentsOf: file) }
+        catch {
+            NSLog("Mistport street resource read failed: %@ error=%@", file.path, String(describing: error))
+            urlSchemeTask.didFailWithError(error); return
         }
         let mime: String
         switch file.pathExtension {
