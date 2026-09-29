@@ -87,8 +87,8 @@ public enum MPCProgressionWalls {
     /// puppet takes by this percentage, up to the cap. The broken sword clears them.
     nonisolated(unsafe) public static var q12FortifyStackPercent = 50
     nonisolated(unsafe) public static var q12FortifyMaxPercent = 95
-    nonisolated(unsafe) public static var q18AdjudicatorHP = 2400
-    nonisolated(unsafe) public static var q18AdjudicatorAttack = 112
+    nonisolated(unsafe) public static var q18AdjudicatorHP = 5200
+    nonisolated(unsafe) public static var q18AdjudicatorAttack = 140
     /// Q18 thirteenth blow and Q26 slam, percent of attack.
     nonisolated(unsafe) public static var q18ChargePercent = 200
     /// Q18 thirteenth blow, Q26 convoy slam and Q30 sovereign slam: without a worn piece
@@ -97,8 +97,8 @@ public enum MPCProgressionWalls {
     nonisolated(unsafe) public static var q22ClockmakerHP = 5000
     /// Q22: a failed verification without the reverse seal hits for this share of base health.
     nonisolated(unsafe) public static var q22FailedBlowHealthPercent = 140
-    nonisolated(unsafe) public static var q26ConvoyHP = 3200
-    nonisolated(unsafe) public static var q26ConvoyAttack = 120
+    nonisolated(unsafe) public static var q26ConvoyHP = 5600
+    nonisolated(unsafe) public static var q26ConvoyAttack = 150
     nonisolated(unsafe) public static var q26SlamPercent = 200
     nonisolated(unsafe) public static var q30SovereignHP = 6500
     /// Q30: the sovereign enrages below this share of its health.

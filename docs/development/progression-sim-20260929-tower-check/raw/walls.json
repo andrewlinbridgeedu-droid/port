@@ -92,8 +92,8 @@
   {
     "bare" : false,
     "firstTry" : {
-      "hpPercent" : 65,
-      "seconds" : 19.8,
+      "hpPercent" : 43,
+      "seconds" : 39.5,
       "won" : true
     },
     "minFloor" : 50,
@@ -107,8 +107,8 @@
   {
     "bare" : false,
     "firstTry" : {
-      "hpPercent" : 65,
-      "seconds" : 25.400000000000002,
+      "hpPercent" : 36,
+      "seconds" : 44.45,
       "won" : true
     },
     "minFloor" : 50,
@@ -122,8 +122,8 @@
   {
     "bare" : false,
     "firstTry" : {
-      "hpPercent" : 65,
-      "seconds" : 25.400000000000002,
+      "hpPercent" : 19,
+      "seconds" : 58.550000000000004,
       "won" : true
     },
     "minFloor" : 50,
@@ -182,8 +182,8 @@
   {
     "bare" : false,
     "firstTry" : {
-      "hpPercent" : 65,
-      "seconds" : 23.1,
+      "hpPercent" : 43,
+      "seconds" : 37.25,
       "won" : true
     },
     "minFloor" : 70,
@@ -197,8 +197,8 @@
   {
     "bare" : false,
     "firstTry" : {
-      "hpPercent" : 53,
-      "seconds" : 26.55,
+      "hpPercent" : 37,
+      "seconds" : 44.800000000000004,
       "won" : true
     },
     "minFloor" : 70,
@@ -212,8 +212,8 @@
   {
     "bare" : false,
     "firstTry" : {
-      "hpPercent" : 46,
-      "seconds" : 34.800000000000004,
+      "hpPercent" : 26,
+      "seconds" : 55.800000000000004,
       "won" : true
     },
     "minFloor" : 70,
