@@ -16,8 +16,8 @@ struct NeighborErrandTests {
         for neighbor in N.all { #expect(neighbor.name == citizens.first { $0.id == neighbor.id }?.name, "\(neighbor.id)") }
     }
 
-    @Test func writtenNeighboursAreComplete() {
-        #expect(N.written.count == 8 && N.written.allSatisfy(\.isWritten) && N.all.filter(\.isWritten).count == 8)
+    @Test func everyNeighbourIsWritten() {
+        #expect(N.written.count == 23 && N.all.count == 23 && Set(N.rotation).count == 23)
         let errands = N.all.flatMap(\.errands)
         #expect(Set(errands.map(\.id)).count == errands.count && errands.allSatisfy { !$0.id.contains("_") })
         for neighbor in N.written {
@@ -52,8 +52,13 @@ struct NeighborErrandTests {
         #expect(ledger.open(day: 3, completedMissions: workshop) == day3 && ledger.open(day: 2, completedMissions: workshop) == day3)
         let chapter = (2...28).map { N.askers(day: $0).count }
         #expect(chapter.allSatisfy { (2...3).contains($0) })
-        // Each written neighbour asks every fourth day: six or seven times in the chapter, enough for both stories.
-        for neighbor in N.written { #expect((2...28).filter { N.askers(day: $0).contains(neighbor) }.count >= 6, "\(neighbor.id)") }
+        // Everyone takes turns: two or three times by day 28, three times by day 31 (both stories).
+        for neighbor in N.all {
+            let asks = { (last: Int) in (2...last).filter { N.askers(day: $0).contains(neighbor) }.count }
+            #expect((2...3).contains(asks(28)) && asks(31) >= 3, "\(neighbor.id)")
+        }
+        let musicianDay = (2...28).first(where: { day in N.askers(day: day).contains { $0.id == "musician" } })
+        #expect(musicianDay == 7)
     }
 
     /// Completes whatever the offer asks, with a real fight for pests.
@@ -71,54 +76,57 @@ struct NeighborErrandTests {
         }
     }
 
-    @Test func affinityUnlocksTheStoriesAtThreeAndSix() throws {
+    @Test func affinityUnlocksTheStoriesAtTwoAndThree() throws {
         var ledger = MPCNeighborLedger(), coins = 0
         var inventory = [MPCCraftingCatalog.strapID: 99, MPCCraftingCatalog.clothID: 99, MPCCraftingCatalog.salveID: 99, MPCCraftingCatalog.patchID: 99]
-        var told: [Int: String] = [:]
-        for day in stride(from: 4, through: 28, by: 4) {
-            let offer = ledger.open(day: day, completedMissions: workshop).first { $0.neighborID == "postman" }!
+        var told: [Int: String] = [:], days: [Int] = []
+        for day in 2...28 {
+            guard let offer = ledger.open(day: day, completedMissions: workshop).first(where: { $0.neighborID == "postman" }) else { continue }
             let reward = try #require(try finish(&ledger, offer, coins: &coins, inventory: &inventory))
+            days.append(day)
             if let story = reward.story { told[reward.affinity] = story }
         }
-        #expect(ledger.affinity["postman"] == 7)
-        #expect(told == [3: N.neighbor("postman")!.stories[0], 6: N.neighbor("postman")!.stories[1]])
+        #expect(days == [2, 12, 21] && ledger.affinity["postman"] == 3)
+        #expect(told == [2: N.neighbor("postman")!.stories[0], 3: N.neighbor("postman")!.stories[1]])
         #expect(ledger.stories("postman") == N.neighbor("postman")!.stories && ledger.stories("baker").isEmpty)
     }
 
     @Test func eachKindPaysOnce() throws {
         var ledger = MPCNeighborLedger(), coins = 0, inventory: [String: Int] = [:]
-        // Day 4: the postman (message) and the east-side lamplighter (goods: two filter cloths).
-        let offers = ledger.open(day: 4, completedMissions: workshop)
-        let message = offers.first { $0.neighborID == "postman" }!, cloth = offers.first { $0.neighborID == "east-houses" }!
-        #expect(message.errand!.kind == .message && cloth.errand!.kind == .deliver)
+        // Day 2: the postman's letter for the old-street registrar.
+        let message = ledger.open(day: 2, completedMissions: workshop).first { $0.neighborID == "postman" }!
+        #expect(message.errand!.kind == .message)
         #expect(throws: MPCNeighborLedger.Failure.wrongRecipient) { try ledger.relay(offerID: message.id, to: "baker", coins: &coins) }
         #expect(throws: MPCNeighborLedger.Failure.wrongKind) { try ledger.deliver(offerID: message.id, coins: &coins, inventory: &inventory) }
         let relayed = try ledger.relay(offerID: message.id, to: "west-lane", coins: &coins)
         #expect(relayed.copper == 8 && coins == 8 && relayed.affinity == 1 && relayed.story == nil)
         #expect(throws: MPCNeighborLedger.Failure.done) { try ledger.relay(offerID: message.id, to: "west-lane", coins: &coins) }
+        // Day 3: the east-side lamplighter wants two filter cloths.
+        let cloth = ledger.open(day: 3, completedMissions: workshop).first { $0.neighborID == "east-houses" }!
+        #expect(cloth.errand!.kind == .deliver)
         #expect(throws: MPCNeighborLedger.Failure.stock) { try ledger.deliver(offerID: cloth.id, coins: &coins, inventory: &inventory) }
         inventory[MPCCraftingCatalog.clothID] = 2
         let delivered = try ledger.deliver(offerID: cloth.id, coins: &coins, inventory: &inventory)
         #expect(delivered.copper == 21 && coins == 29 && inventory[MPCCraftingCatalog.clothID] == 0)
+        // Day 5: the florist's first errand is a find; a wrong answer is struck out at no cost.
+        let find = ledger.open(day: 5, completedMissions: workshop).first { $0.neighborID == "florist" }!
+        let errand = find.errand!
+        let wrong = errand.choices.first { $0.id != errand.correctChoiceID }!.id
+        let miss = try ledger.answer(offerID: find.id, choiceID: wrong, coins: &coins)
+        #expect(miss == nil && coins == 29)
+        #expect(throws: MPCNeighborLedger.Failure.invalidChoice) { try ledger.answer(offerID: find.id, choiceID: wrong, coins: &coins) }
+        let hit = try ledger.answer(offerID: find.id, choiceID: errand.correctChoiceID!, coins: &coins)
+        #expect(hit?.copper == 12 && coins == 41)
         // Day 7: the musician's first errand is a pest; a lost fight leaves it open.
         let pest = ledger.open(day: 7, completedMissions: workshop).first { $0.neighborID == "musician" }!
         #expect(pest.errand!.kind == .pest)
         let id = try ledger.beginPest(offerID: pest.id, ticket: "p1")
         #expect(throws: MPCNeighborLedger.Failure.pending) { try ledger.beginPest(offerID: pest.id, ticket: "p2") }
         let lost = try ledger.settlePest(offerID: pest.id, ticket: "p1", session: playStreet(id, to: .defeat), coins: &coins)
-        #expect(lost == nil && coins == 29)
+        #expect(lost == nil && coins == 41)
         let again = try ledger.beginPest(offerID: pest.id, ticket: "p2")
         let won = try ledger.settlePest(offerID: pest.id, ticket: "p2", session: playStreet(again, to: .victory), coins: &coins)
-        #expect(won?.copper == 15 && coins == 44)
-        // Day 10: the florist's first errand is a find; a wrong answer is struck out at no cost.
-        let find = ledger.open(day: 10, completedMissions: workshop).first { $0.neighborID == "florist" }!
-        let errand = find.errand!
-        let wrong = errand.choices.first { $0.id != errand.correctChoiceID }!.id
-        let miss = try ledger.answer(offerID: find.id, choiceID: wrong, coins: &coins)
-        #expect(miss == nil && coins == 44)
-        #expect(throws: MPCNeighborLedger.Failure.invalidChoice) { try ledger.answer(offerID: find.id, choiceID: wrong, coins: &coins) }
-        let hit = try ledger.answer(offerID: find.id, choiceID: errand.correctChoiceID!, coins: &coins)
-        #expect(hit?.copper == 12 && coins == 56 && ledger.completedErrands == 4)
+        #expect(won?.copper == 15 && coins == 56 && ledger.completedErrands == 4)
     }
 
     @Test func requestsLapseOvernight() throws {
@@ -142,7 +150,7 @@ struct NeighborErrandTests {
 
     @Test func codableRoundTrip() throws {
         var ledger = MPCNeighborLedger(), coins = 0
-        let offers = ledger.open(day: 4, completedMissions: workshop)
+        let offers = ledger.open(day: 2, completedMissions: workshop)
         _ = try ledger.relay(offerID: offers[0].id, to: offers[0].errand!.recipientID!, coins: &coins)
         let decoded = try JSONDecoder().decode(MPCNeighborLedger.self, from: JSONEncoder().encode(ledger))
         #expect(decoded == ledger)
