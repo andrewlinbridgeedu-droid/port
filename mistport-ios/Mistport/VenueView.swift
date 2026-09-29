@@ -6,51 +6,16 @@ struct VenueView: View {
     let venue: VenueDefinition
 
     var body: some View {
-        ZStack {
-            Image(decorative: venue.backgroundArtName)
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-
-            LinearGradient(
-                colors: [
-                    .black.opacity(0.26),
-                    .clear,
-                    venue.kind == .cafe ? .purple.opacity(0.30) : .orange.opacity(0.25),
-                    .black.opacity(0.88)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-
-            GeometryReader { proxy in
-                if venue.kind != .cafe {
-                    ownerCounterScene
-                        .frame(
-                            width: min(proxy.size.width * 0.90, 380),
-                            height: min(proxy.size.height * 0.54, 500)
-                        )
-                        .position(x: proxy.size.width * 0.54, y: proxy.size.height * 0.38)
-                }
-
-                ownerDialogue
-                    .frame(width: min(proxy.size.width * 0.72, 284))
-                    .position(x: proxy.size.width * 0.43, y: proxy.size.height * 0.20)
+        HomeCounterScene(title: venue.name, room: venue.kind == .cafe ? .cafe : .restaurant,
+                         actorArt: venue.ownerArtName) {
+            HStack {
+                Text("\(venue.ownerName) · \(venue.ownerTitle)").font(.headline)
+                Spacer()
+                Text("\(game.venueCoins) 铜").monospacedDigit()
             }
-            .ignoresSafeArea()
-            .allowsHitTesting(false)
-
-            VStack(spacing: 12) {
-                venueHeader
-                Spacer(minLength: 0)
-                offerShelf
-            }
-            .padding(.horizontal, 14)
-            .padding(.top, 8)
-            .padding(.bottom, 12)
+            Text(game.venueMessage.isEmpty ? venue.greeting : game.venueMessage)
+            offerShelf
         }
-        .preferredColorScheme(.dark)
     }
 
     private var ownerCounterScene: some View {

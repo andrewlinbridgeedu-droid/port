@@ -1,0 +1,31 @@
+{
+  "beforeFiles": 181,
+  "afterFiles": 194,
+  "playerByteIdentical": true,
+  "addedPlayerKeys": [],
+  "changedOrRemovedPlayerKeys": [],
+  "changedOrRemovedOtherFiles": [
+    "mistport.daily-pacing-device-walk.v1.plist",
+    "mistport.player-test-01-15.audit.plist"
+  ],
+  "allowedTestSuiteChanges": [
+    "mistport.daily-pacing-device-walk.v1.plist",
+    "mistport.player-test-01-15.audit.plist"
+  ],
+  "newFiles": [
+    "mistport.bounty-daily-risk-check.01D29107-EE4C-464D-A646-426EBB82F619.plist",
+    "mistport.church-tower-check.F8886966-AE04-4170-B6E6-1679A41B0B54.plist",
+    "mistport.city-events-check.8F3659F0-344B-4DC0-8B33-AC6B54C2CCCC.plist",
+    "mistport.daily-pacing.9C2C2A09-9EAD-43B0-B1F4-1B5028605941.old.plist",
+    "mistport.daily-pacing.9C2C2A09-9EAD-43B0-B1F4-1B5028605941.plist",
+    "mistport.daily-work-check.6FBCCFD3-453B-41C2-8F84-D1F9A900EC35.plist",
+    "mistport.daily-workshop-check.0F6055B8-B089-43C5-AF8A-1F88CF1614F1.plist",
+    "mistport.neighbors-check.7436A241-8C38-44F0-B4B5-BF286B19EA7E.plist",
+    "mistport.newspaper-check.5DE4FD4E-B7FA-4152-8FF6-CB6468244122.plist",
+    "mistport.p0-verification.A60F9432-0841-45BD-86CF-1EBA416F0A92.plist",
+    "mistport.player-growth-check.37142BC0-882A-43E6-A878-236BA3D1914E.gap.plist",
+    "mistport.player-growth-check.37142BC0-882A-43E6-A878-236BA3D1914E.plist",
+    "mistport.remnants-check.3F1B989B-2855-45C0-A8C7-E86E9D75BDF0.plist"
+  ],
+  "passed": true
+}

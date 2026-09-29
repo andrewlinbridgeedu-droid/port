@@ -25,6 +25,24 @@ struct ContentView: View {
     @Bindable var storefront: Storefront
     @Environment(\.scenePhase) private var scenePhase
     @State private var newspaperPresented = false
+    @State private var homeFocusID: String?
+    @State private var homeFocusRevision = 0
+    @State private var homeDestination: HomeDestination?
+    private struct HomeDestination: Identifiable {
+        let id: String
+        var target: MPCStreetTaskTarget?
+    }
+    private var streetTargets: [MPCStreetTaskTarget] { MPCStreetTaskCatalog.bountyTargets(game.churchServices.bounties) }
+    private var homeIsActive: Bool {
+        let uncovered = scenePhase == .active && presentedSheet == nil && homeDestination == nil && !newspaperPresented
+            && !churchPresented && !blackSaltShorePresented && !tavernBountyPresented
+            && !isProfilePresented && !isVenuePresented && !isTurnBasedBattlePresented && !isLaunchLoading
+        #if DEBUG
+        return uncovered && !isDeveloperTestPanelPresented
+        #else
+        return uncovered
+        #endif
+    }
     #if DEBUG
     @State private var didRunMapReview = false
     #endif
@@ -75,10 +93,18 @@ struct ContentView: View {
         case .workshop: presentedSheet = .workshop
         case .events: presentedSheet = .cityEvents
         case .tavern: tavernBountyPresented = true
-        case .neighbors: presentedSheet = .dailyNeighbors
+        case .neighbors: homeFocusID = "board"; homeFocusRevision += 1
         case .remnants: presentedSheet = .dailyRemnants
         case .work: presentedSheet = .dailyWork
         }
+    }
+
+    private func openHomeService(_ service: String) {
+        if service == "merchant" { homeDestination = .init(id: "merchant") }
+        else if service == "cafe_keeper" {
+            guard game.venueIsUnlocked("midnight-clock-cafe") else { homeDestination = .init(id: "cafe-locked"); return }
+            game.prepareVenue("midnight-clock-cafe"); isVenuePresented = true
+        } else { homeDestination = .init(id: service) }
     }
 
     private var isDirectChapterOnePreview: Bool {
@@ -178,16 +204,20 @@ struct ContentView: View {
                             game.prepareVenue(venueID)
                             isVenuePresented = true
                         },
+                        onNewspaper: { newspaperPresented = true },
+                        homeIsActive: homeIsActive,
+                        streetTargets: streetTargets,
+                        focusID: homeFocusID,
+                        focusRevision: homeFocusRevision,
+                        onStreetTarget: { homeDestination = .init(id: $0.id, target: $0) },
+                        onStreetService: openHomeService,
+                        onCounter: { if $0 == "cafe" { openHomeService("cafe_keeper") } else { homeDestination = .init(id: $0) } },
                         blackSaltShore: game.churchHasDepartedMistport ? (
                             status: !game.sequenceEightQualified ? "先举行序列 8 仪式"
                                 : game.chapterTwoBridge.worldEventStoryReady ? "已见过两家负责人 · 可重访" : "两家负责人在站内等候",
                             action: { blackSaltShorePresented = true }
                         ) : nil
                     )
-                    .safeAreaInset(edge: .bottom) {
-                        Button("雾港日刊 · 第 \(game.pacingDay) 天") { newspaperPresented = true }
-                            .buttonStyle(.borderedProminent).padding(.bottom, 4)
-                    }
                 case .districtMap:
                     // Legacy entry/debug routes bypass the removed street page too.
                     Color.black.ignoresSafeArea()
@@ -339,6 +369,21 @@ struct ContentView: View {
             }
             #endif
         }
+        #if DEBUG
+        .task {
+            guard ProcessInfo.processInfo.arguments.contains("--home-map-review"),
+                  let action = UserDefaults.standard.string(forKey: "MistportHomeReviewService") else { return }
+            try? await Task.sleep(for: .seconds(5))
+            if action == "newspaper" { newspaperPresented = true }
+            else if action == "tavern" { tavernBountyPresented = true }
+            else if action == "remnants" { presentedSheet = .dailyRemnants }
+            else if action == "cafe-door" { openHomeService("cafe_keeper") }
+            else if ["merchant", "cafe_keeper", "mohr", "old-sailor"].contains(action) { openHomeService(action) }
+            else { homeDestination = .init(id: action) }
+            try? await Task.sleep(for: .seconds(3))
+            saveDailyLoopReviewFrame("home-" + action)
+        }
+        #endif
         .onChange(of: game.phase) { _, phase in
             HomeMusicController.shared.update(for: phase)
             if phase == .dungeon && presentedSheet == .dailyNeighbors { presentedSheet = nil }
@@ -350,6 +395,26 @@ struct ContentView: View {
                 newspaperDestination = destination
                 newspaperPresented = false
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .homeQuestFocus)) { event in
+            homeFocusID = event.object as? String; homeFocusRevision += 1
+            presentedSheet = nil; churchPresented = false; tavernBountyPresented = false
+            newspaperPresented = false; homeDestination = nil
+        }
+        .sheet(item: $homeDestination) { destination in
+            if let target = destination.target {
+                let matching = target.personID == nil ? [target] : streetTargets.filter { $0.personID == target.personID }
+                if matching.count > 1 { HomeTaskChoicesView(game: game, targets: matching) }
+                else { HomeBountyInteractionView(game: game, target: target) }
+            }
+            else if destination.id == "merchant" { HomeCopperShopView(game: game) }
+            else if destination.id == "mohr" || destination.id == "old-sailor" {
+                if game.tavernPokerUnlocked {
+                    BountyPokerRound(game: game, caseID: "tavern", onFinish: { _ in },
+                                     opponentOverride: destination.id == "old-sailor" ? "码头老水手" : nil)
+                } else { HomeServiceGreetingView(title: destination.id == "mohr" ? "莫尔" : "码头老水手", message: "牌手向你点头。完成借脸人案后，常驻牌桌开放。") }
+            } else if destination.id == "cafe-locked" { HomeCafeWelcomeView() }
+            else { HomeCounterView(game: game, buildingID: destination.id) }
         }
         .fullScreenCover(isPresented: $churchPresented) { ChurchSanctuaryView(game: game) }
         .fullScreenCover(isPresented: $blackSaltShorePresented) { BlackSaltShoreView(game: game) }
@@ -381,9 +446,8 @@ struct ContentView: View {
             case .dailyWork:
                 ChurchMaintenanceView(game: game, onBack: { presentedSheet = nil })
             case .dailyNeighbors:
-                DistrictLocationMapView(game: game, onExit: { presentedSheet = nil },
-                    onOpenExpedition: { presentedSheet = .expedition },
-                    onEnterVenue: { id in presentedSheet = nil; game.prepareVenue(id); isVenuePresented = true })
+                Text("街坊委托请回首页委托板查看。")
+                    .onAppear { presentedSheet = nil; homeFocusID = "board" }
             case .cityEvents:
                 CityEventsView(game: game)
             case .workshop:
