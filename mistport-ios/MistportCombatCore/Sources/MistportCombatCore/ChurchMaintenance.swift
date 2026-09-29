@@ -74,6 +74,7 @@ public enum MPCChurchMaintenanceCatalog {
     }
     public static func encounter(id: String) -> MPCEncounterContent? {
         if let lights = MPCLightsPublicTarget.encounter(id: id) { return lights }
+        if let street = MPCStreetEncounters.encounter(id: id) { return street }
         guard let d = descriptor(id) else { return nil }
         let baseWaves: [[String]]
         if d.patrol {

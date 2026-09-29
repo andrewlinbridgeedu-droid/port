@@ -102,6 +102,8 @@ public enum MPCCraftingCatalog {
 
     public static let all: [MPCCraftRecipe] = basics + gear
     public static func recipe(_ id: String) -> MPCCraftRecipe? { all.first { $0.id == id } }
+    /// Base stock actually paid once the city's surcharge or discount applies; never below zero.
+    public static func baseStock(_ recipe: MPCCraftRecipe, surcharge: Int = 0) -> Int { max(0, recipe.copper + surcharge) }
     public static func isOpen(_ recipe: MPCCraftRecipe, completedMissions: Set<Int>) -> Bool {
         completedMissions.contains { $0 >= recipe.requiredMission }
     }
@@ -126,17 +128,20 @@ public struct MPCCraftingLedger: Codable, Equatable, Sendable {
     /// Validates everything first, then pays, consumes and produces in one step.
     /// Goods go to the inventory; gear goes to the gear ledger (not worn).
     @discardableResult
+    /// `surcharge` is the city's change to base-stock prices (MPCCityEventLedger.effects).
     public mutating func craft(receiptID: String, recipeID: String, day: Int, completedMissions: Set<Int>,
-                               coins: inout Int, inventory: inout [String: Int], gear: inout MPCChurchGearLedger) throws -> Bool {
+                               coins: inout Int, inventory: inout [String: Int], gear: inout MPCChurchGearLedger,
+                               surcharge: Int = 0) throws -> Bool {
         if receipts.contains(receiptID) { return false }
         guard let recipe = MPCCraftingCatalog.recipe(recipeID) else { throw Failure.unknown }
         guard MPCCraftingCatalog.isOpen(recipe, completedMissions: completedMissions) else { throw Failure.locked }
         guard points(recipe.craft) >= recipe.requiredProficiency else { throw Failure.proficiency }
         guard recipe.inputs.allSatisfy({ inventory[$0.key, default: 0] >= $0.value }) else { throw Failure.stock }
-        guard coins >= recipe.copper else { throw Failure.funds }
+        let cost = MPCCraftingCatalog.baseStock(recipe, surcharge: surcharge)
+        guard coins >= cost else { throw Failure.funds }
         if recipe.isGear && gear.ownedIDs.contains(recipe.output) { throw Failure.owned }
 
-        coins -= recipe.copper
+        coins -= cost
         for (id, count) in recipe.inputs { inventory[id, default: 0] -= count }
         if recipe.isGear { gear.grant(recipe.output) } else { inventory[recipe.output, default: 0] += recipe.outputCount }
         if day > self.day { self.day = day; proficiencyCraftsToday = 0 }
@@ -168,10 +173,12 @@ public struct MPCWorkshopOrderBoard: Codable, Equatable, Sendable {
     public private(set) var receipts: [String: Int] = [:]
     public init() {}
 
-    /// Adds each new day's money, keeping at most three days' worth.
-    public mutating func open(day: Int) {
+    /// Adds each new day's money, keeping at most three days' worth. `bonus` is the
+    /// city's change to the daily budget (MPCCityEventLedger.effects), as of that day.
+    public mutating func open(day: Int, bonus: Int = 0) {
         guard day > self.day else { return }
-        budget = min(Self.dailyBudget * Self.carriedDays, budget + Self.dailyBudget * (day - self.day))
+        let daily = max(0, Self.dailyBudget + bonus)
+        budget = max(0, min(daily * Self.carriedDays, budget + daily * (day - self.day)))
         self.day = day
     }
 
@@ -179,10 +186,10 @@ public struct MPCWorkshopOrderBoard: Codable, Equatable, Sendable {
     /// a replayed receipt returns its first result without paying again.
     @discardableResult
     public mutating func sell(receiptID: String, itemID: String, count: Int, day: Int,
-                              coins: inout Int, inventory: inout [String: Int]) throws -> Int {
+                              coins: inout Int, inventory: inout [String: Int], bonus: Int = 0) throws -> Int {
         if let done = receipts[receiptID] { return done }
         guard let price = Self.prices[itemID] else { throw Failure.notBought }
-        open(day: day)
+        open(day: day, bonus: bonus)
         let units = min(count, inventory[itemID, default: 0], budget / price)
         guard count > 0, inventory[itemID, default: 0] >= 1 else { throw Failure.stock }
         guard units > 0 else { throw Failure.budget }
