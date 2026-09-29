@@ -88,6 +88,7 @@ Q1–8失名与诊所 → Q9–16假家庭、错误救援与终止旧犬 → Q17
 | [关卡—塔开放总表](CHAPTER_ONE_LEVEL_TOWER_OPENING_20260921.md) | 逐关技能、物证和故事映射；旧塔身份表由本页当前事实覆盖 |
 | [世界观连续性](WORLD_CONTINUITY.md)／[模型预算](MODEL_BUDGET.md)／[Boss制作说明](BOSS_ART_BRIEF.md) | 连续性与资产来源；旧预算不是现行总数 |
 | [成长和开放](PROGRESSION_AND_UNLOCKS.md) | 技能、天赋、服务、材料与晋阶资格 |
+| [每日玩法与经济](DAILY_LOOP_AND_ECONOMY_20260929.md) | 按天推进后每天 1–2 小时怎么安排：日刊、工坊提前、四周事件、街坊委托、重复工作递减；设计候选，待用户定 |
 | [经济账本](ECONOMY.md)／[遗落物与借用](RELICS_AND_LOANS.md) | 实际收入与规划预算、借还与消费 |
 | [教会百层塔](CHURCH_TOWER.md) | D01–D11、门槛、波次与结算 |
 | [通缉与地下委托](BOUNTIES_AND_TAVERN.md)／[十案目标设计](BOUNTY_TEN_PROPOSAL_20260922.md) | 当前十案与待实施地下任务，B04／B06设计和实装必须分开 |
