@@ -30,9 +30,8 @@ struct DailyBountyBoardTests {
         #expect(MPCDailyBountyRotation.issue(dayOrdinal: 20260925, eligibleIDs: []).offerIDs.isEmpty)
     }
 
-    @Test func defeatLossIsBoundedRepeatableAndCanHitBothTypes() {
+    @Test func defeatLossIsBoundedRepeatableAndOnlyCostsCopper() {
         var sawCopper = false
-        var sawRelic = false
         var sawNeither = false
         for index in 0..<1_000 {
             let battleID = "bounty-risk-\(index)"
@@ -41,12 +40,11 @@ struct DailyBountyBoardTests {
             #expect(loss == MPCBountyDefeatRisk.loss(battleID: battleID, availableCopper: 1_000,
                                                       carriedOrdinaryRelicIDs: ["ordinary-a"]))
             #expect(loss.copper == 0 || loss.copper == 60)
-            #expect(loss.relicID == nil || loss.relicID == "ordinary-a")
+            #expect(loss.relicID == nil)
             sawCopper = sawCopper || loss.copper > 0
-            sawRelic = sawRelic || loss.relicID != nil
-            sawNeither = sawNeither || (loss.copper == 0 && loss.relicID == nil)
+            sawNeither = sawNeither || loss.copper == 0
         }
-        #expect(sawCopper && sawRelic && sawNeither)
+        #expect(sawCopper && sawNeither)
         let empty = MPCBountyDefeatRisk.loss(battleID: "empty", availableCopper: 0,
                                              carriedOrdinaryRelicIDs: [])
         #expect(empty.copper == 0 && empty.relicID == nil)

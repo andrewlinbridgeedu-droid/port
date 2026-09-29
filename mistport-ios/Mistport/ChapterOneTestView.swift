@@ -8504,7 +8504,7 @@ struct ChurchBountyBoard: View {
                                     .frame(width: 24, height: 24)
                                     .overlay(Circle().stroke(crimson.opacity(0.75)))
                                     .accessibilityHidden(true)
-                                Text("接案前请辨认罪行与招式。阵亡可重试；每次战败有 35% 概率遗失随身铜币，12% 概率遗失一件随身普通遗落物。剧情物品与教会借物不掉落。")
+                                Text("接案前请辨认罪行与招式。阵亡可重试；每次战败有 35% 概率遗失随身铜币，随身遗落物不会遗失。")
                                     .font(.system(size: 12, weight: .medium, design: .serif))
                                     .fixedSize(horizontal: false, vertical: true)
                             }
@@ -8780,7 +8780,7 @@ private struct ChurchBountyDossier: View {
                             Text("本案今日未张贴。明日告示更新后可再查看。").font(.footnote).foregroundStyle(ChurchGold)
                         }
                         if !progress.claimed {
-                            Text("战败可重试，但每次阵亡有 35% 概率遗失最多 60 铜币，12% 概率遗失一件随身普通遗落物。关键物品与借物不掉落。")
+                            Text("战败可重试，但每次阵亡有 35% 概率遗失最多 60 铜币。随身遗落物不会遗失。")
                                 .font(.footnote).foregroundStyle(Color(red: 1, green: 0.67, blue: 0.58))
                         }
                         if let relic = MPCBountyRelicCatalog.relic(forCase: bounty.id) {

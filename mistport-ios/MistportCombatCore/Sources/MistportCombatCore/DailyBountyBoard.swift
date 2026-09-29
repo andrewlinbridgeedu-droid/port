@@ -90,19 +90,15 @@ public struct MPCBountyDefeatLoss: Codable, Equatable, Sendable {
     }
 }
 
-/// Stable rolls let a restarted settlement reproduce the same loss. The
-/// caller supplies only ordinary, owned relics actually carried into battle.
+/// Stable rolls let a restarted settlement reproduce the same loss. From
+/// 2026-09-29 a defeat only costs copper: carried relics are never lost, so
+/// `relicID` is always nil (the field stays so older saved receipts decode).
 public enum MPCBountyDefeatRisk {
     public static let copperChance = 35
-    public static let relicChance = 12
     public static func loss(battleID: String, availableCopper: Int, carriedOrdinaryRelicIDs: [String]) -> MPCBountyDefeatLoss {
         let coinRoll = hash("copper:" + battleID) % 100
-        let relicRoll = hash("relic:" + battleID) % 100
         let copper = coinRoll < copperChance ? min(max(0, availableCopper), min(60, (max(0, availableCopper) * 15 + 99) / 100)) : 0
-        let candidates = Array(Set(carriedOrdinaryRelicIDs)).sorted()
-        let relic = relicRoll < relicChance && !candidates.isEmpty
-            ? candidates[Int(hash("which:" + battleID) % UInt64(candidates.count))] : nil
-        return .init(battleID: battleID, copper: copper, relicID: relic)
+        return .init(battleID: battleID, copper: copper, relicID: nil)
     }
     private static func hash(_ text: String) -> UInt64 {
         text.utf8.reduce(14_695_981_039_346_656_037) { ($0 ^ UInt64($1)) &* 1_099_511_628_211 }

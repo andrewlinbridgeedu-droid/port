@@ -3199,23 +3199,22 @@ extension GameStore {
         try! game.presentChurchBountyWarrant(bounty.id, suspectID: bounty.enemyID,
                                              supportingEvidenceIDs: ["witness", "wound"])
         let battleID = (0..<2_000).map { "risk-\($0)" }.first {
-            let loss = MPCBountyDefeatRisk.loss(battleID: $0, availableCopper: 1_000,
-                                                 carriedOrdinaryRelicIDs: [EarlyRelicShop.salt])
-            return loss.copper > 0 && loss.relicID == EarlyRelicShop.salt
+            MPCBountyDefeatRisk.loss(battleID: $0, availableCopper: 1_000,
+                                     carriedOrdinaryRelicIDs: [EarlyRelicShop.salt]).copper > 0
         }!
         _ = try! game.beginChurchBounty(bounty.id, battleID: battleID, skills: [])
         try! game.finishChurchBounty(bounty.id, battleID: battleID, outcome: .defeat)
         assert(game.venueCoins == 940)
-        assert(!game.chapterOneCampaign.ownedRelicIDs.contains(EarlyRelicShop.salt))
-        assert(game.chapterOneCampaign.loadout.relicIDs.isEmpty)
+        assert(game.chapterOneCampaign.ownedRelicIDs.contains(EarlyRelicShop.salt))
+        assert(game.chapterOneCampaign.loadout.relicIDs == [EarlyRelicShop.salt])
         let reopened = GameStore(launchArguments: [], defaults: storage)
         assert(reopened.venueCoins == 940)
-        assert(reopened.churchServices.bountyDefeatLosses[battleID]?.relicID == EarlyRelicShop.salt)
-        assert(!reopened.chapterOneCampaign.ownedRelicIDs.contains(EarlyRelicShop.salt))
+        assert(reopened.churchServices.bountyDefeatLosses[battleID]?.relicID == nil)
+        assert(reopened.chapterOneCampaign.ownedRelicIDs.contains(EarlyRelicShop.salt))
         try! reopened.finishChurchBounty(bounty.id, battleID: battleID, outcome: .defeat)
         assert(reopened.venueCoins == 940)
         assert(reopened.churchServices.bounties.cases[bounty.id]?.evidenceIDs.contains("identity") == true)
-        NSLog("BOUNTY_DAILY_RISK_VERIFY_PASS: no mission gate, daily issue, both loss types, reload, no double charge, evidence retained")
+        NSLog("BOUNTY_DAILY_RISK_VERIFY_PASS: no mission gate, daily issue, copper-only loss, relic kept, reload, no double charge, evidence retained")
     }
     private static func verifyChurchDeparture() {
         let suite = "mistport.church-departure-check." + UUID().uuidString
