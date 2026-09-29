@@ -71,6 +71,9 @@
 
 ## 下一步（按优先级）
 
+**Mac 上的工作已整理成 Codex 任务单：[CODEX_TASKS_DAILY_LOOP_APP_20260929.md](CODEX_TASKS_DAILY_LOOP_APP_20260929.md)**（编译与按天推进验证、每日玩法阶段 3、真机计时与经济阶段 4）。
+
+
 1. **每日玩法阶段 3（App，Mac）**：日刊；工坊界面接 `MPCCraftingLedger`、`MPCWorkshopOrderBoard`（带事件的 `bonus`、`surcharge`）和工坊装备的穿戴修理；事件板（交货、事件战入口、`MPCCityEventLedger` 的回执和结算）；地图上街坊的委托对话（`MPCNeighborLedger`，传话要走到收话人那里再调 `relay`）；残余案卷（`MPCRemnantLedger`，领奖走 `MPCDailyWorkLedger`）；商店止痛膏价加上 `effects(day:).salveSurcharge`；递减和“今天已记满”的提示。新账本都要进存档并有迁移回执，旧存档读入为空账本。街头战要在 Unity 里各看一场。
 2. **按天推进第二步：在 Mac 上编译并验证第四轮的接入**。`xcodebuild` 修掉类型错误；跑 `--verify-daily-pacing` 和 `--verify-player-growth`；真机上先备份 Preferences，确认用户真实存档第一次打开时被迁移（下一关当天可打），并逐文件核对只多了 `mistport.daily-pacing.start.v1` 一个键。可选：把 `todaySummary` 放到城市页；任务板上锁住的关显示原因。
 3. 交给 Codex（Mac）：拉 `main`，`xcodebuild`，按惯例备份 Preferences 后装机；看“封线装备”页通缉栏、通缉案卷的遗落物说明、墙关失败提示（含“换上深井第 N 层或更深的装备”）、通缉战败说明，以及几个新机制的实际手感。装机、编号、SSD、存档隔离规矩见 `HANDOFF_PROGRESSION_UI_20260928.md` 和 `AGENTS.md`。
