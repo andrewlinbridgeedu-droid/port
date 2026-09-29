@@ -1445,12 +1445,15 @@ struct MissionBoardView: View {
                         chapterHeader
                         districtSelector
                         districtProgressCard
+                        Text(game.repeatWorkNotice).font(.caption).foregroundStyle(.yellow)
 
                         ForEach(game.playerTestMissions) { mission in
                             DistrictMissionRow(
                                 mission: mission,
                                 isCompleted: game.missionIsCompleted(mission),
                                 isAvailable: game.missionIsAvailable(mission),
+                                rewardCopper: game.missionCoinReward(for: mission, firstClear: !game.missionIsCompleted(mission)),
+                                lockReason: game.missionLockText(mission),
                                 action: { begin(mission) }
                             )
                         }
@@ -1662,6 +1665,8 @@ private struct DistrictMissionRow: View {
     let mission: DistrictMission
     let isCompleted: Bool
     let isAvailable: Bool
+    let rewardCopper: Int
+    let lockReason: String?
     let action: () -> Void
 
     var body: some View {
@@ -1698,6 +1703,8 @@ private struct DistrictMissionRow: View {
                                 .background(.yellow.opacity(0.12), in: Capsule())
                         }
                     }
+                    Text(isAvailable ? "本次奖励 \(rewardCopper) 铜币" : lockReason ?? "完成前置主线后开放")
+                        .font(.caption).foregroundStyle(.yellow)
                     Text(mission.objective)
                         .font(.caption2)
                         .foregroundStyle(.white.opacity(0.54))

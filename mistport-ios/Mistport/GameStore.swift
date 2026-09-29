@@ -158,6 +158,7 @@ final class GameStore {
         static let completedChapterMissionIDs = "chapter-one.completed-mission-ids"
         /// MPCDailyPacingStart: the save's day 1, written once (migration receipt for old saves).
         static let dailyPacingStart = "mistport.daily-pacing.start.v1"
+        static let dailyWork = "mistport.daily-work.v1"
         static let selectedChapterDistrictID = "chapter-one.selected-district-id"
         static let venueCoins = "economy.venue-coins"
         static let ownedVenueItems = "economy.owned-venue-items"
@@ -179,6 +180,12 @@ final class GameStore {
         static let debugBattlePlacementPrefix = "debug.chapter-one.player-placement."
     }
 
+    private struct DailyWorkRecord: Codable {
+        let migratedAt: Date
+        var ledger: MPCDailyWorkLedger
+        init() { migratedAt = Date(); ledger = .init() }
+    }
+    private var dailyWorkRecord = DailyWorkRecord()
     private let defaults: UserDefaults
     private(set) var phase: GamePhase = .title
     var chapterOneCampaign = MPCChapterOneCampaignState.chapterStartState
@@ -255,6 +262,8 @@ final class GameStore {
         defaults: UserDefaults = .standard
     ) {
         self.defaults = defaults
+        if let data = defaults.data(forKey: PersistenceKey.dailyWork),
+           let record = try? JSONDecoder().decode(DailyWorkRecord.self, from: data) { dailyWorkRecord = record }
         #if DEBUG
         if launchArguments.contains("--developer-tools") {
             defaults.set(true, forKey: "mistport.developer-editor.enabled")
@@ -312,6 +321,7 @@ final class GameStore {
             let progressKeysToClear = [
                 PersistenceKey.completedChapterMissionIDs,
                 PersistenceKey.dailyPacingStart,
+                PersistenceKey.dailyWork,
                 PersistenceKey.selectedChapterDistrictID,
                 PersistenceKey.venueCoins,
                 PersistenceKey.ownedVenueItems,
@@ -355,6 +365,7 @@ final class GameStore {
             let progressKeysToClear = [
                 PersistenceKey.completedChapterMissionIDs,
                 PersistenceKey.dailyPacingStart,
+                PersistenceKey.dailyWork,
                 PersistenceKey.selectedChapterDistrictID,
                 PersistenceKey.venueCoins,
                 PersistenceKey.ownedVenueItems,
@@ -493,6 +504,7 @@ final class GameStore {
 
         // After every progress load and reset argument above: old saves migrate once here.
         resolveDailyPacingStart()
+        if defaults.object(forKey: PersistenceKey.dailyWork) == nil { persistDailyWork(DailyWorkRecord()) }
 
         #if DEBUG
         if launchArguments.contains("--preview-path") {
@@ -594,6 +606,7 @@ final class GameStore {
         if launchArguments.contains("--verify-church-tower-100") { Self.verifyChurchTowerHundred() }
         if launchArguments.contains("--verify-player-growth") { Self.verifyPlayerGrowthPersistence() }
         if launchArguments.contains("--verify-daily-pacing") { Self.verifyDailyPacing() }
+        if launchArguments.contains("--verify-daily-work") { Self.verifyDailyWorkIntegration() }
         if launchArguments.contains("--verify-p0") { Self.verifySettlementRecovery() }
         if launchArguments.contains("--verify-early-relic-shop") { Self.verifyEarlyRelicShop(); Self.verifyAdvancementProcurement() }
         if launchArguments.contains("--verify-q5-migration") { Self.verifyEncoreBellMigration() }
@@ -792,6 +805,8 @@ final class GameStore {
         assert(reopened.towerFloorIsOpenToday(4) && !reopened.towerFloorIsOpenToday(5) && reopened.towerPacingLockText != nil)
         assert((try? reopened.churchTowerSession(floor: 5)) == nil)
         assert((try? reopened.churchTowerSession(floor: 4)) != nil)
+        assert((try? reopened.beginChurchTower(floor: 5, battleID: "pacing-locked", skills: [])) == nil)
+        assert((try? reopened.beginChurchTower(floor: 4, battleID: "pacing-replay", skills: [])) != nil)
         old.set((1...17).map { "old-clock-\($0)" }, forKey: PersistenceKey.completedChapterMissionIDs)
         let migrated = GameStore(launchArguments: [], defaults: old)
         assert(migrated.dailyPacingStart?.origin == .migrated && migrated.missionIsAvailable(all[17]))
@@ -813,6 +828,15 @@ final class GameStore {
         storage.set(try! JSONEncoder().encode(MPCChurchTowerProgress(clearedFloors: [1, 2, 3, 4])),
                     forKey: "mistport.church-tower.progress.v1")
         seed.debugSetPacingDay(1)
+        if ProcessInfo.processInfo.arguments.contains("--daily-work-preview") {
+            seed.debugJumpToOldClockMission(10, enterImmediately: false)
+            seed.debugSetPacingDay(1)
+            storage.set(try! JSONEncoder().encode(MPCChurchTowerProgress(clearedFloors: Set(1...10))),
+                        forKey: "mistport.church-tower.progress.v1")
+            var work = seed.dailyWorkRecord
+            for n in 1...6 { _ = work.ledger.settle(receiptID: "preview-\(n)", day: 1, copper: 40, merit: 6) }
+            seed.persistDailyWork(work)
+        }
         return storage
     }
 
@@ -1567,6 +1591,7 @@ final class GameStore {
         var lifetimeMerit: Int? = nil
         var spendableMerit: Int? = nil
         var talentEarned: Int? = nil
+        var dailyWork: DailyWorkRecord? = nil
     }
     private static let settlementJournalKey = "mistport.pending-settlement.v1"
     var recoveredMissionReward: MissionRewardReceipt?
@@ -1602,6 +1627,7 @@ final class GameStore {
         chapterOneCampaign.lifetimeChurchMerit = journal.lifetimeMerit ?? chapterOneCampaign.lifetimeChurchMerit
         chapterOneCampaign.spendableChurchMerit = journal.spendableMerit ?? chapterOneCampaign.spendableChurchMerit
         chapterOneCampaign.chapterTalentPointsEarned = journal.talentEarned ?? chapterOneCampaign.chapterTalentPointsEarned
+        if let work = journal.dailyWork { persistDailyWork(work) }
         recoveredMissionReward = journal.receipt
         persistChapterProgress()
     }
@@ -1612,8 +1638,12 @@ final class GameStore {
         guard let mission = activeChapterMission else { return nil }
         if let receipt = settledMissionReward, receipt.missionID == mission.id { return receipt }
         let materialsBefore = materials
-        let wasNewCompletion = completedChapterMissionIDs.insert(mission.id).inserted
-        let earnedCoins = missionCoinReward(for: mission, firstClear: wasNewCompletion)
+        let wasNewCompletion = !completedChapterMissionIDs.contains(mission.id)
+        guard wasNewCompletion || dailyWorkIsReadable else { return nil }
+        var work = dailyWorkRecord
+        let base = baseMissionCoinReward(for: mission, firstClear: wasNewCompletion)
+        let earnedCoins = wasNewCompletion ? base : work.ledger.settle(receiptID: "story-" + UUID().uuidString, day: pacingDay, copper: base, merit: 0).copper
+        completedChapterMissionIDs.insert(mission.id)
         venueCoins += earnedCoins
         if wasNewCompletion {
             acting += 1
@@ -1649,12 +1679,14 @@ final class GameStore {
             rewardVersion: chapterOneCampaign.chapterThirtyRewardVersion,
             lifetimeMerit: chapterOneCampaign.lifetimeChurchMerit,
             spendableMerit: chapterOneCampaign.spendableChurchMerit,
-            talentEarned: chapterOneCampaign.chapterTalentPointsEarned)
+            talentEarned: chapterOneCampaign.chapterTalentPointsEarned,
+            dailyWork: wasNewCompletion ? nil : work)
         // One encoded write-ahead record owns the post-settlement values. On
         // restart replay absolute values, never add the reward a second time.
         guard let encoded = try? JSONEncoder().encode(journal) else { return nil }
         defaults.set(encoded, forKey: Self.settlementJournalKey)
         settledMissionReward = receipt
+        if !wasNewCompletion { persistDailyWork(work) }
         persistChapterProgress()
         return receipt
     }
@@ -1799,6 +1831,11 @@ final class GameStore {
     }
 
     func missionCoinReward(for mission: DistrictMission, firstClear: Bool) -> Int {
+        let base = baseMissionCoinReward(for: mission, firstClear: firstClear)
+        return firstClear ? base : dailyWorkRecord.ledger.preview(day: pacingDay, copper: base)
+    }
+
+    private func baseMissionCoinReward(for mission: DistrictMission, firstClear: Bool) -> Int {
         let firstClearValue = MPCChapterOneThirtyMissionContract.firstClear(for: mission.number)?.copper ?? 0
         return firstClear ? firstClearValue : max(8, Int(Double(firstClearValue) * 0.35))
     }
@@ -1943,7 +1980,8 @@ final class GameStore {
         selectedChapterDistrictID = "old-clock"
         activeChapterMissionID = nil
         completedChapterMissionIDs = []
-        // A new save starts a new calendar.
+        // A new save starts a new calendar and repeat-work ledger.
+        persistDailyWork(DailyWorkRecord())
         defaults.removeObject(forKey: PersistenceKey.dailyPacingStart)
         dailyPacingStart = nil
         resolveDailyPacingStart()
@@ -2104,6 +2142,7 @@ final class GameStore {
     private struct PostalSettlement: Codable {
         let completedSerial: Int
         let coins: Int
+        var dailyWork: DailyWorkRecord? = nil
     }
     var postalJobFields: [String] {
         let index = postalJobSerial
@@ -2125,16 +2164,20 @@ final class GameStore {
             defaults.set(postalJobStep, forKey: "mistport.postal-step.v1")
             return
         }
-        let receipt = PostalSettlement(completedSerial: serial, coins: venueCoins + 40)
+        guard dailyWorkIsReadable else { featureMessage = "工单账本暂不可读取，请重新打开游戏。"; return }
+        var work = dailyWorkRecord
+        let payout = work.ledger.settle(receiptID: "postal-\(serial)", day: pacingDay, copper: 40, merit: 0)
+        let receipt = PostalSettlement(completedSerial: serial, coins: venueCoins + payout.copper, dailyWork: work)
         guard let data = try? JSONEncoder().encode(receipt) else { return }
         defaults.set(data, forKey: "mistport.postal-settlement.v1")
         recoverPostalSettlement()
-        featureMessage = "邮务核对完成，获得40铜币。"
+        featureMessage = "邮务核对完成，获得\(payout.copper)铜币。"
     }
     private func recoverPostalSettlement() {
         guard let data = defaults.data(forKey: "mistport.postal-settlement.v1"),
               let receipt = try? JSONDecoder().decode(PostalSettlement.self, from: data) else { return }
         venueCoins = receipt.coins
+        if let work = receipt.dailyWork { persistDailyWork(work) }
         postalJobSerial = max(postalJobSerial, receipt.completedSerial + 1)
         postalJobStep = 0
         defaults.set(postalJobSerial, forKey: "mistport.postal-serial.v1")
@@ -2608,6 +2651,7 @@ extension GameStore {
     }
     private struct ChurchServicesReceipt: Codable {
         let state: ChurchServicesState
+        var dailyWork: DailyWorkRecord? = nil
         let coins: Int
         let lifetime: Int
         let available: Int
@@ -2664,6 +2708,7 @@ extension GameStore {
     func recoverChurchServices() {
         guard let data = defaults.data(forKey: "mistport.church.services.pending.v1"), let receipt = try? JSONDecoder().decode(ChurchServicesReceipt.self, from: data) else { return }
         venueCoins = receipt.coins
+        if let work = receipt.dailyWork { persistDailyWork(work) }
         chapterOneCampaign.lifetimeChurchMerit = receipt.lifetime
         chapterOneCampaign.spendableChurchMerit = receipt.available
         if let relics = receipt.relicSnapshot {
@@ -2689,7 +2734,10 @@ extension GameStore {
         state.loans.lifetimeMerit = chapterOneCampaign.lifetimeChurchMerit
         state.loans.availableMerit = chapterOneCampaign.spendableChurchMerit
         try change(&state)
-        let receipt = ChurchServicesReceipt(state: state, coins: state.loans.coins, lifetime: state.loans.lifetimeMerit, available: state.loans.availableMerit, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
+        try commitChurchServices(state, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
+    }
+    private func commitChurchServices(_ state: ChurchServicesState, dailyWork: DailyWorkRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil) throws {
+        let receipt = ChurchServicesReceipt(state: state, dailyWork: dailyWork, coins: state.loans.coins, lifetime: state.loans.lifetimeMerit, available: state.loans.availableMerit, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
         defaults.set(try JSONEncoder().encode(receipt), forKey: "mistport.church.services.pending.v1")
         recoverChurchServices()
         preparedChapterOneSession = nil
@@ -3092,13 +3140,14 @@ func beginChurchMaintenance(jobID: String, battleID: String, skills: [FoolSkillI
     return session
 }
 func finishChurchMaintenance(jobID: String, battleID: String, outcome: MPCChurchBattleOutcome) throws {
-    try updateChurchServices { state in
+    try updateChurchServicesAndWork { state, work in
         _ = try state.maintenance.settleBattle(jobID: jobID, battleID: battleID, outcome: outcome)
         try settleChurchGear(&state, battleID: battleID, outcome: outcome)
         if outcome == .victory, let reward = try state.maintenance.claim(jobID: jobID) {
-            state.loans.coins += reward.copper
-            state.loans.lifetimeMerit += reward.merit
-            state.loans.availableMerit += reward.merit
+            let payout = work.ledger.settle(receiptID: "maintenance-" + jobID, day: pacingDay, copper: reward.copper, merit: reward.merit)
+            state.loans.coins += payout.copper
+            state.loans.lifetimeMerit += payout.merit
+            state.loans.availableMerit += payout.merit
         }
     }
 }
@@ -3463,6 +3512,7 @@ extension GameStore {
     func beginChurchTower(floor: Int, battleID: String, skills: [FoolSkillID]) throws -> MPCChapterOneEncounterSession {
         try requireChurchRemoteService()
         guard churchTowerProgress.canEnter(floor,completedMissionNumbers:churchTowerMissionNumbers),
+              towerFloorIsOpenToday(floor),
               let definition = MPCChurchTowerCatalog.floor(number:floor) else { throw MPCEncounterRuntimeError.unknownEncounter }
         var loadout = churchBattleCampaign.loadout
         // The tower uses the same owned cards and slot limit as the campaign.
@@ -3488,7 +3538,7 @@ extension GameStore {
             + state.maintenance.jobs.values.filter { !$0.claimed && $0.allSitesComplete }.count
     }
     func claimCompletedChurchAccounts() throws {
-        try updateChurchServices { state in
+        try updateChurchServicesAndWork { state, work in
             for id in state.bounties.cases.keys.sorted() {
                 guard let progress=state.bounties.cases[id], !progress.claimed, progress.victoriousBattleID != nil else { continue }
                 if let reward=try state.bounties.claim(id) {
@@ -3498,7 +3548,8 @@ extension GameStore {
             for id in state.maintenance.jobs.keys.sorted() {
                 guard let job=state.maintenance.jobs[id], !job.claimed, job.allSitesComplete else { continue }
                 if let reward=try state.maintenance.claim(jobID:id) {
-                    state.loans.coins += reward.copper; state.loans.lifetimeMerit += reward.merit; state.loans.availableMerit += reward.merit
+                    let payout = work.ledger.settle(receiptID: "maintenance-" + id, day: pacingDay, copper: reward.copper, merit: reward.merit)
+                    state.loans.coins += payout.copper; state.loans.lifetimeMerit += payout.merit; state.loans.availableMerit += payout.merit
                 }
             }
         }
@@ -3999,3 +4050,114 @@ extension GameStore {
     }
 }
 #endif
+
+// MARK: Shared repeat-work settlement (J0, J1, J2, story replays)
+extension GameStore {
+    private var dailyWorkIsReadable: Bool {
+        guard let data = defaults.data(forKey: PersistenceKey.dailyWork) else { return false }
+        return (try? JSONDecoder().decode(DailyWorkRecord.self, from: data)) != nil
+    }
+    private func persistDailyWork(_ record: DailyWorkRecord) {
+        guard let data = try? JSONEncoder().encode(record) else { return }
+        defaults.set(data, forKey: PersistenceKey.dailyWork)
+        dailyWorkRecord = record
+    }
+    private func updateChurchServicesAndWork(_ change: (inout ChurchServicesState, inout DailyWorkRecord) throws -> Void) throws {
+        guard workshopLedgerIsReadable, dailyWorkIsReadable else { throw MPCLocalWorkshopLedger.Failure.locked }
+        var state = churchServices
+        var work = dailyWorkRecord
+        state.loans.coins = venueCoins
+        state.loans.lifetimeMerit = chapterOneCampaign.lifetimeChurchMerit
+        state.loans.availableMerit = chapterOneCampaign.spendableChurchMerit
+        try change(&state, &work)
+        try commitChurchServices(state, dailyWork: work)
+    }
+    var repeatWorkNotice: String {
+        let ledger = dailyWorkRecord.ledger
+        let count = pacingDay > ledger.day ? 0 : ledger.jobsToday
+        let meritCount = pacingDay > ledger.day ? 0 : ledger.meritJobsToday
+        return "今天第 \(count + 1) 单；第 4 单起半价，第 7 单起一成。"
+            + (meritCount >= MPCDailyWorkLedger.meritJobsPerDay ? "今天功勋已记满。" : "功勋每天只计前 2 单有功勋的工作。")
+    }
+    func repeatWorkPreview(copper: Int, merit: Int = 0) -> String {
+        let ledger = dailyWorkRecord.ledger
+        let paid = ledger.preview(day: pacingDay, copper: copper)
+        let meritCount = pacingDay > ledger.day ? 0 : ledger.meritJobsToday
+        let meritPaid = meritCount < MPCDailyWorkLedger.meritJobsPerDay ? merit : 0
+        return merit > 0 ? "\(paid) 铜币 · \(meritPaid) 功勋" : "\(paid) 铜币"
+    }
+    func maintenancePayoutText(jobID: String) -> String {
+        guard let payout = dailyWorkRecord.ledger.settled["maintenance-" + jobID] else {
+            return "工单报酬已结清"
+        }
+        return "+\(payout.copper) 铜币 · +\(payout.merit) 功勋"
+    }
+
+    #if DEBUG
+    private static func verifyDailyWorkIntegration() {
+        let suite = "mistport.daily-work-check." + UUID().uuidString
+        let storage = UserDefaults(suiteName: suite)!
+        defer { storage.removePersistentDomain(forName: suite) }
+        let store = GameStore(launchArguments: [], defaults: storage)
+        let migration = storage.data(forKey: PersistenceKey.dailyWork)!
+        assert(store.dailyWorkRecord.ledger.jobsToday == 0)
+        _ = GameStore(launchArguments: [], defaults: storage)
+        assert(storage.data(forKey: PersistenceKey.dailyWork) == migration)
+        store.debugJumpToOldClockMission(10, enterImmediately: false)
+        storage.set(try! JSONEncoder().encode(MPCChurchTowerProgress(clearedFloors: Set(1...10))), forKey: "mistport.church-tower.progress.v1")
+        store.debugSetPacingDay(1)
+        func postal() {
+            let serial = store.postalJobSerial
+            for step in 0..<3 { store.verifyPostalField(store.postalJobFields[step], serial: serial, step: step) }
+            let coins = store.venueCoins
+            store.verifyPostalField("", serial: serial, step: 2)
+            assert(store.venueCoins == coins)
+        }
+        func maintenance(_ kind: MPCChurchMaintenanceKind) {
+            let id = try! store.acceptChurchMaintenance(kind: kind, floor: kind == .patrol ? nil : 10)
+            for objective in store.churchServices.maintenance.jobs[id]!.objectives {
+                try! store.verifyChurchMaintenance(jobID: id, objectiveID: objective.id, choiceID: objective.correctChoiceID)
+            }
+            for site in 1...3 {
+                let battle = "work-check-\(id)-\(site)"
+                _ = try! store.beginChurchMaintenance(jobID: id, battleID: battle, skills: [])
+                try! store.finishChurchMaintenance(jobID: id, battleID: battle, outcome: .victory)
+                let coins = store.venueCoins
+                try! store.finishChurchMaintenance(jobID: id, battleID: battle, outcome: .victory)
+                assert(store.venueCoins == coins)
+            }
+        }
+        let before = store.venueCoins
+        let merit = store.chapterOneCampaign.lifetimeChurchMerit
+        postal(); maintenance(.patrol); maintenance(.towerMaintenance); maintenance(.patrol)
+        assert(store.venueCoins == before + 40 + 60 + 80 + 30)
+        assert(store.chapterOneCampaign.lifetimeChurchMerit == merit + 14)
+        postal(); postal(); postal()
+        assert(store.venueCoins == before + 40 + 60 + 80 + 30 + 20 + 20 + 4)
+        assert(store.dailyWorkRecord.ledger.jobsToday == 7)
+        store.activeChapterMissionID = "old-clock-1"
+        let replay = store.settleActiveMissionRewards()!
+        assert(!replay.firstClear && replay.coins == MPCDailyWorkLedger.scaled(store.baseMissionCoinReward(for: store.activeChapterMission!, firstClear: false), percent: 10))
+        assert(store.dailyWorkRecord.ledger.jobsToday == 8)
+        _ = store.settleActiveMissionRewards()
+        assert(store.dailyWorkRecord.ledger.jobsToday == 8)
+        let restored = GameStore(launchArguments: [], defaults: storage)
+        assert(restored.venueCoins == store.venueCoins && restored.dailyWorkRecord.ledger == store.dailyWorkRecord.ledger)
+        restored.acknowledgeMissionReward()
+        // A persisted write-ahead postal record recovers wallet and counter together.
+        var work = restored.dailyWorkRecord
+        let payout = work.ledger.settle(receiptID: "postal-\(restored.postalJobSerial)", day: 1, copper: 40, merit: 0)
+        let pending = PostalSettlement(completedSerial: restored.postalJobSerial, coins: restored.venueCoins + payout.copper, dailyWork: work)
+        storage.set(try! JSONEncoder().encode(pending), forKey: "mistport.postal-settlement.v1")
+        let recovered = GameStore(launchArguments: [], defaults: storage)
+        let twice = GameStore(launchArguments: [], defaults: storage)
+        assert(recovered.venueCoins == pending.coins && twice.venueCoins == pending.coins)
+        assert(twice.dailyWorkRecord.ledger == work.ledger)
+        twice.debugSetPacingDay(2)
+        assert(twice.repeatWorkPreview(copper: 40) == "40 铜币")
+        twice.restart()
+        assert(twice.dailyWorkRecord.ledger.jobsToday == 0 && twice.dailyWorkRecord.ledger.settled.isEmpty)
+        NSLog("DAILY_WORK_VERIFY_PASS: empty migration once, shared J0/J1/J2/story counter, 100/50/10 percent, two merit jobs, duplicate callbacks, reopen, journal recovery, next day, restart")
+    }
+    #endif
+}

@@ -51,6 +51,7 @@ struct ChurchMaintenanceView: View {
             Spacer().frame(height:100)
             Text("有人守住入口，才有人能够回去。")
                 .font(.system(size:23,weight:.medium,design:.serif)).shadow(color:.black,radius:6)
+            Text(game.repeatWorkNotice).font(.callout).foregroundStyle(maintenanceGold)
             if !openJobs.isEmpty {
                 Text("未结工单").font(.headline).foregroundStyle(maintenanceGold)
                 ForEach(openJobs) { job in
@@ -66,7 +67,7 @@ struct ChurchMaintenanceView: View {
             VStack(alignment:.leading,spacing:12) {
                 Text("巡检封口").font(.system(size:25,weight:.bold,design:.serif)).foregroundStyle(maintenanceGold)
                 Text("核对封签与人员撤离后，依次巡检三处封口。每处连续清理两波，三处完成才结算整单报酬。")
-                Text("60 铜币  ·  6 功勋").foregroundStyle(maintenanceGold)
+                Text(game.repeatWorkPreview(copper: 60, merit: 6)).foregroundStyle(maintenanceGold)
                 ChurchActionButton(title:game.churchTowerMissionNumbers.contains(9) ? "领取巡检工单" : "完成第9关后开放",enabled:game.churchTowerMissionNumbers.contains(9) && game.churchMistportFieldworkAvailable) {
                     perform { selectedJobID = try game.acceptChurchMaintenance(kind:.patrol) }
                 }
@@ -85,7 +86,7 @@ struct ChurchMaintenanceView: View {
                         Button { moveFloor(1) } label:{ Image(systemName:"chevron.right").frame(width:44,height:44) }.accessibilityLabel("下一已通层")
                     }
                 }
-                Text("80 铜币  ·  8 功勋").foregroundStyle(maintenanceGold)
+                Text(game.repeatWorkPreview(copper: 80, merit: 8)).foregroundStyle(maintenanceGold)
                 ChurchActionButton(title:"领取维护工单",enabled:!clearedFloors.isEmpty && game.churchRemoteServicesAvailable) {
                     perform { selectedJobID = try game.acceptChurchMaintenance(kind:.towerMaintenance,floor:selectedFloor) }
                 }
@@ -189,7 +190,7 @@ private struct ChurchMaintenanceBattleView: View {
                     Text(liveJob.allSitesComplete ? "值务完成" : "本处封线恢复").font(.system(size:30,weight:.bold,design:.serif)).foregroundStyle(maintenanceGold)
                     Text("维护点完成 \(liveJob.completedSites.count) / 3").foregroundStyle(maintenanceGold)
                     if liveJob.allSitesComplete {
-                        Text(job.kind == .patrol ? "+60 铜币    +6 功勋" : "+80 铜币    +8 功勋").foregroundStyle(maintenanceGold)
+                        Text(game.maintenancePayoutText(jobID: job.id)).foregroundStyle(maintenanceGold)
                         Text("三处均已完成，工单报酬已结清。").font(.callout)
                         ChurchActionButton(title:"返回值务处",action:onExit)
                     } else {
