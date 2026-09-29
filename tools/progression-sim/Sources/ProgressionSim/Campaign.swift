@@ -15,9 +15,11 @@ struct Profile: Sendable {
 
 /// What the player is willing to do when the next story battle is lost.
 /// Every policy may earn copper at the J0 postal job and buy shop relics:
-/// neither is church or bounty content.
+/// neither is church or bounty content. `hinted` does, at a wall, only what the
+/// wall's defeat hint names (its floor, then its case); elsewhere it plays like `all`.
+/// Its side time is the "needed side content" of acceptance criterion 4.
 enum Policy: String, CaseIterable, Sendable {
-    case mainOnly, mainTower, mainBounty, all, completionist
+    case mainOnly, mainTower, mainBounty, all, completionist, hinted
 }
 
 /// Pacing and time costs that are not game data. Reported with every run.
@@ -160,9 +162,10 @@ final class Campaign {
     var churchOpen: Bool { q >= 7 }
     var stats: MPCChurchGearStats { gear.stats }
     var signature: String {
-        "\(stats.attackBP)/\(stats.maxHP)/\(stats.damageReductionBP)|\(passives.sorted().joined(separator: ","))|\(relics.ownedIDs.sorted().joined(separator: ","))|\(q)|\(salve)"
+        "\(stats.attackBP)/\(stats.maxHP)/\(stats.damageReductionBP)|\(passives.sorted().joined(separator: ","))|\(relics.ownedIDs.sorted().joined(separator: ","))|\(q)|\(salve)|\(rotation)"
     }
-    /// A retry leads with a different relic, as a player changing plan would.
+    /// A story retry leads with a different plan (and a tower or case retry with a
+    /// different relic), as a player changing plan would.
     var rotation = 0
     var passiveCandidates: [String?] {
         guard !passives.isEmpty else { return [nil] }
@@ -221,43 +224,45 @@ final class Campaign {
 
     // MARK: Battles
 
-    func attemptMain() -> Bool {
+    func attemptMain(stopAfterSalve: Bool = false) -> Bool {
         shop()
         let mission = q + 1, key = "main-\(mission)"
         guard !knownLoss(key) else { return false }
         var attempts = 0, total = 0.0
-        for sequence in cards(forMission: mission) {
-            for bountyRelic in bountyRelicCandidates(mission: mission, owned: relics.ownedIDs) {
-            for passive in mission >= 5 ? passiveCandidates : [nil] {
-                for offset in mission >= 5 ? [6.0, 14.0] as [Double?] : [nil] {
-                    attempts += 1
-                    let consumables = mission >= 5 && salve > 0 ? ["consumable_pain_salve": 1] : [:]
-                    let l = loadout(mission: mission, gear: stats, passive: passive, sequence: sequence, bountyRelic: bountyRelic)
-                    let report = try! ChapterDriver.run(q: mission, sequence: sequence, mask: mission == 3 || mission == 4,
-                                                        consumables: consumables, priorityCore: profile.priorityCore,
-                                                        ultimate: mission >= 14, loadout: l, medalOffset: offset,
-                                                        precise: true, actionDelay: profile.actionDelay)
-                    spend("main", report.seconds); total += report.seconds
-                    if report.medicinesUsed > 0 { salve = 0; salvesUsed += 1 }
-                    let won = report.session.outcome == .victory
-                    wear(passive, won: won)
-                    if won {
-                        let reward = MPCChapterOneThirtyMissionContract.firstClear(for: mission)!
-                        copper += reward.copper; merit += reward.merit
-                        q = mission; missionsToday += 1
-                        visit("main", key, won: true, attempts: attempts, seconds: total)
-                        milestones.append(.init(mission: q, day: day, minutes: seconds.values.reduce(0, +) / 60,
-                                                towerFloor: tower, bountiesCleared: cleared.count, copper: copper,
-                                                attackBP: stats.attackBP, gearHP: stats.maxHP, reductionBP: stats.damageReductionBP))
-                        if q == 7 { refreshBoard() }
-                        if missionsToday >= assumptions.missionsPerDay { nextDay() }
-                        return true
-                    }
-                    losses["main", default: 0] += 1
-                    shop()
-                }
+        // A retry starts from a different whole plan (cards, relics, medal time), so the
+        // one salve is not always spent on the same losing plan first.
+        let plans = cards(forMission: mission).flatMap { sequence in
+            bountyRelicCandidates(mission: mission, owned: relics.ownedIDs).flatMap { bountyRelic in
+                (mission >= 5 && !passives.isEmpty ? passives.map { Optional($0) } : [nil]).flatMap { passive in
+                    (mission >= 5 ? [6.0, 14.0] as [Double?] : [nil]).map { (sequence, bountyRelic, passive, $0) } } } }
+        let shift = plans.isEmpty ? 0 : rotation % plans.count
+        for (sequence, bountyRelic, passive, offset) in plans[shift...] + plans[..<shift] {
+            attempts += 1
+            let consumables = mission >= 5 && salve > 0 ? ["consumable_pain_salve": 1] : [:]
+            let l = loadout(mission: mission, gear: stats, passive: passive, sequence: sequence, bountyRelic: bountyRelic)
+            let report = try! ChapterDriver.run(q: mission, sequence: sequence, mask: mission == 3 || mission == 4,
+                                                consumables: consumables, priorityCore: profile.priorityCore,
+                                                ultimate: mission >= 14, loadout: l, medalOffset: offset,
+                                                precise: true, actionDelay: profile.actionDelay)
+            spend("main", report.seconds); total += report.seconds
+            if report.medicinesUsed > 0 { salve = 0; salvesUsed += 1 }
+            let won = report.session.outcome == .victory
+            wear(passive, won: won)
+            if won {
+                let reward = MPCChapterOneThirtyMissionContract.firstClear(for: mission)!
+                copper += reward.copper; merit += reward.merit
+                q = mission; missionsToday += 1
+                visit("main", key, won: true, attempts: attempts, seconds: total)
+                milestones.append(.init(mission: q, day: day, minutes: seconds.values.reduce(0, +) / 60,
+                                        towerFloor: tower, bountiesCleared: cleared.count, copper: copper,
+                                        attackBP: stats.attackBP, gearHP: stats.maxHP, reductionBP: stats.damageReductionBP))
+                if q == 7 { refreshBoard() }
+                if missionsToday >= assumptions.missionsPerDay { nextDay() }
+                return true
             }
-            }
+            losses["main", default: 0] += 1
+            if stopAfterSalve && report.medicinesUsed > 0 { break }
+            shop()
         }
         failed[key, default: []].insert(signature)
         visit("main", key, won: false, attempts: attempts, seconds: total)
@@ -366,6 +371,26 @@ final class Campaign {
         return (false, progressed)
     }
 
+    /// At a wall: climb to its floor, retry; then work its case (waiting for the
+    /// guaranteed board), retry. True if the story advanced.
+    func followWallHint() -> Bool {
+        guard churchOpen, let wall = MPCProgressionWalls.wall(mission: q + 1) else { return false }
+        if let floor = wall.towerFloor, tower < floor {
+            while tower < floor && attemptTower() {}
+            if tower >= floor && attemptMain() { return true }
+        }
+        if let caseID = wall.caseID, let relic = MPCBountyRelicCatalog.relic(forCase: caseID),
+           !relics.ownedIDs.contains(relic.id) {
+            var idle = 0
+            while !cleared.contains(caseID) && idle <= assumptions.maxWaitDays {
+                if accepted.contains(caseID) && attemptBounty(caseID) { break }
+                nextDay(); idle += 1
+            }
+            if cleared.contains(caseID) && attemptMain() { return true }
+        }
+        return false
+    }
+
     func clearAvailableSide() {
         guard churchOpen else { return }
         var progressed = true
@@ -376,6 +401,18 @@ final class Campaign {
         }
     }
 
+    /// Out of salve: a player runs J0 for one more and retries, leading each time with a
+    /// different whole plan and stopping once that salve is spent on a loss.
+    func retryWithFreshSalves() -> Bool {
+        defer { rotation = 0 }
+        for retry in 1...8 where q >= 4 {
+            if salve == 0 { postal(jobs: max(0, (Shop.salve - copper + Shop.postalPay - 1) / Shop.postalPay)) }
+            rotation = retry
+            if attemptMain(stopAfterSalve: true) { return true }
+        }
+        return false
+    }
+
     func run() -> RunResult {
         var stuckAt: Int?
         while q < 30 {
@@ -384,20 +421,14 @@ final class Campaign {
             var advanced = false
             while !advanced && buyNextRelicWithPostal() { advanced = attemptMain() }
             if advanced { continue }
-            // Out of salve and copper: a player runs J0 for one more and retries.
-            // Each retry may spend the salve on a losing relic before the winning one comes up.
-            for retry in 1...4 where !advanced && q >= 4 && salve == 0 {
-                postal(jobs: max(0, (Shop.salve - copper + Shop.postalPay - 1) / Shop.postalPay))
-                rotation = retry
-                advanced = attemptMain()
-            }
-            rotation = 0
-            if advanced { continue }
+            if retryWithFreshSalves() { continue }
             switch policy {
             case .mainOnly: break
             case .mainTower: advanced = grindTower().storyWon
             case .mainBounty: advanced = grindBounties().storyWon
-            case .all, .completionist:
+            case .all, .completionist, .hinted:
+                // Hinted: do what the wall asks, then retry other plans before any further side content.
+                if policy == .hinted { advanced = followWallHint() || retryWithFreshSalves() }
                 var moving = true
                 while !advanced && moving {
                     let climb = grindTower()
@@ -407,6 +438,8 @@ final class Campaign {
                     moving = climb.progressed || cases.progressed
                 }
             }
+            // Side content may have made a plan winnable that only works with the salve.
+            if !advanced { advanced = retryWithFreshSalves() }
             if !advanced { stuckAt = q + 1; break }
         }
         return RunResult(policy: policy.rawValue, profile: profile.name, startOffset: startOffset, assumptions: assumptions,

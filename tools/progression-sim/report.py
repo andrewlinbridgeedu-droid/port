@@ -31,5 +31,13 @@ for profile in ["high", "medium", "low"]:
     need = [f"Q{g['mission']}: F{g['minTowerFloor'] if g.get('minTowerFloor') is not None else '>100'} / F{g['towerFloorOpenAtThisPoint']} / {'能' if g['winsWithAllBountyRelics'] else '不能'}"
             for g in gates if g["profile"] == profile and not g["winsWithoutChurchGear"]]
     lines.append(f"| {profile} | {'；'.join(need) or '无'} |")
+hinted = [row for row in rows if row[0] == "hinted"]
+if hinted:
+    lines += ["", "验收第 4 条（按提示补支线：支线 = 塔 + 通缉，不含邮务）", "",
+              "| 熟练 | 起始日 | 结果 | 主线 | 支线 | 支线/主线 |", "|---|---:|---|---:|---:|---:|"]
+    for row in hinted:
+        side = round(row[8] + row[9], 1)
+        ratio = f"{side / row[7]:.2f}" if row[7] else "-"
+        lines.append(f"| {row[1]} | {row[2]} | {'卡在 Q' + str(row[4]) if row[4] else '通关'} | {row[7]} | {side} | {ratio} |")
 (folder / "summary.md").write_text("\n".join(lines) + "\n")
 print("\n".join(lines))

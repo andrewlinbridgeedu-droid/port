@@ -33,8 +33,23 @@ enum WallProbe {
     static func towerGear(through floor: Int) -> MPCChurchGearStats {
         var ledger = MPCChurchGearLedger()
         if floor > 0 { for f in 1...floor { if let drop = MPCChurchGearCatalog.towerDrop(floor: f) { ledger.grant(drop.id) } } }
-        return ledger.stats
+        guard let scale = gearScale, floor > 10 else { return ledger.stats }
+        let base = towerGear(through: 10), s = ledger.stats
+        func grow(_ from: Int, _ to: Int, _ k: Double) -> Int { from + Int(Double(to - from) * k) }
+        return .init(attackBP: grow(base.attackBP, s.attackBP, scale.attack), maxHP: grow(base.maxHP, s.maxHP, scale.hp),
+                     damageReductionBP: grow(base.damageReductionBP, s.damageReductionBP, scale.reduction), towerDepth: s.towerDepth)
     }
+
+    /// Tuning only: `GEAR_SCALE="attack=2,hp=1.5,reduction=1"` multiplies what tower gear adds above F10, in the probe only.
+    static let gearScale: (attack: Double, hp: Double, reduction: Double)? = {
+        guard let text = ProcessInfo.processInfo.environment["GEAR_SCALE"], !text.isEmpty else { return nil }
+        var v = (attack: 1.0, hp: 1.0, reduction: 1.0)
+        for pair in text.split(separator: ",") {
+            let kv = pair.split(separator: "="); guard kv.count == 2, let x = Double(kv[1]) else { continue }
+            switch kv[0] { case "attack": v.attack = x; case "hp": v.hp = x; case "reduction": v.reduction = x; default: print("unknown gear scale \(kv[0])") }
+        }
+        return v
+    }()
 
     static func fight(_ q: Int, _ profile: Profile, floor: Int, relic: String?, passive: String?,
                       sequence: [FoolSkillID], offset: Double?, salve: Bool) -> Fight {
@@ -136,6 +151,9 @@ enum WallTuning {
             case "q26ConvoyHP": W.q26ConvoyHP = v
             case "q26ConvoyAttack": W.q26ConvoyAttack = v
             case "q26SlamPercent": W.q26SlamPercent = v
+            case "q18GearCheckHP": W.towerCheckBlowHealthPercent[18] = v
+            case "q26GearCheckHP": W.towerCheckBlowHealthPercent[26] = v
+            case "q30GearCheckHP": W.towerCheckBlowHealthPercent[30] = v
             case "q30SovereignHP": W.q30SovereignHP = v
             case "q30EnragePercent": W.q30EnragePercent = v
             case "q30EnragedHP": W.q30EnragedBlowHealthPercent = v
