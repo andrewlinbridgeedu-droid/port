@@ -2884,6 +2884,12 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             let multiplier = chapterMissionNumber == 30 ? (enraged ? MPCProgressionWalls.q30EnragePercent : 100)
                 : chapterMissionNumber == 29 ? 65 : 100
             let base: Int = switch intent { case "strike": 65; case "thirteenth_charge": 85; case "slam": 110; default: 0 }
+            // Q30 wall, tower half: without F90-or-deeper gear the slam takes a share of health.
+            if chapterMissionNumber == 30, intent == "slam",
+               !MPCProgressionWalls.meetsTowerFloor(mission: 30, gear: loadout.churchGear),
+               let share = MPCProgressionWalls.towerCheckBlowHealthPercent[30] {
+                return .attack(max(base * multiplier / 100, playerBaseMaxHP * share / 100))
+            }
             // Q30 wall: enraged blows take a share of the player's health, so gear cannot race past them.
             if chapterMissionNumber == 30, enraged, base > 0, MPCProgressionWalls.q30EnragedBlowHealthPercent > 0 {
                 return .attack(max(base * multiplier / 100, playerBaseMaxHP * MPCProgressionWalls.q30EnragedBlowHealthPercent / 100))
@@ -2896,6 +2902,11 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         if ["enemy_archive_adjudicator", "enemy_archive_convoy"].contains(enemy.contentID) {
             if intent == "memory_breath" { queueFiniteDamage(source: enemy.id, damage: 45); return .attack(0) }
             if intent == "thirteenth_charge" || intent == "slam" {
+                // Q18/Q26 walls: without deep enough tower gear the heavy blow takes a share of health.
+                if !MPCProgressionWalls.meetsTowerFloor(mission: chapterMissionNumber, gear: loadout.churchGear),
+                   let share = MPCProgressionWalls.towerCheckBlowHealthPercent[chapterMissionNumber] {
+                    return .attack(playerBaseMaxHP * share / 100)
+                }
                 let percent = chapterMissionNumber == 18 ? MPCProgressionWalls.q18ChargePercent
                     : chapterMissionNumber == 26 ? MPCProgressionWalls.q26SlamPercent : 200
                 return .attack(enemy.attack * percent / 100)

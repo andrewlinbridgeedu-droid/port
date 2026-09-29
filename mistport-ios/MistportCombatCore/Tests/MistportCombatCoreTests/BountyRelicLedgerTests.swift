@@ -62,5 +62,12 @@ struct BountyRelicLedgerTests {
         #expect(MPCProgressionWalls.defeatHint(mission: 8, highestTowerFloor: 3, equippedRelicID: nil, ownedRelicIDs: [], caseTitle: title)?
             .contains("第 10 层") == true)
         #expect(MPCProgressionWalls.defeatHint(mission: 9, highestTowerFloor: 0, equippedRelicID: nil, ownedRelicIDs: [], caseTitle: title) == nil)
+        // Floor cleared but shallower gear worn: only the tower-checked walls ask to change it.
+        #expect(MPCProgressionWalls.defeatHint(mission: 18, highestTowerFloor: 60, equippedRelicID: nil, ownedRelicIDs: [],
+                                               wornTowerDepth: 40, caseTitle: title)?.contains("换上深井第 50 层或更深的装备") == true)
+        #expect(MPCProgressionWalls.defeatHint(mission: 18, highestTowerFloor: 60, equippedRelicID: nil, ownedRelicIDs: [],
+                                               wornTowerDepth: 60, caseTitle: title) == nil)
+        #expect(MPCProgressionWalls.defeatHint(mission: 8, highestTowerFloor: 10, equippedRelicID: nil, ownedRelicIDs: [],
+                                               wornTowerDepth: 2, caseTitle: title) == nil)
     }
 }

@@ -7,6 +7,8 @@ struct BountyRelicTests {
     func session(_ q: Int, relic: String?) throws -> MPCChapterOneEncounterSession {
         var loadout = MPCChapterOneLoadout(normalSkillIDs: [.sidestepStrike], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
         loadout.bountyRelicID = relic
+        // Tower checks met without extra stats, so these tests isolate the relics.
+        loadout.churchGear = .init(towerDepth: 100)
         return try MPCChapterOneEncounterSession.start(encounterID: String(format: "chapter01_q%02d_encounter", q),
                                                        companionIDs: [], loadout: loadout)
     }
@@ -30,7 +32,7 @@ struct BountyRelicTests {
         #expect(ledger.retireBountyGear() == ["bounty-b05-red-shears", "bounty-b06-dark-lantern"])
         #expect(ledger.ownedIDs == ["tower-f08-joint-guard", "tower-f10-anchor-blade"])
         #expect(ledger.equippedWeaponID == "tower-f10-anchor-blade" && ledger.equippedArmorID == "tower-f08-joint-guard")
-        #expect(ledger.stats == MPCChurchGearStats(attackBP: 3_600, maxHP: 270, damageReductionBP: 1_100))
+        #expect(ledger.stats == MPCChurchGearStats(attackBP: 3_600, maxHP: 270, damageReductionBP: 1_100, towerDepth: 10))
         #expect(ledger.retireBountyGear().isEmpty)
     }
 
@@ -122,6 +124,53 @@ struct BountyRelicTests {
             }
             #expect(wins[false, default: 0] == 0, "Q\(q) falls to tower gear alone")
             #expect(wins[true, default: 0] > 0, "Q\(q) has no route with its relic")
+        }
+    }
+
+    @Test func towerDepthComesFromTheDeepestWornPiece() {
+        var ledger = MPCChurchGearLedger()
+        #expect(ledger.stats.towerDepth == 0)
+        for f in 1...50 { if let drop = MPCChurchGearCatalog.towerDrop(floor: f) { ledger.grant(drop.id) } }
+        #expect(ledger.stats.towerDepth == 50)
+        let equipped = ledger.equip("tower-f10-anchor-blade")
+        #expect(equipped)
+        #expect(ledger.stats.towerDepth == 40)
+        #expect(MPCChurchGearCatalog.item("bounty-b01-broken-sword")?.towerFloor == nil)
+        #expect(MPCProgressionWalls.meetsTowerFloor(mission: 18, gear: .init(towerDepth: 50)))
+        #expect(!MPCProgressionWalls.meetsTowerFloor(mission: 18, gear: .init(towerDepth: 40)))
+        #expect(MPCProgressionWalls.meetsTowerFloor(mission: 8, gear: .init()))
+    }
+
+    @Test func towerWallsNeedTheirFloor() throws {
+        let sequences: [[FoolSkillID]] = [[.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .absurdFinale],
+                                          [.sidestepStrike, .fabricatedEvidence, .mirrorPursuit, .absurdFinale]]
+        let passives = ["relic_salt_sealed_breathing_bag", "relic_return_gift_clasp"]
+        func gear(through floor: Int) -> MPCChurchGearStats {
+            var ledger = MPCChurchGearLedger()
+            for f in 1...floor { if let drop = MPCChurchGearCatalog.towerDrop(floor: f) { ledger.grant(drop.id) } }
+            return ledger.stats
+        }
+        for q in [18, 26, 30] {
+            let floor = try #require(MPCProgressionWalls.wall(mission: q)?.towerFloor)
+            let budget = (1..<q).compactMap { MPCChapterOneThirtyMissionContract.firstClear(for: $0)?.talentPoints }.reduce(0, +)
+            var wins: [Bool: Int] = [:]
+            for deepEnough in [false, true] {
+                for sequence in sequences {
+                    for passive in passives {
+                        for offset in [6.0, 14.0] {
+                            var loadout = MPCChapterOneLoadout(normalSkillIDs: sequence, isUltimateUnlocked: q >= 14, passiveIDs: [], relicIDs: [passive])
+                            loadout.talents = .restored((0...5).map { "trickery.\($0)" } + (0...5).map { "omen.\($0)" }, budget: budget)
+                            loadout.churchGear = gear(through: deepEnough ? floor : floor - 10)
+                            loadout.bountyRelicID = EarnedChapterAuditFixture.wallRelic(q)
+                            let r = try NewMaskBalanceSimulator.run(q: q, sequence: sequence, mask: false, consumables: ["consumable_pain_salve": 1],
+                                                                    ultimate: q >= 14, loadout: loadout, medalOffset: offset, precise: true)
+                            if r.session.outcome == .victory { wins[deepEnough, default: 0] += 1 }
+                        }
+                    }
+                }
+            }
+            #expect(wins[false, default: 0] == 0, "Q\(q) falls to gear from above F\(floor)")
+            #expect(wins[true, default: 0] > 0, "Q\(q) has no route with F\(floor) gear")
         }
     }
 }

@@ -2530,6 +2530,7 @@ extension GameStore {
         return MPCProgressionWalls.defeatHint(mission: missionNumber,
             highestTowerFloor: churchTowerProgress.clearedFloors.max() ?? 0,
             equippedRelicID: relics.equippedID, ownedRelicIDs: relics.ownedIDs,
+            wornTowerDepth: churchServices.gear.stats.towerDepth,
             caseTitle: { MPCChurchBountyCatalog.bounty(id: $0)?.title })
     }
     func equipChurchGear(_ id: String) throws {

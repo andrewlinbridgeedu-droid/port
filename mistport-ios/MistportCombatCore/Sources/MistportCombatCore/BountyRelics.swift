@@ -86,18 +86,21 @@ public enum MPCProgressionWalls {
     /// Q12: every fortify leaves a stack that does not fade; each cuts all damage the
     /// puppet takes by this percentage, up to the cap. The broken sword clears them.
     nonisolated(unsafe) public static var q12FortifyStackPercent = 50
-    nonisolated(unsafe) public static var q12FortifyMaxPercent = 90
+    nonisolated(unsafe) public static var q12FortifyMaxPercent = 95
     nonisolated(unsafe) public static var q18AdjudicatorHP = 2400
     nonisolated(unsafe) public static var q18AdjudicatorAttack = 112
     /// Q18 thirteenth blow and Q26 slam, percent of attack.
     nonisolated(unsafe) public static var q18ChargePercent = 200
-    nonisolated(unsafe) public static var q22ClockmakerHP = 3500
+    /// Q18 thirteenth blow, Q26 convoy slam and Q30 sovereign slam: without a worn piece
+    /// from the wall's tower floor or deeper, the blow takes this share of base health.
+    nonisolated(unsafe) public static var towerCheckBlowHealthPercent: [Int: Int] = [18: 140, 26: 140, 30: 140]
+    nonisolated(unsafe) public static var q22ClockmakerHP = 5000
     /// Q22: a failed verification without the reverse seal hits for this share of base health.
-    nonisolated(unsafe) public static var q22FailedBlowHealthPercent = 110
+    nonisolated(unsafe) public static var q22FailedBlowHealthPercent = 140
     nonisolated(unsafe) public static var q26ConvoyHP = 3200
     nonisolated(unsafe) public static var q26ConvoyAttack = 120
     nonisolated(unsafe) public static var q26SlamPercent = 200
-    nonisolated(unsafe) public static var q30SovereignHP = 5200
+    nonisolated(unsafe) public static var q30SovereignHP = 6500
     /// Q30: the sovereign enrages below this share of its health.
     nonisolated(unsafe) public static var q30EnrageBelowPercent = 67
     /// Q30: while enraged (below a third), each blow takes at least this share of base health.
@@ -126,12 +129,20 @@ public enum MPCProgressionWalls {
     public static let walls: [Wall] = [
         .init(mission: 8, towerFloor: 10, caseID: nil, cause: "吞名一次比一次痛，拖得越久越难撑。"),
         .init(mission: 12, towerFloor: nil, caseID: "b01", cause: "校准人偶的强化层层叠加，越打越打不动。"),
-        .init(mission: 18, towerFloor: 50, caseID: nil, cause: "裁定者的第十三击太重。"),
+        .init(mission: 18, towerFloor: 50, caseID: nil, cause: "裁定者的第十三击要够深的深井装备才扛得住。"),
         .init(mission: 22, towerFloor: nil, caseID: "b04", cause: "钟匠校准时命中不够，校验失败的重击扛不住。"),
-        .init(mission: 26, towerFloor: 70, caseID: nil, cause: "押运车太硬，猛砸太重。"),
-        .init(mission: 30, towerFloor: 90, caseID: "b10", cause: "总签官掉到三分之二血后狂暴，每一击都按你的生命算。"),
+        .init(mission: 26, towerFloor: 70, caseID: nil, cause: "押运车的猛砸要够深的深井装备才扛得住。"),
+        .init(mission: 30, towerFloor: 90, caseID: "b10", cause: "总签官的猛砸要够深的深井装备才扛得住；掉到三分之二血后还会狂暴，每一击都按你的生命算。"),
     ]
     public static func wall(mission: Int) -> Wall? { walls.first { $0.mission == mission } }
+
+    /// Tower-checked walls (Q18, Q26, Q30) let their heavy blow through at normal
+    /// strength only when a worn piece comes from the wall's floor or deeper.
+    /// Q8 is not checked: it stays a plain damage race.
+    public static func meetsTowerFloor(mission: Int, gear: MPCChurchGearStats) -> Bool {
+        guard towerCheckBlowHealthPercent[mission] != nil, let floor = wall(mission: mission)?.towerFloor else { return true }
+        return gear.towerDepth >= floor
+    }
 
     /// The case the daily board must carry while the player stands at a mechanism
     /// wall without its relic, so nobody waits days for a random draw.
@@ -143,12 +154,18 @@ public enum MPCProgressionWalls {
     }
 
     /// Shown after losing a wall mission while its requirement is still unmet.
+    /// `wornTowerDepth` (MPCChurchGearStats.towerDepth) lets a tower-checked wall ask
+    /// for deeper gear when the floor is cleared but shallower pieces are worn.
     public static func defeatHint(mission: Int, highestTowerFloor: Int, equippedRelicID: String?,
-                                  ownedRelicIDs: Set<String>, caseTitle: (String) -> String?) -> String? {
+                                  ownedRelicIDs: Set<String>, wornTowerDepth: Int? = nil,
+                                  caseTitle: (String) -> String?) -> String? {
         guard let wall = wall(mission: mission) else { return nil }
         var steps: [String] = []
         if let floor = wall.towerFloor, highestTowerFloor < floor {
             steps.append("去教会塔打到第 \(floor) 层，换上那里的装备")
+        } else if let floor = wall.towerFloor, let depth = wornTowerDepth,
+                  !meetsTowerFloor(mission: mission, gear: .init(towerDepth: depth)) {
+            steps.append("换上深井第 \(floor) 层或更深的装备")
         }
         if let caseID = wall.caseID, let relic = MPCBountyRelicCatalog.relic(forCase: caseID), equippedRelicID != relic.id {
             if ownedRelicIDs.contains(relic.id) {
