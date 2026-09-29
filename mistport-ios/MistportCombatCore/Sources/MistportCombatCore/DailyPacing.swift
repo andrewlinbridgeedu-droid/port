@@ -111,7 +111,8 @@ extension MPCDailyPacing {
             : completedMissions >= highest ? (missionLockText(completedMissions + 1, day: day) ?? "")
             : "今天可推进到第 \(highest) 关"
         let floors = max(0, towerFirstClearsAllowed(day: day) - clearedFloors)
-        let tower = clearedFloors >= MPCChurchTowerCatalog.releasedFloorCount ? "深井已全部封堵"
+        let tower = completedMissions < MPCChurchTowerCatalog.unlockMission ? "深井在第 \(MPCChurchTowerCatalog.unlockMission) 关后开放"
+            : clearedFloors >= MPCChurchTowerCatalog.releasedFloorCount ? "深井已全部封堵"
             : floors == 0 ? "深井新层明天再开" : "深井今天还能新封 \(floors) 层"
         return "第 \(day) 天 · \(story) · \(tower)"
     }

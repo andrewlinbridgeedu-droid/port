@@ -1,0 +1,14 @@
+{
+ "name": "D1",
+ "family": "chosen",
+ "base": "launch_base",
+ "loop": "funded",
+ "share": 0.05,
+ "tax": 0.05,
+ "import_cap": 0,
+ "need_increment": null,
+ "unbacked_per_active": 0,
+ "underground": false,
+ "scale": 1.0,
+ "control": false
+}

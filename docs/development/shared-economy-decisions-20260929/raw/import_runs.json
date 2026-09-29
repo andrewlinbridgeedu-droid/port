@@ -1,0 +1,380 @@
+[
+ {
+  "cap": 0,
+  "seed": 101,
+  "imported": 0,
+  "index_peak": 1.1515151515151516,
+  "index_last": 0.6060606060606061,
+  "max_30d_change": 0.25757575757575757,
+  "free_fill": 0.9427227448810183,
+  "free_cash_p50": 5743,
+  "paid_cash_p50": 6976,
+  "trades": 140169,
+  "gross": 1584879,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 0,
+  "seed": 211,
+  "imported": 0,
+  "index_peak": 1.121212121212121,
+  "index_last": 0.5757575757575758,
+  "max_30d_change": 0.25,
+  "free_fill": 0.9299930410577593,
+  "free_cash_p50": 5750,
+  "paid_cash_p50": 7312,
+  "trades": 139235,
+  "gross": 1508369,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 0,
+  "seed": 307,
+  "imported": 0,
+  "index_peak": 1.1515151515151516,
+  "index_last": 0.5606060606060606,
+  "max_30d_change": 0.2571428571428571,
+  "free_fill": 0.9628500138619351,
+  "free_cash_p50": 5684,
+  "paid_cash_p50": 6951,
+  "trades": 139418,
+  "gross": 1588861,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 500,
+  "seed": 101,
+  "imported": 439788,
+  "index_peak": 1.1818181818181819,
+  "index_last": 0.6060606060606061,
+  "max_30d_change": 0.23529411764705888,
+  "free_fill": 0.9428610957387936,
+  "free_cash_p50": 5950,
+  "paid_cash_p50": 7186,
+  "trades": 140515,
+  "gross": 1633260,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 500,
+  "seed": 211,
+  "imported": 445499,
+  "index_peak": 1.1515151515151516,
+  "index_last": 0.5757575757575758,
+  "max_30d_change": 0.25,
+  "free_fill": 0.9276270006958942,
+  "free_cash_p50": 5960,
+  "paid_cash_p50": 7535,
+  "trades": 139952,
+  "gross": 1539827,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 500,
+  "seed": 307,
+  "imported": 460938,
+  "index_peak": 1.1818181818181819,
+  "index_last": 0.5303030303030303,
+  "max_30d_change": 0.22857142857142854,
+  "free_fill": 0.9629886332131966,
+  "free_cash_p50": 5898,
+  "paid_cash_p50": 7163,
+  "trades": 139477,
+  "gross": 1598170,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 1000,
+  "seed": 101,
+  "imported": 833771,
+  "index_peak": 1.2121212121212122,
+  "index_last": 0.5757575757575758,
+  "max_30d_change": 0.2777777777777778,
+  "free_fill": 0.9435528500276702,
+  "free_cash_p50": 6079,
+  "paid_cash_p50": 7406,
+  "trades": 140613,
+  "gross": 1644737,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 1000,
+  "seed": 211,
+  "imported": 846943,
+  "index_peak": 1.1818181818181819,
+  "index_last": 0.5757575757575758,
+  "max_30d_change": 0.2727272727272727,
+  "free_fill": 0.9359777313848295,
+  "free_cash_p50": 6156,
+  "paid_cash_p50": 7654,
+  "trades": 139730,
+  "gross": 1549910,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 1000,
+  "seed": 307,
+  "imported": 875584,
+  "index_peak": 1.2121212121212122,
+  "index_last": 0.5303030303030303,
+  "max_30d_change": 0.2499999999999999,
+  "free_fill": 0.9635431106182423,
+  "free_cash_p50": 6094,
+  "paid_cash_p50": 7422,
+  "trades": 139498,
+  "gross": 1607572,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 2000,
+  "seed": 101,
+  "imported": 1412055,
+  "index_peak": 1.2121212121212122,
+  "index_last": 0.6060606060606061,
+  "max_30d_change": 0.2777777777777778,
+  "free_fill": 0.9436912008854454,
+  "free_cash_p50": 6368,
+  "paid_cash_p50": 7720,
+  "trades": 140823,
+  "gross": 1667561,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 2000,
+  "seed": 211,
+  "imported": 1415731,
+  "index_peak": 1.1818181818181819,
+  "index_last": 0.5757575757575758,
+  "max_30d_change": 0.24242424242424243,
+  "free_fill": 0.9331941544885177,
+  "free_cash_p50": 6399,
+  "paid_cash_p50": 7868,
+  "trades": 140207,
+  "gross": 1556720,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 2000,
+  "seed": 307,
+  "imported": 1475550,
+  "index_peak": 1.2424242424242424,
+  "index_last": 0.5303030303030303,
+  "max_30d_change": 0.2432432432432432,
+  "free_fill": 0.9635431106182423,
+  "free_cash_p50": 6335,
+  "paid_cash_p50": 7698,
+  "trades": 139809,
+  "gross": 1611811,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 4000,
+  "seed": 101,
+  "imported": 1991001,
+  "index_peak": 1.2121212121212122,
+  "index_last": 0.6363636363636364,
+  "max_30d_change": 0.22857142857142854,
+  "free_fill": 0.9436912008854454,
+  "free_cash_p50": 6544,
+  "paid_cash_p50": 7957,
+  "trades": 141271,
+  "gross": 1693455,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 4000,
+  "seed": 211,
+  "imported": 1940591,
+  "index_peak": 1.1818181818181819,
+  "index_last": 0.5606060606060606,
+  "max_30d_change": 0.24242424242424243,
+  "free_fill": 0.930410577592206,
+  "free_cash_p50": 6535,
+  "paid_cash_p50": 8051,
+  "trades": 140244,
+  "gross": 1579115,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 4000,
+  "seed": 307,
+  "imported": 2042772,
+  "index_peak": 1.2424242424242424,
+  "index_last": 0.5303030303030303,
+  "max_30d_change": 0.2702702702702702,
+  "free_fill": 0.9635431106182423,
+  "free_cash_p50": 6558,
+  "paid_cash_p50": 7950,
+  "trades": 140248,
+  "gross": 1627119,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 12000,
+  "seed": 101,
+  "imported": 2481901,
+  "index_peak": 1.2121212121212122,
+  "index_last": 0.6060606060606061,
+  "max_30d_change": 0.2676056338028169,
+  "free_fill": 0.9438295517432208,
+  "free_cash_p50": 6562,
+  "paid_cash_p50": 8140,
+  "trades": 141716,
+  "gross": 1705740,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 12000,
+  "seed": 211,
+  "imported": 2348485,
+  "index_peak": 1.1818181818181819,
+  "index_last": 0.5757575757575758,
+  "max_30d_change": 0.234375,
+  "free_fill": 0.9262352122477383,
+  "free_cash_p50": 6583,
+  "paid_cash_p50": 8087,
+  "trades": 140412,
+  "gross": 1589757,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ },
+ {
+  "cap": 12000,
+  "seed": 307,
+  "imported": 2462437,
+  "index_peak": 1.2424242424242424,
+  "index_last": 0.5303030303030303,
+  "max_30d_change": 0.2702702702702702,
+  "free_fill": 0.9636817299695037,
+  "free_cash_p50": 6610,
+  "paid_cash_p50": 7994,
+  "trades": 140307,
+  "gross": 1633040,
+  "checks": {
+   "accounting": true,
+   "free_drug_fill_90pct": true,
+   "free_cash_unmet_zero": true,
+   "free_median_30d_cash_nonnegative": true,
+   "price_coverage_complete": false,
+   "price_change_20pct": false
+  }
+ }
+]

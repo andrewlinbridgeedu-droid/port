@@ -221,7 +221,7 @@ struct CityHubView: View {
             CGPoint(x: painting.minX + CGFloat(x) * painting.height, y: painting.minY + CGFloat(y) * painting.height - 20)
         }
         return ZStack {
-            // Positions marked by the user on the autumn day painting (2026-09-28).
+            // Painting anchors; tavern, city hall and police updated from the 2026-09-29 markup.
             CityLandmarkTag(title: "皇宫")
                 .position(at(1.180, 0.223))          // palace on the castle hill
             CityLandmarkTag(title: "教会", action: serviceIsUnlocked(.church) ? onChurch : nil)
@@ -233,13 +233,13 @@ struct CityHubView: View {
             CityLandmarkTag(title: "报社")
                 .position(at(0.584, 0.430))
             CityLandmarkTag(title: "市政厅")
-                .position(at(1.180, 0.464))
+                .position(at(1.285, 0.464))
+            CityLandmarkTag(title: "警察厅")
+                .position(at(1.065, 0.535))
             CityLandmarkTag(title: "工业委员会", action: onBuild)
                 .position(at(1.256, 0.647))          // Opens the same workshop and its progression requirements.
             CityLandmarkTag(title: "酒馆", action: serviceIsUnlocked(.church) && path?.id == .fool ? onBountyTavern : nil)
-                .position(at(0.825, 0.595))
-            CityLandmarkTag(title: "咖啡馆", action: cafeUnlocked ? onSupply : nil)
-                .position(at(0.680, 0.735))
+                .position(at(0.740, 0.595))
         }
         .frame(width: panoramaWidth, height: size.height)
     }

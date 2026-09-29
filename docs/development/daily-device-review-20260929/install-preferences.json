@@ -1,0 +1,13 @@
+{
+  "beforeFiles": 168,
+  "afterFiles": 168,
+  "playerByteIdentical": false,
+  "addedPlayerKeys": [],
+  "changedOrRemovedPlayerKeys": [
+    "chapter-one.tutorial-flags"
+  ],
+  "changedOrRemovedOtherFiles": [],
+  "allowedTestSuiteChanges": [],
+  "newFiles": [],
+  "passed": false
+}

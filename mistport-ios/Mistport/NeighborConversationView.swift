@@ -38,13 +38,29 @@ struct NeighborConversationView: View {
                         GroupBox("街坊往事 · \(index + 1)") { Text(story).frame(maxWidth: .infinity, alignment: .leading) }
                     }
                     if MPCNeighborCatalog.neighbor(neighborID)?.isWritten == true && stories.count < 2 {
-                        Text("好感达到 3 和 6 时，会聊起更多往事。").font(.footnote).foregroundStyle(.secondary)
+                        Text("好感达到 \(MPCNeighborCatalog.storyAffinity.map(String.init).joined(separator: " 和 ")) 时，会聊起更多往事。").font(.footnote).foregroundStyle(.secondary)
                     }
                 }.padding()
             }
             .navigationTitle(MPCNeighborCatalog.neighbor(neighborID)?.name ?? "街坊")
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("告辞") { dismiss() } } }
             .task(id: game.pacingDay) { try? game.openNeighborDay() }
+            .task {
+                #if DEBUG
+                let args = ProcessInfo.processInfo.arguments
+                if args.contains("--daily-pacing-device-walk"), args.contains("--daily-map-walk") {
+                    try? await Task.sleep(for: .seconds(2))
+                    saveDailyLoopReviewFrame("map-talk-\(neighborID)")
+                    if args.contains("--daily-map-recipient"), neighborID == "west-lane",
+                       let offer = game.neighbors.offers.first(where: { $0.errand?.recipientID == neighborID && game.canRelayNeighbor($0.id) }) {
+                        perform { try game.relayNeighbor(offer.id) }
+                        NSLog("DAILY_MAP_RELAY: completed=%@", game.neighbors.offers.first { $0.id == offer.id }?.done == true ? "true" : "false")
+                        try? await Task.sleep(for: .seconds(1))
+                        saveDailyLoopReviewFrame("map-relay-complete")
+                    }
+                }
+                #endif
+            }
             .fullScreenCover(item: $battle) { ticket in
                 NeighborPestBattleView(game: game, offerID: ticket.offerID, battleID: ticket.id, onClose: { battle = nil })
             }

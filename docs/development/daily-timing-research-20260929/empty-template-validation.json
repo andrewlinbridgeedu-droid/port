@@ -1,0 +1,21 @@
+{
+  "status": "incomplete",
+  "errors": [
+    "story: at least 3 samples required",
+    "tower: at least 3 samples required",
+    "bounty: at least 3 samples required",
+    "J0: at least 3 samples required",
+    "J1: at least 3 samples required",
+    "J2: at least 3 samples required",
+    "craft: at least 3 samples required",
+    "sale: at least 3 samples required",
+    "neighbor_deliver: at least 3 samples required",
+    "neighbor_find: at least 3 samples required",
+    "neighbor_message: at least 3 samples required",
+    "neighbor_pest: at least 3 samples required",
+    "tavern: at least 3 samples required",
+    "event_delivery: at least 3 samples required",
+    "event_battle: at least 3 samples required",
+    "remnant: at least 3 samples required"
+  ]
+}

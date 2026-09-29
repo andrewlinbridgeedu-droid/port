@@ -24,6 +24,15 @@ swift run -c release --package-path tools/progression-sim ProgressionSim walls <
 swift run -c release --package-path tools/progression-sim ProgressionSim fight 18 medium 50 -
 ```
 
+人类计时（2026-09-29，用户定用模拟器代替真人计时）：
+
+```sh
+swift run -c release --package-path tools/progression-sim ProgressionSim human <输出目录> 0,30,90
+python3 tools/progression-sim/human_report.py <输出目录>
+```
+
+按三档人类速度（`HumanTiming.swift` 的 `HumanPace`）估算 16 类活动每次多久（`timings.json`，逐步列出），并按人的速度跑“全都做”“先清支线”“只补必需支线”的整章（`runs.json`）。战斗外的秒数来自真实文本长度、3D 街道坐标、界面步骤和击键层次模型；战斗用正式战斗核心，出招由游戏自动（App 的 `automatesSkillSequence`），所以人的速度不加出招延迟。是模型，不是测量。`fight` 模式的熟练度参数也接受 `quick`/`typical`/`casual` 或直接写一个出招延迟秒数。
+
 不改代码扫参数：`WALLS="q18GearCheckHP=160,q30SovereignHP=7000"` 临时改 `MPCProgressionWalls`（键名见 `Walls.swift` 的 `WallTuning`）；`GEAR_SCALE="attack=2,hp=1.5,reduction=1"` 只在探针里把 F10 以上塔装备的增量放大，用来估算装备曲线要多陡。
 
 ## 模拟了什么
