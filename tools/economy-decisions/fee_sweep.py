@@ -36,17 +36,22 @@ if __name__ == "__main__":
     print(json.dumps(rows))
 '''
 
+def write_patched_model(tmp: Path):
+    """The market model with the corrected shopping and mature-crafter profit rules, in tmp."""
+    sys.path.insert(0, str(AGENT))
+    import run_shopping
+    modified = (AGENT / "model.py").read_text()
+    for old, new in run_shopping.REPLACEMENTS + [(run_shopping.PROFIT_OLD, run_shopping.PROFIT_NEW)]:
+        assert modified.count(old) == 1; modified = modified.replace(old, new)
+    (tmp / "model.py").write_text(modified)
+    shutil.copyfile(AGENT / "source_inputs.json", tmp / "source_inputs.json")
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--out", required=True); ap.add_argument("--workers", type=int, default=4)
     args = ap.parse_args()
-    sys.path.insert(0, str(AGENT))
-    import run_shopping
-    source = (AGENT / "model.py").read_text(); modified = source
-    for old, new in run_shopping.REPLACEMENTS + [(run_shopping.PROFIT_OLD, run_shopping.PROFIT_NEW)]:
-        assert modified.count(old) == 1; modified = modified.replace(old, new)
     with tempfile.TemporaryDirectory(prefix="mistport-fee-") as tmp:
-        tmp = Path(tmp); (tmp / "model.py").write_text(modified); (tmp / "runner.py").write_text(RUNNER)
-        shutil.copyfile(AGENT / "source_inputs.json", tmp / "source_inputs.json")
+        tmp = Path(tmp); write_patched_model(tmp); (tmp / "runner.py").write_text(RUNNER)
         out = subprocess.run([sys.executable, str(tmp / "runner.py"), ",".join(map(str, FEES)), ",".join(map(str, SEEDS)), str(args.workers)],
                              cwd=tmp, check=True, capture_output=True, text=True).stdout
     rows = json.loads(out.strip().splitlines()[-1])
@@ -54,15 +59,20 @@ def main():
     (dest / "fee_runs.json").write_text(json.dumps(rows, indent=1))
     by = {f: [r for r in rows if r["fee"] == f] for f in FEES}
     base_net = statistics.mean(r["crafter_net"] for r in by[0]); base_fill = statistics.mean(r["free_fill"] for r in by[0])
-    lines = ["| 交易费 | 成交笔数 | 成交额 | 交易费回收 | 占全年发行 | 工匠市场净收入 | 相对 0% | 免费玩家药品履约（末 90 天） | 最大 30 天价格变化 |",
-             "|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    base_take = statistics.mean(sum(p["sales"] for p in r["profession"]) for r in by[0])
+    lines = ["| 交易费 | 成交笔数 | 成交额 | 交易费回收 | 占全年发行 | 工匠市场净收入 | 比 0% 少 | 卖家到手 | 比 0% 少 | 免费玩家药品履约（末 90 天） | 最大 30 天价格变化 |",
+             "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     ok = []
     for f in FEES:
         g = by[f]; m = lambda k: statistics.mean(r[k] for r in g)
         fee = statistics.mean(r["sinks"].get("trade_fee", 0) for r in g); issue = m("issuance")
         net = m("crafter_net"); fill = m("free_fill")
-        lines.append(f"| {f/100:g}% | {m('trades'):,.0f} | {m('gross'):,.0f} | {fee:,.0f} | {fee/issue:.2%} | {net:,.0f} | {net/base_net-1:+.1%} | {fill:.1%} | {statistics.mean(r['max_30d_change'] or 0 for r in g):.0%} |")
-        if net >= base_net * 0.9 and fill >= base_fill - 0.02:
+        # Every account has a profession, so the net is negative (players also buy from NPC stock);
+        # the drop is measured against its size, not as a ratio of two negatives.
+        drop = (base_net - net) / abs(base_net)
+        take = statistics.mean(sum(p["sales"] for p in r["profession"]) for r in g); take_drop = 1 - take / base_take
+        lines.append(f"| {f/100:g}% | {m('trades'):,.0f} | {m('gross'):,.0f} | {fee:,.0f} | {fee/issue:.2%} | {net:,.0f} | {drop:.1%} | {take:,.0f} | {take_drop:.1%} | {fill:.1%} | {statistics.mean(r['max_30d_change'] or 0 for r in g):.0%} |")
+        if drop <= 0.10 and fill >= base_fill - 0.02:
             ok.append(f)
     chosen = max(ok) if ok else 0
     decision = f"**交易费判定**：{chosen/100:g}%（工匠市场净收入下降不超过 10%、免费玩家药品履约下降不超过 2 个百分点的最高一档）。"

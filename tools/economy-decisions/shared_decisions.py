@@ -164,11 +164,13 @@ def _daily_loop(world, active_ids):
         world.general_business_cash -= from_business
         world.treasury_general_cash += from_households + from_business
         STATS["levy_moved"] += from_households + from_business
+        STATS["levy_today"] = (from_households, from_business)
     if ext.unbacked_per_active > 0:
         for pid in active_ids:
             world.mint_to_player(world.residents[pid], ext.unbacked_per_active)
             STATS["unbacked_minted"] += ext.unbacked_per_active
     if ext.loop == "none":
+        _recycle(world, ext)
         return
     order = list(active_ids)
     world.rng.shuffle(order)
@@ -200,6 +202,26 @@ def _daily_loop(world, active_ids):
                 p.cash -= stock
                 world.npc_household_cash += stock
                 STATS["stock_paid"] += stock
+    _recycle(world, ext)
+
+
+def _recycle(world, ext):
+    # The city budget does not hoard: whatever it holds above its opening reserve after paying
+    # today's players is refunded the same day to the accounts it was levied from, in today's
+    # proportions. The tax rate is therefore a cap on the daily levy, not a transfer between
+    # NPC accounts. (Without the refund a levy larger than the payouts drains household cash and
+    # the basket stops selling; refunding everything to households instead would move business
+    # cash to households and make a higher tax look better.)
+    if ext.tax <= 0:
+        return
+    surplus = world.treasury_general_cash - world.cfg.treasury_general_cash
+    if surplus > 0:
+        households, business = STATS["levy_today"]
+        to_households = surplus if households + business == 0 else int(surplus * households / (households + business))
+        world.treasury_general_cash -= surplus
+        world.npc_household_cash += to_households
+        world.general_business_cash += surplus - to_households
+        STATS["recycled"] += surplus
 
 
 def _j0(world, active_ids):
@@ -312,7 +334,7 @@ def metrics(rows, cfg, ext) -> dict:
         "account_empty_day": dict(STATS["account_empty_day"]),
         "loop_minted": STATS["loop_minted"], "import_minted": STATS["import_minted"],
         "underground_minted": STATS["underground_minted"], "unbacked_minted": STATS["unbacked_minted"],
-        "levy_moved": STATS["levy_moved"], "stock_paid": STATS["stock_paid"],
+        "levy_moved": STATS["levy_moved"], "recycled": STATS["recycled"], "stock_paid": STATS["stock_paid"],
     }
     m["L1"] = (m["fill_min"] >= 0.85 and recovery_days is not None and recovery_days <= 30) if shock else \
         (m["fill_share_99"] >= 0.95 and m["fill_min"] >= 0.95)
@@ -327,7 +349,7 @@ def run_one(job):
     ext, seed = job
     EXT = ext
     STATS = {"due": {}, "paid": {}, "short_days": {}, "account_empty_day": {}, "loop_minted": 0, "import_minted": 0,
-             "underground_minted": 0, "unbacked_minted": 0, "levy_moved": 0, "stock_paid": 0, "below_floor_share": []}
+             "underground_minted": 0, "unbacked_minted": 0, "levy_moved": 0, "levy_today": (0, 0), "recycled": 0, "stock_paid": 0, "below_floor_share": []}
     for ch in ("orders", "errands", "remnants", "events"):
         STATS["due"][ch] = 0; STATS["paid"][ch] = 0; STATS["short_days"][ch] = set()
     LAST_SERVICE_SPEND = 0
@@ -353,15 +375,37 @@ SHARES = (1.0, 0.5, 0.25, 0.15, 0.1, 0.05)
 TAXES = (0.02, 0.05, 0.1, 0.2, 0.3)
 
 
-def family_funding():
+def family_funding(need_increment=None, family="funding"):
     out = []
+    tag = "" if need_increment is None else f"·玩家篮子{need_increment:g}"
     for base in NORMAL_BASES:
-        out.append(Ext(f"{base}·无每日玩法", "funding", base))
-        out.append(Ext(f"{base}·照单机发币", "funding", base, loop="mint"))
+        out.append(Ext(f"{base}{tag}·无每日玩法", family, base, need_increment=need_increment))
+        out.append(Ext(f"{base}{tag}·照单机发币", family, base, loop="mint", need_increment=need_increment))
         for share in SHARES:
             for tax in TAXES:
-                out.append(Ext(f"{base}·城市预算付{int(share*100)}%·税{int(tax*100)}%", "funding", base, loop="funded", share=share, tax=tax))
+                out.append(Ext(f"{base}{tag}·城市预算付{int(share*100)}%·税{int(tax*100)}%", family, base, loop="funded",
+                               share=share, tax=tax, need_increment=need_increment))
     return out
+
+
+def pick_funding(results):
+    """D1's rule: among funded (share, tax) pairs that pass L1, L2_primary and L3 in every run of
+    both normal bases with at least 95% paid on average, the highest share, then the lowest tax."""
+    combos = {}
+    for runs in group(results).values():
+        ext = runs[0]["ext"]
+        if ext["loop"] == "funded":
+            combos.setdefault((ext["share"], ext["tax"]), []).append(runs)
+    best = None
+    for (share, tax), groups in combos.items():
+        if len(groups) != len(NORMAL_BASES):
+            continue
+        runs = [r for g in groups for r in g]
+        paid = statistics.mean(r["loop_paid_share"] or 0 for r in runs)
+        if all(r["L1"] and r["L2_primary"] and r["L3"] for r in runs) and paid >= 0.95:
+            if best is None or (share, -tax) > (best[0], -best[1]):
+                best = (share, tax, paid)
+    return best
 
 
 RULES = {
@@ -479,25 +523,9 @@ def main():
     funding = run_family(family_funding(), args.workers)
     all_results += funding
     report += ["## D1 每日玩法的铜从哪来", ""] + table(funding) + [""]
-    combos = {}
-    for name, runs in group(funding).items():
-        ext = runs[0]["ext"]
-        if ext["loop"] != "funded":
-            continue
-        combos.setdefault((ext["share"], ext["tax"]), []).append(runs)
-    best = None
-    for (share, tax), groups in combos.items():
-        if len(groups) != len(NORMAL_BASES):
-            continue
-        runs = [r for g in groups for r in g]
-        ok = all(r["L1"] and r["L2_primary"] and r["L3"] for r in runs)
-        paid = statistics.mean(r["loop_paid_share"] or 0 for r in runs)
-        if ok and paid >= 0.95:
-            key = (share, -tax)
-            if best is None or key > best[0]:
-                best = (key, share, tax, paid)
+    best = pick_funding(funding)
     if best:
-        _, share, tax, paid = best
+        share, tax, paid = best
         chosen = Ext("D1", "chosen", "launch_base", loop="funded", share=share, tax=tax)
         report += [f"**D1 判定**：共享服里每日玩法付单机的 {share:.0%}，由城市预算付，城市按 {tax:.0%} 从 NPC 基础消费和开放服务消费收钱"
                    f"（两个正常年份、5 个种子都过 L1/L2/L3，平均实付 {paid:.0%}）。照单机全额发币会通胀（见表）。", ""]
@@ -525,6 +553,15 @@ def main():
     decisions["D3"] = (f"**D3 判定**：玩家每活跃日累积 {cov} 份保护篮子需求（正常年份与修复的供给减半都过 L1）。"
                        if cov is not None else "**D3 判定**：没有覆盖档在修复的冲击里过 L1；保护范围需先加储备或产能。")
     report += ["## D3 保护篮子覆盖", ""] + table(res) + ["", decisions["D3"], ""]
+
+    # Sensitivity (reported, does not change D1): D1's grid again with players buying the D3
+    # coverage, since their basket spending is part of what returns to NPC households.
+    if cov is not None and cov != v3.Config().player_need_increment:
+        res = run_family(family_funding(need_increment=cov, family="funding_at_coverage"), args.workers); all_results += res
+        again = pick_funding(res)
+        decisions["S1"] = (f"**S1 复核**：玩家每活跃日买 {cov:g} 份篮子时，按 D1 同一规则可付单机的 {again[0]:.0%}（税 {again[1]:.0%}，平均实付 {again[2]:.0%}）。"
+                           if again else f"**S1 复核**：玩家每活跃日买 {cov:g} 份篮子时，没有组合通过 D1 的规则。")
+        report += [f"## S1 复核：D1 在玩家篮子 {cov:g} 下", ""] + table(res) + ["", decisions["S1"], ""]
 
     res = run_family(family_scale(chosen), args.workers); all_results += res
     g = group(res)
@@ -576,7 +613,7 @@ def main():
 
     # D8 from every normal run with the chosen funding.
     normal = [r for r in all_results if r["ext"]["loop"] == chosen.loop and r["ext"]["share"] == chosen.share
-              and r["ext"]["tax"] == chosen.tax and r["ext"]["scale"] == 1.0 and not r["ext"]["control"]
+              and r["ext"]["tax"] == chosen.tax and r["ext"]["scale"] == 1.0 and not r["ext"]["control"] and r["ext"]["need_increment"] is None
               and r["ext"]["base"] in ("launch_base", "steady_fresh20", "dormant_return_200", "investment_heat")]
     used = [960000 - r["recovery_fund_min"] for r in normal]
     fund_ok = all(r["recovery_fund_min"] > 0 for r in normal)
