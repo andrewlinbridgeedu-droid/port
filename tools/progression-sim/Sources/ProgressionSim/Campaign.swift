@@ -36,6 +36,9 @@ struct Assumptions: Codable, Sendable {
     var messageWalkSeconds = 60.0
     var remnantInvestigationSeconds = 240.0
     var eventDeliverySeconds = 30.0
+    /// Human-pace runs (HumanTiming.swift): when set, every non-battle second above is
+    /// replaced by the step model and battles run at the pace's action delay.
+    var pace: HumanPace? = nil
     var maxWaitDays = 10
     /// A run that has not finished by this day is reported as stuck.
     var maxDays = 120
@@ -129,6 +132,8 @@ struct RunResult: Codable {
     let stuckAt: Int?
     let days: Int
     let minutes: [String: Double]
+    /// Combat alone, in seconds, by kind (the rest of `minutes` is overhead and non-battle steps).
+    let battleSecondsByKind: [String: Double]
     /// Minutes played on each day (index 0 is day 1): battles, overhead and postal jobs.
     let minutesByDay: [Double]
     let battles: [String: Int]
@@ -225,7 +230,8 @@ final class Campaign {
         self.startDate = startDate; self.startOffset = startOffset
     }
 
-    var churchOpen: Bool { q >= 7 }
+    /// The church (tower, bounties) opens after Q7 (MPCChurchTowerCatalog, user decision 2026-09-29).
+    var churchOpen: Bool { MPCChurchTowerCatalog.isUnlocked(completedMissionNumbers: completedMissions) }
     /// MPCDailyPacing counts the save's first day as day 1.
     var dayNumber: Int { day + 1 }
     var storyOpen: Bool { MPCDailyPacing.isMissionOpen(q + 1, day: dayNumber) }
@@ -244,9 +250,29 @@ final class Campaign {
     /// Towers and cases wear one bounty relic; the story swaps in the wall's counter.
     var worn: String? { bountyRelicCandidates(mission: q + 1, owned: relics.ownedIDs)[0] }
 
+    /// Set for human-pace runs: every non-battle second comes from the step model.
+    var model: HumanTimingModel? { assumptions.pace.map { HumanTimingModel(pace: $0) } }
+    var battleOnly: [String: Double] = [:]
+    var visitedMissions = Set<Int>(), investigatedCases = Set<String>(), briefedEvents = Set<String>()
+    var churchVisitDay = -1
+    func total(_ steps: [TimedStep]) -> Double { steps.reduce(0) { $0 + $1.seconds } }
+    /// Non-battle seconds around one battle. Errand and remnant fights have theirs in their step models.
+    func overhead(_ kind: String) -> Double {
+        guard let m = model else { return assumptions.battleOverheadSeconds }
+        switch kind {
+        case "main": return total(m.storyAttempt)
+        case "tower", "workshop": return total(m.towerFloor)
+        case "bounty": return total(m.battleFrame(result: 40, planning: 1))
+        case "event": return total(m.eventBattle)
+        default: return 0
+        }
+    }
+
     func spend(_ kind: String, _ battleSeconds: Double) {
-        seconds[kind, default: 0] += battleSeconds + assumptions.battleOverheadSeconds
-        dayMinutes[day] += (battleSeconds + assumptions.battleOverheadSeconds) / 60
+        let extra = overhead(kind)
+        seconds[kind, default: 0] += battleSeconds + extra
+        dayMinutes[day] += (battleSeconds + extra) / 60
+        battleOnly[kind, default: 0] += battleSeconds
         battles[kind, default: 0] += 1
     }
 
@@ -282,13 +308,14 @@ final class Campaign {
             postalJobs += 1
             let pay = work.settle(receiptID: "postal-\(postalJobs)", day: dayNumber, copper: Shop.postalPay, merit: 0)
             copper += pay.copper; earned["postal", default: 0] += pay.copper
-            busy("postal", assumptions.postalSeconds)
+            busy("postal", model.map { total($0.postal) } ?? assumptions.postalSeconds)
         }
         if copper < target { copperShort = true }
         return copper >= target
     }
 
     func nextDay() {
+        if let m = model { busy("newspaper", total(m.newspaper)) }
         if usesDailyContent { neighbors.open(day: dayNumber, completedMissions: completedMissions) }
         workshopSession()
         dailyContent()
@@ -303,6 +330,7 @@ final class Campaign {
     func workshopSession() {
         guard usesWorkshop, MPCCraftingCatalog.isUnlocked(completedMissions: completedMissions) else { return }
         let effects = city
+        if let m = model { busy("workshop", total(m.workshopVisit)) }
         orders.open(day: dayNumber, bonus: effects.orderBudgetBonus)
         func craft(_ recipeID: String) -> Bool {
             let cost = MPCCraftingCatalog.baseStock(MPCCraftingCatalog.recipe(recipeID)!, surcharge: effects.craftSurcharge)
@@ -310,7 +338,7 @@ final class Campaign {
             let made = (try? crafting.craft(receiptID: "craft-\(crafts)", recipeID: recipeID, day: dayNumber,
                                             completedMissions: completedMissions, coins: &copper,
                                             inventory: &inventory, gear: &gear, surcharge: effects.craftSurcharge)) == true
-            if made { crafts += 1; baseStockCopper += cost; busy("workshop", assumptions.craftSeconds) }
+            if made { crafts += 1; baseStockCopper += cost; busy("workshop", model.map { total($0.craft) } ?? assumptions.craftSeconds) }
             return made
         }
         func sell(_ item: String, keeping keep: Int) -> Bool {
@@ -321,7 +349,7 @@ final class Campaign {
             guard units > 0 else { return false }
             unitsSold += units
             earned["workshop", default: 0] += units * MPCWorkshopOrderBoard.prices[item]!
-            busy("workshop", assumptions.saleSeconds)
+            busy("workshop", model.map { total($0.sale) } ?? assumptions.saleSeconds)
             return true
         }
         let salveID = MPCCraftingCatalog.salveID
@@ -350,7 +378,8 @@ final class Campaign {
                 if (try? events.deliver(id: "deliver-\(tickets)", eventID: event.id, itemID: need.itemID, count: spare,
                                         day: dayNumber, coins: &copper, inventory: &inventory)) != nil {
                     earned["event", default: 0] += copper - before
-                    busy("event", assumptions.eventDeliverySeconds)
+                    busy("event", model.map { total($0.eventDelivery) } ?? assumptions.eventDeliverySeconds)
+                    if let m = model, briefedEvents.insert(event.id).inserted { busy("event", total([m.eventBriefing(event)])) }
                 }
             }
         }
@@ -394,6 +423,7 @@ final class Campaign {
     /// counted event battles (three tries), and today's remnant case once a bounty is closed.
     func dailyContent() {
         guard usesDailyContent else { return }
+        if let m = model, neighbors.offers.contains(where: { $0.day == dayNumber && !$0.done }) { busy("errand", total(m.streetOpen)) }
         for offer in neighbors.offers where offer.day == dayNumber && !offer.done {
             guard let errand = offer.errand else { continue }
             var reward: MPCNeighborLedger.Reward?
@@ -408,8 +438,10 @@ final class Campaign {
                 let fight = streetFight(id, kind: "errand")
                 reward = try? neighbors.settlePest(offerID: offer.id, ticket: ticket, session: fight.session, coins: &copper)
             }
-            busy("errand", assumptions.errandSeconds + (errand.kind == .message ? assumptions.messageWalkSeconds : 0))
+            busy("errand", model.map { total($0.errand(errand, asker: offer.neighborID)) }
+                 ?? assumptions.errandSeconds + (errand.kind == .message ? assumptions.messageWalkSeconds : 0))
             if let reward { errandsDone += 1; earned["errand", default: 0] += reward.copper }
+            if let m = model, let story = reward?.story { busy("errand", total([m.story(story)])) }
         }
         if let event = MPCCityEventCatalog.running(day: dayNumber) {
             var tries = 0
@@ -425,7 +457,7 @@ final class Campaign {
             }
         }
         if let job = try? remnants.accept(day: dayNumber, closedCaseIDs: cleared, highestTowerFloor: tower), !job.claimed {
-            busy("remnant", assumptions.remnantInvestigationSeconds)
+            busy("remnant", model.map { total($0.remnant(job.remnant!, lead: job.lead)) } ?? assumptions.remnantInvestigationSeconds)
             _ = try? remnants.answer(day: dayNumber, choiceID: job.remnant!.leads[job.lead].correctChoiceID)
             for _ in 0..<2 where remnants.job(day: dayNumber)?.won == false {
                 tickets += 1
@@ -472,6 +504,7 @@ final class Campaign {
         shop()
         let mission = q + 1, key = "main-\(mission)"
         guard storyOpen, !knownLoss(key) else { return false }
+        if let m = model, visitedMissions.insert(mission).inserted { busy("main", total(m.storyFirstVisit(mission))) }
         var attempts = 0, total = 0.0
         // A retry starts from a different whole plan (cards, relics, medal time), so the
         // one salve is not always spent on the same losing plan first.
@@ -516,6 +549,7 @@ final class Campaign {
         let floor = tower + 1, key = "tower-\(floor)"
         guard churchOpen, floor <= towerLimit(completed: q), !knownLoss(key) else { return false }
         guard MPCDailyPacing.canFirstClearTower(clearedFloors: tower, day: dayNumber) else { towerGated = true; return false }
+        if let m = model, churchVisitDay != day { churchVisitDay = day; busy("tower", total(m.churchVisit)) }
         let mission = q + 1
         var attempts = 0, total = 0.0
         for passive in passiveCandidates {
@@ -547,6 +581,7 @@ final class Campaign {
         let key = "bounty-\(id)"
         guard churchOpen, accepted.contains(id), !cleared.contains(id), !knownLoss(key),
               let bounty = MPCChurchBountyCatalog.all.first(where: { $0.id == id }) else { return false }
+        if let m = model, investigatedCases.insert(id).inserted { busy("bounty", total(m.bountyInvestigation(id))) }
         let mission = q + 1
         var attempts = 0, total = 0.0
         for passive in passiveCandidates {
@@ -715,6 +750,7 @@ final class Campaign {
         return RunResult(policy: policy.rawValue, profile: profile.name, startOffset: startOffset, assumptions: assumptions,
                          finalMission: q, stuckAt: stuckAt, days: dayNumber,
                          minutes: seconds.mapValues { ($0 / 60 * 10).rounded() / 10 },
+                         battleSecondsByKind: battleOnly.mapValues { ($0 * 10).rounded() / 10 },
                          minutesByDay: dayMinutes.map { ($0 * 10).rounded() / 10 },
                          battles: battles, losses: losses, salvesUsed: salvesUsed, postalJobs: postalJobs,
                          repairCopper: repairCopper, defeatCopperLost: defeatCopperLost, relicsLost: relicsLost,

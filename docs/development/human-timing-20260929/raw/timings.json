@@ -1,0 +1,1400 @@
+{
+  "note" : "模拟器估算，不是真人或真机测量；不能写进 timings-template.json 的 samples。",
+  "paces" : [
+    {
+      "activities" : [
+        {
+          "activity" : "story",
+          "battleSeconds" : 35.3,
+          "battles" : 1,
+          "nonBattleSeconds" : 50.9,
+          "scope" : "一关主线，含剧情、准备和结算（含重试）",
+          "steps" : [
+            {
+              "label" : "平均（30 个内容）",
+              "seconds" : 37.5
+            },
+            {
+              "label" : "战前配置 ×1",
+              "seconds" : 3.6
+            },
+            {
+              "label" : "进出战斗（设备） ×1",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算 ×1",
+              "seconds" : 4.8
+            }
+          ],
+          "totalSeconds" : 86.19999999999999
+        },
+        {
+          "activity" : "tower",
+          "battleSeconds" : 30.4,
+          "battles" : 1,
+          "nonBattleSeconds" : 14.7,
+          "scope" : "一层塔，含进出和结算（每天 4 层共用一次进教会）",
+          "steps" : [
+            {
+              "label" : "城市→教会→深井（÷4）",
+              "seconds" : 0.8
+            },
+            {
+              "label" : "选层 ×1",
+              "seconds" : 0.8
+            },
+            {
+              "label" : "塔装备：换上新掉落（每层一半机会） ×1",
+              "seconds" : 1.7
+            },
+            {
+              "label" : "战前配置 ×1",
+              "seconds" : 2.6
+            },
+            {
+              "label" : "进出战斗（设备） ×1",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算 ×1",
+              "seconds" : 3.8
+            }
+          ],
+          "totalSeconds" : 45.099999999999994
+        },
+        {
+          "activity" : "bounty",
+          "battleSeconds" : 121.5,
+          "battles" : 4,
+          "nonBattleSeconds" : 167.29999999999998,
+          "scope" : "一个通缉案，调查到领奖",
+          "steps" : [
+            {
+              "label" : "平均（10 个内容）",
+              "seconds" : 113.7
+            },
+            {
+              "label" : "战前配置 ×4",
+              "seconds" : 14.4
+            },
+            {
+              "label" : "进出战斗（设备） ×4",
+              "seconds" : 20
+            },
+            {
+              "label" : "读结算 ×4",
+              "seconds" : 19.2
+            }
+          ],
+          "totalSeconds" : 288.79999999999995
+        },
+        {
+          "activity" : "J0",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 14,
+          "scope" : "一单邮务核验，接单到结算",
+          "steps" : [
+            {
+              "label" : "打开邮务",
+              "seconds" : 2.4
+            },
+            {
+              "label" : "核对第1栏（三选一）",
+              "seconds" : 3.2
+            },
+            {
+              "label" : "核对第2栏（三选一）",
+              "seconds" : 3.2
+            },
+            {
+              "label" : "核对第3栏（三选一）",
+              "seconds" : 3.2
+            },
+            {
+              "label" : "结算",
+              "seconds" : 2
+            }
+          ],
+          "totalSeconds" : 14
+        },
+        {
+          "activity" : "J1",
+          "battleSeconds" : 85.6,
+          "battles" : 3,
+          "nonBattleSeconds" : 62.19999999999999,
+          "scope" : "一单封口巡检（三处），Q12 时的装备",
+          "steps" : [
+            {
+              "label" : "教会接单",
+              "seconds" : 3.2
+            },
+            {
+              "label" : "核对：核对入口封签",
+              "seconds" : 8
+            },
+            {
+              "label" : "核对：比对渗出路线",
+              "seconds" : 8.8
+            },
+            {
+              "label" : "核对：确认疏散与清剿范围",
+              "seconds" : 9.4
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 2.2
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 2.8
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 2.2
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 2.8
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 2.2
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 2.8
+            },
+            {
+              "label" : "领报酬",
+              "seconds" : 2.8
+            }
+          ],
+          "totalSeconds" : 147.79999999999998
+        },
+        {
+          "activity" : "J2",
+          "battleSeconds" : 109,
+          "battles" : 3,
+          "nonBattleSeconds" : 63.8,
+          "scope" : "一单塔内维护（F50 层段三处），Q17 时的装备",
+          "steps" : [
+            {
+              "label" : "教会接单",
+              "seconds" : 3.2
+            },
+            {
+              "label" : "核对：核对已通层封条",
+              "seconds" : 8.8
+            },
+            {
+              "label" : "核对：确认损坏支路",
+              "seconds" : 9.2
+            },
+            {
+              "label" : "核对：完成安全交接",
+              "seconds" : 9.8
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 2.2
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 2.8
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 2.2
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 2.8
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 2.2
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 2.8
+            },
+            {
+              "label" : "领报酬",
+              "seconds" : 2.8
+            }
+          ],
+          "totalSeconds" : 172.8
+        },
+        {
+          "activity" : "craft",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 5.2,
+          "scope" : "一次制作，材料预先持有（进工坊另计 2 秒\/次）",
+          "steps" : [
+            {
+              "label" : "选配方",
+              "seconds" : 3.4
+            },
+            {
+              "label" : "制作",
+              "seconds" : 1.8
+            }
+          ],
+          "totalSeconds" : 5.2
+        },
+        {
+          "activity" : "sale",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 4,
+          "scope" : "一次卖货，商品预先持有",
+          "steps" : [
+            {
+              "label" : "选货和数量",
+              "seconds" : 2.2
+            },
+            {
+              "label" : "确认卖出",
+              "seconds" : 1.8
+            }
+          ],
+          "totalSeconds" : 4
+        },
+        {
+          "activity" : "neighbor_deliver",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 21.6,
+          "scope" : "街坊委托（20 条平均），走近接单到完成",
+          "steps" : [
+            {
+              "label" : "平均（20 个内容）",
+              "seconds" : 21.6
+            }
+          ],
+          "totalSeconds" : 21.6
+        },
+        {
+          "activity" : "neighbor_find",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 27.8,
+          "scope" : "街坊委托（15 条平均），走近接单到完成",
+          "steps" : [
+            {
+              "label" : "平均（15 个内容）",
+              "seconds" : 27.8
+            }
+          ],
+          "totalSeconds" : 27.8
+        },
+        {
+          "activity" : "neighbor_message",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 37.6,
+          "scope" : "街坊委托（16 条平均），走近接单到完成",
+          "steps" : [
+            {
+              "label" : "平均（16 个内容）",
+              "seconds" : 37.6
+            }
+          ],
+          "totalSeconds" : 37.6
+        },
+        {
+          "activity" : "neighbor_pest",
+          "battleSeconds" : 6.1,
+          "battles" : 1,
+          "nonBattleSeconds" : 31.1,
+          "scope" : "街坊委托（18 条平均），走近接单到完成",
+          "steps" : [
+            {
+              "label" : "平均（18 个内容）",
+              "seconds" : 31.1
+            }
+          ],
+          "totalSeconds" : 37.2
+        },
+        {
+          "activity" : "tavern",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 78.6,
+          "scope" : "一局两副牌斗地主（按规则库的出牌规则模拟 20 局）",
+          "steps" : [
+            {
+              "label" : "入座选注",
+              "seconds" : 3.4
+            },
+            {
+              "label" : "我方出牌（15 手，每手决定并点选牌）",
+              "seconds" : 50.6
+            },
+            {
+              "label" : "看电脑出牌（18 手）",
+              "seconds" : 21.8
+            },
+            {
+              "label" : "结算",
+              "seconds" : 2.8
+            }
+          ],
+          "totalSeconds" : 78.6
+        },
+        {
+          "activity" : "tavern_poker",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 15.100000000000001,
+          "scope" : "一手五张换牌",
+          "steps" : [
+            {
+              "label" : "入座选注",
+              "seconds" : 3.4
+            },
+            {
+              "label" : "发牌",
+              "seconds" : 1.5
+            },
+            {
+              "label" : "选弃牌并换牌",
+              "seconds" : 5.4
+            },
+            {
+              "label" : "亮牌结算",
+              "seconds" : 4.8
+            }
+          ],
+          "totalSeconds" : 15.100000000000001
+        },
+        {
+          "activity" : "event_delivery",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 5,
+          "scope" : "一次事件交货，商品预先持有（每场事件另读一次简报）",
+          "steps" : [
+            {
+              "label" : "事件板选物资",
+              "seconds" : 2.8
+            },
+            {
+              "label" : "选数量并确认",
+              "seconds" : 2.2
+            }
+          ],
+          "totalSeconds" : 5
+        },
+        {
+          "activity" : "event_battle",
+          "battleSeconds" : 28.7,
+          "battles" : 1,
+          "nonBattleSeconds" : 13.8,
+          "scope" : "一场事件战，进板到结算",
+          "steps" : [
+            {
+              "label" : "事件板开战",
+              "seconds" : 2.4
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 2.6
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 3.8
+            }
+          ],
+          "totalSeconds" : 42.5
+        },
+        {
+          "activity" : "remnant",
+          "battleSeconds" : 25.6,
+          "battles" : 1,
+          "nonBattleSeconds" : 27.1,
+          "scope" : "一个残余案，接案、调查、战斗到领奖",
+          "steps" : [
+            {
+              "label" : "平均（20 个内容）",
+              "seconds" : 27.1
+            }
+          ],
+          "totalSeconds" : 52.7
+        }
+      ],
+      "pace" : {
+        "battleActionDelay" : 0,
+        "decisionSeconds" : 2,
+        "name" : "quick",
+        "priorityCore" : true,
+        "readingCPM" : 600,
+        "searchSeconds" : 6,
+        "tapSeconds" : 0.8,
+        "wrongAnswerChance" : 0.1
+      }
+    },
+    {
+      "activities" : [
+        {
+          "activity" : "story",
+          "battleSeconds" : 35.3,
+          "battles" : 1,
+          "nonBattleSeconds" : 65.2,
+          "scope" : "一关主线，含剧情、准备和结算（含重试）",
+          "steps" : [
+            {
+              "label" : "平均（30 个内容）",
+              "seconds" : 47.4
+            },
+            {
+              "label" : "战前配置 ×1",
+              "seconds" : 5.7
+            },
+            {
+              "label" : "进出战斗（设备） ×1",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算 ×1",
+              "seconds" : 7.1
+            }
+          ],
+          "totalSeconds" : 100.5
+        },
+        {
+          "activity" : "tower",
+          "battleSeconds" : 30.4,
+          "battles" : 1,
+          "nonBattleSeconds" : 19.15,
+          "scope" : "一层塔，含进出和结算（每天 4 层共用一次进教会）",
+          "steps" : [
+            {
+              "label" : "城市→教会→深井（÷4）",
+              "seconds" : 0.95
+            },
+            {
+              "label" : "选层 ×1",
+              "seconds" : 1.1
+            },
+            {
+              "label" : "塔装备：换上新掉落（每层一半机会） ×1",
+              "seconds" : 2.5
+            },
+            {
+              "label" : "战前配置 ×1",
+              "seconds" : 4
+            },
+            {
+              "label" : "进出战斗（设备） ×1",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算 ×1",
+              "seconds" : 5.6
+            }
+          ],
+          "totalSeconds" : 49.55
+        },
+        {
+          "activity" : "bounty",
+          "battleSeconds" : 121.5,
+          "battles" : 4,
+          "nonBattleSeconds" : 216.9,
+          "scope" : "一个通缉案，调查到领奖",
+          "steps" : [
+            {
+              "label" : "平均（10 个内容）",
+              "seconds" : 145.7
+            },
+            {
+              "label" : "战前配置 ×4",
+              "seconds" : 22.8
+            },
+            {
+              "label" : "进出战斗（设备） ×4",
+              "seconds" : 20
+            },
+            {
+              "label" : "读结算 ×4",
+              "seconds" : 28.4
+            }
+          ],
+          "totalSeconds" : 338.4
+        },
+        {
+          "activity" : "J0",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 20.9,
+          "scope" : "一单邮务核验，接单到结算",
+          "steps" : [
+            {
+              "label" : "打开邮务",
+              "seconds" : 3
+            },
+            {
+              "label" : "核对第1栏（三选一）",
+              "seconds" : 5
+            },
+            {
+              "label" : "核对第2栏（三选一）",
+              "seconds" : 5
+            },
+            {
+              "label" : "核对第3栏（三选一）",
+              "seconds" : 5
+            },
+            {
+              "label" : "结算",
+              "seconds" : 2.9
+            }
+          ],
+          "totalSeconds" : 20.9
+        },
+        {
+          "activity" : "J1",
+          "battleSeconds" : 85.6,
+          "battles" : 3,
+          "nonBattleSeconds" : 87.39999999999998,
+          "scope" : "一单封口巡检（三处），Q12 时的装备",
+          "steps" : [
+            {
+              "label" : "教会接单",
+              "seconds" : 4.1
+            },
+            {
+              "label" : "核对：核对入口封签",
+              "seconds" : 12.9
+            },
+            {
+              "label" : "核对：比对渗出路线",
+              "seconds" : 14.1
+            },
+            {
+              "label" : "核对：确认疏散与清剿范围",
+              "seconds" : 15
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 3.3
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 4.1
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 3.3
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 4.1
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 3.3
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 4.1
+            },
+            {
+              "label" : "领报酬",
+              "seconds" : 4.1
+            }
+          ],
+          "totalSeconds" : 172.99999999999997
+        },
+        {
+          "activity" : "J2",
+          "battleSeconds" : 109,
+          "battles" : 3,
+          "nonBattleSeconds" : 89.79999999999998,
+          "scope" : "一单塔内维护（F50 层段三处），Q17 时的装备",
+          "steps" : [
+            {
+              "label" : "教会接单",
+              "seconds" : 4.1
+            },
+            {
+              "label" : "核对：核对已通层封条",
+              "seconds" : 14.1
+            },
+            {
+              "label" : "核对：确认损坏支路",
+              "seconds" : 14.7
+            },
+            {
+              "label" : "核对：完成安全交接",
+              "seconds" : 15.6
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 3.3
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 4.1
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 3.3
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 4.1
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 3.3
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 4.1
+            },
+            {
+              "label" : "领报酬",
+              "seconds" : 4.1
+            }
+          ],
+          "totalSeconds" : 198.79999999999998
+        },
+        {
+          "activity" : "craft",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 7.199999999999999,
+          "scope" : "一次制作，材料预先持有（进工坊另计 3 秒\/次）",
+          "steps" : [
+            {
+              "label" : "选配方",
+              "seconds" : 5.1
+            },
+            {
+              "label" : "制作",
+              "seconds" : 2.1
+            }
+          ],
+          "totalSeconds" : 7.199999999999999
+        },
+        {
+          "activity" : "sale",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 5.4,
+          "scope" : "一次卖货，商品预先持有",
+          "steps" : [
+            {
+              "label" : "选货和数量",
+              "seconds" : 3.3
+            },
+            {
+              "label" : "确认卖出",
+              "seconds" : 2.1
+            }
+          ],
+          "totalSeconds" : 5.4
+        },
+        {
+          "activity" : "neighbor_deliver",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 31.1,
+          "scope" : "街坊委托（20 条平均），走近接单到完成",
+          "steps" : [
+            {
+              "label" : "平均（20 个内容）",
+              "seconds" : 31.1
+            }
+          ],
+          "totalSeconds" : 31.1
+        },
+        {
+          "activity" : "neighbor_find",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 41.6,
+          "scope" : "街坊委托（15 条平均），走近接单到完成",
+          "steps" : [
+            {
+              "label" : "平均（15 个内容）",
+              "seconds" : 41.6
+            }
+          ],
+          "totalSeconds" : 41.6
+        },
+        {
+          "activity" : "neighbor_message",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 54.6,
+          "scope" : "街坊委托（16 条平均），走近接单到完成",
+          "steps" : [
+            {
+              "label" : "平均（16 个内容）",
+              "seconds" : 54.6
+            }
+          ],
+          "totalSeconds" : 54.6
+        },
+        {
+          "activity" : "neighbor_pest",
+          "battleSeconds" : 6.1,
+          "battles" : 1,
+          "nonBattleSeconds" : 42.9,
+          "scope" : "街坊委托（18 条平均），走近接单到完成",
+          "steps" : [
+            {
+              "label" : "平均（18 个内容）",
+              "seconds" : 42.9
+            }
+          ],
+          "totalSeconds" : 49
+        },
+        {
+          "activity" : "tavern",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 109.6,
+          "scope" : "一局两副牌斗地主（按规则库的出牌规则模拟 20 局）",
+          "steps" : [
+            {
+              "label" : "入座选注",
+              "seconds" : 4.8
+            },
+            {
+              "label" : "我方出牌（15 手，每手决定并点选牌）",
+              "seconds" : 78.9
+            },
+            {
+              "label" : "看电脑出牌（18 手）",
+              "seconds" : 21.8
+            },
+            {
+              "label" : "结算",
+              "seconds" : 4.1
+            }
+          ],
+          "totalSeconds" : 109.6
+        },
+        {
+          "activity" : "tavern_poker",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 21,
+          "scope" : "一手五张换牌",
+          "steps" : [
+            {
+              "label" : "入座选注",
+              "seconds" : 4.8
+            },
+            {
+              "label" : "发牌",
+              "seconds" : 1.5
+            },
+            {
+              "label" : "选弃牌并换牌",
+              "seconds" : 8.6
+            },
+            {
+              "label" : "亮牌结算",
+              "seconds" : 6.1
+            }
+          ],
+          "totalSeconds" : 21
+        },
+        {
+          "activity" : "event_delivery",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 7.3999999999999995,
+          "scope" : "一次事件交货，商品预先持有（每场事件另读一次简报）",
+          "steps" : [
+            {
+              "label" : "事件板选物资",
+              "seconds" : 4.1
+            },
+            {
+              "label" : "选数量并确认",
+              "seconds" : 3.3
+            }
+          ],
+          "totalSeconds" : 7.3999999999999995
+        },
+        {
+          "activity" : "event_battle",
+          "battleSeconds" : 28.7,
+          "battles" : 1,
+          "nonBattleSeconds" : 17.6,
+          "scope" : "一场事件战，进板到结算",
+          "steps" : [
+            {
+              "label" : "事件板开战",
+              "seconds" : 3
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 4
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 5.6
+            }
+          ],
+          "totalSeconds" : 46.3
+        },
+        {
+          "activity" : "remnant",
+          "battleSeconds" : 25.6,
+          "battles" : 1,
+          "nonBattleSeconds" : 38.9,
+          "scope" : "一个残余案，接案、调查、战斗到领奖",
+          "steps" : [
+            {
+              "label" : "平均（20 个内容）",
+              "seconds" : 38.9
+            }
+          ],
+          "totalSeconds" : 64.5
+        }
+      ],
+      "pace" : {
+        "battleActionDelay" : 0,
+        "decisionSeconds" : 3.5,
+        "name" : "typical",
+        "priorityCore" : true,
+        "readingCPM" : 400,
+        "searchSeconds" : 12,
+        "tapSeconds" : 1.1,
+        "wrongAnswerChance" : 0.2
+      }
+    },
+    {
+      "activities" : [
+        {
+          "activity" : "story",
+          "battleSeconds" : 35.9,
+          "battles" : 1,
+          "nonBattleSeconds" : 86.10000000000001,
+          "scope" : "一关主线，含剧情、准备和结算（含重试）",
+          "steps" : [
+            {
+              "label" : "平均（30 个内容）",
+              "seconds" : 62.4
+            },
+            {
+              "label" : "战前配置 ×1",
+              "seconds" : 8
+            },
+            {
+              "label" : "进出战斗（设备） ×1",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算 ×1",
+              "seconds" : 10.7
+            }
+          ],
+          "totalSeconds" : 122
+        },
+        {
+          "activity" : "tower",
+          "battleSeconds" : 30.4,
+          "battles" : 1,
+          "nonBattleSeconds" : 25.049999999999997,
+          "scope" : "一层塔，含进出和结算（每天 4 层共用一次进教会）",
+          "steps" : [
+            {
+              "label" : "城市→教会→深井（÷4）",
+              "seconds" : 1.15
+            },
+            {
+              "label" : "选层 ×1",
+              "seconds" : 1.5
+            },
+            {
+              "label" : "塔装备：换上新掉落（每层一半机会） ×1",
+              "seconds" : 3.5
+            },
+            {
+              "label" : "战前配置 ×1",
+              "seconds" : 5.5
+            },
+            {
+              "label" : "进出战斗（设备） ×1",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算 ×1",
+              "seconds" : 8.4
+            }
+          ],
+          "totalSeconds" : 55.449999999999996
+        },
+        {
+          "activity" : "bounty",
+          "battleSeconds" : 121.5,
+          "battles" : 4,
+          "nonBattleSeconds" : 287.6,
+          "scope" : "一个通缉案，调查到领奖",
+          "steps" : [
+            {
+              "label" : "平均（10 个内容）",
+              "seconds" : 192.8
+            },
+            {
+              "label" : "战前配置 ×4",
+              "seconds" : 32
+            },
+            {
+              "label" : "进出战斗（设备） ×4",
+              "seconds" : 20
+            },
+            {
+              "label" : "读结算 ×4",
+              "seconds" : 42.8
+            }
+          ],
+          "totalSeconds" : 409.1
+        },
+        {
+          "activity" : "J0",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 29.7,
+          "scope" : "一单邮务核验，接单到结算",
+          "steps" : [
+            {
+              "label" : "打开邮务",
+              "seconds" : 3.8
+            },
+            {
+              "label" : "核对第1栏（三选一）",
+              "seconds" : 7.2
+            },
+            {
+              "label" : "核对第2栏（三选一）",
+              "seconds" : 7.2
+            },
+            {
+              "label" : "核对第3栏（三选一）",
+              "seconds" : 7.2
+            },
+            {
+              "label" : "结算",
+              "seconds" : 4.3
+            }
+          ],
+          "totalSeconds" : 29.7
+        },
+        {
+          "activity" : "J1",
+          "battleSeconds" : 85.6,
+          "battles" : 3,
+          "nonBattleSeconds" : 123.19999999999997,
+          "scope" : "一单封口巡检（三处），Q12 时的装备",
+          "steps" : [
+            {
+              "label" : "教会接单",
+              "seconds" : 5.3
+            },
+            {
+              "label" : "核对：核对入口封签",
+              "seconds" : 20
+            },
+            {
+              "label" : "核对：比对渗出路线",
+              "seconds" : 21.8
+            },
+            {
+              "label" : "核对：确认疏散与清剿范围",
+              "seconds" : 23.2
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 4.5
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 6.1
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 4.5
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 6.1
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 4.5
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 6.1
+            },
+            {
+              "label" : "领报酬",
+              "seconds" : 6.1
+            }
+          ],
+          "totalSeconds" : 208.79999999999995
+        },
+        {
+          "activity" : "J2",
+          "battleSeconds" : 109,
+          "battles" : 3,
+          "nonBattleSeconds" : 126.79999999999998,
+          "scope" : "一单塔内维护（F50 层段三处），Q17 时的装备",
+          "steps" : [
+            {
+              "label" : "教会接单",
+              "seconds" : 5.3
+            },
+            {
+              "label" : "核对：核对已通层封条",
+              "seconds" : 21.8
+            },
+            {
+              "label" : "核对：确认损坏支路",
+              "seconds" : 22.7
+            },
+            {
+              "label" : "核对：完成安全交接",
+              "seconds" : 24.1
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 4.5
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 6.1
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 4.5
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 6.1
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 4.5
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 6.1
+            },
+            {
+              "label" : "领报酬",
+              "seconds" : 6.1
+            }
+          ],
+          "totalSeconds" : 235.79999999999998
+        },
+        {
+          "activity" : "craft",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 10.1,
+          "scope" : "一次制作，材料预先持有（进工坊另计 3 秒\/次）",
+          "steps" : [
+            {
+              "label" : "选配方",
+              "seconds" : 7.6
+            },
+            {
+              "label" : "制作",
+              "seconds" : 2.5
+            }
+          ],
+          "totalSeconds" : 10.1
+        },
+        {
+          "activity" : "sale",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 7,
+          "scope" : "一次卖货，商品预先持有",
+          "steps" : [
+            {
+              "label" : "选货和数量",
+              "seconds" : 4.5
+            },
+            {
+              "label" : "确认卖出",
+              "seconds" : 2.5
+            }
+          ],
+          "totalSeconds" : 7
+        },
+        {
+          "activity" : "neighbor_deliver",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 44.3,
+          "scope" : "街坊委托（20 条平均），走近接单到完成",
+          "steps" : [
+            {
+              "label" : "平均（20 个内容）",
+              "seconds" : 44.3
+            }
+          ],
+          "totalSeconds" : 44.3
+        },
+        {
+          "activity" : "neighbor_find",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 60.9,
+          "scope" : "街坊委托（15 条平均），走近接单到完成",
+          "steps" : [
+            {
+              "label" : "平均（15 个内容）",
+              "seconds" : 60.9
+            }
+          ],
+          "totalSeconds" : 60.9
+        },
+        {
+          "activity" : "neighbor_message",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 78.3,
+          "scope" : "街坊委托（16 条平均），走近接单到完成",
+          "steps" : [
+            {
+              "label" : "平均（16 个内容）",
+              "seconds" : 78.3
+            }
+          ],
+          "totalSeconds" : 78.3
+        },
+        {
+          "activity" : "neighbor_pest",
+          "battleSeconds" : 6.1,
+          "battles" : 1,
+          "nonBattleSeconds" : 59.1,
+          "scope" : "街坊委托（18 条平均），走近接单到完成",
+          "steps" : [
+            {
+              "label" : "平均（18 个内容）",
+              "seconds" : 59.1
+            }
+          ],
+          "totalSeconds" : 65.2
+        },
+        {
+          "activity" : "tavern",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 144.6,
+          "scope" : "一局两副牌斗地主（按规则库的出牌规则模拟 20 局）",
+          "steps" : [
+            {
+              "label" : "入座选注",
+              "seconds" : 6.3
+            },
+            {
+              "label" : "我方出牌（15 手，每手决定并点选牌）",
+              "seconds" : 110.4
+            },
+            {
+              "label" : "看电脑出牌（18 手）",
+              "seconds" : 21.8
+            },
+            {
+              "label" : "结算",
+              "seconds" : 6.1
+            }
+          ],
+          "totalSeconds" : 144.6
+        },
+        {
+          "activity" : "tavern_poker",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 27.9,
+          "scope" : "一手五张换牌",
+          "steps" : [
+            {
+              "label" : "入座选注",
+              "seconds" : 6.3
+            },
+            {
+              "label" : "发牌",
+              "seconds" : 1.5
+            },
+            {
+              "label" : "选弃牌并换牌",
+              "seconds" : 12
+            },
+            {
+              "label" : "亮牌结算",
+              "seconds" : 8.1
+            }
+          ],
+          "totalSeconds" : 27.9
+        },
+        {
+          "activity" : "event_delivery",
+          "battleSeconds" : 0,
+          "battles" : 0,
+          "nonBattleSeconds" : 10.6,
+          "scope" : "一次事件交货，商品预先持有（每场事件另读一次简报）",
+          "steps" : [
+            {
+              "label" : "事件板选物资",
+              "seconds" : 6.1
+            },
+            {
+              "label" : "选数量并确认",
+              "seconds" : 4.5
+            }
+          ],
+          "totalSeconds" : 10.6
+        },
+        {
+          "activity" : "event_battle",
+          "battleSeconds" : 28.7,
+          "battles" : 1,
+          "nonBattleSeconds" : 22.700000000000003,
+          "scope" : "一场事件战，进板到结算",
+          "steps" : [
+            {
+              "label" : "事件板开战",
+              "seconds" : 3.8
+            },
+            {
+              "label" : "战前配置",
+              "seconds" : 5.5
+            },
+            {
+              "label" : "进出战斗（设备）",
+              "seconds" : 5
+            },
+            {
+              "label" : "读结算",
+              "seconds" : 8.4
+            }
+          ],
+          "totalSeconds" : 51.400000000000006
+        },
+        {
+          "activity" : "remnant",
+          "battleSeconds" : 25.6,
+          "battles" : 1,
+          "nonBattleSeconds" : 55.7,
+          "scope" : "一个残余案，接案、调查、战斗到领奖",
+          "steps" : [
+            {
+              "label" : "平均（20 个内容）",
+              "seconds" : 55.7
+            }
+          ],
+          "totalSeconds" : 81.30000000000001
+        }
+      ],
+      "pace" : {
+        "battleActionDelay" : 0,
+        "decisionSeconds" : 5,
+        "name" : "casual",
+        "priorityCore" : false,
+        "readingCPM" : 260,
+        "searchSeconds" : 20,
+        "tapSeconds" : 1.5,
+        "wrongAnswerChance" : 0.3
+      }
+    }
+  ],
+  "schema" : 1,
+  "status" : "modeled",
+  "streetAverageWalkSeconds" : 7.9
+}

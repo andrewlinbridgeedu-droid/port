@@ -45,14 +45,14 @@ enum EarlyRelicShop {
 }
 
 /// A service requires both an authored unlock milestone and a released gameplay loop.
-/// The church is always open; the workshop opens after Q5 (MPCCraftingCatalog.unlockMission,
-/// user decision 2026-09-29); other services stay unreleased.
+/// The church opens after Q7 (MPCChurchTowerCatalog.unlockMission) and the workshop after Q5
+/// (MPCCraftingCatalog.unlockMission), both user decisions of 2026-09-29; other services stay unreleased.
 enum CityService: String {
     case workshop, cafe, restaurant, church, store, advancement
     var unlockMissionID: String? {
         switch self {
         case .workshop: return "old-clock-\(MPCCraftingCatalog.unlockMission)"
-        case .church: return "old-clock-7"
+        case .church: return "old-clock-\(MPCChurchTowerCatalog.unlockMission)"
         default: return nil // Assigned with the corresponding story/content release.
         }
     }
@@ -838,6 +838,10 @@ final class GameStore {
         assert(fresh.pacingDay == 2 && fresh.missionIsAvailable(all[3]))
         let reopened = GameStore(launchArguments: [], defaults: storage)
         assert(reopened.dailyPacingStart == fresh.dailyPacingStart)
+        // The church opens after Q7; the day-1 allowance of four new floors still applies.
+        assert(!reopened.cityServiceIsUnlocked(.church) && (try? reopened.churchTowerSession(floor: 1)) == nil)
+        reopened.completedChapterMissionIDs = Set((1...7).map { "old-clock-\($0)" })
+        assert(reopened.cityServiceIsUnlocked(.church))
         storage.set(try! JSONEncoder().encode(MPCChurchTowerProgress(clearedFloors: [1, 2, 3, 4])),
                     forKey: "mistport.church-tower.progress.v1")
         assert(reopened.towerFloorIsOpenToday(4) && !reopened.towerFloorIsOpenToday(5) && reopened.towerPacingLockText != nil)
@@ -853,7 +857,7 @@ final class GameStore {
         assert(again.dailyPacingStart == migrated.dailyPacingStart)
         migrated.restart()
         assert(migrated.dailyPacingStart?.origin == .newSave && migrated.pacingDay == 1)
-        NSLog("DAILY_PACING_VERIFY_PASS: new save day 1, Q4 tomorrow, replay open, next day, reopen, tower 4/day, migration once, restart")
+        NSLog("DAILY_PACING_VERIFY_PASS: new save day 1, Q4 tomorrow, replay open, next day, reopen, church after Q7, tower 4/day, migration once, restart")
     }
 
     /// Explicit DEBUG walk only. Never seed or reset either player-owned suite.
@@ -862,10 +866,11 @@ final class GameStore {
         let storage = UserDefaults(suiteName: suite)!
         storage.removePersistentDomain(forName: suite)
         let seed = GameStore(launchArguments: [], defaults: storage)
-        seed.debugJumpToOldClockMission(4, enterImmediately: false)
-        storage.set(try! JSONEncoder().encode(MPCChurchTowerProgress(clearedFloors: [1, 2, 3, 4])),
+        // Church opens after Q7 (day 5 on pace): Q1–Q7 done, today's 20 new floors used, Q8 tomorrow.
+        seed.debugJumpToOldClockMission(8, enterImmediately: false)
+        storage.set(try! JSONEncoder().encode(MPCChurchTowerProgress(clearedFloors: Set(1...20))),
                     forKey: "mistport.church-tower.progress.v1")
-        seed.debugSetPacingDay(1)
+        seed.debugSetPacingDay(5)
         if ProcessInfo.processInfo.arguments.contains("--daily-work-preview") {
             seed.debugJumpToOldClockMission(10, enterImmediately: false)
             seed.debugSetPacingDay(1)
@@ -1356,8 +1361,8 @@ final class GameStore {
     }
 
     func cityServiceIsUnlocked(_ service: CityService) -> Bool {
-        if service == .church { return service.isReleased }
-        // Same rule as the rules library: any mission at or past Q5 completed.
+        // Same rules as the rules library: any mission at or past Q7 (church) or Q5 (workshop) completed.
+        if service == .church { return service.isReleased && MPCChurchTowerCatalog.isUnlocked(completedMissionNumbers: churchTowerMissionNumbers) }
         if service == .workshop { return service.isReleased && MPCLocalWorkshopLedger.isUnlocked(completedMissions: churchTowerMissionNumbers) }
         guard service.isReleased, let milestone = service.unlockMissionID else { return false }
         return completedChapterMissionIDs.contains(milestone)
@@ -2643,8 +2648,11 @@ extension GameStore {
         let storage = UserDefaults(suiteName: suite)!
         defer { storage.removePersistentDomain(forName: suite) }
         let store = GameStore(launchArguments: [], defaults: storage)
-        assert(store.cityServiceIsUnlocked(.church))
         assert(store.completedChapterMissionIDs.isEmpty)
+        assert(!store.cityServiceIsUnlocked(.church) && (try? store.churchTowerSession(floor: 1)) == nil)
+        store.completedChapterMissionIDs = Set((1...6).map { "old-clock-\($0)" })
+        assert(!store.cityServiceIsUnlocked(.church))
+        store.completedChapterMissionIDs.insert("old-clock-7")
         assert(store.cityServiceIsUnlocked(.church))
         store.persistChapterProgress()
         // Exercise the real entry method with a malicious/stale picker payload.
@@ -2677,7 +2685,7 @@ extension GameStore {
         assert(recovered.venueCoins == before + 16 && recovered.churchTowerProgress.clearedFloors == [1,2])
         let again = GameStore(launchArguments: [], defaults: storage)
         assert(again.venueCoins == recovered.venueCoins && again.chapterOneCampaign.spendableChurchMerit == 4)
-        NSLog("CHURCH_TOWER_VERIFY_PASS: unlock, defeat rejection, first clear, duplicate, restore, mismatched battle, journal recovery")
+        NSLog("CHURCH_TOWER_VERIFY_PASS: locked before Q7, unlock after Q7, defeat rejection, first clear, duplicate, restore, mismatched battle, journal recovery")
         Task { @MainActor in
             let renderer = ImageRenderer(content: ChurchSanctuaryView(game: recovered).frame(width: 390, height: 844))
             renderer.scale = 2
@@ -4367,9 +4375,10 @@ extension GameStore {
         _ = GameStore(launchArguments: [], defaults: storage)
         assert(storage.data(forKey: PersistenceKey.dailyWorkshop) == migration)
         assert(store.craftingLedger.receipts.isEmpty)
-        store.debugJumpToOldClockMission(6, enterImmediately: false)
-        store.debugSetPacingDay(3)
-        assert(store.cityServiceIsUnlocked(.workshop))
+        // Q1–Q7 done (day 5 on pace) so the tower material checks below can enter the church.
+        store.debugJumpToOldClockMission(8, enterImmediately: false)
+        store.debugSetPacingDay(5)
+        assert(store.cityServiceIsUnlocked(.workshop) && store.cityServiceIsUnlocked(.church))
         store.venueCoins = 50_000
         let materialIDs = [MPCTowerMaterials.hide, MPCTowerMaterials.gland, MPCTowerMaterials.membrane,
             MPCTowerMaterials.chitin, MPCTowerMaterials.silk, MPCTowerMaterials.talon, MPCTowerMaterials.fiber, MPCTowerMaterials.scale]
@@ -4727,7 +4736,11 @@ extension GameStore {
             }
         }
         assert(kinds == ["deliver", "find", "message", "pest"])
-        for neighbor in MPCNeighborCatalog.written { assert(store.neighbors.stories(neighbor.id).count == 2) }
+        // All 23 take turns: everyone asked at least twice by day 28; stories follow affinity 2 and 3.
+        for neighbor in MPCNeighborCatalog.all {
+            let level = store.neighbors.affinity[neighbor.id, default: 0]
+            assert(level >= 2 && store.neighbors.stories(neighbor.id).count == MPCNeighborCatalog.storyAffinity.filter { $0 <= level }.count)
+        }
         store.debugSetPacingDay(30); try! store.openNeighborDay()
         let pending = store.neighbors.offers.first { $0.errand?.kind == .pest }!
         try! store.talkToNeighbor(pending.neighborID)
@@ -4742,7 +4755,7 @@ extension GameStore {
         store.debugSetPacingDay(32); try! store.openNeighborDay()
         assert(store.neighbors.offers.allSatisfy { $0.day == 32 })
         store.restart(); assert(store.neighbors.offers.isEmpty && store.neighbors.affinity.isEmpty)
-        NSLog("NEIGHBORS_VERIFY_PASS: migration once, daily 2-3 offers, proximity conversation required, actual recipient, wrong answers free, four kinds, no double rewards, pest abandon/retry, stories at 3/6, expiry, reopen, reset")
+        NSLog("NEIGHBORS_VERIFY_PASS: migration once, daily 2-3 offers, proximity conversation required, actual recipient, wrong answers free, four kinds, no double rewards, pest abandon/retry, all 23 in turn, stories at 2/3, expiry, reopen, reset")
     }
 }
 #endif

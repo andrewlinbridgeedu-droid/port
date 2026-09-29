@@ -38,7 +38,7 @@ struct NeighborConversationView: View {
                         GroupBox("街坊往事 · \(index + 1)") { Text(story).frame(maxWidth: .infinity, alignment: .leading) }
                     }
                     if MPCNeighborCatalog.neighbor(neighborID)?.isWritten == true && stories.count < 2 {
-                        Text("好感达到 3 和 6 时，会聊起更多往事。").font(.footnote).foregroundStyle(.secondary)
+                        Text("好感达到 \(MPCNeighborCatalog.storyAffinity.map(String.init).joined(separator: " 和 ")) 时，会聊起更多往事。").font(.footnote).foregroundStyle(.secondary)
                     }
                 }.padding()
             }

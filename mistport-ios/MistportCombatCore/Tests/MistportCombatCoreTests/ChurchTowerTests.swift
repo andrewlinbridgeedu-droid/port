@@ -4,10 +4,12 @@ import Testing
 
 @Suite("Church tower released first section")
 struct ChurchTowerTests {
-    @Test func availableWithoutStoryProgressButNoFutureFloors() {
+    @Test func opensAfterQ7ButNoFutureFloors() {
         let progress = MPCChurchTowerProgress()
-        #expect(progress.canEnter(1, completedMissionNumbers: []))
+        #expect(!progress.canEnter(1, completedMissionNumbers: []))
+        #expect(!progress.canEnter(1, completedMissionNumbers: Set(1...6)))
         #expect(progress.canEnter(1, completedMissionNumbers: [7]))
+        #expect(progress.canEnter(1, completedMissionNumbers: [16]))
         #expect(!progress.canEnter(2, completedMissionNumbers: [7]))
         #expect(!progress.canEnter(0, completedMissionNumbers: [7]))
         #expect(!progress.canEnter(11, completedMissionNumbers: Set(1...30)))

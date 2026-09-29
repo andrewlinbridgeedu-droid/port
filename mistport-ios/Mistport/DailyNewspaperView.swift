@@ -20,11 +20,11 @@ struct DailyNewspaperView: View {
                             if game.missionLockText(next) != nil { Text("前往可重访已开放关卡；新关等待日限开放。") }
                         } else { Text("本章主线已完成，可回访旧关。") }
                     }
-                    row("深井封堵", destination: .tower) {
+                    row("深井封堵", destination: .tower, locked: game.cityServiceIsUnlocked(.church) ? nil : MPCChurchTowerCatalog.lockText) {
                         Text("累计封堵 \(game.churchTowerProgress.clearedFloors.count)/100 层；今天还能新封 \(max(0, MPCDailyPacing.towerFirstClearsAllowed(day: game.pacingDay) - game.churchTowerProgress.clearedFloors.count)) 层。")
                         Text(game.towerPacingLockText ?? "已封堵的层可随时重打。")
                     }
-                    row("通缉日刊", destination: .bounties) {
+                    row("通缉日刊", destination: .bounties, locked: game.cityServiceIsUnlocked(.church) ? nil : MPCChurchTowerCatalog.lockText) {
                         let offers = game.previewChurchBountyIssue().offerIDs.compactMap(MPCChurchBountyCatalog.bounty(id:))
                             .filter { game.churchServices.bounties.cases[$0.id]?.claimed != true }
                         Text(offers.isEmpty ? "当前没有新的通缉，已接案卷可继续。" : offers.map(\.title).joined(separator: " · "))

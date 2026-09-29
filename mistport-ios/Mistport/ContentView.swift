@@ -370,7 +370,7 @@ struct ContentView: View {
                 if game.cityServiceIsUnlocked(.church) {
                     ChurchSanctuaryView(game: game)
                 } else {
-                    Text("教会尚未开放 · 随主线推进解锁").padding()
+                    Text("教会尚未开放 · \(MPCChurchTowerCatalog.lockText)").padding()
                 }
             case .dailyTower:
                 ChurchTowerView(game: game)

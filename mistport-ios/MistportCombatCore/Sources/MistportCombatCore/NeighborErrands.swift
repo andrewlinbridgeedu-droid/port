@@ -65,7 +65,9 @@ public struct MPCNeighbor: Equatable, Sendable, Identifiable {
 
 public enum MPCNeighborCatalog {
     public static let firstDay = 2
-    public static let storyAffinity = [3, 6]
+    /// All 23 take turns (`rotation`), so each asks about every nine days: two or three
+    /// times in chapter one. Stories come at the second and third finished errand.
+    public static let storyAffinity = [2, 3]
     public static let prefix = "church_maintenance_errand_"
     /// Pests are small early bodies: a chore, not a tower fight.
     public static let pestFloor = 10
@@ -76,7 +78,7 @@ public enum MPCNeighborCatalog {
     static var cloth: String { MPCCraftingCatalog.clothID }
 
     /// First batch (2026-09-29): eight neighbours with their own errands and two stories each.
-    public static let written: [MPCNeighbor] = [
+    static let firstBatch: [MPCNeighbor] = [
         .init(id: "postman", name: "邮差", errands: [
             .message("postman-letter", "有封信写着‘旧街门牌登记员收’，可我今天走不到旧街了。你替我跑一趟，把信交给他？",
                      to: "west-lane", reply: "又是寄给那间空屋的。门牌换了，可总有人记得旧号。我先替他收着。",
@@ -187,37 +189,230 @@ public enum MPCNeighborCatalog {
         ])
     ]
 
-    /// Neighbours whose own errands and stories are not written yet. They use the shared
-    /// requests below, in a different order each, and have no stories.
-    public static let unwritten: [(id: String, name: String)] = [
-        ("courier", "信使"), ("west-lane", "旧街门牌登记员"), ("cafe-lane", "咖啡馆跑堂"), ("market-lane", "花摊帮工"),
-        ("clock-square", "钟楼广场水手"), ("upper-road", "上坡守灯人"), ("south-quay", "港务抄账员"),
-        ("flower-seller-walk", "流动花贩"), ("sailor-walk", "离港水手"), ("archive-apprentice-walk", "档案学徒"),
-        ("cafe_keeper", "咖啡馆店主"), ("street_warden", "巡街人"), ("scholar", "学者"), ("merchant", "商人"), ("visitor", "旅人")
+    /// Second batch (2026-09-29): the other fifteen, written at the user's request.
+    static let secondBatch: [MPCNeighbor] = [
+        .init(id: "courier", name: "信使", errands: [
+            .pest("courier-pest", "东岸码头的邮筒底下钻进了一只塔怪，信一投进去就被它叼走。", [.copperback, .moonfang],
+                  thanks: "邮筒清净了。今天的信一封都没少，我数过。"),
+            .message("courier-message", "港务抄账员托我问一句：昨夜那条没敲钟的船，登记上写的是谁的名字？我得赶下一趟，你替我去问。",
+                     to: "south-quay", reply: "船主一栏空着，只按了个指印。告诉他：空着的就是空着，我不会替谁补上。",
+                     thanks: "空着就好。空着的地方，将来才能填上对的名字。"),
+            .deliver("courier-strap", "跑得太急，信袋的背带又断了。两条维修绑带，我付钱。", item: strap, count: 2,
+                     thanks: "系紧了。东岸到钟楼，我今天还能跑三趟。")
+        ], stories: [
+            "我送信从不看内容，只看地址。可有一回，同一个人每周都给同一间屋子写信，那屋子早就空了。我没把信退回去，而是塞进门缝——总得有个地方收着。后来门缝里的信不见了，我到现在也不知道是谁拿走的。",
+            "有人出过十个银币，要我把一封信里的船号划掉再送。我没收，把信原样送到了。第二天那人在码头等我，我以为要挨打，他却说：‘我就是想看看，这城里还有没有不收钱的人。’后来他成了我的老主顾。"
+        ]),
+        .init(id: "west-lane", name: "旧街门牌登记员", errands: [
+            .find("west-lane-find", "有人拿着一张旧门牌号来问路：旧街十七号。可旧街的门牌早就重编过了。", question: "旧十七号现在是哪一间？", [
+                ("照登记簿上的新旧对照表，是现在的九号", "对照表是换门牌那天一户户核过的。"),
+                ("门上还挂着‘17’铁牌的那间", "那块铁牌是后来有人捡去钉上的，不作数。"),
+                ("从街口数第十七间", "旧街中间拆过两间屋，按顺序数会数错。")], correct: 0,
+                  thanks: "九号。我这就带他过去——对照表总算派上了用场。"),
+            .deliver("west-lane-patch", "门牌的铆钉锈断了，一刮风就晃。修甲片的铁皮正好能垫，给我两片。", item: patch, count: 2,
+                     thanks: "铆上了。门牌不晃，找门的人就不会走错。"),
+            .pest("west-lane-pest", "那间空屋的地窖里有东西在挠门，夜里整条旧街都听得见。", [.moonfang, .crimsonBrute],
+                  thanks: "安静了。空屋就该是空的，不该有东西在里面等人。")
+        ], stories: [
+            "旧街换门牌那年，我挨家挨户记下新旧号码。有个老太太不肯换，说她儿子只认得旧号。我在她门框内侧偷偷刻了个小小的旧号，新的挂在外面。她到走都不知道，我也没说。",
+            "你问那间空屋？以前住着一对姐妹，后来搬走了，一个往东，一个往西，走前说好把信都寄到这里。可来的信总是只有一边的。我每月去空屋收一次，攒着。哪天另一边的信也来了，我就知道她们还互相找得到。"
+        ]),
+        .init(id: "cafe-lane", name: "咖啡馆跑堂", errands: [
+            .deliver("cafe-lane-salve", "端咖啡时被壶嘴烫了一下，店主让我别声张。你有止痛膏吗？", item: salve, count: 1,
+                     thanks: "好多了。店里的人要是看见我手抖，会以为咖啡太苦。"),
+            .message("cafe-lane-message", "店主让我给面包师带句话：明早的牛角包多要一打，今晚有船回港。",
+                     to: "baker", reply: "多一打？行。有船回来的晚上，咖啡馆总是坐满。",
+                     thanks: "谢了。店主说，回港的人喝第一口咖啡前，得先吃点热的。"),
+            .find("cafe-lane-find", "有位客人落下一把伞，伞柄上刻着字，可三个常客都说是自己的。", question: "伞是谁的？", [
+                ("说得最急的那位", "着急不说明什么。"),
+                ("伞骨里夹着港务处的船期单——是那位抄账的客人", "船期单只有港务处的人随身带。"),
+                ("坐得离门最近的那位", "座位每天都会换。")], correct: 1,
+                  thanks: "果然是他。他说这伞是他父亲的，丢了要挨骂——都这把年纪了。")
+        ], stories: [
+            "咖啡馆晚熄灯，是店主定的规矩：只要港口还有一条船没回来，灯就不熄。有时候到半夜只剩我一个人擦杯子，钟一响，我就往窗外看一眼。其实我也不知道自己在等谁。",
+            "我是从北边一个没有海的地方来的。第一次听见港口的钟，我以为是着火了。店主笑了半天，教我分辨：长的是开船，短的是回港，还有一种很急很乱的——她说那个我不用记，希望我永远用不上。"
+        ]),
+        .init(id: "market-lane", name: "花摊帮工", errands: [
+            .pest("market-lane-pest", "花摊收工后巷口那几步不是人——我看见了，是塔怪，在翻装花根的筐。", [.goldenThroat, .moonfang],
+                  thanks: "原来是它们。我还以为是有人跟着我，吓得三天没敢走那条巷子。"),
+            .deliver("market-lane-cloth", "花商要用过滤布给花苗遮盐雾，让我来找你要三块。", item: cloth, count: 3,
+                     thanks: "遮好了。花商说今年的紫藤能多开一个月。"),
+            .message("market-lane-message", "花商让我跟流动花贩说：旧街的老墙今年剪过了，别再去剪，让它歇一年。",
+                     to: "flower-seller-walk", reply: "歇一年？……好。那面墙的花，确实开得累了。",
+                     thanks: "她肯听就好。那面墙是花商的宝贝。")
+        ], stories: [
+            "我来花摊帮工，是因为欠了花商一笔账。说是欠，其实是我娘病的那年，她每天送一束花去我家，从不收钱。后来我娘好了，我就来帮工抵账。她说早就不记得了，可我记得。",
+            "巷口的脚步声我怕了很久，后来才知道一半是塔怪，另一半是巡街人。他每晚绕路过来，就为看一眼我们收摊的人是不是都平安回了家。他从没说过，是花商告诉我的。"
+        ]),
+        .init(id: "clock-square", name: "钟楼广场水手", errands: [
+            .message("clock-square-message", "街头乐师那边……替我跟他说，那首《回港》他拉得比我船长哼得还好。别说是我说的。",
+                     to: "musician", reply: "他真这么说？……那我明天再拉一遍，拉慢一点。",
+                     thanks: "……谢谢。你没说是我吧？"),
+            .find("clock-square-find", "我想给船上的老朋友留张字条，可不知道他们回港后先去哪儿。", question: "字条留在哪里，他们最可能看到？", [
+                ("港务登记处，回港的船员都要先去销假", "登记是回港第一件事。"),
+                ("钟楼底下", "他们不一定路过广场。"),
+                ("酒馆门口", "贴在门口会被风吹走。")], correct: 0,
+                  thanks: "登记处……对，他们第一件事就是销假。我怎么没想到。"),
+            .pest("clock-square-pest", "我每天坐的那张长椅底下，藏着一只塔怪。", [.copperback, .goldenThroat],
+                  thanks: "椅子空出来了。我还得在这儿等一阵子。")
+        ], stories: [
+            "我在等一条船。不是我的船——我的船去年就沉了，只有我一个人游了回来。我等的是船长的弟弟，他在另一条船上，说好回港后请全船的人喝酒。全船只剩我了，我得替大家去喝这一杯。",
+            "那天我顺走了花商一束紫藤，放在码头边上。船长生前总说，回港第一眼看见的要是花，就说明这趟没白跑。后来花商知道了，没找我要钱，只是每隔几天，码头边就会多出一束新的。"
+        ]),
+        .init(id: "upper-road", name: "上坡守灯人", errands: [
+            .deliver("upper-road-patch", "上坡的灯柱被货车撞歪了，灯座要两片修甲片垫平。", item: patch, count: 2,
+                     thanks: "垫平了。歪着的灯，照得人心里也歪。"),
+            .message("upper-road-message", "替我跟东岸提灯人说一声：上坡的灯油，我从下个月起自己买，不用他再分给我了。",
+                     to: "east-houses", reply: "他要自己买？……那我把省下的油，添到老钟表铺门口那盏去。",
+                     thanks: "他总把自己的油分给别人。这回该轮到他给自己留一点了。"),
+            .pest("upper-road-pest", "守卫在上坡开箱，查出一只躲在空箱里的塔怪，箱子一开它就跑了，就躲在灯柱后面。", [.moonfang, .crimsonBrute],
+                  thanks: "守卫查箱子，原来是在找它。明天他们能松口气了。")
+        ], stories: [
+            "上坡的灯比东岸少，只有十九盏，可每一盏都比东岸的高。守卫说，灯高一点，坏人就少一点地方躲。我倒觉得，灯高一点，下坡回家的人能看得远一点。",
+            "我和东岸提灯人是同一年学点灯的。师傅说，点灯的人不能怕黑。他怕，我不怕。结果师傅把东岸那条长街给了他——师傅说，怕黑的人才知道每一盏灯有多要紧。"
+        ]),
+        .init(id: "south-quay", name: "港务抄账员", errands: [
+            .find("south-quay-find", "今天的船期单抄错了一行，我得找出是哪条船的。", question: "哪一行最可能抄错？", [
+                ("字写得最潦草的那行", "潦草不等于错。"),
+                ("最后一行", "错误不挑位置。"),
+                ("同一条船出现了两次的那行", "一条船一天只靠一次岸。")], correct: 2,
+                  thanks: "果然是重抄了。一条船靠两次岸，账就对不上了。"),
+            .deliver("south-quay-strap", "账本散页了，我用维修绑带捆一捆，给我两条。", item: strap, count: 2,
+                     thanks: "捆好了。散掉的账本，比撕掉的还难找。"),
+            .message("south-quay-message", "替我跟信使说：往后给港务处的信别放门口，直接交到我手上。",
+                     to: "courier", reply: "直接交到他手上？行。门口那个信箱，我也觉得不太安全。",
+                     thanks: "谢了。这阵子港务处的东西，还是少经几只手的好。")
+        ], stories: [
+            "抄账是件笨活：别人报数，我记数。可数字会说话。一条船吃水深了，账上的货却少了，多出来的是什么？我不问，我只记。记下来，总有一天会有人来问。",
+            "我父亲也在港务处抄账，他的字比我好看得多。他退下来那天，把一支用了三十年的笔交给我，说：‘账可以抄错，改过来就是；但不能抄假。’那支笔我现在只在签年底总账时用。"
+        ]),
+        .init(id: "flower-seller-walk", name: "流动花贩", errands: [
+            .deliver("flower-seller-walk-strap", "花筐的背带断了，我背着花走了一上午。两条维修绑带，救救我的肩膀。", item: strap, count: 2,
+                     thanks: "系好了。今天下午能走到东岸去卖。"),
+            .find("flower-seller-walk-find", "有人说在旧街看见我偷剪花商的紫藤。我没有。", question: "怎么证明不是她？", [
+                ("她说自己没有", "说没有不算证据。"),
+                ("她筐里的紫藤带着东岸野坡的红土，不是旧街老墙的灰土", "土不会说谎。"),
+                ("花商跟她关系好", "关系好也不能代替证据。")], correct: 1,
+                  thanks: "东岸红土……对，我一早去东岸野坡剪的。谢谢你，我不想和花商闹翻。"),
+            .pest("flower-seller-walk-pest", "野坡上有只塔怪守着最好的那片紫藤，我不敢靠近。", [.goldenThroat, .crimsonBrute],
+                  thanks: "那片花没被踩坏。我剪两枝最好的给你——拿着，不收钱。")
+        ], stories: [
+            "我没有摊位，背着筐走遍全城。好处是什么都能看见：谁家换了窗帘，谁家的孩子长高了。坏处是没人记得我——大家只记得花。我不介意，花本来就比人好记。",
+            "我年轻时在花商的摊子上帮过工，后来吵了一架，自己出来单干。其实那次是我错了。她从没说过我一句坏话，还常把老墙上剪下的花分给我卖。我一直想道歉，可每次走到她摊前，都只买一枝花就走。"
+        ]),
+        .init(id: "sailor-walk", name: "离港水手", errands: [
+            .message("sailor-walk-message", "我明天就走了。替我跟面包师说，给船上留两袋硬面包，钱我放在她门口的罐子里。",
+                     to: "baker", reply: "门口罐子？……又放多了。告诉他，面包我装好了，多的钱我塞回袋子里了。",
+                     thanks: "她总是这样。算了，到了海上，我替她多吃一块。"),
+            .deliver("sailor-walk-salve", "出海前得带一罐止痛膏，船医那儿总是不够。", item: salve, count: 1,
+                     thanks: "带上了。有这罐药，我在海上能少骂两句娘。"),
+            .pest("sailor-walk-pest", "我的行李在码头仓库，里面钻进了一只塔怪，我不敢去拿。", [.copperback, .copperback],
+                  thanks: "行李保住了。里面有我娘缝的毯子，丢了我就不走了。")
+        ], stories: [
+            "每次离港前，我都要在码头上站一会儿，把城里的声音记下来：钟声、面包师的炉门、乐师的琴。海上太安静，想家的时候，我就在脑子里放一遍。",
+            "有人问我为什么总要走。其实我不是想走，是怕留下来就再也走不动了。我爹一辈子没离开过雾港，临走前跟我说，他最后悔的是没看过一次别处的日出。我替他看，一年看两次。"
+        ]),
+        .init(id: "archive-apprentice-walk", name: "档案学徒", errands: [
+            .find("archive-apprentice-walk-find", "档案馆一卷旧名册里，有一页的装订孔和别的页对不上。", question: "这说明什么？", [
+                ("这一页是后来补装进去的，先查补装记录", "孔对不上只说明是后来装的，不说明是假的。"),
+                ("这一页是伪造的", "没查记录就说伪造，会冤枉人。"),
+                ("装订工手抖", "别的页都对得上。")], correct: 0,
+                  thanks: "补装记录里写着：那年大水泡坏过一页，照原稿重抄的。差点冤枉了人。"),
+            .deliver("archive-apprentice-walk-cloth", "档案柜防潮要垫布，过滤布最合适，给我两块。", item: cloth, count: 2,
+                     thanks: "垫上了。纸最怕潮，比怕火还怕。"),
+            .pest("archive-apprentice-walk-pest", "档案馆地下室有只塔怪在啃旧卷宗，我一个人不敢下去。", [.moonfang, .goldenThroat],
+                  thanks: "卷宗只啃坏了两个角，我会照着副本补回来。")
+        ], stories: [
+            "我进档案馆是因为字写得工整。第一年只让我抄目录，一个字都不许错。我抄错过一次，老档案员没骂我，只让我把那一整本重抄一遍。现在我抄东西，比吃饭还慢。",
+            "档案里最多的不是大事，是小事：谁家添了孩子，谁家的船回来了。老档案员说，大事自有人记，小事没人记就真没了。所以我每天下班前，会多记一件街上的小事，写在我自己的本子里。"
+        ]),
+        .init(id: "cafe_keeper", name: "咖啡馆店主", errands: [
+            .deliver("cafe-keeper-strap", "咖啡豆麻袋的口绳烂了，给我三条维修绑带扎口。", item: strap, count: 3,
+                     thanks: "扎紧了。受潮的豆子，煮出来一股海腥味。"),
+            .message("cafe-keeper-message", "替我跟跑堂说：今晚他可以早点回去，灯我来守。",
+                     to: "cafe-lane", reply: "早点回去？……不了，我陪店主。一个人守灯太闷。",
+                     thanks: "这孩子。那就两个人守吧，我给他留一杯热的。"),
+            .find("cafe-keeper-find", "店招被人挪了位置，客人都找不到门了。", question: "该挂回哪里？", [
+                ("挂得越高越好", "太高了路人看不见。"),
+                ("看墙上留下的钉孔和晒出的浅色印子", "晒出的印子就是原来的位置。"),
+                ("挂到隔壁门口", "那是别人家的门。")], correct: 1,
+                  thanks: "挂回去了。客人说一看见招牌，就知道今晚有地方坐。")
+        ], stories: [
+            "这间咖啡馆是我母亲开的。她定下规矩：港口还有船没回来，灯就不熄。我小时候嫌这规矩傻，现在自己守着才明白，她不是在等船，是在让船上的人知道，岸上有人在等。",
+            "有些客人来了从不点东西，只坐着听钟。我从不赶他们。有一回一位老人坐到天亮，走前在桌上留了一枚旧船徽。后来我才知道，那天是他儿子的船沉没十年的日子。船徽我一直挂在吧台后面。"
+        ]),
+        .init(id: "street_warden", name: "巡街人", errands: [
+            .pest("street-warden-pest", "巷子里有两只塔怪，我一个人拦得住一只，拦不住两只。", [.crimsonBrute, .moonfang],
+                  thanks: "两只都清了。你出手比我的警哨管用。"),
+            .deliver("street-warden-patch", "警哨的铜片磨穿了，吹不响。给我一片修甲片，我自己剪。", item: patch, count: 1,
+                     thanks: "能吹响了。巡街的人没有哨子，就像灯没有油。"),
+            .message("street-warden-message", "替我跟花摊帮工说一声：往后收摊晚了别怕，那条巷子我每晚都会绕过去。",
+                     to: "market-lane", reply: "……原来每天晚上那个脚步是他。替我谢谢他，就说我以后不绕远路了。",
+                     thanks: "不绕远路就好。怕黑的人一绕路，就会走到更黑的地方去。")
+        ], stories: [
+            "我巡街二十年，最怕的不是塔怪，是谣言。塔怪看得见，谣言看不见，一传十、十传百，冤枉的人一辈子洗不清。所以我从不在街上乱说话，要说，就对着正式的卷宗说。",
+            "我年轻时抓错过一个人。他被关了三天，放出来那天没骂我，只说了一句：‘下次看清楚点。’从那以后，我每抓一个人，都要先看三遍。看三遍，街上的人才信得过巡街的。"
+        ]),
+        .init(id: "scholar", name: "学者", errands: [
+            .find("scholar-find", "我手上有两份抄本，内容一样，我想知道哪份更早。", question: "看什么最能分出先后？", [
+                ("看哪份纸更旧", "纸可以做旧。"),
+                ("看哪份字更好", "字好不说明先后。"),
+                ("看后一份有没有照抄前一份的笔误", "照抄的错误会一代代传下去。")], correct: 2,
+                  thanks: "后一份把前一份的笔误也抄了。先后清楚了——错也有它的用处。"),
+            .deliver("scholar-salve", "我在书堆里熬了三夜，手腕疼得握不住笔。有止痛膏吗？", item: salve, count: 1,
+                     thanks: "能握笔了。学问不等人，手腕却要人等。"),
+            .message("scholar-message", "替我把这张借条交给档案学徒，我想借那卷补装过的旧名册看看。",
+                     to: "archive-apprentice-walk", reply: "那卷？……可以，但只能在馆里看，不能带出去。告诉他，我给他留靠窗的位子。",
+                     thanks: "靠窗的位子。这孩子懂规矩，也懂人。")
+        ], stories: [
+            "我研究印章，是因为一枚章能说出很多话：谁盖的，用了多大力，章面磨到了哪一步。人会说谎，章不会。可章也会被人拿去替别人说谎——所以光看章还不够，还得看人。",
+            "我这辈子写过三本书，一本也没卖出去。我不在意。书写出来，就放在档案馆里，总有一天会有人需要它。上个月档案学徒说，有人借过我的第二本。我高兴了一整个星期。"
+        ]),
+        .init(id: "merchant", name: "商人", errands: [
+            .deliver("merchant-patch", "货箱的铁角磕坏了，用修甲片补上，给我三片。", item: patch, count: 3,
+                     thanks: "补好了。箱子体面，货就好卖一半。"),
+            .find("merchant-find", "我进的一批布少了一匹，三个伙计说法不一。", question: "少的那匹最可能在哪里？", [
+                ("对一对入库单和出货单，看哪一天的数没对上", "账对不上的那天，就是丢的那天。"),
+                ("先搜伙计的身", "没有证据就搜人，是冤枉人。"),
+                ("算了，当作损耗", "该查的要查清。")], correct: 0,
+                  thanks: "是出货那天多装了一匹给老主顾。账对清了，谁也没冤枉。"),
+            .pest("merchant-pest", "仓库里有只塔怪在啃布匹，伙计们都不敢进去。", [.moonfang, .copperback],
+                  thanks: "布只啃坏了一匹。工钱照原价算，一分不少。")
+        ], stories: [
+            "我做买卖三十年，只有一条规矩：货要认得，账要清楚。运货的人我不一定认得，所以每批货我都亲手点一遍。别人说我多疑，我说这叫对得起买家。",
+            "年轻时我亏过一大笔，赔光了家底。是面包师的父亲赊给我一个月的面包，让我撑了过来。他没立字据，只说：‘你以后别让别人饿着就行。’所以现在城里谁家揭不开锅，我都会悄悄送一袋面粉过去。"
+        ]),
+        .init(id: "visitor", name: "旅人", errands: [
+            .message("visitor-message", "我想给家里寄封信，可不知道雾港的邮差在哪儿。你替我把信交给他吧。",
+                     to: "postman", reply: "外地的信？寄到南边的……好，明早第一趟船就带走。",
+                     thanks: "谢谢。家里人会高兴的，我写了三页，全是这座城。"),
+            .find("visitor-find", "我迷路了，只记得旅店门口有一棵紫藤，傍晚回去时，钟楼的影子正好落在门口台阶上。", question: "旅店最可能在哪儿？", [
+                ("旧街，那里紫藤多", "紫藤到处都有，不能指路。"),
+                ("钟楼广场边上——影子能落到门口的只有那几间", "影子比紫藤可靠。"),
+                ("东岸", "东岸离钟楼太远，影子落不过去。")], correct: 1,
+                  thanks: "找到了！门口的紫藤还在，老板娘以为我被海浪卷走了。"),
+            .pest("visitor-pest", "我想去旧港区看看，可路口有只塔怪拦着，我不敢过去。", [.crimsonBrute, .goldenThroat],
+                  thanks: "路通了。……旧港区其实没那么可怕，就是太安静了。")
+        ], stories: [
+            "我是来找祖父出生的房子的。他走前说，雾港的钟声和别处不一样，一听就知道到家了。我下船第一天就听见了——他说得对。可那房子，我到现在还没找到。",
+            "我在旧街门牌登记员那里查到了：祖父家原来的门牌，现在是一间仓库。仓库的主人听说了，让我进去站了一会儿。墙角还留着一道量身高的刻痕，旁边刻着一个名字——是我祖父的。"
+        ])
     ]
 
+    /// Asking order: districts and kinds interleave, and each day's askers are the next two
+    /// or three in this cycle. The musician stays twelfth (first asks on day 7, a pest).
+    public static let rotation = [
+        "postman", "west-lane", "baker", "cafe-lane", "east-houses", "courier", "clockmaker", "market-lane",
+        "florist", "clock-square", "dockworker", "south-quay", "musician", "upper-road", "cathedral-road",
+        "flower-seller-walk", "sailor-walk", "archive-apprentice-walk", "cafe_keeper", "street_warden",
+        "scholar", "merchant", "visitor"
+    ]
+
+    public static let all: [MPCNeighbor] = rotation.map { id in (firstBatch + secondBatch).first { $0.id == id }! }
+    /// Every neighbour now has their own errands and stories.
+    public static var written: [MPCNeighbor] { all.filter(\.isWritten) }
+
     static func slug(_ id: String) -> String { id.replacingOccurrences(of: "_", with: "-") }
-
-    static func shared(_ id: String, rotation: Int) -> [MPCNeighborErrand] {
-        let s = slug(id)
-        let requests: [MPCNeighborErrand] = [
-            .deliver(s + "-strap", "住处的门闩又松了，能帮我带两条维修绑带吗？", item: strap, count: 2, thanks: "扎好了，这门今晚关得上了。"),
-            .pest(s + "-pest", "住处后巷有只塔怪，天一黑就在那儿翻东西。", [.moonfang, .copperback], thanks: "清干净了？谢谢你，今晚能睡个安稳觉。"),
-            .find(s + "-find", "我丢了钥匙。今天只走过三个地方：歇脚的台阶、一直走的大路、买东西的摊子。", question: "钥匙最可能掉在哪？", [
-                ("歇脚的台阶，起身时口袋朝下", "坐下时最容易掉东西。"),
-                ("一直走的大路", "走路时口袋是扣着的。"),
-                ("买东西的摊子", "摊主说没见过。")], correct: 0, thanks: "找到了，就卡在台阶缝里。"),
-            .deliver(s + "-cloth", "窗缝漏盐雾，能给我两块过滤布挡一挡吗？", item: cloth, count: 2, thanks: "挡上了，屋里总算不呛了。"),
-            .message(s + "-message", "替我给邮差带句话：这阵子寄给我的信先放在邮局，我自己去取。", to: "postman",
-                     reply: "放邮局？行，我给他单独留一格。", thanks: "谢谢，这下不会再丢信了。")
-        ]
-        let shift = rotation % requests.count
-        return Array(requests[shift...] + requests[..<shift])
-    }
-
-    public static let all: [MPCNeighbor] = written + unwritten.enumerated().map { index, citizen in
-        MPCNeighbor(id: citizen.id, name: citizen.name, errands: shared(citizen.id, rotation: index), stories: [])
-    }
 
     public static func neighbor(_ id: String) -> MPCNeighbor? { all.first { $0.id == id } }
     public static func errand(_ errandID: String) -> (neighbor: MPCNeighbor, errand: MPCNeighborErrand)? {
@@ -225,14 +420,15 @@ public enum MPCNeighborCatalog {
         return nil
     }
 
-    /// Who asks on a pacing day: two written neighbours in turn, and every third day
-    /// one more from the rest. Nobody before day 2.
+    /// How many ask on a pacing day: two, three on every third day, nobody before day 2.
+    public static func askerCount(day: Int) -> Int { day < firstDay ? 0 : day.isMultiple(of: 3) ? 3 : 2 }
+
+    /// Who asks on a pacing day: the next neighbours in `rotation`, so everyone takes turns.
     public static func askers(day: Int) -> [MPCNeighbor] {
-        guard day >= firstDay else { return [] }
-        let others = all.filter { !$0.isWritten }
-        var result = [written[(2 * day) % written.count], written[(2 * day + 1) % written.count]]
-        if day.isMultiple(of: 3), !others.isEmpty { result.append(others[(day / 3) % others.count]) }
-        return result
+        let count = askerCount(day: day)
+        guard count > 0 else { return [] }
+        let start = (firstDay..<day).reduce(0) { $0 + askerCount(day: $1) }
+        return (0..<count).map { all[(start + $0) % all.count] }
     }
 
     public static func encounterID(errandID: String, ticket: String) -> String { prefix + errandID + "_" + ticket }

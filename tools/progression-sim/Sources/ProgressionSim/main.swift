@@ -8,7 +8,7 @@ PacingTuning.apply(ProcessInfo.processInfo.environment["PACING"])
 var arguments = CommandLine.arguments
 if arguments.count > 5 && arguments[1] == "fight" {
     // fight <mission> <profile> <floor> <bounty relic id or -> : every shop relic, medal time and salve choice.
-    let q = Int(arguments[2])!, profile = Profile.all.first { $0.name == arguments[3] }!, floor = Int(arguments[4])!
+    let q = Int(arguments[2])!, profile = (Profile.all + HumanPace.all.map(\.profile)).first { $0.name == arguments[3] } ?? Profile(name: "delay", actionDelay: Double(arguments[3]) ?? 0, priorityCore: true), floor = Int(arguments[4])!
     let relic = arguments[5] == "-" ? nil : arguments[5]
     let owned = Shop.passives.filter { q - 1 >= $0.unlock }.map { Optional($0.id) }
     for (n, sequence) in cards(forMission: q).enumerated() {
@@ -21,6 +21,15 @@ if arguments.count > 5 && arguments[1] == "fight" {
             }
         }
     }
+    exit(0)
+}
+if arguments.count > 1 && arguments[1] == "human" {
+    // human <output-dir> [start offsets]: modelled human timing table and human-pace campaign runs.
+    let destination = URL(fileURLWithPath: arguments.count > 2 ? arguments[2] : FileManager.default.currentDirectoryPath)
+    let offsets = arguments.count > 3 ? arguments[3].split(separator: ",").compactMap { Int($0) } : [0, 30, 90]
+    try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
+    let start = Calendar(identifier: .gregorian).date(from: DateComponents(year: 2026, month: 9, day: 28, hour: 12))!
+    try HumanReport.run(destination: destination, offsets: offsets, startDate: start)
     exit(0)
 }
 if arguments.count > 1 && arguments[1] == "walls" {

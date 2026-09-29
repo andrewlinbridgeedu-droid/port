@@ -70,10 +70,14 @@ public enum MPCChurchTowerCatalog {
         public var firstClearReward: Reward { Reward(coins: 8 + 2 * ((number - 1) / 10), merit: 2 + (number - 1) / 30) }
     }
     public static let releasedFloorCount = 100
+    /// User decision 2026-09-29: the church (deep well, bounties, church work) opens
+    /// after Q7, once any mission at or past Q7 is completed. Tower first-clear allowances
+    /// still count from the save's first day (MPCDailyPacing).
     public static let unlockMission = 7
     public static func isUnlocked(completedMissionNumbers: Set<Int>) -> Bool {
-        true // User explicitly opened the church before the former Q7 gate.
+        completedMissionNumbers.contains { $0 >= unlockMission }
     }
+    public static let lockText = "完成第 \(unlockMission) 关后开放教会（深井、通缉与教会工作）"
     public static func floor(number: Int) -> Floor? { floors.first { $0.number == number } }
     public static func encounter(id: String) -> MPCEncounterContent? { floors.first { $0.id == id }?.encounter }
     private static let configurations: [String: Enemy] = {
