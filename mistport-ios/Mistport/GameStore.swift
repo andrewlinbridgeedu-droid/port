@@ -871,6 +871,11 @@ final class GameStore {
         storage.set(try! JSONEncoder().encode(MPCChurchTowerProgress(clearedFloors: Set(1...20))),
                     forKey: "mistport.church-tower.progress.v1")
         seed.debugSetPacingDay(5)
+        if ProcessInfo.processInfo.arguments.contains("--home-map-review") {
+            storage.set(Pathway.ID.fool.rawValue, forKey: PersistenceKey.selectedPathID)
+            storage.set(CharacterGender.male.rawValue, forKey: PersistenceKey.selectedCharacterGender)
+            seed.markDailyNewspaperSeen()
+        }
         if ProcessInfo.processInfo.arguments.contains("--daily-work-preview") {
             seed.debugJumpToOldClockMission(10, enterImmediately: false)
             seed.debugSetPacingDay(1)

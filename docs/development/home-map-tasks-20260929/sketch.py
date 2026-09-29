@@ -9,7 +9,12 @@ from PIL import Image, ImageDraw, ImageFont
 
 HERE = "docs/development/home-map-tasks-20260929"
 SRC = "mistport-ios/Mistport/Assets.xcassets/CityAutumnDay.imageset/CityAutumnDay.jpg"
-FONT = "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc"
+FONT = os.environ.get("MISTPORT_MAP_FONT") or next((path for path in [
+    "/System/Library/Fonts/Hiragino Sans GB.ttc",
+    "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
+] if os.path.isfile(path)), None)
+if FONT is None:
+    raise SystemExit("未找到中文字体；请设置 MISTPORT_MAP_FONT 为本机中文字体路径")
 L = json.load(open(os.path.join(HERE, "home-map-layout.json")))
 
 W = 2400

@@ -121,6 +121,9 @@ struct MistportApp: App {
                     }
                 }
                 .defaultAppStorage(Self.playerDefaults)
+                .onAppear {
+                    if ProcessInfo.processInfo.arguments.contains("--home-map-review") { game.begin() }
+                }
                 .task {
                     try? await Task.sleep(for: .seconds(4))
                     saveDailyPacingWalkScreenshot()
