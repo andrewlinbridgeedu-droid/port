@@ -1,0 +1,182 @@
+{
+  "model_sha256": "819169ddf3b440e4c93bb62fa4f9a9af6cd13cb944ce4148d1b863eeb4dd4271",
+  "assumptions": "One output per craft, posted NPC base prices, craft fee 1, initial raw reference prices, amortized 5% trading fee. Quotes are not executions. Batch5 is an untested candidate; no demand elasticity or behavior claimed.",
+  "rows": [
+    {
+      "profession": "textile",
+      "tier": 0,
+      "npc_base_and_craft_floor": 9,
+      "initial_material_opportunity_cost": 29,
+      "initial_product_quote": 78,
+      "break_even_gross_average_fee": 31,
+      "repair_saving_ceiling": null,
+      "repair_loss_even_zero_raw_and_zero_fee": false,
+      "batch5_cost_per_output": null
+    },
+    {
+      "profession": "textile",
+      "tier": 1,
+      "npc_base_and_craft_floor": 9,
+      "initial_material_opportunity_cost": 29,
+      "initial_product_quote": 94,
+      "break_even_gross_average_fee": 31,
+      "repair_saving_ceiling": null,
+      "repair_loss_even_zero_raw_and_zero_fee": false,
+      "batch5_cost_per_output": null
+    },
+    {
+      "profession": "textile",
+      "tier": 2,
+      "npc_base_and_craft_floor": 9,
+      "initial_material_opportunity_cost": 41,
+      "initial_product_quote": 109,
+      "break_even_gross_average_fee": 44,
+      "repair_saving_ceiling": null,
+      "repair_loss_even_zero_raw_and_zero_fee": false,
+      "batch5_cost_per_output": null
+    },
+    {
+      "profession": "textile",
+      "tier": 3,
+      "npc_base_and_craft_floor": 9,
+      "initial_material_opportunity_cost": 51,
+      "initial_product_quote": 129,
+      "break_even_gross_average_fee": 54,
+      "repair_saving_ceiling": null,
+      "repair_loss_even_zero_raw_and_zero_fee": false,
+      "batch5_cost_per_output": null
+    },
+    {
+      "profession": "leather",
+      "tier": 0,
+      "npc_base_and_craft_floor": 11,
+      "initial_material_opportunity_cost": 26,
+      "initial_product_quote": 18,
+      "break_even_gross_average_fee": 28,
+      "repair_saving_ceiling": 6,
+      "repair_loss_even_zero_raw_and_zero_fee": true,
+      "batch5_cost_per_output": 5.2
+    },
+    {
+      "profession": "leather",
+      "tier": 1,
+      "npc_base_and_craft_floor": 11,
+      "initial_material_opportunity_cost": 26,
+      "initial_product_quote": 22,
+      "break_even_gross_average_fee": 28,
+      "repair_saving_ceiling": 8,
+      "repair_loss_even_zero_raw_and_zero_fee": true,
+      "batch5_cost_per_output": 5.2
+    },
+    {
+      "profession": "leather",
+      "tier": 2,
+      "npc_base_and_craft_floor": 11,
+      "initial_material_opportunity_cost": 38,
+      "initial_product_quote": 25,
+      "break_even_gross_average_fee": 40,
+      "repair_saving_ceiling": 10,
+      "repair_loss_even_zero_raw_and_zero_fee": true,
+      "batch5_cost_per_output": 7.6
+    },
+    {
+      "profession": "leather",
+      "tier": 3,
+      "npc_base_and_craft_floor": 11,
+      "initial_material_opportunity_cost": 48,
+      "initial_product_quote": 30,
+      "break_even_gross_average_fee": 51,
+      "repair_saving_ceiling": 12,
+      "repair_loss_even_zero_raw_and_zero_fee": false,
+      "batch5_cost_per_output": 9.6
+    },
+    {
+      "profession": "metal",
+      "tier": 0,
+      "npc_base_and_craft_floor": 13,
+      "initial_material_opportunity_cost": 30,
+      "initial_product_quote": 88,
+      "break_even_gross_average_fee": 32,
+      "repair_saving_ceiling": null,
+      "repair_loss_even_zero_raw_and_zero_fee": false,
+      "batch5_cost_per_output": null
+    },
+    {
+      "profession": "metal",
+      "tier": 1,
+      "npc_base_and_craft_floor": 13,
+      "initial_material_opportunity_cost": 30,
+      "initial_product_quote": 106,
+      "break_even_gross_average_fee": 32,
+      "repair_saving_ceiling": null,
+      "repair_loss_even_zero_raw_and_zero_fee": false,
+      "batch5_cost_per_output": null
+    },
+    {
+      "profession": "metal",
+      "tier": 2,
+      "npc_base_and_craft_floor": 13,
+      "initial_material_opportunity_cost": 42,
+      "initial_product_quote": 123,
+      "break_even_gross_average_fee": 45,
+      "repair_saving_ceiling": null,
+      "repair_loss_even_zero_raw_and_zero_fee": false,
+      "batch5_cost_per_output": null
+    },
+    {
+      "profession": "metal",
+      "tier": 3,
+      "npc_base_and_craft_floor": 13,
+      "initial_material_opportunity_cost": 52,
+      "initial_product_quote": 145,
+      "break_even_gross_average_fee": 55,
+      "repair_saving_ceiling": null,
+      "repair_loss_even_zero_raw_and_zero_fee": false,
+      "batch5_cost_per_output": null
+    },
+    {
+      "profession": "alchemy",
+      "tier": 0,
+      "npc_base_and_craft_floor": 7,
+      "initial_material_opportunity_cost": 23,
+      "initial_product_quote": 24,
+      "break_even_gross_average_fee": 25,
+      "repair_saving_ceiling": null,
+      "repair_loss_even_zero_raw_and_zero_fee": false,
+      "batch5_cost_per_output": null
+    },
+    {
+      "profession": "alchemy",
+      "tier": 1,
+      "npc_base_and_craft_floor": 7,
+      "initial_material_opportunity_cost": 23,
+      "initial_product_quote": 29,
+      "break_even_gross_average_fee": 25,
+      "repair_saving_ceiling": null,
+      "repair_loss_even_zero_raw_and_zero_fee": false,
+      "batch5_cost_per_output": null
+    },
+    {
+      "profession": "alchemy",
+      "tier": 2,
+      "npc_base_and_craft_floor": 7,
+      "initial_material_opportunity_cost": 29,
+      "initial_product_quote": 34,
+      "break_even_gross_average_fee": 31,
+      "repair_saving_ceiling": null,
+      "repair_loss_even_zero_raw_and_zero_fee": false,
+      "batch5_cost_per_output": null
+    },
+    {
+      "profession": "alchemy",
+      "tier": 3,
+      "npc_base_and_craft_floor": 7,
+      "initial_material_opportunity_cost": 35,
+      "initial_product_quote": 40,
+      "break_even_gross_average_fee": 37,
+      "repair_saving_ceiling": null,
+      "repair_loss_even_zero_raw_and_zero_fee": false,
+      "batch5_cost_per_output": null
+    }
+  ]
+}

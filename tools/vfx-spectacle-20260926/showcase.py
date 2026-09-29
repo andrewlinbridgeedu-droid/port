@@ -17,8 +17,10 @@ from PIL import Image, ImageDraw, ImageFont
 FF = imageio_ffmpeg.get_ffmpeg_exe()
 FONTS = [
     os.environ.get("SHOWCASE_FONT", ""),
-    "/System/Library/Fonts/PingFang.ttc",
     "/System/Library/Fonts/STHeiti Medium.ttc",
+    "/System/Library/Fonts/Hiragino Sans GB.ttc",
+    "/Library/Fonts/Arial Unicode.ttf",
+    "/System/Library/Fonts/PingFang.ttc",
     "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
     "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
     "/System/Library/Fonts/Helvetica.ttc",

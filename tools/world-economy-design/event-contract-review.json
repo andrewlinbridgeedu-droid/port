@@ -1,0 +1,11 @@
+{
+  "passed": [
+    "duplicate receipt x10",
+    "payload collision",
+    "last unit cannot be resold",
+    "money conservation",
+    "material conservation",
+    "insufficient funds causes no partial mutation"
+  ],
+  "scope": "sequential in-memory reference only; no SQLite, concurrency, crash, price or multiplayer validation"
+}

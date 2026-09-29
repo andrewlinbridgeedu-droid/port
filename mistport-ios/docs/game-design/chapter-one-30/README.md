@@ -42,9 +42,16 @@ Q1–8失名与诊所 → Q9–16假家庭、错误救援与终止旧犬 → Q17
 | [四项审查与后续计划](CHAPTER1_REVIEW_AND_PLAN_20260925.md) | 本轮总结果、证据层级、优先级与验收顺序 |
 | [全法术命中华彩层 9/26](../../../../docs/development/SPELL_SPECTACLE_20260926.md)（89组Unity实录，未装机、待视觉认可）／[法术强度返工](../../../../docs/development/SPELL_IMPACT_GRADE_20260925.md)／[M12/M15与Build126](../../../../docs/development/SPELL_IMPACT_DEVICE_20260925.md)／[M12二次展开补修](../../../../docs/development/M12_DEPLOY_GRADE_20260926.md)／[受创反馈](../../../../docs/development/PLAYER_IMPACT_FEEDBACK_20260925.md) | 原批82段Unity实录、M12/M15补修片与正式受创桥接分批核对；Build126已装机、Q6旧蓝盾仍偏平，M12加强版正式录制、设备导出和签名Build127完成但未装机，M15/H10及用户视觉认可仍未完成 |
 | [高塔／十案战场Debug直达入口](../../../../docs/development/CHAPTER1_AUDIT_DIRECT_PREVIEW_20260925.md) | Build126已编入隔离战场夹具并装机，但该入口尚未真机实玩；不能当塔百层或十案自然通关 |
+| [世界事件与经济](WORLD_EVENTS_AND_ECONOMY_20260926.md) | Pro v2审核包已取得并本地复跑19,710日行；先做雾潮/泵站闭环，伤患潮需盐茶产业前置；结构候选可开发，经济稳定性未通过、未实施 |
+| [2000独立账户多场景实验](../../../../docs/development/economy-agent-sim-20260926/RESULTS.md)／[图表](../../../../docs/development/economy-agent-sim-20260926/index.html) | 220次运行、87,600模拟日、约2610万笔成交，钱账复核通过；修正策略后双倍供给药品履约94.54%，完整经济门槛未通过；原始控制组与模型限制均保留 |
+| [晋阶采购与成熟服追加实验](../../../../docs/development/economy-agent-sim-20260926/followup/RESULTS.md)／[继续研究议题](../../../../docs/development/economy-agent-sim-20260926/NEXT_RESEARCH.md) | 额外12次、4,380模拟日，采购压力下药品履约94.31%；成熟服持续刷关发行显著超过当前模型销毁，不能靠一次性晋阶费解决；未改游戏奖励，Pro本轮未连通 |
+| [Pro最新回复复核](../../../../docs/development/economy-agent-sim-20260926/pro-reconciliation/RESULTS.md)／[9次周期额度实验](../../../../docs/development/economy-agent-sim-20260926/entitlement/RESULTS.md) | 已通过用户粘贴取得回复；纠正发行基数和除7算法，每7周期一次仍总发行约1441万/年、原模型销毁约93万，未通过完整稳定性门槛；非游戏规则修改 |
+| [工艺市场与熟练度](CRAFTING_MARKET_AND_PROFICIENCY_20260926.md) | 最新方向：免费/月卡生活补给＋制作商品赚钱；取消工资，高级配方要求角色等级与工艺熟练度；v2候选28+28铜/7周期及等级/熟练度已模拟，尚未通过平衡验收、未实施 |
+| [历史工艺规格v1](CRAFTING_INTEGRATION_SPEC_20260926.md) | 配方组合与事务设计可参考；12工资单、400铜预算及F10门槛已被最新方向覆盖 |
+| [玩家工作与工资](PLAYER_WORK_AND_WAGES_20260926.md) | 战斗委托保留备选；用户最新工艺方向见上一行；工资/产业原型不等于游戏实装 |
 | [银行与产业投资](BANK_AND_INDUSTRY_DESIGN_20260925.md) | 新经济系统方案、经营决策、候选数值、亏损与离港承接；未实施 |
 | [完整规划与Pro交接](ECONOMY_PRO_CONSULTATION_20260925.md) | 18份输入包、A–H回答来源、采纳与候选边界 |
-| [每服2,000玩家经济落地咨询](ECONOMY_2000_PLAYER_PRO_20260926.md) | 已发送实际人数、货币与产能约束、180／365天压力测试及最小上线问题；最终回答待取得，未实施 |
+| [每服2,000玩家经济落地咨询](ECONOMY_2000_PLAYER_PRO_20260926.md) | V3审核包已取得，10×5×365日本地复跑与原结果逐字节一致；仍有服务涨价、缺货及工业燃料未支付等模型缺口，未实施 |
 | [Pro货币定标终稿与WoW交叉核对](ECONOMY_PRO_MONETARY_WOW_FINAL_20260925.md) | 24／12候选、1560／2880物料单、银行准备金与官方机制；第二轮附件未独立运行 |
 | [铜币购买力与压力模拟](CURRENCY_CALIBRATION_20260925.md) | 旧16×240与新24／12六项篮子10×180分开复算；人口、战争、开放服务仍有缺货或涨价，已列实物和支付来源硬门槛，尚未达到全游戏无通胀 |
 | [24／12六项篮子新压力模型](../../../../docs/development/CURRENCY_24_12_STRESS_20260925.md)／[独立流水重放](../../../../output/chapter1-audit-20260925/economy/calibration24/independent-review.md) | 10×180期、人口涌入、战争、支付存款准备及车／泵有限客户；内部会计复核通过，但缺货和开放服务涨价说明全经济稳定未通过 |

@@ -1,0 +1,15 @@
+{
+  "script_sha256": "723031cdff1d0a3cc6c8aef4c47ba2f3ad8157349b560dc5bd99c41b1115b1d0",
+  "exit_code": 0,
+  "comparisons": {
+    "daily_all_scenarios.csv": {
+      "identical": true,
+      "sha256": "6a1dc0c2d5b888e3bffd84e87e906c5a97cafe74130638788946e9ce3b720917"
+    },
+    "summary_all_scenarios.csv": {
+      "identical": true,
+      "sha256": "707bfba42ccb544f0743ac18053ba261a3a12b8cdb6a54ef1e5941ea022e7cf0"
+    }
+  },
+  "scope": "Model replay only; no game balance approval"
+}

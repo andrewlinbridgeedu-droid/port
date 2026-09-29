@@ -1,0 +1,11 @@
+{
+  "test_command": "python3 -m unittest discover -s tools/economy-agent-sim -v",
+  "tests_passed": 11,
+  "python": "3.9.6 (default, May 22 2026, 11:13:45) \n[Clang 21.0.0 (clang-2100.1.1.101)]",
+  "model_sha256": "819169ddf3b440e4c93bb62fa4f9a9af6cd13cb944ce4148d1b863eeb4dd4271",
+  "tests_sha256": {
+    "test_model.py": "c42eb7a4586f701fdb9c0be28a7882d07f0ab3552303dd31099fffc7fb8da217",
+    "test_shopping.py": "c00ae42327663eede552baa91cd74494e7f52269c93f7e2a09a86a07e5b9dc20"
+  },
+  "scope": "Offline integer money/inventory contracts; not production concurrency or anti-cheat."
+}

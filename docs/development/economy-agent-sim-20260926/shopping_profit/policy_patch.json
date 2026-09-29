@@ -1,0 +1,27 @@
+{
+  "baseline_sha256": "819169ddf3b440e4c93bb62fa4f9a9af6cd13cb944ce4148d1b863eeb4dd4271",
+  "variant_sha256": "2e821cb26b076657cdaea17c386badcb4d760218f23a5528c03463cd3e8083f3",
+  "replacements": [
+    [
+      "item=min([k for k in range(24,28) if k in available] or [24],key=lambda k:self.ref[k])\n                ceiling=math.ceil(30*wealth)\n                requests[item].append((i,a.need,ceiling))",
+      "ceiling=math.ceil(30*wealth)\n                for item in range(24,28):\n                    requests[item].append((i,a.need,ceiling))"
+    ],
+    [
+      "for item in sorted(keys):",
+      "for item in sorted(keys,key=lambda k:(1,self.ref[k],k) if k>=24 else (0,k,k)):"
+    ],
+    [
+      "for buyer,qty,ceiling in bids:\n                while qty",
+      "for buyer,qty,ceiling in bids:\n                if item>=24 and buyer<self.c.n:\n                    owner=self.p[buyer]\n                    qty=min(qty,max(0,owner.need-sum(owner.inv[24:28])))\n                while qty"
+    ],
+    [
+      "offers=[];want=sum(q for _,q,_ in bids)",
+      "offers=[]\n            want=sum(min(q,max(0,self.p[i].need-sum(self.p[i].inv[24:28]))) if item>=24 and i<self.c.n else q for i,q,_ in bids)"
+    ],
+    [
+      "if a.cash<1 or a.inv[item]>=8 or any(a.inv[k]<q for k,q in recipe.items()):continue",
+      "if a.cash<1 or a.inv[item]>=8 or any(a.inv[k]<q for k,q in recipe.items()):continue\n            opportunity_cost=1+sum((P0[k] if k>=8 else self.ref[k])*q for k,q in recipe.items())\n            self_use=(a.prof==3 and a.need>sum(a.inv[24:28])) or (a.prof==0 and a.gear[0]<t) or (a.prof==2 and a.gear[1]<t)\n            training=a.skill-STAGES[t]<30\n            if not training and not self_use and self.ref[item]*(1-self.c.fee_bps/10000)<opportunity_cost:continue"
+    ]
+  ],
+  "note": "All potion tiers substitute for one optional battle use in this simplified model. Orders cannot overbuy; materials and monetary rules unchanged. Profit option suppresses mature loss-making crafts, not training or self-use."
+}

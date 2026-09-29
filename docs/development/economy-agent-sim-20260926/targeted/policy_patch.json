@@ -1,0 +1,15 @@
+{
+  "baseline_sha256": "819169ddf3b440e4c93bb62fa4f9a9af6cd13cb944ce4148d1b863eeb4dd4271",
+  "variant_sha256": "e2f4e6045316748b23902ac1a539cda58898ef236abf912956c228319ffea013",
+  "replacements": [
+    [
+      "else:f=self.r.randrange(max(1,min(cap,a.floor or 1)))",
+      "else:\n                    limit=max(1,min(cap,a.floor or 1))\n                    recipe=RECIPES[a.prof*4+max(0,self.stage(a))]\n                    wanted=[m for m in recipe if m<8 and self.material_floors[m][0]<limit]\n                    if wanted:\n                        target=max(wanted,key=lambda m:recipe[m]/(a.inv[m]+1))\n                        options=[f for f in self.material_floors[target] if f<limit]\n                        f=self.r.choice(options)\n                    else:f=self.r.randrange(limit)"
+    ],
+    [
+      "self.c=c;self.r=random.Random(seed);self.seed=seed;self.trace=trace",
+      "self.c=c;self.r=random.Random(seed);self.seed=seed;self.trace=trace\n        self.material_floors={m:[i for i,x in enumerate(SOURCE['tower']) if any(m in MAP[d] for d in x['monsters'])] for m in range(8)}"
+    ]
+  ],
+  "note": "Only replay floor selection changes. Rewards, quantities, wallets, recipes, fees and thresholds unchanged. Not a measured player preference."
+}

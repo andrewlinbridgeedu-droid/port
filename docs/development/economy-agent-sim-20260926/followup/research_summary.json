@@ -1,0 +1,118 @@
+[
+  {
+    "scenario": "expense_supply2",
+    "seeds": 3,
+    "free_fill_last90": {
+      "mean": 0.943106086685818,
+      "min": 0.9266527487821851,
+      "max": 0.9618796784031051
+    },
+    "free_cash_p10": {
+      "mean": 2280.6666666666665,
+      "min": 2251,
+      "max": 2337
+    },
+    "advancement_wait_player_item_cycles": {
+      "mean": 0,
+      "min": 0,
+      "max": 0
+    },
+    "advancement_unpaid_eligible_items": {
+      "mean": 0,
+      "min": 0,
+      "max": 0
+    },
+    "issuance_mean": 12151415.666666666,
+    "repeat_issuance_mean": 1881029,
+    "sinks_mean": 2083567,
+    "advancement_sink_mean": 1692560,
+    "all_checks_pass": 0
+  },
+  {
+    "scenario": "mature_repeat1",
+    "seeds": 3,
+    "free_fill_last90": {
+      "mean": 0.9677400602065585,
+      "min": 0.9524266520427749,
+      "max": 0.9795203449205065
+    },
+    "free_cash_p10": {
+      "mean": 11464.666666666666,
+      "min": 11436,
+      "max": 11513
+    },
+    "advancement_wait_player_item_cycles": {
+      "mean": 0,
+      "min": 0,
+      "max": 0
+    },
+    "advancement_unpaid_eligible_items": {
+      "mean": 0,
+      "min": 0,
+      "max": 0
+    },
+    "issuance_mean": 42252583.333333336,
+    "repeat_issuance_mean": 38405850,
+    "sinks_mean": 938116,
+    "advancement_sink_mean": 0,
+    "all_checks_pass": 0
+  },
+  {
+    "scenario": "mature_repeat3",
+    "seeds": 3,
+    "free_fill_last90": {
+      "mean": 0.9691969238666883,
+      "min": 0.9553057307375925,
+      "max": 0.9807329560765292
+    },
+    "free_cash_p10": {
+      "mean": 29927.333333333332,
+      "min": 29496,
+      "max": 30149
+    },
+    "advancement_wait_player_item_cycles": {
+      "mean": 0,
+      "min": 0,
+      "max": 0
+    },
+    "advancement_unpaid_eligible_items": {
+      "mean": 0,
+      "min": 0,
+      "max": 0
+    },
+    "issuance_mean": 119064283.33333333,
+    "repeat_issuance_mean": 115217550,
+    "sinks_mean": 949122,
+    "advancement_sink_mean": 0,
+    "all_checks_pass": 0
+  },
+  {
+    "scenario": "mature_repeat10",
+    "seeds": 3,
+    "free_fill_last90": {
+      "mean": 0.9699218048001329,
+      "min": 0.9558541266794626,
+      "max": 0.9820803018054433
+    },
+    "free_cash_p10": {
+      "mean": 93513.33333333333,
+      "min": 91745,
+      "max": 94722
+    },
+    "advancement_wait_player_item_cycles": {
+      "mean": 0,
+      "min": 0,
+      "max": 0
+    },
+    "advancement_unpaid_eligible_items": {
+      "mean": 0,
+      "min": 0,
+      "max": 0
+    },
+    "issuance_mean": 387905233.3333333,
+    "repeat_issuance_mean": 384058500,
+    "sinks_mean": 966938.3333333334,
+    "advancement_sink_mean": 0,
+    "all_checks_pass": 0
+  }
+]

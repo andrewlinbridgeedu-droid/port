@@ -1,0 +1,8 @@
+check,passed,value
+existing_one_time_total,True,5220
+money_identity_all_daily_rows,True,19710
+no_negative_base_stock,True,all
+no_negative_material_stock,True,all
+no_negative_product_inventory,True,all
+tea_substitution_present,True,"({'restorative_gel': 1, 'saline_powder': 1}, {'mist_fiber': 2, 'saline_powder': 1})"
+event_payment_is_finite_procurement,True,all event budgets pre-funded from named accounts; combat/donations unpaid

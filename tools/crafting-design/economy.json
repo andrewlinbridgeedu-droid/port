@@ -1,0 +1,174 @@
+{
+  "orders": [
+    {
+      "id": "craft_order_tutorial_textile_01",
+      "recipe": "recipe_textile_layered_coat_01",
+      "wage": 20,
+      "unlock": "migration_complete_and_first_material_claim",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_tutorial_leather_01",
+      "recipe": "recipe_leather_tool_harness_01",
+      "wage": 20,
+      "unlock": "migration_complete_and_first_material_claim",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_tutorial_metal_01",
+      "recipe": "recipe_metal_riveted_blade_01",
+      "wage": 20,
+      "unlock": "migration_complete_and_first_material_claim",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_tutorial_alchemy_01",
+      "recipe": "recipe_alchemy_pain_salve_01",
+      "wage": 20,
+      "unlock": "migration_complete_and_first_material_claim",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_textile_watchcoat_01",
+      "recipe": "recipe_textile_layered_coat_01",
+      "wage": 40,
+      "unlock": "craft_order_tutorial_textile_01_settled",
+      "acceptance": {
+        "forbiddenTags": [
+          "showy"
+        ]
+      },
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_textile_mistcoat_02",
+      "recipe": "recipe_textile_mistcoat_02",
+      "wage": 40,
+      "unlock": "known:recipe_textile_mistcoat_02",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_leather_tool_harness_01",
+      "recipe": "recipe_leather_tool_harness_01",
+      "wage": 40,
+      "unlock": "craft_order_tutorial_leather_01_settled",
+      "acceptance": {
+        "forbiddenTags": [
+          "showy"
+        ]
+      },
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_leather_courier_case_02",
+      "recipe": "recipe_leather_courier_case_02",
+      "wage": 40,
+      "unlock": "known:recipe_leather_courier_case_02",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_metal_work_blade_01",
+      "recipe": "recipe_metal_riveted_blade_01",
+      "wage": 40,
+      "unlock": "craft_order_tutorial_metal_01_settled",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_metal_balanced_blade_02",
+      "recipe": "recipe_metal_balanced_blade_02",
+      "wage": 40,
+      "unlock": "known:recipe_metal_balanced_blade_02",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_alchemy_pain_salve_01",
+      "recipe": "recipe_alchemy_pain_salve_01",
+      "wage": 40,
+      "unlock": "craft_order_tutorial_alchemy_01_settled",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_alchemy_salt_tea_02",
+      "recipe": "recipe_alchemy_salt_tea_01",
+      "wage": 40,
+      "unlock": "known:recipe_alchemy_salt_tea_01",
+      "acceptance": {},
+      "baseOwner": "client"
+    }
+  ],
+  "scrolls": [
+    {
+      "id": "recipe_scroll_textile_mistcoat_02",
+      "recipe": "recipe_textile_mistcoat_02",
+      "price": 60,
+      "buyback": 15,
+      "stock": 1,
+      "unlock": "corresponding_tutorial_settled_and_floor_10_cleared"
+    },
+    {
+      "id": "recipe_scroll_leather_courier_case_02",
+      "recipe": "recipe_leather_courier_case_02",
+      "price": 60,
+      "buyback": 15,
+      "stock": 1,
+      "unlock": "corresponding_tutorial_settled_and_floor_10_cleared"
+    },
+    {
+      "id": "recipe_scroll_metal_balanced_blade_02",
+      "recipe": "recipe_metal_balanced_blade_02",
+      "price": 80,
+      "buyback": 20,
+      "stock": 1,
+      "unlock": "corresponding_tutorial_settled_and_floor_10_cleared"
+    },
+    {
+      "id": "recipe_scroll_alchemy_salt_tea_01",
+      "recipe": "recipe_alchemy_salt_tea_01",
+      "price": 100,
+      "buyback": 25,
+      "stock": 1,
+      "unlock": "corresponding_tutorial_settled_and_floor_10_cleared"
+    }
+  ],
+  "initialMerchantCash": 0,
+  "budget": 400,
+  "baseSupply": [
+    {
+      "id": "craft_cloth_blank",
+      "price": 8,
+      "initial": 8,
+      "cap": 8,
+      "restockPerThreeClaims": 2
+    },
+    {
+      "id": "craft_leather_blank",
+      "price": 10,
+      "initial": 6,
+      "cap": 6,
+      "restockPerThreeClaims": 1
+    },
+    {
+      "id": "craft_iron_blank",
+      "price": 12,
+      "initial": 5,
+      "cap": 5,
+      "restockPerThreeClaims": 1
+    },
+    {
+      "id": "craft_clear_base",
+      "price": 6,
+      "initial": 12,
+      "cap": 12,
+      "restockPerThreeClaims": 3
+    }
+  ]
+}

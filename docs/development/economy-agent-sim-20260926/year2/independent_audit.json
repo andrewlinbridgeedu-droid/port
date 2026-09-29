@@ -1,0 +1,7 @@
+{
+  "runs": 20,
+  "daily_rows": 14600,
+  "trades_reported": 4006530,
+  "stored_money_and_gross_reconciled": true,
+  "inventory_note": "Inventory conservation asserted inside simulator each day; full inventories not exported independently."
+}

@@ -1,0 +1,5 @@
+tier,start_prof,target_prof,min_character_level,crafts_needed,tower_material_units_candidate,cash_cost_self_farm_assumption
+T1_basic,0,20,2,8,16,72
+T2_journeyman,20,45,5,13,39,177
+T3_advanced,45,70,10,13,52,237
+T4_master,70,100,15,18,90,362

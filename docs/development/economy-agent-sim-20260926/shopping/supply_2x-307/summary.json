@@ -1,0 +1,246 @@
+{
+  "config": {
+    "name": "supply_2x",
+    "n": 2000,
+    "days": 365,
+    "activity": 0.5,
+    "pass_share": 0.3,
+    "allowance": 28,
+    "pass_extra": 28,
+    "bundle": 4,
+    "base_capacity": 2,
+    "fee_bps": 500,
+    "crafting": 0.45,
+    "tower_rate": 0.65,
+    "repeat_rate": 0.25,
+    "repeat_strategy": "uniform",
+    "drug_need": 0.18,
+    "demand_elasticity": 0.15,
+    "event_mode": "two",
+    "veterans": 0.2,
+    "newcomers": 0.1,
+    "churn": 0.0,
+    "hoard": false,
+    "dump": false,
+    "shortage": false,
+    "price_response": 0.025
+  },
+  "seed": 307,
+  "trades": 140888,
+  "gross": 1595558,
+  "opening_money": 1535315,
+  "issuance": {
+    "free_allowance": 2860284,
+    "q_first": 3478630,
+    "tower_first": 1633510,
+    "pass_allowance": 831908,
+    "q_repeat": 1850448,
+    "bounty_first": 1372910
+  },
+  "sinks": {
+    "trade_fee": 52289,
+    "craft": 69179,
+    "repair": 250376
+  },
+  "end_money": 13191161,
+  "free_cash_p10": 2746,
+  "free_cash_p50": 5792,
+  "paid_cash_p50": 6966,
+  "free_fill_last90": 0.9625727751594123,
+  "paid_fill_last90": 0.9857281868310087,
+  "free_cash_blocked_last90": 0,
+  "free_median_delta_last3": [
+    356,
+    344,
+    297
+  ],
+  "material_fill": 0.9200838938309105,
+  "basket_index_30d": [
+    1.121212121212121,
+    1.1515151515151516,
+    1.0606060606060606,
+    0.7878787878787878,
+    0.6666666666666666,
+    0.6060606060606061,
+    0.6363636363636364,
+    0.5757575757575758,
+    0.5606060606060606,
+    null,
+    null,
+    null
+  ],
+  "basket_coverage_30d": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.8,
+    0.8,
+    0.8
+  ],
+  "max_30d_change": 0.2571428571428571,
+  "events": [
+    {
+      "kind": "mist",
+      "start": 35,
+      "end": 44,
+      "req": {
+        "24": 120,
+        "16": 80,
+        "0": 80
+      },
+      "filled": {
+        "24": 120,
+        "16": 80,
+        "0": 80
+      },
+      "budget": 9000,
+      "spent": 3537,
+      "combat": 4391,
+      "combat_req": 600,
+      "state": "success"
+    },
+    {
+      "kind": "pump",
+      "start": 135,
+      "end": 144,
+      "req": {
+        "16": 60,
+        "7": 70,
+        "2": 70,
+        "4": 50
+      },
+      "filled": {
+        "16": 60,
+        "7": 70,
+        "2": 70,
+        "4": 50
+      },
+      "budget": 6000,
+      "spent": 250,
+      "combat": 4561,
+      "combat_req": 500,
+      "state": "success"
+    }
+  ],
+  "checks": {
+    "accounting": true,
+    "free_drug_fill_90pct": true,
+    "free_cash_unmet_zero": true,
+    "free_median_30d_cash_nonnegative": true,
+    "price_coverage_complete": false,
+    "price_change_20pct": false
+  },
+  "all_checks_pass": false,
+  "profession": [
+    {
+      "prof": "textile",
+      "crafts": 9546,
+      "skill_median": 41.0,
+      "sales": 286073,
+      "purchases": 361265
+    },
+    {
+      "prof": "leather",
+      "crafts": 13218,
+      "skill_median": 48.0,
+      "sales": 62151,
+      "purchases": 404142
+    },
+    {
+      "prof": "metal",
+      "crafts": 8222,
+      "skill_median": 41.0,
+      "sales": 166399,
+      "purchases": 367134
+    },
+    {
+      "prof": "alchemy",
+      "crafts": 38193,
+      "skill_median": 75.0,
+      "sales": 482668,
+      "purchases": 459230
+    }
+  ],
+  "flows": {
+    "free->free": [
+      494756,
+      24764,
+      0,
+      0
+    ],
+    "free->pass": [
+      219732,
+      10946,
+      0,
+      0
+    ],
+    "pass->pass": [
+      102144,
+      5110,
+      0,
+      0
+    ],
+    "pass->free": [
+      229161,
+      11469,
+      0,
+      0
+    ],
+    "free->npc": [
+      372858,
+      0,
+      0,
+      0
+    ],
+    "pass->npc": [
+      173120,
+      0,
+      0,
+      0
+    ],
+    "npc->pass": [
+      952,
+      0,
+      0,
+      0
+    ],
+    "npc->free": [
+      2835,
+      0,
+      0,
+      0
+    ]
+  },
+  "wealth_flows": {
+    "top1->bottom50": 2750,
+    "p90_99->bottom50": 29991,
+    "p90_99->p90_99": 35979,
+    "p90_99->p50_90": 50138,
+    "p50_90->p50_90": 194642,
+    "p50_90->p90_99": 67419,
+    "top1->p90_99": 5527,
+    "p50_90->bottom50": 110504,
+    "bottom50->p50_90": 319658,
+    "top1->p50_90": 3884,
+    "top1->npc": 4884,
+    "p90_99->npc": 72232,
+    "p50_90->npc": 297578,
+    "bottom50->npc": 171284,
+    "p50_90->top1": 4629,
+    "bottom50->p90_99": 108968,
+    "bottom50->bottom50": 106502,
+    "bottom50->top1": 1631,
+    "p90_99->top1": 2401,
+    "top1->top1": 1170,
+    "npc->p50_90": 1932,
+    "npc->bottom50": 1812,
+    "npc->p90_99": 43
+  },
+  "runtime_seconds": 44.6
+}

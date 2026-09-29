@@ -1,0 +1,1050 @@
+{
+  "version": 1,
+  "status": "design candidate; no runtime wiring",
+  "materials": {
+    "craft_cloth_blank": {
+      "stats": [
+        0,
+        0,
+        0
+      ],
+      "displayName": "素布坯"
+    },
+    "craft_leather_blank": {
+      "stats": [
+        0,
+        0,
+        0
+      ],
+      "displayName": "鞣革坯"
+    },
+    "craft_iron_blank": {
+      "stats": [
+        0,
+        0,
+        0
+      ],
+      "displayName": "铁坯"
+    },
+    "craft_clear_base": {
+      "stats": [
+        0,
+        0,
+        0
+      ],
+      "displayName": "澄清药基"
+    },
+    "craft_mist_fiber": {
+      "stats": [
+        0,
+        0,
+        0
+      ],
+      "displayName": "雾纤束"
+    },
+    "craft_resilient_membrane": {
+      "stats": [
+        0,
+        0,
+        0
+      ],
+      "displayName": "韧膜丝"
+    },
+    "craft_shell_chip": {
+      "stats": [
+        0,
+        0,
+        0
+      ],
+      "displayName": "甲壳片"
+    },
+    "craft_sinew_cord": {
+      "stats": [
+        0,
+        0,
+        0
+      ],
+      "displayName": "筋索"
+    },
+    "craft_saline_powder": {
+      "stats": [
+        0,
+        0,
+        0
+      ],
+      "displayName": "盐晶粉"
+    },
+    "craft_restorative_gel": {
+      "stats": [
+        0,
+        0,
+        0
+      ],
+      "displayName": "修复胶质"
+    },
+    "craft_veil_filament": {
+      "stats": [
+        0,
+        0,
+        0
+      ],
+      "displayName": "帷纹丝"
+    },
+    "craft_copper_scale": {
+      "stats": [
+        0,
+        0,
+        0
+      ],
+      "displayName": "铜化鳞片"
+    }
+  },
+  "processes": {
+    "textile_layer": {
+      "stats": [
+        2,
+        -1,
+        0
+      ]
+    },
+    "textile_cross": {
+      "stats": [
+        0,
+        2,
+        -1
+      ]
+    },
+    "textile_finish": {
+      "stats": [
+        -1,
+        0,
+        2
+      ],
+      "removeTags": [
+        "showy"
+      ]
+    },
+    "leather_oil": {
+      "stats": [
+        -1,
+        2,
+        0
+      ],
+      "removeTags": [
+        "rigid"
+      ]
+    },
+    "leather_double": {
+      "stats": [
+        2,
+        -1,
+        0
+      ]
+    },
+    "leather_finish": {
+      "stats": [
+        -1,
+        0,
+        2
+      ]
+    },
+    "metal_harden": {
+      "stats": [
+        2,
+        1,
+        -2
+      ],
+      "addTags": [
+        "rigid"
+      ]
+    },
+    "metal_temper": {
+      "stats": [
+        -1,
+        1,
+        2
+      ],
+      "removeTags": [
+        "rigid"
+      ]
+    },
+    "metal_polish": {
+      "stats": [
+        1,
+        -1,
+        1
+      ]
+    },
+    "alchemy_soak": {
+      "stats": [
+        0,
+        2,
+        0
+      ]
+    },
+    "alchemy_extract": {
+      "stats": [
+        1,
+        -1,
+        0
+      ]
+    },
+    "alchemy_filter": {
+      "stats": [
+        -1,
+        0,
+        2
+      ]
+    }
+  },
+  "recipes": [
+    {
+      "id": "recipe_textile_layered_coat_01",
+      "base": [
+        1,
+        1,
+        0
+      ],
+      "slots": [
+        [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 2
+          }
+        ],
+        [
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          }
+        ],
+        [
+          null,
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ]
+      ],
+      "materialEffects": {
+        "craft_mist_fiber": {
+          "stats": [
+            1,
+            0,
+            0
+          ],
+          "tags": []
+        },
+        "craft_resilient_membrane": {
+          "stats": [
+            0,
+            1,
+            0
+          ],
+          "tags": []
+        },
+        "craft_sinew_cord": {
+          "stats": [
+            0,
+            1,
+            0
+          ],
+          "tags": []
+        },
+        "craft_veil_filament": {
+          "stats": [
+            0,
+            0,
+            2
+          ],
+          "tags": [
+            "showy"
+          ]
+        }
+      },
+      "processes": [
+        "textile_layer",
+        "textile_cross",
+        "textile_finish"
+      ],
+      "required": [
+        3,
+        3,
+        0
+      ],
+      "output": "product_textile_layered_coat_01",
+      "minSolutions": 2,
+      "baseMaterial": {
+        "id": "craft_cloth_blank",
+        "quantity": 1
+      },
+      "displayName": "夹层外套",
+      "discipline": "textile",
+      "metrics": [
+        "warmth",
+        "durability",
+        "finish"
+      ]
+    },
+    {
+      "id": "recipe_leather_tool_harness_01",
+      "base": [
+        1,
+        1,
+        0
+      ],
+      "slots": [
+        [
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          }
+        ],
+        [
+          {
+            "id": "craft_shell_chip",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          }
+        ],
+        [
+          null,
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ]
+      ],
+      "materialEffects": {
+        "craft_sinew_cord": {
+          "stats": [
+            1,
+            1,
+            0
+          ],
+          "tags": []
+        },
+        "craft_resilient_membrane": {
+          "stats": [
+            1,
+            1,
+            0
+          ],
+          "tags": []
+        },
+        "craft_shell_chip": {
+          "stats": [
+            2,
+            -1,
+            0
+          ],
+          "tags": [
+            "rigid"
+          ]
+        },
+        "craft_veil_filament": {
+          "stats": [
+            0,
+            0,
+            2
+          ],
+          "tags": [
+            "showy"
+          ]
+        }
+      },
+      "processes": [
+        "leather_oil",
+        "leather_double",
+        "leather_finish"
+      ],
+      "required": [
+        3,
+        2,
+        0
+      ],
+      "output": "product_tool_harness_01",
+      "minSolutions": 2,
+      "baseMaterial": {
+        "id": "craft_leather_blank",
+        "quantity": 1
+      },
+      "displayName": "工具护带",
+      "discipline": "leather",
+      "metrics": [
+        "durability",
+        "flexibility",
+        "finish"
+      ]
+    },
+    {
+      "id": "recipe_metal_riveted_blade_01",
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "slots": [
+        [
+          {
+            "id": "craft_copper_scale",
+            "quantity": 1
+          },
+          {
+            "id": "craft_shell_chip",
+            "quantity": 1
+          },
+          {
+            "id": "craft_saline_powder",
+            "quantity": 1
+          }
+        ],
+        [
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          }
+        ]
+      ],
+      "materialEffects": {
+        "craft_copper_scale": {
+          "stats": [
+            1,
+            1,
+            0
+          ],
+          "tags": []
+        },
+        "craft_shell_chip": {
+          "stats": [
+            0,
+            2,
+            -1
+          ],
+          "tags": [
+            "rigid"
+          ]
+        },
+        "craft_saline_powder": {
+          "stats": [
+            1,
+            0,
+            0
+          ],
+          "tags": []
+        },
+        "craft_sinew_cord": {
+          "stats": [
+            0,
+            0,
+            2
+          ],
+          "tags": []
+        },
+        "craft_resilient_membrane": {
+          "stats": [
+            0,
+            1,
+            1
+          ],
+          "tags": []
+        }
+      },
+      "processes": [
+        "metal_harden",
+        "metal_temper",
+        "metal_polish"
+      ],
+      "required": [
+        3,
+        2,
+        1
+      ],
+      "output": "gear_craft_riveted_blade_01",
+      "minSolutions": 2,
+      "baseMaterial": {
+        "id": "craft_iron_blank",
+        "quantity": 1
+      },
+      "displayName": "铆接短刃",
+      "discipline": "metal",
+      "metrics": [
+        "sharpness",
+        "durability",
+        "handling"
+      ]
+    },
+    {
+      "id": "recipe_alchemy_pain_salve_01",
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "slots": [
+        [
+          {
+            "id": "craft_restorative_gel",
+            "quantity": 1
+          }
+        ],
+        [
+          {
+            "id": "craft_saline_powder",
+            "quantity": 1
+          },
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 1
+          }
+        ]
+      ],
+      "materialEffects": {
+        "craft_restorative_gel": {
+          "stats": [
+            2,
+            0,
+            -1
+          ],
+          "tags": []
+        },
+        "craft_saline_powder": {
+          "stats": [
+            0,
+            2,
+            1
+          ],
+          "tags": []
+        },
+        "craft_mist_fiber": {
+          "stats": [
+            0,
+            0,
+            1
+          ],
+          "tags": []
+        }
+      },
+      "processes": [
+        "alchemy_soak",
+        "alchemy_extract",
+        "alchemy_filter"
+      ],
+      "required": [
+        3,
+        2,
+        1
+      ],
+      "output": "consumable_pain_salve",
+      "minSolutions": 2,
+      "baseMaterial": {
+        "id": "craft_clear_base",
+        "quantity": 1
+      },
+      "displayName": "止痛膏",
+      "discipline": "alchemy",
+      "metrics": [
+        "potency",
+        "stability",
+        "clarity"
+      ]
+    },
+    {
+      "id": "recipe_textile_mistcoat_02",
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "slots": [
+        [
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 2
+          }
+        ],
+        [
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          },
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          }
+        ],
+        [
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ]
+      ],
+      "materialEffects": {
+        "craft_mist_fiber": {
+          "stats": [
+            1,
+            0,
+            0
+          ],
+          "tags": []
+        },
+        "craft_resilient_membrane": {
+          "stats": [
+            0,
+            1,
+            0
+          ],
+          "tags": []
+        },
+        "craft_sinew_cord": {
+          "stats": [
+            0,
+            1,
+            0
+          ],
+          "tags": []
+        },
+        "craft_veil_filament": {
+          "stats": [
+            0,
+            0,
+            2
+          ],
+          "tags": [
+            "showy"
+          ]
+        }
+      },
+      "processes": [
+        "textile_layer",
+        "textile_cross",
+        "textile_finish"
+      ],
+      "required": [
+        2,
+        2,
+        3
+      ],
+      "output": "product_textile_mistcoat_02",
+      "minSolutions": 2,
+      "baseMaterial": {
+        "id": "craft_cloth_blank",
+        "quantity": 1
+      },
+      "displayName": "雾纹外套",
+      "discipline": "textile",
+      "metrics": [
+        "warmth",
+        "durability",
+        "finish"
+      ]
+    },
+    {
+      "id": "recipe_leather_courier_case_02",
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "slots": [
+        [
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          }
+        ],
+        [
+          {
+            "id": "craft_shell_chip",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          }
+        ],
+        [
+          {
+            "id": "craft_veil_filament",
+            "quantity": 1
+          }
+        ]
+      ],
+      "materialEffects": {
+        "craft_sinew_cord": {
+          "stats": [
+            1,
+            1,
+            0
+          ],
+          "tags": []
+        },
+        "craft_resilient_membrane": {
+          "stats": [
+            1,
+            1,
+            0
+          ],
+          "tags": []
+        },
+        "craft_shell_chip": {
+          "stats": [
+            2,
+            -1,
+            0
+          ],
+          "tags": [
+            "rigid"
+          ]
+        },
+        "craft_veil_filament": {
+          "stats": [
+            0,
+            0,
+            2
+          ],
+          "tags": [
+            "showy"
+          ]
+        }
+      },
+      "processes": [
+        "leather_oil",
+        "leather_double",
+        "leather_finish"
+      ],
+      "required": [
+        3,
+        2,
+        3
+      ],
+      "output": "product_leather_courier_case_02",
+      "minSolutions": 2,
+      "baseMaterial": {
+        "id": "craft_leather_blank",
+        "quantity": 1
+      },
+      "displayName": "信使皮匣",
+      "discipline": "leather",
+      "metrics": [
+        "durability",
+        "flexibility",
+        "finish"
+      ]
+    },
+    {
+      "id": "recipe_metal_balanced_blade_02",
+      "base": [
+        2,
+        2,
+        1
+      ],
+      "slots": [
+        [
+          {
+            "id": "craft_copper_scale",
+            "quantity": 1
+          },
+          {
+            "id": "craft_shell_chip",
+            "quantity": 1
+          },
+          {
+            "id": "craft_saline_powder",
+            "quantity": 1
+          }
+        ],
+        [
+          {
+            "id": "craft_sinew_cord",
+            "quantity": 1
+          },
+          {
+            "id": "craft_resilient_membrane",
+            "quantity": 1
+          }
+        ]
+      ],
+      "materialEffects": {
+        "craft_copper_scale": {
+          "stats": [
+            1,
+            1,
+            0
+          ],
+          "tags": []
+        },
+        "craft_shell_chip": {
+          "stats": [
+            0,
+            2,
+            -1
+          ],
+          "tags": [
+            "rigid"
+          ]
+        },
+        "craft_saline_powder": {
+          "stats": [
+            1,
+            0,
+            0
+          ],
+          "tags": []
+        },
+        "craft_sinew_cord": {
+          "stats": [
+            0,
+            0,
+            2
+          ],
+          "tags": []
+        },
+        "craft_resilient_membrane": {
+          "stats": [
+            0,
+            1,
+            1
+          ],
+          "tags": []
+        }
+      },
+      "processes": [
+        "metal_harden",
+        "metal_temper",
+        "metal_polish"
+      ],
+      "required": [
+        3,
+        3,
+        2
+      ],
+      "output": "product_metal_balanced_blade_02",
+      "minSolutions": 2,
+      "baseMaterial": {
+        "id": "craft_iron_blank",
+        "quantity": 1
+      },
+      "displayName": "均衡工刀",
+      "discipline": "metal",
+      "metrics": [
+        "sharpness",
+        "durability",
+        "handling"
+      ]
+    },
+    {
+      "id": "recipe_alchemy_salt_tea_01",
+      "base": [
+        1,
+        2,
+        2
+      ],
+      "slots": [
+        [
+          {
+            "id": "craft_restorative_gel",
+            "quantity": 1
+          },
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 2
+          }
+        ],
+        [
+          {
+            "id": "craft_saline_powder",
+            "quantity": 1
+          },
+          {
+            "id": "craft_mist_fiber",
+            "quantity": 1
+          }
+        ]
+      ],
+      "materialEffects": {
+        "craft_restorative_gel": {
+          "stats": [
+            2,
+            0,
+            -1
+          ],
+          "tags": []
+        },
+        "craft_saline_powder": {
+          "stats": [
+            0,
+            2,
+            1
+          ],
+          "tags": []
+        },
+        "craft_mist_fiber": {
+          "stats": [
+            0,
+            0,
+            1
+          ],
+          "tags": []
+        }
+      },
+      "processes": [
+        "alchemy_soak",
+        "alchemy_extract",
+        "alchemy_filter"
+      ],
+      "required": [
+        2,
+        3,
+        3
+      ],
+      "output": "consumable_salt_tea",
+      "minSolutions": 2,
+      "baseMaterial": {
+        "id": "craft_clear_base",
+        "quantity": 1
+      },
+      "displayName": "盐雾醒神茶",
+      "discipline": "alchemy",
+      "metrics": [
+        "potency",
+        "stability",
+        "clarity"
+      ]
+    }
+  ],
+  "orders": [
+    {
+      "id": "craft_order_tutorial_textile_01",
+      "recipe": "recipe_textile_layered_coat_01",
+      "wage": 20,
+      "unlock": "migration_complete_and_first_material_claim",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_tutorial_leather_01",
+      "recipe": "recipe_leather_tool_harness_01",
+      "wage": 20,
+      "unlock": "migration_complete_and_first_material_claim",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_tutorial_metal_01",
+      "recipe": "recipe_metal_riveted_blade_01",
+      "wage": 20,
+      "unlock": "migration_complete_and_first_material_claim",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_tutorial_alchemy_01",
+      "recipe": "recipe_alchemy_pain_salve_01",
+      "wage": 20,
+      "unlock": "migration_complete_and_first_material_claim",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_textile_watchcoat_01",
+      "recipe": "recipe_textile_layered_coat_01",
+      "wage": 40,
+      "unlock": "craft_order_tutorial_textile_01_settled",
+      "acceptance": {
+        "forbiddenTags": [
+          "showy"
+        ]
+      },
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_textile_mistcoat_02",
+      "recipe": "recipe_textile_mistcoat_02",
+      "wage": 40,
+      "unlock": "known:recipe_textile_mistcoat_02",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_leather_tool_harness_01",
+      "recipe": "recipe_leather_tool_harness_01",
+      "wage": 40,
+      "unlock": "craft_order_tutorial_leather_01_settled",
+      "acceptance": {
+        "forbiddenTags": [
+          "showy"
+        ]
+      },
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_leather_courier_case_02",
+      "recipe": "recipe_leather_courier_case_02",
+      "wage": 40,
+      "unlock": "known:recipe_leather_courier_case_02",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_metal_work_blade_01",
+      "recipe": "recipe_metal_riveted_blade_01",
+      "wage": 40,
+      "unlock": "craft_order_tutorial_metal_01_settled",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_metal_balanced_blade_02",
+      "recipe": "recipe_metal_balanced_blade_02",
+      "wage": 40,
+      "unlock": "known:recipe_metal_balanced_blade_02",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_alchemy_pain_salve_01",
+      "recipe": "recipe_alchemy_pain_salve_01",
+      "wage": 40,
+      "unlock": "craft_order_tutorial_alchemy_01_settled",
+      "acceptance": {},
+      "baseOwner": "client"
+    },
+    {
+      "id": "craft_order_alchemy_salt_tea_02",
+      "recipe": "recipe_alchemy_salt_tea_01",
+      "wage": 40,
+      "unlock": "known:recipe_alchemy_salt_tea_01",
+      "acceptance": {},
+      "baseOwner": "client"
+    }
+  ]
+}
