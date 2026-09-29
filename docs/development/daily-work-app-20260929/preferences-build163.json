@@ -1,0 +1,24 @@
+{
+  "beforeFiles": 95,
+  "afterFiles": 103,
+  "playerByteIdentical": true,
+  "addedPlayerKeys": [],
+  "changedOrRemovedPlayerKeys": [],
+  "changedOrRemovedOtherFiles": [
+    "mistport.player-test-01-15.audit.plist"
+  ],
+  "allowedTestSuiteChanges": [
+    "mistport.player-test-01-15.audit.plist"
+  ],
+  "newFiles": [
+    "mistport.bounty-daily-risk-check.509FD160-39E3-430D-A4C6-01B2F3D158F3.plist",
+    "mistport.church-tower-check.00630223-3BC3-4896-BE99-62CBB691AE7E.plist",
+    "mistport.daily-pacing.021542E3-35FF-4A68-87B4-70E2EEE98C00.old.plist",
+    "mistport.daily-pacing.021542E3-35FF-4A68-87B4-70E2EEE98C00.plist",
+    "mistport.daily-work-check.F92A20ED-DB9D-4166-B9AD-DEED5B257195.plist",
+    "mistport.p0-verification.F866D922-FF36-41BA-B862-FDB7E58BC91D.plist",
+    "mistport.player-growth-check.58461186-B7A2-4258-90F5-19949E34A432.gap.plist",
+    "mistport.player-growth-check.58461186-B7A2-4258-90F5-19949E34A432.plist"
+  ],
+  "passed": true
+}

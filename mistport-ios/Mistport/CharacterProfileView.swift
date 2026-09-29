@@ -488,8 +488,9 @@ struct CharacterProfileView: View {
                 Divider()
                 VStack(alignment: .leading, spacing: 8) {
                     Text("邮务核对 · 第\(game.postalJobSerial + 1)单").font(.headline)
-                    Text("核对三个字段，完成后领取40铜币。无需战斗或消耗品。")
+                    Text("核对三个字段，本单可领\(game.repeatWorkPreview(copper: 40))。无需战斗或消耗品。")
                         .font(.caption).foregroundStyle(.secondary)
+                    Text(game.repeatWorkNotice).font(.caption).foregroundStyle(.secondary)
                     Text("原始单据：\(game.postalJobFields.joined(separator: " · "))")
                         .font(.subheadline).padding(8)
                         .background(.secondary.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
