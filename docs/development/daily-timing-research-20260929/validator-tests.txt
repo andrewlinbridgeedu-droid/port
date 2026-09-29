@@ -1,0 +1,12 @@
+test_invalid_or_automatic_observations_rejected (__main__.TimingValidationTests) ... ok
+test_median_and_seconds_to_minutes (__main__.TimingValidationTests) ... ok
+test_missing_category (__main__.TimingValidationTests) ... ok
+test_missing_samples (__main__.TimingValidationTests) ... ok
+test_mixed_builds (__main__.TimingValidationTests) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+OK
+
+Also passed with python3 -O; synthetic validator tests only, no gameplay observations.
