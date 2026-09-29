@@ -1,0 +1,140 @@
+{
+  "baseCommit": "485b5d67308f2ea9dddac476d74a8d9af4f10cfa",
+  "originals": [
+    {
+      "name": "CitySpringDay",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CitySpringDay.imageset/CitySpringDay.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "45908c900de559adf7dfa028555275125e79a53f3643eab4da95d671d45a2687"
+    },
+    {
+      "name": "CitySpringSunset",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CitySpringSunset.imageset/CitySpringSunset.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "f4e52d9019ff690323805ef77356ef47dd01e2df20f708534be48551c14f169d"
+    },
+    {
+      "name": "CitySpringNight",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CitySpringNight.imageset/CitySpringNight.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "bf8e7a64b853217939a2a15ee997336b1d3a6de9831160fadf4ce14ba07c8c72"
+    },
+    {
+      "name": "CitySummerDay",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CitySummerDay.imageset/CitySummerDay.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "dda611df52fb6f55375729aadd968e4e26f4f031b1100b84506b25e9d9fcf5e9"
+    },
+    {
+      "name": "CitySummerSunset",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CitySummerSunset.imageset/CitySummerSunset.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "424edefac1216f1bdaa50944643c95c07d9b2950c82327e0dd42701dcc04f21d"
+    },
+    {
+      "name": "CitySummerNight",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CitySummerNight.imageset/CitySummerNight.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "4c839ce0583a591ce12142eea4fc46c1575d7bcace0104d523d4d0952b49891c"
+    },
+    {
+      "name": "CityAutumnDay",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityAutumnDay.imageset/CityAutumnDay.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "82ef7c09c4a83b972617d4783d3c803e49c409d9f1f494bf26acdf8d06a3ace9"
+    },
+    {
+      "name": "CityAutumnSunset",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityAutumnSunset.imageset/CityAutumnSunset.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "a4ded1119c5715166c88099764ee0320f82e37c9a5ba47f97f678d6ef2cbe81e"
+    },
+    {
+      "name": "CityAutumnNight",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityAutumnNight.imageset/CityAutumnNight.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "f3c62f9368132de08aec5ae38910597608a508aa0e782577bb3b4ba8a70031a1"
+    },
+    {
+      "name": "CityWinterDay",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityWinterDay.imageset/CityWinterDay.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "c20f23cb0a324b2aaa7838cbbbf61ec42f5e9348142e30b43adcf3aa993acd67"
+    },
+    {
+      "name": "CityWinterSunset",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityWinterSunset.imageset/CityWinterSunset.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "b535eaefad3fe0ad1024317b10966050c6f0ca9ea8c166668368298ac4d2cdaf"
+    },
+    {
+      "name": "CityWinterNight",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityWinterNight.imageset/CityWinterNight.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "f5878e6aa1e1d1704730fec0f3742c3b5a28d9651b4006936d64640b2c794a81"
+    },
+    {
+      "name": "CityWinterSnowDay",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityWinterSnowDay.imageset/CityWinterSnowDay.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "a565e7f671a7b020c92b806d54bfbac10cc1debbd897e19df3268c105398adae"
+    },
+    {
+      "name": "CityWinterSnowSunset",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityWinterSnowSunset.imageset/CityWinterSnowSunset.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "c668ae2d6b549581d2db2802aa5ad224db372a91f9b1f29092c194b9bf8b1d36"
+    },
+    {
+      "name": "CityWinterSnowNight",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityWinterSnowNight.imageset/CityWinterSnowNight.jpg",
+      "size": [
+        4096,
+        2305
+      ],
+      "sha256": "6e6196fa01c0a41552d82450b0725897515d132c15471ad98625d79cc751af63"
+    }
+  ]
+}

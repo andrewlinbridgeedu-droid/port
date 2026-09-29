@@ -1,0 +1,146 @@
+{
+  "unit": "512-pixel asset canvas",
+  "fountainFlowerbedTranslation": [
+    4,
+    -38
+  ],
+  "fountainPennantsTranslation": [
+    0,
+    0
+  ],
+  "fountainVariantCanvasRegistration": [
+    {
+      "file": "CommissionFountainSunset.png",
+      "sourcePaintedBounds": [
+        14,
+        138,
+        498,
+        378
+      ],
+      "targetPaintedBounds": [
+        62,
+        110,
+        462,
+        291
+      ]
+    },
+    {
+      "file": "CommissionFountainNight.png",
+      "sourcePaintedBounds": [
+        17,
+        146,
+        495,
+        370
+      ],
+      "targetPaintedBounds": [
+        62,
+        110,
+        462,
+        291
+      ]
+    },
+    {
+      "file": "CommissionFountainSnowDay.png",
+      "sourcePaintedBounds": [
+        38,
+        132,
+        475,
+        353
+      ],
+      "targetPaintedBounds": [
+        62,
+        106,
+        462,
+        291
+      ]
+    },
+    {
+      "file": "CommissionFountainSnowSunset.png",
+      "sourcePaintedBounds": [
+        21,
+        125,
+        496,
+        376
+      ],
+      "targetPaintedBounds": [
+        62,
+        106,
+        462,
+        291
+      ]
+    },
+    {
+      "file": "CommissionFountainSnowNight.png",
+      "sourcePaintedBounds": [
+        30,
+        140,
+        483,
+        381
+      ],
+      "targetPaintedBounds": [
+        62,
+        106,
+        462,
+        291
+      ]
+    }
+  ],
+  "boulevardGlowRegistration": [
+    {
+      "glassCenter": [
+        79,
+        70
+      ],
+      "translation": [
+        1,
+        2
+      ],
+      "scale": 1.0
+    },
+    {
+      "glassCenter": [
+        122,
+        117
+      ],
+      "translation": [
+        4,
+        1
+      ],
+      "scale": 0.9
+    },
+    {
+      "glassCenter": [
+        189,
+        163
+      ],
+      "translation": [
+        3,
+        -5
+      ],
+      "scale": 0.83
+    },
+    {
+      "glassCenter": [
+        288,
+        212
+      ],
+      "translation": [
+        2,
+        -33
+      ],
+      "scale": 0.85
+    },
+    {
+      "glassCenter": [
+        409,
+        273
+      ],
+      "translation": [
+        12,
+        -37
+      ],
+      "scale": 0.78
+    }
+  ],
+  "artworkRepaintedByScript": false
+}
