@@ -605,7 +605,7 @@ struct BlackSaltShoreView: View {
                     .foregroundStyle(ChurchGold)
                     .minimumScaleFactor(0.75)
                     .lineLimit(1)
-                Text("第二章 · 地点与人物均为暂名")
+                Text("第二章")
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.7))
             }
@@ -666,7 +666,7 @@ struct BlackSaltShoreView: View {
 
     private var station: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("转运站只有一套主接驳装置。两家要的控制配置互不兼容，接下来三十天的供能检修权只能给一家。")
+            Text("转运站只有一套主接驳装置，接下来三十天只能交给一家。")
                 .font(.body).foregroundStyle(.white.opacity(0.85)).lineSpacing(5)
                 .padding(14)
                 .background(Color(red: 0.035, green: 0.055, blue: 0.08).opacity(0.88), in: RoundedRectangle(cornerRadius: 12))
@@ -674,12 +674,12 @@ struct BlackSaltShoreView: View {
                 contactCard(contact)
             }
             Text(game.chapterTwoBridge.worldEventStoryReady
-                 ? "两份计划你都听过了。转运站的维修与采购尚未开放。"
+                 ? "两份计划你都听过了。"
                  : "两家负责人都在站内。先听听他们各自的打算。")
                 .font(.footnote).foregroundStyle(.white.opacity(0.6))
             if game.chapterTwoBridge.worldEventStoryReady {
-                blackSaltAction(title: "转运站检修单", detail: game.lightsEvent.closed ? "已结束" : "本存档", plate: .saltportRoute) { showsWork = true }
-                blackSaltAction(title: "供能争端 · 事件预览", detail: "假设快照", plate: .saltportNews) { showsEvent = true }
+                blackSaltAction(title: "转运站检修单", detail: game.lightsEvent.closed ? "已结束" : "进行中", plate: .saltportRoute) { showsWork = true }
+                blackSaltAction(title: "供能争端 · 事件预告", detail: "预告", plate: .saltportNews) { showsEvent = true }
             }
             PlateButton(title: "返回黑盐岸码头", plate: .saltportRoute) { game.returnToBlackSaltShore() }
         }
@@ -810,8 +810,8 @@ struct LightsEventPreviewView: View {
 
     private var hypotheticalBanner: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("假设快照 · \(snapshot.phase.title)").font(.subheadline.bold()).foregroundStyle(.orange)
-            Text(P.hypotheticalNotice + "事件尚未开放，本页不能投资、交货或参战。")
+            Text("预告 · \(snapshot.phase.title)").font(.subheadline.bold()).foregroundStyle(.orange)
+            Text("以下是示例数字。事件开放前不能投资、交货或参战。")
                 .font(.caption).foregroundStyle(muted).fixedSize(horizontal: false, vertical: true)
             #if DEBUG
             Menu {
@@ -841,7 +841,7 @@ struct LightsEventPreviewView: View {
     private var overview: some View {
         VStack(alignment: .leading, spacing: 14) {
             newsHeader
-            Text("转运站只有一套主接驳装置。两家的控制配置互不兼容，三十日独占经营权只能给一家；落败方仍可经营原有业务。")
+            Text("转运站只有一套主接驳装置。三十日经营权只能给一家；落败的一方照常做原来的生意。")
                 .font(.body).foregroundStyle(.white.opacity(0.85)).lineSpacing(4)
             planCard(.pumps, lead: "工程监理 艾妲·维恩", aim: "先恢复住宅与诊所的药基处理；账册公开。",
                      cost: "分流给民用线路后，可收费的工坊服务容量较少，回本取决于需求。",
@@ -849,7 +849,7 @@ struct LightsEventPreviewView: View {
             planCard(.shipping, lead: "护航总管 罗文·凯尔", aim: "先恢复燃料周转与工坊生产。",
                      cost: "工业先行会延后部分住宅增量供能；运输与货源中断风险较高。",
                      win: "码头吊机和炉火恢复，货船班次牌更新。")
-            Text("时间表（首测候选）：准备 7 日 → 公共行动 48 小时 → 核心窗口 24 小时 → 经营 30 日。")
+            Text("时间表：准备 7 日 → 公共行动 48 小时 → 决战 24 小时 → 经营 30 日。")
                 .font(.footnote).foregroundStyle(muted)
             linkButton("看最新公报", .news)
         }
@@ -861,7 +861,7 @@ struct LightsEventPreviewView: View {
             Text(P.sideName(f)).font(.system(size: 19, weight: .bold, design: .serif)).foregroundStyle(ChurchGold)
             Text(lead).font(.caption).foregroundStyle(muted)
             row("主张", aim); row("代价", cost); row("胜出后", win)
-            Text("快照：已筹 \(l.raised)/\(P.fundingCap) 铜 · 已安装 \(l.installedKits)/\(P.kitSlots) 处")
+            Text("已筹 \(l.raised)/\(P.fundingCap) 铜 · 已安装 \(l.installedKits)/\(P.kitSlots) 处")
                 .font(.caption.monospacedDigit()).foregroundStyle(.orange.opacity(0.9))
         }
         .padding(14)
@@ -881,7 +881,7 @@ struct LightsEventPreviewView: View {
     private var news: some View {
         let articles = P.articles(for: snapshot)
         return VStack(alignment: .leading, spacing: 12) {
-            Text("已发布 \(articles.count)/8 篇。条件不成立的新闻不发布，只选与快照事实相符的版本。")
+            Text("已发布 \(articles.count) 篇。")
                 .font(.caption).foregroundStyle(muted)
             ForEach(articles.reversed()) { article in
                 articleCard(article)
@@ -894,7 +894,7 @@ struct LightsEventPreviewView: View {
         return VStack(alignment: .leading, spacing: 8) {
             Button { openArticle = open ? nil : article.id } label: {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("\(article.id) · \(article.day) · \(article.variant)").font(.caption).foregroundStyle(muted)
+                    Text(article.day).font(.caption).foregroundStyle(muted)
                     Text(article.headline).font(.system(size: 17, weight: .bold, design: .serif))
                         .foregroundStyle(ChurchGold).multilineTextAlignment(.leading)
                 }
@@ -930,7 +930,7 @@ struct LightsEventPreviewView: View {
     private var ledgers: some View {
         VStack(alignment: .leading, spacing: 14) {
             ForEach(P.Faction.allCases, id: \.self) { ledgerCard($0) }
-            Text("组具首测报价 \(P.kitPrice) 铜/套（过滤布、维修绑带、锡罐各 2 件）；单账号最多投 \(P.perAccountCap) 铜。投资是收益份额，不保本。投资与采购入口尚未开放。")
+            Text("一套组具 \(P.kitPrice) 铜（过滤布、维修绑带、锡罐各 2 件）。每人最多投 \(P.perAccountCap) 铜，按收益分成，不保本。")
                 .font(.caption).foregroundStyle(muted).fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -977,10 +977,10 @@ struct LightsEventPreviewView: View {
                 ForEach(["我的公共行动", "我的货物去了哪里", "我的突破", "我的项目账"], id: \.self) { title in
                     amount(title, "无记录")
                 }
-                Text("假设快照不含你的个人记录；结算不按投资额发放胜利奖金。").font(.caption).foregroundStyle(muted)
+                Text("事件结束后，这里会列出你的记录。").font(.caption).foregroundStyle(muted)
             }
         } else {
-            Text("尚未结算。合同、人物状态和个人记录在世界结算后出现；未发生的结果不会提前显示。")
+            Text("还没结算，事件结束后公布。")
                 .font(.body).foregroundStyle(muted)
         }
     }
@@ -1021,8 +1021,8 @@ struct LightsLocalEventView: View {
                     step(1, "选择支持", done: event.side != nil) { sideStep }
                     step(2, "准备维修绑带", done: game.lightsStrapCount >= E.strapsPerKit || event.projectStraps > 0 || event.worksComplete) { craftStep }
                     step(3, "交货", done: !event.orderOpen) { deliverStep }
-                    step(4, "安装第12套组具", done: event.worksComplete) { installStep }
-                    step(5, "普通公共行动", done: event.closed) { publicStep }
+                    step(4, "安装组具", done: event.worksComplete) { installStep }
+                    step(5, "公共行动", done: event.closed) { publicStep }
                     if event.closed { resultCard }
                     if !notice.isEmpty { Text(notice).font(.footnote).foregroundStyle(.orange) }
                     if !event.entries.isEmpty { logCard }
@@ -1048,7 +1048,7 @@ struct LightsLocalEventView: View {
             }.buttonStyle(.plain).accessibilityLabel("返回")
             VStack(alignment: .leading, spacing: 3) {
                 Text("转运站检修单").font(.system(size: 24, weight: .bold, design: .serif)).foregroundStyle(ChurchGold)
-                Text("谁让雾港重新亮灯 · 本地一次").font(.caption).foregroundStyle(muted)
+                Text("谁让雾港重新亮灯").font(.caption).foregroundStyle(muted)
             }
             Spacer(minLength: 0)
         }
@@ -1091,16 +1091,16 @@ struct LightsLocalEventView: View {
         case E.Failure.stock, MPCLocalWorkshopLedger.Failure.stock: return "材料不足。"
         case E.Failure.funds, MPCLocalWorkshopLedger.Failure.funds: return "铜币不足。"
         case E.Failure.order: return "这张订单已经收满。"
-        case E.Failure.attempted: return "本存档的公共行动尝试已经用过。"
-        default: return "操作未完成，钱物没有变化。"
+        case E.Failure.attempted: return "这次行动的机会已经用过了。"
+        default: return "没有完成，钱和东西都没动。"
         }
     }
 
     @ViewBuilder private var sideStep: some View {
         if let side = event.side {
-            Text("已支持\(P.sideName(side))。立场在本次事件内锁定。").font(.subheadline).foregroundStyle(muted)
+            Text("你支持\(P.sideName(side))，这次事件里不能再换。").font(.subheadline).foregroundStyle(muted)
         } else {
-            Text("免费支持，不收报名费，也不发工资。选定后本次事件不能更换。").font(.subheadline).foregroundStyle(muted)
+            Text("选一方支持，不收钱。选定后这次事件里不能换。").font(.subheadline).foregroundStyle(muted)
             VStack(spacing: 10) {
                 action("泵站联合会", plate: .sideChoice, emblem: "EmblemPumpsUnion") { try game.chooseLightsSide(.pumps) }
                 action("灰帆联营", plate: .sideChoice, emblem: "EmblemGreySail") { try game.chooseLightsSide(.shipping) }
@@ -1109,7 +1109,7 @@ struct LightsLocalEventView: View {
     }
 
     @ViewBuilder private var craftStep: some View {
-        Text("工作台配方：1 份盾颚韧皮 + 13 铜 → 3 条维修绑带。韧皮来自教会塔第 1 层的新一场胜利。")
+        Text("维修绑带：1 份韧皮 + 13 铜 → 3 条。在教会塔第 1 层打败盾颚魔可得韧皮。")
             .font(.subheadline).foregroundStyle(muted).fixedSize(horizontal: false, vertical: true)
         HStack(spacing: 14) {
             holding("ItemShieldJawHide", "韧皮 \(game.lightsHideCount)")
@@ -1125,20 +1125,20 @@ struct LightsLocalEventView: View {
 
     @ViewBuilder private var deliverStep: some View {
         if event.orderOpen {
-            Text("\(event.side.map(P.projectName) ?? "项目")还收 \(E.strapsPerKit) 条绑带，每条 \(E.strapPrice) 铜；项目账上还有 \(event.projectCash) 铜。")
+            Text("\(event.side.map(P.projectName) ?? "项目")要 \(E.strapsPerKit) 条绑带，每条 \(E.strapPrice) 铜。")
                 .font(.subheadline).foregroundStyle(muted)
             action("交 \(E.strapsPerKit) 条 · 收 \(E.orderBudget) 铜", enabled: event.side != nil && game.lightsStrapCount >= E.strapsPerKit) {
                 try game.deliverLightsStraps()
             }
         } else {
-            Text("订单已收满，不再收货。多出的绑带仍在你的背包里。").font(.subheadline).foregroundStyle(muted)
+            Text("订单收满了，多的绑带留在你背包里。").font(.subheadline).foregroundStyle(muted)
         }
     }
 
     @ViewBuilder private var installStep: some View {
         HStack(alignment: .top, spacing: 10) {
             Image(decorative: "ItemFilterKit").resizable().scaledToFit().frame(width: 40, height: 40)
-            Text("工程 \(event.installedKits)/\(P.kitSlots)。绑带与已入库的过滤布、锡罐组成组具，装上后就是设施的一部分。")
+            Text("工程 \(event.installedKits)/\(P.kitSlots)。绑带配上过滤布和锡罐，装好这一套。")
                 .font(.subheadline).foregroundStyle(muted).fixedSize(horizontal: false, vertical: true)
         }
         if !event.worksComplete {
@@ -1148,13 +1148,13 @@ struct LightsLocalEventView: View {
 
     @ViewBuilder private var publicStep: some View {
         if let side = event.side {
-            Text("\(MPCLightsPublicTarget.title(side))：一场普通战斗。本存档只有一次有效尝试，失败或撤退也会用掉。胜利记 1 点公共贡献。")
+            Text("\(MPCLightsPublicTarget.title(side))：只有一次机会，输了或撤退也算用掉。打赢记 1 点公共贡献。")
                 .font(.subheadline).foregroundStyle(muted).fixedSize(horizontal: false, vertical: true)
         }
         if event.closed {
             Text(event.publicWon ? "已完成：胜利，记 1 点。" : "已完成：未胜利，不记贡献。").font(.subheadline)
         } else if let pending = event.activeTicket {
-            action("放弃未结的公共行动", plate: .workshopSecondary) { game.abandonLightsPublic(battleID: pending, defeated: false) }
+            action("放弃这次行动", plate: .workshopSecondary) { game.abandonLightsPublic(battleID: pending, defeated: false) }
         } else {
             action("进入战斗", plate: .battle, enabled: event.worksComplete) { battleID = UUID().uuidString }
         }
@@ -1169,11 +1169,11 @@ struct LightsLocalEventView: View {
                 HStack {
                     Text(P.sideName(f) + (f == event.side ? "（本方）" : "")).font(.subheadline)
                     Spacer()
-                    Text("\(l.publicScore) 点 · \(l.successfulAccounts) 账号 · 工程 \(l.installedKits)/12 · \(l.qualified ? "有资格" : "无资格")")
+                    Text("\(l.publicScore) 点 · 工程 \(l.installedKits)/12")
                         .font(.caption.monospacedDigit()).foregroundStyle(muted)
                 }
             }
-            Text("两位负责人均存活；核心人物战尚未开放。结果不发胜利奖金。").font(.caption).foregroundStyle(muted)
+            Text("两位负责人都还活着。").font(.caption).foregroundStyle(muted)
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -1259,7 +1259,7 @@ struct LightsPublicBattleView: View {
                         do {
                             configuredSession = try game.beginLightsPublic(battleID: battleID, skills: skills)
                             started = true
-                        } catch { startError = "无法开始：本存档的公共行动尝试可能已用过。" }
+                        } catch { startError = "无法开始：这次行动的机会可能已经用过了。" }
                     })
                 if !startError.isEmpty { Text(startError).foregroundStyle(.orange) }
             }
@@ -1267,7 +1267,7 @@ struct LightsPublicBattleView: View {
                 Color.black.opacity(0.8).ignoresSafeArea()
                 VStack(spacing: 16) {
                     Text(won ? "阻碍已解除" : "行动未完成").font(.title.bold()).foregroundStyle(won ? .yellow : .orange)
-                    Text(won ? "记 1 点公共贡献。" : "本次尝试已用掉，不记贡献。")
+                    Text(won ? "记 1 点公共贡献。" : "机会已用掉，不记贡献。")
                     ChurchActionButton(title: "返回检修单") { onClose() }
                 }
                 .foregroundStyle(.white).padding(24)

@@ -64,7 +64,7 @@ public struct MPCLightsLocalEvent: Codable, Equatable, Sendable {
         guard eligible else { throw Failure.locked }
         guard side == nil else { throw Failure.side }
         side = faction
-        log(id, "side", "支持\(P.sideName(faction))。不收报名费，不发工资；本次事件立场锁定。")
+        log(id, "side", "支持\(P.sideName(faction))。")
         return true
     }
 
@@ -80,7 +80,7 @@ public struct MPCLightsLocalEvent: Codable, Equatable, Sendable {
         guard projectCash >= payment, coins <= Int.max - payment else { throw Failure.funds }
         inventory[Self.strapID, default: 0] -= quantity
         coins += payment; projectCash -= payment; projectStraps += quantity
-        log(id, "deliver", "\(P.projectName(side))验收\(quantity)条维修绑带，付\(payment)铜。钱来自本存档一次性的项目预算。",
+        log(id, "deliver", "\(P.projectName(side))验收\(quantity)条维修绑带，付\(payment)铜。",
             player: payment, project: -payment)
         return true
     }
@@ -92,7 +92,7 @@ public struct MPCLightsLocalEvent: Codable, Equatable, Sendable {
         guard eligible, let side else { throw Failure.locked }
         guard projectStraps == Self.strapsPerKit, installedKits == P.kitSlots - 1 else { throw Failure.stock }
         projectStraps = 0; installedKits = P.kitSlots
-        log(id, "install", "2条绑带与已入库的2块过滤布、2个锡罐组成最后一套检修组具，装进\(P.projectName(side))第12号滤筒位。工程12/12验收。")
+        log(id, "install", "装好最后一套检修组具，\(P.projectName(side))工程完工。")
         return true
     }
 
@@ -105,7 +105,7 @@ public struct MPCLightsLocalEvent: Codable, Equatable, Sendable {
         guard !publicAttempted else { throw Failure.attempted }
         guard MPCLightsPublicTarget.validTicket(id) else { throw Failure.conflict }
         activeTicket = id; publicAttempted = true
-        log(id, "public_begin", "开始普通公共行动：\(MPCLightsPublicTarget.title(side))。本存档唯一的有效尝试。")
+        log(id, "public_begin", "出发：\(MPCLightsPublicTarget.title(side))。")
         return MPCLightsPublicTarget.encounterID(side: side, ticket: id)
     }
 
@@ -119,7 +119,7 @@ public struct MPCLightsLocalEvent: Codable, Equatable, Sendable {
               session.outcome != .inProgress else { throw Failure.invalidBattle }
         publicWon = session.outcome == .victory
         activeTicket = nil
-        log("settle:" + id, "public_end", publicWon ? "普通公共行动胜利：解除一处阻碍，记1点公共贡献。" : "普通公共行动未完成；本次尝试已用掉，不记贡献。")
+        log("settle:" + id, "public_end", publicWon ? "打赢了，解除一处阻碍，记 1 点公共贡献。" : "没有完成，不记贡献。")
         return true
     }
 
@@ -127,7 +127,7 @@ public struct MPCLightsLocalEvent: Codable, Equatable, Sendable {
     public mutating func abandonPublic(id: String, defeated: Bool = false) {
         guard activeTicket == id else { return }
         activeTicket = nil
-        log("settle:" + id, "public_end", (defeated ? "普通公共行动失败" : "撤出普通公共行动") + "；本次尝试已用掉，不记贡献。")
+        log("settle:" + id, "public_end", (defeated ? "战斗失败" : "中途撤退") + "，不记贡献。")
     }
 
     public func ledger(_ faction: Faction) -> P.Ledger {
