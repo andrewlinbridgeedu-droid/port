@@ -1711,6 +1711,7 @@ final class GameStore {
         loadout.passiveIDs = loadout.passiveIDs.filter(chapterOneCampaign.unlockedPassiveIDs.contains)
         loadout.relicIDs = loadout.relicIDs.filter(chapterOneCampaign.ownedRelicIDs.contains)
         loadout.churchGear = churchServices.gear.stats
+        loadout.bountyRelicID = churchServices.bountyRelics.equippedID
         loadout.outfit = MPCOutfit(rawValue: equippedOutfitID) ?? .mistportNight
         return try! MPCChapterOneEncounterSession.start(
             encounterID: encounterID,
@@ -2447,8 +2448,9 @@ extension GameStore {
         var gear = MPCChurchGearLedger()
         var workshop = MPCLocalWorkshopLedger()
         var lightsEvent = MPCLightsLocalEvent()
+        var bountyRelics = MPCBountyRelicLedger()
         init() {}
-        private enum CodingKeys: String, CodingKey { case loans, bounties, dailyBountyIssue, bountyCarriedRelics, bountyDefeatLosses, pokerActiveRounds, pokerSettlements, pokerSimpleAttempts, douActiveGames, douSettlements, tavernPrizeCheckedDay, tavernDailyPrize, tavernPrizeResolvedDays, tavernFeaturedGames, tavernPrizePaidGames, equippedLoanIDs, maintenance, ownedCondition, gear, workshop, lightsEvent }
+        private enum CodingKeys: String, CodingKey { case loans, bounties, dailyBountyIssue, bountyCarriedRelics, bountyDefeatLosses, pokerActiveRounds, pokerSettlements, pokerSimpleAttempts, douActiveGames, douSettlements, tavernPrizeCheckedDay, tavernDailyPrize, tavernPrizeResolvedDays, tavernFeaturedGames, tavernPrizePaidGames, equippedLoanIDs, maintenance, ownedCondition, gear, workshop, lightsEvent, bountyRelics }
         init(from decoder: Decoder) throws {
             let c = try decoder.container(keyedBy: CodingKeys.self)
             loans = try c.decodeIfPresent(MPCChurchLoanLedger.self, forKey: .loans) ?? .init()
@@ -2473,6 +2475,7 @@ extension GameStore {
             gear = try c.decodeIfPresent(MPCChurchGearLedger.self, forKey: .gear) ?? .init()
             workshop = try c.decodeIfPresent(MPCLocalWorkshopLedger.self, forKey: .workshop) ?? .init()
             lightsEvent = try c.decodeIfPresent(MPCLightsLocalEvent.self, forKey: .lightsEvent) ?? .init()
+            bountyRelics = try c.decodeIfPresent(MPCBountyRelicLedger.self, forKey: .bountyRelics) ?? .init()
         }
     }
     private struct BountyRelicSnapshot: Codable {
@@ -2494,18 +2497,40 @@ extension GameStore {
         _ = churchServicesRevision
         return defaults.data(forKey: "mistport.church.services.v1").flatMap { try? JSONDecoder().decode(ChurchServicesState.self, from: $0) } ?? .init()
     }
+    /// Tower floors pay gear; closed bounty cases pay relics (bounty gear was
+    /// retired on 2026-09-28 by a one-time migration recorded in the ledger).
     private func reconcileChurchGearEntitlements() {
+        let services = churchServices
         let floors = churchTowerProgress.clearedFloors
-        let cases = churchServices.bounties.cases
-        let missing = floors.compactMap(MPCChurchGearCatalog.towerDrop(floor:))
-            .filter { !churchServices.gear.ownedIDs.contains($0.id) }
-            + cases.compactMap { id, progress in
-                progress.claimed ? MPCChurchGearCatalog.bountyDrop(caseID: id) : nil
-            }.filter { !churchServices.gear.ownedIDs.contains($0.id) }
-        guard !missing.isEmpty else { return }
-        try? updateChurchServices { state in
-            for item in missing.sorted(by: { $0.id < $1.id }) { state.gear.grant(item.id) }
+        let claimed = services.bounties.cases.filter { $0.value.claimed }.map(\.key)
+        let missingGear = floors.compactMap(MPCChurchGearCatalog.towerDrop(floor:))
+            .filter { !services.gear.ownedIDs.contains($0.id) }
+        let missingRelics = claimed.filter { id in
+            MPCBountyRelicCatalog.relic(forCase: id).map { !services.bountyRelics.ownedIDs.contains($0.id) } ?? false
         }
+        guard !missingGear.isEmpty || !missingRelics.isEmpty || !services.bountyRelics.hasMigrated else { return }
+        try? updateChurchServices { state in
+            for item in missingGear.sorted(by: { $0.id < $1.id }) { state.gear.grant(item.id) }
+            state.bountyRelics.migrate(gear: &state.gear, claimedCaseIDs: claimed)
+            for id in claimed.sorted() { state.bountyRelics.grant(caseID: id) }
+        }
+    }
+    func equipBountyRelic(_ id: String?) throws {
+        try updateChurchServices { state in
+            guard state.bountyRelics.equip(id) else { throw MPCChurchLoanError.exhausted }
+        }
+    }
+    /// First story mission not yet cleared, used to spot a player standing at a wall.
+    var nextChapterMissionNumber: Int? {
+        let done = churchTowerMissionNumbers
+        return (1...30).first { !done.contains($0) }
+    }
+    func wallDefeatHint(missionNumber: Int) -> String? {
+        let relics = churchServices.bountyRelics
+        return MPCProgressionWalls.defeatHint(mission: missionNumber,
+            highestTowerFloor: churchTowerProgress.clearedFloors.max() ?? 0,
+            equippedRelicID: relics.equippedID, ownedRelicIDs: relics.ownedIDs,
+            caseTitle: { MPCChurchBountyCatalog.bounty(id: $0)?.title })
     }
     func equipChurchGear(_ id: String) throws {
         try updateChurchServices { state in
@@ -2608,14 +2633,28 @@ extension GameStore {
     }
     func refreshChurchBountyBoard(asOf date: Date = Date()) {
         let today = MPCDailyBountyRotation.dayOrdinal(for: date)
-        if let previous = churchServices.dailyBountyIssue, previous.dayOrdinal >= today { return }
+        func eligible(_ state: ChurchServicesState, _ id: String) -> Bool {
+            let progress = state.bounties.cases[id]
+            return progress?.accepted != true && progress?.claimed != true
+        }
+        // Standing at a mechanism wall without its relic: that case is printed today.
+        func guaranteed(_ state: ChurchServicesState) -> String? {
+            guard let next = nextChapterMissionNumber,
+                  let id = MPCProgressionWalls.guaranteedCase(nextMission: next, ownedRelicIDs: state.bountyRelics.ownedIDs),
+                  eligible(state, id) else { return nil }
+            return id
+        }
+        let current = churchServices
+        if let previous = current.dailyBountyIssue, previous.dayOrdinal >= today,
+           previous.guaranteeing(guaranteed(current)) == previous { return }
         try? updateChurchServices { state in
-            if let previous = state.dailyBountyIssue, previous.dayOrdinal >= today { return }
-            let eligible = MPCChurchBountyCatalog.all.map(\.id).filter { id in
-                let progress = state.bounties.cases[id]
-                return progress?.accepted != true && progress?.claimed != true
+            if let previous = state.dailyBountyIssue, previous.dayOrdinal >= today {
+                state.dailyBountyIssue = previous.guaranteeing(guaranteed(state))
+                return
             }
-            state.dailyBountyIssue = MPCDailyBountyRotation.issue(dayOrdinal: today, eligibleIDs: eligible)
+            let ids = MPCChurchBountyCatalog.all.map(\.id).filter { eligible(state, $0) }
+            state.dailyBountyIssue = MPCDailyBountyRotation.issue(dayOrdinal: today, eligibleIDs: ids)
+                .guaranteeing(guaranteed(state))
         }
     }
     func acceptChurchBounty(_ id: String) throws {
@@ -2870,7 +2909,7 @@ extension GameStore {
                 state.loans.coins += reward.copper
                 state.loans.lifetimeMerit += reward.merit
                 state.loans.availableMerit += reward.merit
-                if let drop = MPCChurchGearCatalog.bountyDrop(caseID: id) { state.gear.grant(drop.id) }
+                state.bountyRelics.grant(caseID: id)
             }
         }
     }
@@ -2880,6 +2919,7 @@ extension GameStore {
     func applyingChurchLoans(to source: MPCChapterOneLoadout, allowsActive: Bool = true) -> MPCChapterOneLoadout {
         var loadout = source
         loadout.churchGear = churchServices.gear.stats
+        loadout.bountyRelicID = churchServices.bountyRelics.equippedID
         loadout.outfit = MPCOutfit(rawValue: equippedOutfitID) ?? .mistportNight
         let condition = churchServices.ownedCondition
         loadout.relicIDs.removeAll { condition.currentDurability($0) == 0 }
