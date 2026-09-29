@@ -110,7 +110,7 @@ struct LocalWorkshopView: View {
                     .accessibilityElement(children: .combine)
                     .accessibilityIdentifier("workshop.inventory")
                     if !game.cityServiceIsUnlocked(.workshop) {
-                        Text("通过第 16 关后开放。")
+                        Text("通过第 5 关后开放。")
                     } else if !game.workshopLedgerIsReadable {
                         Text("工坊记录读不出来，暂时不能使用。")
                     } else if !game.churchMistportFieldworkAvailable {

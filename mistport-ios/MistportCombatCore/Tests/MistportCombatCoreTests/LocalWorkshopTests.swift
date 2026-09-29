@@ -15,7 +15,7 @@ struct LocalWorkshopTests {
         var inventory: [String: Int] = [:]
         #expect(!ledger.learnedBasics && ledger.proficiency == 0)
         #expect(ledger.procurementCopper == 18 && ledger.order == .offered)
-        #expect(throws: MPCLocalWorkshopLedger.Failure.locked) { try ledger.learnBasics(completedMissions: [15]) }
+        #expect(throws: MPCLocalWorkshopLedger.Failure.locked) { try ledger.learnBasics(completedMissions: [4]) }
         #expect(throws: MPCLocalWorkshopLedger.Failure.locked) {
             try ledger.craft(id: "a", completedMissions: missions, coins: &coins, inventory: &inventory)
         }
@@ -69,7 +69,7 @@ struct LocalWorkshopTests {
         #expect(throws: MPCLocalWorkshopLedger.Failure.locked) {
             try ledger.claimTower(id: "missing", floor: 1, session: win, inventory: &inventory)
         }
-        try ledger.beginTower(id: "before16", floor: 1, completedMissions: [15])
+        try ledger.beginTower(id: "before5", floor: 1, completedMissions: [4])
         #expect(ledger.towerTickets.isEmpty)
         try ledger.beginTower(id: "a", floor: 1, completedMissions: missions)
         #expect(throws: MPCLocalWorkshopLedger.Failure.locked) {

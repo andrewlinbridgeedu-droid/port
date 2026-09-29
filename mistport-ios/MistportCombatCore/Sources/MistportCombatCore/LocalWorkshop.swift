@@ -19,7 +19,8 @@ public struct MPCLocalWorkshopLedger: Codable, Equatable, Sendable {
     private var applied: [String: String] = [:]
     public init() {}
 
-    public static func isUnlocked(completedMissions: Set<Int>) -> Bool { completedMissions.contains(16) }
+    /// Opens with the workshop (MPCCraftingCatalog.unlockMission, Q5 since 2026-09-29).
+    public static func isUnlocked(completedMissions: Set<Int>) -> Bool { MPCCraftingCatalog.isUnlocked(completedMissions: completedMissions) }
     public mutating func learnBasics(completedMissions: Set<Int>) throws {
         guard Self.isUnlocked(completedMissions: completedMissions) else { throw Failure.locked }
         learnedBasics = true

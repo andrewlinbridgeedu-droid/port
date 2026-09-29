@@ -3782,7 +3782,7 @@ extension GameStore {
         do {
             let locked = GameStore(launchArguments: [], defaults: storage)
             do { try locked.learnWorkshopBasics(); throw NSError(domain: "UnexpectedEarlyWorkshop", code: 1) }
-            catch MPCLocalWorkshopLedger.Failure.locked { checks.append("pre-Q16 recipe learning is rejected") }
+            catch MPCLocalWorkshopLedger.Failure.locked { checks.append("pre-Q5 recipe learning is rejected") }
             // Existing save with a cleared F1: migration must not backfill repeat loot.
             storage.set(["old-clock-16"], forKey: PersistenceKey.completedChapterMissionIDs)
             storage.set(71, forKey: PersistenceKey.venueCoins)
