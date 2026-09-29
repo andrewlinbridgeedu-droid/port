@@ -1,0 +1,567 @@
+{
+  "events": 216,
+  "projects": 448,
+  "currency_observations": 2916,
+  "presets": {
+    "recommended": {
+      "outcomes": {
+        "A": 0.9673746093749994,
+        "B": 0.03156097451156615,
+        "interim": 0.0010644161134338375
+      },
+      "mortality": {
+        "A": 0.20849968786703385,
+        "B": 0.03156097451156615,
+        "both": 0.0010644161134338375,
+        "neither": 0.7588749215079655
+      },
+      "project_net": [
+        1560.0,
+        1560.0
+      ],
+      "money365": [
+        {
+          "days": 365,
+          "interval": 1,
+          "q": 42157500.0,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 44337645.0,
+          "net": 44337645.0,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 3.7561224489795917,
+          "break_even_sink_per_active_day": 122.6,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 7,
+          "q": 10994695.29571875,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 13174840.295718752,
+          "net": 13174840.295718752,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 1.1161240836420185,
+          "break_even_sink_per_active_day": 44.98404805907535,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 14,
+          "q": 5575423.762642332,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 7755568.762642331,
+          "net": 7755568.762642331,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 0.6570233022968571,
+          "break_even_sink_per_active_day": 31.4864850875276,
+          "actual_sink_per_active_day": 12.17
+        }
+      ]
+    },
+    "recommended_minority": {
+      "outcomes": {
+        "A": 0.8458450292968749,
+        "B": 0.14912560456715004,
+        "interim": 0.005029366135974883
+      },
+      "mortality": {
+        "A": 0.18230623678062213,
+        "B": 0.14912560456715004,
+        "both": 0.005029366135974883,
+        "neither": 0.6635387925162527
+      },
+      "project_net": [
+        1560.0,
+        1560.0
+      ],
+      "money365": [
+        {
+          "days": 365,
+          "interval": 1,
+          "q": 42157500.0,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 44337645.0,
+          "net": 44337645.0,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 3.7561224489795917,
+          "break_even_sink_per_active_day": 122.6,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 7,
+          "q": 10994695.29571875,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 13174840.295718752,
+          "net": 13174840.295718752,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 1.1161240836420185,
+          "break_even_sink_per_active_day": 44.98404805907535,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 14,
+          "q": 5575423.762642332,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 7755568.762642331,
+          "net": 7755568.762642331,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 0.6570233022968571,
+          "break_even_sink_per_active_day": 31.4864850875276,
+          "actual_sink_per_active_day": 12.17
+        }
+      ]
+    },
+    "recommended_no_customers": {
+      "outcomes": {
+        "A": 0.9673746093749994,
+        "B": 0.03156097451156615,
+        "interim": 0.0010644161134338375
+      },
+      "mortality": {
+        "A": 0.20849968786703385,
+        "B": 0.03156097451156615,
+        "both": 0.0010644161134338375,
+        "neither": 0.7588749215079655
+      },
+      "project_net": [
+        -720,
+        -720
+      ],
+      "money365": [
+        {
+          "days": 365,
+          "interval": 1,
+          "q": 42157500.0,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 44337645.0,
+          "net": 44337645.0,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 3.7561224489795917,
+          "break_even_sink_per_active_day": 122.6,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 7,
+          "q": 10994695.29571875,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 13174840.295718752,
+          "net": 13174840.295718752,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 1.1161240836420185,
+          "break_even_sink_per_active_day": 44.98404805907535,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 14,
+          "q": 5575423.762642332,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 7755568.762642331,
+          "net": 7755568.762642331,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 0.6570233022968571,
+          "break_even_sink_per_active_day": 31.4864850875276,
+          "actual_sink_per_active_day": 12.17
+        }
+      ]
+    },
+    "baseline": {
+      "outcomes": {
+        "A": 0.9673746093749994,
+        "B": 0.03156097451156615,
+        "interim": 0.0010644161134338375
+      },
+      "mortality": {
+        "A": 0.20849968786703385,
+        "B": 0.03156097451156615,
+        "both": 0.0010644161134338375,
+        "neither": 0.7588749215079655
+      },
+      "project_net": [
+        2400.0,
+        2400.0
+      ],
+      "money365": [
+        {
+          "days": 365,
+          "interval": 1,
+          "q": 42157500.0,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 44337645.0,
+          "net": 44337645.0,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 3.7561224489795917,
+          "break_even_sink_per_active_day": 122.6,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 7,
+          "q": 10994695.29571875,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 13174840.295718752,
+          "net": 13174840.295718752,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 1.1161240836420185,
+          "break_even_sink_per_active_day": 44.98404805907535,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 14,
+          "q": 5575423.762642332,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 7755568.762642331,
+          "net": 7755568.762642331,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 0.6570233022968571,
+          "break_even_sink_per_active_day": 31.4864850875276,
+          "actual_sink_per_active_day": 12.17
+        }
+      ]
+    },
+    "minority_prepared": {
+      "outcomes": {
+        "A": 0.1727630068282439,
+        "B": 0.8080391946139521,
+        "interim": 0.019197798557803784
+      },
+      "mortality": {
+        "A": 0.055980179345383435,
+        "B": 0.49805756828750597,
+        "both": 0.005460980051056577,
+        "neither": 0.44050127231605385
+      },
+      "project_net": [
+        2400.0,
+        2400.0
+      ],
+      "money365": [
+        {
+          "days": 365,
+          "interval": 1,
+          "q": 42157500.0,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 44337645.0,
+          "net": 44337645.0,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 3.7561224489795917,
+          "break_even_sink_per_active_day": 122.6,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 7,
+          "q": 10994695.29571875,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 13174840.295718752,
+          "net": 13174840.295718752,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 1.1161240836420185,
+          "break_even_sink_per_active_day": 44.98404805907535,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 14,
+          "q": 5575423.762642332,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 7755568.762642331,
+          "net": 7755568.762642331,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 0.6570233022968571,
+          "break_even_sink_per_active_day": 31.4864850875276,
+          "actual_sink_per_active_day": 12.17
+        }
+      ]
+    },
+    "majority_shortage": {
+      "outcomes": {
+        "A": 0.0,
+        "B": 0.9999999999999997,
+        "interim": 0.0
+      },
+      "mortality": {
+        "A": 0.0,
+        "B": 0.21553148681640621,
+        "both": 0.0,
+        "neither": 0.7844685131835935
+      },
+      "project_net": [
+        -320,
+        2400.0
+      ],
+      "money365": [
+        {
+          "days": 365,
+          "interval": 1,
+          "q": 42157500.0,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 44337645.0,
+          "net": 44337645.0,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 3.7561224489795917,
+          "break_even_sink_per_active_day": 122.6,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 7,
+          "q": 10994695.29571875,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 13174840.295718752,
+          "net": 13174840.295718752,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 1.1161240836420185,
+          "break_even_sink_per_active_day": 44.98404805907535,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 14,
+          "q": 5575423.762642332,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 7755568.762642331,
+          "net": 7755568.762642331,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 0.6570233022968571,
+          "break_even_sink_per_active_day": 31.4864850875276,
+          "actual_sink_per_active_day": 12.17
+        }
+      ]
+    },
+    "no_customers": {
+      "outcomes": {
+        "A": 0.9673746093749994,
+        "B": 0.03156097451156615,
+        "interim": 0.0010644161134338375
+      },
+      "mortality": {
+        "A": 0.20849968786703385,
+        "B": 0.03156097451156615,
+        "both": 0.0010644161134338375,
+        "neither": 0.7588749215079655
+      },
+      "project_net": [
+        -600,
+        -600
+      ],
+      "money365": [
+        {
+          "days": 365,
+          "interval": 1,
+          "q": 42157500.0,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 44337645.0,
+          "net": 44337645.0,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 3.7561224489795917,
+          "break_even_sink_per_active_day": 122.6,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 7,
+          "q": 10994695.29571875,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 13174840.295718752,
+          "net": 13174840.295718752,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 1.1161240836420185,
+          "break_even_sink_per_active_day": 44.98404805907535,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 14,
+          "q": 5575423.762642332,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 7755568.762642331,
+          "net": 7755568.762642331,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 0.6570233022968571,
+          "break_even_sink_per_active_day": 31.4864850875276,
+          "actual_sink_per_active_day": 12.17
+        }
+      ]
+    },
+    "no_players": {
+      "outcomes": {
+        "A": 0.0,
+        "B": 0.0,
+        "interim": 1.0
+      },
+      "mortality": {
+        "A": 0.0,
+        "B": 0.0,
+        "both": 0.0,
+        "neither": 1.0
+      },
+      "project_net": [
+        2400.0,
+        2400.0
+      ],
+      "money365": [
+        {
+          "days": 365,
+          "interval": 1,
+          "q": 42157500.0,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 44337645.0,
+          "net": 44337645.0,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 3.7561224489795917,
+          "break_even_sink_per_active_day": 122.6,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 7,
+          "q": 10994695.29571875,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 13174840.295718752,
+          "net": 13174840.295718752,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 1.1161240836420185,
+          "break_even_sink_per_active_day": 44.98404805907535,
+          "actual_sink_per_active_day": 12.17
+        },
+        {
+          "days": 365,
+          "interval": 14,
+          "q": 5575423.762642332,
+          "base": 3854400.0,
+          "other": 3212000.0,
+          "newcomers": 0,
+          "sinks": 4886255.0,
+          "recurring_net": 7755568.762642331,
+          "net": 7755568.762642331,
+          "gross": 11804100.0,
+          "material_payments": 3372600.0,
+          "fees": 590205.0,
+          "pressure": 0.6570233022968571,
+          "break_even_sink_per_active_day": 31.4864850875276,
+          "actual_sink_per_active_day": 12.17
+        }
+      ]
+    }
+  }
+}

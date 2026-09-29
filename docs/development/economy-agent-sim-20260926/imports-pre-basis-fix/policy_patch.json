@@ -1,0 +1,99 @@
+{
+  "baseline_sha256": "819169ddf3b440e4c93bb62fa4f9a9af6cd13cb944ce4148d1b863eeb4dd4271",
+  "variant_sha256": "d8c6a90c8a60920091956a8e25a518db5c2190f82e3e23361acb4e118a676a38",
+  "replacements": [
+    [
+      "item=min([k for k in range(24,28) if k in available] or [24],key=lambda k:self.ref[k])\n                ceiling=math.ceil(30*wealth)\n                requests[item].append((i,a.need,ceiling))",
+      "ceiling=math.ceil(30*wealth)\n                for item in range(24,28):\n                    requests[item].append((i,a.need,ceiling))"
+    ],
+    [
+      "for item in sorted(keys):",
+      "for item in sorted(keys,key=lambda k:(1,self.ref[k],k) if k>=24 else (0,k,k)):"
+    ],
+    [
+      "for buyer,qty,ceiling in bids:\n                while qty",
+      "for buyer,qty,ceiling in bids:\n                if item>=24 and buyer<self.c.n:\n                    owner=self.p[buyer]\n                    qty=min(qty,max(0,owner.need-sum(owner.inv[24:28])))\n                while qty"
+    ],
+    [
+      "offers=[];want=sum(q for _,q,_ in bids)",
+      "offers=[]\n            want=sum(min(q,max(0,self.p[i].need-sum(self.p[i].inv[24:28]))) if item>=24 and i<self.c.n else q for i,q,_ in bids)"
+    ],
+    [
+      "if a.cash<1 or a.inv[item]>=8 or any(a.inv[k]<q for k,q in recipe.items()):continue",
+      "if a.cash<1 or a.inv[item]>=8 or any(a.inv[k]<q for k,q in recipe.items()):continue\n            opportunity_cost=1+sum((P0[k] if k>=8 else self.ref[k])*q for k,q in recipe.items())\n            self_use=(a.prof==3 and a.need>sum(a.inv[24:28])) or (a.prof==0 and a.gear[0]<t) or (a.prof==2 and a.gear[1]<t)\n            training=a.skill-STAGES[t]<30\n            if not training and not self_use and self.ref[item]*(1-self.c.fee_bps/10000)<opportunity_cost:continue"
+    ],
+    [
+      "    repeat_rate:float=.25",
+      "    expense_stress:bool=False\n    repeat_count:int=1\n    repeat_rate:float=.25"
+    ],
+    [
+      "    battles:int=0",
+      "    battles:int=0\n    advancement:set=field(default_factory=set)\n    advancement_wait:int=0"
+    ],
+    [
+      "                a.cash=int(self.r.lognormvariate",
+      "                a.advancement={17,20,23} # assumed already owned by initialized veterans\n                a.cash=int(self.r.lognormvariate"
+    ],
+    [
+      "                self.issue_to(a,SOURCE['q_repeat'][q],'q_repeat')",
+      "                self.issue_to(a,SOURCE['q_repeat'][q]*self.c.repeat_count,'q_repeat')"
+    ],
+    [
+      "            for j,b in enumerate(SOURCE['bounty']):",
+      "            if self.c.expense_stress:\n                for unlock,price in [(17, 260), (20, 340), (23, 480)]:\n                    if a.q>=unlock and unlock not in a.advancement:\n                        if a.cash>=price:\n                            self.retire(a,price,'advancement');a.advancement.add(unlock)\n                        else:a.advancement_wait+=1\n            for j,b in enumerate(SOURCE['bounty']):"
+    ],
+    [
+      "    repeat_count:int=1",
+      "    repeat_count:int=1\n    repeat_window:int=0"
+    ],
+    [
+      "    advancement_wait:int=0",
+      "    advancement_wait:int=0\n    last_repeat_block:int=-1"
+    ],
+    [
+      "                self.issue_to(a,SOURCE['q_repeat'][q]*self.c.repeat_count,'q_repeat')",
+      "                block=(self.day-1)//self.c.repeat_window if self.c.repeat_window else -1\n                if not self.c.repeat_window or a.last_repeat_block!=block:\n                    self.issue_to(a,SOURCE['q_repeat'][q]*self.c.repeat_count,'q_repeat')\n                    a.last_repeat_block=block"
+    ],
+    [
+      "    repeat_window:int=0",
+      "    repeat_window:int=0\n    import_cost:int=12\n    retail_margin:int=2\n    craft_fee:int=2\n    leather_batch:int=1"
+    ],
+    [
+      "    last_repeat_block:int=-1",
+      "    last_repeat_block:int=-1\n    unit_basis:list=field(default_factory=lambda:[0.]*16)\n    craft_sales_net:int=0\n    craft_sold_units:int=0\n    sold_opportunity_cost:float=0."
+    ],
+    [
+      "        self.c=c;self.r=random.Random(seed);self.seed=seed;self.trace=trace",
+      "        self.c=c;self.r=random.Random(seed);self.seed=seed;self.trace=trace\n        P0[8:12]=[c.import_cost+c.retail_margin]*4"
+    ],
+    [
+      "            b.cash+=gross-fee;b.inv[item]-=qty;b.sales+=gross-fee",
+      "            b.cash+=gross-fee;b.inv[item]-=qty;b.sales+=gross-fee\n            if item>=12:\n                b.craft_sales_net+=gross-fee;b.craft_sold_units+=qty\n                b.sold_opportunity_cost+=qty*b.unit_basis[item-12]"
+    ],
+    [
+      "enumerate(zip((24,18,15,70),(5,7,9,4)))",
+      "enumerate(zip((24,18,15,70),(self.c.import_cost,)*4))"
+    ],
+    [
+      "self.npc[0]-=qty*cost;self.npc[1]+=qty*cost",
+      "self.npc[0]-=qty*cost;self.sinks['external_import']+=qty*cost"
+    ],
+    [
+      "            if a.cash<1 or a.inv[item]>=8 or any(a.inv[k]<q for k,q in recipe.items()):continue",
+      "            output=self.c.leather_batch if a.prof==1 else 1\n            if a.cash<self.c.craft_fee or a.inv[item]+output>8 or any(a.inv[k]<q for k,q in recipe.items()):continue"
+    ],
+    [
+      "            opportunity_cost=1+sum(",
+      "            opportunity_cost=self.c.craft_fee+sum("
+    ],
+    [
+      "self.ref[item]*(1-self.c.fee_bps/10000)<opportunity_cost",
+      "output*self.ref[item]*(1-self.c.fee_bps/10000)<opportunity_cost"
+    ],
+    [
+      "            a.inv[item]+=1;self.created[item]+=1;a.crafts+=1;self.retire(a,1,'craft')",
+      "            a.unit_basis[item-12]=(a.inv[item]*a.unit_basis[item-12]+opportunity_cost)/(a.inv[item]+output)\n            a.inv[item]+=output;self.created[item]+=output;a.crafts+=1;self.retire(a,self.c.craft_fee,'craft')"
+    ]
+  ],
+  "note": "Import cash leaves server when finite merchant purchases actual stock, retail = import cost + 2 retained merchant margin. Existing initial stock remains opening stock, not charged again. Craft fee 2 replaces 1. Leather batch output 1 or 6, shelf cap 8, proficiency once per batch. Realized product contribution uses production-time raw quote opportunity cost plus retail bases and craft fee, weighted-average unit basis; excludes training/recipe fees and unsold write-downs. No actual gameplay timing, newcomers or other repeat cash."
+}

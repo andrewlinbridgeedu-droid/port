@@ -17,6 +17,7 @@ struct GameSettingsView: View {
     @AppStorage(GameSettingsKeys.musicVolume, store: .standard) private var musicVolume = 0.7
     @AppStorage(GameSettingsKeys.interfaceSoundVolume, store: .standard) private var soundVolume = 0.6
     @AppStorage(GameSettingsKeys.combatSoundVolume, store: .standard) private var combatSoundVolume = 0.6
+    @AppStorage(CityAmbience.volumeKey, store: .standard) private var ambienceVolume = 0.6
     @AppStorage(GameSettingsKeys.reduceMotion, store: .standard) private var reduceMotion = false
     @AppStorage(GameSettingsKeys.hapticsEnabled, store: .standard) private var hapticsEnabled = true
     @State private var nameDraft = ""
@@ -47,7 +48,8 @@ struct GameSettingsView: View {
                     volumeRow("界面音效", value: $soundVolume)
                     Button("试听界面音效") { GameInterfaceSound.shared.playClick() }
                     volumeRow("战斗法术音效", value: $combatSoundVolume)
-                    Text("界面按钮与战斗法术分别调节；战斗音效调至 0 即静音。")
+                    volumeRow("港城环境音", value: $ambienceVolume)
+                    Text("界面按钮、战斗法术与主页的海浪、风雨、鸟叫分别调节；调至 0 即静音。")
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 Section("效果") {
@@ -83,6 +85,9 @@ struct GameSettingsView: View {
             }
             .onChange(of: musicVolume) { _, volume in
                 HomeMusicController.shared.setVolume(volume)
+            }
+            .onChange(of: ambienceVolume) { _, volume in
+                CityAmbience.shared.setVolume(volume)
             }
         }
         .preferredColorScheme(.dark)

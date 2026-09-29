@@ -397,6 +397,8 @@ public enum MPCChapterOneCatalog {
     ]
 
     public static let items: [MPCItemContent] = [
+        item(MPCLocalWorkshopLedger.hideID, "盾颚韧皮", .material, .common, "工坊开放后，从教会塔第1层的新胜利中取得。1份韧皮可加工3条维修绑带。", Int.max, false, .investigationOne),
+        item(MPCLocalWorkshopLedger.strapID, "维修绑带", .material, .common, "皮革工坊制品。检修单只采购2条，交货后安装才消耗；剩余成品可以保存。", Int.max, false, .investigationOne),
         item("chapter30_e02", "寻人退件索引", .keyItem, .story, "绑定调查物证。用于核验认领、签发与押运记录；不可装备、消耗或出售。", 1, false, .investigationOne),
         item("chapter30_e03", "具名项圈拓印", .keyItem, .story, "绑定调查物证。用于核验认领、签发与押运记录；不可装备、消耗或出售。", 1, false, .investigationOne),
         item("chapter30_e05", "召回节律手记", .keyItem, .story, "绑定调查物证。用于核验认领、签发与押运记录；不可装备、消耗或出售。", 1, false, .investigationOne),

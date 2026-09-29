@@ -104,7 +104,18 @@ public struct FoolCombatConfiguration: Decodable, Sendable {
 
 public enum FoolCombatConfigurationLoader {
     public static func bundled() throws -> FoolCombatConfiguration {
-        guard let url = Bundle.module.url(
+        // SwiftPM CLI bundles sit beside the executable; signed macOS apps
+        // place the same bundle under Contents/Resources. Preserve the normal
+        // package/iOS lookup when no app resource bundle is present.
+        #if os(macOS)
+        let appBundle = Bundle.main.resourceURL
+            .map { $0.appendingPathComponent("MistportCombatCore_MistportCombatCore.bundle") }
+            .flatMap { Bundle(url: $0) }
+        let resources = appBundle ?? Bundle.module
+        #else
+        let resources = Bundle.module
+        #endif
+        guard let url = resources.url(
             forResource: "fool_combat_config.v1.1",
             withExtension: "json"
         ) else {

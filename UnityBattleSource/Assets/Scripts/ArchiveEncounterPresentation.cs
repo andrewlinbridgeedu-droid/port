@@ -27,41 +27,66 @@ public sealed class ArchiveEncounterPresentation : MonoBehaviour
         line.widthCurve=new AnimationCurve(new Keyframe(0,.08f),new Keyframe(.22f,1),new Keyframe(.75f,.75f),new Keyframe(1,.05f));
         return line;
     }
-    static Mesh BuildOpenAegis(){
-        // Protection is an overlapping, asymmetric cuirass of broad curled fins.
-        // No four-corner silhouette or complete engraved ring survives as a border.
-        var mesh=new Mesh{name="Archive asymmetric layered cuirass folds"};
-        var vertices=new List<Vector3>();var uv=new List<Vector2>();var colors=new List<Color>();var triangles=new List<int>();
-        for(int lobe=0;lobe<3;lobe++)for(int j=0;j<36;j++)for(int cross=0;cross<10;cross++){
-            int n=vertices.Count;
-            for(int corner=0;corner<4;corner++){
-                float u=(j+(corner==1||corner==2?1:0))/36f;
-                float v=(cross+(corner>=2?1:0))/10f,x=v*2-1;
-                float taper=Mathf.Pow(Mathf.Max(0,Mathf.Sin(u*Mathf.PI)),.52f);
-                float width=(lobe==0?.34f:lobe==1?.29f:.24f)*taper*(.84f+.12f*Mathf.Sin(u*8.8f+lobe)+.08f*Mathf.Sin(u*19.3f-lobe));
-                Vector3 a=lobe==0?new Vector3(-.40f,-.27f,.02f):lobe==1?new Vector3(.39f,.23f,.18f):new Vector3(-.16f,-.48f,.26f);
-                Vector3 d=lobe==0?new Vector3(-.05f,.52f,.01f):lobe==1?new Vector3(.06f,-.39f,.16f):new Vector3(.47f,-.09f,.21f);
-                Vector3 side=lobe==0?new Vector3(.90f,-.28f,0):lobe==1?new Vector3(.93f,.36f,0):new Vector3(-.41f,.89f,0);
-                Vector3 bow=lobe==0?new Vector3(-.11f,.04f,.11f):lobe==1?new Vector3(.10f,.02f,.13f):new Vector3(.05f,-.09f,.10f);
-                Vector3 center=Vector3.Lerp(a,d,u)+bow*Mathf.Sin(u*Mathf.PI);
-                float uneven=x*width*(1+.14f*x*Mathf.Sin(u*10+lobe));
-                float curled=(.065f+width*.27f)*Mathf.Sin(v*Mathf.PI)+width*x*Mathf.Sin(u*5.5f+lobe)*.38f;
-                vertices.Add(center+side*uneven+Vector3.forward*curled);
-                uv.Add(new Vector2(v,u));colors.Add(new Color(.88f+lobe*.04f,.95f,1,.88f));
+    static Mesh BuildSealedPlates(){
+        // Sealed ward: two uneven columns of light feathers shingled top to
+        // bottom beside the wearer, outer ends wrapping back round the body.
+        // Rounded inner ends, pointed outer tips, varied lengths and droop;
+        // no ring, fan of equal ribs or lung-like smooth lobes.
+        var mesh=new Mesh{name="Archive sealed plate armour"};
+        var vertices=new List<Vector3>();var uv=new List<Vector2>();var centres=new List<Vector3>();var colors=new List<Color>();var triangles=new List<int>();
+        const int along=16,across=8;
+        // Per plate (top -> bottom): root height, length, droop in degrees.
+        // Spacing, length and angle are deliberately uneven on each side.
+        var sides=new[]{
+            (side:-1f,heights:new[]{.31f,.21f,.075f,-.015f,-.16f},lengths:new[]{.52f,.43f,.48f,.33f,.30f},droops:new[]{-24f,-9f,2f,19f,27f},width:.085f),
+            (side:1f,heights:new[]{.24f,.085f,-.005f,-.15f},lengths:new[]{.42f,.49f,.35f,.28f},droops:new[]{-17f,-4f,14f,31f},width:.08f)};
+        int plate=0;
+        foreach(var col in sides)for(int k=col.lengths.Length-1;k>=0;k--){
+            // Lower plates first so each upper plate overlaps the one below it.
+            float angle=col.droops[k]*Mathf.Deg2Rad;
+            var axis=new Vector3(col.side*Mathf.Cos(angle),-Mathf.Sin(angle),0);
+            var perp=new Vector3(-axis.y,axis.x,0)*col.side;
+            var root=new Vector3(col.side*(.13f+.012f*k),col.heights[k],-.015f*(col.lengths.Length-k));
+            float L=col.lengths[k],W=col.width*(1-.04f*k)*(k%2==0?1.06f:.94f);
+            Vector3 Pos(float u,float x){
+                float cap=Mathf.Sqrt(Mathf.Max(0f,1-Mathf.Pow(1-Mathf.Min(1f,u/.13f),2)));
+                float tip=u>.45f?Mathf.Pow(Mathf.Max(0f,(1-u)/.55f),.85f):1f;
+                float w=W*(.92f+.08f*Mathf.Sin(Mathf.PI*u))*Mathf.Min(cap,tip);
+                return root+axis*(L*u)+perp*(x*w)
+                    +Vector3.forward*(.11f*u*u-.022f*(1-Mathf.Abs(x)))   // wrap back round the body; a forged ridge, not a cushion
+                    +perp*(.07f*u*u);                                   // tips sweep up like blade feathers
             }
-            triangles.Add(n);triangles.Add(n+1);triangles.Add(n+2);triangles.Add(n);triangles.Add(n+2);triangles.Add(n+3);
+            var centre=Pos(.5f,0);
+            float delay=.06f*(col.lengths.Length-1-k)+(col.side>0?.05f:0f);
+            int first=vertices.Count;
+            for(int j=0;j<=along;j++)for(int i=0;i<=across;i++){
+                float u=j/(float)along,v=i/(float)across;
+                vertices.Add(Pos(u,v*2-1));uv.Add(new Vector2(v,u));centres.Add(centre);
+                colors.Add(new Color(plate/37f,delay,0,1));
+            }
+            for(int j=0;j<along;j++)for(int i=0;i<across;i++){
+                int a=first+j*(across+1)+i,b=a+1,c=a+across+1,d=c+1;
+                triangles.Add(a);triangles.Add(c);triangles.Add(b);triangles.Add(b);triangles.Add(c);triangles.Add(d);
+            }
+            plate++;
         }
-        mesh.SetVertices(vertices);mesh.SetUVs(0,uv);mesh.SetColors(colors);mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
+        mesh.SetVertices(vertices);mesh.SetUVs(0,uv);mesh.SetUVs(1,centres);mesh.SetColors(colors);mesh.SetTriangles(triangles,0);
+        mesh.RecalculateNormals();mesh.RecalculateBounds();
+        // Plates slide in from behind the spine in the vertex shader.
+        mesh.bounds=new Bounds(mesh.bounds.center,mesh.bounds.size+Vector3.one*.4f);
+        return mesh;
     }
     public void SetArchive(Transform target,string value) {
         Clear(); if(value=="clear" || !target)return; actor=target; phase=value; began=Time.time;
         if(value=="guard") {
-            var go=new GameObject("Archive layered open cuirass ward");go.transform.SetParent(transform,false);objects.Add(go);shield=go.transform;
-            shieldMesh=BuildOpenAegis();
+            var go=new GameObject("Archive sealed plate armour");go.transform.SetParent(transform,false);objects.Add(go);shield=go.transform;
+            shieldMesh=BuildSealedPlates();
             shieldMesh.RecalculateBounds();go.AddComponent<MeshFilter>().sharedMesh=shieldMesh;
             shieldMaterial=new Material(Resources.Load<Shader>("EnemySignature/ArchiveAegis"));materials.Add(shieldMaterial);
-            shieldMaterial.mainTexture=Resources.Load<Texture2D>("EnemySignature/ArchiveAegisV2");
-            go.AddComponent<MeshRenderer>().sharedMaterial=shieldMaterial;
+            shieldMaterial.SetFloat("_Open",0);
+            shieldMaterial.SetTexture("_Matter",Resources.Load<Texture2D>("SpellSpectacle20260926/SpectacleMatter"));
+            var shieldRenderer=go.AddComponent<MeshRenderer>();shieldRenderer.sharedMaterial=shieldMaterial;
+            shieldRenderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;shieldRenderer.receiveShadows=false;
             // The first rendered frame can precede Update; place the fold at
             // its owner immediately so it never flashes at the scene origin.
             var camera=Camera.main;
@@ -70,7 +95,7 @@ public sealed class ArchiveEncounterPresentation : MonoBehaviour
             towardViewer.y=0;
             shield.position=center+towardViewer.normalized*1.25f;
             if(camera)shield.rotation=camera.transform.rotation;
-            shield.localScale=Vector3.one*2.32f;
+            shield.localScale=Vector3.one*3.45f;
             return;
         }
         // Open phase is a local etched heart, not three naked gold wires.
@@ -99,17 +124,17 @@ public sealed class ArchiveEncounterPresentation : MonoBehaviour
             Vector3 towardViewer=camera?camera.transform.position-center:Vector3.back;
             towardViewer.y=0;
             shield.position=center+towardViewer.normalized*1.25f;
-            if(camera)shield.rotation=camera.transform.rotation*Quaternion.Euler(Mathf.Sin(t*.8f)*6,Mathf.Sin(t*1.1f)*9,Mathf.Sin(t*.6f)*7);
+            // Heavy armour: only a slow, small sway.
+            if(camera)shield.rotation=camera.transform.rotation*Quaternion.Euler(Mathf.Sin(t*.8f)*2.5f,Mathf.Sin(t*1.1f)*4f,Mathf.Sin(t*.6f)*2f);
             shieldMaterial.SetFloat("_ShimmerTime",t);
-            // The defensive folds gather close, snap open, then settle around
-            // the wearer. This is presentation only; the native guard timing
-            // and damage contract are untouched.
-            float open=Mathf.SmoothStep(0,1,Mathf.Clamp01(t/.17f));
-            float settle=Mathf.SmoothStep(0,1,Mathf.Clamp01((t-.17f)/.25f));
-            float size=Mathf.Lerp(Mathf.Lerp(2.32f,5.10f,open),3.70f,settle);
-            float deploy=Mathf.Exp(-Mathf.Pow((t-.17f)/.17f,2));
+            // Plates slide out from behind the wearer one after another, then
+            // lock with a short flash and a small kick. Presentation only; the
+            // native guard timing and damage contract are untouched.
+            float open=Mathf.Clamp01(t/.34f);
+            float deploy=Mathf.Exp(-Mathf.Pow((t-.36f)/.09f,2));
+            shieldMaterial.SetFloat("_Open",open);
             shieldMaterial.SetFloat("_DeployPulse",deploy);
-            shield.localScale=Vector3.one*(size+Mathf.Sin(t*1.7f)*.035f);
+            shield.localScale=Vector3.one*3.45f*(1+.05f*deploy);
         }
         if(swelling)swelling.localScale=restingScale*(phase=="leech" ? 1+.075f*Mathf.Clamp01(t/2) : 1);
         if(phase=="restrained"&&t>1.1f){Clear();return;}

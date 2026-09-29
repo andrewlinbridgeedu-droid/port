@@ -1,0 +1,27 @@
+{
+  "checks" : [
+    "pre-Q16 recipe learning is rejected",
+    "old save: unlock preserved, no fixture money or retroactive hide",
+    "repeat victory: one hide, no duplicate old first-clear cash",
+    "craft charges real balance and increments skill once",
+    "interrupted journal restores matching money, inventory and skill",
+    "same craft receipt after restart is not charged twice",
+    "finite sale transfers 18 once and keeps unsold item",
+    "exhausted order refuses another sale",
+    "installation and leftover survive reload without second payment",
+    "unrelated supplies and story evidence preserved",
+    "finite startup allocation, transfer and external payment reconcile",
+    "retired battle ticket cannot later grant hide",
+    "old service receipt without inventory preserves current bag",
+    "Q30 departure blocks local workshop actions without clearing progress",
+    "unreadable service ledger disables workshop without overwriting bytes",
+    "corrupt bytes retained",
+    "first-clear copper and merit plus new material settle once together across reload"
+  ],
+  "coins" : 76,
+  "passed" : true,
+  "playerDefaultsTouched" : false,
+  "proficiency" : 1,
+  "scope" : "Production Swift GameStore and SwiftUI render; no Unity or device play acceptance",
+  "straps" : 1
+}

@@ -40,7 +40,7 @@ struct MasqueradeTests {
         try session.endRound(actingEnemyID: id)
         #expect(session.playerHP == hp)
         try session.endRound(actingEnemyID: id)
-        #expect(session.playerHP == hp - 260)
+        #expect(session.playerHP == hp - MPCProgressionWalls.q3BreathDamage)
     }
     @Test func recastingRefreshesInsteadOfStacking() throws {
         var session = try MPCChapterOneEncounterSession.start(

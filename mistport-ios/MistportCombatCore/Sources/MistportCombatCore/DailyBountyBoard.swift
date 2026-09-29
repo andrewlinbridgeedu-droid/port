@@ -33,6 +33,11 @@ public struct MPCDailyBountyIssue: Codable, Equatable, Sendable {
         self.dayOrdinal = dayOrdinal
         self.offerIDs = offerIDs
     }
+    /// Adds a case the day must carry (MPCProgressionWalls.guaranteedCase); the day is not rerolled.
+    public func guaranteeing(_ caseID: String?) -> MPCDailyBountyIssue {
+        guard let caseID, !offerIDs.contains(caseID) else { return self }
+        return .init(dayOrdinal: dayOrdinal, offerIDs: offerIDs + [caseID])
+    }
 }
 
 /// A local, deterministic issue: reopening the board cannot reroll the day.

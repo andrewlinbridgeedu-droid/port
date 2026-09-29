@@ -1,0 +1,10 @@
+{
+  "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/WorldCampaignPrototype.swift": "bd441dca10c0a0d03fb89a9ac8047f876f0bbf7cc89348aa5420da0f0cbe08de",
+  "mistport-ios/MistportCombatCore/Tests/MistportCombatCoreTests/WorldCampaignPrototypeTests.swift": "27c16b42f9809b08a153fa98e4986c0d93fecba1d70b1d5ac6f6147d52dcad3f",
+  "mistport-ios/MistportCombatCore/Tests/MistportCombatCoreTests/CampaignCombatProbeTests.swift": "6a2f3f9bad70e7bda6635660f309ea2c3fa76f567d45dfa48414b00920e781c3",
+  "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChapterOneEncounterRuntime.swift": "113a0d48a8d541f5b519a67a787919bb8b6354c0989fc37188ce2cb6fbf539e1",
+  "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChurchOwnedRelicLedger.swift": "1abbf03764c3707277d2efac458f89900befa338275c344f91074607f404cc47",
+  "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChurchGear.swift": "6ab88a2d4b5535595a830e526f19a4389d4e854cdfb01adcb3bc3537247722c0",
+  "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChurchBounties.swift": "75bd200fa32ef2fa5f5f89f82ec89ba71aca2837bfc1b6c3a3d90fe59b57e9ef",
+  "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChurchTower.swift": "fb688f65f1f2df8e754d405c9e9f305808b064be833e230cc5c54a898215dd39"
+}

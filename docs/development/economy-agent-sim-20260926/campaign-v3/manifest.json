@@ -1,0 +1,169 @@
+{
+  "configs": [
+    {
+      "name": "w0_control",
+      "n": 2000,
+      "days": 365,
+      "cash_window": 0,
+      "war": false,
+      "preparation": 7,
+      "procurement_mint": false,
+      "faction_share": 0.5,
+      "participation": 0.35,
+      "win_chance": 0.45,
+      "craft_chance": 0.45,
+      "campaign_starts": [
+        120,
+        240
+      ]
+    },
+    {
+      "name": "w0_war_prep7",
+      "n": 2000,
+      "days": 365,
+      "cash_window": 0,
+      "war": true,
+      "preparation": 7,
+      "procurement_mint": false,
+      "faction_share": 0.5,
+      "participation": 0.35,
+      "win_chance": 0.45,
+      "craft_chance": 0.45,
+      "campaign_starts": [
+        120,
+        240
+      ]
+    },
+    {
+      "name": "w7_control",
+      "n": 2000,
+      "days": 365,
+      "cash_window": 7,
+      "war": false,
+      "preparation": 7,
+      "procurement_mint": false,
+      "faction_share": 0.5,
+      "participation": 0.35,
+      "win_chance": 0.45,
+      "craft_chance": 0.45,
+      "campaign_starts": [
+        120,
+        240
+      ]
+    },
+    {
+      "name": "w7_war_prep7",
+      "n": 2000,
+      "days": 365,
+      "cash_window": 7,
+      "war": true,
+      "preparation": 7,
+      "procurement_mint": false,
+      "faction_share": 0.5,
+      "participation": 0.35,
+      "win_chance": 0.45,
+      "craft_chance": 0.45,
+      "campaign_starts": [
+        120,
+        240
+      ]
+    },
+    {
+      "name": "w14_control",
+      "n": 2000,
+      "days": 365,
+      "cash_window": 14,
+      "war": false,
+      "preparation": 7,
+      "procurement_mint": false,
+      "faction_share": 0.5,
+      "participation": 0.35,
+      "win_chance": 0.45,
+      "craft_chance": 0.45,
+      "campaign_starts": [
+        120,
+        240
+      ]
+    },
+    {
+      "name": "w14_war_prep7",
+      "n": 2000,
+      "days": 365,
+      "cash_window": 14,
+      "war": true,
+      "preparation": 7,
+      "procurement_mint": false,
+      "faction_share": 0.5,
+      "participation": 0.35,
+      "win_chance": 0.45,
+      "craft_chance": 0.45,
+      "campaign_starts": [
+        120,
+        240
+      ]
+    },
+    {
+      "name": "w14_war_mint",
+      "n": 2000,
+      "days": 365,
+      "cash_window": 14,
+      "war": true,
+      "preparation": 7,
+      "procurement_mint": true,
+      "faction_share": 0.5,
+      "participation": 0.35,
+      "win_chance": 0.45,
+      "craft_chance": 0.45,
+      "campaign_starts": [
+        120,
+        240
+      ]
+    },
+    {
+      "name": "w14_war_no_prep",
+      "n": 2000,
+      "days": 365,
+      "cash_window": 14,
+      "war": true,
+      "preparation": 0,
+      "procurement_mint": false,
+      "faction_share": 0.5,
+      "participation": 0.35,
+      "win_chance": 0.45,
+      "craft_chance": 0.45,
+      "campaign_starts": [
+        120,
+        240
+      ]
+    },
+    {
+      "name": "w14_war_70_30",
+      "n": 2000,
+      "days": 365,
+      "cash_window": 14,
+      "war": true,
+      "preparation": 7,
+      "procurement_mint": false,
+      "faction_share": 0.7,
+      "participation": 0.35,
+      "win_chance": 0.45,
+      "craft_chance": 0.45,
+      "campaign_starts": [
+        120,
+        240
+      ]
+    }
+  ],
+  "seeds": [
+    101,
+    211,
+    307
+  ],
+  "source_hashes": {
+    "campaign_model.py": "1198aee50b1a7954fb484b24285b0ff88e2198023324af0c8aa2cac59ee53311",
+    "salve_policy.py": "bccb54bcc91ef5ce715881ad6ceba03bd9964b4e33d5b8d041af0854039246b4",
+    "source_inputs.json": "b8f7b6fbd46aa3742d6e6dce15c84ca542d63836fdb0ed7f46bc7cec23353093",
+    "run_campaign.py": "00f7118d1481849cfc6a3cd0a7ee79d38b4573003a4a5a1ab59a3d50f59b9af0"
+  },
+  "note": "27 new mature-only fixed-price feasibility runs; not CPI, full narrative or investment return validation."
+}

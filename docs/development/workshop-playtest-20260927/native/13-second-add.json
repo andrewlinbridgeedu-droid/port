@@ -1,0 +1,378 @@
+{
+  "nodes": [
+    {
+      "depth": 0,
+      "i": 0,
+      "role": "AXApplication",
+      "title": "雾港工坊试玩"
+    },
+    {
+      "depth": 1,
+      "i": 1,
+      "identifier": "campaign-sandbox",
+      "role": "AXWindow",
+      "title": "雾港 · 世界事件演练"
+    },
+    {
+      "depth": 2,
+      "i": 2,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 3,
+      "enabled": "1",
+      "i": 3,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 4,
+      "role": "AXStaticText",
+      "value": "我的这次参与"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 5,
+      "role": "AXStaticText",
+      "value": "泵站联合会"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 6,
+      "role": "AXStaticText",
+      "value": "53 铜"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 7,
+      "role": "AXStaticText",
+      "value": "韧皮 0 · 绑带 1 · 药品 0"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 8,
+      "role": "AXStaticText",
+      "value": "皮革熟练度 1 / 20"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 9,
+      "role": "AXStaticText",
+      "value": "取材 → 制作 → 有预算交货 → 安装 → 公共行动 → 结果"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 10,
+      "role": "AXProgressIndicator",
+      "value": "1"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 11,
+      "role": "AXStaticText",
+      "value": "本方工程 12/12 · 我的贡献 0点"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 12,
+      "role": "AXStaticText",
+      "value": "项目仅再收0条绑带，每条9铜。卖不出的成品仍属于你。"
+    },
+    {
+      "depth": 4,
+      "description": "导出本次试玩回执",
+      "enabled": "1",
+      "i": 13,
+      "role": "AXButton"
+    },
+    {
+      "depth": 4,
+      "description": "从头体验另一条路线",
+      "enabled": "1",
+      "i": 14,
+      "role": "AXButton"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 15,
+      "role": "AXStaticText",
+      "value": "第二章资格与30层装备为隔离快照；本方此前3名玩家5点、对方4名玩家4点及11套工程为预置。非联网，非正式存档。"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 16,
+      "role": "AXStaticText",
+      "value": "钱账守恒：通过"
+    },
+    {
+      "depth": 4,
+      "i": 17,
+      "role": "AXScrollArea"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 18,
+      "role": "AXStaticText",
+      "value": "雾港公报 / 第三夜熄灯"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 19,
+      "role": "AXStaticText",
+      "value": "谁让雾港重新亮灯"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 20,
+      "role": "AXStaticText",
+      "value": "诊所依靠备用灯，工坊取消了夜班。两派争夺有限的供能经营权。你不需要投资，也能让一处工程继续向前。"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 21,
+      "role": "AXStaticText",
+      "value": "回流阵 · 普通"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 22,
+      "role": "AXStaticText",
+      "value": "33.4 / 180秒"
+    },
+    {
+      "depth": 5,
+      "description": "继续",
+      "enabled": "1",
+      "i": 23,
+      "role": "AXButton"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 24,
+      "role": "AXStaticText",
+      "value": "主角生命 1,015 / 1,330 · 护盾15"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 25,
+      "role": "AXProgressIndicator",
+      "value": "0.7631578947368421"
+    },
+    {
+      "depth": 5,
+      "description": "回流阵核心, 2,200 / 2,200, 点击切换",
+      "enabled": "0",
+      "i": 26,
+      "role": "AXProgressIndicator",
+      "value": "1"
+    },
+    {
+      "depth": 5,
+      "description": "回流支援者, 0 / 500, 已击破",
+      "enabled": "0",
+      "i": 27,
+      "role": "AXProgressIndicator",
+      "value": "0"
+    },
+    {
+      "depth": 5,
+      "description": "回流支援者, 0 / 500, 已击破",
+      "enabled": "0",
+      "i": 28,
+      "role": "AXProgressIndicator",
+      "value": "0"
+    },
+    {
+      "depth": 5,
+      "description": "伪证烙印 [1], 技能就绪",
+      "enabled": "0",
+      "i": 29,
+      "role": "AXButton"
+    },
+    {
+      "depth": 5,
+      "description": "身份错置 [2], 冷却 3.9秒",
+      "enabled": "0",
+      "i": 30,
+      "role": "AXButton"
+    },
+    {
+      "depth": 5,
+      "description": "错影追猎 [3], 冷却 4.4秒",
+      "enabled": "0",
+      "i": 31,
+      "role": "AXButton"
+    },
+    {
+      "depth": 5,
+      "description": "荒谬归结 [4], 技能就绪",
+      "enabled": "0",
+      "i": 32,
+      "role": "AXButton"
+    },
+    {
+      "depth": 5,
+      "description": "普攻 [5], 普攻就绪",
+      "enabled": "0",
+      "i": 33,
+      "role": "AXButton"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 34,
+      "role": "AXStaticText",
+      "value": "已暂停；继续后可以行动。"
+    },
+    {
+      "depth": 5,
+      "description": "止痛膏 [M] ×0",
+      "enabled": "0",
+      "i": 35,
+      "role": "AXButton"
+    },
+    {
+      "depth": 5,
+      "description": "发动僭命勋章",
+      "enabled": "0",
+      "i": 36,
+      "role": "AXButton"
+    },
+    {
+      "depth": 5,
+      "description": "撤退并结算本次消耗",
+      "enabled": "1",
+      "i": 37,
+      "role": "AXButton"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 38,
+      "role": "AXStaticText",
+      "value": "每次动作有接触时间与公共间隔；暂停不走时钟。击杀后等待尚未落下的既定攻击结算。"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 39,
+      "role": "AXStaticText",
+      "value": "选择目标后使用技能。1–4为技能，5为普攻，M用药。"
+    },
+    {
+      "depth": 5,
+      "description": "钱物回执 · 每笔都能对上",
+      "enabled": "1",
+      "i": 40,
+      "role": "AXDisclosureTriangle",
+      "value": "0"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 41,
+      "role": "AXStaticText",
+      "value": "隔离内容试玩：使用Swift正式战斗规则；材料/配方/项目为首测候选，Unity演出与共享服务器尚未接入。"
+    },
+    {
+      "depth": 2,
+      "i": 42,
+      "role": "AXToolbar"
+    },
+    {
+      "depth": 3,
+      "i": 43,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 44,
+      "role": "AXRadioGroup",
+      "value": "<AXUIElement 0x951018360> {pid=57500}"
+    },
+    {
+      "depth": 5,
+      "description": "事件试玩",
+      "enabled": "1",
+      "i": 45,
+      "role": "AXRadioButton",
+      "value": "1"
+    },
+    {
+      "depth": 5,
+      "description": "机制对照（开发）",
+      "enabled": "1",
+      "i": 46,
+      "role": "AXRadioButton",
+      "value": "0"
+    },
+    {
+      "depth": 2,
+      "enabled": "1",
+      "i": 47,
+      "role": "AXButton"
+    },
+    {
+      "depth": 2,
+      "enabled": "1",
+      "i": 48,
+      "role": "AXButton"
+    },
+    {
+      "depth": 3,
+      "i": 49,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 4,
+      "i": 50,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 2,
+      "enabled": "1",
+      "i": 51,
+      "role": "AXButton"
+    }
+  ],
+  "pid": 57500,
+  "windows": [
+    {
+      "kCGWindowAlpha": 1,
+      "kCGWindowBounds": {
+        "Height": 170,
+        "Width": 131,
+        "X": 16,
+        "Y": 658
+      },
+      "kCGWindowIsOnscreen": true,
+      "kCGWindowLayer": 0,
+      "kCGWindowMemoryUsage": 2368,
+      "kCGWindowName": "雾港 · 世界事件演练",
+      "kCGWindowNumber": 17449,
+      "kCGWindowOwnerName": "雾港工坊试玩",
+      "kCGWindowOwnerPID": 57500,
+      "kCGWindowSharingState": 1,
+      "kCGWindowStoreType": 1
+    }
+  ]
+}

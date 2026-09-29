@@ -28,7 +28,9 @@ struct PuppetCalibrationTests {
         #expect(session.playerShield == 0)
         #expect(session.playerHP == hpBeforeCalibration)
         #expect(session.enemies[0].currentIntent == "slam")
-        #expect(try session.useBasicAction(.damage, targetID: puppet.id) == 60)
+        // The Q12 wall: the fortify left a stack that outlasts the +50% defense.
+        #expect(session.q12FortifyStacks[puppet.id] == 1)
+        #expect(try session.useBasicAction(.damage, targetID: puppet.id) == 60 * (100 - MPCProgressionWalls.q12FortifyStackPercent) / 100)
         try session.endRound(actingEnemyID: puppet.id)
         #expect(session.playerHP == hpBeforeCalibration - puppet.attack * 2)
         #expect(session.enemies[0].currentIntent == "fortify")

@@ -13,3 +13,17 @@ Build126 的 Q6 真机片确认 M12 已不再是四角盾框，但蓝面近乎�
 Unity iOS设备导出已完成，导出manifest的951项当前来源文件逐一SHA256相同，见[导出核对](../../output/spell-impact-m12-deploy-20260926/export-source-check127.json)。录制400项源文件与当前一致，其中263项被设备导出包含且SHA一致，另137项为只供编辑器录制的脚本，见[同源核对](../../output/spell-impact-m12-deploy-20260926/capture-export-check127.json)。核心源码 SHA256：`ArchiveEncounterPresentation.cs` 为 `3d4005fed68f5392da04465a3e561c447ad4d06462f9a6cedda4e7fe0a455b4a3f52`，`ArchiveAegis.shader` 为 `4598c62cdde51e0e04c29dbe9cd5271eaac30154e9dd8a4cc89c523c3f1895a3`。
 
 Xcode设备版完整编译及开发签名通过，`codesign --verify --deep --strict`退出0；[Build127回执](../../output/spell-impact-m12-deploy-20260926/final-build127.json)记录包版本、UnityFramework和原生二进制SHA。签名包已用APFS克隆保存在 `artifacts/releases/Build127/Mistport.app`，克隆后再次核签名和两项SHA，避免仅把可装包放在系统临时目录。**Build127未装手机，手机仍为Build126。** 新片无音轨，尚未真机看此轮峰值、帧率或获用户视觉认可。Q7/M15、H10、高塔和十案真机样本仍待设备可连续空闲时完成。
+
+## 2026-09-26 追加：用户指出"像 CT"，改为封存光羽
+
+用户看了设备截图后指出：左右两片半透明蓝色叶片，加上里面分叉的亮纹，看起来像 CT 片里的两片肺。原因有两个：一是光滑、近乎对称的双叶外形像器官；二是暗蓝半透明底加血管状刻纹像 X 光。
+
+第一次改成不透明的钢铁甲片（黄铜包边、铆钉、金色卷草纹），用户否定："不好看，法术一般是比较虚幻的，没那么实在"。这一版的录像保留在 `output/m12-armor-20260926/probe3/`，作为未认可过程证据。
+
+当前版本（`ArchiveEncounterPresentation.cs` 的 `BuildSealedPlates`、`ArchiveAegis.shader`）：
+- **外形**：沿用第一次改出来的错落甲叶排布。左 5 片、右 4 片从上往下鱼鳞状叠压，内端圆、外端尖且上翘，外端向后包住守卫；每片的高度、长度、下垂角都不同，不是环形，也不是等距扇骨。
+- **材质：能量光羽**。根部是亮青，往外经天蓝过渡到蓝紫，甲面流动着华彩层共用的金色祥云卷纹和鳞片纹（`SpectacleMatter` 第 0 行），偶有闪点。边缘一条细白亮芯加一圈青色辉光，里面还有一道内光线。羽尖逐渐消散成光。颜色是饱和的预乘混合，在浅色大理石前也不会冲成白色。
+- **动作**：光羽从守卫背后依次滑出（0.34 秒），锁定时（约 0.36 秒）整片闪亮、边缘光加强；之后每片各自缓慢漂浮、呼吸明暗。
+- 防御语义、原生减伤、contact、冷却和存档都没改；`recover` 时仍立即收起，和原来一样。
+
+验证：`output/m12-armor-20260926/probe6/`，M12 录制 6 项、安全检查 11 项通过，两次运行的源码一致。三版对比见 `m12-three-versions.jpg`；原版与当前版的并排视频见 `m12-light-before-after.mp4`。改前两个文件的副本在 `backups/m12-armor-20260926/original/`。只有编辑器录像，未出包、未装机，待用户视觉认可。

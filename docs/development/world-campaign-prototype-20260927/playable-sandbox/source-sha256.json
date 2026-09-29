@@ -1,0 +1,12 @@
+{
+  "mistport-ios/MistportCombatCore/Package.swift": "8e1c0eefab730cf8dbd9ed3069ad01aca0ddbf7ce5a5883bf44f374e6973a254",
+  "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/CampaignBattleSandbox.swift": "e71f79180c0a2afdf39e1c4df22b2cf125f373fa3233ae372c55c7321191c4bd",
+  "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChapterOneEncounterRuntime.swift": "d76d6412346b4300921137cb38dd06554c0e1bf3095b12c69452e4212f728991",
+  "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/FoolCombatConfiguration.swift": "be91d6480d0584c3d9738ce9305135c99ea6d47297721a22bf7972ec8afe1e52",
+  "mistport-ios/MistportCombatCore/Tests/MistportCombatCoreTests/CampaignBattleSandboxTests.swift": "6c7d1c03f100c5558b9b6b2e2f05ebe93c22d446ceb918029b82a48ba99925c2",
+  "mistport-ios/MistportCombatCore/Tests/MistportCombatCoreTests/CampaignCombatProbeTests.swift": "6a2f3f9bad70e7bda6635660f309ea2c3fa76f567d45dfa48414b00920e781c3",
+  "tools/campaign-sandbox/Package.swift": "0f60f72814a37afc2d2c80a6e4ad6e3f14003a6acc5a38ae7ae169b3cd703399",
+  "tools/campaign-sandbox/Sources/CampaignSandboxApp.swift": "bb975c08c385263a406c7d3bd680b672bf8c2b973891e7c9934abc0b91bf2d4c",
+  "tools/campaign-sandbox/build_and_run.sh": "2f8b4c395e4709f40c6a05b6aa3c450842262afb7a4ae7aba4a73d41f9d04f2b",
+  "tools/campaign-sandbox/report_trials.py": "6d381e11222b7a61560267c3c5f57982fd963665141451e92936241486f33917"
+}

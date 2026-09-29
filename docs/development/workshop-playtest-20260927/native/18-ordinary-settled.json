@@ -1,0 +1,429 @@
+{
+  "nodes": [
+    {
+      "depth": 0,
+      "i": 0,
+      "role": "AXApplication",
+      "title": "雾港工坊试玩"
+    },
+    {
+      "depth": 1,
+      "i": 1,
+      "identifier": "campaign-sandbox",
+      "role": "AXWindow",
+      "title": "雾港 · 世界事件演练"
+    },
+    {
+      "depth": 2,
+      "i": 2,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 3,
+      "enabled": "1",
+      "i": 3,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 4,
+      "role": "AXStaticText",
+      "value": "我的这次参与"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 5,
+      "role": "AXStaticText",
+      "value": "泵站联合会"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 6,
+      "role": "AXStaticText",
+      "value": "53 铜"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 7,
+      "role": "AXStaticText",
+      "value": "韧皮 0 · 绑带 1 · 药品 0"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 8,
+      "role": "AXStaticText",
+      "value": "皮革熟练度 1 / 20"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 9,
+      "role": "AXStaticText",
+      "value": "取材 → 制作 → 有预算交货 → 安装 → 公共行动 → 结果"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 10,
+      "role": "AXProgressIndicator",
+      "value": "1"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 11,
+      "role": "AXStaticText",
+      "value": "本方工程 12/12 · 我的贡献 1点"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 12,
+      "role": "AXStaticText",
+      "value": "项目仅再收0条绑带，每条9铜。卖不出的成品仍属于你。"
+    },
+    {
+      "depth": 4,
+      "description": "导出本次试玩回执",
+      "enabled": "1",
+      "i": 13,
+      "role": "AXButton"
+    },
+    {
+      "depth": 4,
+      "description": "从头体验另一条路线",
+      "enabled": "1",
+      "i": 14,
+      "role": "AXButton"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 15,
+      "role": "AXStaticText",
+      "value": "第二章资格与30层装备为隔离快照；本方此前3名玩家5点、对方4名玩家4点及11套工程为预置。非联网，非正式存档。"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 16,
+      "role": "AXStaticText",
+      "value": "钱账守恒：通过"
+    },
+    {
+      "depth": 4,
+      "i": 17,
+      "role": "AXScrollArea"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 18,
+      "role": "AXStaticText",
+      "value": "雾港公报 / 第三夜熄灯"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 19,
+      "role": "AXStaticText",
+      "value": "谁让雾港重新亮灯"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 20,
+      "role": "AXStaticText",
+      "value": "诊所依靠备用灯，工坊取消了夜班。两派争夺有限的供能经营权。你不需要投资，也能让一处工程继续向前。"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 21,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 6,
+      "description": "01 · 工程真的缺什么",
+      "enabled": "1",
+      "i": 22,
+      "role": "AXHeading"
+    },
+    {
+      "depth": 6,
+      "enabled": "1",
+      "i": 23,
+      "role": "AXStaticText",
+      "value": "此前11套组具已安装。12号滤筒的过滤布和锡罐已经入库，还缺2条维修绑带。你的货会安装在这里，不是交完就消失。"
+    },
+    {
+      "depth": 6,
+      "description": "去教会塔F1取材",
+      "enabled": "1",
+      "i": 24,
+      "role": "AXButton"
+    },
+    {
+      "depth": 6,
+      "description": "领取本场韧皮",
+      "enabled": "0",
+      "i": 25,
+      "role": "AXButton"
+    },
+    {
+      "depth": 6,
+      "enabled": "1",
+      "i": 26,
+      "role": "AXStaticText",
+      "value": "新增候选：本次盾颚魔胜利掉1份韧皮；不发旧首通铜币、功勋或装备。"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 27,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 6,
+      "description": "02 · 皮革工坊",
+      "enabled": "1",
+      "i": 28,
+      "role": "AXHeading"
+    },
+    {
+      "depth": 6,
+      "enabled": "1",
+      "i": 29,
+      "role": "AXStaticText",
+      "value": "1韧皮＋12铜底料＋1铜耗材 → 3条维修绑带。熟练度按成功批次+1。"
+    },
+    {
+      "depth": 6,
+      "description": "制作3条绑带 · 13铜",
+      "enabled": "0",
+      "i": 30,
+      "role": "AXButton"
+    },
+    {
+      "depth": 6,
+      "description": "卖2条 · 收18铜",
+      "enabled": "0",
+      "i": 31,
+      "role": "AXButton"
+    },
+    {
+      "depth": 6,
+      "description": "安装到12号滤筒",
+      "enabled": "0",
+      "i": 32,
+      "role": "AXButton"
+    },
+    {
+      "depth": 6,
+      "enabled": "1",
+      "i": 33,
+      "role": "AXStaticText",
+      "value": "高级图纸：需序列8、皮革熟练度20及已学习图纸；本试玩尚未学习。多制作不保证有买家。"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 34,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 6,
+      "description": "03 · 让工程真正接通",
+      "enabled": "1",
+      "i": 35,
+      "role": "AXHeading"
+    },
+    {
+      "depth": 6,
+      "enabled": "1",
+      "i": 36,
+      "role": "AXStaticText",
+      "value": "工程已经验收。你还有一次公共行动：普通成功1点，高难2点；失败不扣别人的贡献。用药和昂贵装备都不是报名条件。"
+    },
+    {
+      "depth": 6,
+      "enabled": "1",
+      "i": 37,
+      "role": "AXStaticText",
+      "value": "已持有的普通封印物"
+    },
+    {
+      "depth": 6,
+      "enabled": "1",
+      "i": 38,
+      "role": "AXPopUpButton",
+      "value": "不携带"
+    },
+    {
+      "depth": 6,
+      "description": "带僭命勋章",
+      "enabled": "1",
+      "i": 39,
+      "role": "AXCheckBox",
+      "value": "0"
+    },
+    {
+      "depth": 6,
+      "description": "买1瓶止痛膏 · 9铜",
+      "enabled": "1",
+      "i": 40,
+      "role": "AXButton"
+    },
+    {
+      "depth": 6,
+      "description": "普通公共行动",
+      "enabled": "0",
+      "i": 41,
+      "role": "AXButton"
+    },
+    {
+      "depth": 6,
+      "description": "高难公共行动",
+      "enabled": "0",
+      "i": 42,
+      "role": "AXButton"
+    },
+    {
+      "depth": 6,
+      "enabled": "1",
+      "i": 43,
+      "role": "AXStaticText",
+      "value": "回流阵：读条时切支援者打断回血；护卫阵：先拆护卫，蓄力时击杀护卫可中断。药品恢复25%最大生命，实际服用才减少库存。"
+    },
+    {
+      "depth": 5,
+      "description": "结束本次事件 · 查看世界与账单",
+      "enabled": "1",
+      "i": 44,
+      "role": "AXButton"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 45,
+      "role": "AXStaticText",
+      "value": "胜利，用时88秒，实际用药0瓶。本次贡献1点。"
+    },
+    {
+      "depth": 5,
+      "description": "钱物回执 · 每笔都能对上",
+      "enabled": "1",
+      "i": 46,
+      "role": "AXDisclosureTriangle",
+      "value": "0"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 47,
+      "role": "AXStaticText",
+      "value": "隔离内容试玩：使用Swift正式战斗规则；材料/配方/项目为首测候选，Unity演出与共享服务器尚未接入。"
+    },
+    {
+      "depth": 5,
+      "enabled": "1",
+      "i": 48,
+      "role": "AXScrollBar",
+      "value": "0"
+    },
+    {
+      "depth": 6,
+      "i": 49,
+      "role": "AXValueIndicator",
+      "value": "0"
+    },
+    {
+      "depth": 6,
+      "i": 50,
+      "role": "AXButton"
+    },
+    {
+      "depth": 6,
+      "i": 51,
+      "role": "AXButton"
+    },
+    {
+      "depth": 6,
+      "i": 52,
+      "role": "AXButton"
+    },
+    {
+      "depth": 6,
+      "i": 53,
+      "role": "AXButton"
+    },
+    {
+      "depth": 2,
+      "i": 54,
+      "role": "AXToolbar"
+    },
+    {
+      "depth": 3,
+      "i": 55,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 4,
+      "enabled": "1",
+      "i": 56,
+      "role": "AXRadioGroup",
+      "value": "<AXUIElement 0xb77018360> {pid=57500}"
+    },
+    {
+      "depth": 5,
+      "description": "事件试玩",
+      "enabled": "1",
+      "i": 57,
+      "role": "AXRadioButton",
+      "value": "1"
+    },
+    {
+      "depth": 5,
+      "description": "机制对照（开发）",
+      "enabled": "1",
+      "i": 58,
+      "role": "AXRadioButton",
+      "value": "0"
+    },
+    {
+      "depth": 2,
+      "enabled": "1",
+      "i": 59,
+      "role": "AXButton"
+    },
+    {
+      "depth": 2,
+      "enabled": "1",
+      "i": 60,
+      "role": "AXButton"
+    },
+    {
+      "depth": 3,
+      "i": 61,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 4,
+      "i": 62,
+      "role": "AXGroup"
+    },
+    {
+      "depth": 2,
+      "enabled": "1",
+      "i": 63,
+      "role": "AXButton"
+    }
+  ],
+  "pid": 57500,
+  "windows": []
+}

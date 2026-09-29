@@ -55,7 +55,7 @@ struct Q4TwoFlameTests {
         #expect(!q3.enemies[0].intentPattern.contains("q4_probe"))
         let before = q3.playerHP + q3.playerShield
         try q3.endRound(actingEnemyID: q3.enemies[0].id, at: 2)
-        #expect(before - q3.playerHP - q3.playerShield == 260)
+        #expect(before - q3.playerHP - q3.playerShield == MPCProgressionWalls.q3BreathDamage)
     }
     @Test("Three accurate manual masks win during the third opening", arguments: [6.2, 7.2, 8.4], [0.05, 1.0 / 30.0])
     func threeRounds(maskOffset: Double, tickDuration: Double) throws {

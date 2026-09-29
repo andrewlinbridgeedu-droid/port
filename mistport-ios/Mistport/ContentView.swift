@@ -11,6 +11,7 @@ private enum AppSheet: String, Identifiable {
     case missions
     case profile
     case build
+    case workshop
     case advancement
     case inventory
 
@@ -20,8 +21,8 @@ private enum AppSheet: String, Identifiable {
 struct ContentView: View {
     @Bindable var game: GameStore
     @Bindable var storefront: Storefront
+    @State private var blackSaltShorePresented = ProcessInfo.processInfo.arguments.contains("--preview-black-salt-shore")
     @State private var churchPresented = (ProcessInfo.processInfo.arguments.contains("--preview-church") || ProcessInfo.processInfo.arguments.contains("--verify-church-entry"))
-    @State private var harborPresented = ProcessInfo.processInfo.arguments.contains("--preview-harbor")
     @State private var tavernBountyPresented = false
     @State private var presentedSheet: AppSheet? = {
         let arguments = ProcessInfo.processInfo.arguments
@@ -110,7 +111,7 @@ struct ContentView: View {
                 case .cityHub:
                     CityHubView(
                         path: game.selectedPath,
-                        sequence: game.currentSequence,
+                        sequence: game.displayedSequence,
                         districtName: game.selectedChapterDistrict.name,
                         nextMissionTitle: game.nextChapterMission?.title ?? "本次调查已完成 · 可重访",
                         missionProgress: game.completedMissionCount(in: game.selectedChapterDistrict),
@@ -120,9 +121,9 @@ struct ContentView: View {
                         clues: game.clues,
                         ingredientCount: game.advancementIngredients.count,
                         serviceIsUnlocked: game.cityServiceIsUnlocked,
+                        cafeUnlocked: game.venueIsUnlocked("midnight-clock-cafe"),
                         onSettings: { GameInterfaceSound.shared.playClick(); presentedSheet = .settings },
                         onTest: cityTestAction,
-                        onHarbor: { harborPresented = true },
                         onStory: game.enterDistrictMap,
                         onWorld: { presentedSheet = .world },
                         onExpedition: { presentedSheet = .expedition },
@@ -134,7 +135,7 @@ struct ContentView: View {
                             }
                         },
                         onProfile: { isProfilePresented = true },
-                        onBuild: { if game.cityServiceIsUnlocked(.workshop) { isProfilePresented = true } },
+                        onBuild: { presentedSheet = .workshop },
                         onAdvancement: { presentedSheet = .advancement },
                         onSupply: {
                             guard game.venueIsUnlocked("midnight-clock-cafe") else { return }
@@ -146,7 +147,12 @@ struct ContentView: View {
                             guard game.venueIsUnlocked(venueID) else { return }
                             game.prepareVenue(venueID)
                             isVenuePresented = true
-                        }
+                        },
+                        blackSaltShore: game.churchHasDepartedMistport ? (
+                            status: !game.sequenceEightQualified ? "先举行序列 8 仪式"
+                                : game.chapterTwoBridge.worldEventStoryReady ? "已见过两家负责人 · 可重访" : "两家负责人在站内等候",
+                            action: { blackSaltShorePresented = true }
+                        ) : nil
                     )
                 case .districtMap:
                     // Legacy entry/debug routes bypass the removed street page too.
@@ -287,9 +293,7 @@ struct ContentView: View {
             HomeMusicController.shared.update(for: phase)
         }
         .fullScreenCover(isPresented: $churchPresented) { ChurchSanctuaryView(game: game) }
-        .fullScreenCover(isPresented: $harborPresented) {
-            HarborCityExplorationView(game: game, onBack: { harborPresented = false })
-        }
+        .fullScreenCover(isPresented: $blackSaltShorePresented) { BlackSaltShoreView(game: game) }
         .fullScreenCover(isPresented: $tavernBountyPresented) {
             TavernInteriorView(game: game, onBack: { tavernBountyPresented = false })
         }
@@ -309,6 +313,8 @@ struct ContentView: View {
                 } else {
                     Text("教会尚未开放 · 随主线推进解锁").padding()
                 }
+            case .workshop:
+                LocalWorkshopView(game: game)
             case .world:
                 WorldRouteView()
             case .expedition:

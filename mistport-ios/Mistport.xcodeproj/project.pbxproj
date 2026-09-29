@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C92800000000000000000001 /* LocalWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92800000000000000000002; };
 		C91700000000000000000001 /* ChurchMaintenanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91700000000000000000002; };
 		B16000000000000000000001 /* CombatHaptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B16000000000000000000002 /* CombatHaptics.swift */; };
 		B15000000000000000000001 /* GameSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15000000000000000000002 /* GameSettingsView.swift */; };
@@ -21,6 +22,10 @@
 		A10000000000000000000008 /* WorldModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* WorldModels.swift */; };
 		A10000000000000000000009 /* WorldViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* WorldViews.swift */; };
 		A1000000000000000000000A /* SceneViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000A /* SceneViews.swift */; };
+		C1D2E3F40000000000C17A01 /* CityLivingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D2E3F40000000000C17A02 /* CityLivingScene.swift */; };
+		C1D2E3F40000000000C17A03 /* CityLandmarkPlaque.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D2E3F40000000000C17A04 /* CityLandmarkPlaque.swift */; };
+		C1D2E3F40000000000C17A05 /* CityAmbience.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D2E3F40000000000C17A06 /* CityAmbience.swift */; };
+		C1D2E3F40000000000C17A07 /* Ambience in Resources */ = {isa = PBXBuildFile; fileRef = C1D2E3F40000000000C17A08 /* Ambience */; };
 		A1000000000000000000000B /* DungeonModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000B /* DungeonModels.swift */; };
 		A1000000000000000000000C /* DungeonScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000C /* DungeonScene.swift */; };
 		A1000000000000000000000D /* DungeonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000D /* DungeonView.swift */; };
@@ -89,6 +94,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C92800000000000000000002 /* LocalWorkshopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/LocalWorkshopView.swift; sourceTree = SOURCE_ROOT; };
 		C91700000000000000000002 /* ChurchMaintenanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/ChurchMaintenanceView.swift; sourceTree = SOURCE_ROOT; };
 		B16000000000000000000002 /* CombatHaptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombatHaptics.swift; sourceTree = "<group>"; };
 		B15000000000000000000002 /* GameSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsView.swift; sourceTree = "<group>"; };
@@ -103,6 +109,10 @@
 		A20000000000000000000008 /* WorldModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldModels.swift; sourceTree = "<group>"; };
 		A20000000000000000000009 /* WorldViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldViews.swift; sourceTree = "<group>"; };
 		A2000000000000000000000A /* SceneViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneViews.swift; sourceTree = "<group>"; };
+		C1D2E3F40000000000C17A02 /* CityLivingScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityLivingScene.swift; sourceTree = "<group>"; };
+		C1D2E3F40000000000C17A04 /* CityLandmarkPlaque.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityLandmarkPlaque.swift; sourceTree = "<group>"; };
+		C1D2E3F40000000000C17A06 /* CityAmbience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityAmbience.swift; sourceTree = "<group>"; };
+		C1D2E3F40000000000C17A08 /* Ambience */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Audio/Ambience; sourceTree = "<group>"; };
 		A2000000000000000000000B /* DungeonModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonModels.swift; sourceTree = "<group>"; };
 		A2000000000000000000000C /* DungeonScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonScene.swift; sourceTree = "<group>"; };
 		A2000000000000000000000D /* DungeonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DungeonView.swift; sourceTree = "<group>"; };
@@ -196,6 +206,10 @@
 				B71000000000000000000002 /* BountyPokerRound.swift */,
 				A20000000000000000000006 /* GameViews.swift */,
 				A2000000000000000000000A /* SceneViews.swift */,
+				C1D2E3F40000000000C17A02 /* CityLivingScene.swift */,
+				C1D2E3F40000000000C17A04 /* CityLandmarkPlaque.swift */,
+				C1D2E3F40000000000C17A06 /* CityAmbience.swift */,
+				C1D2E3F40000000000C17A08 /* Ambience */,
 				A20000000000000000000018 /* CharacterProfileView.swift */,
 				A20000000000000000000017 /* GameEmblems.swift */,
 				A2000000000000000000000F /* MissionBoardView.swift */,
@@ -224,6 +238,7 @@
 			children = (
 				A2000000000000000000001D /* Mistport/ChapterOneTestView.swift */,
 				C91700000000000000000002 /* ChurchMaintenanceView.swift */,
+				C92800000000000000000002 /* LocalWorkshopView.swift */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -319,6 +334,7 @@
 				A10000000000000000000026 /* BattleGearsFog.m4a in Resources */,
 				A10000000000000000000027 /* BattleHarborIronToll.m4a in Resources */,
 				A10000000000000000000028 /* BattleBrassTide.m4a in Resources */,
+				C1D2E3F40000000000C17A07 /* Ambience in Resources */,
 				C10000000000000000000004 /* Unity Data in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -370,6 +386,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000000000000000000001 /* MistportApp.swift in Sources */,
+				C92800000000000000000001 /* LocalWorkshopView.swift in Sources */,
 				A10000000000000000000020 /* HomeMusicController.swift in Sources */,
 				B15000000000000000000001 /* GameSettingsView.swift in Sources */,
 				B16000000000000000000001 /* CombatHaptics.swift in Sources */,
@@ -395,6 +412,9 @@
 				A10000000000000000000005 /* ContentView.swift in Sources */,
 				A10000000000000000000006 /* GameViews.swift in Sources */,
 				A1000000000000000000000A /* SceneViews.swift in Sources */,
+				C1D2E3F40000000000C17A01 /* CityLivingScene.swift in Sources */,
+				C1D2E3F40000000000C17A03 /* CityLandmarkPlaque.swift in Sources */,
+				C1D2E3F40000000000C17A05 /* CityAmbience.swift in Sources */,
 				A10000000000000000000018 /* CharacterProfileView.swift in Sources */,
 				A10000000000000000000017 /* GameEmblems.swift in Sources */,
 				A1000000000000000000000F /* MissionBoardView.swift in Sources */,
