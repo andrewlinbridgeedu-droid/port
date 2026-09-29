@@ -1,0 +1,7 @@
+{
+  "citizens": 23,
+  "stableIDsMatch": true,
+  "shippedMeshesExist": true,
+  "javascriptSyntax": "PASS (JavaScriptCore)",
+  "nativeMapArrivalWalk": "pending device interaction check"
+}

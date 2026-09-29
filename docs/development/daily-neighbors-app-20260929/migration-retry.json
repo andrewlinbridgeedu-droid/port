@@ -1,0 +1,13 @@
+{
+  "beforeFiles": 132,
+  "afterFiles": 132,
+  "playerByteIdentical": false,
+  "addedPlayerKeys": [
+    "mistport.neighbors.v1"
+  ],
+  "changedOrRemovedPlayerKeys": [],
+  "changedOrRemovedOtherFiles": [],
+  "allowedTestSuiteChanges": [],
+  "newFiles": [],
+  "passed": true
+}

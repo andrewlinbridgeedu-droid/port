@@ -148,3 +148,21 @@ struct NeighborErrandTests {
         #expect(decoded == ledger)
     }
 }
+
+extension NeighborErrandTests {
+    @Test func abandonedPestTicketCannotRewardButNewAttemptCan() throws {
+        var ledger = MPCNeighborLedger(), coins = 0
+        let offer = ledger.open(day: 7, completedMissions: workshop).first { $0.errand?.kind == .pest }!
+        let old = try ledger.beginPest(offerID: offer.id, ticket: "abandoned")
+        ledger.abandonPest(offerID: offer.id, ticket: "wrong-ticket")
+        #expect(ledger.offers.first { $0.id == offer.id }?.activeTicket == "abandoned")
+        ledger.abandonPest(offerID: offer.id, ticket: "abandoned")
+        ledger.abandonPest(offerID: offer.id, ticket: "abandoned")
+        #expect(try ledger.settlePest(offerID: offer.id, ticket: "abandoned", session: playStreet(old, to: .victory), coins: &coins) == nil)
+        #expect(coins == 0)
+        let retry = try ledger.beginPest(offerID: offer.id, ticket: "retry")
+        ledger.open(day: 8, completedMissions: workshop)
+        let reward = try ledger.settlePest(offerID: offer.id, ticket: "retry", session: playStreet(retry, to: .victory), coins: &coins)
+        #expect(reward?.copper == 15 && coins == 15)
+    }
+}
