@@ -66,4 +66,32 @@ struct DailyPacingTests {
         #expect(MPCDailyPacing.migratedStart(today: today, completedMissions: 0, clearedTowerFloors: 0, calendar: calendar)
                 == calendar.startOfDay(for: today))
     }
+
+    @Test func aNewSaveStartsTodayAndAnOldSaveIsMigratedOnce() throws {
+        let now = date(29, 21)
+        let fresh = MPCDailyPacingStart.resolve(now: now, completedMissions: 0, clearedTowerFloors: 0, calendar: calendar)
+        #expect(fresh.origin == .newSave && fresh.day(now: now, calendar: calendar) == 1)
+        #expect(fresh.start == calendar.startOfDay(for: now))
+        let old = MPCDailyPacingStart.resolve(now: now, completedMissions: 17, clearedTowerFloors: 40, calendar: calendar)
+        #expect(old.origin == .migrated && old.recordedAt == now)
+        #expect(MPCDailyPacing.isMissionOpen(18, day: old.day(now: now, calendar: calendar)))
+        // The record is what the save keeps: it round-trips and later days count from it.
+        let stored = try JSONDecoder().decode(MPCDailyPacingStart.self, from: JSONEncoder().encode(old))
+        #expect(stored == old)
+        #expect(stored.day(now: date(30, 1), calendar: calendar) == old.day(now: now, calendar: calendar) + 1)
+    }
+
+    @Test func lockTextsSayWhenThingsOpen() {
+        #expect(MPCDailyPacing.missionLockText(3, day: 1) == nil)
+        #expect(MPCDailyPacing.missionLockText(4, day: 1) == "第 4 关明天开放")
+        #expect(MPCDailyPacing.missionLockText(6, day: 1) == "第 6 关 3 天后开放")
+        #expect(MPCDailyPacing.towerLockText(clearedFloors: 0, day: 1) == nil)
+        #expect(MPCDailyPacing.towerLockText(clearedFloors: MPCDailyPacing.towerFloorsPerDay, day: 1) != nil)
+        #expect(MPCDailyPacing.todaySummary(day: 1, completedMissions: 0, clearedFloors: 0)
+                == "第 1 天 · 今天可推进到第 3 关 · 深井今天还能新封 \(MPCDailyPacing.towerFloorsPerDay) 层")
+        #expect(MPCDailyPacing.todaySummary(day: 2, completedMissions: 4, clearedFloors: 8)
+                == "第 2 天 · 第 5 关明天开放 · 深井新层明天再开")
+        #expect(MPCDailyPacing.todaySummary(day: 40, completedMissions: 30, clearedFloors: 100)
+                == "第 40 天 · 主线已全部打完 · 深井已全部封堵")
+    }
 }

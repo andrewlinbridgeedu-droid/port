@@ -156,6 +156,8 @@ final class GameStore {
         static let selectedPathID = "character.selected-path"
         static let selectedCharacterGender = "character.selected-gender"
         static let completedChapterMissionIDs = "chapter-one.completed-mission-ids"
+        /// MPCDailyPacingStart: the save's day 1, written once (migration receipt for old saves).
+        static let dailyPacingStart = "mistport.daily-pacing.start.v1"
         static let selectedChapterDistrictID = "chapter-one.selected-district-id"
         static let venueCoins = "economy.venue-coins"
         static let ownedVenueItems = "economy.owned-venue-items"
@@ -180,6 +182,10 @@ final class GameStore {
     private let defaults: UserDefaults
     private(set) var phase: GamePhase = .title
     var chapterOneCampaign = MPCChapterOneCampaignState.chapterStartState
+    /// Day 1 of this save's calendar (MPCDailyPacing). Resolved at the end of init.
+    private(set) var dailyPacingStart: MPCDailyPacingStart?
+    /// The clock pacing reads; debug checks replace it, the game never does.
+    var pacingClock: () -> Date = { Date() }
     private(set) var chapterOneTutorialFlags: Set<String> = []
     private(set) var selectedPathID: Pathway.ID?
     private(set) var selectedCharacterGender: CharacterGender = .male
@@ -305,6 +311,7 @@ final class GameStore {
             // progression state rather than only a map-label override.
             let progressKeysToClear = [
                 PersistenceKey.completedChapterMissionIDs,
+                PersistenceKey.dailyPacingStart,
                 PersistenceKey.selectedChapterDistrictID,
                 PersistenceKey.venueCoins,
                 PersistenceKey.ownedVenueItems,
@@ -347,6 +354,7 @@ final class GameStore {
             // mission on the next launch.
             let progressKeysToClear = [
                 PersistenceKey.completedChapterMissionIDs,
+                PersistenceKey.dailyPacingStart,
                 PersistenceKey.selectedChapterDistrictID,
                 PersistenceKey.venueCoins,
                 PersistenceKey.ownedVenueItems,
@@ -483,6 +491,9 @@ final class GameStore {
         let migratedMask = chapterOneCampaign.migrateLegacyMaskCardToRelic()
         if migratedBell || migratedMask { persistChapterProgress() }
 
+        // After every progress load and reset argument above: old saves migrate once here.
+        resolveDailyPacingStart()
+
         #if DEBUG
         if launchArguments.contains("--preview-path") {
             phase = .pathSelection
@@ -582,6 +593,7 @@ final class GameStore {
         if launchArguments.contains("--verify-church-tower") { Self.verifyChurchTower() }
         if launchArguments.contains("--verify-church-tower-100") { Self.verifyChurchTowerHundred() }
         if launchArguments.contains("--verify-player-growth") { Self.verifyPlayerGrowthPersistence() }
+        if launchArguments.contains("--verify-daily-pacing") { Self.verifyDailyPacing() }
         if launchArguments.contains("--verify-p0") { Self.verifySettlementRecovery() }
         if launchArguments.contains("--verify-early-relic-shop") { Self.verifyEarlyRelicShop(); Self.verifyAdvancementProcurement() }
         if launchArguments.contains("--verify-q5-migration") { Self.verifyEncoreBellMigration() }
@@ -747,11 +759,46 @@ final class GameStore {
         assert(gap.missionIsAvailable(all[0]))
         assert(gap.missionIsAvailable(all[1]))
         assert(!gap.missionIsAvailable(all[2]))
+        // Q30 opens on day 28 (MPCDailyPacing); a day-1 save must wait for it.
         gap.completedChapterMissionIDs = Set((1...29).map { "old-clock-\($0)" })
+        assert(!gap.missionIsAvailable(all[29]) && gap.missionLockText(all[29]) != nil)
+        gap.debugSetPacingDay(40)
         assert(gap.missionIsAvailable(all[29]) && !gap.playerTestComplete)
         gap.completedChapterMissionIDs.insert("old-clock-30")
         assert(gap.playerTestComplete)
         NSLog("PLAYER_GROWTH_VERIFY_PASS: locked card, debit, no funds, restore, battle level, Q30 release boundary, interrupted upgrade, reset")
+    }
+
+    /// Daily pacing on disposable suites: new save, next day, reopen, tower allowance,
+    /// one-time migration of a save from before pacing, and restart.
+    private static func verifyDailyPacing() {
+        let suite = "mistport.daily-pacing." + UUID().uuidString
+        let storage = UserDefaults(suiteName: suite)!
+        let oldSuite = suite + ".old"
+        let old = UserDefaults(suiteName: oldSuite)!
+        defer { storage.removePersistentDomain(forName: suite); old.removePersistentDomain(forName: oldSuite) }
+        let all = GameContent.chapterOneDistricts[0].missions
+        let fresh = GameStore(launchArguments: [], defaults: storage)
+        assert(fresh.dailyPacingStart?.origin == .newSave && fresh.pacingDay == 1)
+        fresh.completedChapterMissionIDs = Set((1...3).map { "old-clock-\($0)" })
+        assert(!fresh.missionIsAvailable(all[3]) && fresh.missionLockText(all[3]) == "第 4 关明天开放")
+        assert(fresh.missionIsAvailable(all[0]) && fresh.missionLockText(all[0]) == nil)
+        fresh.pacingClock = { Date().addingTimeInterval(86_400) }
+        assert(fresh.pacingDay == 2 && fresh.missionIsAvailable(all[3]))
+        let reopened = GameStore(launchArguments: [], defaults: storage)
+        assert(reopened.dailyPacingStart == fresh.dailyPacingStart)
+        storage.set(try! JSONEncoder().encode(MPCChurchTowerProgress(clearedFloors: [1, 2, 3, 4])),
+                    forKey: "mistport.church-tower.progress.v1")
+        assert(reopened.towerFloorIsOpenToday(4) && !reopened.towerFloorIsOpenToday(5) && reopened.towerPacingLockText != nil)
+        old.set((1...17).map { "old-clock-\($0)" }, forKey: PersistenceKey.completedChapterMissionIDs)
+        let migrated = GameStore(launchArguments: [], defaults: old)
+        assert(migrated.dailyPacingStart?.origin == .migrated && migrated.missionIsAvailable(all[17]))
+        assert(!migrated.missionIsAvailable(all[18]))
+        let again = GameStore(launchArguments: [], defaults: old)
+        assert(again.dailyPacingStart == migrated.dailyPacingStart)
+        migrated.restart()
+        assert(migrated.dailyPacingStart?.origin == .newSave && migrated.pacingDay == 1)
+        NSLog("DAILY_PACING_VERIFY_PASS: new save day 1, Q4 tomorrow, replay open, next day, reopen, tower 4/day, migration once, restart")
     }
 
     private static func verifyEncoreBellMigration() {
@@ -1174,7 +1221,7 @@ final class GameStore {
             return
         }
         // The intermediate street screen is no longer part of mission entry.
-        guard let mission = nextChapterMission
+        guard let mission = nextChapterMission.flatMap({ missionIsAvailable($0) ? $0 : nil })
             ?? playerTestMissions.last(where: { missionIsAvailable($0) }) else {
             returnToCity()
             return
@@ -1774,6 +1821,8 @@ final class GameStore {
         guard let district = GameContent.chapterOneDistricts.first(where: { $0.id == mission.districtID }),
               districtIsUnlocked(district) else { return false }
         if missionIsCompleted(mission) { return true }
+        // Progress opens by calendar day; replays of cleared missions are never limited.
+        guard MPCDailyPacing.isMissionOpen(mission.number, day: pacingDay) else { return false }
         let next = district.missions.filter { missionIsInPlayerTest($0) && !missionIsCompleted($0) }
             .min { $0.number < $1.number }
         return mission.id == next?.id
@@ -1879,6 +1928,10 @@ final class GameStore {
         selectedChapterDistrictID = "old-clock"
         activeChapterMissionID = nil
         completedChapterMissionIDs = []
+        // A new save starts a new calendar.
+        defaults.removeObject(forKey: PersistenceKey.dailyPacingStart)
+        dailyPacingStart = nil
+        resolveDailyPacingStart()
         venueCoins = 180
         ownedVenueItems = [:]
         skillLevels = [.strike: 1, .mobility: 1, .control: 1, .ward: 1, .ultimate: 1]
@@ -1978,6 +2031,10 @@ final class GameStore {
         selectedCharacterGender = .male
         selectedChapterDistrictID = district.id
         completedChapterMissionIDs = Set(completedMissions.map(\.id))
+        // A jumped save is dated like a migrated one, so its next mission is open today.
+        defaults.removeObject(forKey: PersistenceKey.dailyPacingStart)
+        dailyPacingStart = nil
+        resolveDailyPacingStart()
         hermitTalents = .restored(Array(hermitTalents.learned), budget: hermitTalentBudget)
         activeChapterMissionID = enterImmediately ? mission.id : nil
         isTeamExpeditionActive = false
@@ -2309,6 +2366,7 @@ extension GameStore {
     func churchTowerSession(floor: Int) throws -> MPCChapterOneEncounterSession {
         try requireChurchRemoteService()
         guard churchTowerProgress.canEnter(floor, completedMissionNumbers: churchTowerMissionNumbers),
+              towerFloorIsOpenToday(floor),
               let definition = MPCChurchTowerCatalog.floor(number: floor) else { throw MPCEncounterRuntimeError.unknownEncounter }
         var loadout = churchBattleCampaign.loadout
         loadout.normalSkillIDs = []
@@ -2318,6 +2376,53 @@ extension GameStore {
             party: chapterOneCampaign.party, consumables: chapterOneCampaign.inventory,
             companionIDs: [], loadout: loadout)
     }
+}
+
+// MARK: Daily pacing (2026-09-29): checked before a battle starts, never at settlement.
+extension GameStore {
+    var pacingDay: Int {
+        (dailyPacingStart ?? MPCDailyPacingStart(start: pacingClock(), origin: .newSave, recordedAt: pacingClock()))
+            .day(now: pacingClock())
+    }
+    /// Writes the record once: today for a new save, a migrated start for a save with progress.
+    func resolveDailyPacingStart() {
+        if let data = defaults.data(forKey: PersistenceKey.dailyPacingStart),
+           let stored = try? JSONDecoder().decode(MPCDailyPacingStart.self, from: data) {
+            dailyPacingStart = stored
+            return
+        }
+        let record = MPCDailyPacingStart.resolve(now: pacingClock(),
+                                                 completedMissions: churchTowerMissionNumbers.count,
+                                                 clearedTowerFloors: churchTowerProgress.clearedFloors.count)
+        defaults.set(try? JSONEncoder().encode(record), forKey: PersistenceKey.dailyPacingStart)
+        dailyPacingStart = record
+    }
+    /// Why an uncleared story mission cannot start today (nil when it can or is cleared).
+    func missionLockText(_ mission: DistrictMission) -> String? {
+        guard missionIsInPlayerTest(mission), !missionIsCompleted(mission) else { return nil }
+        return MPCDailyPacing.missionLockText(mission.number, day: pacingDay)
+    }
+    /// Cleared floors can always be replayed; a new floor needs today's allowance.
+    func towerFloorIsOpenToday(_ floor: Int) -> Bool {
+        churchTowerProgress.clearedFloors.contains(floor) || towerPacingLockText == nil
+    }
+    var towerPacingLockText: String? {
+        MPCDailyPacing.towerLockText(clearedFloors: churchTowerProgress.clearedFloors.count, day: pacingDay)
+    }
+    var todayPacingSummary: String {
+        MPCDailyPacing.todaySummary(day: pacingDay, completedMissions: churchTowerMissionNumbers.count,
+                                    clearedFloors: churchTowerProgress.clearedFloors.count)
+    }
+    #if DEBUG
+    /// Checks and walk saves only: make today day `day` of this save.
+    func debugSetPacingDay(_ day: Int) {
+        let today = Calendar.current.startOfDay(for: pacingClock())
+        let start = Calendar.current.date(byAdding: .day, value: -(max(1, day) - 1), to: today)!
+        let record = MPCDailyPacingStart(start: start, origin: .migrated, recordedAt: pacingClock())
+        defaults.set(try? JSONEncoder().encode(record), forKey: PersistenceKey.dailyPacingStart)
+        dailyPacingStart = record
+    }
+    #endif
 }
 
 #if DEBUG

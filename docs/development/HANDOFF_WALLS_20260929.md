@@ -1,15 +1,28 @@
-# 交接：墙关调数、按天推进与每日玩法 · 2026-09-29（第三轮）
+# 交接：墙关调数、按天推进与每日玩法 · 2026-09-29（第四轮）
 
 接手前按顺序读：本页 → [每日玩法第二阶段记录](daily-content-phase2-20260929/README.md) → [第一阶段记录](workshop-phase1-20260929/README.md) → [每日玩法与经济设计](../../mistport-ios/docs/game-design/chapter-one-30/DAILY_LOOP_AND_ECONOMY_20260929.md) → [按天推进报告](progression-sim-20260929-daily-pacing/README.md) → [第二轮调数报告](progression-sim-20260929-tower-check/README.md) → [第一轮调数报告](progression-sim-20260929/README.md) → [HANDOFF_PROGRESSION_UI_20260928.md](HANDOFF_PROGRESSION_UI_20260928.md) → [HANDOFF_M0_20260928.md](HANDOFF_M0_20260928.md)。回复用户用中文。
 
 ## 仓库与分支
 
 - **工作仓库：`github.com/andrewlinbridgeedu-droid/port`**（用户 2026-09-29 定为以后唯一的工作仓库）。换 Claude 账号也可以继续：新账号连上有这个仓库权限的 GitHub 账号，开会话时选这个仓库，先读本页。
-- **最新分支：`claude/nifty-planck-80307c`**。它包含 `claude/world-economy-m0-u62oho`（第一轮墙关调数）的全部提交、`main`，以及本轮的提交，全部已推送。`claude/world-economy-m0-u62oho` 已落后，不要再往上面提交。
+- **最新分支：`claude/world-economy-m0-u62oho`**（第四轮）。第四轮开始时把它快进到了 `claude/nifty-planck-80307c`（`a47efee`，第三轮最后一个提交），再加上第四轮的提交，全部已推送。`claude/nifty-planck-80307c` 现在落后于它；两个分支若再各自往前走，要先合并再继续。
 - `main` 还没合并这些分支；用户同意后再开 PR。
 - 第一轮交接提到的 `showcase.py` 冲突已在本分支合好（保留 PIL 画字，字体优先用 main 选的华文黑体）。
 
-## 用户 2026-09-29 的决定（本轮已实装）
+## 第四轮：按天推进第二步（App 接入，云端写，没编译）
+
+- 规则库 `DailyPacing.swift` 新增 `MPCDailyPacingStart`：存档的第 1 天，只写一次。没有记录时，有主线或塔进度的旧存档按 `migratedStart` 迁移（`origin = .migrated`，`recordedAt` 就是迁移回执），没有进度的新档记今天。另有 `missionLockText`（“第 N 关明天开放”／“N 天后开放”）、`towerLockText`、`todaySummary`。新增 2 个测试，规则库 **516 个测试全过**（云端 Linux；读地图文件的街坊测试需要保持仓库目录结构才能跑）。
+- `GameStore.swift`：
+  - 存档键 `mistport.daily-pacing.start.v1`；`init` 末尾（所有进度和重置参数处理完后）调用 `resolveDailyPacingStart()`，旧档在这里迁移一次。
+  - `missionIsAvailable`：未通关的关要 `isMissionOpen`；已通关的重打不受限。发奖路径（`settleActiveMissionRewards`）没有加任何判断，打赢一定发奖。
+  - `enterDistrictMap`：下一关还没开放时回城，不再停在黑屏地图。
+  - `churchTowerSession`：新层要 `towerFloorIsOpenToday`；已封堵的层随时重打。
+  - `restart()` 清掉记录并按新档重记；`debugJumpToOldClockMission`（工坊、第二章走查存档用它播种）清掉记录后按迁移重记，下一关当天可打。`--reset-to-chapter-one-q3/q4` 的清理列表里加了这个键。
+  - DEBUG：`debugSetPacingDay(_:)`；`verifyPlayerGrowthPersistence` 改为先断言 Q30 在第 1 天锁住、推到第 40 天后可打；新自检 `--verify-daily-pacing`（新档第 1 天、Q4 明天、重打、次日、重开、深井每天 4 层、旧档只迁移一次、重开新档），通过时打印 `DAILY_PACING_VERIFY_PASS`。
+- 界面：城市页“下一关”标题在锁住时显示“第 N 关明天开放”（`ContentView.swift`）；深井页（`ChapterOneTestView.swift`）新层按每日限额禁用并显示原因，胜利页的“下一层”按钮同样判断。任务板上锁住的关沿用原来的“未开放”样式，没有单独写原因。
+- 只做了 `swiftc -parse` 语法检查，**没有类型检查、没有编译**。`todaySummary` 还没放到任何界面上。
+
+## 用户 2026-09-29 的决定（第三轮已实装）
 
 1. Q18、Q26 不是墙 → 先选“拉陡塔装备曲线”；实测需要每 20 层战力翻倍后，改为**塔层装备检定**，曲线只温和拉陡。
 2. 验收第 3 条改为“只做通缉卡在 Q8”。
@@ -54,18 +67,14 @@
 
 ## 没验证
 
-- **iOS App 从 `cee125a` 起没编译过。** 阶段 2 改了 `GameStore.swift` 的工坊开放判断（阶段 1 只改了文字，按钮实际还要 Q16），改成和规则库一样“完成第 5 关或之后任意一关”，也没编译。 按天推进在 App 里还没有任何接入。 本轮 App 只改了：两处通缉说明文字、`verifyBountyDailyRisk` 自检、`wallDefeatHint` 多传一个参数。规则库里 `MPCChurchGearStats` 多了带默认值的字段。
+- **iOS App 从 `cee125a` 起没编译过**，第四轮的按天推进接入也没编译（见上）。 阶段 2 改了 `GameStore.swift` 的工坊开放判断（阶段 1 只改了文字，按钮实际还要 Q16），改成和规则库一样“完成第 5 关或之后任意一关”，也没编译。 本轮 App 只改了：两处通缉说明文字、`verifyBountyDailyRisk` 自检、`wallDefeatHint` 多传一个参数。规则库里 `MPCChurchGearStats` 多了带默认值的字段。
 - 没有真机、没有真人试玩；机器人熟练度只能相对比较。Unity 端没有塔层检定、Q12 叠层、Q22 校验失败、Q30 狂暴的专门演出。
 
 ## 下一步（按优先级）
 
 1. **每日玩法阶段 3（App，Mac）**：日刊；工坊界面接 `MPCCraftingLedger`、`MPCWorkshopOrderBoard`（带事件的 `bonus`、`surcharge`）和工坊装备的穿戴修理；事件板（交货、事件战入口、`MPCCityEventLedger` 的回执和结算）；地图上街坊的委托对话（`MPCNeighborLedger`，传话要走到收话人那里再调 `relay`）；残余案卷（`MPCRemnantLedger`，领奖走 `MPCDailyWorkLedger`）；商店止痛膏价加上 `effects(day:).salveSurcharge`；递减和“今天已记满”的提示。新账本都要进存档并有迁移回执，旧存档读入为空账本。街头战要在 Unity 里各看一场。
-2. **按天推进第二步（App，要在 Mac 上做）**：
-   - 存档里记建档日；旧存档首次打开时用 `MPCDailyPacing.migratedStart` 补一个，只做一次，写迁移回执。
-   - 主线开打前用 `isMissionOpen`、塔首通开打前用 `canFirstClearTower` 判断；**打赢后一定发奖**，不要在领奖时再拦。已通关的层和关重打不受限。
-   - 界面显示“今天还能推进什么”和“第 N 关明天开放”（`openingDay`）。
-   - 走查用的测试存档（`--workshop-device-walk`、`--chapter2-bridge-walk` 等）要把建档日往前推，不然会被锁住。
-3. 交给 Codex（Mac）：拉 `claude/nifty-planck-80307c`，`xcodebuild`，按惯例备份 Preferences 后装机；看“封线装备”页通缉栏、通缉案卷的遗落物说明、墙关失败提示（含“换上深井第 N 层或更深的装备”）、通缉战败说明，以及几个新机制的实际手感。装机、编号、SSD、存档隔离规矩见 `HANDOFF_PROGRESSION_UI_20260928.md` 和 `AGENTS.md`。
+2. **按天推进第二步：在 Mac 上编译并验证第四轮的接入**。`xcodebuild` 修掉类型错误；跑 `--verify-daily-pacing` 和 `--verify-player-growth`；真机上先备份 Preferences，确认用户真实存档第一次打开时被迁移（下一关当天可打），并逐文件核对只多了 `mistport.daily-pacing.start.v1` 一个键。可选：把 `todaySummary` 放到城市页；任务板上锁住的关显示原因。
+3. 交给 Codex（Mac）：拉 `claude/world-economy-m0-u62oho`，`xcodebuild`，按惯例备份 Preferences 后装机；看“封线装备”页通缉栏、通缉案卷的遗落物说明、墙关失败提示（含“换上深井第 N 层或更深的装备”）、通缉战败说明，以及几个新机制的实际手感。装机、编号、SSD、存档隔离规矩见 `HANDOFF_PROGRESSION_UI_20260928.md` 和 `AGENTS.md`。
 4. 用户对上面两条可选项的意见。
 5. 其余 7 件遗落物效果；第二章核心人物战、死亡与继任；服务端账户与可信战斗结算小样。
 

@@ -7598,7 +7598,7 @@ struct ChurchTowerView: View {
     private let sealPoints: [CGPoint] = [CGPoint(x: 0.246, y: 0.183), CGPoint(x: 0.659, y: 0.25), CGPoint(x: 0.279, y: 0.31), CGPoint(x: 0.74, y: 0.375), CGPoint(x: 0.278, y: 0.44), CGPoint(x: 0.699, y: 0.502), CGPoint(x: 0.325, y: 0.569), CGPoint(x: 0.739, y: 0.637), CGPoint(x: 0.347, y: 0.702), CGPoint(x: 0.68, y: 0.777)]
     private let tierNames = ["井口封线", "盐雾渗层", "回生暗渠", "双刃断桥", "冠鸣回廊", "骨爪深穴", "交错封锁", "沉井围阵", "裂隙王庭", "最后界碑"]
     private var floor: MPCChurchTowerCatalog.Floor { MPCChurchTowerCatalog.floor(number: selected)! }
-    private var available: Bool { game.churchRemoteServicesAvailable && game.churchTowerProgress.canEnter(selected, completedMissionNumbers: game.churchTowerMissionNumbers) }
+    private var available: Bool { game.churchRemoteServicesAvailable && game.churchTowerProgress.canEnter(selected, completedMissionNumbers: game.churchTowerMissionNumbers) && game.towerFloorIsOpenToday(selected) }
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -7641,7 +7641,7 @@ struct ChurchTowerView: View {
                             enabled: available
                         ) { launch(selected) }
                         if !available {
-                            Text(!game.churchRemoteServicesAvailable ? game.churchRemoteContactPauseReason : floor.requiredMission > 0 && !game.churchTowerMissionNumbers.contains(floor.requiredMission) ? "完成主线第 \(floor.requiredMission) 关后取得下井许可" : "先封堵上一层").font(.caption).foregroundStyle(.white.opacity(0.65))
+                            Text(!game.churchRemoteServicesAvailable ? game.churchRemoteContactPauseReason : floor.requiredMission > 0 && !game.churchTowerMissionNumbers.contains(floor.requiredMission) ? "完成主线第 \(floor.requiredMission) 关后取得下井许可" : !game.churchTowerProgress.canEnter(selected, completedMissionNumbers: game.churchTowerMissionNumbers) ? "先封堵上一层" : game.towerPacingLockText ?? "").font(.caption).foregroundStyle(.white.opacity(0.65))
                         }
                         if !error.isEmpty { Text(error).font(.caption).foregroundStyle(.orange) }
                     }.padding(20).frame(maxWidth: .infinity).background(.black.opacity(0.65)).overlay(alignment: .top) { Rectangle().fill(ChurchGold.opacity(0.6)).frame(height: 1) }
@@ -7680,7 +7680,7 @@ struct ChurchTowerView: View {
             selected = number; tier = (number - 1) / 10
             battleDestination = BattleDestination(floor: number, session: prepared)
         }
-        catch { self.error = "封线暂不可进入，请检查前层与主线许可。" }
+        catch { self.error = game.towerFloorIsOpenToday(number) ? "封线暂不可进入，请检查前层与主线许可。" : (game.towerPacingLockText ?? "") }
     }
 }
 
@@ -7892,8 +7892,11 @@ private struct ChurchTowerBattleView: View {
                     if awarded, let drop = MPCChurchGearCatalog.towerDrop(floor: floor) {
                         Text("获得装备 · \(drop.name)").foregroundStyle(.cyan)
                     }
-                    if game.churchTowerProgress.canEnter(floor + 1, completedMissionNumbers: game.churchTowerMissionNumbers) {
+                    if game.churchTowerProgress.canEnter(floor + 1, completedMissionNumbers: game.churchTowerMissionNumbers),
+                       game.towerFloorIsOpenToday(floor + 1) {
                         ChurchTowerArtButton(title: .nextFloor) { onNext() }
+                    } else if let lock = game.towerPacingLockText, !game.churchTowerProgress.clearedFloors.contains(floor + 1) {
+                        Text(lock).font(.caption).foregroundStyle(.white.opacity(0.65))
                     }
                     ChurchTowerArtButton(title: .backToWell) { onExit() }
                 }.foregroundStyle(.white)

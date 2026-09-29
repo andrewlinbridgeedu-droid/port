@@ -59,3 +59,60 @@ public enum MPCDailyPacing {
         return calendar.date(byAdding: .day, value: -(day - 1), to: calendar.startOfDay(for: today))!
     }
 }
+
+/// The calendar a save plays by: written once and kept with the save. A save from
+/// before pacing (any story or tower progress, no record) gets a migrated start that
+/// keeps its next mission and floor open today; a new save starts today.
+public struct MPCDailyPacingStart: Codable, Equatable, Sendable {
+    public enum Origin: String, Codable, Sendable { case newSave, migrated }
+    public let start: Date
+    public let origin: Origin
+    /// When the record was written: the migration receipt for an old save.
+    public let recordedAt: Date
+
+    public init(start: Date, origin: Origin, recordedAt: Date) {
+        self.start = start; self.origin = origin; self.recordedAt = recordedAt
+    }
+
+    /// For a save that has no record yet. Call once, then store the result.
+    public static func resolve(now: Date, completedMissions: Int, clearedTowerFloors: Int,
+                               calendar: Calendar = .current) -> MPCDailyPacingStart {
+        guard completedMissions > 0 || clearedTowerFloors > 0 else {
+            return .init(start: calendar.startOfDay(for: now), origin: .newSave, recordedAt: now)
+        }
+        return .init(start: MPCDailyPacing.migratedStart(today: now, completedMissions: completedMissions,
+                                                         clearedTowerFloors: clearedTowerFloors, calendar: calendar),
+                     origin: .migrated, recordedAt: now)
+    }
+
+    public func day(now: Date, calendar: Calendar = .current) -> Int {
+        MPCDailyPacing.dayNumber(start: start, now: now, calendar: calendar)
+    }
+}
+
+extension MPCDailyPacing {
+    /// Why an uncleared mission cannot start today, or nil when it can.
+    public static func missionLockText(_ mission: Int, day: Int) -> String? {
+        guard !isMissionOpen(mission, day: day) else { return nil }
+        let wait = openingDay(mission: mission) - day
+        return wait == 1 ? "第 \(mission) 关明天开放" : "第 \(mission) 关 \(wait) 天后开放"
+    }
+
+    /// Why a new tower floor cannot be first-cleared today, or nil when it can.
+    public static func towerLockText(clearedFloors: Int, day: Int) -> String? {
+        guard !canFirstClearTower(clearedFloors: clearedFloors, day: day) else { return nil }
+        return "今天的新层已封堵完，明天再来；已封堵的层可以随时重打"
+    }
+
+    /// Short line for the city: what today still opens.
+    public static func todaySummary(day: Int, completedMissions: Int, clearedFloors: Int) -> String {
+        let highest = highestOpenMission(day: day)
+        let story = completedMissions >= 30 ? "主线已全部打完"
+            : completedMissions >= highest ? (missionLockText(completedMissions + 1, day: day) ?? "")
+            : "今天可推进到第 \(highest) 关"
+        let floors = max(0, towerFirstClearsAllowed(day: day) - clearedFloors)
+        let tower = clearedFloors >= MPCChurchTowerCatalog.releasedFloorCount ? "深井已全部封堵"
+            : floors == 0 ? "深井新层明天再开" : "深井今天还能新封 \(floors) 层"
+        return "第 \(day) 天 · \(story) · \(tower)"
+    }
+}

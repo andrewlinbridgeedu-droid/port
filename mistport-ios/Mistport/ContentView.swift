@@ -113,7 +113,7 @@ struct ContentView: View {
                         path: game.selectedPath,
                         sequence: game.displayedSequence,
                         districtName: game.selectedChapterDistrict.name,
-                        nextMissionTitle: game.nextChapterMission?.title ?? "本次调查已完成 · 可重访",
+                        nextMissionTitle: game.nextChapterMission.map { game.missionLockText($0) ?? $0.title } ?? "本次调查已完成 · 可重访",
                         missionProgress: game.completedMissionCount(in: game.selectedChapterDistrict),
                         reputation: game.reputation(in: game.selectedChapterDistrict),
                         coins: game.venueCoins,
