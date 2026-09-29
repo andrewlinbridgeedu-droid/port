@@ -162,6 +162,7 @@ final class GameStore {
         static let dailyWorkshop = "mistport.daily-workshop.v1"
         static let cityEvents = "mistport.city-events.v1"
         static let neighbors = "mistport.neighbors.v1"
+        static let remnants = "mistport.remnants.v1"
         static let selectedChapterDistrictID = "chapter-one.selected-district-id"
         static let venueCoins = "economy.venue-coins"
         static let ownedVenueItems = "economy.owned-venue-items"
@@ -341,6 +342,7 @@ final class GameStore {
                 PersistenceKey.dailyWorkshop,
                 PersistenceKey.cityEvents,
                 PersistenceKey.neighbors,
+                PersistenceKey.remnants,
                 PersistenceKey.selectedChapterDistrictID,
                 PersistenceKey.venueCoins,
                 PersistenceKey.ownedVenueItems,
@@ -388,6 +390,7 @@ final class GameStore {
                 PersistenceKey.dailyWorkshop,
                 PersistenceKey.cityEvents,
                 PersistenceKey.neighbors,
+                PersistenceKey.remnants,
                 PersistenceKey.selectedChapterDistrictID,
                 PersistenceKey.venueCoins,
                 PersistenceKey.ownedVenueItems,
@@ -530,6 +533,7 @@ final class GameStore {
         if defaults.object(forKey: PersistenceKey.dailyWorkshop) == nil { persistDailyWorkshop(DailyWorkshopRecord()) }
         if defaults.object(forKey: PersistenceKey.cityEvents) == nil { defaults.set(try? JSONEncoder().encode(CityEventRecord()), forKey: PersistenceKey.cityEvents) }
         if defaults.object(forKey: PersistenceKey.neighbors) == nil { defaults.set(try? JSONEncoder().encode(NeighborRecord()), forKey: PersistenceKey.neighbors) }
+        if defaults.object(forKey: PersistenceKey.remnants) == nil { defaults.set(try? JSONEncoder().encode(RemnantRecord()), forKey: PersistenceKey.remnants) }
 
         #if DEBUG
         if launchArguments.contains("--preview-path") {
@@ -632,6 +636,7 @@ final class GameStore {
         if launchArguments.contains("--verify-player-growth") { Self.verifyPlayerGrowthPersistence() }
         if launchArguments.contains("--verify-daily-pacing") { Self.verifyDailyPacing() }
         if launchArguments.contains("--verify-daily-work") { Self.verifyDailyWorkIntegration() }
+        if launchArguments.contains("--verify-remnants") { Self.verifyRemnantsIntegration() }
         if launchArguments.contains("--verify-neighbors") { Self.verifyNeighborsIntegration() }
         if launchArguments.contains("--verify-city-events") { Self.verifyCityEventsIntegration() }
         if launchArguments.contains("--verify-daily-workshop") { Self.verifyDailyWorkshopIntegration() }
@@ -864,6 +869,12 @@ final class GameStore {
             var work = seed.dailyWorkRecord
             for n in 1...6 { _ = work.ledger.settle(receiptID: "preview-\(n)", day: 1, copper: 40, merit: 6) }
             seed.persistDailyWork(work)
+        }
+        if ProcessInfo.processInfo.arguments.contains("--daily-remnants-preview") {
+            seed.debugJumpToOldClockMission(6, enterImmediately: false)
+            seed.debugSetPacingDay(4)
+            try! seed.updateChurchServices { $0.bounties = try! JSONDecoder().decode(MPCChurchBountyLedger.self, from: Data(#"{"cases":{"b01":{"claimed":true}}}"#.utf8)) }
+            try! seed.acceptDailyRemnant()
         }
         if ProcessInfo.processInfo.arguments.contains("--daily-neighbors-preview") {
             seed.debugJumpToOldClockMission(6, enterImmediately: false)
@@ -2037,6 +2048,7 @@ final class GameStore {
         defaults.set(try? JSONEncoder().encode(CityEventRecord()), forKey: PersistenceKey.cityEvents)
         defaults.set(try? JSONEncoder().encode(NeighborRecord()), forKey: PersistenceKey.neighbors)
         talkingNeighborID = nil
+        defaults.set(try? JSONEncoder().encode(RemnantRecord()), forKey: PersistenceKey.remnants)
         defaults.removeObject(forKey: PersistenceKey.dailyPacingStart)
         dailyPacingStart = nil
         resolveDailyPacingStart()
@@ -2719,6 +2731,7 @@ extension GameStore {
         var dailyWorkshop: DailyWorkshopRecord? = nil
         var cityEvents: CityEventRecord? = nil
         var neighbors: NeighborRecord? = nil
+        var remnants: RemnantRecord? = nil
         let coins: Int
         let lifetime: Int
         let available: Int
@@ -2779,6 +2792,7 @@ extension GameStore {
         if let workshop = receipt.dailyWorkshop { persistDailyWorkshop(workshop) }
         if let events = receipt.cityEvents { defaults.set(try? JSONEncoder().encode(events), forKey: PersistenceKey.cityEvents) }
         if let neighbors = receipt.neighbors { defaults.set(try? JSONEncoder().encode(neighbors), forKey: PersistenceKey.neighbors) }
+        if let remnants = receipt.remnants { defaults.set(try? JSONEncoder().encode(remnants), forKey: PersistenceKey.remnants) }
         chapterOneCampaign.lifetimeChurchMerit = receipt.lifetime
         chapterOneCampaign.spendableChurchMerit = receipt.available
         if let relics = receipt.relicSnapshot {
@@ -2796,7 +2810,7 @@ extension GameStore {
         defaults.removeObject(forKey: "mistport.church.services.pending.v1")
         churchServicesRevision += 1
     }
-    private func updateChurchServices(neighbors: NeighborRecord? = nil, cityEvents: CityEventRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil, _ change: (inout ChurchServicesState) throws -> Void) throws {
+    private func updateChurchServices(dailyWork: DailyWorkRecord? = nil, remnants: RemnantRecord? = nil, neighbors: NeighborRecord? = nil, cityEvents: CityEventRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil, _ change: (inout ChurchServicesState) throws -> Void) throws {
         // Never replace an unreadable financial ledger with the default empty state.
         guard workshopLedgerIsReadable else { throw MPCLocalWorkshopLedger.Failure.locked }
         var state = churchServices
@@ -2804,10 +2818,10 @@ extension GameStore {
         state.loans.lifetimeMerit = chapterOneCampaign.lifetimeChurchMerit
         state.loans.availableMerit = chapterOneCampaign.spendableChurchMerit
         try change(&state)
-        try commitChurchServices(state, neighbors: neighbors, cityEvents: cityEvents, dailyWorkshop: dailyWorkshop, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
+        try commitChurchServices(state, remnants: remnants, dailyWork: dailyWork, neighbors: neighbors, cityEvents: cityEvents, dailyWorkshop: dailyWorkshop, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
     }
-    private func commitChurchServices(_ state: ChurchServicesState, neighbors: NeighborRecord? = nil, cityEvents: CityEventRecord? = nil, dailyWork: DailyWorkRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil) throws {
-        let receipt = ChurchServicesReceipt(state: state, dailyWork: dailyWork, dailyWorkshop: dailyWorkshop, cityEvents: cityEvents, neighbors: neighbors, coins: state.loans.coins, lifetime: state.loans.lifetimeMerit, available: state.loans.availableMerit, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
+    private func commitChurchServices(_ state: ChurchServicesState, remnants: RemnantRecord? = nil, dailyWork: DailyWorkRecord? = nil, neighbors: NeighborRecord? = nil, cityEvents: CityEventRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil) throws {
+        let receipt = ChurchServicesReceipt(state: state, dailyWork: dailyWork, dailyWorkshop: dailyWorkshop, cityEvents: cityEvents, neighbors: neighbors, remnants: remnants, coins: state.loans.coins, lifetime: state.loans.lifetimeMerit, available: state.loans.availableMerit, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
         defaults.set(try JSONEncoder().encode(receipt), forKey: "mistport.church.services.pending.v1")
         recoverChurchServices()
         preparedChapterOneSession = nil
@@ -4706,6 +4720,142 @@ extension GameStore {
         assert(store.neighbors.offers.allSatisfy { $0.day == 32 })
         store.restart(); assert(store.neighbors.offers.isEmpty && store.neighbors.affinity.isEmpty)
         NSLog("NEIGHBORS_VERIFY_PASS: migration once, daily 2-3 offers, proximity conversation required, actual recipient, wrong answers free, four kinds, no double rewards, pest abandon/retry, stories at 3/6, expiry, reopen, reset")
+    }
+}
+#endif
+
+// MARK: Daily remnant cases share the repeat-work ledger, never grant bounty relics
+extension GameStore {
+    private struct RemnantRecord: Codable {
+        let migratedAt: Date
+        var ledger = MPCRemnantLedger()
+        init() { migratedAt = Date() }
+    }
+    private func readRemnants() throws -> RemnantRecord {
+        guard let data = defaults.data(forKey: PersistenceKey.remnants),
+              let record = try? JSONDecoder().decode(RemnantRecord.self, from: data) else { throw MPCRemnantLedger.Failure.notAccepted }
+        return record
+    }
+    var remnants: MPCRemnantLedger {
+        _ = churchServicesRevision
+        return (try? readRemnants().ledger) ?? .init()
+    }
+    var closedBountyIDs: Set<String> { Set(churchServices.bounties.cases.filter { $0.value.claimed }.map(\.key)) }
+    var todayRemnant: MPCRemnantCase? { MPCRemnantCatalog.today(day: pacingDay, closedCaseIDs: closedBountyIDs)?.remnant }
+    func openRemnantDay() throws {
+        var record = try readRemnants()
+        let old = record.ledger
+        record.ledger.prune(day: pacingDay)
+        guard old != record.ledger else { return }
+        try updateChurchServices(remnants: record) { _ in }
+    }
+    func acceptDailyRemnant() throws {
+        var record = try readRemnants()
+        try record.ledger.accept(day: pacingDay, closedCaseIDs: closedBountyIDs, highestTowerFloor: churchTowerProgress.clearedFloors.max() ?? 0)
+        try updateChurchServices(remnants: record) { _ in }
+    }
+    func answerRemnant(day: Int, choiceID: String) throws -> Bool {
+        try openRemnantDay()
+        var record = try readRemnants()
+        let correct = try record.ledger.answer(day: day, choiceID: choiceID)
+        try updateChurchServices(remnants: record) { _ in }
+        return correct
+    }
+    func remnantPreview(day: Int, ticket: String) throws -> MPCChapterOneEncounterSession {
+        guard let job = remnants.job(day: day) else { throw MPCRemnantLedger.Failure.notAccepted }
+        return try MPCChapterOneEncounterSession.start(encounterID: MPCRemnantCatalog.encounterID(caseID: job.caseID, band: job.band, ticket: ticket),
+            party: chapterOneCampaign.party, consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: churchBattleCampaign.loadout)
+    }
+    func beginRemnant(day: Int, ticket: String, skills: [FoolSkillID]) throws -> MPCChapterOneEncounterSession {
+        try openRemnantDay()
+        var record = try readRemnants(), loadout = churchBattleCampaign.loadout
+        var legal: [FoolSkillID] = []
+        for skill in skills where skill != .maskedWhisper && chapterOneCampaign.unlockedSkillIDs.contains(skill) && !legal.contains(skill) { legal.append(skill) }
+        loadout.normalSkillIDs = Array(legal.prefix(chapterOneLoadoutSlotCapacity))
+        loadout.talents = hermitTalents; loadout.skillLevels = foolSkillLevels
+        let id = try record.ledger.beginBattle(day: day, ticket: ticket)
+        let session = try MPCChapterOneEncounterSession.start(encounterID: id, party: chapterOneCampaign.party,
+            consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: loadout)
+        try updateChurchServices(remnants: record) { try beginChurchGear(&$0, battleID: ticket, loadout: loadout) }
+        return session
+    }
+    func settleRemnant(day: Int, ticket: String, session: MPCChapterOneEncounterSession) throws {
+        var record = try readRemnants()
+        guard try record.ledger.settleBattle(day: day, ticket: ticket, session: session) else { return }
+        try updateChurchServices(remnants: record) { try settleChurchGear(&$0, battleID: ticket, outcome: session.outcome == .victory ? .victory : .defeat) }
+    }
+    func abandonRemnant(day: Int, ticket: String, defeated: Bool = false) throws {
+        var record = try readRemnants()
+        guard record.ledger.job(day: day)?.activeTicket == ticket else { return }
+        record.ledger.abandonBattle(day: day, ticket: ticket)
+        try updateChurchServices(remnants: record) { try settleChurchGear(&$0, battleID: ticket, outcome: defeated ? .defeat : .retreat) }
+    }
+    @discardableResult
+    func claimRemnant(day: Int) throws -> MPCDailyWorkLedger.Payout? {
+        var record = try readRemnants(), work = dailyWorkRecord, coins = venueCoins, inventory = chapterOneCampaign.inventory
+        let payout = try record.ledger.claim(day: day, today: pacingDay, work: &work.ledger, coins: &coins, inventory: &inventory)
+        guard let payout else { return nil }
+        try updateChurchServices(dailyWork: work, remnants: record, inventory: inventory) { $0.loans.coins = coins }
+        return payout
+    }
+}
+
+#if DEBUG
+extension GameStore {
+    private static func verifyRemnantsIntegration() {
+        let suite = "mistport.remnants-check." + UUID().uuidString
+        let storage = UserDefaults(suiteName: suite)!
+        defer { storage.removePersistentDomain(forName: suite) }
+        var store = GameStore(launchArguments: [], defaults: storage)
+        let migration = storage.data(forKey: PersistenceKey.remnants)!
+        store = GameStore(launchArguments: [], defaults: storage)
+        assert(storage.data(forKey: PersistenceKey.remnants) == migration && store.todayRemnant == nil)
+        assert((try? store.acceptDailyRemnant()) == nil)
+        store.debugJumpToOldClockMission(6, enterImmediately: false)
+        store.debugSetPacingDay(4)
+        try! store.updateChurchServices { $0.bounties = try! JSONDecoder().decode(MPCChurchBountyLedger.self, from: Data(#"{"cases":{"b01":{"claimed":true}}}"#.utf8)) }
+        store = GameStore(launchArguments: [], defaults: storage)
+        let relics = store.churchServices.bountyRelics, merit = store.chapterOneCampaign.lifetimeChurchMerit
+        try! store.acceptDailyRemnant(); try! store.acceptDailyRemnant()
+        assert(store.remnants.jobs.count == 1)
+        let job = store.remnants.job(day: 4)!, lead = job.remnant!.leads[job.lead]
+        assert(job.band == 10 && (try? store.beginRemnant(day: 4, ticket: "unsolved", skills: [])) == nil)
+        let before = store.venueCoins
+        assert(!(try! store.answerRemnant(day: 4, choiceID: lead.choices.first { $0.id != lead.correctChoiceID }!.id)))
+        assert(store.venueCoins == before)
+        assert(try! store.answerRemnant(day: 4, choiceID: lead.correctChoiceID))
+        _ = try! store.beginRemnant(day: 4, ticket: "abandoned", skills: [])
+        try! store.abandonRemnant(day: 4, ticket: "abandoned")
+        assert(store.remnants.job(day: 4)?.activeTicket == nil)
+        let victory = winDailyStreetVerification(try! store.beginRemnant(day: 4, ticket: "winner", skills: []))
+        store.debugSetPacingDay(20); try! store.openRemnantDay()
+        assert(store.remnants.job(day: 4) != nil)
+        try! store.settleRemnant(day: 4, ticket: "winner", session: victory)
+        try! store.settleRemnant(day: 4, ticket: "winner", session: victory)
+        try! store.openRemnantDay()
+        assert(store.remnants.job(day: 4)?.won == true && store.venueCoins == before)
+        var work = store.dailyWorkRecord
+        for n in 1...3 { _ = work.ledger.settle(receiptID: "earlier-\(n)", day: 20, copper: 40, merit: 0) }
+        store.persistDailyWork(work)
+        let material = job.remnant!.material, stock = store.chapterOneCampaign.inventory[job.remnant!.material, default: 0]
+        let payout = try! store.claimRemnant(day: 4)
+        assert(payout?.copper == 15 && store.venueCoins == before + 15 && store.dailyWorkRecord.ledger.jobsToday == 4)
+        assert(try! store.claimRemnant(day: 4) == nil)
+        assert(store.chapterOneCampaign.inventory[material, default: 0] == stock + 2)
+        assert(store.churchServices.bountyRelics == relics && store.chapterOneCampaign.lifetimeChurchMerit == merit)
+        // Replay an interrupted common receipt over stale ledgers: absolute balances recover once.
+        let paidRecord = try! store.readRemnants()
+        let receipt = ChurchServicesReceipt(state: store.churchServices, dailyWork: store.dailyWorkRecord, remnants: paidRecord,
+            coins: store.venueCoins, lifetime: merit, available: store.chapterOneCampaign.spendableChurchMerit, inventory: store.chapterOneCampaign.inventory)
+        storage.set(try! JSONEncoder().encode(receipt), forKey: "mistport.church.services.pending.v1")
+        storage.set(migration, forKey: PersistenceKey.remnants)
+        store = GameStore(launchArguments: [], defaults: storage)
+        assert(store.remnants.job(day: 4)?.claimed == true && store.venueCoins == before + 15)
+        assert(store.dailyWorkRecord.ledger.jobsToday == 4 && store.chapterOneCampaign.inventory[material, default: 0] == stock + 2)
+        try! store.openRemnantDay(); assert(store.remnants.job(day: 4) == nil)
+        try! store.acceptDailyRemnant(); assert(store.remnants.job(day: 20) != nil)
+        store.restart(); assert(store.remnants.jobs.isEmpty)
+        NSLog("REMNANTS_VERIFY_PASS: empty migration once, closed-bounty gate, one case/day, wrong answer free, band, abandon, real runtime win, cross-week pending/earned reward, shared taper, duplicate claim, atomic recovery, no relic/merit grants, cleanup, reset")
     }
 }
 #endif

@@ -95,7 +95,9 @@ struct MistportApp: App {
             #if DEBUG
             if ProcessInfo.processInfo.arguments.contains("--daily-pacing-device-walk") {
                 Group {
-                    if ProcessInfo.processInfo.arguments.contains("--daily-neighbors-preview") {
+                    if ProcessInfo.processInfo.arguments.contains("--daily-remnants-preview") {
+                        RemnantCasesView(game: game)
+                    } else if ProcessInfo.processInfo.arguments.contains("--daily-neighbors-preview") {
                         NeighborConversationView(game: game, neighborID: "postman")
                             .task { try? game.talkToNeighbor("postman") }
                     } else if ProcessInfo.processInfo.arguments.contains("--daily-events-preview") {
@@ -155,7 +157,7 @@ private func saveDailyPacingWalkScreenshot() {
         .flatMap(\.windows).first(where: \.isKeyWindow),
           let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
     let arguments = ProcessInfo.processInfo.arguments
-    let page = arguments.contains("--daily-neighbors-preview") ? "neighbors" : arguments.contains("--daily-events-preview") ? "events" : arguments.contains("--daily-workshop-preview") ? "workshop" : arguments.contains("--daily-work-preview") ? "work" : arguments.contains("--daily-pacing-tower") ? "tower" : arguments.contains("--daily-pacing-gear") ? "gear" : "city"
+    let page = arguments.contains("--daily-remnants-preview") ? "remnants" : arguments.contains("--daily-neighbors-preview") ? "neighbors" : arguments.contains("--daily-events-preview") ? "events" : arguments.contains("--daily-workshop-preview") ? "workshop" : arguments.contains("--daily-work-preview") ? "work" : arguments.contains("--daily-pacing-tower") ? "tower" : arguments.contains("--daily-pacing-gear") ? "gear" : "city"
     let image = UIGraphicsImageRenderer(bounds: window.bounds).image { _ in
         window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
     }
