@@ -106,3 +106,22 @@ struct RemnantCaseTests {
         #expect(decoded == ledger)
     }
 }
+
+extension RemnantCaseTests {
+    @Test func cleanupKeepsSevenDaysAndProtectsPendingRewards() throws {
+        var ledger = MPCRemnantLedger(), work = MPCDailyWorkLedger(), coins = 0, inventory: [String: Int] = [:]
+        for day in 1...8 { try ledger.accept(day: day, closedCaseIDs: ["b01"], highestTowerFloor: 10) }
+        #expect(ledger.jobs.count == 7 && ledger.job(day: 1) == nil && ledger.job(day: 2) != nil)
+        let job = ledger.job(day: 2)!
+        try ledger.answer(day: 2, choiceID: job.remnant!.leads[job.lead].correctChoiceID)
+        let encounter = try ledger.beginBattle(day: 2, ticket: "late-win")
+        ledger.prune(day: 30)
+        #expect(ledger.jobs.count == 1)
+        try ledger.settleBattle(day: 2, ticket: "late-win", session: playStreet(encounter, to: .victory))
+        ledger.prune(day: 30)
+        #expect(ledger.job(day: 2)?.won == true)
+        _ = try ledger.claim(day: 2, today: 30, work: &work, coins: &coins, inventory: &inventory)
+        ledger.prune(day: 30)
+        #expect(ledger.jobs.isEmpty && coins == 30)
+    }
+}

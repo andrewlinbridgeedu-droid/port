@@ -1,0 +1,13 @@
+{
+  "beforeFiles": 143,
+  "afterFiles": 143,
+  "playerByteIdentical": false,
+  "addedPlayerKeys": [
+    "mistport.remnants.v1"
+  ],
+  "changedOrRemovedPlayerKeys": [],
+  "changedOrRemovedOtherFiles": [],
+  "allowedTestSuiteChanges": [],
+  "newFiles": [],
+  "passed": true
+}

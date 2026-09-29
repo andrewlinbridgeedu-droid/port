@@ -8446,6 +8446,7 @@ struct ChurchBountyBoard: View {
     var origin = "教会"
     @State private var selected: String?
     @State private var showsClosed = false
+    @State private var showsRemnants = false
     private let crimson = Color(red: 0.70, green: 0.28, blue: 0.25)
     private var issue: MPCDailyBountyIssue? { game.churchServices.dailyBountyIssue }
     private var ongoing: [MPCChurchBounty] {
@@ -8545,6 +8546,8 @@ struct ChurchBountyBoard: View {
                                     selected = bounty.id
                                 }
                             }
+                            Button("无名残余案 · 每日当地小案") { showsRemnants = true }
+                                .buttonStyle(.borderedProminent)
                             if !closed.isEmpty {
                                 Button { withAnimation { showsClosed.toggle() } } label: {
                                     HStack {
@@ -8572,6 +8575,7 @@ struct ChurchBountyBoard: View {
                 }
             }
             .preferredColorScheme(.dark)
+            .sheet(isPresented: $showsRemnants) { RemnantCasesView(game: game) }
             .onAppear { game.refreshChurchBountyBoard() }
             .task {
                 while !Task.isCancelled {

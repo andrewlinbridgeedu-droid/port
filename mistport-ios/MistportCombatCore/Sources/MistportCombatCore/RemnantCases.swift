@@ -199,12 +199,18 @@ public struct MPCRemnantLedger: Codable, Equatable, Sendable {
     static func key(_ day: Int) -> String { "d\(day)" }
     public func job(day: Int) -> Job? { jobs[Self.key(day)] }
 
+    /// Seven calendar days including today; a started fight and an earned, unpaid
+    /// reward survive cleanup so crossing a date cannot swallow a legitimate win.
+    public mutating func prune(day: Int) {
+        jobs = jobs.filter { $0.value.day > day - Self.keptDays || $0.value.activeTicket != nil || ($0.value.won && !$0.value.claimed) }
+    }
+
     /// Takes today's case (or returns it if already taken). The band is fixed at acceptance.
     @discardableResult
     public mutating func accept(day: Int, closedCaseIDs: Set<String>, highestTowerFloor: Int) throws -> Job {
         if let job = job(day: day) { return job }
         guard let today = MPCRemnantCatalog.today(day: day, closedCaseIDs: closedCaseIDs) else { throw Failure.noCase }
-        jobs = jobs.filter { $0.value.day >= day - Self.keptDays || $0.value.activeTicket != nil }
+        prune(day: day)
         let job = Job(day: day, caseID: today.remnant.id, lead: today.lead,
                       band: MPCRemnantCatalog.band(today.remnant, highestTowerFloor: highestTowerFloor))
         jobs[Self.key(day)] = job

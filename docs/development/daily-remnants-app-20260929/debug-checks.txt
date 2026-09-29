@@ -1,0 +1,10 @@
+2026-09-29 03:02:21.326 Mistport[27784:863493] BOUNTY_DAILY_RISK_VERIFY_PASS: no mission gate, daily issue, copper-only loss, relic kept, reload, no double charge, evidence retained
+2026-09-29 03:02:21.347 Mistport[27784:863493] CHURCH_TOWER_VERIFY_PASS: unlock, defeat rejection, first clear, duplicate, restore, mismatched battle, journal recovery
+2026-09-29 03:02:21.369 Mistport[27784:863493] PLAYER_GROWTH_VERIFY_PASS: locked card, debit, no funds, restore, battle level, Q30 release boundary, interrupted upgrade, reset
+2026-09-29 03:02:21.388 Mistport[27784:863493] DAILY_PACING_VERIFY_PASS: new save day 1, Q4 tomorrow, replay open, next day, reopen, tower 4/day, migration once, restart
+2026-09-29 03:02:21.460 Mistport[27784:863493] DAILY_WORK_VERIFY_PASS: empty migration once, shared J0/J1/J2/story counter, 100/50/10 percent, two merit jobs, duplicate callbacks, reopen, journal recovery, next day, restart
+2026-09-29 03:02:21.489 Mistport[27784:863493] REMNANTS_VERIFY_PASS: empty migration once, closed-bounty gate, one case/day, wrong answer free, band, abandon, real runtime win, cross-week pending/earned reward, shared taper, duplicate claim, atomic recovery, no relic/merit grants, cleanup, reset
+2026-09-29 03:02:21.825 Mistport[27784:863493] NEIGHBORS_VERIFY_PASS: migration once, daily 2-3 offers, proximity conversation required, actual recipient, wrong answers free, four kinds, no double rewards, pest abandon/retry, stories at 3/6, expiry, reopen, reset
+2026-09-29 03:02:21.876 Mistport[27784:863493] CITY_EVENTS_VERIFY_PASS: migrate once, delivery receipts, finite escrow, real runtime victories, daily cap, persisted start day, cross-day victory payout, duplicate settlement, success/failure prices, retreat, reset
+2026-09-29 03:02:22.067 Mistport[27784:863493] DAILY_WORKSHOP_VERIFY_PASS: migration once, Q5/day3, five daily crafts, duplicate craft/order, finite orders, first/repeat species drops, retired tickets, fourteen recipes, wear gate, tower depth, wear once, repair once, reopen
+P0_VERIFY_PASS: commit, duplicate, interruption recovery, acknowledge, replay, auto-exit
