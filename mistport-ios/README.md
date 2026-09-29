@@ -13,3 +13,5 @@ xcodebuild -project Mistport.xcodeproj -scheme Mistport -sdk iphoneos -configura
 战斗核心测试在 `MistportCombatCore/` 执行 `swift test`。改动 `UnityBattleSource/` 的运行资源后，先运行仓库根目录 `scripts/check_unity_export_freshness.sh`，再构建宿主；生成的 `UnityBuild/` 不手改。安装或启动成功不代表逐关或法术视觉通过，需按交付记录逐项核对。真机测试必须隔离夹具并核查玩家 Preferences。
 
 工程导航见[项目结构](../PROJECT_STRUCTURE.md)、[文档权威](../DOCUMENTATION_GUIDE.md)、[美术规则](../ART_ASSET_GUIDE.md)与[3D 敌人接入](ENEMY_3D_PIPELINE.md)。
+
+角色页箭头、技能长按介绍及结算铭牌按钮的实现与验证见[2026-09-29 界面修正记录](../docs/development/PROFILE_UI_FIX_20260929.md)。

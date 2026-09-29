@@ -93,6 +93,7 @@ struct CharacterProfileView: View {
         if MPCChapterOneCatalog.relicsEnabled && arguments.contains("--preview-relics") { return .equipment }
         return .talent
     }()
+    @State private var inspectedSkill: MPCSkillContent?
     @State private var isBreathing = false
     @State private var relicRepairNotice = ""
     @State private var showsTalentTree = ProcessInfo.processInfo.arguments.contains("--preview-talents")
@@ -103,6 +104,9 @@ struct CharacterProfileView: View {
         GeometryReader { geometry in
             ZStack {
                 characterBackdrop
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .clipped()
+                    .allowsHitTesting(false)
                 characterArt(in: geometry.size)
                 vignette
                 outfitControls(in: geometry.size)
@@ -149,6 +153,12 @@ struct CharacterProfileView: View {
         .ignoresSafeArea()
         .preferredColorScheme(.light)
         .onAppear { startAmbientMotion() }
+        .sheet(item: $inspectedSkill) { skill in
+            ChapterSkillDetailSheet(skill: skill)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .preferredColorScheme(.dark)
+        }
         .fullScreenCover(isPresented: $showsTalentTree) {
             LegacyHermitTalentTreeView(game: game)
         }
@@ -195,9 +205,10 @@ struct CharacterProfileView: View {
             Spacer()
             outfitArrow(direction: 1)
         }
-        .padding(.horizontal, 19)
-        .frame(width: size.width)
+        .padding(.horizontal, 24)
+        .frame(width: size.width, height: 48)
         .position(x: size.width / 2, y: size.height * 0.43)
+        .frame(width: size.width, height: size.height)
     }
 
     private func outfitArrow(direction: Int) -> some View {
@@ -210,11 +221,12 @@ struct CharacterProfileView: View {
             Image(systemName: direction < 0 ? "chevron.left" : "chevron.right")
                 .font(.system(size: 19, weight: .semibold))
                 .foregroundStyle(Color(red: 0.91, green: 0.83, blue: 0.66))
-                .frame(width: 46, height: 46)
+                .frame(width: 48, height: 48)
                 .background(.black.opacity(0.63), in: Circle())
                 .overlay { Circle().stroke(Color(red: 0.79, green: 0.68, blue: 0.46).opacity(0.85), lineWidth: 1) }
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier(direction < 0 ? "character-outfit-previous" : "character-outfit-next")
         .accessibilityLabel("换上\(next.name)")
         .accessibilityHint(direction < 0 ? "上一套衣装" : "下一套衣装")
     }
@@ -545,6 +557,9 @@ struct CharacterProfileView: View {
                         .font(.system(size: 10)).foregroundStyle(.white.opacity(0.65))
                 }
             }
+            .contentShape(Rectangle())
+            .onLongPressGesture(minimumDuration: 0.45) { inspectedSkill = skill }
+            .accessibilityAction(named: "查看技能介绍") { inspectedSkill = skill }
             Text(skill.summary).font(.system(size: 10)).lineLimit(2).frame(height: 27, alignment: .topLeading)
             Text(supported ? (level < 5 ? "下一级：直接伤害 / 自身盾 +\(level * 10)%" : "已达到本次强化上限") : "层数与时机固定，无需消耗粉尘强化。")
                 .font(.system(size: 9)).foregroundStyle(.yellow.opacity(0.9)).lineLimit(1)
@@ -602,6 +617,7 @@ struct CharacterProfileView: View {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                     Label("出战技能顺序", systemImage: "list.number")
                         .font(.caption.bold())
+                        .foregroundStyle(.white.opacity(0.85))
                     Spacer(minLength: 4)
                     Text("左→右执行 · \(selectedSkills.count)/\(slotCapacity)")
                         .font(.system(size: 9, weight: .bold, design: .rounded))
@@ -613,16 +629,7 @@ struct CharacterProfileView: View {
                     .foregroundStyle(.white.opacity(0.64))
                     .lineLimit(2)
 
-                if selectedSkills.isEmpty {
-                    HStack(spacing: 7) {
-                        Image(systemName: "rectangle.stack.badge.plus")
-                            .foregroundStyle(path.tint)
-                        Text("完成第一关后，玛拉交付的技能牌会出现在这里。")
-                            .font(.system(size: 9, weight: .semibold))
-                            .foregroundStyle(.white.opacity(0.72))
-                    }
-                    .padding(.vertical, 6)
-                } else {
+                if !selectedSkills.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 6) {
                             ForEach(Array(selectedSkills.enumerated()), id: \.element.id) { index, skill in
@@ -634,7 +641,8 @@ struct CharacterProfileView: View {
                                     canMoveRight: index < selectedSkills.count - 1,
                                     onMoveLeft: { moveChapterOneBattleSkill(skill.id, by: -1) },
                                     onMoveRight: { moveChapterOneBattleSkill(skill.id, by: 1) },
-                                    onRemove: { toggleChapterOneBattleSkill(skill.id) }
+                                    onRemove: { toggleChapterOneBattleSkill(skill.id) },
+                                    onInspect: { inspectedSkill = skill }
                                 )
                             }
                         }
@@ -647,7 +655,8 @@ struct CharacterProfileView: View {
                 HStack(spacing: 5) {
                     Text("可编入技能")
                         .font(.system(size: 9, weight: .black, design: .rounded))
-                    Text("点击加入牌组")
+                        .foregroundStyle(.white.opacity(0.85))
+                    Text("点击编入 · 长按介绍")
                         .font(.system(size: 8, weight: .semibold, design: .rounded))
                         .foregroundStyle(.white.opacity(0.52))
                     Spacer(minLength: 0)
@@ -658,6 +667,7 @@ struct CharacterProfileView: View {
                         ForEach(chapterOneUnlockedSkills) { skill in
                             let isSelected = selectedIDs.contains(skill.id)
                             Button {
+                                guard isSelected || selectedSkills.count < slotCapacity else { return }
                                 toggleChapterOneBattleSkill(skill.id)
                             } label: {
                                 VStack(spacing: 2) {
@@ -678,8 +688,8 @@ struct CharacterProfileView: View {
                                 }
                                 .frame(width: 50, height: 67)
                             }
-                            .buttonStyle(.plain)
-                            .disabled(!isSelected && selectedSkills.count >= slotCapacity)
+                            .buttonStyle(CharacterSkillInspectionStyle { inspectedSkill = skill })
+                            .accessibilityAction(named: "查看技能介绍") { inspectedSkill = skill }
                             .opacity(!isSelected && selectedSkills.count >= slotCapacity ? 0.38 : 1)
                             .accessibilityLabel(skill.name + "，" + (isSelected ? "已编入出战顺序" : "加入出战顺序"))
                         }
@@ -816,6 +826,28 @@ private enum CharacterSection: String, CaseIterable, Identifiable {
     }
 }
 
+// A hold inspects without also firing the loadout toggle on release.
+private struct CharacterSkillInspectionStyle: PrimitiveButtonStyle {
+    let onInspect: () -> Void
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .contentShape(Rectangle())
+            .gesture(
+                LongPressGesture(minimumDuration: 0.45, maximumDistance: 12)
+                    .exclusively(before: TapGesture())
+                    .onEnded { gesture in
+                        switch gesture {
+                        case .first(true): onInspect()
+                        case .second: configuration.trigger()
+                        default: break
+                        }
+                    }
+            )
+            .accessibilityAction { configuration.trigger() }
+    }
+}
+
 private struct CharacterBattleSequenceCard: View {
     let skill: MPCSkillContent
     let order: Int
@@ -825,28 +857,33 @@ private struct CharacterBattleSequenceCard: View {
     let onMoveLeft: () -> Void
     let onMoveRight: () -> Void
     let onRemove: () -> Void
+    let onInspect: () -> Void
 
     var body: some View {
         VStack(spacing: 2) {
-            ZStack(alignment: .topLeading) {
-                Image(decorative: artName)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 56, height: 62)
-                    .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            Button(action: onInspect) {
+                ZStack(alignment: .topLeading) {
+                    Image(decorative: artName)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 56, height: 62)
+                        .clipped()
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
 
-                Text("\(order)")
-                    .font(.system(size: 8, weight: .black, design: .rounded))
-                    .foregroundStyle(.black)
-                    .frame(width: 15, height: 15)
-                    .background(.yellow, in: Circle())
-                    .padding(2)
+                    Text("\(order)")
+                        .font(.system(size: 8, weight: .black, design: .rounded))
+                        .foregroundStyle(.black)
+                        .frame(width: 15, height: 15)
+                        .background(.yellow, in: Circle())
+                        .padding(2)
+                }
+                .overlay {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(.yellow.opacity(0.72), lineWidth: 1.2)
+                }
             }
-            .overlay {
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(.yellow.opacity(0.72), lineWidth: 1.2)
-            }
+            .buttonStyle(CharacterSkillInspectionStyle(onInspect: onInspect))
+            .accessibilityLabel("查看\(skill.name)介绍")
 
             HStack(spacing: 2) {
                 Button(action: onMoveLeft) {

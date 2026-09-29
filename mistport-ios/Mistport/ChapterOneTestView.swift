@@ -5596,7 +5596,7 @@ private struct HellHoundFlameProjectile: View {
     }
 }
 
-private struct ChapterSkillDetailSheet: View {
+struct ChapterSkillDetailSheet: View {
     let skill: MPCSkillContent
 
     var body: some View {
@@ -7426,15 +7426,7 @@ struct ChapterOneVictoryReceiptView: View {
                             Text("习得 · \(skill.name)").foregroundStyle(.white).font(.headline)
                         }
                     }
-                    Button(action: finish) {
-                        Text("继续 · 前往后续")
-                            .font(.headline.bold())
-                            .foregroundStyle(.black)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 13)
-                            .background(.yellow, in: Capsule())
-                    }
-                    .buttonStyle(.plain)
+                    MistportPlaqueButton(title: "继续 · 前往后续", action: finish)
                     .accessibilityIdentifier("chapter-one-victory-continue")
                     .padding(.top, 14)
                 }
