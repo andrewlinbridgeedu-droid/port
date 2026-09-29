@@ -10,8 +10,9 @@ import Foundation
 /// (`PACING=`); the game never writes them. Local saves trust the device clock;
 /// a moved-forward clock can only be caught by a server.
 public enum MPCDailyPacing {
-    /// Story missions open on day 1, then this many more each day (Q30 on day 30).
-    nonisolated(unsafe) public static var missionsOnFirstDay = 1
+    /// Story missions open on day 1 (Q1–Q3, so the first session is not a single
+    /// short battle), then this many more each day (Q30 on day 28).
+    nonisolated(unsafe) public static var missionsOnFirstDay = 3
     nonisolated(unsafe) public static var missionsPerDay = 1
     /// Tower first clears allowed per day, accumulating. Replays of cleared floors
     /// are never limited; they pay no first-clear reward.

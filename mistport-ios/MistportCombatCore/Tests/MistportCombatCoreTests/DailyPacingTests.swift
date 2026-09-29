@@ -22,14 +22,16 @@ struct DailyPacingTests {
         #expect(MPCDailyPacing.dayNumber(start: date(10), now: date(3), calendar: calendar) == 1)
     }
 
-    @Test func oneMissionADayAndSkippedDaysStillCount() {
-        #expect(MPCDailyPacing.highestOpenMission(day: 1) == 1)
-        #expect(MPCDailyPacing.isMissionOpen(18, day: 18))
-        #expect(!MPCDailyPacing.isMissionOpen(19, day: 18))
+    @Test func threeMissionsOnDayOneThenOneADayAndSkippedDaysStillCount() {
+        #expect(MPCDailyPacing.highestOpenMission(day: 1) == 3)
+        #expect(MPCDailyPacing.highestOpenMission(day: 2) == 4)
+        #expect(MPCDailyPacing.isMissionOpen(18, day: 16))
+        #expect(!MPCDailyPacing.isMissionOpen(19, day: 16))
+        #expect(MPCDailyPacing.openingDay(mission: 30) == 28)
         #expect(MPCDailyPacing.highestOpenMission(day: 45) == 30)
         for mission in 1...30 {
             #expect(MPCDailyPacing.isMissionOpen(mission, day: MPCDailyPacing.openingDay(mission: mission)))
-            #expect(!MPCDailyPacing.isMissionOpen(mission, day: MPCDailyPacing.openingDay(mission: mission) - 1) || mission == 1)
+            #expect(!MPCDailyPacing.isMissionOpen(mission, day: MPCDailyPacing.openingDay(mission: mission) - 1) || mission <= 3)
         }
     }
 
