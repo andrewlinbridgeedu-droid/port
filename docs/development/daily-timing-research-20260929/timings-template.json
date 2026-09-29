@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "status": "unmeasured",
+  "activities": {
+    "story": {
+      "scope": "一关主线，含剧情、准备和结算",
+      "samples": []
+    },
+    "tower": {
+      "scope": "一层塔，含进出和结算",
+      "samples": []
+    },
+    "bounty": {
+      "scope": "一个通缉案，调查到领奖",
+      "samples": []
+    },
+    "J0": {
+      "scope": "一单邮务核验，接单到结算",
+      "samples": []
+    },
+    "J1": {
+      "scope": "一单封口巡检，接单到结算",
+      "samples": []
+    },
+    "J2": {
+      "scope": "一单塔内维护，接单到结算；记录层段",
+      "samples": []
+    },
+    "craft": {
+      "scope": "一次制作；记录配方，材料预先持有",
+      "samples": []
+    },
+    "sale": {
+      "scope": "一次卖货；记录物品，商品预先持有",
+      "samples": []
+    },
+    "neighbor_deliver": {
+      "scope": "街坊交货，走近接单到交货；商品预先持有",
+      "samples": []
+    },
+    "neighbor_find": {
+      "scope": "街坊寻物，走近接单到完成",
+      "samples": []
+    },
+    "neighbor_message": {
+      "scope": "街坊传话，走近接单到走到收话人完成",
+      "samples": []
+    },
+    "neighbor_pest": {
+      "scope": "街坊赶塔怪，走近接单到战斗结算",
+      "samples": []
+    },
+    "tavern": {
+      "scope": "一局牌，入局到结算；记录牌种",
+      "samples": []
+    },
+    "event_delivery": {
+      "scope": "一次事件交货，进板到交货；商品预先持有",
+      "samples": []
+    },
+    "event_battle": {
+      "scope": "一场事件战，进板到战斗结算",
+      "samples": []
+    },
+    "remnant": {
+      "scope": "一个残余案，接案、调查、战斗到领奖",
+      "samples": []
+    }
+  }
+}
