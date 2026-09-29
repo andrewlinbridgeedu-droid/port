@@ -7,6 +7,7 @@
 | 第一章任务与系统设计 | [`mistport-ios/docs/game-design/chapter-one-30/`](mistport-ios/docs/game-design/chapter-one-30/README.md) |
 | 当前审查、缺口与验收顺序 | [`CHAPTER1_REVIEW_AND_PLAN_20260925.md`](mistport-ios/docs/game-design/chapter-one-30/CHAPTER1_REVIEW_AND_PLAN_20260925.md) |
 | Swift App 与 CombatCore | [`mistport-ios/`](mistport-ios/README.md) |
+| 共享服服务端（M0 技术小样） | [`mistport-server/`](mistport-server/README.md) |
 | 美术生产与归档规则 | [`ART_ASSET_GUIDE.md`](ART_ASSET_GUIDE.md) |
 | 旧 v0.5 设计与旧 skill | [`mistport-ios/docs/legacy/game-design-v0.5/`](mistport-ios/docs/legacy/game-design-v0.5/README.md)、[`archive/legacy-skills/`](archive/legacy-skills/README.md) |
 | VFX V1 兼容生成工具 | [`tools/vfx-v1-authoring/`](tools/vfx-v1-authoring/README.md) |

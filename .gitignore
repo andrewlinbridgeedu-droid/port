@@ -101,3 +101,7 @@ tools/gorest/
 tools/city-daynight/textures/out/
 docs/development/**/*.png
 docs/development/economy-agent-sim-20260926/**/trades.jsonl.gz
+
+# Shared-server sample databases
+mistport-server/*.sqlite
+mistport-server/*.sqlite-*
