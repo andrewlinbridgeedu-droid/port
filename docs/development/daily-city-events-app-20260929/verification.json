@@ -1,0 +1,38 @@
+{
+  "beforeFiles": 114,
+  "afterFiles": 132,
+  "playerByteIdentical": false,
+  "addedPlayerKeys": [
+    "mistport.city-events.v1"
+  ],
+  "changedOrRemovedPlayerKeys": [],
+  "changedOrRemovedOtherFiles": [
+    "mistport.daily-pacing-device-walk.v1.plist",
+    "mistport.player-test-01-15.audit.plist"
+  ],
+  "allowedTestSuiteChanges": [
+    "mistport.daily-pacing-device-walk.v1.plist",
+    "mistport.player-test-01-15.audit.plist"
+  ],
+  "newFiles": [
+    "mistport.bounty-daily-risk-check.53BDCB3F-5F3F-44B2-A74D-DE4809A407D8.plist",
+    "mistport.bounty-daily-risk-check.EB488470-CBD4-408D-99E1-928D91413DF1.plist",
+    "mistport.church-tower-check.34ACAB4E-32D5-4C68-AEE6-4D16C6891751.plist",
+    "mistport.church-tower-check.9DF807B4-E15C-46D1-8E16-FE4E8DF9E84E.plist",
+    "mistport.city-events-check.A50C8C4D-BBA1-42FD-960B-FCD344D58532.plist",
+    "mistport.city-events-check.D7CEA2F6-9CD6-414A-9FF0-38123A88223A.plist",
+    "mistport.daily-pacing.944EA529-656A-43D9-8F64-A7B40F9DF39E.old.plist",
+    "mistport.daily-pacing.944EA529-656A-43D9-8F64-A7B40F9DF39E.plist",
+    "mistport.daily-pacing.CBD2BE45-1FDB-43BE-9211-5740DC7D96C4.old.plist",
+    "mistport.daily-pacing.CBD2BE45-1FDB-43BE-9211-5740DC7D96C4.plist",
+    "mistport.daily-work-check.E24BECE8-D621-4256-A1C6-8A3C4B0BCD1B.plist",
+    "mistport.daily-work-check.F2E3B2B2-455A-4603-AC8F-CAAF75238B56.plist",
+    "mistport.daily-workshop-check.DC5E77E7-A8CA-4BB7-B692-830D909686DF.plist",
+    "mistport.p0-verification.5873E5AB-F154-46CE-BBDB-25CC812E422D.plist",
+    "mistport.player-growth-check.7E0D1DFB-44D7-43E1-9BBA-EF85ADC31FAA.gap.plist",
+    "mistport.player-growth-check.7E0D1DFB-44D7-43E1-9BBA-EF85ADC31FAA.plist",
+    "mistport.player-growth-check.E582441D-08AB-4372-8BF5-603431A39C0E.gap.plist",
+    "mistport.player-growth-check.E582441D-08AB-4372-8BF5-603431A39C0E.plist"
+  ],
+  "passed": true
+}

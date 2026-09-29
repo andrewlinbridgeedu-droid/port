@@ -6799,12 +6799,12 @@ struct ChapterOneMissionBridgeView: View {
                         .font(.caption2.bold())
                     Spacer(minLength: 4)
                     if game.earlyRelicShopUnlocked && game.painSalveStock == 0 {
-                        Button("补给 30铜币") {
+                        Button("补给 \(game.painSalvePrice)铜币") {
                             game.purchasePainSalve()
                             campaign = game.chapterOneCampaign
                         }
                         .font(.caption2.bold())
-                        .disabled(game.venueCoins < 30)
+                        .disabled(game.venueCoins < game.painSalvePrice)
                         .accessibilityIdentifier("chapter-one-prebattle-buy-salve")
                     }
                 }

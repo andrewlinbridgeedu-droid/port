@@ -12,6 +12,7 @@ private enum AppSheet: String, Identifiable {
     case profile
     case build
     case workshop
+    case cityEvents
     case advancement
     case inventory
 
@@ -154,6 +155,10 @@ struct ContentView: View {
                             action: { blackSaltShorePresented = true }
                         ) : nil
                     )
+                    .safeAreaInset(edge: .bottom) {
+                        Button("城市事件板 · 第 \(game.pacingDay) 天") { presentedSheet = .cityEvents }
+                            .buttonStyle(.borderedProminent).padding(.bottom, 4)
+                    }
                 case .districtMap:
                     // Legacy entry/debug routes bypass the removed street page too.
                     Color.black.ignoresSafeArea()
@@ -313,6 +318,8 @@ struct ContentView: View {
                 } else {
                     Text("教会尚未开放 · 随主线推进解锁").padding()
                 }
+            case .cityEvents:
+                CityEventsView(game: game)
             case .workshop:
                 LocalWorkshopView(game: game)
             case .world:
