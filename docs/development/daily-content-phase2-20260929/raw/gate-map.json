@@ -1,0 +1,715 @@
+[
+  {
+    "minTowerFloor" : 0,
+    "mission" : 1,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 1,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 1,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 2,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 2,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 2,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 3,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 3,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 3,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 4,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 4,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 4,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 5,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 5,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 5,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 6,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 6,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 6,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 7,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 7,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 7,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 0,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 6,
+    "mission" : 8,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 10,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 2,
+    "mission" : 8,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 10,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 8,
+    "mission" : 8,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 10,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 9,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 10,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 9,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 10,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 2,
+    "mission" : 9,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 10,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 10,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 10,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 10,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 10,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 10,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 10,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 11,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 30,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 11,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 30,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 4,
+    "mission" : 11,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 30,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 50,
+    "mission" : 12,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 30,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 50,
+    "mission" : 12,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 30,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "mission" : 12,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 30,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 13,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 30,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 13,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 30,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 13,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 30,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 14,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 50,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 14,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 50,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 14,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 50,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 15,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 50,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 15,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 50,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 2,
+    "mission" : 15,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 50,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 16,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 50,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 16,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 50,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 16,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 50,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 17,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 70,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 17,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 70,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 17,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 70,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 50,
+    "mission" : 18,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 70,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 50,
+    "mission" : 18,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 70,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 50,
+    "mission" : 18,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 70,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 19,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 70,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 19,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 70,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 19,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 70,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 20,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 70,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 20,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 70,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 20,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 70,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 21,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 21,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 21,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "mission" : 22,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "mission" : 22,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "mission" : 22,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 23,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 23,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 23,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 24,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 24,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 24,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 25,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 25,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 25,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 70,
+    "mission" : 26,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 70,
+    "mission" : 26,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 70,
+    "mission" : 26,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 27,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 27,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 27,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 28,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 28,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 28,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 29,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 29,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "minTowerFloor" : 0,
+    "mission" : 29,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : true,
+    "winsWithoutChurchGear" : true
+  },
+  {
+    "mission" : 30,
+    "profile" : "high",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "mission" : 30,
+    "profile" : "medium",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  },
+  {
+    "mission" : 30,
+    "profile" : "low",
+    "towerFloorOpenAtThisPoint" : 100,
+    "winsWithAllBountyRelics" : false,
+    "winsWithoutChurchGear" : false
+  }
+]

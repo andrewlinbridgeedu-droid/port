@@ -29,6 +29,13 @@ struct Assumptions: Codable, Sendable {
     var postalSeconds = 150.0
     var craftSeconds = 60.0
     var saleSeconds = 20.0
+    /// Phase 2 daily content, outside battles: walking to a neighbour and talking,
+    /// the extra walk to a message's recipient, a remnant case's investigation,
+    /// and handing goods to an event.
+    var errandSeconds = 120.0
+    var messageWalkSeconds = 60.0
+    var remnantInvestigationSeconds = 240.0
+    var eventDeliverySeconds = 30.0
     var maxWaitDays = 10
     /// A run that has not finished by this day is reported as stuck.
     var maxDays = 120
@@ -136,6 +143,7 @@ struct RunResult: Codable {
     /// daily taper) and workshop (NPC orders, before base-stock costs).
     let copperBySource: [String: Int]
     let workshop: WorkshopSummary
+    let daily: DailyContentSummary
     let merit: Int
     let towerFloor: Int
     let bountiesCleared: [String]
@@ -143,6 +151,18 @@ struct RunResult: Codable {
     let bountyRelics: [String]
     let milestones: [Milestone]
     let visits: [Visit]
+}
+
+/// City events, remnant cases and neighbour errands (all and completionist policies).
+struct DailyContentSummary: Codable {
+    let errands: Int
+    let remnants: Int
+    let eventWins: [String: Int]
+    /// Each event's status on the run's last day: succeeded, failed or running.
+    let eventStatus: [String: String]
+    let storiesUnlocked: Int
+    /// Errands offered on a day the run finished but not done that day, by errand ID.
+    let missedErrands: [String]
 }
 
 struct WorkshopSummary: Codable {
@@ -186,6 +206,16 @@ final class Campaign {
     var copperShort = false
     /// Policies that use the workshop: it needs tower materials and is optional content.
     var usesWorkshop: Bool { policy == .all || policy == .completionist }
+    /// City events, remnant cases and errands (MPCCityEventLedger, MPCRemnantLedger, MPCNeighborLedger).
+    /// Every policy lives in the same city: events nobody works on fail and their costs apply.
+    var events = MPCCityEventLedger()
+    var remnants = MPCRemnantLedger()
+    var neighbors = MPCNeighborLedger()
+    var tickets = 0, errandsDone = 0, remnantsDone = 0
+    var missedErrands: [String] = []
+    var usesDailyContent: Bool { usesWorkshop }
+    var city: MPCCityEvent.Effects { events.effects(day: dayNumber) }
+    var salvePrice: Int { Shop.salve + city.salveSurcharge }
     var completedMissions: Set<Int> { q > 0 ? Set(1...q) : [] }
     /// States already known to lose a target; the bots are deterministic.
     var failed: [String: Set<String>] = [:]
@@ -233,8 +263,8 @@ final class Campaign {
         if salve == 0, inventory[MPCCraftingCatalog.salveID, default: 0] > 0 {
             inventory[MPCCraftingCatalog.salveID, default: 0] -= 1; salve = 1; salvesFromStock += 1
         }
-        if salve == 0 && copper >= Shop.salve { copper -= Shop.salve; salve = 1 }
-        for relic in Shop.passives where q >= relic.unlock && !passives.contains(relic.id) && copper - relic.price >= Shop.salve {
+        if salve == 0 && copper >= salvePrice { copper -= salvePrice; salve = 1 }
+        for relic in Shop.passives where q >= relic.unlock && !passives.contains(relic.id) && copper - relic.price >= salvePrice {
             copper -= relic.price; passives.append(relic.id)
         }
     }
@@ -259,7 +289,10 @@ final class Campaign {
     }
 
     func nextDay() {
+        if usesDailyContent { neighbors.open(day: dayNumber, completedMissions: completedMissions) }
         workshopSession()
+        dailyContent()
+        missedErrands += neighbors.offers.filter { $0.day == dayNumber && !$0.done }.map(\.errandID)
         day += 1; dayMinutes.append(0)
         if churchOpen { refreshBoard() }
     }
@@ -269,13 +302,14 @@ final class Campaign {
     /// (at most twice) when materials run short.
     func workshopSession() {
         guard usesWorkshop, MPCCraftingCatalog.isUnlocked(completedMissions: completedMissions) else { return }
-        orders.open(day: dayNumber)
+        let effects = city
+        orders.open(day: dayNumber, bonus: effects.orderBudgetBonus)
         func craft(_ recipeID: String) -> Bool {
-            let cost = MPCCraftingCatalog.recipe(recipeID)!.copper
-            guard copper - cost >= Shop.salve else { return false }
+            let cost = MPCCraftingCatalog.baseStock(MPCCraftingCatalog.recipe(recipeID)!, surcharge: effects.craftSurcharge)
+            guard copper - cost >= salvePrice else { return false }
             let made = (try? crafting.craft(receiptID: "craft-\(crafts)", recipeID: recipeID, day: dayNumber,
                                             completedMissions: completedMissions, coins: &copper,
-                                            inventory: &inventory, gear: &gear)) == true
+                                            inventory: &inventory, gear: &gear, surcharge: effects.craftSurcharge)) == true
             if made { crafts += 1; baseStockCopper += cost; busy("workshop", assumptions.craftSeconds) }
             return made
         }
@@ -283,7 +317,7 @@ final class Campaign {
             let spare = inventory[item, default: 0] - keep
             guard spare > 0 else { return false }
             let units = (try? orders.sell(receiptID: "sale-\(unitsSold)-\(item)", itemID: item, count: spare,
-                                           day: dayNumber, coins: &copper, inventory: &inventory)) ?? 0
+                                           day: dayNumber, coins: &copper, inventory: &inventory, bonus: effects.orderBudgetBonus)) ?? 0
             guard units > 0 else { return false }
             unitsSold += units
             earned["workshop", default: 0] += units * MPCWorkshopOrderBoard.prices[item]!
@@ -292,6 +326,35 @@ final class Campaign {
         }
         let salveID = MPCCraftingCatalog.salveID
         while inventory[salveID, default: 0] < 3 && craft("recipe_pain_salve") { salvesCrafted += 1 }
+        // Goods the city event and today's neighbours ask for come before the orders.
+        let recipeFor = [salveID: "recipe_pain_salve", MPCCraftingCatalog.strapID: "recipe_repair_strap",
+                         MPCCraftingCatalog.patchID: "recipe_armor_patch", MPCCraftingCatalog.clothID: "recipe_filter_cloth"]
+        func stock(_ item: String, _ count: Int) {
+            while inventory[item, default: 0] < count && craft(recipeFor[item]!) { if item == salveID { salvesCrafted += 1 } }
+        }
+        // Kept back from the event and the orders: three salves of our own and today's errand goods.
+        var reserved = [salveID: 3]
+        if usesDailyContent {
+            for offer in neighbors.offers where !offer.done {
+                if let errand = offer.errand, errand.kind == .deliver, let item = errand.itemID { reserved[item, default: 0] += errand.count }
+            }
+        }
+        if usesDailyContent, let event = MPCCityEventCatalog.running(day: dayNumber), events.status(event.id, day: dayNumber) == .running {
+            for need in event.deliveries where events.remaining(event, itemID: need.itemID) > 0 {
+                let keep = reserved[need.itemID, default: 0]
+                stock(need.itemID, events.remaining(event, itemID: need.itemID) + keep)
+                let spare = inventory[need.itemID, default: 0] - keep
+                guard spare > 0 else { continue }
+                tickets += 1
+                let before = copper
+                if (try? events.deliver(id: "deliver-\(tickets)", eventID: event.id, itemID: need.itemID, count: spare,
+                                        day: dayNumber, coins: &copper, inventory: &inventory)) != nil {
+                    earned["event", default: 0] += copper - before
+                    busy("event", assumptions.eventDeliverySeconds)
+                }
+            }
+        }
+        for (item, count) in reserved.sorted(by: { $0.key < $1.key }) { stock(item, count) }
         // Best copper per material first: salves, straps, then patches and cloth.
         let goods: [(recipe: String, item: String)] = [("recipe_pain_salve", salveID), ("recipe_repair_strap", MPCCraftingCatalog.strapID),
                                                       ("recipe_armor_patch", MPCCraftingCatalog.patchID), ("recipe_filter_cloth", MPCCraftingCatalog.clothID)]
@@ -300,7 +363,7 @@ final class Campaign {
         while orders.budget >= cheapest {
             var progressed = false
             for good in goods where orders.budget >= MPCWorkshopOrderBoard.prices[good.item]! {
-                let keep = good.item == salveID ? 3 : 0
+                let keep = reserved[good.item, default: 0]
                 if inventory[good.item, default: 0] > keep {
                     if sell(good.item, keeping: keep) { progressed = true }
                 } else if craft(good.recipe) {
@@ -312,6 +375,68 @@ final class Campaign {
             guard replaysToday < 2, tower >= 1 else { break }
             replaysToday += 1
             replayForMaterials()
+        }
+    }
+
+    /// Street fights of the daily content, on the shipping combat core like every other battle.
+    func streetFight(_ encounterID: String, kind: String) -> TowerDriver.Report {
+        let l = loadout(mission: q + 1, gear: stats, passive: passives.last, sequence: cards(forMission: q + 1)[0], bountyRelic: worn)
+        let report = try! TowerDriver.run(number: 1, medalOffset: 6, suppliedLoadout: l, actionDelay: profile.actionDelay,
+                                          encounterID: encounterID)
+        spend(kind, report.seconds)
+        let won = report.session.outcome == .victory
+        wear(passives.last, won: won)
+        if !won { losses[kind, default: 0] += 1 }
+        return report
+    }
+
+    /// The rest of the day (all and completionist): today's neighbour errands, up to two
+    /// counted event battles (three tries), and today's remnant case once a bounty is closed.
+    func dailyContent() {
+        guard usesDailyContent else { return }
+        for offer in neighbors.offers where offer.day == dayNumber && !offer.done {
+            guard let errand = offer.errand else { continue }
+            var reward: MPCNeighborLedger.Reward?
+            switch errand.kind {
+            case .deliver: reward = try? neighbors.deliver(offerID: offer.id, coins: &copper, inventory: &inventory)
+            case .find: reward = try? neighbors.answer(offerID: offer.id, choiceID: errand.correctChoiceID!, coins: &copper)
+            case .message: reward = try? neighbors.relay(offerID: offer.id, to: errand.recipientID!, coins: &copper)
+            case .pest:
+                tickets += 1
+                let ticket = "errand-\(tickets)"
+                guard let id = try? neighbors.beginPest(offerID: offer.id, ticket: ticket) else { continue }
+                let fight = streetFight(id, kind: "errand")
+                reward = try? neighbors.settlePest(offerID: offer.id, ticket: ticket, session: fight.session, coins: &copper)
+            }
+            busy("errand", assumptions.errandSeconds + (errand.kind == .message ? assumptions.messageWalkSeconds : 0))
+            if let reward { errandsDone += 1; earned["errand", default: 0] += reward.copper }
+        }
+        if let event = MPCCityEventCatalog.running(day: dayNumber) {
+            var tries = 0
+            while tries < 3, events.status(event.id, day: dayNumber) == .running, events.winsLeft(event) > 0,
+                  events.winsCounted(event.id, day: dayNumber) < MPCCityEventCatalog.countedWinsPerDay {
+                tries += 1; tickets += 1
+                let ticket = "event-\(tickets)"
+                guard let id = try? events.beginBattle(ticket: ticket, eventID: event.id, day: dayNumber) else { break }
+                let fight = streetFight(id, kind: "event")
+                let before = copper
+                _ = try? events.settleBattle(ticket: ticket, session: fight.session, day: dayNumber, coins: &copper)
+                earned["event", default: 0] += copper - before
+            }
+        }
+        if let job = try? remnants.accept(day: dayNumber, closedCaseIDs: cleared, highestTowerFloor: tower), !job.claimed {
+            busy("remnant", assumptions.remnantInvestigationSeconds)
+            _ = try? remnants.answer(day: dayNumber, choiceID: job.remnant!.leads[job.lead].correctChoiceID)
+            for _ in 0..<2 where remnants.job(day: dayNumber)?.won == false {
+                tickets += 1
+                let ticket = "remnant-\(tickets)"
+                guard let id = try? remnants.beginBattle(day: dayNumber, ticket: ticket) else { break }
+                let fight = streetFight(id, kind: "remnant")
+                _ = try? remnants.settleBattle(day: dayNumber, ticket: ticket, session: fight.session)
+            }
+            if let payout = try? remnants.claim(day: dayNumber, today: dayNumber, work: &work, coins: &copper, inventory: &inventory) {
+                remnantsDone += 1; earned["remnant", default: 0] += payout.copper
+            }
         }
     }
 
@@ -461,7 +586,7 @@ final class Campaign {
     /// Earn copper at J0 for the next unlocked shop relic, then buy it.
     func buyNextRelicWithPostal() -> Bool {
         guard let next = Shop.passives.first(where: { q >= $0.unlock && !passives.contains($0.id) }) else { return false }
-        postal(upTo: next.price + Shop.salve)
+        postal(upTo: next.price + salvePrice)
         shop()
         return passives.contains(next.id)
     }
@@ -526,7 +651,7 @@ final class Campaign {
     func retryWithFreshSalves() -> Bool {
         defer { rotation = 0 }
         for retry in 1...8 where q >= 4 {
-            if salve == 0 { postal(upTo: Shop.salve) }
+            if salve == 0 { postal(upTo: salvePrice) }
             rotation = retry
             if attemptMain(stopAfterSalve: true) { return true }
         }
@@ -597,6 +722,11 @@ final class Campaign {
                          workshop: .init(crafts: crafts, salvesCrafted: salvesCrafted, salvesUsedFromStock: salvesFromStock,
                                          unitsSold: unitsSold, boardPaid: orders.paid, baseStockCopper: baseStockCopper,
                                          replays: replays, proficiency: crafting.proficiency),
+                         daily: .init(errands: errandsDone, remnants: remnantsDone,
+                                      eventWins: Dictionary(uniqueKeysWithValues: MPCCityEventCatalog.all.map { ($0.id, events.progress[$0.id]?.wins ?? 0) }),
+                                      eventStatus: Dictionary(uniqueKeysWithValues: MPCCityEventCatalog.all.map { ($0.id, events.status($0.id, day: dayNumber).rawValue) }),
+                                      storiesUnlocked: MPCNeighborCatalog.all.reduce(0) { $0 + neighbors.stories($1.id).count },
+                                      missedErrands: missedErrands),
                          merit: merit, towerFloor: tower, bountiesCleared: cleared.sorted(),
                          passives: passives, bountyRelics: relics.ownedIDs.sorted(), milestones: milestones, visits: visits)
     }

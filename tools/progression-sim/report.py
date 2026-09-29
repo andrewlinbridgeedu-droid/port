@@ -59,14 +59,29 @@ if paced:
                      f"{sum(1 for m in by_day if m > CAP)} | {capped_days(by_day)} |")
 sourced = [r for r in runs if r["policy"] in ("all", "completionist") and "copperBySource" in r]
 if sourced:
-    lines += ["", "铜币来源与工坊（J0 按单递减；工坊卖给每天 60 铜的 NPC 订单，含底料成本前）", "",
-              "| 策略 | 熟练 | 起始日 | 主线 | 塔 | 通缉 | 邮务 J0 | 工坊销售 | 工坊底料 | 自熬止痛膏用掉 | 工坊分钟/天 | 章末铜 |",
-              "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    lines += ["", "铜币来源与工坊（J0 和无名残余按单递减；工坊卖给 NPC 订单，含底料成本前）", "",
+              "| 策略 | 熟练 | 起始日 | 主线 | 塔 | 通缉 | 邮务 J0 | 工坊销售 | 事件 | 残余 | 街坊 | 工坊底料 | 自熬止痛膏用掉 | 章末铜 |",
+              "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for r in sourced:
         src, ws = r["copperBySource"], r["workshop"]
-        per_day = r["minutes"].get("workshop", 0) / max(1, r["days"])
         lines.append(f"| {r['policy']} | {r['profile']} | {r['startOffset']} | {src.get('main', 0)} | {src.get('tower', 0)} | "
-                     f"{src.get('bounty', 0)} | {src.get('postal', 0)} | {src.get('workshop', 0)} | {ws['baseStockCopper']} | "
-                     f"{ws['salvesUsedFromStock']} | {per_day:.1f} | {r['copper']} |")
+                     f"{src.get('bounty', 0)} | {src.get('postal', 0)} | {src.get('workshop', 0)} | {src.get('event', 0)} | "
+                     f"{src.get('remnant', 0)} | {src.get('errand', 0)} | {ws['baseStockCopper']} | "
+                     f"{ws['salvesUsedFromStock']} | {r['copper']} |")
+daily = [r for r in runs if r["policy"] in ("all", "completionist") and "daily" in r]
+if daily:
+    names = {"casualty-wave": "伤患潮", "pump-station": "泵站", "harbor-blockade": "封锁", "workshop-foundation": "奠基"}
+    marks = {"succeeded": "成", "failed": "败", "running": "进行中", "upcoming": "未到"}
+    lines += ["", "每日内容（街坊委托、无名残余、世界事件；分钟为机器人战斗加假设的走动对话时间，按全局天数平均）", "",
+              "| 策略 | 熟练 | 起始日 | 街坊委托 | 解锁小故事 | 残余案 | 事件胜场 | 事件结果 | 工坊 | 街坊 | 残余 | 事件 | 平均每天 | 单日最长 |",
+              "|---|---|---:|---:|---:|---:|---|---|---:|---:|---:|---:|---:|---:|"]
+    for r in daily:
+        d, m, days = r["daily"], r["minutes"], max(1, r["days"])
+        wins = "/".join(str(d["eventWins"].get(k, 0)) for k in names)
+        status = "、".join(f"{v}{marks.get(d['eventStatus'].get(k, ''), '?')}" for k, v in names.items())
+        per = lambda key: f"{m.get(key, 0) / days:.1f}"
+        lines.append(f"| {r['policy']} | {r['profile']} | {r['startOffset']} | {d['errands']} | {d['storiesUnlocked']} | {d['remnants']} | "
+                     f"{wins} | {status} | {per('workshop')} | {per('errand')} | {per('remnant')} | {per('event')} | "
+                     f"{sum(m.values()) / days:.0f} | {max(r['minutesByDay']):.0f} |")
 (folder / "summary.md").write_text("\n".join(lines) + "\n")
 print("\n".join(lines))

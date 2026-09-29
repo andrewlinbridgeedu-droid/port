@@ -1,0 +1,272 @@
+[
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 39,
+      "seconds" : 27.900000000000002,
+      "won" : true
+    },
+    "minFloor" : 6,
+    "mission" : 8,
+    "previousOnly" : false,
+    "profile" : "high",
+    "requirement" : "F10",
+    "towerOpen" : 10,
+    "towerOpenNoWallRelic" : true
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 39,
+      "seconds" : 28.6,
+      "won" : true
+    },
+    "minFloor" : 2,
+    "mission" : 8,
+    "previousOnly" : false,
+    "profile" : "medium",
+    "requirement" : "F10",
+    "towerOpen" : 10,
+    "towerOpenNoWallRelic" : true
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 0,
+      "seconds" : 24.900000000000002,
+      "won" : false
+    },
+    "minFloor" : 8,
+    "mission" : 8,
+    "previousOnly" : false,
+    "profile" : "low",
+    "requirement" : "F10",
+    "towerOpen" : 10,
+    "towerOpenNoWallRelic" : true
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 29,
+      "seconds" : 36.9,
+      "won" : true
+    },
+    "minFloor" : 0,
+    "mission" : 12,
+    "previousOnly" : false,
+    "profile" : "high",
+    "requirement" : "F10+B01",
+    "towerOpen" : 30,
+    "towerOpenNoWallRelic" : false
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 28,
+      "seconds" : 42.45,
+      "won" : true
+    },
+    "minFloor" : 0,
+    "mission" : 12,
+    "previousOnly" : false,
+    "profile" : "medium",
+    "requirement" : "F10+B01",
+    "towerOpen" : 30,
+    "towerOpenNoWallRelic" : false
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 21,
+      "seconds" : 51.900000000000006,
+      "won" : true
+    },
+    "minFloor" : 0,
+    "mission" : 12,
+    "previousOnly" : false,
+    "profile" : "low",
+    "requirement" : "F10+B01",
+    "towerOpen" : 30,
+    "towerOpenNoWallRelic" : false
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 43,
+      "seconds" : 39.5,
+      "won" : true
+    },
+    "minFloor" : 50,
+    "mission" : 18,
+    "previousOnly" : false,
+    "profile" : "high",
+    "requirement" : "F50",
+    "towerOpen" : 70,
+    "towerOpenNoWallRelic" : true
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 36,
+      "seconds" : 44.45,
+      "won" : true
+    },
+    "minFloor" : 50,
+    "mission" : 18,
+    "previousOnly" : false,
+    "profile" : "medium",
+    "requirement" : "F50",
+    "towerOpen" : 70,
+    "towerOpenNoWallRelic" : true
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 19,
+      "seconds" : 58.550000000000004,
+      "won" : true
+    },
+    "minFloor" : 50,
+    "mission" : 18,
+    "previousOnly" : false,
+    "profile" : "low",
+    "requirement" : "F50",
+    "towerOpen" : 70,
+    "towerOpenNoWallRelic" : true
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 50,
+      "seconds" : 34.5,
+      "won" : true
+    },
+    "minFloor" : 0,
+    "mission" : 22,
+    "previousOnly" : false,
+    "profile" : "high",
+    "requirement" : "F50+B04",
+    "towerOpen" : 100,
+    "towerOpenNoWallRelic" : false
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 50,
+      "seconds" : 36.45,
+      "won" : true
+    },
+    "minFloor" : 0,
+    "mission" : 22,
+    "previousOnly" : false,
+    "profile" : "medium",
+    "requirement" : "F50+B04",
+    "towerOpen" : 100,
+    "towerOpenNoWallRelic" : false
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 45,
+      "seconds" : 47.7,
+      "won" : true
+    },
+    "minFloor" : 0,
+    "mission" : 22,
+    "previousOnly" : false,
+    "profile" : "low",
+    "requirement" : "F50+B04",
+    "towerOpen" : 100,
+    "towerOpenNoWallRelic" : false
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 43,
+      "seconds" : 37.25,
+      "won" : true
+    },
+    "minFloor" : 70,
+    "mission" : 26,
+    "previousOnly" : false,
+    "profile" : "high",
+    "requirement" : "F70",
+    "towerOpen" : 100,
+    "towerOpenNoWallRelic" : true
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 37,
+      "seconds" : 44.800000000000004,
+      "won" : true
+    },
+    "minFloor" : 70,
+    "mission" : 26,
+    "previousOnly" : false,
+    "profile" : "medium",
+    "requirement" : "F70",
+    "towerOpen" : 100,
+    "towerOpenNoWallRelic" : true
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 26,
+      "seconds" : 55.800000000000004,
+      "won" : true
+    },
+    "minFloor" : 70,
+    "mission" : 26,
+    "previousOnly" : false,
+    "profile" : "low",
+    "requirement" : "F70",
+    "towerOpen" : 100,
+    "towerOpenNoWallRelic" : true
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 61,
+      "seconds" : 35.050000000000004,
+      "won" : true
+    },
+    "minFloor" : 90,
+    "mission" : 30,
+    "previousOnly" : false,
+    "profile" : "high",
+    "requirement" : "F90+B10",
+    "towerOpen" : 100,
+    "towerOpenNoWallRelic" : false
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 59,
+      "seconds" : 40.900000000000006,
+      "won" : true
+    },
+    "minFloor" : 90,
+    "mission" : 30,
+    "previousOnly" : false,
+    "profile" : "medium",
+    "requirement" : "F90+B10",
+    "towerOpen" : 100,
+    "towerOpenNoWallRelic" : false
+  },
+  {
+    "bare" : false,
+    "firstTry" : {
+      "hpPercent" : 58,
+      "seconds" : 49.2,
+      "won" : true
+    },
+    "minFloor" : 90,
+    "mission" : 30,
+    "previousOnly" : false,
+    "profile" : "low",
+    "requirement" : "F90+B10",
+    "towerOpen" : 100,
+    "towerOpenNoWallRelic" : false
+  }
+]

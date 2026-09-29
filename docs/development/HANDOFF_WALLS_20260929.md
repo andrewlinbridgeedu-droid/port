@@ -1,6 +1,6 @@
-# 交接：墙关调数与按天推进 · 2026-09-29（第三轮）
+# 交接：墙关调数、按天推进与每日玩法 · 2026-09-29（第三轮）
 
-接手前按顺序读：本页 → [按天推进报告](progression-sim-20260929-daily-pacing/README.md) → [第二轮调数报告](progression-sim-20260929-tower-check/README.md) → [第一轮调数报告](progression-sim-20260929/README.md) → [HANDOFF_PROGRESSION_UI_20260928.md](HANDOFF_PROGRESSION_UI_20260928.md) → [HANDOFF_M0_20260928.md](HANDOFF_M0_20260928.md)。回复用户用中文。
+接手前按顺序读：本页 → [每日玩法第二阶段记录](daily-content-phase2-20260929/README.md) → [第一阶段记录](workshop-phase1-20260929/README.md) → [每日玩法与经济设计](../../mistport-ios/docs/game-design/chapter-one-30/DAILY_LOOP_AND_ECONOMY_20260929.md) → [按天推进报告](progression-sim-20260929-daily-pacing/README.md) → [第二轮调数报告](progression-sim-20260929-tower-check/README.md) → [第一轮调数报告](progression-sim-20260929/README.md) → [HANDOFF_PROGRESSION_UI_20260928.md](HANDOFF_PROGRESSION_UI_20260928.md) → [HANDOFF_M0_20260928.md](HANDOFF_M0_20260928.md)。回复用户用中文。
 
 ## 仓库与分支
 
@@ -48,23 +48,26 @@
 ## 需要用户定的
 
 - **第一天已改为开 Q1–Q3**（用户定），Q30 在第 28 天开放；模拟结果改为第 28 天打完。
-- **每天剩下的时间怎么填**：已写[每日玩法与经济设计候选](../../mistport-ios/docs/game-design/chapter-one-30/DAILY_LOOP_AND_ECONOMY_20260929.md)（估算脚本 `tools/daily-loop/budget.py`），用户已定（第 8 节）：工坊提前到 Q5 且可以出装备（档位对应塔层、穿戴要求打通该层、属性不超过同档塔装备、计入塔层检定、会磨损）；重复工作按单递减、功勋每天前 2 单；四场事件用设计稿主题；先做街坊委托和无名残余清剿。实施分期见第 10 节。**阶段 1 已完成**（规则库＋模拟器，[记录](workshop-phase1-20260929/README.md)）：`DailyWork.swift`（重复工作递减、功勋每天前 2 单）、`Crafting.swift`（塔材料、四个基础配方、十件工坊装备配方、制作账本、NPC 订单）、`ChurchGear.swift`（工坊装备：档位、穿戴要求、磨损修理、计入塔层检定），工坊开放改到 Q5；规则库 490 个测试全过。App 还没接入，阶段 2（世界事件、街坊委托、无名残余清剿）尚未开始。
+- **每天剩下的时间怎么填**：已写[每日玩法与经济设计候选](../../mistport-ios/docs/game-design/chapter-one-30/DAILY_LOOP_AND_ECONOMY_20260929.md)（估算脚本 `tools/daily-loop/budget.py`），用户已定（第 8 节）：工坊提前到 Q5 且可以出装备（档位对应塔层、穿戴要求打通该层、属性不超过同档塔装备、计入塔层检定、会磨损）；重复工作按单递减、功勋每天前 2 单；四场事件用设计稿主题；先做街坊委托和无名残余清剿。实施分期见第 10 节。**阶段 1 已完成**（规则库＋模拟器，[记录](workshop-phase1-20260929/README.md)）：`DailyWork.swift`（重复工作递减、功勋每天前 2 单）、`Crafting.swift`（塔材料、四个基础配方、十件工坊装备配方、制作账本、NPC 订单）、`ChurchGear.swift`（工坊装备：档位、穿戴要求、磨损修理、计入塔层检定），工坊开放改到 Q5。**阶段 2 已完成**（规则库＋第一批文案＋模拟器，[记录](daily-content-phase2-20260929/README.md)）：`CityEvents.swift`（四场本地世界事件，事件战每天最多记 2 场，成功改城市、失败只罚一周）、`RemnantCases.swift`（通缉结案后每天一个无名残余小案，铜走递减）、`NeighborErrands.swift`（23 名街坊每天 2–3 条委托，第一批 8 人有专属委托和小故事）、`StreetEncounters.swift`（街头战复用塔恶魔身体和塔战演出路径）。规则库 514 个测试全过。App 都还没接入。
+
+- **模拟器的教会开放时间**（阶段 2 发现）：模拟器假设教会（塔、通缉）Q7 后才开，App 和规则库里教会一直开着。打完天数不受影响，但前几天的塔进度、材料和第 5 天的时长偏了。改不改请用户定，改了以后前几轮报告的单日最长会变。
 
 ## 没验证
 
-- **iOS App 从 `cee125a` 起没编译过。** 按天推进在 App 里还没有任何接入。 本轮 App 只改了：两处通缉说明文字、`verifyBountyDailyRisk` 自检、`wallDefeatHint` 多传一个参数。规则库里 `MPCChurchGearStats` 多了带默认值的字段。
+- **iOS App 从 `cee125a` 起没编译过。** 阶段 2 改了 `GameStore.swift` 的工坊开放判断（阶段 1 只改了文字，按钮实际还要 Q16），改成和规则库一样“完成第 5 关或之后任意一关”，也没编译。 按天推进在 App 里还没有任何接入。 本轮 App 只改了：两处通缉说明文字、`verifyBountyDailyRisk` 自检、`wallDefeatHint` 多传一个参数。规则库里 `MPCChurchGearStats` 多了带默认值的字段。
 - 没有真机、没有真人试玩；机器人熟练度只能相对比较。Unity 端没有塔层检定、Q12 叠层、Q22 校验失败、Q30 狂暴的专门演出。
 
 ## 下一步（按优先级）
 
-1. **按天推进第二步（App，要在 Mac 上做）**：
+1. **每日玩法阶段 3（App，Mac）**：日刊；工坊界面接 `MPCCraftingLedger`、`MPCWorkshopOrderBoard`（带事件的 `bonus`、`surcharge`）和工坊装备的穿戴修理；事件板（交货、事件战入口、`MPCCityEventLedger` 的回执和结算）；地图上街坊的委托对话（`MPCNeighborLedger`，传话要走到收话人那里再调 `relay`）；残余案卷（`MPCRemnantLedger`，领奖走 `MPCDailyWorkLedger`）；商店止痛膏价加上 `effects(day:).salveSurcharge`；递减和“今天已记满”的提示。新账本都要进存档并有迁移回执，旧存档读入为空账本。街头战要在 Unity 里各看一场。
+2. **按天推进第二步（App，要在 Mac 上做）**：
    - 存档里记建档日；旧存档首次打开时用 `MPCDailyPacing.migratedStart` 补一个，只做一次，写迁移回执。
    - 主线开打前用 `isMissionOpen`、塔首通开打前用 `canFirstClearTower` 判断；**打赢后一定发奖**，不要在领奖时再拦。已通关的层和关重打不受限。
    - 界面显示“今天还能推进什么”和“第 N 关明天开放”（`openingDay`）。
    - 走查用的测试存档（`--workshop-device-walk`、`--chapter2-bridge-walk` 等）要把建档日往前推，不然会被锁住。
-2. 交给 Codex（Mac）：拉 `claude/nifty-planck-80307c`，`xcodebuild`，按惯例备份 Preferences 后装机；看“封线装备”页通缉栏、通缉案卷的遗落物说明、墙关失败提示（含“换上深井第 N 层或更深的装备”）、通缉战败说明，以及几个新机制的实际手感。装机、编号、SSD、存档隔离规矩见 `HANDOFF_PROGRESSION_UI_20260928.md` 和 `AGENTS.md`。
-3. 用户对上面两条可选项的意见。
-4. 其余 7 件遗落物效果；第二章核心人物战、死亡与继任；服务端账户与可信战斗结算小样。
+3. 交给 Codex（Mac）：拉 `claude/nifty-planck-80307c`，`xcodebuild`，按惯例备份 Preferences 后装机；看“封线装备”页通缉栏、通缉案卷的遗落物说明、墙关失败提示（含“换上深井第 N 层或更深的装备”）、通缉战败说明，以及几个新机制的实际手感。装机、编号、SSD、存档隔离规矩见 `HANDOFF_PROGRESSION_UI_20260928.md` 和 `AGENTS.md`。
+4. 用户对上面两条可选项的意见。
+5. 其余 7 件遗落物效果；第二章核心人物战、死亡与继任；服务端账户与可信战斗结算小样。
 
 ## 常用命令
 

@@ -45,12 +45,13 @@ enum EarlyRelicShop {
 }
 
 /// A service requires both an authored unlock milestone and a released gameplay loop.
-/// Workshop and church use authored milestones; other services stay unreleased.
+/// The church is always open; the workshop opens after Q5 (MPCCraftingCatalog.unlockMission,
+/// user decision 2026-09-29); other services stay unreleased.
 enum CityService: String {
     case workshop, cafe, restaurant, church, store, advancement
     var unlockMissionID: String? {
         switch self {
-        case .workshop: return "old-clock-16"
+        case .workshop: return "old-clock-\(MPCCraftingCatalog.unlockMission)"
         case .church: return "old-clock-7"
         default: return nil // Assigned with the corresponding story/content release.
         }
@@ -1185,6 +1186,8 @@ final class GameStore {
 
     func cityServiceIsUnlocked(_ service: CityService) -> Bool {
         if service == .church { return service.isReleased }
+        // Same rule as the rules library: any mission at or past Q5 completed.
+        if service == .workshop { return service.isReleased && MPCLocalWorkshopLedger.isUnlocked(completedMissions: churchTowerMissionNumbers) }
         guard service.isReleased, let milestone = service.unlockMissionID else { return false }
         return completedChapterMissionIDs.contains(milestone)
     }
