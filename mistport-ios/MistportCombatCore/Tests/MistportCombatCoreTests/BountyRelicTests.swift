@@ -90,4 +90,38 @@ struct BountyRelicTests {
         }
         #expect(taken[0] > taken[1])
     }
+
+    /// The three mechanism walls: every tower floor open at the time does not replace the
+    /// wall's relic, and wearing it (with the floors earlier walls ask for) gives a route.
+    @Test func mechanismWallsNeedTheirRelic() throws {
+        let sequences: [[FoolSkillID]] = [[.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .absurdFinale],
+                                          [.sidestepStrike, .fabricatedEvidence, .mirrorPursuit, .absurdFinale]]
+        let passives = ["relic_salt_sealed_breathing_bag", "relic_return_gift_clasp"]
+        func gear(through floor: Int) -> MPCChurchGearStats {
+            var ledger = MPCChurchGearLedger()
+            for f in 1...floor { if let drop = MPCChurchGearCatalog.towerDrop(floor: f) { ledger.grant(drop.id) } }
+            return ledger.stats
+        }
+        for (q, openFloor) in [(12, 30), (22, 100), (30, 100)] {
+            let budget = (1..<q).compactMap { MPCChapterOneThirtyMissionContract.firstClear(for: $0)?.talentPoints }.reduce(0, +)
+            var wins: [Bool: Int] = [:]
+            for wearsRelic in [false, true] {
+                for sequence in sequences {
+                    for passive in passives {
+                        for offset in [6.0, 14.0] {
+                            var loadout = MPCChapterOneLoadout(normalSkillIDs: sequence, isUltimateUnlocked: q >= 14, passiveIDs: [], relicIDs: [passive])
+                            loadout.talents = .restored((0...5).map { "trickery.\($0)" } + (0...5).map { "omen.\($0)" }, budget: budget)
+                            loadout.churchGear = wearsRelic ? EarnedChapterAuditFixture.wallGear(beforeOrAt: q) : gear(through: openFloor)
+                            loadout.bountyRelicID = wearsRelic ? EarnedChapterAuditFixture.wallRelic(q) : nil
+                            let r = try NewMaskBalanceSimulator.run(q: q, sequence: sequence, mask: false, consumables: ["consumable_pain_salve": 1],
+                                                                    ultimate: q >= 14, loadout: loadout, medalOffset: offset, precise: true)
+                            if r.session.outcome == .victory { wins[wearsRelic, default: 0] += 1 }
+                        }
+                    }
+                }
+            }
+            #expect(wins[false, default: 0] == 0, "Q\(q) falls to tower gear alone")
+            #expect(wins[true, default: 0] > 0, "Q\(q) has no route with its relic")
+        }
+    }
 }
