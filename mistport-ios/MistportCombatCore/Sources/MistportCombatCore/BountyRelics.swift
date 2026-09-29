@@ -36,6 +36,38 @@ public enum MPCBountyRelicCatalog {
     public static func relic(forCase caseID: String) -> Relic? { all.first { $0.caseID == caseID } }
 }
 
+/// The bounty slot: relics earned from closed cases and the one being worn.
+public struct MPCBountyRelicLedger: Codable, Equatable, Sendable {
+    public private(set) var ownedIDs: Set<String> = []
+    public private(set) var equippedID: String?
+    /// Bounty weapons and armor removed when the save moved to relics; nil until then.
+    public private(set) var retiredGearIDs: [String]?
+    public init() {}
+
+    public var hasMigrated: Bool { retiredGearIDs != nil }
+
+    /// Idempotent per case. The first relic a player earns is worn automatically.
+    @discardableResult public mutating func grant(caseID: String) -> String? {
+        guard let relic = MPCBountyRelicCatalog.relic(forCase: caseID), ownedIDs.insert(relic.id).inserted else { return nil }
+        if equippedID == nil { equippedID = relic.id }
+        return relic.id
+    }
+    /// `nil` takes the relic off.
+    @discardableResult public mutating func equip(_ id: String?) -> Bool {
+        guard id.map(ownedIDs.contains) ?? true else { return false }
+        equippedID = id
+        return true
+    }
+    /// One-time move for saves from before 2026-09-28: bounty gear is removed and
+    /// every closed case pays its relic instead. Copper and merit are not paid again.
+    @discardableResult public mutating func migrate(gear: inout MPCChurchGearLedger, claimedCaseIDs: [String]) -> Bool {
+        guard !hasMigrated else { return false }
+        retiredGearIDs = gear.retireBountyGear()
+        for caseID in claimedCaseIDs.sorted() { grant(caseID: caseID) }
+        return true
+    }
+}
+
 /// Story hard walls agreed 2026-09-28 (PROGRESSION_WALLS_AND_BOUNTY_RELICS_20260928.md).
 /// Values are tuned with tools/progression-sim; change them here, not at call sites.
 public enum MPCProgressionWalls {
@@ -52,4 +84,51 @@ public enum MPCProgressionWalls {
     public static let lifeLedgerCycleHealPercent = 5
     /// Broken-sword cooldown per enemy, in seconds.
     public static let brokenSwordCooldown: TimeInterval = 8
+
+    public struct Wall: Equatable, Sendable {
+        public let mission: Int
+        /// Highest tower floor that should be cleared first, if any.
+        public let towerFloor: Int?
+        /// Bounty case whose relic counters the wall's mechanic, if any.
+        public let caseID: String?
+        /// What beat the player, in their words.
+        public let cause: String
+    }
+    public static let walls: [Wall] = [
+        .init(mission: 8, towerFloor: 10, caseID: nil, cause: "吞名一次比一次痛，拖得越久越难撑。"),
+        .init(mission: 12, towerFloor: nil, caseID: "b01", cause: "校准人偶强化后几乎打不动。"),
+        .init(mission: 18, towerFloor: 50, caseID: nil, cause: "裁定者的第十三击太重。"),
+        .init(mission: 22, towerFloor: nil, caseID: "b04", cause: "钟匠校准时命中不够，校验失败的重击扛不住。"),
+        .init(mission: 26, towerFloor: 70, caseID: nil, cause: "押运车太硬，猛砸太重。"),
+        .init(mission: 30, towerFloor: 90, caseID: "b10", cause: "总签官低血后狂暴，伤害太高。"),
+    ]
+    public static func wall(mission: Int) -> Wall? { walls.first { $0.mission == mission } }
+
+    /// The case the daily board must carry while the player stands at a mechanism
+    /// wall without its relic, so nobody waits days for a random draw.
+    public static func guaranteedCase(nextMission: Int, ownedRelicIDs: Set<String>) -> String? {
+        guard let caseID = wall(mission: nextMission)?.caseID,
+              let relic = MPCBountyRelicCatalog.relic(forCase: caseID),
+              !ownedRelicIDs.contains(relic.id) else { return nil }
+        return caseID
+    }
+
+    /// Shown after losing a wall mission while its requirement is still unmet.
+    public static func defeatHint(mission: Int, highestTowerFloor: Int, equippedRelicID: String?,
+                                  ownedRelicIDs: Set<String>, caseTitle: (String) -> String?) -> String? {
+        guard let wall = wall(mission: mission) else { return nil }
+        var steps: [String] = []
+        if let floor = wall.towerFloor, highestTowerFloor < floor {
+            steps.append("去教会塔打到第 \(floor) 层，换上那里的装备")
+        }
+        if let caseID = wall.caseID, let relic = MPCBountyRelicCatalog.relic(forCase: caseID), equippedRelicID != relic.id {
+            if ownedRelicIDs.contains(relic.id) {
+                steps.append("在通缉栏换上\(relic.name)")
+            } else {
+                steps.append("接通缉“\(caseTitle(caseID) ?? caseID.uppercased())”，结案得\(relic.name)，装进通缉栏")
+            }
+        }
+        guard !steps.isEmpty else { return nil }
+        return wall.cause + steps.joined(separator: "；") + "，再来。"
+    }
 }
