@@ -1,0 +1,49 @@
+=== street-event.log ===
+2026-09-29 03:24:28.988 Mistport[29179:887244] DAILY_STREET_VISUAL_START: event church_maintenance_event_casualty-wave_daily-visual-review
+*** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: '[KeyboardDelegate Initialize] called after creating keyboard'
+=== street-event-retry.log ===
+2026-09-29 03:27:56.166 Mistport[29263:889495] DAILY_STREET_VISUAL_START: event church_maintenance_event_casualty-wave_daily-visual-review
+2026-09-29 03:28:04.529 Mistport[29263:889495] DAILY_REVIEW_FRAME: street-event-8
+2026-09-29 03:28:12.927 Mistport[29263:889495] DAILY_REVIEW_FRAME: street-event-16
+2026-09-29 03:28:25.407 Mistport[29263:889495] DAILY_REVIEW_FRAME: street-event-28
+2026-09-29 03:28:41.834 Mistport[29263:889495] DAILY_STREET_VISUAL_VICTORY: event church_maintenance_event_casualty-wave_daily-visual-review
+2026-09-29 03:28:42.873 Mistport[29263:889495] DAILY_REVIEW_FRAME: street-event-45
+2026-09-29 03:28:58.220 Mistport[29263:889495] DAILY_REVIEW_FRAME: street-event-60
+2026-09-29 03:28:58.220 Mistport[29263:889495] DAILY_STREET_VISUAL_CAPTURE_DONE: event
+=== street-pest.log ===
+2026-09-29 03:29:14.406 Mistport[29279:890370] DAILY_STREET_VISUAL_START: pest church_maintenance_errand_musician-pest_daily-visual-review
+2026-09-29 03:29:22.793 Mistport[29279:890370] DAILY_REVIEW_FRAME: street-pest-8
+2026-09-29 03:29:25.863 Mistport[29279:890370] DAILY_STREET_VISUAL_VICTORY: pest church_maintenance_errand_musician-pest_daily-visual-review
+2026-09-29 03:29:31.184 Mistport[29279:890370] DAILY_REVIEW_FRAME: street-pest-16
+2026-09-29 03:29:43.538 Mistport[29279:890370] DAILY_REVIEW_FRAME: street-pest-28
+2026-09-29 03:30:00.878 Mistport[29279:890370] DAILY_REVIEW_FRAME: street-pest-45
+=== street-remnant.log ===
+2026-09-29 03:30:16.654 Mistport[29302:890982] DAILY_STREET_VISUAL_START: remnant church_maintenance_remnant_b01-f10_daily-visual-review
+2026-09-29 03:30:24.750 Mistport[29302:890982] DAILY_REVIEW_FRAME: street-remnant-8
+2026-09-29 03:30:32.824 Mistport[29302:890982] DAILY_REVIEW_FRAME: street-remnant-16
+2026-09-29 03:30:44.882 Mistport[29302:890982] DAILY_REVIEW_FRAME: street-remnant-28
+2026-09-29 03:31:01.934 Mistport[29302:890982] DAILY_REVIEW_FRAME: street-remnant-45
+2026-09-29 03:31:03.645 Mistport[29302:890982] DAILY_STREET_VISUAL_VICTORY: remnant church_maintenance_remnant_b01-f10_daily-visual-review
+2026-09-29 03:31:16.985 Mistport[29302:890982] DAILY_REVIEW_FRAME: street-remnant-60
+2026-09-29 03:31:16.985 Mistport[29302:890982] DAILY_STREET_VISUAL_CAPTURE_DONE: remnant
+=== street-remnant-retry.log ===
+2026-09-29 03:31:34.832 Mistport[29373:892647] DAILY_STREET_VISUAL_START: remnant church_maintenance_remnant_b01-f10_daily-visual-review
+2026-09-29 03:31:43.486 Mistport[29373:892647] DAILY_REVIEW_FRAME: street-remnant-8
+2026-09-29 03:31:51.992 Mistport[29373:892647] DAILY_REVIEW_FRAME: street-remnant-16
+2026-09-29 03:32:04.449 Mistport[29373:892647] DAILY_REVIEW_FRAME: street-remnant-28
+2026-09-29 03:32:21.808 Mistport[29373:892647] DAILY_REVIEW_FRAME: street-remnant-45
+2026-09-29 03:32:30.939 Mistport[29373:892647] DAILY_STREET_VISUAL_VICTORY: remnant church_maintenance_remnant_b01-f10_daily-visual-review
+2026-09-29 03:32:37.175 Mistport[29373:892647] DAILY_REVIEW_FRAME: street-remnant-60
+2026-09-29 03:32:37.175 Mistport[29373:892647] DAILY_STREET_VISUAL_CAPTURE_DONE: remnant
+2026-09-29 03:32:53.121 Mistport[29373:892647] DAILY_STREET_VISUAL_EXIT: remnant
+=== map-source-diagnosis.log ===
+2026-09-29 03:42:29.673 Mistport[29581:899663] DAILY_REVIEW_FRAME: map-newspaper-entry
+2026-09-29 03:42:30.687 Mistport[29581:899663] Mistport street resource missing: /index.html
+2026-09-29 03:42:30.694 Mistport[29581:899663] Mistport street navigation failed: Error Domain=NSURLErrorDomain Code=-1100 "(null)" UserInfo={_WKRecoveryAttempterErrorKey=<WKReloadFrameErrorRecoveryAttempter: 0x14c1ebb80>}
+=== map-source-path-fixed.log ===
+2026-09-29 03:47:06.332 Mistport[29646:901972] DAILY_REVIEW_FRAME: map-newspaper-entry
+2026-09-29 03:47:08.439 Mistport[29646:901972] DAILY_MAP_ROSTER: complete=true count=23
+2026-09-29 03:47:10.724 Mistport[29646:901972] DAILY_REVIEW_FRAME: map-street-loaded
+2026-09-29 03:47:19.730 Mistport[29646:901972] DAILY_REVIEW_FRAME: map-after-load
+2026-09-29 03:47:20.056 Mistport[29646:901972] DAILY_MAP_NEIGHBOR_ARRIVAL: postman distance=2.442
+2026-09-29 03:47:22.708 Mistport[29646:901972] DAILY_REVIEW_FRAME: map-talk-postman

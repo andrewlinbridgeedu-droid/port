@@ -1,0 +1,4 @@
+Old guard accepts existing resource: false
+Canonical guard accepts existing resource: true
+Read bytes: 3
+Traversal rejected: true

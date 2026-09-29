@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C92800000000000000000001 /* LocalWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92800000000000000000002; };
 		C92900000000000000000001 /* CityEventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92900000000000000000002; };
+		C93300000000000000000001 /* DailyLoopReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93300000000000000000002; };
 		C93200000000000000000001 /* DailyNewspaperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93200000000000000000002; };
 		C93100000000000000000001 /* RemnantCasesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93100000000000000000002; };
 		C93000000000000000000001 /* NeighborConversationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93000000000000000000002; };
@@ -100,6 +101,7 @@
 /* Begin PBXFileReference section */
 		C92800000000000000000002 /* LocalWorkshopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/LocalWorkshopView.swift; sourceTree = SOURCE_ROOT; };
 		C92900000000000000000002 /* CityEventsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/CityEventsView.swift; sourceTree = SOURCE_ROOT; };
+		C93300000000000000000002 /* DailyLoopReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/DailyLoopReviewView.swift; sourceTree = SOURCE_ROOT; };
 		C93200000000000000000002 /* DailyNewspaperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/DailyNewspaperView.swift; sourceTree = SOURCE_ROOT; };
 		C93100000000000000000002 /* RemnantCasesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/RemnantCasesView.swift; sourceTree = SOURCE_ROOT; };
 		C93000000000000000000002 /* NeighborConversationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/NeighborConversationView.swift; sourceTree = SOURCE_ROOT; };
@@ -248,6 +250,7 @@
 				C91700000000000000000002 /* ChurchMaintenanceView.swift */,
 				C92800000000000000000002 /* LocalWorkshopView.swift */,
 				C92900000000000000000002 /* CityEventsView.swift */,
+				C93300000000000000000002 /* DailyLoopReviewView.swift */,
 				C93200000000000000000002 /* DailyNewspaperView.swift */,
 				C93100000000000000000002 /* RemnantCasesView.swift */,
 				C93000000000000000000002 /* NeighborConversationView.swift */,
@@ -400,6 +403,7 @@
 				A10000000000000000000001 /* MistportApp.swift in Sources */,
 				C92800000000000000000001 /* LocalWorkshopView.swift in Sources */,
 				C92900000000000000000001 /* CityEventsView.swift in Sources */,
+				C93300000000000000000001 /* DailyLoopReviewView.swift in Sources */,
 				C93200000000000000000001 /* DailyNewspaperView.swift in Sources */,
 				C93100000000000000000001 /* RemnantCasesView.swift in Sources */,
 				C93000000000000000000001 /* NeighborConversationView.swift in Sources */,

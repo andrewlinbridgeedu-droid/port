@@ -95,7 +95,11 @@ struct MistportApp: App {
             #if DEBUG
             if ProcessInfo.processInfo.arguments.contains("--daily-pacing-device-walk") {
                 Group {
-                    if ProcessInfo.processInfo.arguments.contains("--daily-newspaper-preview") {
+                    if let kind = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--daily-street-kind=") })?.dropFirst(20) {
+                        DailyStreetReviewView(game: game, kind: String(kind))
+                    } else if ProcessInfo.processInfo.arguments.contains("--daily-map-walk") {
+                        ContentView(game: game, storefront: storefront)
+                    } else if ProcessInfo.processInfo.arguments.contains("--daily-newspaper-preview") {
                         DailyNewspaperView(game: game, onSelect: { _ in })
                     } else if ProcessInfo.processInfo.arguments.contains("--daily-remnants-preview") {
                         RemnantCasesView(game: game)

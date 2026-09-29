@@ -875,6 +875,18 @@ final class GameStore {
             for n in 1...6 { _ = work.ledger.settle(receiptID: "preview-\(n)", day: 1, copper: 40, merit: 6) }
             seed.persistDailyWork(work)
         }
+        let reviewArguments = ProcessInfo.processInfo.arguments
+        if reviewArguments.contains("--daily-map-walk") || reviewArguments.contains(where: { $0.hasPrefix("--daily-street-kind=") }) {
+            seed.debugJumpToOldClockMission(30, enterImmediately: false)
+            seed.debugSetPacingDay(reviewArguments.contains("--daily-street-kind=pest") ? 7 : 4)
+            seed.completeChapterOneTutorial(.mapEntry)
+            storage.set(Pathway.ID.fool.rawValue, forKey: PersistenceKey.selectedPathID)
+            storage.set(CharacterGender.male.rawValue, forKey: PersistenceKey.selectedCharacterGender)
+            if reviewArguments.contains("--daily-street-kind=remnant") {
+                try! seed.updateChurchServices { $0.bounties = try! JSONDecoder().decode(MPCChurchBountyLedger.self, from: Data(#"{"cases":{"b01":{"claimed":true}}}"#.utf8)) }
+            }
+            if reviewArguments.contains("--daily-map-recipient") { try! seed.talkToNeighbor("postman"); seed.endNeighborConversation() }
+        }
         if ProcessInfo.processInfo.arguments.contains("--daily-newspaper-preview") {
             let day = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--daily-day=") }).flatMap { Int($0.dropFirst(12)) } ?? 4
             let completed = min(29, MPCDailyPacing.highestOpenMission(day: day) - 1)
@@ -4934,3 +4946,35 @@ extension GameStore {
     }
     #endif
 }
+
+#if DEBUG
+extension GameStore {
+    func beginDailyStreetReview(kind: String, ticket: String) throws -> MPCChapterOneEncounterSession {
+        precondition(ProcessInfo.processInfo.arguments.contains("--daily-pacing-device-walk"))
+        let skills: [FoolSkillID] = [.sidestepStrike, .paperDouble, .identityDisplacement, .mirrorPursuit]
+        switch kind {
+        case "event": return try beginCityEvent(eventID: "casualty-wave", ticket: ticket, skills: skills)
+        case "pest":
+            try talkToNeighbor("musician")
+            let offer = neighbors.offers.first { $0.neighborID == "musician" && $0.errand?.kind == .pest }!
+            return try beginNeighborPest(offerID: offer.id, ticket: ticket, skills: skills)
+        case "remnant":
+            try acceptDailyRemnant()
+            let job = remnants.job(day: pacingDay)!
+            _ = try answerRemnant(day: job.day, choiceID: job.remnant!.leads[job.lead].correctChoiceID)
+            return try beginRemnant(day: job.day, ticket: ticket, skills: skills)
+        default: throw MPCRemnantLedger.Failure.noCase
+        }
+    }
+    func finishDailyStreetReview(kind: String, ticket: String, session: MPCChapterOneEncounterSession) throws {
+        switch kind {
+        case "event": try settleCityEvent(ticket: ticket, session: session)
+        case "pest":
+            let offer = neighbors.offers.first { $0.neighborID == "musician" && $0.errand?.kind == .pest }!
+            _ = try settleNeighborPest(offerID: offer.id, ticket: ticket, session: session)
+        case "remnant": try settleRemnant(day: pacingDay, ticket: ticket, session: session)
+        default: break
+        }
+    }
+}
+#endif

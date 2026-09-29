@@ -25,6 +25,9 @@ struct ContentView: View {
     @Bindable var storefront: Storefront
     @Environment(\.scenePhase) private var scenePhase
     @State private var newspaperPresented = false
+    #if DEBUG
+    @State private var didRunMapReview = false
+    #endif
     @State private var newspaperDestination: DailyNewspaperDestination?
     @State private var blackSaltShorePresented = ProcessInfo.processInfo.arguments.contains("--preview-black-salt-shore")
     @State private var churchPresented = (ProcessInfo.processInfo.arguments.contains("--preview-church") || ProcessInfo.processInfo.arguments.contains("--verify-church-entry"))
@@ -318,8 +321,23 @@ struct ContentView: View {
             }
         }
         .onAppear {
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--daily-pacing-device-walk"), ProcessInfo.processInfo.arguments.contains("--daily-map-walk"), game.phase == .title { game.begin() }
+            #endif
             HomeMusicController.shared.update(for: game.phase)
             presentDailyNewspaperIfNeeded()
+            #if DEBUG
+            if !didRunMapReview, ProcessInfo.processInfo.arguments.contains("--daily-pacing-device-walk"), ProcessInfo.processInfo.arguments.contains("--daily-map-walk") {
+                didRunMapReview = true
+                Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(2))
+                    saveDailyLoopReviewFrame("map-newspaper-entry")
+                    newspaperDestination = .neighbors
+                    newspaperPresented = false
+                    NSLog("DAILY_MAP_ROUTE: newspaper to street")
+                }
+            }
+            #endif
         }
         .onChange(of: game.phase) { _, phase in
             HomeMusicController.shared.update(for: phase)

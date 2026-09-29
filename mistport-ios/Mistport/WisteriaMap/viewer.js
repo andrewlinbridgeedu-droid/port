@@ -120,3 +120,13 @@ if(pendingNeighbor&&hero){
 renderer.render(scene,camera);});
 
 window.addEventListener("pagehide",()=>renderer.setAnimationLoop(null));
+
+// An explicit native DEBUG fixture uses the same pathfinder and proximity callback.
+// No teleport, no direct native completion, and no helper enabled in normal launches.
+if(window.__neighborWalkTarget){
+ window.webkit?.messageHandlers?.neighborArrival?.postMessage({kind:'ready',ids:npcs.map(n=>n.id).filter(Boolean)});
+ setTimeout(()=>{
+  const npc=npcs.find(n=>n.id===window.__neighborWalkTarget);
+  if(npc){npc.delivery?.pause(120);goPoint(navigator.nearest(npc.approach||toPixel(npc.holder.position)));pendingNeighbor=npc;}
+ },3500);
+}
