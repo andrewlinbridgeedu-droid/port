@@ -95,7 +95,9 @@ struct MistportApp: App {
             #if DEBUG
             if ProcessInfo.processInfo.arguments.contains("--daily-pacing-device-walk") {
                 Group {
-                    if ProcessInfo.processInfo.arguments.contains("--daily-work-preview") {
+                    if ProcessInfo.processInfo.arguments.contains("--daily-workshop-preview") {
+                        LocalWorkshopView(game: game)
+                    } else if ProcessInfo.processInfo.arguments.contains("--daily-work-preview") {
                         ChurchMaintenanceView(game: game, onBack: {})
                     } else if ProcessInfo.processInfo.arguments.contains("--daily-pacing-tower") {
                         ChurchTowerView(game: game)
@@ -148,7 +150,7 @@ private func saveDailyPacingWalkScreenshot() {
         .flatMap(\.windows).first(where: \.isKeyWindow),
           let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
     let arguments = ProcessInfo.processInfo.arguments
-    let page = arguments.contains("--daily-work-preview") ? "work" : arguments.contains("--daily-pacing-tower") ? "tower" : arguments.contains("--daily-pacing-gear") ? "gear" : "city"
+    let page = arguments.contains("--daily-workshop-preview") ? "workshop" : arguments.contains("--daily-work-preview") ? "work" : arguments.contains("--daily-pacing-tower") ? "tower" : arguments.contains("--daily-pacing-gear") ? "gear" : "city"
     let image = UIGraphicsImageRenderer(bounds: window.bounds).image { _ in
         window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
     }

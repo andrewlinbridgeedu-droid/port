@@ -79,7 +79,7 @@ struct LocalWorkshopView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showsTower = false
     @State private var message = ""
-    @State private var confirmsExtraBatch = false
+    @State private var selectedCraft: MPCCraftRecipe.Craft = .leather
 
     /// Card colour; the step illustrations fade to exactly this at their edges.
     private static let card = Color(red: 0.149, green: 0.153, blue: 0.169)
@@ -101,7 +101,7 @@ struct LocalWorkshopView: View {
                     HStack {
                         stock("RewardCoin", "\(game.venueCoins) 铜")
                         Spacer()
-                        Text("皮革熟练 \(game.localWorkshop.proficiency)/20")
+                        Text("皮革熟练 \(game.craftingLedger.points(.leather))/20")
                     }.font(.headline).monospacedDigit()
                     HStack(spacing: 18) {
                         stock("ItemShieldJawHide", "韧皮 \(game.workshopHideCount)")
@@ -118,6 +118,8 @@ struct LocalWorkshopView: View {
                     } else {
                         gathering
                         recipe
+                        dailyOrders
+                        WorkshopGearCareSection(game: game)
                         order
                     }
                     if !message.isEmpty {
@@ -131,10 +133,7 @@ struct LocalWorkshopView: View {
         }
         .preferredColorScheme(.dark)
         .fullScreenCover(isPresented: $showsTower) { ChurchSanctuaryView(game: game) }
-        .confirmationDialog("这单已经收满，再做的绑带暂时卖不出去。还要花 13 铜做一批吗？", isPresented: $confirmsExtraBatch) {
-            Button("做一批 · 13铜") { craft() }
-            Button("算了", role: .cancel) {}
-        }
+        .onAppear { game.openDailyWorkshopOrders() }
     }
 
     private func stock(_ art: String, _ text: String) -> some View {
@@ -167,26 +166,46 @@ struct LocalWorkshopView: View {
 
     private var gathering: some View {
         step("01", "取材", art: "WorkshopStepGather") {
-            Text("在教会塔第 1 层打败盾颚魔，可得 1 份韧皮。")
+            Text("每次封堵或重打深井，都会取得该层恶魔的材料；已封层可随时重打。")
             PlateButton(title: "前往教会塔取材", plate: .workshopSecondary) { showsTower = true }
         }
     }
     private var recipe: some View {
-        step("02", "皮革制作", art: "WorkshopStepCraft") {
-            Text("维修绑带：1 份韧皮 + 13 铜 → 3 条")
-            if !game.localWorkshop.learnedBasics {
-                PlateButton(title: "学习图纸 · 免费", plate: .workshopPrimary) {
-                    perform("学会了维修绑带。") { try game.learnWorkshopBasics() }
+        step("02", "制作", art: "WorkshopStepCraft") {
+            Picker("手艺", selection: $selectedCraft) {
+                Text("皮革").tag(MPCCraftRecipe.Craft.leather)
+                Text("药剂").tag(MPCCraftRecipe.Craft.alchemy)
+                Text("金属").tag(MPCCraftRecipe.Craft.metal)
+                Text("织造").tag(MPCCraftRecipe.Craft.weaving)
+            }.pickerStyle(.segmented)
+            Text("本门熟练 \(game.craftingLedger.points(selectedCraft))/20").font(.headline)
+            Text(game.workshopProficiencyNotice).font(.caption).foregroundStyle(.secondary)
+            ForEach(MPCCraftingCatalog.all.filter { $0.craft == selectedCraft }) { recipe in
+                WorkshopRecipeRow(game: game, recipe: recipe) { recipeID in
+                    perform("制作完成。") { try game.craftDailyWorkshop(recipeID: recipeID) }
                 }
-            } else {
-                PlateButton(title: "制作一批 · 13铜", plate: .workshopPrimary,
-                            enabled: game.workshopHideCount >= 1 && game.venueCoins >= 13) {
-                    if game.localWorkshop.order != .offered { confirmsExtraBatch = true }
-                    else { craft() }
-                }
-                if game.workshopHideCount < 1 { Text("还缺 1 份韧皮。").font(.caption).foregroundStyle(.secondary) }
-                else if game.venueCoins < 13 { Text("还差 \(13 - game.venueCoins) 铜。").font(.caption).foregroundStyle(.secondary) }
             }
+        }
+    }
+    private var dailyOrders: some View {
+        step("03", "每日订单", art: "WorkshopStepInstall") {
+            Text("诊所 · 港务处 · 教会").font(.headline)
+            Text("今日还可收购 \(game.workshopOrders.budget) 铜；余款最多累积 3 天。卖不掉的货可留着自用。")
+            ForEach(MPCCraftingCatalog.basics) { recipe in
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(recipe.name)
+                        Text("库存 \(game.chapterOneCampaign.inventory[recipe.output, default: 0]) · 每件 \(MPCWorkshopOrderBoard.prices[recipe.output, default: 0]) 铜")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button("交 1 件") {
+                        perform("已交货，铜币已到账。") { _ = try game.sellDailyWorkshop(itemID: recipe.output) }
+                    }.buttonStyle(.bordered)
+                        .disabled(game.chapterOneCampaign.inventory[recipe.output, default: 0] == 0 || game.workshopOrders.budget < MPCWorkshopOrderBoard.prices[recipe.output, default: 0])
+                }
+            }
+            if game.workshopOrders.budget < 8 { Text("今天的收购预算已不足，明天再来。 ").font(.caption).foregroundStyle(.yellow) }
         }
     }
     private var order: some View {
@@ -207,9 +226,6 @@ struct LocalWorkshopView: View {
             }
         }
     }
-    private func craft() {
-        perform("做好 3 条维修绑带，皮革熟练 +1。") { try game.craftWorkshopStraps() }
-    }
     private func perform(_ success: String, action: () throws -> Void) {
         do { try action(); message = success }
         catch let error as MPCLocalWorkshopLedger.Failure {
@@ -221,5 +237,67 @@ struct LocalWorkshopView: View {
             case .conflict: message = "没有生效，请再点一次。"
             }
         } catch { message = "没能保存，请再试一次。" }
+    }
+}
+
+private struct WorkshopRecipeRow: View {
+    let game: GameStore
+    let recipe: MPCCraftRecipe
+    let craft: (String) -> Void
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("\(recipe.name) ×\(recipe.outputCount)").font(.headline)
+            Text(recipe.inputs.sorted(by: { $0.key < $1.key }).map {
+                "\(GameStore.workshopItemName($0.key)) \(game.chapterOneCampaign.inventory[$0.key, default: 0])/\($0.value)"
+            }.joined(separator: " · ")).font(.caption)
+            Text("底料 \(MPCCraftingCatalog.baseStock(recipe, surcharge: game.dailyCityEffects.craftSurcharge)) 铜")
+            if let tier = MPCChurchGearCatalog.item(recipe.output)?.craftTier {
+                Text("F\(tier) 档 · 封堵第 \(tier) 层后可穿戴；制作后需手动装备。")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+            if let reason = game.workshopRecipeLock(recipe) {
+                Text(reason).font(.caption).foregroundStyle(.yellow)
+            }
+            PlateButton(title: "制作 · \(recipe.name)", plate: .workshopPrimary,
+                        enabled: game.workshopRecipeLock(recipe) == nil) { craft(recipe.id) }
+        }.padding(.vertical, 10)
+    }
+}
+
+struct WorkshopGearCareSection: View {
+    let game: GameStore
+    @State private var message = ""
+    private var pieces: [MPCChurchGearItem] {
+        MPCChurchGearCatalog.all.filter { $0.craftTier != nil && game.churchServices.gear.ownedIDs.contains($0.id) }
+    }
+    var body: some View {
+        if !pieces.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("工坊装备保养").font(.headline)
+                ForEach(pieces) { item in
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(item.name).font(.subheadline.bold())
+                        Text("F\(item.craftTier ?? 0) 档 · 耐久 \(game.churchServices.gear.durability(item.id) ?? 0)/100")
+                            .font(.caption)
+                        let unlocked = (game.churchTowerProgress.clearedFloors.max() ?? 0) >= (item.craftTier ?? 0)
+                        let kit = item.slot == .weapon ? MPCChurchGearLedger.bladeKitID : MPCChurchGearLedger.mailKitID
+                        if !unlocked { Text("封堵第 \(item.craftTier ?? 0) 层后可穿戴").font(.caption).foregroundStyle(.yellow) }
+                        HStack {
+                            Button("穿戴") { perform { try game.equipChurchGear(item.id) } }
+                                .disabled(!unlocked)
+                            Button("用\(GameStore.workshopItemName(kit))修理 +25") {
+                                perform { try game.repairWorkshopGear(item.id) }
+                            }.disabled((game.churchServices.gear.durability(item.id) ?? 100) == 100 || game.chapterOneCampaign.inventory[kit, default: 0] == 0)
+                        }.buttonStyle(.bordered)
+                        Text("\(GameStore.workshopItemName(kit))库存 \(game.chapterOneCampaign.inventory[kit, default: 0])").font(.caption)
+                    }
+                }
+                if !message.isEmpty { Text(message).font(.caption).foregroundStyle(.yellow) }
+            }
+        }
+    }
+    private func perform(_ action: () throws -> Void) {
+        do { try action(); message = "已保存。" }
+        catch { message = "尚未满足穿戴或修理条件。" }
     }
 }
