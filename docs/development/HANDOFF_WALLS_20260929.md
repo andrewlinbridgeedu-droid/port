@@ -1,6 +1,6 @@
-# 交接：墙关调数 · 2026-09-29（第二轮）
+# 交接：墙关调数与按天推进 · 2026-09-29（第三轮）
 
-接手前按顺序读：本页 → [第二轮调数报告](progression-sim-20260929-tower-check/README.md) → [第一轮调数报告](progression-sim-20260929/README.md) → [HANDOFF_PROGRESSION_UI_20260928.md](HANDOFF_PROGRESSION_UI_20260928.md) → [HANDOFF_M0_20260928.md](HANDOFF_M0_20260928.md)。回复用户用中文。
+接手前按顺序读：本页 → [按天推进报告](progression-sim-20260929-daily-pacing/README.md) → [第二轮调数报告](progression-sim-20260929-tower-check/README.md) → [第一轮调数报告](progression-sim-20260929/README.md) → [HANDOFF_PROGRESSION_UI_20260928.md](HANDOFF_PROGRESSION_UI_20260928.md) → [HANDOFF_M0_20260928.md](HANDOFF_M0_20260928.md)。回复用户用中文。
 
 ## 仓库与分支
 
@@ -14,6 +14,7 @@
 1. Q18、Q26 不是墙 → 先选“拉陡塔装备曲线”；实测需要每 20 层战力翻倍后，改为**塔层装备检定**，曲线只温和拉陡。
 2. 验收第 3 条改为“只做通缉卡在 Q8”。
 3. 通缉战败只扣铜，不再丢随身遗落物。
+5. **按天推进**：玩家不能靠投入更多时间取得领先，多玩只能多赚铜币；按每天 1–2 小时、约 30 天打完第一章设计。验收第 4 条改为这个时间预算。用户同意分两步做：第一步规则和模拟器（本轮已完成），第二步 App（见“下一步”）。
 4. 验收第 4 条只算过墙必需的支线。
 
 ## 本轮完成
@@ -38,20 +39,32 @@
 | Q26 W5 | ✅ 塔层检定 | 身穿 F70 或更深的塔装备 |
 | Q30 W6 | ✅ 塔层检定＋机制墙 | 身穿 F90 或更深的塔装备 ＋ B10 绯月寿账签 |
 
+## 按天推进（第三轮，第一步已完成）
+
+- 规则：`DailyPacing.swift` 的 `MPCDailyPacing`。第 N 天开放第 N 关；塔首通每天 4 层、可累积；旧存档用 `migratedStart`。只是判断函数，**还没接进 App 的开战和领奖流程**。新增 4 个测试（规则库共 476 个）。
+- 模拟器：主线、塔首通按天开放，逐天记时长，`PACING=` 可临时改参数，`report.py` 输出按天推进表。原“每天打 3 关”的假设已删除。
+- 结果：所有熟练度都在第 30 天打完；边推主线边爬塔时单日战斗最长 24–79 分钟、平均 5–9 分钟。
+
 ## 需要用户定的（可选）
 
-1. **第 4 条的严格口径**：按“准备好了再打”的主线时间（约 29–47 分钟）算，必需支线（主要是爬塔到 F90，约 73–87 分钟）是主线的 1.9–2.6 倍。模拟器不算剧情对话和探索，真人主线更长，实际比例会更低。要压到 2 倍以内，可以缩短每层耗时，或降低 Q30 的塔层要求。用户暂未要求改。
+1. **每天 1–2 小时里其余的时间从哪来**：战斗推进每天只要几分钟到十几分钟，剩下的要靠工坊、经济、世界事件、酒馆来填，需跟经济设计一起算。
+2. **第一天偏薄**：只开放 Q1。可调 `missionsOnFirstDay`（比如第一天开 Q1–Q3）。
 
 ## 没验证
 
-- **iOS App 从 `cee125a` 起没编译过。** 本轮 App 只改了：两处通缉说明文字、`verifyBountyDailyRisk` 自检、`wallDefeatHint` 多传一个参数。规则库里 `MPCChurchGearStats` 多了带默认值的字段。
+- **iOS App 从 `cee125a` 起没编译过。** 按天推进在 App 里还没有任何接入。 本轮 App 只改了：两处通缉说明文字、`verifyBountyDailyRisk` 自检、`wallDefeatHint` 多传一个参数。规则库里 `MPCChurchGearStats` 多了带默认值的字段。
 - 没有真机、没有真人试玩；机器人熟练度只能相对比较。Unity 端没有塔层检定、Q12 叠层、Q22 校验失败、Q30 狂暴的专门演出。
 
 ## 下一步（按优先级）
 
-1. 交给 Codex（Mac）：拉 `claude/nifty-planck-80307c`，`xcodebuild`，按惯例备份 Preferences 后装机；看“封线装备”页通缉栏、通缉案卷的遗落物说明、墙关失败提示（含“换上深井第 N 层或更深的装备”）、通缉战败说明，以及几个新机制的实际手感。装机、编号、SSD、存档隔离规矩见 `HANDOFF_PROGRESSION_UI_20260928.md` 和 `AGENTS.md`。
-2. 用户对上面两条可选项的意见。
-3. 其余 7 件遗落物效果；第二章核心人物战、死亡与继任；服务端账户与可信战斗结算小样。
+1. **按天推进第二步（App，要在 Mac 上做）**：
+   - 存档里记建档日；旧存档首次打开时用 `MPCDailyPacing.migratedStart` 补一个，只做一次，写迁移回执。
+   - 主线开打前用 `isMissionOpen`、塔首通开打前用 `canFirstClearTower` 判断；**打赢后一定发奖**，不要在领奖时再拦。已通关的层和关重打不受限。
+   - 界面显示“今天还能推进什么”和“第 N 关明天开放”（`openingDay`）。
+   - 走查用的测试存档（`--workshop-device-walk`、`--chapter2-bridge-walk` 等）要把建档日往前推，不然会被锁住。
+2. 交给 Codex（Mac）：拉 `claude/nifty-planck-80307c`，`xcodebuild`，按惯例备份 Preferences 后装机；看“封线装备”页通缉栏、通缉案卷的遗落物说明、墙关失败提示（含“换上深井第 N 层或更深的装备”）、通缉战败说明，以及几个新机制的实际手感。装机、编号、SSD、存档隔离规矩见 `HANDOFF_PROGRESSION_UI_20260928.md` 和 `AGENTS.md`。
+3. 用户对上面两条可选项的意见。
+4. 其余 7 件遗落物效果；第二章核心人物战、死亡与继任；服务端账户与可信战斗结算小样。
 
 ## 常用命令
 
@@ -66,7 +79,8 @@ WALLS="q18GearCheckHP=160,q30SovereignHP=7000" swift run -c release --package-pa
 GEAR_SCALE="attack=2,hp=2,reduction=1.5" swift run -c release --package-path tools/progression-sim ProgressionSim walls <输出目录> 18
 # 单关逐套打法；TRACE=1 打印每次敌人行动
 swift run -c release --package-path tools/progression-sim ProgressionSim fight 22 medium 50 bounty_relic_b04_reverse_seal
-# 串行全流程（约 1 分钟）与汇总（含第 4 条比例）
+# 串行全流程（约 1 分钟）与汇总（含按天推进表）；PACING= 临时改按天参数
+# PACING="towerFloorsPerDay=3" swift run -c release --package-path tools/progression-sim ProgressionSim <输出目录> 0,30,90
 swift run -c release --package-path tools/progression-sim ProgressionSim <输出目录> 0,30,90
 python3 tools/progression-sim/report.py <输出目录>
 ```

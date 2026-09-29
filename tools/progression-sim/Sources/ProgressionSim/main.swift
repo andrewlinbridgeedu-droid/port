@@ -4,6 +4,7 @@ import MistportCombatCore
 // Usage: swift run -c release ProgressionSim <output-dir> [start-offsets comma separated]
 //        swift run -c release ProgressionSim walls <output-dir> [missions comma separated] [profiles comma separated]
 WallTuning.apply(ProcessInfo.processInfo.environment["WALLS"])
+PacingTuning.apply(ProcessInfo.processInfo.environment["PACING"])
 var arguments = CommandLine.arguments
 if arguments.count > 5 && arguments[1] == "fight" {
     // fight <mission> <profile> <floor> <bounty relic id or -> : every shop relic, medal time and salve choice.

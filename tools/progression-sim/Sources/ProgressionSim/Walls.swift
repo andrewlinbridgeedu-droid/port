@@ -119,6 +119,22 @@ enum WallProbe {
     }
 }
 
+/// Tuning only: `PACING="towerFloorsPerDay=4"` overrides MPCDailyPacing.
+enum PacingTuning {
+    static func apply(_ text: String?) {
+        guard let text, !text.isEmpty else { return }
+        for pair in text.split(separator: ",") {
+            let kv = pair.split(separator: "="); guard kv.count == 2, let v = Int(kv[1]) else { continue }
+            switch kv[0] {
+            case "towerFloorsPerDay": MPCDailyPacing.towerFloorsPerDay = v
+            case "missionsPerDay": MPCDailyPacing.missionsPerDay = v
+            case "missionsOnFirstDay": MPCDailyPacing.missionsOnFirstDay = v
+            default: print("unknown pacing knob \(kv[0])")
+            }
+        }
+    }
+}
+
 /// Tuning only: `WALLS="q8LeechHP=2000,q12FortifyStackPercent=30"` overrides MPCProgressionWalls.
 enum WallTuning {
     static func apply(_ text: String?) {

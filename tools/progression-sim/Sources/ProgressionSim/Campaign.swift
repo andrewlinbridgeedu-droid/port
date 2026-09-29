@@ -22,12 +22,14 @@ enum Policy: String, CaseIterable, Sendable {
     case mainOnly, mainTower, mainBounty, all, completionist, hinted
 }
 
-/// Pacing and time costs that are not game data. Reported with every run.
+/// Time costs and limits that are not game data. Reported with every run.
+/// Story and tower first clears open by day through MPCDailyPacing (game rules).
 struct Assumptions: Codable, Sendable {
     var battleOverheadSeconds = 20.0
     var postalSeconds = 150.0
-    var missionsPerDay = 3
     var maxWaitDays = 10
+    /// A run that has not finished by this day is reported as stuck.
+    var maxDays = 120
 }
 
 /// Shop and job constants from GameStore.swift (EarlyRelicShop, purchasePainSalve, J0).
@@ -118,6 +120,8 @@ struct RunResult: Codable {
     let stuckAt: Int?
     let days: Int
     let minutes: [String: Double]
+    /// Minutes played on each day (index 0 is day 1): battles, overhead and postal jobs.
+    let minutesByDay: [Double]
     let battles: [String: Int]
     let losses: [String: Int]
     let salvesUsed: Int
@@ -141,7 +145,10 @@ final class Campaign {
     let policy: Policy, profile: Profile, assumptions: Assumptions
     let startDate: Date, startOffset: Int
     let calendar = Calendar(identifier: .gregorian)
-    var q = 0, tower = 0, day = 0, missionsToday = 0
+    var q = 0, tower = 0, day = 0
+    var dayMinutes: [Double] = [0]
+    /// Set when today's tower first-clear allowance, not a loss, stopped the climb.
+    var towerGated = false
     var cleared = Set<String>(), accepted = Set<String>()
     var gear = MPCChurchGearLedger()
     var relics = MPCBountyRelicLedger()
@@ -160,6 +167,9 @@ final class Campaign {
     }
 
     var churchOpen: Bool { q >= 7 }
+    /// MPCDailyPacing counts the save's first day as day 1.
+    var dayNumber: Int { day + 1 }
+    var storyOpen: Bool { MPCDailyPacing.isMissionOpen(q + 1, day: dayNumber) }
     var stats: MPCChurchGearStats { gear.stats }
     var signature: String {
         "\(stats.attackBP)/\(stats.maxHP)/\(stats.damageReductionBP)|\(passives.sorted().joined(separator: ","))|\(relics.ownedIDs.sorted().joined(separator: ","))|\(q)|\(salve)|\(rotation)"
@@ -177,6 +187,7 @@ final class Campaign {
 
     func spend(_ kind: String, _ battleSeconds: Double) {
         seconds[kind, default: 0] += battleSeconds + assumptions.battleOverheadSeconds
+        dayMinutes[day] += (battleSeconds + assumptions.battleOverheadSeconds) / 60
         battles[kind, default: 0] += 1
     }
 
@@ -199,10 +210,11 @@ final class Campaign {
         guard jobs > 0 else { return }
         postalJobs += jobs; copper += jobs * Shop.postalPay
         seconds["postal", default: 0] += Double(jobs) * assumptions.postalSeconds
+        dayMinutes[day] += Double(jobs) * assumptions.postalSeconds / 60
     }
 
     func nextDay() {
-        day += 1; missionsToday = 0
+        day += 1; dayMinutes.append(0)
         if churchOpen { refreshBoard() }
     }
 
@@ -227,7 +239,7 @@ final class Campaign {
     func attemptMain(stopAfterSalve: Bool = false) -> Bool {
         shop()
         let mission = q + 1, key = "main-\(mission)"
-        guard !knownLoss(key) else { return false }
+        guard storyOpen, !knownLoss(key) else { return false }
         var attempts = 0, total = 0.0
         // A retry starts from a different whole plan (cards, relics, medal time), so the
         // one salve is not always spent on the same losing plan first.
@@ -251,13 +263,12 @@ final class Campaign {
             if won {
                 let reward = MPCChapterOneThirtyMissionContract.firstClear(for: mission)!
                 copper += reward.copper; merit += reward.merit
-                q = mission; missionsToday += 1
+                q = mission
                 visit("main", key, won: true, attempts: attempts, seconds: total)
                 milestones.append(.init(mission: q, day: day, minutes: seconds.values.reduce(0, +) / 60,
                                         towerFloor: tower, bountiesCleared: cleared.count, copper: copper,
                                         attackBP: stats.attackBP, gearHP: stats.maxHP, reductionBP: stats.damageReductionBP))
                 if q == 7 { refreshBoard() }
-                if missionsToday >= assumptions.missionsPerDay { nextDay() }
                 return true
             }
             losses["main", default: 0] += 1
@@ -272,6 +283,7 @@ final class Campaign {
     func attemptTower() -> Bool {
         let floor = tower + 1, key = "tower-\(floor)"
         guard churchOpen, floor <= towerLimit(completed: q), !knownLoss(key) else { return false }
+        guard MPCDailyPacing.canFirstClearTower(clearedFloors: tower, day: dayNumber) else { towerGated = true; return false }
         let mission = q + 1
         var attempts = 0, total = 0.0
         for passive in passiveCandidates {
@@ -416,7 +428,20 @@ final class Campaign {
     func run() -> RunResult {
         var stuckAt: Int?
         while q < 30 {
+            if dayNumber > assumptions.maxDays { stuckAt = q + 1; break }
+            towerGated = false
             if policy == .completionist { clearAvailableSide() }
+            // The next mission opens on a later day: today's usual side content, then tomorrow.
+            if !storyOpen {
+                switch policy {
+                case .mainOnly, .hinted: break
+                case .mainTower: while attemptTower() {}
+                case .mainBounty: for id in accepted.subtracting(cleared).sorted() { _ = attemptBounty(id) }
+                case .all, .completionist: clearAvailableSide()
+                }
+                nextDay()
+                continue
+            }
             if attemptMain() { continue }
             var advanced = false
             while !advanced && buyNextRelicWithPostal() { advanced = attemptMain() }
@@ -427,8 +452,13 @@ final class Campaign {
             case .mainTower: advanced = grindTower().storyWon
             case .mainBounty: advanced = grindBounties().storyWon
             case .all, .completionist, .hinted:
-                // Hinted: do what the wall asks, then retry other plans before any further side content.
-                if policy == .hinted { advanced = followWallHint() || retryWithFreshSalves() }
+                // Hinted: do what the wall asks, then retry other plans before any further side
+                // content; if today's tower floors ran out first, wait for tomorrow's.
+                if policy == .hinted {
+                    advanced = followWallHint()
+                    if !advanced && towerGated { break }
+                    if !advanced { advanced = retryWithFreshSalves() }
+                }
                 var moving = true
                 while !advanced && moving {
                     let climb = grindTower()
@@ -438,13 +468,16 @@ final class Campaign {
                     moving = climb.progressed || cases.progressed
                 }
             }
+            // Today's tower floors ran out before the story moved: more open tomorrow.
+            if !advanced && towerGated { nextDay(); continue }
             // Side content may have made a plan winnable that only works with the salve.
             if !advanced { advanced = retryWithFreshSalves() }
             if !advanced { stuckAt = q + 1; break }
         }
         return RunResult(policy: policy.rawValue, profile: profile.name, startOffset: startOffset, assumptions: assumptions,
-                         finalMission: q, stuckAt: stuckAt, days: day + 1,
+                         finalMission: q, stuckAt: stuckAt, days: dayNumber,
                          minutes: seconds.mapValues { ($0 / 60 * 10).rounded() / 10 },
+                         minutesByDay: dayMinutes.map { ($0 * 10).rounded() / 10 },
                          battles: battles, losses: losses, salvesUsed: salvesUsed, postalJobs: postalJobs,
                          repairCopper: repairCopper, defeatCopperLost: defeatCopperLost, relicsLost: relicsLost,
                          copper: copper, merit: merit, towerFloor: tower, bountiesCleared: cleared.sorted(),

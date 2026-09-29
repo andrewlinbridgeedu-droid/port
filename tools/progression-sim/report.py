@@ -39,5 +39,23 @@ if hinted:
         side = round(row[8] + row[9], 1)
         ratio = f"{side / row[7]:.2f}" if row[7] else "-"
         lines.append(f"| {row[1]} | {row[2]} | {'卡在 Q' + str(row[4]) if row[4] else '通关'} | {row[7]} | {side} | {ratio} |")
+# Daily pacing: finish day, the longest day, and the finish day if each day is capped at
+# two hours (overflow carries to the next day; an approximation of spreading the work).
+CAP = 120
+def capped_days(by_day):
+    carry = 0.0
+    for minutes in by_day:
+        carry = max(0.0, minutes + carry - CAP)
+    return len(by_day) + int(-(-carry // CAP))
+paced = [r for r in runs if r["policy"] in ("hinted", "all", "completionist") and "minutesByDay" in r]
+if paced:
+    lines += ["", f"按天推进（第 N 天开放第 N 关；单日上限按 {CAP} 分钟折算）", "",
+              "| 策略 | 熟练 | 起始日 | 结果 | 打完是第几天 | 单日最长（分钟） | 超过 2 小时的天数 | 每天 ≤2 小时时第几天打完 |",
+              "|---|---|---:|---|---:|---:|---:|---:|"]
+    for r in paced:
+        by_day = r["minutesByDay"]
+        result = f"卡在 Q{r['stuckAt']}" if r.get("stuckAt") else "通关"
+        lines.append(f"| {r['policy']} | {r['profile']} | {r['startOffset']} | {result} | {r['days']} | {max(by_day):.0f} | "
+                     f"{sum(1 for m in by_day if m > CAP)} | {capped_days(by_day)} |")
 (folder / "summary.md").write_text("\n".join(lines) + "\n")
 print("\n".join(lines))
