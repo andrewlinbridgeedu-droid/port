@@ -5,9 +5,8 @@
 ## 仓库与分支
 
 - **工作仓库：`github.com/andrewlinbridgeedu-droid/port`**（用户 2026-09-29 定为以后唯一的工作仓库）。换 Claude 账号也可以继续：新账号连上有这个仓库权限的 GitHub 账号，开会话时选这个仓库，先读本页。
-- **最新分支：`claude/world-economy-m0-u62oho`**（第四轮）。第四轮开始时把它快进到了 `claude/nifty-planck-80307c`（`a47efee`，第三轮最后一个提交），再加上第四轮的提交，全部已推送。`claude/nifty-planck-80307c` 现在落后于它；两个分支若再各自往前走，要先合并再继续。
-- `main` 还没合并这些分支；用户同意后再开 PR。
-- 第一轮交接提到的 `showcase.py` 冲突已在本分支合好（保留 PIL 画字，字体优先用 main 选的华文黑体）。
+- **从 `main` 起步。** 2026-09-29 已通过 PR #1 把所有分支的工作合进 `main`（合并提交 `9b62e55`）。新会话从 `main` 开始；`claude/world-economy-m0`、`claude/world-economy-m0-u62oho`、`claude/nifty-planck-80307c` 都已并入，不要再在旧分支上继续。
+- 第一轮交接提到的 `showcase.py` 冲突已合好（保留 PIL 画字，字体优先用 main 选的华文黑体）。
 
 ## 第四轮：按天推进第二步（App 接入，云端写，没编译）
 
@@ -74,7 +73,7 @@
 
 1. **每日玩法阶段 3（App，Mac）**：日刊；工坊界面接 `MPCCraftingLedger`、`MPCWorkshopOrderBoard`（带事件的 `bonus`、`surcharge`）和工坊装备的穿戴修理；事件板（交货、事件战入口、`MPCCityEventLedger` 的回执和结算）；地图上街坊的委托对话（`MPCNeighborLedger`，传话要走到收话人那里再调 `relay`）；残余案卷（`MPCRemnantLedger`，领奖走 `MPCDailyWorkLedger`）；商店止痛膏价加上 `effects(day:).salveSurcharge`；递减和“今天已记满”的提示。新账本都要进存档并有迁移回执，旧存档读入为空账本。街头战要在 Unity 里各看一场。
 2. **按天推进第二步：在 Mac 上编译并验证第四轮的接入**。`xcodebuild` 修掉类型错误；跑 `--verify-daily-pacing` 和 `--verify-player-growth`；真机上先备份 Preferences，确认用户真实存档第一次打开时被迁移（下一关当天可打），并逐文件核对只多了 `mistport.daily-pacing.start.v1` 一个键。可选：把 `todaySummary` 放到城市页；任务板上锁住的关显示原因。
-3. 交给 Codex（Mac）：拉 `claude/world-economy-m0-u62oho`，`xcodebuild`，按惯例备份 Preferences 后装机；看“封线装备”页通缉栏、通缉案卷的遗落物说明、墙关失败提示（含“换上深井第 N 层或更深的装备”）、通缉战败说明，以及几个新机制的实际手感。装机、编号、SSD、存档隔离规矩见 `HANDOFF_PROGRESSION_UI_20260928.md` 和 `AGENTS.md`。
+3. 交给 Codex（Mac）：拉 `main`，`xcodebuild`，按惯例备份 Preferences 后装机；看“封线装备”页通缉栏、通缉案卷的遗落物说明、墙关失败提示（含“换上深井第 N 层或更深的装备”）、通缉战败说明，以及几个新机制的实际手感。装机、编号、SSD、存档隔离规矩见 `HANDOFF_PROGRESSION_UI_20260928.md` 和 `AGENTS.md`。
 4. 用户对上面两条可选项的意见。
 5. 其余 7 件遗落物效果；第二章核心人物战、死亡与继任；服务端账户与可信战斗结算小样。
 
