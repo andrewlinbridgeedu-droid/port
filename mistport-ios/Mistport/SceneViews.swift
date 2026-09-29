@@ -53,7 +53,7 @@ struct CityHubView: View {
             // The painting's height fits the screen above the bottom bar, so
             // the whole picture shows from top to bottom.
             let scenery = CGSize(width: geometry.size.width,
-                                 height: max(1, geometry.size.height - max(0, bottomBarHeight - 8)))
+                                 height: max(1, geometry.size.height - max(0, bottomBarHeight - 8 * CityBottomBar.contentScale)))
             ZStack {
                 cityPanorama(in: scenery)
                     .frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
@@ -70,7 +70,6 @@ struct CityHubView: View {
                                   coins: coins, materials: materials, clues: clues, ingredientCount: ingredientCount,
                                   onSettings: onSettings, onTest: onTest)
                         .padding(.horizontal, 18)
-                    taskStrip(in: scenery).padding(.horizontal, 18).padding(.top, 8)
                     Spacer()
                     if let blackSaltShore {
                         CityMissionStrip(
@@ -84,6 +83,9 @@ struct CityHubView: View {
                         .padding(.horizontal, 28)
                         .padding(.bottom, 8)
                     }
+                    taskStrip(in: scenery)
+                        .padding(.horizontal, 18)
+                        .padding(.top, 8)
                     CityBottomBar(
                         bottomInset: max(geometry.safeAreaInsets.bottom, 8),
                         churchUnlocked: serviceIsUnlocked(.church),
@@ -173,6 +175,7 @@ struct CityHubView: View {
     /// on screen; -MistportHubSnapshot saves the window and its layout to Documents.
     private func debugLabelCheck(in viewport: CGSize) async {
         let arguments = UserDefaults.standard
+        tasksExpanded = arguments.bool(forKey: "MistportHubTasksExpanded")
         let width = panoramaWidth(for: viewport)
         let painting = HarborPainting.rect(in: CGSize(width: width, height: viewport.height))
         if let x = arguments.string(forKey: "MistportHubPanX").flatMap(Double.init) {
@@ -194,6 +197,7 @@ struct CityHubView: View {
             "panoramaWidth": Double(width), "paintingMinX": Double(painting.minX), "paintingMinY": Double(painting.minY),
             "paintingHeight": Double(painting.height), "offset": Double(boundedPanoramaOffset(panoramaOffset, in: viewport)),
             "windowWidth": Double(window.bounds.width), "windowHeight": Double(window.bounds.height),
+            "bottomBarHeight": Double(bottomBarHeight), "navigationContentScale": Double(CityBottomBar.contentScale),
             "screenScale": Double(window.traitCollection.displayScale)
         ]
         try? JSONSerialization.data(withJSONObject: layout, options: .sortedKeys)
@@ -506,6 +510,8 @@ private struct CityMissionStrip: View {
 }
 
 private struct CityBottomBar: View {
+    /// Scale the whole navigation content while keeping the device's safe area intact.
+    static let contentScale: CGFloat = 0.9
     var bottomInset: CGFloat = 8
     var churchUnlocked = false
     var storeUnlocked = false
@@ -517,22 +523,22 @@ private struct CityBottomBar: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 0) {
-            CityBarButton(title: "角色", artName: "GameNavProfile", artScale: 0.88, action: onProfile)
+            CityBarButton(title: "角色", artName: "GameNavProfile", artScale: 0.88, contentScale: Self.contentScale, action: onProfile)
             // The workbench art is a dense, square object; shown at full size it reads larger than its neighbours.
-            CityBarButton(title: "百工坊", artName: "GameNavWorkshop", artScale: 0.84, action: onWork)
-            CityBarButton(title: "教会", artName: "GameNavChurch", isLocked: !churchUnlocked, artScale: 0.88, action: onChurch)
-            CityBarButton(title: "商店", artName: "GameNavStore", isLocked: !storeUnlocked, artScale: 0.88, action: onStore)
-            CityBarButton(title: "行囊", artName: "GameNavInventory", artScale: 0.88, action: onInventory)
+            CityBarButton(title: "百工坊", artName: "GameNavWorkshop", artScale: 0.84, contentScale: Self.contentScale, action: onWork)
+            CityBarButton(title: "教会", artName: "GameNavChurch", isLocked: !churchUnlocked, artScale: 0.88, contentScale: Self.contentScale, action: onChurch)
+            CityBarButton(title: "商店", artName: "GameNavStore", isLocked: !storeUnlocked, artScale: 0.88, contentScale: Self.contentScale, action: onStore)
+            CityBarButton(title: "行囊", artName: "GameNavInventory", artScale: 0.88, contentScale: Self.contentScale, action: onInventory)
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, 22)
-        .padding(.top, 11)
+        .padding(.horizontal, 22 * Self.contentScale)
+        .padding(.top, 11 * Self.contentScale)
         .padding(.bottom, bottomInset)
         .background {
             LinearGradient(colors: [Color(red: 0.13, green: 0.13, blue: 0.30).opacity(0.65), Color(red: 0.09, green: 0.08, blue: 0.22).opacity(0.9)], startPoint: .top, endPoint: .bottom)
                 .overlay(alignment: .top) { Rectangle().fill(.white.opacity(0.23)).frame(height: 1) }
         }
-        .padding(.top, 8)
+        .padding(.top, 8 * Self.contentScale)
         .frame(maxWidth: .infinity)
     }
 }
@@ -591,23 +597,24 @@ private struct CityBarButton: View {
     let artName: String
     var isLocked = false
     var artScale: CGFloat = 1
+    let contentScale: CGFloat
     let action: () -> Void
 
     var body: some View {
         Button(action: { GameInterfaceSound.shared.playClick(); action() }) {
-            VStack(spacing: 1) {
+            VStack(spacing: contentScale) {
                 ZStack {
                     Image(artName + "Anime")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 62 * artScale, height: 62 * artScale)
+                        .frame(width: 62 * artScale * contentScale, height: 62 * artScale * contentScale)
                         .shadow(color: Color.indigo.opacity(0.45), radius: 4, y: 2)
                         .opacity(0.94)
                         .accessibilityHidden(true)
                 }
-                .frame(maxWidth: .infinity).frame(height: 64)
+                .frame(maxWidth: .infinity).frame(height: 64 * contentScale)
                 Text(isLocked ? "🔒 " + title : title)
-                    .font(.system(size: 13, weight: .bold, design: .serif))
+                    .font(.system(size: 13 * contentScale, weight: .bold, design: .serif))
                     .foregroundStyle(.white.opacity(0.92))
                     .shadow(color: .black.opacity(0.65), radius: 2, y: 1)
             }
@@ -619,7 +626,7 @@ private struct CityBarButton: View {
         .saturation(isLocked ? 0 : 1)
         .opacity(isLocked ? 0.42 : 1)
         .accessibilityHint(isLocked ? "尚未开放，随主线推进解锁" : "")
-        .frame(maxWidth: .infinity, minHeight: 80, alignment: .center)
+        .frame(maxWidth: .infinity, minHeight: max(44, 80 * contentScale), alignment: .center)
     }
 }
 
