@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C92800000000000000000001 /* LocalWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92800000000000000000002; };
 		C92900000000000000000001 /* CityEventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92900000000000000000002; };
+		C93000000000000000000001 /* NeighborConversationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93000000000000000000002; };
 		C91700000000000000000001 /* ChurchMaintenanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91700000000000000000002; };
 		B16000000000000000000001 /* CombatHaptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B16000000000000000000002 /* CombatHaptics.swift */; };
 		B15000000000000000000001 /* GameSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15000000000000000000002 /* GameSettingsView.swift */; };
@@ -97,6 +98,7 @@
 /* Begin PBXFileReference section */
 		C92800000000000000000002 /* LocalWorkshopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/LocalWorkshopView.swift; sourceTree = SOURCE_ROOT; };
 		C92900000000000000000002 /* CityEventsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/CityEventsView.swift; sourceTree = SOURCE_ROOT; };
+		C93000000000000000000002 /* NeighborConversationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/NeighborConversationView.swift; sourceTree = SOURCE_ROOT; };
 		C91700000000000000000002 /* ChurchMaintenanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/ChurchMaintenanceView.swift; sourceTree = SOURCE_ROOT; };
 		B16000000000000000000002 /* CombatHaptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombatHaptics.swift; sourceTree = "<group>"; };
 		B15000000000000000000002 /* GameSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsView.swift; sourceTree = "<group>"; };
@@ -242,6 +244,7 @@
 				C91700000000000000000002 /* ChurchMaintenanceView.swift */,
 				C92800000000000000000002 /* LocalWorkshopView.swift */,
 				C92900000000000000000002 /* CityEventsView.swift */,
+				C93000000000000000000002 /* NeighborConversationView.swift */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -391,6 +394,7 @@
 				A10000000000000000000001 /* MistportApp.swift in Sources */,
 				C92800000000000000000001 /* LocalWorkshopView.swift in Sources */,
 				C92900000000000000000001 /* CityEventsView.swift in Sources */,
+				C93000000000000000000001 /* NeighborConversationView.swift in Sources */,
 				A10000000000000000000020 /* HomeMusicController.swift in Sources */,
 				B15000000000000000000001 /* GameSettingsView.swift in Sources */,
 				B16000000000000000000001 /* CombatHaptics.swift in Sources */,

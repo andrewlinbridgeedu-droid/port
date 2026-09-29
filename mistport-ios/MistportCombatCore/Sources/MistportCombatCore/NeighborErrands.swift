@@ -365,4 +365,11 @@ public struct MPCNeighborLedger: Codable, Equatable, Sendable {
         guard session.outcome == .victory, !offers[i].done else { return nil }
         return complete(i, errand, coins: &coins)
     }
+    /// Close an abandoned attempt once; today's request remains available to retry.
+    public mutating func abandonPest(offerID: String, ticket: String) {
+        guard let i = offers.firstIndex(where: { $0.id == offerID }), offers[i].activeTicket == ticket else { return }
+        offers[i].activeTicket = nil
+        offers[i].settledTickets.insert(ticket)
+    }
+
 }

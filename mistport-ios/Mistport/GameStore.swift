@@ -161,6 +161,7 @@ final class GameStore {
         static let dailyWork = "mistport.daily-work.v1"
         static let dailyWorkshop = "mistport.daily-workshop.v1"
         static let cityEvents = "mistport.city-events.v1"
+        static let neighbors = "mistport.neighbors.v1"
         static let selectedChapterDistrictID = "chapter-one.selected-district-id"
         static let venueCoins = "economy.venue-coins"
         static let ownedVenueItems = "economy.owned-venue-items"
@@ -198,6 +199,7 @@ final class GameStore {
         var repairs: Set<String> = []
     }
     private var dailyWorkshopRecord = DailyWorkshopRecord()
+    private(set) var talkingNeighborID: String?
     private let defaults: UserDefaults
     private(set) var phase: GamePhase = .title
     var chapterOneCampaign = MPCChapterOneCampaignState.chapterStartState
@@ -338,6 +340,7 @@ final class GameStore {
                 PersistenceKey.dailyWork,
                 PersistenceKey.dailyWorkshop,
                 PersistenceKey.cityEvents,
+                PersistenceKey.neighbors,
                 PersistenceKey.selectedChapterDistrictID,
                 PersistenceKey.venueCoins,
                 PersistenceKey.ownedVenueItems,
@@ -384,6 +387,7 @@ final class GameStore {
                 PersistenceKey.dailyWork,
                 PersistenceKey.dailyWorkshop,
                 PersistenceKey.cityEvents,
+                PersistenceKey.neighbors,
                 PersistenceKey.selectedChapterDistrictID,
                 PersistenceKey.venueCoins,
                 PersistenceKey.ownedVenueItems,
@@ -525,6 +529,7 @@ final class GameStore {
         if defaults.object(forKey: PersistenceKey.dailyWork) == nil { persistDailyWork(DailyWorkRecord()) }
         if defaults.object(forKey: PersistenceKey.dailyWorkshop) == nil { persistDailyWorkshop(DailyWorkshopRecord()) }
         if defaults.object(forKey: PersistenceKey.cityEvents) == nil { defaults.set(try? JSONEncoder().encode(CityEventRecord()), forKey: PersistenceKey.cityEvents) }
+        if defaults.object(forKey: PersistenceKey.neighbors) == nil { defaults.set(try? JSONEncoder().encode(NeighborRecord()), forKey: PersistenceKey.neighbors) }
 
         #if DEBUG
         if launchArguments.contains("--preview-path") {
@@ -627,6 +632,7 @@ final class GameStore {
         if launchArguments.contains("--verify-player-growth") { Self.verifyPlayerGrowthPersistence() }
         if launchArguments.contains("--verify-daily-pacing") { Self.verifyDailyPacing() }
         if launchArguments.contains("--verify-daily-work") { Self.verifyDailyWorkIntegration() }
+        if launchArguments.contains("--verify-neighbors") { Self.verifyNeighborsIntegration() }
         if launchArguments.contains("--verify-city-events") { Self.verifyCityEventsIntegration() }
         if launchArguments.contains("--verify-daily-workshop") { Self.verifyDailyWorkshopIntegration() }
         if launchArguments.contains("--verify-p0") { Self.verifySettlementRecovery() }
@@ -858,6 +864,12 @@ final class GameStore {
             var work = seed.dailyWorkRecord
             for n in 1...6 { _ = work.ledger.settle(receiptID: "preview-\(n)", day: 1, copper: 40, merit: 6) }
             seed.persistDailyWork(work)
+        }
+        if ProcessInfo.processInfo.arguments.contains("--daily-neighbors-preview") {
+            seed.debugJumpToOldClockMission(6, enterImmediately: false)
+            seed.debugSetPacingDay(4)
+            for recipe in MPCCraftingCatalog.basics { seed.chapterOneCampaign.inventory[recipe.output] = 20 }
+            seed.persistChapterProgress()
         }
         if ProcessInfo.processInfo.arguments.contains("--daily-events-preview") {
             seed.debugJumpToOldClockMission(6, enterImmediately: false)
@@ -2023,6 +2035,8 @@ final class GameStore {
         persistDailyWork(DailyWorkRecord())
         persistDailyWorkshop(DailyWorkshopRecord())
         defaults.set(try? JSONEncoder().encode(CityEventRecord()), forKey: PersistenceKey.cityEvents)
+        defaults.set(try? JSONEncoder().encode(NeighborRecord()), forKey: PersistenceKey.neighbors)
+        talkingNeighborID = nil
         defaults.removeObject(forKey: PersistenceKey.dailyPacingStart)
         dailyPacingStart = nil
         resolveDailyPacingStart()
@@ -2704,6 +2718,7 @@ extension GameStore {
         var dailyWork: DailyWorkRecord? = nil
         var dailyWorkshop: DailyWorkshopRecord? = nil
         var cityEvents: CityEventRecord? = nil
+        var neighbors: NeighborRecord? = nil
         let coins: Int
         let lifetime: Int
         let available: Int
@@ -2763,6 +2778,7 @@ extension GameStore {
         if let work = receipt.dailyWork { persistDailyWork(work) }
         if let workshop = receipt.dailyWorkshop { persistDailyWorkshop(workshop) }
         if let events = receipt.cityEvents { defaults.set(try? JSONEncoder().encode(events), forKey: PersistenceKey.cityEvents) }
+        if let neighbors = receipt.neighbors { defaults.set(try? JSONEncoder().encode(neighbors), forKey: PersistenceKey.neighbors) }
         chapterOneCampaign.lifetimeChurchMerit = receipt.lifetime
         chapterOneCampaign.spendableChurchMerit = receipt.available
         if let relics = receipt.relicSnapshot {
@@ -2780,7 +2796,7 @@ extension GameStore {
         defaults.removeObject(forKey: "mistport.church.services.pending.v1")
         churchServicesRevision += 1
     }
-    private func updateChurchServices(cityEvents: CityEventRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil, _ change: (inout ChurchServicesState) throws -> Void) throws {
+    private func updateChurchServices(neighbors: NeighborRecord? = nil, cityEvents: CityEventRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil, _ change: (inout ChurchServicesState) throws -> Void) throws {
         // Never replace an unreadable financial ledger with the default empty state.
         guard workshopLedgerIsReadable else { throw MPCLocalWorkshopLedger.Failure.locked }
         var state = churchServices
@@ -2788,10 +2804,10 @@ extension GameStore {
         state.loans.lifetimeMerit = chapterOneCampaign.lifetimeChurchMerit
         state.loans.availableMerit = chapterOneCampaign.spendableChurchMerit
         try change(&state)
-        try commitChurchServices(state, cityEvents: cityEvents, dailyWorkshop: dailyWorkshop, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
+        try commitChurchServices(state, neighbors: neighbors, cityEvents: cityEvents, dailyWorkshop: dailyWorkshop, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
     }
-    private func commitChurchServices(_ state: ChurchServicesState, cityEvents: CityEventRecord? = nil, dailyWork: DailyWorkRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil) throws {
-        let receipt = ChurchServicesReceipt(state: state, dailyWork: dailyWork, dailyWorkshop: dailyWorkshop, cityEvents: cityEvents, coins: state.loans.coins, lifetime: state.loans.lifetimeMerit, available: state.loans.availableMerit, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
+    private func commitChurchServices(_ state: ChurchServicesState, neighbors: NeighborRecord? = nil, cityEvents: CityEventRecord? = nil, dailyWork: DailyWorkRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil) throws {
+        let receipt = ChurchServicesReceipt(state: state, dailyWork: dailyWork, dailyWorkshop: dailyWorkshop, cityEvents: cityEvents, neighbors: neighbors, coins: state.loans.coins, lifetime: state.loans.lifetimeMerit, available: state.loans.availableMerit, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
         defaults.set(try JSONEncoder().encode(receipt), forKey: "mistport.church.services.pending.v1")
         recoverChurchServices()
         preparedChapterOneSession = nil
@@ -4500,3 +4516,196 @@ extension GameStore {
     }
     #endif
 }
+
+// MARK: Neighbor conversations, only reachable after arriving beside a map citizen
+extension GameStore {
+    private struct NeighborRecord: Codable {
+        let migratedAt: Date
+        var ledger = MPCNeighborLedger()
+        var heardMessages: Set<String> = []
+        init() { migratedAt = Date() }
+    }
+    private func readNeighbors() throws -> NeighborRecord {
+        guard let data = defaults.data(forKey: PersistenceKey.neighbors),
+              let record = try? JSONDecoder().decode(NeighborRecord.self, from: data) else { throw MPCNeighborLedger.Failure.notOffered }
+        return record
+    }
+    var neighbors: MPCNeighborLedger {
+        _ = churchServicesRevision
+        return (try? readNeighbors().ledger) ?? .init()
+    }
+    func openNeighborDay() throws {
+        var record = try readNeighbors()
+        let old = record.ledger
+        record.ledger.open(day: pacingDay, completedMissions: churchTowerMissionNumbers)
+        record.heardMessages.formIntersection(Set(record.ledger.offers.map(\.id)))
+        guard record.ledger != old else { return }
+        try updateChurchServices(neighbors: record) { _ in }
+    }
+    /// Called exclusively by the offline map's arrival message (or an explicit DEBUG fixture).
+    func talkToNeighbor(_ id: String) throws {
+        guard MPCNeighborCatalog.neighbor(id) != nil else { throw MPCNeighborLedger.Failure.notOffered }
+        try openNeighborDay()
+        var record = try readNeighbors()
+        for offer in record.ledger.offers where offer.neighborID == id && offer.errand?.kind == .message && !offer.done {
+            record.heardMessages.insert(offer.id)
+        }
+        try updateChurchServices(neighbors: record) { _ in }
+        talkingNeighborID = id
+    }
+    func endNeighborConversation() { talkingNeighborID = nil }
+    func canRelayNeighbor(_ offerID: String) -> Bool {
+        (try? readNeighbors().heardMessages.contains(offerID)) == true
+    }
+    private func requireNeighborOffer(_ offerID: String, recipient: Bool = false) throws {
+        try openNeighborDay()
+        guard let offer = neighbors.offers.first(where: { $0.id == offerID }),
+              let actor = talkingNeighborID,
+              actor == (recipient ? offer.errand?.recipientID : offer.neighborID),
+              offer.day == pacingDay else { throw MPCNeighborLedger.Failure.notOffered }
+        if recipient && !canRelayNeighbor(offerID) { throw MPCNeighborLedger.Failure.wrongRecipient }
+    }
+    func deliverNeighbor(_ offerID: String) throws -> MPCNeighborLedger.Reward {
+        try requireNeighborOffer(offerID)
+        var record = try readNeighbors(), coins = venueCoins, inventory = chapterOneCampaign.inventory
+        let reward = try record.ledger.deliver(offerID: offerID, coins: &coins, inventory: &inventory)
+        try updateChurchServices(neighbors: record, inventory: inventory) { $0.loans.coins = coins }
+        return reward
+    }
+    func answerNeighbor(_ offerID: String, choiceID: String) throws -> MPCNeighborLedger.Reward? {
+        try requireNeighborOffer(offerID)
+        var record = try readNeighbors(), coins = venueCoins
+        let reward = try record.ledger.answer(offerID: offerID, choiceID: choiceID, coins: &coins)
+        try updateChurchServices(neighbors: record) { $0.loans.coins = coins }
+        return reward
+    }
+    func relayNeighbor(_ offerID: String) throws -> MPCNeighborLedger.Reward {
+        try requireNeighborOffer(offerID, recipient: true)
+        var record = try readNeighbors(), coins = venueCoins
+        let reward = try record.ledger.relay(offerID: offerID, to: talkingNeighborID!, coins: &coins)
+        try updateChurchServices(neighbors: record) { $0.loans.coins = coins }
+        return reward
+    }
+    func neighborPestPreview(offerID: String, ticket: String) throws -> MPCChapterOneEncounterSession {
+        guard let offer = neighbors.offers.first(where: { $0.id == offerID }) else { throw MPCNeighborLedger.Failure.notOffered }
+        return try MPCChapterOneEncounterSession.start(encounterID: MPCNeighborCatalog.encounterID(errandID: offer.errandID, ticket: ticket),
+            party: chapterOneCampaign.party, consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: churchBattleCampaign.loadout)
+    }
+    func beginNeighborPest(offerID: String, ticket: String, skills: [FoolSkillID]) throws -> MPCChapterOneEncounterSession {
+        try requireNeighborOffer(offerID)
+        var record = try readNeighbors(), loadout = churchBattleCampaign.loadout
+        var legal: [FoolSkillID] = []
+        for skill in skills where skill != .maskedWhisper && chapterOneCampaign.unlockedSkillIDs.contains(skill) && !legal.contains(skill) { legal.append(skill) }
+        loadout.normalSkillIDs = Array(legal.prefix(chapterOneLoadoutSlotCapacity))
+        loadout.talents = hermitTalents; loadout.skillLevels = foolSkillLevels
+        let id = try record.ledger.beginPest(offerID: offerID, ticket: ticket)
+        let session = try MPCChapterOneEncounterSession.start(encounterID: id, party: chapterOneCampaign.party,
+            consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: loadout)
+        try updateChurchServices(neighbors: record) { try beginChurchGear(&$0, battleID: ticket, loadout: loadout) }
+        return session
+    }
+    func settleNeighborPest(offerID: String, ticket: String, session: MPCChapterOneEncounterSession) throws -> MPCNeighborLedger.Reward? {
+        var record = try readNeighbors(), coins = venueCoins
+        let reward = try record.ledger.settlePest(offerID: offerID, ticket: ticket, session: session, coins: &coins)
+        try updateChurchServices(neighbors: record) { state in
+            state.loans.coins = coins
+            try settleChurchGear(&state, battleID: ticket, outcome: session.outcome == .victory ? .victory : .defeat)
+        }
+        return reward
+    }
+    func abandonNeighborPest(offerID: String, ticket: String, defeated: Bool = false) throws {
+        var record = try readNeighbors()
+        guard record.ledger.offers.first(where: { $0.id == offerID })?.activeTicket == ticket else { return }
+        record.ledger.abandonPest(offerID: offerID, ticket: ticket)
+        try updateChurchServices(neighbors: record) { try settleChurchGear(&$0, battleID: ticket, outcome: defeated ? .defeat : .retreat) }
+    }
+}
+
+#if DEBUG
+extension GameStore {
+    private static func winDailyStreetVerification(_ initial: MPCChapterOneEncounterSession) -> MPCChapterOneEncounterSession {
+        var battle = initial
+        for step in 0..<400 where battle.outcome == .inProgress {
+            if battle.isAwaitingTowerWave {
+                let now = Double(step) * 2 + 10
+                _ = battle.advanceRelicClock(at: now); battle.advanceChurchTowerEffects(at: now)
+            }
+            for enemy in battle.enemies.filter(\.isAlive) where battle.outcome == .inProgress {
+                _ = try! battle.applyPartyDamage(99_999, to: enemy.id)
+                if battle.outcome == .inProgress, battle.enemies.contains(where: { $0.id == enemy.id && $0.isAlive }) {
+                    battle.commitEnemyImpact(from: enemy.id)
+                    try? battle.endRound(actingEnemyID: enemy.id, at: Double(step))
+                }
+            }
+        }
+        assert(battle.outcome == .victory)
+        return battle
+    }
+    private static func verifyNeighborsIntegration() {
+        let suite = "mistport.neighbors-check." + UUID().uuidString
+        let storage = UserDefaults(suiteName: suite)!
+        defer { storage.removePersistentDomain(forName: suite) }
+        var store = GameStore(launchArguments: [], defaults: storage)
+        let migration = storage.data(forKey: PersistenceKey.neighbors)!
+        store = GameStore(launchArguments: [], defaults: storage)
+        assert(storage.data(forKey: PersistenceKey.neighbors) == migration && store.neighbors.offers.isEmpty)
+        store.debugJumpToOldClockMission(6, enterImmediately: false)
+        for recipe in MPCCraftingCatalog.basics { store.chapterOneCampaign.inventory[recipe.output] = 1000 }
+        store.persistChapterProgress()
+        var kinds: Set<String> = []
+        for day in 2...28 {
+            store.debugSetPacingDay(day)
+            try! store.openNeighborDay()
+            let offers = store.neighbors.offers
+            assert(offers.count == (day.isMultiple(of: 3) ? 3 : 2))
+            for offer in offers {
+                let errand = offer.errand!, before = store.venueCoins
+                kinds.insert(errand.kind.rawValue)
+                store.endNeighborConversation()
+                if errand.kind == .deliver { assert((try? store.deliverNeighbor(offer.id)) == nil) }
+                try! store.talkToNeighbor(offer.neighborID)
+                switch errand.kind {
+                case .deliver:
+                    _ = try! store.deliverNeighbor(offer.id)
+                    assert((try? store.deliverNeighbor(offer.id)) == nil)
+                case .find:
+                    let wrong = errand.choices.first { $0.id != errand.correctChoiceID }!
+                    assert(try! store.answerNeighbor(offer.id, choiceID: wrong.id) == nil)
+                    assert(store.venueCoins == before && store.neighbors.offers.first { $0.id == offer.id }!.excludedChoiceIDs.contains(wrong.id))
+                    _ = try! store.answerNeighbor(offer.id, choiceID: errand.correctChoiceID!)
+                case .message:
+                    assert((try? store.relayNeighbor(offer.id)) == nil)
+                    try! store.talkToNeighbor(errand.recipientID!)
+                    _ = try! store.relayNeighbor(offer.id)
+                    assert((try? store.relayNeighbor(offer.id)) == nil)
+                case .pest:
+                    let ticket = "pest-" + offer.id
+                    _ = try! store.beginNeighborPest(offerID: offer.id, ticket: ticket + "-abandon", skills: [])
+                    try! store.abandonNeighborPest(offerID: offer.id, ticket: ticket + "-abandon")
+                    let battle = winDailyStreetVerification(try! store.beginNeighborPest(offerID: offer.id, ticket: ticket, skills: []))
+                    _ = try! store.settleNeighborPest(offerID: offer.id, ticket: ticket, session: battle)
+                    _ = try! store.settleNeighborPest(offerID: offer.id, ticket: ticket, session: battle)
+                }
+                assert(store.venueCoins == before + errand.copper)
+            }
+        }
+        assert(kinds == ["deliver", "find", "message", "pest"])
+        for neighbor in MPCNeighborCatalog.written { assert(store.neighbors.stories(neighbor.id).count == 2) }
+        store.debugSetPacingDay(30); try! store.openNeighborDay()
+        let pending = store.neighbors.offers.first { $0.errand?.kind == .pest }!
+        try! store.talkToNeighbor(pending.neighborID)
+        let crossing = winDailyStreetVerification(try! store.beginNeighborPest(offerID: pending.id, ticket: "cross-day", skills: []))
+        let beforeCrossing = store.venueCoins
+        store.debugSetPacingDay(31); try! store.openNeighborDay()
+        _ = try! store.settleNeighborPest(offerID: pending.id, ticket: "cross-day", session: crossing)
+        assert(store.venueCoins == beforeCrossing + pending.errand!.copper)
+        let ledger = store.neighbors
+        store = GameStore(launchArguments: [], defaults: storage)
+        assert(store.neighbors == ledger && store.talkingNeighborID == nil)
+        store.debugSetPacingDay(32); try! store.openNeighborDay()
+        assert(store.neighbors.offers.allSatisfy { $0.day == 32 })
+        store.restart(); assert(store.neighbors.offers.isEmpty && store.neighbors.affinity.isEmpty)
+        NSLog("NEIGHBORS_VERIFY_PASS: migration once, daily 2-3 offers, proximity conversation required, actual recipient, wrong answers free, four kinds, no double rewards, pest abandon/retry, stories at 3/6, expiry, reopen, reset")
+    }
+}
+#endif

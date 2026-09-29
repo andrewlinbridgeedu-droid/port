@@ -1,4 +1,5 @@
 import SwiftUI
+import MistportCombatCore
 import WebKit
 
 struct ChapterStageMapView: View {
@@ -399,6 +400,9 @@ struct DistrictLocationMapView: View {
 
     @State private var selectedLocationIndex = 0
     @State private var showWalkableStreet = true
+    @State private var neighborConversation: MapNeighbor?
+    @State private var neighborError = false
+    private struct MapNeighbor: Identifiable { let id: String }
     @State private var selectedMissionID: String?
     @State private var runnerMissionNumber = 1
     @State private var isRunnerMoving = false
@@ -425,7 +429,10 @@ struct DistrictLocationMapView: View {
                 if game.selectedChapterDistrict.order == 1 && showWalkableStreet {
                     WisteriaStreetWebView(completedMissions: game.playerTestMissions
                         .sorted { $0.number < $1.number }
-                        .prefix(while: { game.missionIsCompleted($0) }).count)
+                        .prefix(while: { game.missionIsCompleted($0) }).count, onNeighbor: { id in
+                            do { try game.talkToNeighbor(id); neighborConversation = .init(id: id) }
+                            catch { neighborError = true }
+                        })
                         .ignoresSafeArea(edges: .bottom)
                 } else {
                     movableMap(in: geometry.size)
@@ -584,6 +591,11 @@ struct DistrictLocationMapView: View {
         .background(Color(red: 0.02, green: 0.04, blue: 0.10))
         .ignoresSafeArea()
         .preferredColorScheme(.dark)
+        .alert("街坊委托暂时无法打开", isPresented: $neighborError) { Button("好", role: .cancel) {} }
+        .sheet(item: $neighborConversation, onDismiss: { game.endNeighborConversation() }) { neighbor in
+            NeighborConversationView(game: game, neighborID: neighbor.id)
+        }
+        .task(id: game.pacingDay) { try? game.openNeighborDay() }
         .onChange(of: game.selectedChapterDistrict.id) {
             resetMapSelection()
         }
@@ -1756,6 +1768,7 @@ private struct DistrictMissionRow: View {
 /// Offline, fixed-camera 3D street. The enclosing native view owns missions and save data.
 private struct WisteriaStreetWebView: UIViewRepresentable {
     let completedMissions: Int
+    let onNeighbor: (String) -> Void
     private var testBypass: Bool {
         #if DEBUG
         ProcessInfo.processInfo.arguments.contains("--map-unlocked")
@@ -1764,7 +1777,16 @@ private struct WisteriaStreetWebView: UIViewRepresentable {
         #endif
     }
     func makeCoordinator() -> Coordinator { Coordinator() }
-    final class Coordinator: NSObject, WKNavigationDelegate {
+    final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
+        var onNeighbor: ((String) -> Void)?
+        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+            guard message.name == "neighborArrival", message.frameInfo.isMainFrame,
+                  message.frameInfo.request.url?.scheme == "mistport-map",
+                  let body = message.body as? [String: Any], let id = body["id"] as? String,
+                  let distance = body["distance"] as? Double, distance >= 0, distance <= 2.5,
+                  MPCNeighborCatalog.neighbor(id) != nil else { return }
+            onNeighbor?(id)
+        }
         var completed = 0
         var bypass = false
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -1773,10 +1795,12 @@ private struct WisteriaStreetWebView: UIViewRepresentable {
     }
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
+        configuration.userContentController.add(context.coordinator, name: "neighborArrival")
         configuration.setURLSchemeHandler(WisteriaBundleHandler(), forURLScheme: "mistport-map")
         configuration.userContentController.addUserScript(WKUserScript(
             source: "window.__mapProgress = \(completedMissions); window.__mapBypass = \(testBypass);",
             injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        context.coordinator.onNeighbor = onNeighbor
         context.coordinator.completed = completedMissions
         context.coordinator.bypass = testBypass
         let view = WKWebView(frame: .zero, configuration: configuration)
@@ -1791,11 +1815,14 @@ private struct WisteriaStreetWebView: UIViewRepresentable {
         return view
     }
     func updateUIView(_ view: WKWebView, context: Context) {
+        context.coordinator.onNeighbor = onNeighbor
         context.coordinator.completed = completedMissions
         context.coordinator.bypass = testBypass
         view.evaluateJavaScript("window.setMapProgress?.(\(completedMissions), \(testBypass));", completionHandler: nil)
     }
     static func dismantleUIView(_ view: WKWebView, coordinator: Coordinator) {
+        view.configuration.userContentController.removeScriptMessageHandler(forName: "neighborArrival")
+        coordinator.onNeighbor = nil
         view.stopLoading()
         view.loadHTMLString("", baseURL: nil)
     }
