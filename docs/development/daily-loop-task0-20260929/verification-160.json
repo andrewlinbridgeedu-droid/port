@@ -1,0 +1,37 @@
+{
+  "build": 160,
+  "sourceCommit": "10d0500",
+  "coreTests": 516,
+  "debugChecks": [
+    "DAILY_PACING_VERIFY_PASS",
+    "PLAYER_GROWTH_VERIFY_PASS",
+    "CHURCH_TOWER_VERIFY_PASS",
+    "BOUNTY_DAILY_RISK_VERIFY_PASS",
+    "P0_VERIFY_PASS"
+  ],
+  "installIdenticalFiles": 72,
+  "firstLaunchChangedFiles": [
+    "mistport.player-test-01-15.plist"
+  ],
+  "addedPlayerKeys": [
+    "mistport.daily-pacing.start.v1"
+  ],
+  "changedPlayerKeys": [
+    "mistport.church.services.v1"
+  ],
+  "pacing": {
+    "recordedAt": 812364528.208464,
+    "start": 811839600,
+    "origin": "migrated"
+  },
+  "bountyMigration": {
+    "oldArmor": "bounty-b07-bell-throat",
+    "newRelic": "bounty_relic_b07_bell_throat",
+    "replacementOwnedArmor": "tower-f08-joint-guard",
+    "bountyProgressUnchanged": true,
+    "ownedRelicConditionUnchanged": true
+  },
+  "allOtherPlayerKeysUnchanged": true,
+  "reopenByteIdentical": true,
+  "userVisualApproval": false
+}

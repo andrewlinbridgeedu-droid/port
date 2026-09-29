@@ -1,0 +1,24 @@
+{
+  "build": 161,
+  "installIdenticalFiles": 79,
+  "postDebugChangedExistingFiles": [],
+  "postDebugAddedFiles": [
+    "mistport.bounty-daily-risk-check.769E8FF6-C80F-4B99-A80A-E72276BB09C5.plist",
+    "mistport.church-tower-check.5C6F8C43-CFD8-47BB-B0CA-E48E9615BE0B.plist",
+    "mistport.daily-pacing-device-walk.v1.plist",
+    "mistport.daily-pacing.C9531E3A-794B-4911-8BE1-2B37473126C7.old.plist",
+    "mistport.daily-pacing.C9531E3A-794B-4911-8BE1-2B37473126C7.plist",
+    "mistport.p0-verification.B1740174-4CEF-42D4-92CD-3D0DC38A0A2D.plist",
+    "mistport.player-growth-check.56FD4B96-BF24-443E-9E4C-E7921DF6CD77.gap.plist",
+    "mistport.player-growth-check.56FD4B96-BF24-443E-9E4C-E7921DF6CD77.plist"
+  ],
+  "realPlayerSaveByteIdentical": true,
+  "coreTests": 516,
+  "debugPassCount": 5,
+  "screenshots": [
+    "city.png",
+    "tower.png",
+    "gear.png"
+  ],
+  "userVisualApproval": false
+}

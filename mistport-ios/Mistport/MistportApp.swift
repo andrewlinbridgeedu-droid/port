@@ -39,8 +39,14 @@ enum MistportOrientation {
 @main
 struct MistportApp: App {
     @UIApplicationDelegateAdaptor(MistportOrientationDelegate.self) private var orientationDelegate
+    #if DEBUG
+    private static let dailyWalkDefaults = GameStore.dailyPacingDeviceWalkDefaults()
+    #endif
     private static var playerDefaults: UserDefaults {
         #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--daily-pacing-device-walk") {
+            return dailyWalkDefaults
+        }
         // Checked first so the workshop device walk can never open the player's own suite.
         if ProcessInfo.processInfo.arguments.contains("--workshop-device-walk") {
             return GameStore.workshopDeviceWalkDefaults()
@@ -87,7 +93,22 @@ struct MistportApp: App {
     var body: some Scene {
         WindowGroup {
             #if DEBUG
-            if ProcessInfo.processInfo.arguments.contains("--verify-local-workshop") {
+            if ProcessInfo.processInfo.arguments.contains("--daily-pacing-device-walk") {
+                Group {
+                    if ProcessInfo.processInfo.arguments.contains("--daily-pacing-tower") {
+                        ChurchTowerView(game: game)
+                    } else if ProcessInfo.processInfo.arguments.contains("--daily-pacing-gear") {
+                        ChurchGearArmoryView(game: game, onBack: {})
+                    } else {
+                        ContentView(game: game, storefront: storefront)
+                    }
+                }
+                .defaultAppStorage(Self.playerDefaults)
+                .task {
+                    try? await Task.sleep(for: .seconds(4))
+                    saveDailyPacingWalkScreenshot()
+                }
+            } else if ProcessInfo.processInfo.arguments.contains("--verify-local-workshop") {
                 Text("工坊结算验证 · 隔离存档")
                     .task { await GameStore.verifyLocalWorkshopIntegration() }
             } else if ProcessInfo.processInfo.arguments.contains("--preview-bounty-poker") {
@@ -119,6 +140,19 @@ struct MistportApp: App {
 }
 
 #if DEBUG
+@MainActor
+private func saveDailyPacingWalkScreenshot() {
+    guard let window = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene })
+        .flatMap(\.windows).first(where: \.isKeyWindow),
+          let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+    let arguments = ProcessInfo.processInfo.arguments
+    let page = arguments.contains("--daily-pacing-tower") ? "tower" : arguments.contains("--daily-pacing-gear") ? "gear" : "city"
+    let image = UIGraphicsImageRenderer(bounds: window.bounds).image { _ in
+        window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+    }
+    try? image.pngData()?.write(to: folder.appendingPathComponent("daily-pacing-\(page).png"))
+}
+
 @MainActor
 private func saveTavernPreviewScreenshot() {
     guard let scene = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first,

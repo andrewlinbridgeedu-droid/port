@@ -7652,6 +7652,7 @@ struct ChurchTowerView: View {
                     let number = tier * 10 + index + 1
                     let cleared = game.churchTowerProgress.clearedFloors.contains(number)
                     let unlocked = game.churchTowerProgress.canEnter(number, completedMissionNumbers: game.churchTowerMissionNumbers)
+                        && game.towerFloorIsOpenToday(number)
                     Button { selected = number } label: {
                         ZStack {
                             Circle().fill(RadialGradient(colors: [selected == number ? Color.purple.opacity(0.9) : Color(red: 0.12, green: 0.11, blue: 0.15), .black], center: .center, startRadius: 0, endRadius: 30))
@@ -7659,7 +7660,7 @@ struct ChurchTowerView: View {
                             Circle().stroke(ChurchGold.opacity(0.35), lineWidth: 1).padding(5)
                             Text(cleared ? "✓" : "\(number)").font(.system(size: 21, weight: .bold, design: .serif)).foregroundStyle(unlocked || cleared ? ChurchGold : .gray)
                         }.frame(width: 37, height: 37).shadow(color: selected == number ? .purple.opacity(0.8) : .clear, radius: 13)
-                    }.buttonStyle(.plain).accessibilityLabel("第\(number)层，\(cleared ? "已封堵" : unlocked ? "可进入" : "未解锁")")
+                    }.buttonStyle(.plain).accessibilityLabel("第\(number)层，\(cleared ? "已封堵，可重打" : unlocked ? "可进入" : !game.towerFloorIsOpenToday(number) ? (game.towerPacingLockText ?? "今日未开放") : "未解锁")")
                     .position(x: geo.size.width * point.x, y: geo.size.height * (0.06 + point.y * 0.82))
                 }
             }
