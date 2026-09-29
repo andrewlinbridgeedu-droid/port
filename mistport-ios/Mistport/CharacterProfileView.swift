@@ -477,13 +477,12 @@ struct CharacterProfileView: View {
                     Text("黑盐岸 · 序列 8 仪式").font(.subheadline.bold())
                     Text(game.sequenceEightRitualStatus)
                         .font(.caption).foregroundStyle(.secondary)
-                    Button(game.sequenceEightQualified ? "已完成" : "举行仪式 · \(MPCSequenceEightRitual.fee) 铜币") {
+                    PlateButton(title: game.sequenceEightQualified ? "序列 8 仪式已完成" : "举行仪式 · \(MPCSequenceEightRitual.fee) 铜币",
+                                plate: .ritual,
+                                enabled: !game.sequenceEightQualified
+                                    && game.churchTowerMissionNumbers.contains(MPCSequenceEightRitual.storyMission)) {
                         game.performAdvancement()
                     }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(game.sequenceEightQualified
-                              || !game.churchTowerMissionNumbers.contains(MPCSequenceEightRitual.storyMission))
-                    .accessibilityLabel("举行序列8仪式，交付三份主材与\(MPCSequenceEightRitual.fee)铜币")
                 }
                 .padding(.top, 4)
                 Divider()

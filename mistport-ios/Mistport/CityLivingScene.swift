@@ -97,8 +97,11 @@ struct HarborPlateSet: Equatable {
     /// Where the painting shows sky (alpha): drawn weather stays off the
     /// towers, mountains and branches.
     var skyMask: String { prefix + "SkyMask" }
-    /// How far the cloud reaches down over the distant mountains and islands.
-    var farMask: String { prefix + "FarMask" }
+    /// Where weather may lie over the distant view: everything down to a
+    /// level line near the sea horizon, whatever the shape of the land, except
+    /// the bell tower, the lighthouse, the blossom branch and the lamps
+    /// (tools/city-daynight/textures).
+    var landMask: String { prefix + "LandMask" }
 
     /// Winter with snow lying, revealed over the bare winter set as it settles.
     static let winterSnow = HarborPlateSet(prefix: "CityWinterSnow")
@@ -504,7 +507,8 @@ struct CityLivingScene: View {
                                                         moon: context.resolve(Image("CityBloodMoon")))
                             painter.cloudImage = context.resolve(Image("CityStormClouds"))
                             painter.skyMask = context.resolve(Image(season.plateSet.skyMask))
-                            painter.farMask = context.resolve(Image(season.plateSet.farMask))
+                            painter.landMask = context.resolve(Image(season.plateSet.landMask))
+                            painter.puffImage = context.resolve(Image("CityCloudPuffs"))
                             painter.draw(in: &context)
                         }
                         let autumn = (season == .autumn ? seasons.mix : 0) + (seasons.previous == .autumn ? 1 - seasons.mix : 0)
@@ -538,7 +542,7 @@ struct CityLivingScene: View {
                         } else {
                             Canvas { context, size in
                                 HarborOvercast(size: size, t: t, cover: cover, storm: storm, wind: weather.wind, light: light,
-                                               skyMask: season.plateSet.skyMask, farMask: season.plateSet.farMask)
+                                               skyMask: season.plateSet.skyMask, landMask: season.plateSet.landMask)
                                     .draw(in: context)
                             }
                         }
@@ -780,11 +784,12 @@ private struct HarborRain {
 
 // MARK: - Rain cloud
 
-/// The deck of rain cloud over the harbour: the painting's own clouds turned
-/// grey (CityStormClouds, taken from the open sky of the day painting, so it
-/// keeps the painting's brushwork), drifting slowly with the wind and
-/// thinning into rain haze toward the horizon. Drawn only where the painting
-/// shows sky. Grey by day, darker in a storm, warm at sunset, dark at night.
+/// Rain cloud over the harbour, with no regard to the shape of the land:
+/// the sky becomes the painting's own clouds turned grey (CityStormClouds),
+/// with the mountains standing out against it; the whole distant view greys
+/// and flattens in the rain; and banks of the painting's own cloud puffs
+/// (CityCloudPuffs) drift across with the wind, hiding the mountains where
+/// they pass. Grey by day, darker in a storm, warm at sunset, dark at night.
 private struct HarborOvercast {
     let size: CGSize
     let t: Double
@@ -793,7 +798,7 @@ private struct HarborOvercast {
     let wind: Double
     let light: HarborLight
     let skyMask: String
-    let farMask: String
+    let landMask: String
 
     func draw(in context: GraphicsContext) {
         let rect = HarborPainting.rect(in: size)
@@ -802,20 +807,21 @@ private struct HarborOvercast {
         let tint = RGB(1, 1, 1).mix(RGB(0.66, 0.68, 0.74), storm)
             .mix(RGB(1.0, 0.80, 0.68), 0.5 * light.sunset)
             .mix(RGB(0.20, 0.22, 0.30), light.dark)
-        let clouds = context.resolve(Image("CityStormClouds"))
-        let drift = t * (0.004 + 0.010 * abs(wind))
-        // The sky, and the same cloud drawn down over the distant mountains
-        // and islands, fading out toward the town, so there is no edge where
-        // the cloud meets the land.
-        for (maskName, strength) in [(skyMask, 1.3), (farMask, 1.1)] {
-            var g = context
-            let mask = context.resolve(Image(maskName))
-            g.clipToLayer { $0.draw(mask, in: band) }
-            g.opacity = min(1, cover * strength)
-            g.addFilter(.colorMultiply(tint.color()))
-            g.addFilter(.blur(radius: unit * 0.0018))
-            HarborPainter.drawDeck(g, clouds: clouds, rect: rect, drift: drift)
-        }
+        var sky = context
+        let skyClip = context.resolve(Image(skyMask))
+        sky.clipToLayer { $0.draw(skyClip, in: band) }
+        sky.opacity = min(1, cover * 1.3)
+        sky.addFilter(.colorMultiply(tint.color()))
+        sky.addFilter(.blur(radius: unit * 0.0018))
+        HarborPainter.drawDeck(sky, clouds: context.resolve(Image("CityStormClouds")), rect: rect,
+                               drift: t * (0.004 + 0.010 * abs(wind)))
+        var land = context
+        let landClip = context.resolve(Image(landMask))
+        land.clipToLayer { $0.draw(landClip, in: band) }
+        land.fill(Path(band), with: .color((RGB(0.62, 0.64, 0.70) * tint).color(min(0.7, cover * (0.35 + 0.25 * storm)))))
+        HarborPainter.drawPuffs(land, puffs: context.resolve(Image("CityCloudPuffs")), rect: rect, t: t, wind: wind,
+                                tint: RGB(0.95, 0.96, 1.0).mix(RGB(0.62, 0.64, 0.70), storm) * tint,
+                                strength: min(1, cover * 1.1) * (1 - 0.3 * storm))
     }
 }
 
@@ -975,10 +981,12 @@ private struct HarborPainter {
     let moon: GraphicsContext.ResolvedImage
     /// The painting's clouds as a grey deck (CityStormClouds), for night cloud.
     var cloudImage: GraphicsContext.ResolvedImage?
+    /// The painting's cloud puffs (CityCloudPuffs), drifting in front of the hills.
+    var puffImage: GraphicsContext.ResolvedImage?
     /// The season's sky mask; without it the traced skyline clips the sky.
     var skyMask: GraphicsContext.ResolvedImage?
-    /// How far cloud reaches down over the distant land (see HarborOvercast).
-    var farMask: GraphicsContext.ResolvedImage?
+    /// Where weather may lie over the distant view (see HarborOvercast).
+    var landMask: GraphicsContext.ResolvedImage?
 
     /// Clips to the sky: the painting's own sky pixels when the mask is known.
     func clipToSky(_ context: inout GraphicsContext) {
@@ -987,6 +995,32 @@ private struct HarborPainter {
             context.clipToLayer { $0.draw(skyMask, in: r) }
         } else {
             context.clip(to: skyPath())
+        }
+    }
+
+    /// Two banks of the painting's cloud puffs drifting across the distant
+    /// view with the wind: a far, high, slow one and a nearer, lower, faster
+    /// one. They pass in front of the mountains wherever they happen to be.
+    static func drawPuffs(_ context: GraphicsContext, puffs: GraphicsContext.ResolvedImage, rect: CGRect,
+                          t: Double, wind: Double, tint: RGB, strength: Double) {
+        guard strength > 0.01 else { return }
+        let aspect = puffs.size.width / max(puffs.size.height, 1)
+        // (top, height, speed in painting units per second, opacity)
+        let banks: [(Double, Double, Double, Double)] = [
+            (0.030, 0.12, 0.0025 + 0.004 * abs(wind), 0.95), (0.095, 0.17, 0.0045 + 0.008 * abs(wind), 0.80)]
+        for (index, bank) in banks.enumerated() {
+            let (top, height, speed, alpha) = bank
+            var g = context
+            g.opacity = strength * alpha
+            g.addFilter(.colorMultiply(tint.color()))
+            g.addFilter(.blur(radius: rect.height * 0.0012))
+            let h = rect.height * CGFloat(height), w = h * aspect
+            let offset = CGFloat(t * speed) * rect.height + (index == 0 ? 0 : w * 0.43)
+            var x = rect.minX - offset.truncatingRemainder(dividingBy: w)
+            while x < rect.maxX {
+                g.draw(puffs, in: CGRect(x: x - 3, y: rect.minY + rect.height * CGFloat(top), width: w + 6, height: h))
+                x += w
+            }
         }
     }
 
@@ -999,7 +1033,7 @@ private struct HarborPainter {
         var x = rect.minX - offset.truncatingRemainder(dividingBy: w)
         while x < rect.maxX {
             // Overlap by a point so no hairline of the painting shows between tiles.
-            context.draw(clouds, in: CGRect(x: x - 1, y: rect.minY, width: w + 2, height: h))
+            context.draw(clouds, in: CGRect(x: x - 3, y: rect.minY, width: w + 6, height: h))
             x += w
         }
     }
@@ -1030,8 +1064,7 @@ private struct HarborPainter {
         clipToSky(&sky)
         drawSun(sky)
         drawMoon(sky)
-        drawNightClouds(sky)
-        drawFarNightCloud(context)
+        drawNightClouds(context)
         var water = context
         water.opacity = (1 - rain) * (1 - nightCloud)
         drawReflections(water)
@@ -1196,36 +1229,35 @@ private struct HarborPainter {
         }
     }
 
-    /// Heavy night cloud: the painting's own clouds as a dark deck, drifting
-    /// slowly over the sky, with the town's lamplight warm on its base. Where
-    /// it crosses the moon the moon dims (see drawMoon).
+    /// Heavy night cloud, with no regard to the shape of the land: the sky
+    /// becomes a dark deck of the painting's clouds (the mountains stand out
+    /// against it), the distant view darkens without the moon, and banks of
+    /// cloud puffs drift across in front of the mountains. The town's
+    /// lamplight glows warm on the cloud base. Where cloud crosses the moon
+    /// the moon dims (see drawMoon).
     func drawNightClouds(_ context: GraphicsContext) {
         guard nightCloud > 0.01, let cloud = cloudImage else { return }
-        var g = context
-        g.opacity = min(1, nightCloud * 1.05)
-        g.addFilter(.colorMultiply(RGB(0.24, 0.25, 0.33).color()))
-        g.addFilter(.blur(radius: len(0.003)))
-        let rect = CGRect(x: origin.x, y: origin.y, width: len(aspect), height: side)
-        Self.drawDeck(g, clouds: cloud, rect: rect, drift: t * (0.003 + 0.006 * abs(wind)))
-        var warm = context
+        let band = CGRect(x: origin.x, y: origin.y, width: len(aspect), height: len(0.30))
+        let whole = CGRect(x: origin.x, y: origin.y, width: len(aspect), height: side)
+        var sky = context
+        clipToSky(&sky)
+        sky.opacity = min(1, nightCloud * 1.05)
+        sky.addFilter(.colorMultiply(RGB(0.24, 0.25, 0.33).color()))
+        sky.addFilter(.blur(radius: len(0.003)))
+        Self.drawDeck(sky, clouds: cloud, rect: whole, drift: t * (0.003 + 0.006 * abs(wind)))
+        guard let landMask else { return }
+        var land = context
+        land.clipToLayer { $0.draw(landMask, in: band) }
+        land.fill(Path(band), with: .color(RGB(0.04, 0.05, 0.09).color(0.5 * nightCloud)))
+        if let puffs = puffImage {
+            Self.drawPuffs(land, puffs: puffs, rect: whole, t: t, wind: wind,
+                           tint: RGB(0.21, 0.22, 0.30), strength: min(1, nightCloud * 1.05))
+        }
+        var warm = land
         warm.blendMode = .screen
         warm.fill(Path(CGRect(x: origin.x, y: p(0, 0.12).y, width: len(aspect), height: len(0.14))),
-                  with: .linearGradient(Gradient(colors: [.clear, RGB(0.30, 0.18, 0.12).color(0.35 * nightCloud)]),
+                  with: .linearGradient(Gradient(colors: [.clear, RGB(0.30, 0.18, 0.12).color(0.30 * nightCloud)]),
                                         startPoint: p(0, 0.12), endPoint: p(0, 0.26)))
-    }
-
-    /// The night cloud carried down over the distant mountains and islands,
-    /// fading toward the town, so the cloud has no edge along the ridges.
-    func drawFarNightCloud(_ context: GraphicsContext) {
-        guard nightCloud > 0.01, let cloud = cloudImage, let farMask else { return }
-        var g = context
-        let band = CGRect(x: origin.x, y: origin.y, width: len(aspect), height: len(0.30))
-        g.clipToLayer { $0.draw(farMask, in: band) }
-        g.opacity = min(1, nightCloud * 1.05)
-        g.addFilter(.colorMultiply(RGB(0.24, 0.25, 0.33).color()))
-        g.addFilter(.blur(radius: len(0.003)))
-        Self.drawDeck(g, clouds: cloud, rect: CGRect(x: origin.x, y: origin.y, width: len(aspect), height: side),
-                      drift: t * (0.003 + 0.006 * abs(wind)))
     }
 
     /// The bolt of a near strike, from the cloud base down behind the far

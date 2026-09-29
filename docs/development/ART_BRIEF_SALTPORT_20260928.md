@@ -81,3 +81,5 @@
 - 不删除、不覆盖任何已有图片。
 
 **接入计划：** 韧皮、绑带进背包目录，替换目前复用的通用材料图标，并用在检修单第 2 步；组具用在第 4 步；两枚徽记用在检修单的选边按钮和事件预览的计划卡。
+
+**状态（2026-09-28）：** Codex 已交付 5 张（`ArtSource/Saltport20260928/icons/`），用户认可。已登记为 `ItemShieldJawHide`、`ItemRepairStrap`、`ItemFilterKit`、`EmblemPumpsUnion`、`EmblemGreySail`，接入 Build 158：背包、百工坊和检修单“持有”一行、安装步骤、选边按钮。事件预览计划卡上的徽记尚未接入。

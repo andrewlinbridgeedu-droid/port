@@ -1,6 +1,78 @@
 import SwiftUI
 import MistportCombatCore
 
+/// Painted plate button in the game's flat style (ART_BRIEF_WORKSHOP_UI_20260928).
+/// The plate carries no text; the label is live so prices and counts stay current.
+/// Plates scale uniformly: their side ornaments sit next to the label, so they must not stretch.
+struct PlateButton: View {
+    enum Plate: String {
+        case workshopPrimary = "ButtonArtWorkshopPrimary"
+        case workshopSecondary = "ButtonArtWorkshopSecondary"
+        case saltportRoute = "ButtonArtSaltportRoute"
+        case saltportNews = "ButtonArtSaltportNews"
+        case ritual = "ButtonArtRitualSequence8"
+        case battle = "ButtonArtPublicBattle"
+        case sideChoice = "ButtonArtSideChoice"
+
+        var isDark: Bool { [.workshopSecondary, .saltportRoute, .ritual, .battle].contains(self) }
+        /// The empty label band between the side ornaments, as fractions of the plate width (measured).
+        var label: (center: CGFloat, width: CGFloat) {
+            switch self {
+            case .workshopPrimary: (0.405, 0.56)
+            case .workshopSecondary: (0.424, 0.50)
+            case .saltportRoute: (0.431, 0.51)
+            case .saltportNews: (0.425, 0.53)
+            case .ritual: (0.426, 0.51)
+            case .battle: (0.432, 0.46)
+            case .sideChoice: (0.467, 0.49)
+            }
+        }
+    }
+
+    private static let aspect: CGFloat = 866.0 / 192.0
+    private static let gold = Color(red: 0.93, green: 0.78, blue: 0.48)
+    private static let ink = Color(red: 0.22, green: 0.16, blue: 0.10)
+
+    let title: String
+    let plate: Plate
+    /// Only for `.sideChoice`: the faction emblem laid into the empty round inset.
+    var emblem: String? = nil
+    var enabled = true
+    var height: CGFloat = 58
+    let action: () -> Void
+
+    var body: some View {
+        let width = height * Self.aspect
+        Button {
+            GameInterfaceSound.shared.playClick()
+            action()
+        } label: {
+            ZStack {
+                Image(decorative: plate.rawValue).resizable().scaledToFit()
+                Text(title)
+                    .font(.system(size: height * 0.3, weight: .bold, design: .serif))
+                    .foregroundStyle(plate.isDark ? Self.gold : Self.ink)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                    .frame(width: width * plate.label.width)
+                    .position(x: width * plate.label.center, y: height / 2)
+                if let emblem {
+                    Image(decorative: emblem).resizable().scaledToFit()
+                        .frame(width: height * 0.56, height: height * 0.56)
+                        .position(x: width * 0.884, y: height / 2)
+                }
+            }
+            .frame(width: width, height: height)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(!enabled)
+        .opacity(enabled ? 1 : 0.45)
+        .accessibilityLabel(title)
+        .frame(maxWidth: .infinity)
+    }
+}
+
 /// Production save-backed workshop; never constructs an isolated playtest fixture.
 struct LocalWorkshopView: View {
     @Bindable var game: GameStore
@@ -8,6 +80,9 @@ struct LocalWorkshopView: View {
     @State private var showsTower = false
     @State private var message = ""
     @State private var confirmsExtraBatch = false
+
+    /// Card colour; the step illustrations fade to exactly this at their edges.
+    private static let card = Color(red: 0.149, green: 0.153, blue: 0.169)
 
     var body: some View {
         NavigationStack {
@@ -23,21 +98,23 @@ struct LocalWorkshopView: View {
                                 .font(.subheadline).foregroundStyle(.secondary)
                         }
                     }
-                    Text("先看工坊需要什么，再把塔里的材料做成货物。")
-                        .font(.callout)
                     HStack {
-                        Label("\(game.venueCoins) 铜", systemImage: "circle.circle")
+                        stock("RewardCoin", "\(game.venueCoins) 铜")
                         Spacer()
-                        Text("皮革 \(game.localWorkshop.proficiency) / 20")
+                        Text("皮革熟练 \(game.localWorkshop.proficiency)/20")
                     }.font(.headline).monospacedDigit()
-                    Text("韧皮 \(game.workshopHideCount) · 维修绑带 \(game.workshopStrapCount)")
-                        .accessibilityIdentifier("workshop.inventory")
+                    HStack(spacing: 18) {
+                        stock("ItemShieldJawHide", "韧皮 \(game.workshopHideCount)")
+                        stock("ItemRepairStrap", "维修绑带 \(game.workshopStrapCount)")
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityIdentifier("workshop.inventory")
                     if !game.cityServiceIsUnlocked(.workshop) {
-                        Text("完成第16关后开放基础皮革工艺。")
+                        Text("通过第 16 关后开放。")
                     } else if !game.workshopLedgerIsReadable {
-                        Text("工坊账本暂时无法读取，已停止扣款与交货。原存档保留。")
+                        Text("工坊记录读不出来，暂时不能使用。")
                     } else if !game.churchMistportFieldworkAvailable {
-                        Text("你已离开雾港，现场工坊暂时停用。材料、图纸、熟练度和检修记录均已保留，等待后续剧情开放回访。")
+                        Text("你已离开雾港，这里的工坊先关着，东西都给你留着。")
                     } else {
                         gathering
                         recipe
@@ -46,8 +123,6 @@ struct LocalWorkshopView: View {
                     if !message.isEmpty {
                         Text(message).foregroundStyle(.yellow).accessibilityIdentifier("workshop.message")
                     }
-                    Text("更多专业与城市事件随后续剧情开放。当前检修单只采购2条，不会每天刷新；剩余成品保留在背包。")
-                        .font(.footnote).foregroundStyle(.secondary)
                 }.padding(20)
             }
             .background(Color(red: 0.055, green: 0.08, blue: 0.12))
@@ -56,83 +131,95 @@ struct LocalWorkshopView: View {
         }
         .preferredColorScheme(.dark)
         .fullScreenCover(isPresented: $showsTower) { ChurchSanctuaryView(game: game) }
-        .confirmationDialog("这个检修单已收满，继续制作的成品暂时没有买家。仍花13铜制作？", isPresented: $confirmsExtraBatch) {
-            Button("仍然制作 · 13铜") { craft() }
-            Button("取消", role: .cancel) {}
+        .confirmationDialog("这单已经收满，再做的绑带暂时卖不出去。还要花 13 铜做一批吗？", isPresented: $confirmsExtraBatch) {
+            Button("做一批 · 13铜") { craft() }
+            Button("算了", role: .cancel) {}
         }
     }
 
+    private func stock(_ art: String, _ text: String) -> some View {
+        HStack(spacing: 6) {
+            Image(decorative: art).resizable().scaledToFit().frame(width: 24, height: 24)
+            Text(text)
+        }
+    }
+
+    /// A step card: its illustration with the step name in the dark left band, then the content.
+    private func step<Content: View>(_ number: String, _ title: String, art: String,
+                                     @ViewBuilder _ content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Image(decorative: art).resizable().scaledToFit()
+                .overlay(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(number).font(.caption.bold()).foregroundStyle(.secondary)
+                        Text(title).font(.title3.bold())
+                    }
+                    .padding(.leading, 14)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .accessibilityElement(children: .combine)
+            content()
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Self.card, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
     private var gathering: some View {
-        GroupBox("01 · 取材") {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("教会塔第1层的盾颚魔，每次新战斗胜利可取1份韧皮。旧的通关记录不会补发。")
-                    .font(.callout)
-                Button("前往教会塔取材") { showsTower = true }
-                    .buttonStyle(.bordered)
-                Text("首通铜币、功勋与装备仍按原规则结算；韧皮在胜利时直接收入背包。")
-                    .font(.caption).foregroundStyle(.secondary)
-            }.frame(maxWidth: .infinity, alignment: .leading).padding(8)
+        step("01", "取材", art: "WorkshopStepGather") {
+            Text("在教会塔第 1 层打败盾颚魔，可得 1 份韧皮。")
+            PlateButton(title: "前往教会塔取材", plate: .workshopSecondary) { showsTower = true }
         }
     }
     private var recipe: some View {
-        GroupBox("02 · 皮革制作　维修绑带") {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("1份韧皮 + 12铜底料 + 1铜耗材 → 3条绑带")
-                Text("每成功制作一批，皮革熟练度+1，本阶段上限20。高级配方另需序列8、熟练度20和对应图纸，当前尚未开放。")
-                    .font(.caption).foregroundStyle(.secondary)
-                if !game.localWorkshop.learnedBasics {
-                    Button("学习基础图纸 · 免费") {
-                        perform("已学会维修绑带。图纸与熟练度会随存档保留。") { try game.learnWorkshopBasics() }
-                    }.buttonStyle(.borderedProminent)
-                } else {
-                    Button("制作一批 · 13铜") {
-                        if game.localWorkshop.order != .offered { confirmsExtraBatch = true }
-                        else { craft() }
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(game.workshopHideCount < 1 || game.venueCoins < 13)
-                    if game.workshopHideCount < 1 { Text("还缺1份韧皮，先去第1层取材。 ").font(.caption) }
-                    else if game.venueCoins < 13 { Text("还差\(13-game.venueCoins)铜；不会透支。 ").font(.caption) }
+        step("02", "皮革制作", art: "WorkshopStepCraft") {
+            Text("维修绑带：1 份韧皮 + 13 铜 → 3 条")
+            if !game.localWorkshop.learnedBasics {
+                PlateButton(title: "学习图纸 · 免费", plate: .workshopPrimary) {
+                    perform("学会了维修绑带。") { try game.learnWorkshopBasics() }
                 }
-            }.frame(maxWidth: .infinity, alignment: .leading).padding(8)
+            } else {
+                PlateButton(title: "制作一批 · 13铜", plate: .workshopPrimary,
+                            enabled: game.workshopHideCount >= 1 && game.venueCoins >= 13) {
+                    if game.localWorkshop.order != .offered { confirmsExtraBatch = true }
+                    else { craft() }
+                }
+                if game.workshopHideCount < 1 { Text("还缺 1 份韧皮。").font(.caption).foregroundStyle(.secondary) }
+                else if game.venueCoins < 13 { Text("还差 \(13 - game.venueCoins) 铜。").font(.caption).foregroundStyle(.secondary) }
+            }
         }
     }
     private var order: some View {
-        GroupBox("03 · 工坊检修架") {
-            VStack(alignment: .leading, spacing: 12) {
-                switch game.localWorkshop.order {
-                case .offered:
-                    Text("检修架的旧绑带已经开裂。工坊收购2条新绑带，总价18铜，交货后再安装。")
-                    Text("剩余采购预算：\(game.localWorkshop.procurementCopper)铜 · 只收2条")
-                        .font(.caption).foregroundStyle(.secondary)
-                    Button("交付2条 · 收18铜") {
-                        perform("已交付2条，收到18铜。接下来把它们安装到检修架。") { try game.deliverWorkshopStraps() }
-                    }.buttonStyle(.borderedProminent).disabled(game.workshopStrapCount < 2)
-                case .delivered:
-                    Text("2条绑带已交货，货款已付。安装不会再扣钱，也不会再次发钱。")
-                    Button("安装已交付的2条绑带") {
-                        perform("检修架重新固定，绑带已经用在这里。余下成品仍在背包。") { try game.installWorkshopStraps() }
-                    }.buttonStyle(.borderedProminent)
-                case .installed:
-                    Label("检修架已验收", systemImage: "checkmark.seal.fill").foregroundStyle(.mint)
-                    Text("你制作的两条绑带固定在支架上。此单已完成，不再追加采购。")
+        step("03", "工坊检修架", art: "WorkshopStepInstall") {
+            switch game.localWorkshop.order {
+            case .offered:
+                Text("旧绑带裂了，工坊收 2 条新的，付 18 铜。")
+                PlateButton(title: "交付 2 条 · 收 18 铜", plate: .workshopPrimary, enabled: game.workshopStrapCount >= 2) {
+                    perform("交了 2 条，收到 18 铜。") { try game.deliverWorkshopStraps() }
                 }
-            }.frame(maxWidth: .infinity, alignment: .leading).padding(8)
+            case .delivered:
+                Text("货已交，装上就完工。")
+                PlateButton(title: "安装绑带", plate: .workshopPrimary) {
+                    perform("检修架修好了。") { try game.installWorkshopStraps() }
+                }
+            case .installed:
+                Label("检修架修好了", systemImage: "checkmark.seal.fill").foregroundStyle(.mint)
+            }
         }
     }
     private func craft() {
-        perform("制成3条维修绑带，熟练度已保存（本阶段上限20）。") { try game.craftWorkshopStraps() }
+        perform("做好 3 条维修绑带，皮革熟练 +1。") { try game.craftWorkshopStraps() }
     }
     private func perform(_ success: String, action: () throws -> Void) {
         do { try action(); message = success }
         catch let error as MPCLocalWorkshopLedger.Failure {
             switch error {
-            case .locked: message = "条件未满足，请检查主线进度和已学图纸。"
-            case .funds: message = "铜币不足，本次没有扣款。"
-            case .stock: message = "材料或待安装货物不足，本次没有扣款。"
-            case .exhausted: message = "检修单已收满，成品保留在背包。"
-            case .conflict: message = "操作回执冲突，本次没有重复结算。"
+            case .locked: message = "现在还不能做这一步。"
+            case .funds: message = "铜币不够。"
+            case .stock: message = "材料不够。"
+            case .exhausted: message = "这单已经收满了。"
+            case .conflict: message = "没有生效，请再点一次。"
             }
-        } catch { message = "账本未能保存，本次操作未完成。" }
+        } catch { message = "没能保存，请再试一次。" }
     }
 }

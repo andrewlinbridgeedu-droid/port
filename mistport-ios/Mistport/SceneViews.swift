@@ -460,7 +460,8 @@ private struct CityBottomBar: View {
     var body: some View {
         HStack(alignment: .center, spacing: 0) {
             CityBarButton(title: "角色", artName: "GameNavProfile", action: onProfile)
-            CityBarButton(title: "百工坊", artName: "GameNavWorkshop", action: onWork)
+            // The workbench art is a dense, square object; shown at full size it reads larger than its neighbours.
+            CityBarButton(title: "百工坊", artName: "GameNavWorkshop", artScale: 0.84, action: onWork)
             CityBarButton(title: "教会", artName: "GameNavChurch", isLocked: !churchUnlocked, action: onChurch)
             CityBarButton(title: "商店", artName: "GameNavStore", isLocked: !storeUnlocked, action: onStore)
             CityBarButton(title: "行囊", artName: "GameNavInventory", action: onInventory)
@@ -531,6 +532,7 @@ private struct CityBarButton: View {
     let title: String
     let artName: String
     var isLocked = false
+    var artScale: CGFloat = 1
     let action: () -> Void
 
     var body: some View {
@@ -540,7 +542,7 @@ private struct CityBarButton: View {
                     Image(artName + "Anime")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 62, height: 62)
+                        .frame(width: 62 * artScale, height: 62 * artScale)
                         .shadow(color: Color.indigo.opacity(0.45), radius: 4, y: 2)
                         .opacity(0.94)
                         .accessibilityHidden(true)
@@ -1179,7 +1181,9 @@ func chapterOneInventoryArtName(_ id: String) -> String? {
         case "campaign-item-consumable_clock_key": "ItemEvidenceKey"
         case "campaign-item-item_memory_filament", "campaign-item-material_memory_filament": "ItemMemoryFilament"
         case "campaign-item-material_clock_bronze": "ItemOwnerlessSpring"
-        case "campaign-item-material_skill_dust", "campaign-item-material_shield_jaw_hide", "campaign-item-crafted_repair_strap": "RewardMaterial"
+        case "campaign-item-material_skill_dust": "RewardMaterial"
+        case "campaign-item-material_shield_jaw_hide": "ItemShieldJawHide"
+        case "campaign-item-crafted_repair_strap": "ItemRepairStrap"
         case "clock-coffee": "ItemClockCoffee"
         case "fog-sugar": "ItemFogSugar"
         case "rain-rumor": "ItemRainRumor"

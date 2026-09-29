@@ -204,6 +204,133 @@ def far_mask(day_path, lights_path, skyline_path, out, name):
     cv2.imwrite(f"{out}/{name}.png", (np.clip(rgba, 0, 1) * 255 + 0.5).astype(np.uint8))
 
 
+def cloud_mask(day_path, lights_path, skyline_path, out, name):
+    """One continuous cover for rain cloud and night cloud over sky and
+    distant land alike, so no edge follows a ridge or a cliff: full cover
+    high up, fading over 0.07 painting units to nothing at FAR_LINE (at
+    least 0.03 below the skyline, so a low island is covered too), softened
+    across so jumps in the line do not show as vertical edges. Kept clear:
+    the bell tower and the lighthouse (by colour), the spring blossom
+    branch, and every lamp and lit window."""
+    import ast
+    day = cv2.imread(day_path)
+    H, W = day.shape[:2]
+    band = int(0.30 * H)
+    line = np.array(ast.literal_eval(open(skyline_path).read()))
+    sky_y = np.interp(np.arange(W), (np.arange(len(line)) + 0.5) / len(line) * W, line * H)
+    far_y = np.interp(np.arange(W) / H, [p[0] for p in FAR_LINE], [p[1] for p in FAR_LINE]) * H
+    end_y = np.maximum(far_y, sky_y + 0.03 * H)
+    start_y = end_y - 0.07 * H
+    rows = np.arange(band, dtype=np.float32)[:, None]
+    t = np.clip((rows - start_y[None, :]) / (end_y - start_y)[None, :], 0, 1)
+    alpha = 1 - smoothstep(0, 1, t)
+    alpha = cv2.GaussianBlur(alpha.astype(np.float32), (0, 0), sigmaX=0.015 * H, sigmaY=1.5)
+    xs = np.arange(W, dtype=np.float32)[None, :] / H
+    hsv = cv2.cvtColor(day[:band], cv2.COLOR_BGR2HSV).astype(np.float32)
+    hue, sat, val = hsv[..., 0], hsv[..., 1] / 255, hsv[..., 2] / 255
+    ys = rows / H
+    # The bell tower and the lighthouse are near: their stone, gold and dark
+    # openings stay clear. The castle is far off and takes the mist like the
+    # hills (its lit windows are kept below).
+    structures = ((xs > 0.44) & (xs < 0.58)) | ((xs > 1.715) & (xs < 1.765))
+    below = rows >= sky_y[None, :]
+    skyblue = (hue > 95) & (hue < 128) & (sat > 0.20) & (val > 0.35)
+    spire = (((hue < 40) | (hue > 160)) & (sat > 0.10)) | (val < 0.45)
+    keep = (structures & ((below & ~skyblue) | (~below & spire))).astype(np.uint8)
+    keep = cv2.morphologyEx(keep, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9)))
+    keep |= ((xs < 0.46) & (ys < 0.17) & ((val < 0.55) | ((hue > 140) & (hue < 178) & (sat > 0.12)))).astype(np.uint8)
+    lights = cv2.imread(lights_path, cv2.IMREAD_GRAYSCALE)[:band].astype(np.float32) / 255
+    # Only the bright cores of lamps and windows; their glow dims in the mist.
+    keep |= cv2.dilate((lights > 0.30).astype(np.uint8), np.ones((3, 3), np.uint8))
+    keep = cv2.morphologyEx(keep, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
+    keep = cv2.morphologyEx(keep, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7)))
+    alpha *= 1 - cv2.GaussianBlur(keep.astype(np.float32), (0, 0), 1.2)
+    small = cv2.resize(alpha, (2048, int(2048 * band / W)), interpolation=cv2.INTER_AREA)
+    rgba = np.dstack([np.ones_like(small), np.ones_like(small), np.ones_like(small), small])
+    cv2.imwrite(f"{out}/{name}.png", (np.clip(rgba, 0, 1) * 255 + 0.5).astype(np.uint8))
+
+
+BELL_TOWER = [(0.510, 0.018), (0.513, 0.050), (0.530, 0.060), (0.545, 0.075), (0.548, 0.090), (0.552, 0.140),
+              (0.555, 0.200), (0.565, 0.215), (0.568, 0.260), (0.570, 0.400), (0.440, 0.400), (0.443, 0.260),
+              (0.448, 0.225), (0.465, 0.200), (0.468, 0.140), (0.472, 0.090), (0.475, 0.075), (0.490, 0.060),
+              (0.507, 0.050)]
+LIGHTHOUSE = [(1.738, 0.251), (1.745, 0.256), (1.750, 0.268), (1.750, 0.340), (1.777, 0.340), (1.777, 0.376),
+              (1.673, 0.376), (1.673, 0.350), (1.700, 0.342), (1.726, 0.340), (1.726, 0.268), (1.731, 0.256)]
+
+
+def land_mask(day_path, lights_path, out, name):
+    """Where weather may lie over the distant view, with no regard to the
+    shape of the land: everything down to y 0.20, fading out on a level line
+    by 0.27 (the sea horizon is at 0.245). Kept clear, because they stand in
+    front of any cloud: the bell tower and the lighthouse (by colour), the
+    spring blossom branch, and the bright cores of lamps and windows."""
+    day = cv2.imread(day_path)
+    H, W = day.shape[:2]
+    band = int(0.30 * H)
+    rows = np.arange(band, dtype=np.float32)[:, None]
+    ys = rows / H
+    xs = np.arange(W, dtype=np.float32)[None, :] / H
+    alpha = (1 - smoothstep(0.20, 0.27, ys)) * np.ones((1, W), np.float32)
+    hsv = cv2.cvtColor(day[:band], cv2.COLOR_BGR2HSV).astype(np.float32)
+    hue, sat, val = hsv[..., 0], hsv[..., 1] / 255, hsv[..., 2] / 255
+    tower = (xs > 0.44) & (xs < 0.58)
+    lighthouse = (xs > 1.715) & (xs < 1.765)
+    skyblue = (hue > 95) & (hue < 128) & (sat > 0.20) & (val > 0.35)
+    cloudwhite = (sat < 0.10) & (val > 0.80) & (ys < 0.19)
+    stone = (((hue < 40) | (hue > 160)) & (sat > 0.10)) | (val < 0.45)
+    # The bell tower and the lighthouse: their outlines as traced for the
+    # ships (CityLivingScene bellTower, lighthouse), refined by colour at the
+    # edges so the spire and lantern stay crisp.
+    keep = np.zeros((band, W), np.uint8)
+    for outline in (BELL_TOWER, LIGHTHOUSE):
+        cv2.fillPoly(keep, [np.int32([(x * H, y * H) for x, y in outline])], 1)
+    near = cv2.dilate(keep, np.ones((9, 9), np.uint8)) > 0
+    keep = ((keep > 0) & ~skyblue) | (near & (tower | lighthouse) & stone & ~skyblue)
+    keep = cv2.morphologyEx(keep.astype(np.uint8), cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7)))
+    keep |= ((xs < 0.46) & (ys < 0.17) & ((val < 0.55) | ((hue > 140) & (hue < 178) & (sat > 0.12)))).astype(np.uint8)
+    lights = cv2.imread(lights_path, cv2.IMREAD_GRAYSCALE)[:band].astype(np.float32) / 255
+    keep |= cv2.dilate((lights > 0.30).astype(np.uint8), np.ones((3, 3), np.uint8))
+    alpha *= 1 - cv2.GaussianBlur(keep.astype(np.float32), (0, 0), 1.2)
+    small = cv2.resize(alpha, (2048, int(2048 * band / W)), interpolation=cv2.INTER_AREA)
+    rgba = np.dstack([np.ones_like(small), np.ones_like(small), np.ones_like(small), small])
+    cv2.imwrite(f"{out}/{name}.png", (np.clip(rgba, 0, 1) * 255 + 0.5).astype(np.uint8))
+
+
+def cloud_puffs(day_path, skyline_path, out):
+    """The painting's own clouds, lifted off their blue sky: each puff keeps
+    its brushwork and gets an alpha from how white it is. Tiled left-right,
+    these drift across in front of the mountains and hide them where they
+    pass, whatever the shape of the land."""
+    sky, alpha, H, W = sky_band(day_path, skyline_path)
+    top = int(0.125 * H)
+    x0 = int(0.60 * H)
+    src = sky[:top, x0:]
+    holes = (alpha[:top, x0:] < 0.5).astype(np.uint8) * 255
+    filled = cv2.inpaint((src * 255).astype(np.uint8), holes, 9, cv2.INPAINT_TELEA).astype(np.float32) / 255
+    hsv = cv2.cvtColor((filled * 255).astype(np.uint8), cv2.COLOR_BGR2HSV).astype(np.float32) / 255
+    lum = 0.114 * filled[..., 0] + 0.587 * filled[..., 1] + 0.299 * filled[..., 2]
+    white = smoothstep(0.34, 0.08, hsv[..., 1]) * smoothstep(0.45, 0.85, lum)
+    a = np.clip(cv2.GaussianBlur(white, (0, 0), 1.0) * 1.35, 0, 1) ** 0.8
+    # The crop cuts clouds off at its top and bottom: fade both, so a bank
+    # never shows a straight edge.
+    v = np.linspace(0, 1, a.shape[0], dtype=np.float32)[:, None]
+    a *= smoothstep(0.0, 0.18, v) * (1 - smoothstep(0.55, 1.0, v))
+    # Colour: the cloud's own light and shade, greyed (tinted in the game).
+    grey = np.clip(0.35 + 0.75 * cv2.GaussianBlur(lum, (0, 0), 0.8), 0, 1)
+    col = np.dstack([grey, grey, grey])
+    n = col.shape[1]
+    q = n // 4
+    ramp = np.linspace(0, 1, q, dtype=np.float32)[None, :]
+    tile_a = a[:, :n - q].copy()
+    tile_a[:, :q] = a[:, :q] * ramp + a[:, n - q:] * (1 - ramp)
+    tile_c = col[:, :n - q].copy()
+    tile_c[:, :q] = col[:, :q] * ramp[..., None] + col[:, n - q:] * (1 - ramp[..., None])
+    rgba = np.dstack([tile_c, tile_a])
+    width_px = int(round(4096 * rgba.shape[1] / W))
+    small = cv2.resize(rgba, (width_px, int(width_px * rgba.shape[0] / rgba.shape[1])), interpolation=cv2.INTER_AREA)
+    cv2.imwrite(f"{out}/CityCloudPuffs.png", (np.clip(small, 0, 1) * 255 + 0.5).astype(np.uint8))
+
+
 def storm_clouds(day_path, skyline_path, out):
     """The painting's own clouds as a grey storm deck (tileable left-right).
 
@@ -257,10 +384,10 @@ def main(out, plates_dir=None, skyline_path=None):
     os.makedirs(out, exist_ok=True)
     if plates_dir:
         storm_clouds(f"{plates_dir}/CitySpringDay.jpg", skyline_path, out)
+        cloud_puffs(f"{plates_dir}/CitySpringDay.jpg", skyline_path, out)
         for prefix in ["CitySpring", "CitySummer", "CityAutumn", "CityWinter", "CityWinterSnow"]:
             sky_mask(f"{plates_dir}/{prefix}Day.jpg", skyline_path, out, prefix + "SkyMask")
-            far_mask(f"{plates_dir}/{prefix}Day.jpg", f"{plates_dir}/{prefix}Lights.jpg", skyline_path, out,
-                     prefix + "FarMask")
+            land_mask(f"{plates_dir}/{prefix}Day.jpg", f"{plates_dir}/{prefix}Lights.jpg", out, prefix + "LandMask")
     cv2.imwrite(f"{out}/CityRainFar.png", rain(512, 512, 700, 30, 1, 0.3, 0.55, 31))
     cv2.imwrite(f"{out}/CityRainMid.png", rain(512, 512, 260, 56, 1.6, 0.5, 0.65, 32))
     cv2.imwrite(f"{out}/CityRainNear.png", rain(512, 512, 60, 120, 3, 1.4, 0.55, 33))

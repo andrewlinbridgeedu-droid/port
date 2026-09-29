@@ -639,14 +639,14 @@ struct BlackSaltShoreView: View {
                 .fixedSize(horizontal: false, vertical: true)
             if !game.sequenceEightQualified {
                 blackSaltAction(title: "举行序列 8 仪式", detail: "\(MPCSequenceEightRitual.fee) 铜币",
-                                symbol: "sparkle", enabled: game.churchHasDepartedMistport) {
+                                plate: .ritual, enabled: game.churchHasDepartedMistport) {
                     game.performAdvancement()
                     notice = game.featureMessage
                 }
             } else {
                 Text("外港转运站在前方航线上。驶向雾港的燃料和检修货物都在那里换船。")
                     .font(.subheadline).foregroundStyle(.white.opacity(0.78)).lineSpacing(4)
-                blackSaltAction(title: "前往外港转运站", symbol: "arrow.right") {
+                blackSaltAction(title: "前往外港转运站", plate: .saltportRoute) {
                     game.travelToSaltportStation()
                     notice = game.chapterTwoBridgeOpen ? "" : game.chapterTwoBridgeStatus
                 }
@@ -659,36 +659,9 @@ struct BlackSaltShoreView: View {
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(ChurchGold.opacity(0.36), lineWidth: 1))
     }
 
-    private func blackSaltAction(title: String, detail: String? = nil, symbol: String,
+    private func blackSaltAction(title: String, detail: String? = nil, plate: PlateButton.Plate,
                                  enabled: Bool = true, action: @escaping () -> Void) -> some View {
-        Button {
-            GameInterfaceSound.shared.playClick()
-            action()
-        } label: {
-            HStack(spacing: 12) {
-                Image(systemName: symbol)
-                    .font(.system(size: 19, weight: .medium))
-                    .frame(width: 26)
-                Text(title)
-                    .font(.system(size: 17, weight: .bold, design: .serif))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-                Spacer(minLength: 2)
-                if let detail {
-                    Text(detail)
-                        .font(.subheadline.weight(.semibold))
-                        .lineLimit(1)
-                }
-            }
-            .foregroundStyle(Color(red: 0.08, green: 0.07, blue: 0.08))
-            .padding(.horizontal, 16)
-            .frame(maxWidth: .infinity, minHeight: 58)
-            .background(ChurchGold, in: RoundedRectangle(cornerRadius: 11))
-        }
-        .buttonStyle(.plain)
-        .disabled(!enabled)
-        .opacity(enabled ? 1 : 0.45)
-        .accessibilityLabel(detail.map { "\(title)，\($0)" } ?? title)
+        PlateButton(title: detail.map { "\(title) · \($0)" } ?? title, plate: plate, enabled: enabled, action: action)
     }
 
     private var station: some View {
@@ -705,10 +678,10 @@ struct BlackSaltShoreView: View {
                  : "两家负责人都在站内。先听听他们各自的打算。")
                 .font(.footnote).foregroundStyle(.white.opacity(0.6))
             if game.chapterTwoBridge.worldEventStoryReady {
-                blackSaltAction(title: "转运站检修单", detail: game.lightsEvent.closed ? "已结束" : "本存档", symbol: "wrench.and.screwdriver") { showsWork = true }
-                blackSaltAction(title: "供能争端 · 事件预览", detail: "假设快照", symbol: "newspaper") { showsEvent = true }
+                blackSaltAction(title: "转运站检修单", detail: game.lightsEvent.closed ? "已结束" : "本存档", plate: .saltportRoute) { showsWork = true }
+                blackSaltAction(title: "供能争端 · 事件预览", detail: "假设快照", plate: .saltportNews) { showsEvent = true }
             }
-            ChurchActionButton(title: "返回黑盐岸码头") { game.returnToBlackSaltShore() }
+            PlateButton(title: "返回黑盐岸码头", plate: .saltportRoute) { game.returnToBlackSaltShore() }
         }
     }
 
@@ -933,7 +906,7 @@ struct LightsEventPreviewView: View {
                 ForEach(article.paragraphs, id: \.self) {
                     Text($0).font(.system(size: 15, design: .serif)).lineSpacing(4).fixedSize(horizontal: false, vertical: true)
                 }
-                HStack {
+                VStack(spacing: 8) {
                     ForEach(article.links, id: \.self) { link in
                         switch link {
                         case .plans: linkButton("比较两份计划", .overview)
@@ -949,10 +922,7 @@ struct LightsEventPreviewView: View {
     }
 
     private func linkButton(_ title: String, _ target: Tab) -> some View {
-        Button(title) { tab = target; openArticle = nil }
-            .font(.footnote.bold()).foregroundStyle(ChurchGold)
-            .padding(.horizontal, 12).padding(.vertical, 7)
-            .overlay(Capsule().stroke(ChurchGold.opacity(0.6)))
+        PlateButton(title: title, plate: .saltportNews, height: 50) { tab = target; openArticle = nil }
     }
 
     // MARK: Ledger
@@ -1101,16 +1071,18 @@ struct LightsLocalEventView: View {
         .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 10))
     }
 
-    private func action(_ title: String, enabled: Bool = true, _ run: @escaping () throws -> Void) -> some View {
-        Button {
-            GameInterfaceSound.shared.playClick()
-            do { try run(); notice = "" } catch { notice = message(error) }
-        } label: {
-            Text(title).font(.subheadline.bold()).foregroundStyle(.black)
-                .frame(maxWidth: .infinity, minHeight: 44)
-                .background(ChurchGold, in: RoundedRectangle(cornerRadius: 9))
+    private func holding(_ art: String, _ text: String) -> some View {
+        HStack(spacing: 5) {
+            Image(decorative: art).resizable().scaledToFit().frame(width: 22, height: 22)
+            Text(text)
         }
-        .buttonStyle(.plain).disabled(!enabled).opacity(enabled ? 1 : 0.4)
+    }
+
+    private func action(_ title: String, plate: PlateButton.Plate = .workshopPrimary, emblem: String? = nil,
+                        enabled: Bool = true, _ run: @escaping () throws -> Void) -> some View {
+        PlateButton(title: title, plate: plate, emblem: emblem, enabled: enabled) {
+            do { try run(); notice = "" } catch { notice = message(error) }
+        }
     }
 
     private func message(_ error: Error) -> String {
@@ -1129,9 +1101,9 @@ struct LightsLocalEventView: View {
             Text("已支持\(P.sideName(side))。立场在本次事件内锁定。").font(.subheadline).foregroundStyle(muted)
         } else {
             Text("免费支持，不收报名费，也不发工资。选定后本次事件不能更换。").font(.subheadline).foregroundStyle(muted)
-            HStack(spacing: 10) {
-                action("泵站联合会") { try game.chooseLightsSide(.pumps) }
-                action("灰帆联营") { try game.chooseLightsSide(.shipping) }
+            VStack(spacing: 10) {
+                action("泵站联合会", plate: .sideChoice, emblem: "EmblemPumpsUnion") { try game.chooseLightsSide(.pumps) }
+                action("灰帆联营", plate: .sideChoice, emblem: "EmblemGreySail") { try game.chooseLightsSide(.shipping) }
             }
         }
     }
@@ -1139,8 +1111,13 @@ struct LightsLocalEventView: View {
     @ViewBuilder private var craftStep: some View {
         Text("工作台配方：1 份盾颚韧皮 + 13 铜 → 3 条维修绑带。韧皮来自教会塔第 1 层的新一场胜利。")
             .font(.subheadline).foregroundStyle(muted).fixedSize(horizontal: false, vertical: true)
-        Text("持有：韧皮 \(game.lightsHideCount) · 绑带 \(game.lightsStrapCount) · 铜币 \(game.venueCoins)")
-            .font(.subheadline.monospacedDigit())
+        HStack(spacing: 14) {
+            holding("ItemShieldJawHide", "韧皮 \(game.lightsHideCount)")
+            holding("ItemRepairStrap", "绑带 \(game.lightsStrapCount)")
+            holding("RewardCoin", "\(game.venueCoins) 铜")
+        }
+        .font(.subheadline.monospacedDigit())
+        .accessibilityElement(children: .combine)
         if !event.worksComplete {
             action("制作一批 · 13 铜", enabled: event.side != nil && game.lightsHideCount > 0) { try game.craftStrapsAtStation() }
         }
@@ -1159,8 +1136,11 @@ struct LightsLocalEventView: View {
     }
 
     @ViewBuilder private var installStep: some View {
-        Text("工程 \(event.installedKits)/\(P.kitSlots)。绑带与已入库的过滤布、锡罐组成组具，装上后就是设施的一部分。")
-            .font(.subheadline).foregroundStyle(muted).fixedSize(horizontal: false, vertical: true)
+        HStack(alignment: .top, spacing: 10) {
+            Image(decorative: "ItemFilterKit").resizable().scaledToFit().frame(width: 40, height: 40)
+            Text("工程 \(event.installedKits)/\(P.kitSlots)。绑带与已入库的过滤布、锡罐组成组具，装上后就是设施的一部分。")
+                .font(.subheadline).foregroundStyle(muted).fixedSize(horizontal: false, vertical: true)
+        }
         if !event.worksComplete {
             action("安装", enabled: event.projectStraps == E.strapsPerKit) { try game.installLightsKit() }
         }
@@ -1174,9 +1154,9 @@ struct LightsLocalEventView: View {
         if event.closed {
             Text(event.publicWon ? "已完成：胜利，记 1 点。" : "已完成：未胜利，不记贡献。").font(.subheadline)
         } else if let pending = event.activeTicket {
-            action("放弃未结的公共行动") { game.abandonLightsPublic(battleID: pending, defeated: false) }
+            action("放弃未结的公共行动", plate: .workshopSecondary) { game.abandonLightsPublic(battleID: pending, defeated: false) }
         } else {
-            action("进入战斗", enabled: event.worksComplete) { battleID = UUID().uuidString }
+            action("进入战斗", plate: .battle, enabled: event.worksComplete) { battleID = UUID().uuidString }
         }
     }
 
