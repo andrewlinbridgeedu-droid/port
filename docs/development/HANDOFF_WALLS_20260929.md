@@ -13,6 +13,8 @@
 
 首页港城与街头任务的设计已由用户定稿（[设计稿](../../mistport-ios/docs/game-design/chapter-one-30/HOME_MAP_STREET_TASKS_20260929.md)），Mac 上的实装见 [Codex 任务单](CODEX_TASKS_HOME_MAP_20260929.md)：先编译并生成标注图，再做首页地图层、送信、B07。
 
+城市贡献度（设计稿第 6 节）：规则库 `CityContribution.swift` 和测试已写好，全部 522 项规则测试通过（Linux）；进度模拟器已在各结算点记分（`contributionByDay`、`contributionTierDays`）。App 接入见 [Codex 任务单](CODEX_TASKS_CITY_CONTRIBUTION_20260929.md)，排在首页任务单之后。门槛 120／220／300 待用户确认。
+
 ## 第五轮：用户决定与云端改动（2026-09-29 晚）
 
 用户的决定：

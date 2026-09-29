@@ -62,7 +62,8 @@ for policy in Policy.allCases {
             runs.append(result)
             let total = result.minutes.values.reduce(0, +)
             print("\(policy.rawValue.padding(toLength: 13, withPad: " ", startingAt: 0)) \(profile.name.padding(toLength: 6, withPad: " ", startingAt: 0)) day+\(offset): reached Q\(result.finalMission)"
-                  + (result.stuckAt.map { " STUCK at Q\($0)" } ?? " done") + String(format: " · %.0f min", total))
+                  + (result.stuckAt.map { " STUCK at Q\($0)" } ?? " done") + String(format: " · %.0f min", total)
+                  + " · 贡献 \(result.daily.contribution) 档日 " + (2...4).map { result.daily.contributionTierDays["\($0)"].map(String.init) ?? "-" }.joined(separator: "/"))
         }
     }
 }
