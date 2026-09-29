@@ -1,0 +1,146 @@
+{
+  "HarborArchiveApprenticeWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      80,
+      32,
+      175,
+      201
+    ]
+  },
+  "HarborCourierWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      73,
+      24,
+      182,
+      201
+    ]
+  },
+  "HarborFlowerSellerWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      80,
+      34,
+      175,
+      197
+    ]
+  },
+  "HarborLamplighterWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      78,
+      30,
+      166,
+      199
+    ]
+  },
+  "HarborPostmanWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      70,
+      22,
+      172,
+      201
+    ]
+  },
+  "HarborResidentBakerWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      62,
+      27,
+      176,
+      197
+    ]
+  },
+  "HarborResidentCafeKeeperWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      65,
+      28,
+      175,
+      195
+    ]
+  },
+  "HarborResidentClockmakerWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      71,
+      28,
+      175,
+      197
+    ]
+  },
+  "HarborResidentDockworkerWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      77,
+      27,
+      183,
+      197
+    ]
+  },
+  "HarborResidentFloristWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      61,
+      25,
+      175,
+      196
+    ]
+  },
+  "HarborResidentMerchantWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      66,
+      28,
+      185,
+      201
+    ]
+  },
+  "HarborResidentMusicianWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      61,
+      27,
+      171,
+      195
+    ]
+  },
+  "HarborResidentScholarWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      61,
+      26,
+      170,
+      195
+    ]
+  },
+  "HarborResidentStreetWardenWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      72,
+      28,
+      180,
+      199
+    ]
+  },
+  "HarborResidentVisitorWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      72,
+      28,
+      177,
+      196
+    ]
+  },
+  "HarborSailorWalkAtlas": {
+    "cellWidth": 256,
+    "bounds": [
+      78,
+      31,
+      166,
+      196
+    ]
+  }
+}

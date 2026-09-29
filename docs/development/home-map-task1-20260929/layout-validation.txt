@@ -1,0 +1,1 @@
+PASS: three zones, ten holds, all ten approach entry/end anchors, bounded routes, app/design JSON identical, 23 unique citizens, harmless ambient greetings.

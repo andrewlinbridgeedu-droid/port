@@ -874,6 +874,25 @@ final class GameStore {
         if ProcessInfo.processInfo.arguments.contains("--home-map-review") {
             storage.set(Pathway.ID.fool.rawValue, forKey: PersistenceKey.selectedPathID)
             storage.set(CharacterGender.male.rawValue, forKey: PersistenceKey.selectedCharacterGender)
+            if ProcessInfo.processInfo.arguments.contains("--home-map-review-new") {
+                seed.debugJumpToOldClockMission(1, enterImmediately: false)
+                seed.debugSetPacingDay(1)
+                storage.set(try! JSONEncoder().encode(MPCChurchTowerProgress()), forKey: "mistport.church-tower.progress.v1")
+            }
+            if ProcessInfo.processInfo.arguments.contains("--home-map-review-late") {
+                seed.debugJumpToOldClockMission(30, enterImmediately: false)
+                seed.debugSetPacingDay(29)
+                try! seed.updateChurchServices { state in
+                    state.bounties = try! JSONDecoder().decode(MPCChurchBountyLedger.self, from: Data(#"{"cases":{"b08":{"claimed":true}}}"#.utf8))
+                }
+            }
+            if ProcessInfo.processInfo.arguments.contains("--home-map-review-bounty") {
+                try! seed.visitChurchBounty("b07", location: "教会")
+                // The fixture chooses a published offer explicitly; it cannot modify a player suite.
+                try! seed.updateChurchServices { state in
+                    state.bounties = try! JSONDecoder().decode(MPCChurchBountyLedger.self, from: Data(#"{"cases":{"b07":{"accepted":true,"currentLocation":"教会"}}}"#.utf8))
+                }
+            }
             seed.markDailyNewspaperSeen()
         }
         if ProcessInfo.processInfo.arguments.contains("--daily-work-preview") {

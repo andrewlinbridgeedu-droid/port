@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE2901000000000000000001 /* HomeStreetScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2901000000000000000002; };
 		C92800000000000000000001 /* LocalWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92800000000000000000002; };
 		C92900000000000000000001 /* CityEventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92900000000000000000002; };
 		C93300000000000000000001 /* DailyLoopReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93300000000000000000002; };
@@ -99,6 +100,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CE2901000000000000000002 /* HomeStreetScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeStreetScene.swift; sourceTree = "<group>"; };
 		C92800000000000000000002 /* LocalWorkshopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/LocalWorkshopView.swift; sourceTree = SOURCE_ROOT; };
 		C92900000000000000000002 /* CityEventsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/CityEventsView.swift; sourceTree = SOURCE_ROOT; };
 		C93300000000000000000002 /* DailyLoopReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/DailyLoopReviewView.swift; sourceTree = SOURCE_ROOT; };
@@ -216,6 +218,7 @@
 				B71000000000000000000002 /* BountyPokerRound.swift */,
 				A20000000000000000000006 /* GameViews.swift */,
 				A2000000000000000000000A /* SceneViews.swift */,
+				CE2901000000000000000002 /* HomeStreetScene.swift */,
 				C1D2E3F40000000000C17A02 /* CityLivingScene.swift */,
 				C1D2E3F40000000000C17A04 /* CityLandmarkPlaque.swift */,
 				C1D2E3F40000000000C17A06 /* CityAmbience.swift */,
@@ -432,6 +435,7 @@
 				A10000000000000000000005 /* ContentView.swift in Sources */,
 				A10000000000000000000006 /* GameViews.swift in Sources */,
 				A1000000000000000000000A /* SceneViews.swift in Sources */,
+				CE2901000000000000000001 /* HomeStreetScene.swift in Sources */,
 				C1D2E3F40000000000C17A01 /* CityLivingScene.swift in Sources */,
 				C1D2E3F40000000000C17A03 /* CityLandmarkPlaque.swift in Sources */,
 				C1D2E3F40000000000C17A05 /* CityAmbience.swift in Sources */,

@@ -8806,13 +8806,13 @@ private struct ChurchBountyDossier: View {
                                 }
                             } else {
                             BountyDossierArtButton(title: "进入雾港调查", artName: "ButtonArtBountyInvestigate", enabled: progress.accepted) {
-                                showsInvestigationMap = true
+                                NotificationCenter.default.post(name: .homeQuestFocus, object: bounty.id)
                             }
                             }
                             ForEach(bounty.nodes) { node in
                                 let found = progress.evidenceIDs.contains(node.id)
                                 Button {
-                                    if found { nodeID = node.id } else { showsInvestigationMap = true }
+                                    if found { nodeID = node.id } else { NotificationCenter.default.post(name: .homeQuestFocus, object: bounty.id) }
                                 } label: {
                                     HStack(spacing: 14) {
                                         Text(found ? "◆" : "◇").font(.title2).foregroundStyle(found ? ChurchGold : .gray)
@@ -8833,13 +8833,6 @@ private struct ChurchBountyDossier: View {
                         if !notice.isEmpty { Text(notice).font(.footnote).foregroundStyle(ChurchGold) }
                     }.padding(22)
                 }
-            }
-            if showsInvestigationMap {
-                BountyCityInvestigationView(
-                    game: game, bounty: bounty,
-                    onExit: { showsInvestigationMap = false },
-                    onBattle: { battlePresented = true })
-                    .ignoresSafeArea()
             }
             if let nodeID, let node = bounty.nodes.first(where: { $0.id == nodeID }) {
                 Color.black.opacity(0.88).ignoresSafeArea()
@@ -9006,7 +8999,7 @@ private struct ChurchLoanCabinet: View {
     private func perform(_ action: () throws -> Void) { do { try action(); notice = "契约已记入教会账簿。" } catch { notice = "契约未变更：请检查累计功勋、铜币或未结战斗。" } }
 }
 
-private struct ChurchBountyBattleView: View {
+struct ChurchBountyBattleView: View {
     @Bindable var game: GameStore
     let bounty: MPCChurchBounty
     let onExit: () -> Void

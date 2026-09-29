@@ -122,7 +122,10 @@ struct MistportApp: App {
                 }
                 .defaultAppStorage(Self.playerDefaults)
                 .onAppear {
-                    if ProcessInfo.processInfo.arguments.contains("--home-map-review") { game.begin() }
+                    if ProcessInfo.processInfo.arguments.contains("--home-map-review") {
+                        UIApplication.shared.isIdleTimerDisabled = true
+                        game.begin()
+                    }
                 }
                 .task {
                     try? await Task.sleep(for: .seconds(4))

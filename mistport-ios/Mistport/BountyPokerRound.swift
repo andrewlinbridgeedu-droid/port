@@ -29,15 +29,22 @@ struct TavernInteriorView: View {
             let overflow = max(0, (sceneWidth - geometry.size.width) / 2)
             let position = min(1, max(0, cameraPosition - dragDistance / max(1, overflow * 2)))
             ZStack(alignment: .top) {
-                Image("BountyTavernPanorama4K")
+                Image("HomeTavernPanoramaEmpty20260929")
                     .resizable().scaledToFill()
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .blur(radius: 25)
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
                 ZStack {
-                    Image("BountyTavernPanorama4K")
-                        .resizable()
+                    HomeSceneArtwork(room: HomeSceneRoom(
+                        backgroundArt: "HomeTavernPanoramaEmpty20260929", aspectRatio: 16.0 / 9.0,
+                        counterEdge: [.init(x: 0, y: 0.50), .init(x: 0.34, y: 0.55),
+                                      .init(x: 0.40, y: 1), .init(x: 0.68, y: 1),
+                                      .init(x: 0.71, y: 0.64), .init(x: 1, y: 0.65)],
+                        actorX: talkingToMor ? 0.86 : 0.15,
+                        actorTop: talkingToMor ? 0.27 : 0.12,
+                        actorHeight: talkingToMor ? 0.65 : 0.58),
+                        actorArt: talkingToMor ? "HomeMohr20260929" : "HomeTavernKeeper20260929")
                         .frame(width: sceneWidth, height: sceneHeight)
                     Button {
                         withAnimation(.easeInOut(duration: 0.35)) {
@@ -100,7 +107,7 @@ struct TavernInteriorView: View {
                         }
                         Spacer()
                         Button("莫尔牌桌 →") {
-                            withAnimation(.easeInOut(duration: 0.35)) { cameraPosition = 0.96 }
+                            withAnimation(.easeInOut(duration: 0.35)) { cameraPosition = 0.96; talkingToMor = true }
                         }
                     }
                     .font(.system(size: 12, weight: .bold))
@@ -174,6 +181,7 @@ struct BountyPokerRound: View {
     @Bindable var game: GameStore
     let caseID: String
     let onFinish: (BountyCardResult) -> Void
+    var opponentOverride: String? = nil
     @Environment(\.dismiss) private var dismiss
     @State private var wager = 10
     @State private var round: MPCPokerRound?
@@ -191,10 +199,10 @@ struct BountyPokerRound: View {
     private let gold = Color(red: 0.92, green: 0.75, blue: 0.42)
     private let cream = Color(red: 0.96, green: 0.92, blue: 0.81)
     private var isTavernFreeplay: Bool { caseID == "tavern" }
-    private var opponentName: String { caseID == "b03" ? "码头老水手" : "灰筹·莫尔" }
+    private var opponentName: String { if let opponentOverride { return opponentOverride }; return caseID == "b03" ? "码头老水手" : "灰筹·莫尔" }
     private var caseTitle: String { caseID == "b03" ? "溺钟海盗" : isTavernFreeplay ? "酒馆常驻牌桌" : "借脸人·弥伦" }
     private var clueTitle: String { caseID == "b03" ? "逆钟暗号的来历" : "蜡面交易的见面线索" }
-    private var backdropName: String { caseID == "b03" ? "BountyCityPanorama" : "BountyTavernDepthRoom" }
+    private var backdropName: String { caseID == "b03" ? "CityAutumnDay" : "HomeTavernEmpty20260929" }
     private var activePrize: MPCTavernPrize? {
         guard let douGame else { return nil }
         return game.churchServices.tavernFeaturedGames[douGame.gameID]
@@ -563,7 +571,7 @@ struct BountyPokerRound: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             if caseID != "b03" {
-                Image("BountyNPCMor")
+                Image("HomeMohr20260929")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 69, height: 110)

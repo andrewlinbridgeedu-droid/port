@@ -3,6 +3,8 @@ import MistportCombatCore
 
 struct CityHubView: View {
     @State private var panoramaOffset: CGFloat = 0
+    @State private var tasksExpanded = false
+    @State private var trackedTargetID: String?
     /// Height of the bottom bar; the harbour painting ends at its top edge.
     @State private var bottomBarHeight: CGFloat = 0
     @GestureState private var panoramaDrag: CGFloat = 0
@@ -32,6 +34,15 @@ struct CityHubView: View {
     let onSupply: () -> Void
     let onInventory: () -> Void
     let onEnterVenue: (String) -> Void
+    var onNewspaper: () -> Void = {}
+    var homeIsActive = true
+    var streetTargets: [MPCStreetTaskTarget] = []
+    var focusID: String?
+    var focusRevision = 0
+    private var trackedTarget: MPCStreetTaskTarget? { streetTargets.first { $0.id == trackedTargetID } ?? streetTargets.first }
+    var onStreetTarget: (MPCStreetTaskTarget) -> Void = { _ in }
+    var onStreetService: (String) -> Void = { _ in }
+    var onCounter: (String) -> Void = { _ in }
     /// After Q30: Chapter Two's Black Salt Shore bridge (status line, action).
     var blackSaltShore: (status: String, action: () -> Void)? = nil
 
@@ -59,6 +70,7 @@ struct CityHubView: View {
                                   coins: coins, materials: materials, clues: clues, ingredientCount: ingredientCount,
                                   onSettings: onSettings, onTest: onTest)
                         .padding(.horizontal, 18)
+                    taskStrip(in: scenery).padding(.horizontal, 18).padding(.top, 8)
                     Spacer()
                     if let blackSaltShore {
                         CityMissionStrip(
@@ -72,14 +84,6 @@ struct CityHubView: View {
                         .padding(.horizontal, 28)
                         .padding(.bottom, 8)
                     }
-                    CityMissionStrip(
-                        tint: tint,
-                        districtName: districtName,
-                        missionTitle: nextMissionTitle,
-                        progress: missionProgress,
-                        action: onStory
-                    )
-                    .padding(.horizontal, 28)
                     CityBottomBar(
                         bottomInset: max(geometry.safeAreaInsets.bottom, 8),
                         churchUnlocked: serviceIsUnlocked(.church),
@@ -115,10 +119,23 @@ struct CityHubView: View {
         let panoramaWidth = panoramaWidth(for: viewport)
 
         return ZStack {
-            CityLivingScene()
+            CityLivingScene(isActive: homeIsActive, showsNearPeople: false)
                 .frame(width: panoramaWidth, height: viewport.height)
 
+            let painting = HarborPainting.rect(in: CGSize(width: panoramaWidth, height: viewport.height))
+            let offset = boundedPanoramaOffset(panoramaOffset + panoramaDrag, in: viewport)
+            let left = (panoramaWidth / 2 - viewport.width / 2 - offset - painting.minX) / painting.height
+            HomeStreetScene(painting: painting, visibleRange: Double(left - 0.035)...Double(left + viewport.width / painting.height + 0.035),
+                            active: homeIsActive, targets: streetTargets, trackedID: trackedTarget?.id, onTarget: onStreetTarget, onService: onStreetService)
             cityHotspots(in: viewport, panoramaWidth: panoramaWidth)
+            ForEach(streetTargets.filter { $0.personID == nil }) { target in
+                let point = HomeMapLayout.current.targetPoint(target)
+                Button { onStreetTarget(target) } label: {
+                    Image(systemName: "seal.fill").font(.title2).foregroundStyle(.red)
+                        .frame(width: 44, height: 44).background(.black.opacity(0.4), in: Circle())
+                }.accessibilityLabel(target.title)
+                    .position(x: painting.minX + point[0] * painting.height, y: painting.minY + point[1] * painting.height)
+            }
         }
         .frame(width: panoramaWidth, height: viewport.height)
         .offset(x: boundedPanoramaOffset(panoramaOffset + panoramaDrag, in: viewport))
@@ -135,6 +152,12 @@ struct CityHubView: View {
                         panoramaOffset + value.translation.width, in: viewport)
                 }
         )
+        .onChange(of: focusRevision) { _, _ in
+            guard let id = focusID else { return }
+            if let target = streetTargets.first(where: { $0.id == id || $0.taskID == id }) {
+                center(HomeMapLayout.current.targetPoint(target)[0], in: viewport)
+            } else if let building = HomeMapLayout.current.building(id) { center(building.at![0], in: viewport) }
+        }
         #if DEBUG
         .task(id: viewport.height) { await debugLabelCheck(in: viewport) }
         #endif
@@ -156,6 +179,7 @@ struct CityHubView: View {
             panoramaOffset = boundedPanoramaOffset(width / 2 - (painting.minX + CGFloat(x) * painting.height), in: viewport)
         }
         guard let name = arguments.string(forKey: "MistportHubSnapshot") else { return }
+        HomeFrameSampler.shared.begin()
         try? await Task.sleep(for: .seconds(4))
         guard !Task.isCancelled,
               let window = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene })
@@ -174,6 +198,13 @@ struct CityHubView: View {
         ]
         try? JSONSerialization.data(withJSONObject: layout, options: .sortedKeys)
             .write(to: folder.appendingPathComponent(name + ".json"))
+        if ProcessInfo.processInfo.arguments.contains("--home-map-review-motion") {
+            for (index, delay) in [8.0, 12.0, 8.0].enumerated() {
+                try? await Task.sleep(for: .seconds(delay))
+                guard !Task.isCancelled else { return }
+                HomeFrameSampler.saveScreenshot("home-motion-\(index + 1).png")
+            }
+        }
     }
     #endif
 
@@ -221,28 +252,55 @@ struct CityHubView: View {
             CGPoint(x: painting.minX + CGFloat(x) * painting.height, y: painting.minY + CGFloat(y) * painting.height - 20)
         }
         return ZStack {
-            // Painting anchors; tavern, city hall and police updated from the 2026-09-29 markup.
-            CityLandmarkTag(title: "皇宫")
-                .position(at(1.180, 0.223))          // palace on the castle hill
-            CityLandmarkTag(title: "教会", action: serviceIsUnlocked(.church) ? onChurch : nil)
-                .position(at(0.509, 0.311))          // on the bell tower's axis, over its body
-            CityLandmarkTag(title: "银行")
-                .position(at(0.374, 0.390))
-            CityLandmarkTag(title: "科学委员会")
-                .position(at(0.140, 0.444))
-            CityLandmarkTag(title: "报社")
-                .position(at(0.584, 0.430))
-            CityLandmarkTag(title: "市政厅")
-                .position(at(1.285, 0.464))
-            CityLandmarkTag(title: "警察厅")
-                .position(at(1.065, 0.535))
-            CityLandmarkTag(title: "工业委员会", action: onBuild)
-                .position(at(1.256, 0.647))          // Opens the same workshop and its progression requirements.
-            CityLandmarkTag(title: "酒馆", action: serviceIsUnlocked(.church) && path?.id == .fool ? onBountyTavern : nil)
-                .position(at(0.740, 0.595))
+            ForEach(HomeMapLayout.current.buildings, id: \.id) { building in
+                CityLandmarkTag(title: building.id == "industry" ? "工业委员会" : building.name!, action: buildingAction(building.id!))
+                    .position(at(building.at![0], building.at![1]))
+            }
         }
         .frame(width: panoramaWidth, height: size.height)
     }
+    private func buildingAction(_ id: String) -> (() -> Void)? {
+        switch id {
+        case "church": serviceIsUnlocked(.church) ? onChurch : nil
+        case "tavern": serviceIsUnlocked(.church) && path?.id == .fool ? onBountyTavern : nil
+        case "industry": onBuild
+        case "newspaper": onNewspaper
+        case "cityhall", "police", "post", "clinic", "harbor", "oldstreet", "board", "cafe": { onCounter(id) }
+        default: nil
+        }
+    }
+    private func center(_ x: Double, in viewport: CGSize) {
+        let width = panoramaWidth(for: viewport)
+        withAnimation(.easeOut(duration: 0.4)) { panoramaOffset = boundedPanoramaOffset(width / 2 - x * viewport.height, in: viewport) }
+    }
+    private func taskStrip(in viewport: CGSize) -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            HStack {
+                Button(trackedTarget?.title ?? nextMissionTitle) {
+                    if let target = trackedTarget { center(HomeMapLayout.current.targetPoint(target)[0], in: viewport) }
+                    else { onStory() }
+                }.lineLimit(1).frame(maxWidth: .infinity, alignment: .leading)
+                Button { tasksExpanded.toggle() } label: { Image(systemName: tasksExpanded ? "chevron.up" : "chevron.down").frame(width: 44, height: 36) }
+                    .accessibilityLabel(tasksExpanded ? "收起当前任务" : "展开当前任务，\(streetTargets.count)个目标")
+            }
+            if tasksExpanded {
+                Button("主线 · " + nextMissionTitle, action: onStory)
+                ForEach(streetTargets) { target in
+                    Button(target.title) { trackedTargetID = target.id; center(HomeMapLayout.current.targetPoint(target)[0], in: viewport) }
+                }
+            }
+            if let target = trackedTarget {
+                let x = HomeMapLayout.current.targetPoint(target)[0]
+                let width = panoramaWidth(for: viewport)
+                let screen = viewport.width / 2 - width / 2 + boundedPanoramaOffset(panoramaOffset + panoramaDrag, in: viewport) + x * viewport.height
+                if screen < 0 || screen > viewport.width {
+                    Button { center(x, in: viewport) } label: { Label("任务目标在\(screen < 0 ? "左" : "右")侧", systemImage: screen < 0 ? "arrow.left" : "arrow.right") }
+                }
+            }
+        }.font(.caption).foregroundStyle(.white).padding(.horizontal, 10)
+            .background(.black.opacity(0.68), in: RoundedRectangle(cornerRadius: 10))
+    }
+
 }
 
 private struct CityStatusHUD: View {
@@ -459,12 +517,12 @@ private struct CityBottomBar: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 0) {
-            CityBarButton(title: "角色", artName: "GameNavProfile", action: onProfile)
+            CityBarButton(title: "角色", artName: "GameNavProfile", artScale: 0.88, action: onProfile)
             // The workbench art is a dense, square object; shown at full size it reads larger than its neighbours.
             CityBarButton(title: "百工坊", artName: "GameNavWorkshop", artScale: 0.84, action: onWork)
-            CityBarButton(title: "教会", artName: "GameNavChurch", isLocked: !churchUnlocked, action: onChurch)
-            CityBarButton(title: "商店", artName: "GameNavStore", isLocked: !storeUnlocked, action: onStore)
-            CityBarButton(title: "行囊", artName: "GameNavInventory", action: onInventory)
+            CityBarButton(title: "教会", artName: "GameNavChurch", isLocked: !churchUnlocked, artScale: 0.88, action: onChurch)
+            CityBarButton(title: "商店", artName: "GameNavStore", isLocked: !storeUnlocked, artScale: 0.88, action: onStore)
+            CityBarButton(title: "行囊", artName: "GameNavInventory", artScale: 0.88, action: onInventory)
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 22)

@@ -1,0 +1,234 @@
+{
+  "HomeCivilClerk20260929": {
+    "bounds": [
+      81,
+      21,
+      868,
+      1515
+    ]
+  },
+  "HomeHarborClerk20260929": {
+    "bounds": [
+      64,
+      37,
+      911,
+      1499
+    ]
+  },
+  "HomePoliceClerk20260929": {
+    "bounds": [
+      78,
+      37,
+      895,
+      1499
+    ]
+  },
+  "HomeCommissionClerk20260929": {
+    "bounds": [
+      82,
+      16,
+      942,
+      1520
+    ]
+  },
+  "HomeMerchant20260929": {
+    "bounds": [
+      4,
+      10,
+      1019,
+      1526
+    ]
+  },
+  "HomePostman20260929": {
+    "bounds": [
+      36,
+      10,
+      988,
+      1526
+    ]
+  },
+  "HomeArchivist20260929": {
+    "bounds": [
+      0,
+      11,
+      1017,
+      1525
+    ]
+  },
+  "HomeCarpenter20260929": {
+    "bounds": [
+      0,
+      9,
+      1024,
+      1527
+    ]
+  },
+  "HomeEditor20260929": {
+    "bounds": [
+      13,
+      19,
+      1011,
+      1517
+    ]
+  },
+  "HomePrinter20260929": {
+    "bounds": [
+      47,
+      14,
+      950,
+      1522
+    ]
+  },
+  "HomeTailor20260929": {
+    "bounds": [
+      11,
+      5,
+      978,
+      1531
+    ]
+  },
+  "HomeNotary20260929": {
+    "bounds": [
+      65,
+      50,
+      891,
+      1486
+    ]
+  },
+  "HomeStampClerk20260929": {
+    "bounds": [
+      12,
+      31,
+      1000,
+      1505
+    ]
+  },
+  "HomeLaborClerk20260929": {
+    "bounds": [
+      57,
+      33,
+      932,
+      1503
+    ]
+  },
+  "HomeReliefClerk20260929": {
+    "bounds": [
+      120,
+      32,
+      874,
+      1504
+    ]
+  },
+  "HomeHarborArchivist20260929": {
+    "bounds": [
+      20,
+      76,
+      994,
+      1460
+    ]
+  },
+  "HomePhotographer20260929": {
+    "bounds": [
+      129,
+      40,
+      846,
+      1496
+    ]
+  },
+  "HomePawnbroker20260929": {
+    "bounds": [
+      34,
+      46,
+      986,
+      1490
+    ]
+  },
+  "HomeDyeClerk20260929": {
+    "bounds": [
+      69,
+      31,
+      920,
+      1505
+    ]
+  },
+  "HomeRetiredPrinter20260929": {
+    "bounds": [
+      27,
+      66,
+      972,
+      1470
+    ]
+  },
+  "HomeNorn20260929": {
+    "bounds": [
+      32,
+      9,
+      897,
+      1663
+    ]
+  },
+  "HomeOdelle20260929": {
+    "bounds": [
+      9,
+      0,
+      932,
+      1672
+    ]
+  },
+  "HomeVera20260929": {
+    "bounds": [
+      0,
+      15,
+      919,
+      1657
+    ]
+  },
+  "HomeEli20260929": {
+    "bounds": [
+      0,
+      0,
+      941,
+      1671
+    ]
+  },
+  "HomeMohr20260929": {
+    "bounds": [
+      51,
+      0,
+      971,
+      1536
+    ]
+  },
+  "HomeTavernKeeper20260929": {
+    "bounds": [
+      14,
+      7,
+      987,
+      1529
+    ]
+  },
+  "HomeOldSailor20260929": {
+    "bounds": [
+      58,
+      18,
+      916,
+      1518
+    ]
+  },
+  "PortraitMollyWynn": {
+    "bounds": [
+      301,
+      115,
+      934,
+      1421
+    ]
+  },
+  "PortraitBartoCopperSpoon": {
+    "bounds": [
+      284,
+      100,
+      968,
+      1436
+    ]
+  }
+}
