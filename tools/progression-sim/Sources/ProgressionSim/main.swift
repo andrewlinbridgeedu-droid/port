@@ -2,7 +2,20 @@ import Foundation
 import MistportCombatCore
 
 // Usage: swift run -c release ProgressionSim <output-dir> [start-offsets comma separated]
-let arguments = CommandLine.arguments
+//        swift run -c release ProgressionSim walls <output-dir> [missions comma separated] [profiles comma separated]
+var arguments = CommandLine.arguments
+if arguments.count > 1 && arguments[1] == "walls" {
+    arguments.remove(at: 1)
+    let destination = URL(fileURLWithPath: arguments.count > 1 ? arguments[1] : FileManager.default.currentDirectoryPath)
+    let missions = arguments.count > 2 ? arguments[2].split(separator: ",").compactMap { Int($0) } : MPCProgressionWalls.walls.map(\.mission)
+    let names = arguments.count > 3 ? arguments[3].split(separator: ",").map(String.init) : ["high", "medium"]
+    try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
+    let rows = WallProbe.rows(missions: missions, profiles: Profile.all.filter { names.contains($0.name) })
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+    try encoder.encode(rows).write(to: destination.appendingPathComponent("walls.json"))
+    exit(0)
+}
 let destination = URL(fileURLWithPath: arguments.count > 1 ? arguments[1] : FileManager.default.currentDirectoryPath)
 let offsets = arguments.count > 2 ? arguments[2].split(separator: ",").compactMap { Int($0) } : [0, 30, 90]
 try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
@@ -35,7 +48,7 @@ struct Gate: Codable {
     let winsWithoutChurchGear: Bool
     let minTowerFloor: Int?
     let towerFloorOpenAtThisPoint: Int
-    let winsWithAllBountyGear: Bool
+    let winsWithAllBountyRelics: Bool
 }
 let breakpoints = [0, 2, 4, 6, 8, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 func towerGear(through floor: Int) -> MPCChurchGearStats {
@@ -43,17 +56,14 @@ func towerGear(through floor: Int) -> MPCChurchGearStats {
     if floor > 0 { for f in 1...floor { if let drop = MPCChurchGearCatalog.towerDrop(floor: f) { ledger.grant(drop.id) } } }
     return ledger.stats
 }
-let bountyGear: MPCChurchGearStats = {
-    var ledger = MPCChurchGearLedger()
-    for b in MPCChurchBountyCatalog.all { if let drop = MPCChurchGearCatalog.bountyDrop(caseID: b.id) { ledger.grant(drop.id) } }
-    return ledger.stats
-}()
-func wins(_ q: Int, _ profile: Profile, _ gear: MPCChurchGearStats) -> Bool {
+let allBountyRelics = Set(MPCBountyRelicCatalog.all.map(\.id))
+func wins(_ q: Int, _ profile: Profile, _ gear: MPCChurchGearStats, bountyRelics: Set<String> = []) -> Bool {
     let owned = Shop.passives.filter { q - 1 >= $0.unlock }.map { Optional($0.id) }
     for sequence in cards(forMission: q) {
         for passive in q >= 5 && !owned.isEmpty ? owned : [nil] {
             for offset in q >= 5 ? [6.0, 14.0] as [Double?] : [nil] {
-                let l = loadout(mission: q, gear: gear, passive: passive, sequence: sequence)
+                let relic = bountyRelicCandidates(mission: q, owned: bountyRelics)[0]
+                let l = loadout(mission: q, gear: gear, passive: passive, sequence: sequence, bountyRelic: relic)
                 let report = try! ChapterDriver.run(q: q, sequence: sequence, mask: q == 3 || q == 4,
                                                     consumables: q >= 5 ? ["consumable_pain_salve": 1] : [:],
                                                     priorityCore: profile.priorityCore, ultimate: q >= 14, loadout: l,
@@ -79,7 +89,7 @@ for q in 1...30 {
         }
         gates.append(.init(mission: q, profile: profile.name, winsWithoutChurchGear: bare, minTowerFloor: minimum,
                            towerFloorOpenAtThisPoint: q - 1 >= 7 ? towerLimit(completed: q - 1) : 0,
-                           winsWithAllBountyGear: bare || wins(q, profile, bountyGear)))
+                           winsWithAllBountyRelics: bare || wins(q, profile, .init(), bountyRelics: allBountyRelics)))
     }
 }
 try encoder.encode(gates).write(to: destination.appendingPathComponent("gate-map.json"))

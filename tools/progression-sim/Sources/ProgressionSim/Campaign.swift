@@ -57,9 +57,11 @@ func talentBudget(completed: Int) -> Int {
 }
 
 /// The loadout a player has when the next story mission is `q`: cards, talents,
-/// the two dust upgrades (Q9, Q14), the medal from Q5, one passive relic and church gear.
-func loadout(mission q: Int, gear: MPCChurchGearStats, passive: String?, sequence: [FoolSkillID]) -> MPCChapterOneLoadout {
+/// the two dust upgrades (Q9, Q14), the medal from Q5, one passive relic, the bounty-slot relic and church gear.
+func loadout(mission q: Int, gear: MPCChurchGearStats, passive: String?, sequence: [FoolSkillID],
+             bountyRelic: String? = nil) -> MPCChapterOneLoadout {
     var l = MPCChapterOneLoadout(normalSkillIDs: sequence, isUltimateUnlocked: q >= 14, passiveIDs: [], relicIDs: passive.map { [$0] } ?? [])
+    l.bountyRelicID = bountyRelic
     l.talents = .restored((0...5).map { "trickery.\($0)" } + (0...5).map { "omen.\($0)" } + (0...5).map { "phantom.\($0)" },
                           budget: talentBudget(completed: q - 1))
     if q >= 10 { l.skillLevels[.sidestepStrike] = 2 }
@@ -68,6 +70,14 @@ func loadout(mission q: Int, gear: MPCChurchGearStats, passive: String?, sequenc
     l.churchGear = gear
     l.outfit = .mistportNight
     return l
+}
+
+/// Bounty-slot relics worth wearing for `mission`, the wall's own counter first.
+func bountyRelicCandidates(mission: Int, owned: Set<String>) -> [String?] {
+    let wallRelic = MPCProgressionWalls.wall(mission: mission)?.caseID.flatMap { MPCBountyRelicCatalog.relic(forCase: $0)?.id }
+    let useful = MPCBountyRelicCatalog.all.filter { $0.hasEffect && owned.contains($0.id) }.map(\.id)
+        .sorted { a, b in (a == wallRelic ? 0 : 1, a) < (b == wallRelic ? 0 : 1, b) }
+    return useful.isEmpty ? [nil] : useful.map { Optional($0) }
 }
 
 func towerLimit(completed q: Int) -> Int { q >= 20 ? 100 : q >= 16 ? 70 : q >= 13 ? 50 : q >= 10 ? 30 : 10 }
@@ -118,6 +128,7 @@ struct RunResult: Codable {
     let towerFloor: Int
     let bountiesCleared: [String]
     let passives: [String]
+    let bountyRelics: [String]
     let milestones: [Milestone]
     let visits: [Visit]
 }
@@ -131,6 +142,7 @@ final class Campaign {
     var q = 0, tower = 0, day = 0, missionsToday = 0
     var cleared = Set<String>(), accepted = Set<String>()
     var gear = MPCChurchGearLedger()
+    var relics = MPCBountyRelicLedger()
     var copper = 180, merit = 0, salve = 0
     var passives: [String] = []
     var seconds: [String: Double] = [:], battles: [String: Int] = [:], losses: [String: Int] = [:]
@@ -148,9 +160,11 @@ final class Campaign {
     var churchOpen: Bool { q >= 7 }
     var stats: MPCChurchGearStats { gear.stats }
     var signature: String {
-        "\(stats.attackBP)/\(stats.maxHP)/\(stats.damageReductionBP)|\(passives.sorted().joined(separator: ","))|\(q)|\(salve)"
+        "\(stats.attackBP)/\(stats.maxHP)/\(stats.damageReductionBP)|\(passives.sorted().joined(separator: ","))|\(relics.ownedIDs.sorted().joined(separator: ","))|\(q)|\(salve)"
     }
     var passiveCandidates: [String?] { passives.isEmpty ? [nil] : passives.map { Optional($0) } }
+    /// Towers and cases wear one bounty relic; the story swaps in the wall's counter.
+    var worn: String? { bountyRelicCandidates(mission: q + 1, owned: relics.ownedIDs)[0] }
 
     func spend(_ kind: String, _ battleSeconds: Double) {
         seconds[kind, default: 0] += battleSeconds + assumptions.battleOverheadSeconds
@@ -188,7 +202,8 @@ final class Campaign {
         let date = calendar.date(byAdding: .day, value: startOffset + day, to: startDate)!
         let ordinal = MPCDailyBountyRotation.dayOrdinal(for: date, calendar: calendar)
         let eligible = MPCChurchBountyCatalog.all.map(\.id).filter { !accepted.contains($0) && !cleared.contains($0) }
-        accepted.formUnion(MPCDailyBountyRotation.issue(dayOrdinal: ordinal, eligibleIDs: eligible).offerIDs)
+        let guaranteed = MPCProgressionWalls.guaranteedCase(nextMission: q + 1, ownedRelicIDs: relics.ownedIDs)
+        accepted.formUnion(MPCDailyBountyRotation.issue(dayOrdinal: ordinal, eligibleIDs: eligible).guaranteeing(guaranteed).offerIDs)
     }
 
     func visit(_ kind: String, _ target: String, won: Bool, attempts: Int, seconds: Double) {
@@ -206,11 +221,12 @@ final class Campaign {
         guard !knownLoss(key) else { return false }
         var attempts = 0, total = 0.0
         for sequence in cards(forMission: mission) {
+            for bountyRelic in bountyRelicCandidates(mission: mission, owned: relics.ownedIDs) {
             for passive in mission >= 5 ? passiveCandidates : [nil] {
                 for offset in mission >= 5 ? [6.0, 14.0] as [Double?] : [nil] {
                     attempts += 1
                     let consumables = mission >= 5 && salve > 0 ? ["consumable_pain_salve": 1] : [:]
-                    let l = loadout(mission: mission, gear: stats, passive: passive, sequence: sequence)
+                    let l = loadout(mission: mission, gear: stats, passive: passive, sequence: sequence, bountyRelic: bountyRelic)
                     let report = try! ChapterDriver.run(q: mission, sequence: sequence, mask: mission == 3 || mission == 4,
                                                         consumables: consumables, priorityCore: profile.priorityCore,
                                                         ultimate: mission >= 14, loadout: l, medalOffset: offset,
@@ -235,6 +251,7 @@ final class Campaign {
                     shop()
                 }
             }
+            }
         }
         failed[key, default: []].insert(signature)
         visit("main", key, won: false, attempts: attempts, seconds: total)
@@ -249,7 +266,7 @@ final class Campaign {
         for passive in passiveCandidates {
             for offset in [6.0, 14.0, 22.0] {
                 attempts += 1
-                let l = loadout(mission: mission, gear: stats, passive: passive, sequence: cards(forMission: mission)[0])
+                let l = loadout(mission: mission, gear: stats, passive: passive, sequence: cards(forMission: mission)[0], bountyRelic: worn)
                 let report = try! TowerDriver.run(number: floor, medalOffset: offset, suppliedLoadout: l, actionDelay: profile.actionDelay)
                 spend("tower", report.seconds); total += report.seconds
                 let won = report.session.outcome == .victory
@@ -279,7 +296,7 @@ final class Campaign {
         for passive in passiveCandidates {
             for offset in [6.0, 14.0, 22.0] {
                 attempts += 1
-                let l = loadout(mission: mission, gear: stats, passive: passive, sequence: cards(forMission: mission)[0])
+                let l = loadout(mission: mission, gear: stats, passive: passive, sequence: cards(forMission: mission)[0], bountyRelic: worn)
                 let report = try! TowerDriver.run(number: 1, medalOffset: offset, suppliedLoadout: l,
                                                   actionDelay: profile.actionDelay, encounterID: bounty.encounterID)
                 spend("bounty", report.seconds); total += report.seconds
@@ -288,7 +305,7 @@ final class Campaign {
                 if won {
                     cleared.insert(id)
                     copper += bounty.copper; merit += bounty.merit
-                    if let drop = MPCChurchGearCatalog.bountyDrop(caseID: id) { gear.grant(drop.id) }
+                    relics.grant(caseID: id)
                     visit("bounty", key, won: true, attempts: attempts, seconds: total)
                     return true
                 }
@@ -383,6 +400,6 @@ final class Campaign {
                          battles: battles, losses: losses, salvesUsed: salvesUsed, postalJobs: postalJobs,
                          repairCopper: repairCopper, defeatCopperLost: defeatCopperLost, relicsLost: relicsLost,
                          copper: copper, merit: merit, towerFloor: tower, bountiesCleared: cleared.sorted(),
-                         passives: passives, milestones: milestones, visits: visits)
+                         passives: passives, bountyRelics: relics.ownedIDs.sorted(), milestones: milestones, visits: visits)
     }
 }
