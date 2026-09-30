@@ -39,6 +39,8 @@
     {"id": "H10", "zone": "yard", "at": [1.515, 0.817]}
   ],
   "buildings": [
+    {"id": "housing", "name": "赁屋行", "at": [0.27, 0.58], "inside": []},
+    {"id": "highland-board", "name": "高地告示处", "at": [0.29, 0.28], "inside": []},
     {"id": "palace", "name": "皇宫", "at": [1.18, 0.223], "status": "现有名牌"},
     {"id": "church", "name": "教会", "at": [0.509, 0.311], "status": "现有名牌", "inside": ["告示板", "施济登记处", "避难屋", "钟台（伊莱）", "守灯诊所", "联络处"]},
     {"id": "bank", "name": "银行", "at": [0.374, 0.39], "status": "现有名牌（地标）"},

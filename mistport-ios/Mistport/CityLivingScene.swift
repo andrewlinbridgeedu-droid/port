@@ -461,6 +461,9 @@ struct HarborLight {
 struct CityLivingScene: View {
     var isActive = true
     var showsNearPeople = true
+    var housingLodgingID: String?
+    var housingPlayerName = ""
+    var onHousing: () -> Void = {}
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
@@ -521,6 +524,13 @@ struct CityLivingScene: View {
                                     .draw(in: context)
                             }
                             .opacity(autumn)
+                        }
+                    }
+                    .overlay {
+                        if let id = housingLodgingID {
+                            HousingHomeMarker(lodgingID: id, playerName: housingPlayerName,
+                                painting: HarborPainting.rect(in: geometry.size),
+                                glow: lampsOn * (1 - lampsOff), onOpen: onHousing)
                         }
                     }
                     .compositingGroup()

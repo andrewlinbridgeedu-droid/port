@@ -101,6 +101,7 @@ struct ContentView: View {
 
     private func openHomeService(_ service: String) {
         if service == "merchant" { homeDestination = .init(id: "merchant") }
+        else if service.hasPrefix("housing-") { homeDestination = .init(id: service) }
         else if service == "cafe_keeper" {
             guard game.venueIsUnlocked("midnight-clock-cafe") else { homeDestination = .init(id: "cafe-locked"); return }
             game.prepareVenue("midnight-clock-cafe"); isVenuePresented = true
@@ -205,6 +206,11 @@ struct ContentView: View {
                             isVenuePresented = true
                         },
                         onNewspaper: { newspaperPresented = true },
+                        housingLodgingID: game.housingHomeID,
+                        housingPlayerName: game.housingPlayerName,
+                        staminaValue: game.currentStamina,
+                        onStamina: { homeDestination = .init(id: "housing-stamina") },
+                        onHousing: { homeDestination = .init(id: "housing-home") },
                         homeIsActive: homeIsActive,
                         streetTargets: streetTargets,
                         focusID: homeFocusID,
@@ -389,7 +395,14 @@ struct ContentView: View {
             if phase == .dungeon && presentedSheet == .dailyNeighbors { presentedSheet = nil }
             presentDailyNewspaperIfNeeded()
         }
-        .onChange(of: scenePhase) { _, phase in if phase == .active { presentDailyNewspaperIfNeeded() } }
+        .task(id: game.phase) {
+            guard game.phase == .cityHub else { return }
+            while !Task.isCancelled {
+                if scenePhase == .active { await game.openHousingDay() }
+                do { try await Task.sleep(for: .seconds(30)) } catch { return }
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in if phase == .active { Task { await game.openHousingDay(); presentDailyNewspaperIfNeeded() } } }
         .fullScreenCover(isPresented: $newspaperPresented, onDismiss: openNewspaperDestination) {
             DailyNewspaperView(game: game) { destination in
                 newspaperDestination = destination
@@ -407,13 +420,18 @@ struct ContentView: View {
                 if matching.count > 1 { HomeTaskChoicesView(game: game, targets: matching) }
                 else { HomeBountyInteractionView(game: game, target: target) }
             }
+            else if destination.id == "housing" { HousingAgencyView(game: game) }
+            else if destination.id == "housing-home" { HousingResidenceView(game: game) }
+            else if destination.id == "housing-stamina" { HousingStaminaView(game: game) }
+            else if destination.id == "highland-board" { HousingHighlandBoardView(game: game) }
+            else if ["housing-soup", "housing-bakery", "housing-cafe"].contains(destination.id) { HousingMealCounterView(game: game, venue: String(destination.id.dropFirst(8))) }
             else if destination.id == "merchant" { HomeCopperShopView(game: game) }
             else if destination.id == "mohr" || destination.id == "old-sailor" {
                 if game.tavernPokerUnlocked {
                     BountyPokerRound(game: game, caseID: "tavern", onFinish: { _ in },
                                      opponentOverride: destination.id == "old-sailor" ? "码头老水手" : nil)
                 } else { HomeServiceGreetingView(title: destination.id == "mohr" ? "莫尔" : "码头老水手", message: "牌手向你点头。完成借脸人案后，常驻牌桌开放。") }
-            } else if destination.id == "cafe-locked" { HomeCafeWelcomeView() }
+            } else if destination.id == "cafe-locked" { HomeCafeWelcomeView(game: game) }
             else { HomeCounterView(game: game, buildingID: destination.id) }
         }
         .fullScreenCover(isPresented: $churchPresented) { ChurchSanctuaryView(game: game) }

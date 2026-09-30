@@ -269,11 +269,11 @@ public struct MPCRemnantLedger: Codable, Equatable, Sendable {
     /// Pays once after the win: copper through today's taper, then the area's material.
     /// Returns nil when already claimed.
     public mutating func claim(day: Int, today: Int, work: inout MPCDailyWorkLedger,
-                               coins: inout Int, inventory: inout [String: Int]) throws -> MPCDailyWorkLedger.Payout? {
+                               coins: inout Int, inventory: inout [String: Int], usesStamina: Bool = false) throws -> MPCDailyWorkLedger.Payout? {
         guard var job = job(day: day), let remnant = job.remnant else { throw Failure.notAccepted }
         if job.claimed { return nil }
         guard job.won else { throw Failure.unsolved }
-        let payout = work.settle(receiptID: job.receiptID, day: today, copper: MPCRemnantCatalog.copper, merit: 0)
+        let payout = work.settle(receiptID: job.receiptID, day: today, copper: MPCRemnantCatalog.copper, merit: 0, usesStamina: usesStamina)
         coins += payout.copper
         inventory[remnant.material, default: 0] += MPCRemnantCatalog.materialCount
         job.claimed = true

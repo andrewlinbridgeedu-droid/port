@@ -1,0 +1,240 @@
+{
+  "coordinateUnit": "image-normalized-top-left",
+  "note": "三点均按当前原图目视定位；App aspectFit 绘制后须转换到同一个图框。未做真机验收。",
+  "homes": [
+    {
+      "id": "shelter",
+      "name": "教会避难屋",
+      "district": "church",
+      "exterior": "HousingShelterExterior20260930",
+      "interior": "HousingShelterInterior20260930",
+      "hotspots": [
+        {
+          "id": "bed",
+          "title": "帘隔铺位",
+          "at": [
+            0.18,
+            0.6
+          ],
+          "hitRadius": 0.09,
+          "description": "帘子隔出各人的铺位，长廊仍由大家共用。"
+        },
+        {
+          "id": "lamp",
+          "title": "共用灯",
+          "at": [
+            0.58,
+            0.53
+          ],
+          "hitRadius": 0.09,
+          "description": "夜里这一盏灯留给整间避难屋。"
+        },
+        {
+          "id": "register",
+          "title": "施济登记柜",
+          "at": [
+            0.69,
+            0.47
+          ],
+          "hitRadius": 0.09,
+          "description": "铺位按登记牌分配，窗外就是教会区的雾海。"
+        }
+      ]
+    },
+    {
+      "id": "dock_bunk",
+      "name": "码头铺位",
+      "district": "harbor",
+      "exterior": "HousingDockBunkExterior20260930",
+      "interior": "HousingDockBunkInterior20260930",
+      "hotspots": [
+        {
+          "id": "bed",
+          "title": "窄床",
+          "at": [
+            0.28,
+            0.59
+          ],
+          "hitRadius": 0.09,
+          "description": "木板隔间藏在老码头石拱下面。"
+        },
+        {
+          "id": "hooks",
+          "title": "挂衣钩",
+          "at": [
+            0.49,
+            0.36
+          ],
+          "hitRadius": 0.09,
+          "description": "出门用的外衣挂在铸铁钩上，避开拱顶的湿气。"
+        },
+        {
+          "id": "lamp",
+          "title": "船灯",
+          "at": [
+            0.92,
+            0.25
+          ],
+          "hitRadius": 0.09,
+          "description": "防雾船灯守着窗，远处会传来船铃。"
+        }
+      ]
+    },
+    {
+      "id": "arcade_room",
+      "name": "拱廊合租间",
+      "district": "oldArcade",
+      "exterior": "HousingArcadeRoomExterior20260930",
+      "interior": "HousingArcadeRoomInterior20260930",
+      "hotspots": [
+        {
+          "id": "hearth",
+          "title": "小壁炉",
+          "at": [
+            0.13,
+            0.57
+          ],
+          "hitRadius": 0.09,
+          "description": "小壁炉让石屋在雾天也能保持干暖。"
+        },
+        {
+          "id": "window",
+          "title": "拱廊窗",
+          "at": [
+            0.4,
+            0.33
+          ],
+          "hitRadius": 0.09,
+          "description": "窗外是合租公寓的共用拱廊。"
+        },
+        {
+          "id": "seal",
+          "title": "港册门印",
+          "at": [
+            0.83,
+            0.33
+          ],
+          "hitRadius": 0.09,
+          "description": "编号与封蜡纹记住这一户的入口。"
+        }
+      ]
+    },
+    {
+      "id": "canal_house",
+      "name": "运河联排屋",
+      "district": "canal",
+      "exterior": "HousingCanalHouseExterior20260930",
+      "interior": "HousingCanalHouseInterior20260930",
+      "hotspots": [
+        {
+          "id": "window",
+          "title": "运河窗",
+          "at": [
+            0.13,
+            0.34
+          ],
+          "hitRadius": 0.09,
+          "description": "铸铁栏杆外，运河把潮水带进城。"
+        },
+        {
+          "id": "stairs",
+          "title": "楼梯与卧室",
+          "at": [
+            0.87,
+            0.51
+          ],
+          "hitRadius": 0.09,
+          "description": "一楼起居，沿木梯上去是卧室。"
+        },
+        {
+          "id": "greenhouse",
+          "title": "香草温室",
+          "at": [
+            0.58,
+            0.41
+          ],
+          "hitRadius": 0.09,
+          "description": "玻璃顶凝结的雾水沿铜管收进水槽。"
+        }
+      ]
+    },
+    {
+      "id": "bell_loft",
+      "name": "钟楼阁楼",
+      "district": "church",
+      "exterior": "HousingBellLoftExterior20260930",
+      "interior": "HousingBellLoftInterior20260930",
+      "hotspots": [
+        {
+          "id": "window",
+          "title": "灯窗与雾海",
+          "at": [
+            0.25,
+            0.38
+          ],
+          "hitRadius": 0.09,
+          "description": "尖拱灯窗望向雾海，也让夜里的塔身发光。"
+        },
+        {
+          "id": "desk",
+          "title": "窗边书桌",
+          "at": [
+            0.52,
+            0.71
+          ],
+          "hitRadius": 0.09,
+          "description": "木梁下留出一张临窗的书桌。"
+        },
+        {
+          "id": "bell",
+          "title": "头顶的钟",
+          "at": [
+            0.82,
+            0.16
+          ],
+          "hitRadius": 0.09,
+          "description": "检修口上方就是报时钟，整点会听到钟声。"
+        }
+      ]
+    },
+    {
+      "id": "highland_house",
+      "name": "高地石宅",
+      "district": "highland",
+      "exterior": "HousingHighlandHouseExterior20260930",
+      "interior": "HousingHighlandHouseInterior20260930",
+      "hotspots": [
+        {
+          "id": "pool",
+          "title": "雾水中庭",
+          "at": [
+            0.16,
+            0.61
+          ],
+          "hitRadius": 0.09,
+          "description": "柱廊围着中庭，铜檐沟把凝结的水带进水池。"
+        },
+        {
+          "id": "study",
+          "title": "书房",
+          "at": [
+            0.86,
+            0.59
+          ],
+          "hitRadius": 0.09,
+          "description": "书桌和藏书柜属于宅内的起居空间。"
+        },
+        {
+          "id": "kitchen",
+          "title": "宅内厨房",
+          "at": [
+            0.65,
+            0.47
+          ],
+          "hitRadius": 0.09,
+          "description": "穿过拱门就是自家的厨房。"
+        }
+      ]
+    }
+  ]
+}

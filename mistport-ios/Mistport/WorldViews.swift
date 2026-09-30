@@ -1119,7 +1119,7 @@ struct LightsLocalEventView: View {
         .font(.subheadline.monospacedDigit())
         .accessibilityElement(children: .combine)
         if !event.worksComplete {
-            action("制作一批 · 13 铜", enabled: event.side != nil && game.lightsHideCount > 0) { try game.craftStrapsAtStation() }
+            action("制作一批 · 13 铜", enabled: event.side != nil && game.lightsHideCount > 0) { Task { do { try await game.craftStrapsAtStation() } catch { notice = game.housingError(error) } } }
         }
     }
 

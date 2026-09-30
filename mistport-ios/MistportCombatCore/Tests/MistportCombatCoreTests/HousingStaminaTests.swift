@@ -83,4 +83,30 @@ struct HousingStaminaTests {
         h.payDay(31, cash: &poor, completedMissions: 30)
         #expect(!h.canTakeHighlandErrands(day: 31), "a day that could not pay the house loses highland access")
     }
+
+    @Test("changing meals preserves lease dates and today's paid receipt")
+    func mealChangePreservesLease() throws {
+        var ledger = MPCHousingLedger()
+        try ledger.sign(lodgingID: "canal_house", mealID: "bakery", day: 4, roomsLeft: 1)
+        var cash = 1_000
+        let payment = ledger.payDay(4, cash: &cash, completedMissions: 5)
+        let expiry = ledger.leaseEndsDay
+        try ledger.chooseMeal("cafe")
+        #expect(ledger.leaseEndsDay == expiry && ledger.mealID == "cafe")
+        #expect(ledger.payDay(4, cash: &cash, completedMissions: 5) == payment && cash == 976)
+        #expect(throws: MPCHousingLedger.Failure.notAllowed) { try ledger.chooseMeal("house_kitchen") }
+        #expect(ledger.mealID == "cafe")
+        #expect(ledger.payDay(5, cash: &cash, completedMissions: 5).copper == 26)
+    }
+
+    @Test("stamina replaces count-based copper decay, preserving merit and receipt limits")
+    func staminaReplacesPayDecay() {
+        var ledger = MPCDailyWorkLedger()
+        for n in 1...9 {
+            let pay = ledger.settle(receiptID: "stamina-\(n)", day: 1, copper: 40, merit: 6, usesStamina: true)
+            #expect(pay.copper == 40 && pay.percent == 100 && pay.merit == (n <= 2 ? 6 : 0))
+            #expect(ledger.settle(receiptID: "stamina-\(n)", day: 1, copper: 999, merit: 999, usesStamina: true) == pay)
+        }
+        #expect(ledger.jobsToday == 9 && ledger.preview(day: 1, copper: 40, usesStamina: true) == 40)
+    }
 }

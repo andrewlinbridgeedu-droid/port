@@ -171,6 +171,13 @@ public struct MPCHousingLedger: Codable, Equatable, Sendable {
 
     public init() {}
 
+    /// Changing food does not extend a lease or replace a day's paid receipt.
+    public mutating func chooseMeal(_ mealID: String) throws {
+        guard let meal = MPCHousingCatalog.meal(mealID) else { throw Failure.unknown }
+        guard meal.requiresLodgingID == nil || meal.requiresLodgingID == lodgingID else { throw Failure.notAllowed }
+        self.mealID = mealID
+    }
+
     /// Signs a lease of `leaseDays` from `day`. `roomsLeft` is the server's count for that
     /// lodging (nil for unlimited). Paying is daily; signing costs nothing by itself.
     public mutating func sign(lodgingID: String, mealID: String, day: Int, roomsLeft: Int?) throws {

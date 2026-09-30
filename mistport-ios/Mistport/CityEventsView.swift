@@ -61,8 +61,9 @@ struct CityEventsView: View {
                     let stock = game.chapterOneCampaign.inventory[delivery.itemID, default: 0]
                     VStack(alignment: .leading, spacing: 4) {
                         Text("\(GameStore.workshopItemName(delivery.itemID))：还需 \(left)/\(delivery.quantity) 件 · 背包 \(stock) 件")
+                        StaminaCostView(activity: .eventDelivery)
                         Button("交付 1 件 · 收 \(delivery.price) 铜") {
-                            perform { try game.deliverCityEvent(event.id, itemID: delivery.itemID) }
+                            Task { do { try await game.deliverCityEvent(event.id, itemID: delivery.itemID); errorText = "" } catch { errorText = game.housingError(error) } }
                         }.disabled(left == 0 || stock == 0)
                         if stock == 0 && left > 0 { Text("背包缺货，可去工坊制作。").font(.caption).foregroundStyle(.secondary) }
                     }
@@ -70,6 +71,7 @@ struct CityEventsView: View {
                 let today = game.cityEvents.winsCounted(event.id, day: game.pacingDay)
                 let left = game.cityEvents.winsLeft(event)
                 Text("战斗还需 \(left) 场 · 今天已记 \(today)/2 场")
+                StaminaCostView(activity: .eventBattle)
                 Button("\(event.battleTitle) · 胜利 10 铜") {
                     battle = .init(id: UUID().uuidString, eventID: event.id)
                 }.buttonStyle(.borderedProminent)
@@ -148,10 +150,10 @@ struct CityEventBattleView: View {
                     showsStartTutorialHint: false,
                     onStart: {
                         game.saveChapterOneBattleLoadout(skills)
-                        do {
-                            configuredSession = try game.beginCityEvent(eventID: eventID, ticket: battleID, skills: skills)
+                        Task { do {
+                            configuredSession = try await game.beginCityEvent(eventID: eventID, ticket: battleID, skills: skills)
                             started = true
-                        } catch { startError = "无法开始：请检查事件日期、今日胜场和未结束的票据。" }
+                        } catch { startError = game.housingError(error) } }
                     })
                 VStack { HStack { Button("返回事件板") { onClose() }; Spacer() }; Spacer() }.padding()
             }

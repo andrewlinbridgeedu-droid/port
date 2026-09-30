@@ -33,7 +33,7 @@ struct DailyStreetReviewView: View {
                 await Task.yield()
                 UnityBattleRuntime.shared.preload()
                 try await Task.sleep(for: .milliseconds(500))
-                session = try game.beginDailyStreetReview(kind: kind, ticket: ticket)
+                session = try await game.beginDailyStreetReview(kind: kind, ticket: ticket)
                 NSLog("DAILY_STREET_VISUAL_START: %@ %@", kind, session!.encounter.id)
                 var last = 0
                 for second in [8,16,28,45,60] {
