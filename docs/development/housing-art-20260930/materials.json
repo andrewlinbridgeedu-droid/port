@@ -1,0 +1,123 @@
+{
+  "task": "H1",
+  "status": "art-ready-for-App-integration; user-visual-approval-pending",
+  "H0Approval": "style/art-approval.json",
+  "housing": "housing/hotspots.json",
+  "agency": "agency/layers.json",
+  "map": "map/geography-v2.json",
+  "mapBackground": "mistport-ios/Mistport/Assets.xcassets/CityAutumnDay.imageset/CityAutumnDay.jpg",
+  "mapMethod": "Read-only original panorama plus editable native district overlays; no newly invented topology",
+  "assets": {
+    "agencyNameplate": "agency/nameplate-v1.png",
+    "blankDoorplate": "ui/copper-doorplate-blank-v1.png",
+    "engravedDoorplate": "ui/copper-doorplate-engraved-v1.png",
+    "homeDoorplate": "ui/copper-doorplate-blank-v1.png",
+    "homeLamp": "home/house-lamp-base-v1.png",
+    "homeLampGlow": "home/house-lamp-glow-v1.png",
+    "sealAtlas": "ui/seal-stamp-atlas-v1.png",
+    "staminaAtlas": "ui/stamina-lamp-atlas-v1.png"
+  },
+  "atlases": {
+    "seal": {
+      "columns": 2,
+      "rows": 2,
+      "frames": [
+        "raised",
+        "descending",
+        "pressed",
+        "lifted"
+      ],
+      "durationsMilliseconds": [
+        140,
+        100,
+        180,
+        700
+      ],
+      "order": "row-major",
+      "size": [
+        1254,
+        1254
+      ]
+    },
+    "stamina": {
+      "columns": 3,
+      "rows": 2,
+      "frames": [
+        "off",
+        "low",
+        "half",
+        "high",
+        "full"
+      ],
+      "emptyCells": [
+        5
+      ],
+      "order": "row-major",
+      "size": [
+        1536,
+        1024
+      ]
+    }
+  },
+  "nativeText": {
+    "agencyTitle": "赁屋行",
+    "doorplateFields": {
+      "register": {
+        "rect": [
+          0.14,
+          0.33,
+          0.72,
+          0.13
+        ]
+      },
+      "playerName": {
+        "rect": [
+          0.14,
+          0.56,
+          0.72,
+          0.2
+        ]
+      }
+    },
+    "note": "Never bake prices, player names, district labels or stamina amounts into raster art."
+  },
+  "homePlacementProposal": {
+    "coordinateUnit": "painting-height=1",
+    "anchors": {
+      "shelter": [
+        0.455,
+        0.39
+      ],
+      "dock_bunk": [
+        1.56,
+        0.415
+      ],
+      "arcade_room": [
+        0.265,
+        0.6
+      ],
+      "canal_house": [
+        0.39,
+        0.45
+      ],
+      "bell_loft": [
+        0.52,
+        0.34
+      ],
+      "highland_house": [
+        0.285,
+        0.285
+      ]
+    },
+    "review": "proposal; verify on device in H3",
+    "lighting": "Base and glow share exact registration; glow follows the same night lighting phase as existing City lights. Do not modify the 15 original paintings or their Lights/LightOrder."
+  },
+  "excludedDrafts": [
+    "housing/shelter-interior-v1.png",
+    "agency/background-v1.png",
+    "map/district-map-v1.png"
+  ],
+  "originalHomePaintingsUnmodified": true,
+  "AppIntegrated": false,
+  "installed": false
+}

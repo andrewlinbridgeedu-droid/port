@@ -1,0 +1,13 @@
+{
+  "id": "bell-loft-interior",
+  "file": "housing/bell-loft-interior-v1.png",
+  "prompt": "prompts/bell-loft-interior-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-b7cb91d9-210a-47ce-b0e5-0c4167126f76.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/housing/bell-loft-exterior-v1.png",
+    "docs/development/housing-art-20260930/style/02-bell-lantern-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending"
+}

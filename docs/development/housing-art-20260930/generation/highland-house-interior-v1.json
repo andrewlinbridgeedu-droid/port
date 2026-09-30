@@ -1,0 +1,13 @@
+{
+  "id": "highland-house-interior",
+  "file": "housing/highland-house-interior-v1.png",
+  "prompt": "prompts/highland-house-interior-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-6d031620-46f0-4478-8ae8-f7a186400dbf.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/housing/highland-house-exterior-v1.png",
+    "docs/development/housing-art-20260930/style/01-stone-arches-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending"
+}

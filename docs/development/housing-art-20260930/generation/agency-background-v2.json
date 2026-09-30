@@ -1,0 +1,13 @@
+{
+  "id": "agency-background",
+  "file": "agency/background-v2.png",
+  "prompt": "prompts/agency-background-v2.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-cd8aa53a-99bc-4d5e-8ca8-9b63d58d9c80.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/agency/background-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending",
+  "transparentRequested": false
+}

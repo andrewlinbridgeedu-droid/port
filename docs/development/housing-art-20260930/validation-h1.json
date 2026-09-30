@@ -1,0 +1,333 @@
+{
+  "task": "H1",
+  "checks": "file existence, PNG dimensions, alpha, 18 hotspots, exact hashes of 15 untouched home originals",
+  "currentAssets": [
+    {
+      "file": "agency/background-v2.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "5637dd6285bc583081b9f7be6ad9d983d9932074b9d443962ad02dae7993d59d"
+    },
+    {
+      "file": "agency/clerk-v1.png",
+      "size": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA",
+      "sha256": "baa5ddc4f4b41f23741f8a26230d418782799dcad117428f7ef4d0d475f44c4c",
+      "alphaRange": [
+        0,
+        254
+      ],
+      "transparentPixels": 704835
+    },
+    {
+      "file": "agency/foreground-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "d0e97ad550b713485ebef7c08643b63c3027b41c7e533099bdecfb6b58d620fa",
+      "alphaRange": [
+        0,
+        254
+      ],
+      "transparentPixels": 905007
+    },
+    {
+      "file": "agency/nameplate-v1.png",
+      "size": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "sha256": "dfce61713fdc6de915e375c758e6cf30f8363a1667bafa5a961da8e5f8d964d3",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "transparentPixels": 772871
+    },
+    {
+      "file": "home/house-lamp-base-v1.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "sha256": "577966bc3a85162bc3d6841c9fbbbbce67372072305e04b92018171ddd752980",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "transparentPixels": 1050278
+    },
+    {
+      "file": "home/house-lamp-glow-v1.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "sha256": "e47497838e790229766d4a43efdaa3259494a8344e271b803f8954a3be3fc467",
+      "alphaRange": [
+        0,
+        254
+      ],
+      "transparentPixels": 914028
+    },
+    {
+      "file": "housing/arcade-room-exterior-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "19cfd96e997e77c713588e884161d485273ec02d193e193ee2b18c640eecc2e4"
+    },
+    {
+      "file": "housing/arcade-room-interior-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "6c43f50c6cf643927ed5dd329985ae976aa2097165864ec5aef7e27bec3d5f50"
+    },
+    {
+      "file": "housing/bell-loft-exterior-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "22d1f550034bf56cf609c50d1b7626b5a8600b4ee54c4f101159c3eabb21f37e"
+    },
+    {
+      "file": "housing/bell-loft-interior-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "5ac7c85b73d22de879c4ef16fff0ff79b0da18997efc3b3ee5fe809c47a40cf8"
+    },
+    {
+      "file": "housing/canal-house-exterior-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "c0aa71de0ddbf156b70c40a64217d49db9b28da9ad8253be576bfcbef98e8ee2"
+    },
+    {
+      "file": "housing/canal-house-interior-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "87fad55675f62296233a80746e8029b508154b798a1469fc44e4707bc63bf1fa"
+    },
+    {
+      "file": "housing/dock-bunk-exterior-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "43606eea6cea2095d96b015f0ed20f8890d00b808e2bf057044cc2159d2991d7"
+    },
+    {
+      "file": "housing/dock-bunk-interior-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "d5c8f252808fd7c1d4b126c27f04b5bb620fcb38acc239d25f2d8e0791769286"
+    },
+    {
+      "file": "housing/highland-house-exterior-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "aa81f52438cf7cf34ad12c33557d7784ca1bec3eb4b0278db900c0fd10064297"
+    },
+    {
+      "file": "housing/highland-house-interior-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "d11e007bacaa355d18f338407b7cfcf9cc20b6c25b0637bcc2e354e53a603dc4"
+    },
+    {
+      "file": "housing/shelter-exterior-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "d63f787f733cacee5d474d9e99ac2c4ab69d562bcdef2758c91a05d23a0a1706"
+    },
+    {
+      "file": "housing/shelter-interior-v2.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "sha256": "e77cd017908472124104dadf725d7b4e2ce61ddca00783a66e5643efb918ffe0"
+    },
+    {
+      "file": "ui/copper-doorplate-blank-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "aa3ac423c4e8643135dfedc753cf6f2263d59a33fe94bd15eb65308a4211a432",
+      "alphaRange": [
+        0,
+        254
+      ],
+      "transparentPixels": 582927
+    },
+    {
+      "file": "ui/copper-doorplate-engraved-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "71db6457c636fa00f8a7a641dd4d6782466f7a2c2cbf43ce4cc4a86556f71f44",
+      "alphaRange": [
+        0,
+        254
+      ],
+      "transparentPixels": 583767
+    },
+    {
+      "file": "ui/seal-stamp-atlas-v1.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "sha256": "b3b790dc9987e085e4a80535f45416cd51513ab49f38e9a5da0861931dc17953",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "transparentPixels": 1142225
+    },
+    {
+      "file": "ui/stamina-lamp-atlas-v1.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "5c1a1ffe53936e4fdb4967ff801d54ff13df6f391348f7eb3b7ac7dae97c291b",
+      "alphaRange": [
+        0,
+        254
+      ],
+      "transparentPixels": 1010860
+    }
+  ],
+  "homeOriginals": [
+    {
+      "name": "CitySpringDay",
+      "sha256": "45908c900de559adf7dfa028555275125e79a53f3643eab4da95d671d45a2687",
+      "unchanged": true
+    },
+    {
+      "name": "CitySpringSunset",
+      "sha256": "f4e52d9019ff690323805ef77356ef47dd01e2df20f708534be48551c14f169d",
+      "unchanged": true
+    },
+    {
+      "name": "CitySpringNight",
+      "sha256": "bf8e7a64b853217939a2a15ee997336b1d3a6de9831160fadf4ce14ba07c8c72",
+      "unchanged": true
+    },
+    {
+      "name": "CitySummerDay",
+      "sha256": "dda611df52fb6f55375729aadd968e4e26f4f031b1100b84506b25e9d9fcf5e9",
+      "unchanged": true
+    },
+    {
+      "name": "CitySummerSunset",
+      "sha256": "424edefac1216f1bdaa50944643c95c07d9b2950c82327e0dd42701dcc04f21d",
+      "unchanged": true
+    },
+    {
+      "name": "CitySummerNight",
+      "sha256": "4c839ce0583a591ce12142eea4fc46c1575d7bcace0104d523d4d0952b49891c",
+      "unchanged": true
+    },
+    {
+      "name": "CityAutumnDay",
+      "sha256": "82ef7c09c4a83b972617d4783d3c803e49c409d9f1f494bf26acdf8d06a3ace9",
+      "unchanged": true
+    },
+    {
+      "name": "CityAutumnSunset",
+      "sha256": "a4ded1119c5715166c88099764ee0320f82e37c9a5ba47f97f678d6ef2cbe81e",
+      "unchanged": true
+    },
+    {
+      "name": "CityAutumnNight",
+      "sha256": "f3c62f9368132de08aec5ae38910597608a508aa0e782577bb3b4ba8a70031a1",
+      "unchanged": true
+    },
+    {
+      "name": "CityWinterDay",
+      "sha256": "c20f23cb0a324b2aaa7838cbbbf61ec42f5e9348142e30b43adcf3aa993acd67",
+      "unchanged": true
+    },
+    {
+      "name": "CityWinterSunset",
+      "sha256": "b535eaefad3fe0ad1024317b10966050c6f0ca9ea8c166668368298ac4d2cdaf",
+      "unchanged": true
+    },
+    {
+      "name": "CityWinterNight",
+      "sha256": "f5878e6aa1e1d1704730fec0f3742c3b5a28d9651b4006936d64640b2c794a81",
+      "unchanged": true
+    },
+    {
+      "name": "CityWinterSnowDay",
+      "sha256": "a565e7f671a7b020c92b806d54bfbac10cc1debbd897e19df3268c105398adae",
+      "unchanged": true
+    },
+    {
+      "name": "CityWinterSnowSunset",
+      "sha256": "c668ae2d6b549581d2db2802aa5ad224db372a91f9b1f29092c194b9bf8b1d36",
+      "unchanged": true
+    },
+    {
+      "name": "CityWinterSnowNight",
+      "sha256": "6e6196fa01c0a41552d82450b0725897515d132c15471ad98625d79cc751af63",
+      "unchanged": true
+    }
+  ],
+  "approval": "H0 only approved; H1 visual approval pending",
+  "notVerified": [
+    "App build",
+    "device integration",
+    "live room availability or queues",
+    "player save/Preferences (not accessed)"
+  ]
+}

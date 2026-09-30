@@ -2,11 +2,19 @@
 
 ## 现在在哪（2026-09-30，先读这一节）
 
-### 当前 Mac 任务：H0 建筑风格板（2026-09-30，用户已认可）
+### 最新地理修正（用户 2026-09-30 指定，优先）
 
-- 用户最新指定先做 [住处任务单](CODEX_TASKS_HOUSING_20260930.md) H0，暂不沿下方旧任务顺序继续。新分支 `codex/housing-h0-style-boards-20260930` 从最新 main `d07d39d` 开始。
+- 首页原画左侧远景为高级住宅区，右侧远景住宅带为贵族区；贵族区很少能进去住，不列入常规租房卡片。住处规则中的 `highland_house` 对应左侧高级住宅区，不把右侧贵族区当作普通高档租屋。
+- H1 的独立五区地图初稿被用户指出偏离港城地貌，已撤回，禁止接 App。改用首页全景原样缩览，区名和选房数据另外叠加；不改岸线、地势、道路、建筑或 15 张首页原画。见 [修正版地理提案](housing-art-20260930/map/geography-v2.json) 和 [预览](housing-art-20260930/map/geography-preview-v2.html)。位置仍待复看，特殊贵族入住条件尚未定义。
+
+### 当前 Mac 任务：H1 住处与赁屋行美术（H0 已认可并合入 main）
+
+- H0 已通过 PR #32 合入 main（`b98e213`）。H1 分支 `codex/housing-h1-art-20260930` 从该 main 开始，交六处住处、18 个细节点、赁屋行分层柜台、名牌、铜门牌、四帧封蜡、五档体力灯罩、住处灯与光效。见 [H1 素材和预览](housing-art-20260930/README.md)。
+- H1 仅交图稿和 docs。已核对透明通道、尺寸、细节点、柜台遮挡和小屏地图；15 张首页原画哈希不变。未改 App、规则库、运行时布局、构建号，未装机或访问玩家 Preferences。H1 最终视觉认可待 H3 真机复看。
+
+- 本单按 [住处任务单](CODEX_TASKS_HOUSING_20260930.md) H0–H3 做，暂不沿下方旧任务顺序继续。H0 分支 `codex/housing-h0-style-boards-20260930` 从当时最新 main `d07d39d` 开始。
 - 已出三张 1536×1024 PNG：石拱层、钟灯层、铁玻层，沿一条雾中街道从老城到港区；使用首页四季原画作只读风格参考，后两张延续前面的水渠、铺石与地标。见 [H0 图稿、提示词和验证](housing-art-20260930/style/README.md)。这是建筑方向稿，不是地图配准贴片。
-- **用户已于 2026-09-30 回复“认可”，确认三张 H0 风格板，并授权合并 [PR #32](https://github.com/andrewlinbridgeedu-droid/port/pull/32)、继续 H1。**认可原话和图稿哈希见 [认可记录](housing-art-20260930/style/art-approval.json)。H1 在 H0 合并后从最新 main 新开分支；H2 App、H3 自检／装机尚未开始。三张图及提示词保存在 docs；15 张首页原画哈希不变，未修改 App、规则库、AssetCatalog、布局或构建编号，未访问玩家 Preferences。
+- **用户已于 2026-09-30 回复“认可”，确认三张 H0 风格板，并授权合并 [PR #32](https://github.com/andrewlinbridgeedu-droid/port/pull/32)、继续 H1。**认可原话和图稿哈希见 [认可记录](housing-art-20260930/style/art-approval.json)。H0 已合并，H1 已从最新 main 新开分支并交图；H2 App、H3 自检／装机尚未开始。图及提示词保存在 docs；15 张首页原画哈希不变，未修改 App、规则库、AssetCatalog、运行时布局或构建编号，未访问玩家 Preferences。
 - 接着按 H1、H2、H3 依次做，各任务单独 PR。H2 的住处、饮食价格和体力花费一律取 `HousingStamina.swift`，放在 `HousingService` 接口后面；构建编号低于 170，DerivedData 与归档放 SSD，装机前后逐文件核对 Preferences。
 
 ### 分支

@@ -1,0 +1,13 @@
+{
+  "id": "copper-doorplate-engraved",
+  "file": "ui/copper-doorplate-engraved-v1.png",
+  "prompt": "prompts/copper-doorplate-engraved-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-b7c0f93c-9e50-4f89-9646-f85697a206b1.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/ui/copper-doorplate-blank-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending",
+  "transparentRequested": true
+}

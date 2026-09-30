@@ -1,0 +1,12 @@
+{
+  "id": "dock-bunk-exterior",
+  "file": "housing/dock-bunk-exterior-v1.png",
+  "prompt": "prompts/dock-bunk-exterior-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-98d898ec-228d-405a-a9cb-4b1da1429c78.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/style/01-stone-arches-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending"
+}

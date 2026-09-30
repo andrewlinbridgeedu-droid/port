@@ -1,0 +1,13 @@
+{
+  "id": "dock-bunk-interior",
+  "file": "housing/dock-bunk-interior-v1.png",
+  "prompt": "prompts/dock-bunk-interior-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-c72dea10-6022-4f17-b80c-af717bdffbf5.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/housing/dock-bunk-exterior-v1.png",
+    "docs/development/housing-art-20260930/style/01-stone-arches-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending"
+}

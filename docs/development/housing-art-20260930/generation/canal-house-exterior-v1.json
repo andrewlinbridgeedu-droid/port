@@ -1,0 +1,12 @@
+{
+  "id": "canal-house-exterior",
+  "file": "housing/canal-house-exterior-v1.png",
+  "prompt": "prompts/canal-house-exterior-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-85313f80-0759-4a81-8d4e-4a7586129cb4.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/style/03-iron-glass-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending"
+}

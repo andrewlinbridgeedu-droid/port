@@ -1,0 +1,14 @@
+{
+  "id": "agency-clerk",
+  "file": "agency/clerk-v1.png",
+  "prompt": "prompts/agency-clerk-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-aa92ae8d-fa7b-4ecd-bd90-78afb859c621.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/agency/background-v1.png",
+    "docs/development/housing-art-20260930/style/01-stone-arches-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending",
+  "transparentRequested": true
+}

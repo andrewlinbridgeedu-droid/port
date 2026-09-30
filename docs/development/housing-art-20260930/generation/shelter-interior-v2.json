@@ -1,0 +1,12 @@
+{
+  "id": "shelter-interior",
+  "file": "housing/shelter-interior-v2.png",
+  "prompt": "prompts/shelter-interior-v2.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-879ea769-1081-43a8-981a-45112421dc4f.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/housing/shelter-interior-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending"
+}

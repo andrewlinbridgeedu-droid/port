@@ -1,0 +1,12 @@
+{
+  "id": "highland-house-exterior",
+  "file": "housing/highland-house-exterior-v1.png",
+  "prompt": "prompts/highland-house-exterior-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-451a681d-3e2c-498d-8c2c-0a40b5e4c1c2.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/style/01-stone-arches-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending"
+}

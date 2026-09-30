@@ -1,0 +1,17 @@
+{
+  "id": "district-map",
+  "file": "map/district-map-v1.png",
+  "prompt": "prompts/district-map-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-c5ff887d-992c-4f37-a18a-02a424f2cc07.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/style/01-stone-arches-v1.png",
+    "docs/development/housing-art-20260930/style/03-iron-glass-v1.png",
+    "mistport-ios/Mistport/Assets.xcassets/CitySpringDay.imageset/CitySpringDay.jpg"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "rejected",
+  "transparentRequested": false,
+  "runtimeUse": "forbidden",
+  "reason": "用户指出地貌偏離，改用首页原画缩览。"
+}

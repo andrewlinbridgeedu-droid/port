@@ -1,0 +1,13 @@
+{
+  "id": "arcade-room-interior",
+  "file": "housing/arcade-room-interior-v1.png",
+  "prompt": "prompts/arcade-room-interior-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-10e3260a-bed9-461e-b839-41b70cfe88ca.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/housing/arcade-room-exterior-v1.png",
+    "docs/development/housing-art-20260930/style/01-stone-arches-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending"
+}
