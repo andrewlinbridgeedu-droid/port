@@ -4,7 +4,7 @@
   "baseCommit": "d07d39ddeeca6a2c077cb4424bbbbbedd7fa4164",
   "branch": "codex/housing-h0-style-boards-20260930",
   "artRevision": 1,
-  "status": "awaiting-user-visual-approval",
+  "status": "user-approved",
   "generationMode": "built-in image_gen; no CLI/API fallback",
   "boards": [
     {
@@ -28,7 +28,7 @@
         "CityWinterDay"
       ],
       "postprocessing": "none; generated PNG copied byte-for-byte",
-      "agentVisualReview": "reviewed; awaiting user approval"
+      "agentVisualReview": "reviewed; user approved this board set on 2026-09-30"
     },
     {
       "id": "bell-lantern",
@@ -50,7 +50,7 @@
         "CityAutumnDay"
       ],
       "postprocessing": "none; generated PNG copied byte-for-byte",
-      "agentVisualReview": "reviewed; awaiting user approval"
+      "agentVisualReview": "reviewed; user approved this board set on 2026-09-30"
     },
     {
       "id": "iron-glass",
@@ -73,7 +73,7 @@
         "CityAutumnDay"
       ],
       "postprocessing": "none; generated PNG copied byte-for-byte",
-      "agentVisualReview": "reviewed; awaiting user approval"
+      "agentVisualReview": "reviewed; user approved this board set on 2026-09-30"
     }
   ],
   "homeMapOriginals": [
@@ -169,10 +169,10 @@
     }
   ],
   "approvalGate": {
-    "H1Art": "not-started; requires user approval of H0 boards",
+    "H1Art": "authorized by user approval of H0; begins on a new branch after H0 merge",
     "H2App": "not-started",
     "H3DeviceValidation": "not-started"
   },
   "pullRequest": "https://github.com/andrewlinbridgeedu-droid/port/pull/32",
-  "pullRequestState": "draft; awaiting user visual approval"
+  "pullRequestState": "user-approved; authorized to merge H0"
 }

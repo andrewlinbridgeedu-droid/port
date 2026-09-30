@@ -2,12 +2,12 @@
 
 ## 现在在哪（2026-09-30，先读这一节）
 
-### 当前 Mac 任务：H0 建筑风格板（2026-09-30，待用户认可）
+### 当前 Mac 任务：H0 建筑风格板（2026-09-30，用户已认可）
 
 - 用户最新指定先做 [住处任务单](CODEX_TASKS_HOUSING_20260930.md) H0，暂不沿下方旧任务顺序继续。新分支 `codex/housing-h0-style-boards-20260930` 从最新 main `d07d39d` 开始。
 - 已出三张 1536×1024 PNG：石拱层、钟灯层、铁玻层，沿一条雾中街道从老城到港区；使用首页四季原画作只读风格参考，后两张延续前面的水渠、铺石与地标。见 [H0 图稿、提示词和验证](housing-art-20260930/style/README.md)。这是建筑方向稿，不是地图配准贴片。
-- **待用户视觉认可，H0 草稿 [PR #32](https://github.com/andrewlinbridgeedu-droid/port/pull/32) 已创建，尚未合并。用户明确“我认可之前不画后面的图”，所以 H1 美术尚未开始，H2 App、H3 自检／装机也未开始。**三张图及提示词保存在 docs；15 张首页原画哈希不变，未修改 App、规则库、AssetCatalog、布局或构建编号，未访问玩家 Preferences。
-- 认可后按 H1、H2、H3 依次做，各任务单独 PR。H2 的住处、饮食价格和体力花费一律取 `HousingStamina.swift`，放在 `HousingService` 接口后面；构建编号低于 170，DerivedData 与归档放 SSD，装机前后逐文件核对 Preferences。
+- **用户已于 2026-09-30 回复“认可”，确认三张 H0 风格板，并授权合并 [PR #32](https://github.com/andrewlinbridgeedu-droid/port/pull/32)、继续 H1。**认可原话和图稿哈希见 [认可记录](housing-art-20260930/style/art-approval.json)。H1 在 H0 合并后从最新 main 新开分支；H2 App、H3 自检／装机尚未开始。三张图及提示词保存在 docs；15 张首页原画哈希不变，未修改 App、规则库、AssetCatalog、布局或构建编号，未访问玩家 Preferences。
+- 接着按 H1、H2、H3 依次做，各任务单独 PR。H2 的住处、饮食价格和体力花费一律取 `HousingStamina.swift`，放在 `HousingService` 接口后面；构建编号低于 170，DerivedData 与归档放 SSD，装机前后逐文件核对 Preferences。
 
 ### 分支
 
