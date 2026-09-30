@@ -36,6 +36,14 @@ struct Assumptions: Codable, Sendable {
     var messageWalkSeconds = 60.0
     var remnantInvestigationSeconds = 240.0
     var eventDeliverySeconds = 30.0
+    /// City contribution tiers (HOME_MAP_STREET_TASKS_20260929.md 6.2), candidate content:
+    /// an urgent errand a day (tier 2), a joint errand every third day (tier 3) and a city
+    /// commission every seventh day (tier 4). Minutes are estimates, like the rest here.
+    /// Set STREET_TIERS=0 to leave them out.
+    var tierContent = ProcessInfo.processInfo.environment["STREET_TIERS"] != "0"
+    var urgentErrandSeconds = 180.0
+    var jointErrandSeconds = 360.0
+    var cityCommissionSeconds = 600.0
     /// Human-pace runs (HumanTiming.swift): when set, every non-battle second above is
     /// replaced by the step model and battles run at the pace's action delay.
     var pace: HumanPace? = nil
@@ -173,6 +181,8 @@ struct DailyContentSummary: Codable {
     let contributionTierDays: [String: Int]
     /// Contribution at the end of each day, day 1 first.
     let contributionByDay: [Int]
+    /// Tier content done: urgent, joint, commission (count).
+    let tierContent: [String: Int]
 }
 
 struct WorkshopSummary: Codable {
@@ -226,6 +236,8 @@ final class Campaign {
     var contribution = MPCCityContributionLedger()
     var contributionTierDays: [String: Int] = [:]
     var contributionByDay: [Int] = []
+    var tierContentDays = Set<String>()
+    var tierContentDone: [String: Int] = [:]
     var usesDailyContent: Bool { usesWorkshop }
     var city: MPCCityEvent.Effects { events.effects(day: dayNumber) }
     var salvePrice: Int { Shop.salve + city.salveSurcharge }
@@ -442,8 +454,27 @@ final class Campaign {
 
     /// The rest of the day (all and completionist): today's neighbour errands, up to two
     /// counted event battles (three tries), and today's remnant case once a bounty is closed.
+    /// Tier content (design 6.2): copper as designed (15 / 30 / 60), counted as errands for
+    /// contribution, outside the repeatable-work taper. Once per day each.
+    func tierContent() {
+        guard usesDailyContent, assumptions.tierContent else { return }
+        let offers: [(String, MPCCityContribution.Feature, Bool, Int, Double)] = [
+            ("urgent", .urgentErrand, true, 15, assumptions.urgentErrandSeconds),
+            ("joint", .jointErrand, dayNumber % 3 == 0, 30, assumptions.jointErrandSeconds),
+            ("commission", .cityCommission, dayNumber % 7 == 0, 60, assumptions.cityCommissionSeconds),
+        ]
+        for (name, feature, today, pay, seconds) in offers where today && contribution.isOpen(feature) {
+            guard tierContentDays.insert("\(name)-\(dayNumber)").inserted else { continue }
+            busy(name, seconds)
+            copper += pay; earned[name, default: 0] += pay
+            tierContentDone[name, default: 0] += 1
+            contribute("\(name)-\(dayNumber)", .errand)
+        }
+    }
+
     func dailyContent() {
         guard usesDailyContent else { return }
+        defer { tierContent() }
         if let m = model, neighbors.offers.contains(where: { $0.day == dayNumber && !$0.done }) { busy("errand", total(m.streetOpen)) }
         for offer in neighbors.offers where offer.day == dayNumber && !offer.done {
             guard let errand = offer.errand else { continue }
@@ -790,7 +821,7 @@ final class Campaign {
                                       storiesUnlocked: MPCNeighborCatalog.all.reduce(0) { $0 + neighbors.stories($1.id).count },
                                       missedErrands: missedErrands,
                                       contribution: contribution.points, contributionTierDays: contributionTierDays,
-                                      contributionByDay: contributionByDay),
+                                      contributionByDay: contributionByDay, tierContent: tierContentDone),
                          merit: merit, towerFloor: tower, bountiesCleared: cleared.sorted(),
                          passives: passives, bountyRelics: relics.ownedIDs.sorted(), milestones: milestones, visits: visits)
     }

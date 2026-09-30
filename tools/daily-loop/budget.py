@@ -57,13 +57,17 @@ EVENT_COPPER_PER_DAY = 20         # goods bought by the event's funded order
 TAPER = [(3, 1.0), (6, 0.5), (10**9, 0.1)]   # repeatable jobs today: 1-3 full, 4-6 half, then 10%
 WORKSHOP_ORDER_COPPER = 60        # candidate: NPC order budget a day once several basic recipes exist
 WORKSHOP_PROFIT_PER_BATCH = 14    # 3 straps x 9 - 13 copper of base stock
+# City contribution tier content (HOME_MAP_STREET_TASKS_20260929.md 6.2, user-approved tiers).
+# Open days: the day after the progression sim's all-content players reach tiers 2/3/4
+# (days 6, 12, 18 with this content included). name: (open day, every n days, minutes, copper)
+TIER_CONTENT = {"加急委托": (7, 1, 3, 15), "街区难题": (13, 3, 6, 30), "城市委托": (19, 7, 10, 60)}
 
 
 def mission_day(m):
     return max(1, m - (FIRST_DAY_MISSIONS - 1))
 
 
-def simulate(minutes_per_day, taper, max_jobs=None, rich_workshop=False):
+def simulate(minutes_per_day, taper, max_jobs=None, rich_workshop=False, tiers=False):
     balance, low, earned_jobs, spent = START_COPPER, START_COPPER, 0, 0
     floors, jobs_done, rows = 0, 0, []
     for day in range(1, DAYS + 1):
@@ -98,6 +102,11 @@ def simulate(minutes_per_day, taper, max_jobs=None, rich_workshop=False):
             batches = min(demand, max(0, left) // MIN_WORKSHOP_BATCH)
             left -= batches * MIN_WORKSHOP_BATCH; workshop = batches * MIN_WORKSHOP_BATCH
             copper += batches * WORKSHOP_PROFIT_PER_BATCH; battles += batches
+        # Tier content before the tavern and repeatable jobs: it is capped by the day.
+        if tiers:
+            for opens, every, mins, pay in TIER_CONTENT.values():
+                if day >= opens and day % every == 0 and left >= mins:
+                    left -= mins; copper += pay
         tavern = 0
         if minutes_per_day >= 90 and left >= MIN_TAVERN:
             left -= MIN_TAVERN; tavern = MIN_TAVERN
@@ -135,6 +144,17 @@ def main():
         total = sum(row[3] for row in r["rows"]) + START_COPPER
         idle = sum(row[7] for row in r["rows"]) / DAYS
         lines.append(f"| {minutes} 分钟 | {jobs} | {total} | {r['end']} | {idle:.0f} |")
+    lines += ["", "**C. B 再加城市贡献度三类内容**（加急委托 15 铜／天、街区难题 30 铜／3 天、城市委托 60 铜／7 天；分别从第 7、13、19 天开放）", "",
+              "| 每天玩 | 30 天总铜（不含） | 30 天总铜（含） | 多出 | 章末余额（含） |",
+              "|---|---:|---:|---:|---:|"]
+    for minutes, jobs in ((45, 2), (90, 4), (120, 6)):
+        a = simulate(minutes, TAPER, max_jobs=jobs, rich_workshop=True)
+        b = simulate(minutes, TAPER, max_jobs=jobs, rich_workshop=True, tiers=True)
+        ta = sum(row[3] for row in a["rows"]) + START_COPPER
+        tb = sum(row[3] for row in b["rows"]) + START_COPPER
+        lines.append(f"| {minutes} 分钟 | {ta} | {tb} | {tb - ta} | {b['end']} |")
+    steady = sum(pay / every for _, every, _, pay in TIER_CONTENT.values())
+    lines.append(f"\n三类都开放以后，每天平均多 {steady:.1f} 铜。")
     lines += ["", "| 天 | 推进内容用时（所有人相同，分钟） |", "|---:|---:|"]
     for day in (1, 2, 3, 7, 10, 14, 18, 21, 25, 28, 30):
         lines.append(f"| {day} | {_progress_minutes(day)} |")
