@@ -72,19 +72,19 @@ struct LedgerMoneyTests {
         #expect(try ledger.authenticate(token: "") == nil)
     }
 
-    @Test("local copper is imported once per account and save, capped at 12,000")
+    @Test("local copper is imported once per account and save: at most 12,000 counted, converted at 15%")
     func localImport() throws {
         let ledger = try makeLedger()
         let a = try ledger.createPlayer(), b = try ledger.createPlayer()
         let receipt = try ledger.importLocal(account: a.accountID, op: "imp-1", fingerprint: "save-aaaa-0001", copper: 20_000)
-        #expect(receipt.granted == 12_000 && receipt.requested == 20_000)
+        #expect(receipt.requested == 20_000 && receipt.counted == 12_000 && receipt.granted == 1_800)
         #expect(try ledger.importLocal(account: a.accountID, op: "imp-1", fingerprint: "save-aaaa-0001", copper: 20_000) == receipt, "same operation, same answer")
         #expect(throws: LedgerError.operationConflict) { try ledger.importLocal(account: a.accountID, op: "imp-1", fingerprint: "save-aaaa-0001", copper: 5) }
         #expect(throws: LedgerError.alreadyImported) { try ledger.importLocal(account: a.accountID, op: "imp-2", fingerprint: "save-aaaa-0002", copper: 5) }
         #expect(throws: LedgerError.fingerprintUsed) { try ledger.importLocal(account: b.accountID, op: "imp-1", fingerprint: "save-aaaa-0001", copper: 5) }
-        #expect(try ledger.cash(a.accountID) == 12_000 && ledger.cash(b.accountID) == 0)
+        #expect(try ledger.cash(a.accountID) == 1_800 && ledger.cash(b.accountID) == 0)
         let audit = try ledger.audit()
-        #expect(audit.ok && audit.issued["local-import"] == 12_000)
+        #expect(audit.ok && audit.issued["local-import"] == 1_800)
     }
 
     @Test("a trade moves copper and goods together, charges the fee once and keeps provenance")
@@ -92,14 +92,14 @@ struct LedgerMoneyTests {
         let ledger = try makeLedger()
         let seller = try ledger.createPlayer(), buyer = try ledger.createPlayer()
         let lot = try ledger.grantTestItems(account: seller.accountID, item: hide, quantity: 5)
-        _ = try ledger.importLocal(account: buyer.accountID, op: "imp", fingerprint: "save-buyer-01", copper: 1_000)
+        _ = try ledger.importLocal(account: buyer.accountID, op: "imp", fingerprint: "save-buyer-01", copper: 1_000)  // 150 shared
         let listing = try ledger.list(account: seller.accountID, op: "list-1", item: hide, quantity: 5, unitPrice: 40)
         #expect(try ledger.account(seller.accountID).items[hide] == nil, "listed goods sit in escrow")
 
         let trade = try ledger.buy(account: buyer.accountID, op: "buy-1", listingID: listing.listingID, quantity: 3)
         #expect(trade.gross == 120 && trade.fee == 6 && trade.sellerNet == 114 && trade.remaining == 2)
         #expect(try ledger.buy(account: buyer.accountID, op: "buy-1", listingID: listing.listingID, quantity: 3) == trade, "a retried request is not a second purchase")
-        #expect(try ledger.cash(buyer.accountID) == 880 && ledger.cash(seller.accountID) == 114)
+        #expect(try ledger.cash(buyer.accountID) == 30 && ledger.cash(seller.accountID) == 114)
         #expect(try ledger.cash(Ledger.cityBudget) == 100_006)
         #expect(try ledger.account(buyer.accountID).items[hide] == 3)
         let origin = try ledger.provenance(owner: buyer.accountID, item: hide)
@@ -121,7 +121,7 @@ struct LedgerMoneyTests {
         _ = try ledger.grantTestItems(account: seller.accountID, item: hide, quantity: 1)
         let listing = try ledger.list(account: seller.accountID, op: "l", item: hide, quantity: 1, unitPrice: 50)
         #expect(throws: LedgerError.insufficientFunds) { try ledger.buy(account: buyer.accountID, op: "b-1", listingID: listing.listingID, quantity: 1) }
-        _ = try ledger.importLocal(account: buyer.accountID, op: "imp", fingerprint: "save-buyer-02", copper: 100)
+        _ = try ledger.importLocal(account: buyer.accountID, op: "imp", fingerprint: "save-buyer-02", copper: 1_000)
         #expect(throws: LedgerError.insufficientFunds) { try ledger.buy(account: buyer.accountID, op: "b-1", listingID: listing.listingID, quantity: 1) }
         #expect(try ledger.buy(account: buyer.accountID, op: "b-2", listingID: listing.listingID, quantity: 1).gross == 50)
         #expect(throws: LedgerError.invalidRequest) { try ledger.buy(account: buyer.accountID, op: "bad op id!", listingID: listing.listingID, quantity: 1) }
@@ -133,11 +133,11 @@ struct LedgerMoneyTests {
         let ledger = try makeLedger(policy)
         let seller = try ledger.createPlayer(), buyer = try ledger.createPlayer()
         _ = try ledger.grantTestItems(account: seller.accountID, item: hide, quantity: 2)
-        _ = try ledger.importLocal(account: buyer.accountID, op: "imp", fingerprint: "save-buyer-03", copper: 500)
+        _ = try ledger.importLocal(account: buyer.accountID, op: "imp", fingerprint: "save-buyer-03", copper: 2_000)
         let listing = try ledger.list(account: seller.accountID, op: "l", item: hide, quantity: 2, unitPrice: 100)
         _ = try ledger.buy(account: buyer.accountID, op: "b", listingID: listing.listingID, quantity: 2)
         let audit = try ledger.audit()
-        #expect(audit.ok && audit.burned["trade-fee"] == 10 && audit.moneySupply == 100_000 + 500 - 10)
+        #expect(audit.ok && audit.burned["trade-fee"] == 10 && audit.moneySupply == 100_000 + 300 - 10)
     }
 
     @Test("forty buyers on eight connections race for the last unit: exactly one gets it")
@@ -150,7 +150,7 @@ struct LedgerMoneyTests {
         let listing = try setup.list(account: seller.accountID, op: "l", item: hide, quantity: 1, unitPrice: 30)
         let buyers: [String] = try (0..<40).map { index in
             let buyer = try setup.createPlayer()
-            _ = try setup.importLocal(account: buyer.accountID, op: "imp", fingerprint: "save-racer-\(index)", copper: 100)
+            _ = try setup.importLocal(account: buyer.accountID, op: "imp", fingerprint: "save-racer-\(index)", copper: 1_000)
             return buyer.accountID
         }
         let connections = try (0..<8).map { _ in try makeLedger(clock: clock, path: path) }

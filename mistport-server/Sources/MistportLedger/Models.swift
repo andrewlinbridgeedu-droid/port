@@ -1,16 +1,21 @@
 import Foundation
 import MistportCombatCore
 
-/// Server economy settings. Every number here is a candidate from the design docs, not a
-/// launch value: fee 5% and the local-import cap 12,000 come from the shared-economy
-/// decisions (2026-09-29), the public-target reward is one 12-copper basket.
+/// Server economy settings, from the shared-economy decisions settled 2026-09-30
+/// (docs/development/shared-economy-decisions-20260929): fee 5% into the city budget; local
+/// copper enters at the shared-server rate of 15%, counting at most 12,000 local copper; the
+/// public-target reward is one 12-copper basket. Design-model values, not measured ones.
 public struct LedgerPolicy: Codable, Sendable, Equatable {
     public enum FeeDestination: String, Codable, Sendable { case cityBudget = "city-budget", burn }
     public var feeBasisPoints: Int64 = 500
     public var feeDestination: FeeDestination = .cityBudget
     /// Issued once when the ledger is created; pays battle rewards.
     public var cityBudgetGenesis: Int64 = 100_000
+    /// Most local copper counted, before conversion.
     public var localImportCap: Int64 = 12_000
+    /// Shared copper per 100 local copper: the shared server pays the daily systems 15% of
+    /// single-player copper, so local copper converts at the same rate.
+    public var localImportRatePercent: Int64 = 15
     public var ticketLifetimeSeconds: Int64 = 30 * 60
     public var lightsPublicReward: Int64 = 12
     public var maxQuantity: Int64 = 9_999
@@ -50,7 +55,11 @@ public struct LotMove: Codable, Sendable, Equatable {
 
 public struct ImportReceipt: Codable, Sendable, Equatable {
     public let accountID: String
+    /// Local copper in the save.
     public let requested: Int64
+    /// Local copper counted (capped).
+    public let counted: Int64
+    /// Shared copper issued.
     public let granted: Int64
     public let fingerprint: String
 }

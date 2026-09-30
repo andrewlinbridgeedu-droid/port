@@ -147,7 +147,7 @@ public final class Ledger: @unchecked Sendable {
         }
     }
 
-    // MARK: Local wealth import (user decision 2026-09-29: local copper goes to the shared server)
+    // MARK: Local wealth import (user decision 2026-09-29; 15% conversion settled 2026-09-30)
 
     public func importLocal(account: String, op: String, fingerprint: String, copper: Int64) throws -> ImportReceipt {
         struct Payload: Encodable { let fingerprint: String; let copper: Int64 }
@@ -155,11 +155,12 @@ public final class Ledger: @unchecked Sendable {
         return try operation("import-local", account: account, op: op, payload: Payload(fingerprint: fingerprint, copper: copper)) {
             guard try db.query("SELECT 1 FROM imports WHERE account = ?", [.text(account)]).isEmpty else { throw LedgerError.alreadyImported }
             guard try db.query("SELECT 1 FROM imports WHERE fingerprint = ?", [.text(fingerprint)]).isEmpty else { throw LedgerError.fingerprintUsed }
-            let granted = min(copper, policy.localImportCap)
+            let counted = min(copper, policy.localImportCap)
+            let granted = counted * policy.localImportRatePercent / 100
             if granted > 0 { try issue(op: op, to: account, amount: granted, source: "local-import") }
             try db.run("INSERT INTO imports(account, fingerprint, requested, granted, at) VALUES(?, ?, ?, ?, ?)",
                        [.text(account), .text(fingerprint), .int(copper), .int(granted), .int(clock())])
-            return ImportReceipt(accountID: account, requested: copper, granted: granted, fingerprint: fingerprint)
+            return ImportReceipt(accountID: account, requested: copper, counted: counted, granted: granted, fingerprint: fingerprint)
         }
     }
 

@@ -78,8 +78,8 @@ struct EndToEndTests {
 
         // The buyer brings local copper (user decision: local wealth goes to the shared server).
         let imported = try await client.execute(uri: "/v0/import", method: .post, headers: auth(buyer.token),
-                                                body: try body(ImportBody(op: "import-1", fingerprint: "save-e2e-buyer", copper: 500))) { try decode(ImportReceipt.self, $0) }
-        #expect(imported.granted == 500)
+                                                body: try body(ImportBody(op: "import-1", fingerprint: "save-e2e-buyer", copper: 2_000))) { try decode(ImportReceipt.self, $0) }
+        #expect(imported.counted == 2_000 && imported.granted == 300)
 
         // One shared trade.
         let listing = try await client.execute(uri: "/v0/market/listings", method: .post, headers: auth(seller.token),
@@ -114,11 +114,11 @@ struct EndToEndTests {
                                  body: try body(SettleBody(op: "steal", log: log))) { #expect($0.status == .notFound) }
 
         let me = try await client.execute(uri: "/v0/me", method: .get, headers: auth(buyer.token)) { try decode(AccountView.self, $0) }
-        #expect(me.cash == 500 - 80 + 12 && me.items[MPCTowerMaterials.hide] == 2)
+        #expect(me.cash == 300 - 80 + 12 && me.items[MPCTowerMaterials.hide] == 2)
         let scores = try await client.execute(uri: "/v0/events/lights", method: .get) { try decode(PublicScores.self, $0) }
         #expect(scores.points == ["pumps": 1])
 
         let audit = try await client.execute(uri: "/v0/admin/audit", method: .get, headers: adminHeaders) { try decode(AuditReport.self, $0) }
-        #expect(audit.ok && audit.moneySupply == 100_000 + 500, "\(audit.problems)")
+        #expect(audit.ok && audit.moneySupply == 100_000 + 300, "\(audit.problems)")
     }
 }

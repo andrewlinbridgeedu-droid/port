@@ -13,6 +13,10 @@ MISTPORT_DB=./dev.sqlite MISTPORT_PORT=8080 MISTPORT_ADMIN_TOKEN=<至少16位> s
 - Swift 6.0 可编译（Linux 已验证）；Hummingbird 固定在 2.17，这是最后一个 Swift 6.0 能编译的版本。
 - Linux 需要 `libsqlite3-dev`，macOS 用系统自带的 SQLite。
 - 依赖本仓库的 `mistport-ios/MistportCombatCore`，战斗规则和 App 是同一份代码。
+- 选型（2026-09-30 定）：M2 小服用这套 Swift＋SQLite 单权威服务。
+  - 部署在一台 Linux 服务器上，前面用 Caddy 做 TLS。
+  - 用 Litestream 把 SQLite 持续备份到对象存储。
+  - 扩到 2,000 注册前做 200 人同时在线压测；不过线再换 PostgreSQL。
 
 ## 组成
 
@@ -32,7 +36,10 @@ MISTPORT_DB=./dev.sqlite MISTPORT_PORT=8080 MISTPORT_ADMIN_TOKEN=<至少16位> s
   - 开票：先检查资格（塔层不能越级；亮灯公共目标每个账号一次），再从城市预算预留奖励，并把带进战斗的药放进票据托管。预算不够就不开战，不会打赢后才发现付不出。
   - 结算：服务器用自己保存的角色配装和 `MPCChurchBattleDriver` 复算客户端提交的操作记录。确认打赢，才付奖励（塔层还会掉材料）；打输或记录非法，奖励退回城市预算。用掉的药销毁，没用的退回。每张票只结算一次。
   - 过期：票据超过 30 分钟未结算自动关闭，奖励和药退回。
-- **本地财富带入**（用户 2026-09-29 定）：每个账号一次；同一份存档指纹只能带一次；上限 12,000（待用户确认）。存档指纹由客户端提供，服务器无法验证真伪，这个风险用户已接受。
+- **本地财富带入**（用户 2026-09-29 定带入，2026-09-30 定折算）：
+  - 最多计 12,000 本地铜，按 15% 折成共享铜（最多 1,800），和共享服每日玩法按单机 15% 付的比例一致。
+  - 每个账号一次；同一份存档指纹只能带一次。
+  - 存档指纹由客户端提供，服务器无法验证真伪，这个风险用户已接受。
 
 ## HTTP 接口（v0）
 
@@ -41,7 +48,7 @@ MISTPORT_DB=./dev.sqlite MISTPORT_PORT=8080 MISTPORT_ADMIN_TOKEN=<至少16位> s
 | GET | `/health` | 服务与战斗规则版本 |
 | POST | `/v0/accounts` | 建账号，返回 `accountID` 和 `token`（只给一次） |
 | GET | `/v0/me` | 自己的铜、物品和角色 |
-| POST | `/v0/import` | `{op, fingerprint, copper}` 本地财富带入 |
+| POST | `/v0/import` | `{op, fingerprint, copper}` 本地财富带入，回执含计入的本地铜和发出的共享铜 |
 | GET | `/v0/market?item=` | 公开挂单 |
 | POST | `/v0/market/listings` | `{op, item, quantity, unitPrice}` 挂单 |
 | POST | `/v0/market/listings/:id/buy` | `{op, quantity}` 买入 |
