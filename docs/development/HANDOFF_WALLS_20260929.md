@@ -11,8 +11,9 @@
   - 台阶大道不加路灯；
   - 本交接。
 
-  新会话从 `main` 开始。PR #22 分支已同步本轮 main，没有冲突。
-- [PR #22](https://github.com/andrewlinbridgeedu-droid/port/pull/22)（`codex/commission-decals-20260929`，Codex）的**喷泉、货场第三版已由用户在 2026-09-29 明确认可并授权合并**。当前交付为 12 张透明贴片、30 幅离线对比，未接 App、未装机；不新增路灯。认可原话、图稿哈希及运行时状态见[认可记录](commission-decals-20260929/art-approval.json)，合并结果以 PR 记录为准。
+  新会话从 `main` 开始。PR #22 已同步本轮 main 后合并，没有冲突。
+- [PR #22](https://github.com/andrewlinbridgeedu-droid/port/pull/22) 的**喷泉、货场第三版已由用户在 2026-09-29 明确认可，并合入 main（`1f6a859`）**。当前交付为 12 张透明贴片、30 幅离线对比，未接 App、未装机；不新增路灯。认可原话、图稿哈希及运行时状态见[认可记录](commission-decals-20260929/art-approval.json)。
+- **用户合并后明确：图稿先只保存在仓库，等城市贡献度第 4 档的“城市委托”（`.cityCommission`）功能做进 App，玩家完成对应委托并保存完成状态后，才显示对应首页贴片。**美术认可、PR 合并或达到第 4 档本身都不会直接显示变化；当前 12 条坐标继续 `enabled:false`。本次只补充交接与显示条件，不接 App、不装机。
 
 ### 本轮做了什么（云端，Linux）
 
@@ -40,9 +41,9 @@
 
 **Mac（Codex），按顺序：**
 1. 首页任务 1 真机收尾：截图、11 组 DEBUG 自检、Preferences 比较，交用户看。
-2. PR #22 美术已获用户认可：
+2. PR #22 美术已获用户认可并合入 main，图稿先留仓库：
    - 当前交付及 `commissionDecals` 中的大道新增灯和全部配套光效已移除；旧稿只留历史目录，不参与显示。
-   - 喷泉、货场图稿已认可；App 接入与装机是后续任务。12 条坐标继续 `enabled:false`，`reviewStatus:user-art-approved`。
+   - 等第 4 档“城市委托”功能做进 App 后，再按存档里对应委托的完成状态显示喷泉、货场贴片。App 接入与装机是后续任务；当前 12 条坐标继续 `enabled:false`，`reviewStatus:user-art-approved`。
 3. [首页任务单](CODEX_TASKS_HOME_MAP_20260929.md)的任务 2（送信）、任务 3（B07 六环）。
 4. [城市贡献度任务单](CODEX_TASKS_CITY_CONTRIBUTION_20260929.md)第 1 步（记分和迁移）；第 2 步（按档开放）等送信做完。
 5. [共享服 App 任务单](CODEX_TASKS_SHARED_SERVER_M0_20260929.md)：

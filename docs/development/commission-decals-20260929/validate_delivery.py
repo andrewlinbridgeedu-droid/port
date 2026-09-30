@@ -6,7 +6,7 @@ from PIL import Image
 HERE=Path(__file__).resolve().parent
 REPO=HERE.parents[2]
 BASE='485b5d67308f2ea9dddac476d74a8d9af4f10cfa'
-SCOPE_BASE='3c66713a7ae2c584cbaaa525b0c989aa8c815c01'
+SCOPE_BASE='1f6a859bf6b63bc849652fac0773edb8f89bb7c0'
 LAYOUT='mistport-ios/Mistport/WisteriaMap/home-map-layout.json'
 
 def main():
@@ -47,12 +47,17 @@ def main():
     approval=json.loads((HERE/'art-approval.json').read_text())
     assert approval['status']=='user-approved' and approval['artRevision']==3
     assert approval['runtimeIntegration']=='not-started'
+    assert approval['displayPrerequisites']=={
+        'feature':'cityCommission','contributionTier':4,
+        'requiresAppIntegration':True,'requiresCompletedCommission':True}
     assert len(approval['assets'])==12
     assert {e['file'] for e in approval['assets']}=={str(p.relative_to(HERE)) for p in images}
     for entry in approval['assets']:
         assert hashlib.sha256((HERE/entry['file']).read_bytes()).hexdigest()==entry['sha256']
     changed=subprocess.check_output(['git','diff','--name-only',SCOPE_BASE],cwd=REPO,text=True).splitlines()
-    assert all(p in [LAYOUT,'docs/development/HANDOFF_WALLS_20260929.md'] or p.startswith('docs/development/commission-decals-20260929/') for p in changed),changed
+    assert all(p in [LAYOUT,'docs/development/HANDOFF_WALLS_20260929.md',
+                     'docs/development/CODEX_TASKS_CITY_CONTRIBUTION_20260929.md',
+                     'mistport-ios/docs/game-design/chapter-one-30/HOME_MAP_STREET_TASKS_20260929.md'] or p.startswith('docs/development/commission-decals-20260929/') for p in changed),changed
     report={'artRevision':3,'originalPlatesUnchanged':15,'existingCityLightsUnchanged':True,
             'existingLayoutFieldsUnchanged':True,'disabledPlacementEntries':12,'transparent512Assets':12,
             'addedLamps':0,'addedLampGlowLayers':0,'beforeAfterComparisons':30,
@@ -60,7 +65,8 @@ def main():
             'withdrawnDrafts':'Five added boulevard lamps and all associated glow/order layers retained in history only',
             'appSourceOrAssetCatalogChanged':False,'iOSBuildRun':False,'deviceInstalled':False,
             'playerSavesTouched':False,'userVisualApproval':'approved',
-            'approvalRecord':'art-approval.json','imagesTrackedBy':'Git LFS'}
+            'approvalRecord':'art-approval.json','imagesTrackedBy':'Git LFS',
+            'displayPrerequisites':approval['displayPrerequisites']}
     (HERE/'validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
     print(json.dumps(report,ensure_ascii=False))
 

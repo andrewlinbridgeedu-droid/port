@@ -62,5 +62,12 @@
       "file": "assets/CommissionYardV3Sunset.png",
       "sha256": "6231c2b46bdfab3b3111ebaa0c11eb90ddad116f848f9d786cedbc2f9a0d04c7"
     }
-  ]
+  ],
+  "displayGateUserStatement": "合并后图先放在仓库里，要等“城市委托”功能（城市贡献度第 4 档）做进 App 才会显示在首页。",
+  "displayPrerequisites": {
+    "feature": "cityCommission",
+    "contributionTier": 4,
+    "requiresAppIntegration": true,
+    "requiresCompletedCommission": true
+  }
 }
