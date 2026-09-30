@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import subprocess, html, json
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'output/spell-impact-unique-20260919'
-hero={'01':'错步穿行','02':'假面谕令','04':'身份错置','05':'伪证烙印','06':'错影追猎','07':'荒谬归结','08':'反客为主','09':'后手改写','10':'无名宣告'}
+hero={'01':'错步穿行','02':'假面谕令','04':'身份错置','05':'伪证烙印','06':'双影追猎','07':'荒谬归结','08':'反客为主','09':'后手改写','10':'无名宣告'}
 actors={'archivist':'档案守卫','matriarch':'织幕女主','scribe':'书记员','rescue':'失令救援者','executor':'机械笔臂执行者','adjudicator':'裁决重卫','convoy':'护送重卫','chronarch':'总签官','fog-ghost':'幽灵','crimson-ghost':'赤红幽灵'}
 church={'saltmaw':'D02 盐囊','shellback':'D03 背囊','ironclaw':'D04 剪肢','frilled-naga':'D05 蛇冠','boneclaw':'D06 骨爪','stonehide':'D01 盾颚'}
 actions={'tower_poison':'腐蚀毒息','tower_salt_spike':'盐晶刺','tower_mend':'寄生治疗','tower_short_pounce':'短扑','tower_cut_first':'右剪','tower_cut_second':'左剪','tower_heavy_cut':'双剪重击','tower_empower':'冠冕强化','tower_sound_arrow':'声箭','tower_piercing_claw':'穿刺爪','tower_tail_sweep':'尾扫','tower_heavy_claw':'重爪','archive_slam':'地裂重击','guard':'防御','charge':'蓄力'}

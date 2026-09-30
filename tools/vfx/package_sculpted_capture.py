@@ -5,7 +5,7 @@ root=Path(__file__).resolve().parents[2]
 out=root/'output/spell-sculpted-delivery'
 out.mkdir(parents=True,exist_ok=True)
 items=[
-('主角 · 错影追猎','原角色衣装、面部与紫青轮廓光，双影穿透。','sculpted-hero-runtime/fool_skill_06','hero-06',8,67),
+('主角 · 双影追猎','原角色衣装、面部与紫青轮廓光，双影穿透。','sculpted-hero-runtime/fool_skill_06','hero-06',8,67),
 ('主角 · 荒谬归结','独立高清牌面、金属厚边，保留重牌斩落。','sculpted-hero-runtime/fool_skill_07','hero-07',10,67),
 ('猎犬 · 裂地熔爆','主角脚下分叉地裂，缝底熔岩与向上喷发。','sculpted-enemy-runtime/Hound-1','Hound-1',27,67),
 ('猎犬 · 裂隙火潮','裂缝沿地面逐段推进，火浪随之压向目标。','sculpted-enemy-runtime/Hound-2','Hound-2',27,67),
