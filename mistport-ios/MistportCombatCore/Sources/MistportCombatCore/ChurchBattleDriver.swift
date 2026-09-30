@@ -15,6 +15,12 @@ public struct MPCBattleInput: Codable, Equatable, Sendable {
         case consumable
         /// Cast the ultimate at the next free player action.
         case ultimate
+        /// Story battles: raise the ownerless mask.
+        case mask
+        /// Story battles: ring the encore bell during a charge.
+        case bell
+        /// Story battles: reorder the automatic loop; `itemID` lists skill IDs, comma-separated.
+        case sequence
     }
     public var tick: Int
     public var kind: Kind
@@ -30,6 +36,8 @@ public struct MPCBattleInput: Codable, Equatable, Sendable {
 /// its inputs. Never the outcome, the loadout or the inventory; the server holds those.
 public struct MPCBattleInputLog: Codable, Equatable, Sendable {
     public static let currentVersion = "church-battle-v2"
+    /// Chapter-one story battles (`MPCStoryBattleStepper`).
+    public static let storyVersion = "story-battle-v1"
     public var version: String
     public var encounterID: String
     public var inputs: [MPCBattleInput]
@@ -80,6 +88,27 @@ public enum MPCChurchBattleDriver {
         public let incoming: [String: Int]
         public let loadout: MPCChapterOneLoadout
         public var now: TimeInterval { Double(tick) * MPCChurchBattleDriver.step }
+    }
+
+    /// Server side: replays a story battle's log with the character the server holds.
+    public static func replayStory(_ log: MPCBattleInputLog, loadout: MPCChapterOneLoadout, consumables: [String: Int] = [:],
+                                   party: MPCPartyPersistentState = .init(), companionIDs: [String] = [],
+                                   mask: MPCStoryBattleStepper.Mask? = nil) throws -> (Result, maskCracksAdded: Int) {
+        guard log.version == MPCBattleInputLog.storyVersion else { throw Failure.version(log.version) }
+        if let first = log.inputs.first, first.tick < 0 { throw Failure.unordered(index: 0) }
+        for index in log.inputs.indices.dropFirst() where log.inputs[index].tick < log.inputs[index - 1].tick {
+            throw Failure.unordered(index: index)
+        }
+        var stepper = try MPCStoryBattleStepper(encounterID: log.encounterID, loadout: loadout, consumables: consumables,
+                                                party: party, companionIDs: companionIDs, mask: mask)
+        var cursor = 0
+        while !stepper.isFinished {
+            var due: [MPCBattleInput] = []
+            while cursor < log.inputs.count, log.inputs[cursor].tick == stepper.tick { due.append(log.inputs[cursor]); cursor += 1 }
+            _ = try stepper.step(due)
+        }
+        if cursor < log.inputs.count { throw Failure.refused(index: cursor, input: log.inputs[cursor]) }
+        return (stepper.result, stepper.maskCracksAdded)
     }
 
     /// Server side: replays a client's log. Throws if the log is not a legal battle.
@@ -205,6 +234,8 @@ public struct MPCChurchBattleStepper: Sendable {
         public var enemyCancelled: [String] = []
         /// Set when a new wave began this step: rebuild the battlefield for it.
         public var newWave: Int?
+        /// Story battles: Q1 Mara intervention happened this step; show it, then keep stepping.
+        public var intervention = false
     }
 
     public let encounterID: String
@@ -338,6 +369,9 @@ public struct MPCChurchBattleStepper: Sendable {
             case .ultimate:
                 ok = loadout.isUltimateUnlocked && !ultimateRequested && s.canUseFoolSkill(.namelessStage)
                 if ok { ultimateRequested = true }
+            case .mask, .bell, .sequence:
+                // Story-battle inputs; church battles have none of these.
+                ok = false
             }
             guard ok else { throw Failure.refused(index: inputs.count + applied.count, input: input) }
             applied.append(input)

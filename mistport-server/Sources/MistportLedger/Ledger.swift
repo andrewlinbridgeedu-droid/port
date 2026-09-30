@@ -84,7 +84,11 @@ public final class Ledger: @unchecked Sendable {
                 try db.execute("ALTER TABLE characters ADD COLUMN pacing_start INTEGER")
                 try db.execute("UPDATE characters SET pacing_start = (SELECT created_at FROM accounts WHERE accounts.id = characters.account)")
             }
-            try db.run("INSERT INTO meta(key, value) VALUES('schema', '2') ON CONFLICT(key) DO UPDATE SET value = '2'")
+            // Schema 3: story progress and the mask's lifetime cracks.
+            let columns = Set(try db.query("PRAGMA table_info(characters)").map { $0.string("name") })
+            if !columns.contains("story_cleared") { try db.execute("ALTER TABLE characters ADD COLUMN story_cleared INTEGER NOT NULL DEFAULT 0") }
+            if !columns.contains("mask_cracks") { try db.execute("ALTER TABLE characters ADD COLUMN mask_cracks INTEGER NOT NULL DEFAULT 0") }
+            try db.run("INSERT INTO meta(key, value) VALUES('schema', '3') ON CONFLICT(key) DO UPDATE SET value = '3'")
         }
     }
 
@@ -127,13 +131,16 @@ public final class Ledger: @unchecked Sendable {
 
     public func account(_ id: String) throws -> AccountView {
         try locked {
-            guard let row = try db.query("SELECT a.cash, c.floor, c.max_floor, c.pacing_start FROM accounts a JOIN characters c ON c.account = a.id WHERE a.id = ?", [.text(id)]).first else {
+            guard let row = try db.query("SELECT a.cash, c.floor, c.max_floor, c.pacing_start, c.story_cleared, c.mask_cracks FROM accounts a JOIN characters c ON c.account = a.id WHERE a.id = ?", [.text(id)]).first else {
                 throw LedgerError.notFound
             }
             let day = pacingDay(start: row.int("pacing_start"))
             return AccountView(accountID: id, cash: row.int("cash"), items: try itemsOwned(by: id),
                                characterFloor: Int(row.int("floor")), maxFloor: Int(row.int("max_floor")),
-                               pacingDay: day, towerFirstClearsAllowed: MPCDailyPacing.towerFirstClearsAllowed(day: day))
+                               pacingDay: day, towerFirstClearsAllowed: MPCDailyPacing.towerFirstClearsAllowed(day: day),
+                               storyCleared: Int(row.int("story_cleared")),
+                               nextMissionOpen: row.int("story_cleared") < 30 && MPCDailyPacing.isMissionOpen(Int(row.int("story_cleared")) + 1, day: day),
+                               maskCracks: Int(row.int("mask_cracks")))
         }
     }
 
@@ -267,7 +274,7 @@ public final class Ledger: @unchecked Sendable {
     public func openTicket(account: String, op: String, request: BattleRequest) throws -> TicketReceipt {
         try expireTickets()
         return try operation("open-ticket", account: account, op: op, payload: request) {
-            guard let character = try db.query("SELECT floor, max_floor, pacing_start FROM characters WHERE account = ?", [.text(account)]).first else { throw LedgerError.notFound }
+            guard let character = try db.query("SELECT floor, max_floor, pacing_start, story_cleared FROM characters WHERE account = ?", [.text(account)]).first else { throw LedgerError.notFound }
             let id = "t-" + Self.randomHex(8)
             let encounter: String
             var reward: Int64 = 0
@@ -289,6 +296,18 @@ public final class Ledger: @unchecked Sendable {
                 encounter = MPCLightsPublicTarget.encounterID(side: side, ticket: id)
                 reward = policy.lightsPublicReward
                 try db.run("INSERT INTO lights_attempts(account, side, ticket, won) VALUES(?, ?, ?, 0)", [.text(account), .text(raw), .text(id)])
+            case .story:
+                // Story battles are replayed with MPCStoryBattleStepper (user decision 2026-09-30).
+                // The next mission opens by day (MPCDailyPacing); cleared ones can be replayed.
+                // First-clear copper waits for the shared-only economy decision: none yet.
+                guard let mission = request.mission, (1...30).contains(mission) else { throw LedgerError.invalidRequest }
+                let cleared = Int(character.int("story_cleared"))
+                guard mission <= cleared + 1 else { throw LedgerError.notEligible }
+                if mission == cleared + 1,
+                   !MPCDailyPacing.isMissionOpen(mission, day: pacingDay(start: character.int("pacing_start"))) {
+                    throw LedgerError.dailyLimit
+                }
+                encounter = String(format: "chapter01_q%02d_encounter", mission)
             }
             let escrow = "ticket:" + id
             try ensureAccount(escrow, kind: "escrow")
@@ -305,10 +324,11 @@ public final class Ledger: @unchecked Sendable {
             try db.run("""
                 INSERT INTO tickets(id, account, kind, floor, side, encounter, reward, character_floor, consumables, status, created_at, expires_at)
                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 'open', ?, ?)
-                """, [.text(id), .text(account), .text(request.kind.rawValue), request.floor.map { .int(Int64($0)) } ?? .null,
+                """, [.text(id), .text(account), .text(request.kind.rawValue), (request.kind == .story ? request.mission : request.floor).map { .int(Int64($0)) } ?? .null,
                       request.side.map(Database.Value.text) ?? .null, .text(encounter), .int(reward), .int(character.int("floor")),
                       .text(try Self.json(request.consumables)), .int(clock()), .int(expires)])
-            return TicketReceipt(ticketID: id, encounterID: encounter, ruleVersion: MPCBattleInputLog.currentVersion, reward: reward,
+            return TicketReceipt(ticketID: id, encounterID: encounter,
+                                 ruleVersion: request.kind == .story ? MPCBattleInputLog.storyVersion : MPCBattleInputLog.currentVersion, reward: reward,
                                  expiresAt: expires, characterFloor: Int(character.int("floor")), consumables: request.consumables)
         }
     }
@@ -328,9 +348,23 @@ public final class Ledger: @unchecked Sendable {
         // the transaction below checks again that the ticket is still open.
         let ticket = try locked { try db.query("SELECT * FROM tickets WHERE id = ? AND account = ?", [.text(ticketID), .text(account)]).first }
         var verdict: Result<MPCChurchBattleDriver.Result, MPCChurchBattleDriver.Failure>?
+        var cracksAdded = 0
         if let ticket, ticket.string("status") == "open", log.encounterID == ticket.string("encounter") {
             let brought = try Self.decode([String: Int64].self, ticket.string("consumables")).mapValues(Int.init)
-            do { verdict = .success(try MPCChurchBattleDriver.replay(log, loadout: LedgerCatalog.loadout(floor: Int(ticket.int("character_floor"))), consumables: brought)) }
+            let loadout = LedgerCatalog.loadout(floor: Int(ticket.int("character_floor")))
+            do {
+                if ticket.string("kind") == BattleRequest.Kind.story.rawValue {
+                    // The mask the server holds: owned from Q3 (M0: every character), lent for
+                    // teaching in Q3–Q4, with its lifetime cracks.
+                    let mission = Int(ticket.int("floor"))
+                    let cracks = try locked { Int(try db.query("SELECT mask_cracks FROM characters WHERE account = ?", [.text(account)]).first?.int("mask_cracks") ?? 0) }
+                    let (result, added) = try MPCChurchBattleDriver.replayStory(log, loadout: loadout, consumables: brought,
+                                                                                mask: .init(owned: true, teachingLoan: mission == 3 || mission == 4, cracks: cracks))
+                    verdict = .success(result); cracksAdded = added
+                } else {
+                    verdict = .success(try MPCChurchBattleDriver.replay(log, loadout: loadout, consumables: brought))
+                }
+            }
             catch let failure as MPCChurchBattleDriver.Failure { verdict = .failure(failure) }
         }
 
@@ -378,6 +412,8 @@ public final class Ledger: @unchecked Sendable {
                         drops[item] = Int64(count)
                     }
                     try db.run("UPDATE characters SET max_floor = MAX(max_floor, ?) WHERE account = ?", [.int(Int64(floor)), .text(account)])
+                } else if ticket.string("kind") == BattleRequest.Kind.story.rawValue {
+                    try db.run("UPDATE characters SET story_cleared = MAX(story_cleared, ?) WHERE account = ?", [.int(ticket.int("floor")), .text(account)])
                 } else {
                     let side = ticket.string("side")
                     try db.run("INSERT INTO public_scores(event, side, points) VALUES('lights', ?, 1) ON CONFLICT(event, side) DO UPDATE SET points = points + 1", [.text(side)])
@@ -386,6 +422,10 @@ public final class Ledger: @unchecked Sendable {
                 }
             } else if reward > 0 {
                 try move(op: op, from: escrow, to: Self.cityBudget, amount: reward); released = reward
+            }
+            // Mask cracks are spent whether the battle was won or lost, but never on a rejected log.
+            if status != .rejected, cracksAdded > 0 {
+                try db.run("UPDATE characters SET mask_cracks = MIN(10, mask_cracks + ?) WHERE account = ?", [.int(Int64(cracksAdded)), .text(account)])
             }
             let receipt = SettlementReceipt(ticketID: ticketID, status: status, reason: reason, seconds: seconds, playerHP: hp,
                                             rewardPaid: paid, rewardReleased: released, consumablesUsed: used, consumablesReturned: returned,

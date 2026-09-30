@@ -1,0 +1,12 @@
+Q8 high   req F10      bare lose prevOnly lose open F10-noWallRelic WIN  minFloor F6 | first try WIN  hp 39% 27s
+Q8 medium req F10      bare lose prevOnly lose open F10-noWallRelic WIN  minFloor F2 | first try WIN  hp 39% 28s
+Q12 high   req F10+B01  bare lose prevOnly lose open F30-noWallRelic lose minFloor F0 | first try WIN  hp 29% 36s
+Q12 medium req F10+B01  bare lose prevOnly lose open F30-noWallRelic lose minFloor F0 | first try WIN  hp 28% 42s
+Q18 high   req F50      bare lose prevOnly lose open F70-noWallRelic WIN  minFloor F50 | first try WIN  hp 43% 39s
+Q18 medium req F50      bare lose prevOnly lose open F70-noWallRelic WIN  minFloor F50 | first try WIN  hp 36% 44s
+Q22 high   req F50+B04  bare lose prevOnly lose open F100-noWallRelic lose minFloor F0 | first try WIN  hp 50% 34s
+Q22 medium req F50+B04  bare lose prevOnly lose open F100-noWallRelic lose minFloor F0 | first try WIN  hp 50% 36s
+Q26 high   req F70      bare lose prevOnly lose open F100-noWallRelic WIN  minFloor F70 | first try WIN  hp 43% 37s
+Q26 medium req F70      bare lose prevOnly lose open F100-noWallRelic WIN  minFloor F70 | first try WIN  hp 43% 44s
+Q30 high   req F90+B10  bare lose prevOnly lose open F100-noWallRelic lose minFloor F90 | first try WIN  hp 61% 35s
+Q30 medium req F90+B10  bare lose prevOnly lose open F100-noWallRelic lose minFloor F90 | first try WIN  hp 59% 40s

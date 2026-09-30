@@ -6,7 +6,7 @@
 
 ```sh
 swift build
-swift test                     # 账本 18 项 + HTTP 端到端 2 项
+swift test                     # 账本 20 项 + HTTP 端到端 2 项
 MISTPORT_DB=./dev.sqlite MISTPORT_PORT=8080 MISTPORT_ADMIN_TOKEN=<至少16位> swift run mistport-server
 ```
 
@@ -40,8 +40,9 @@ MISTPORT_DB=./dev.sqlite MISTPORT_PORT=8080 MISTPORT_ADMIN_TOKEN=<至少16位> s
   - 和单机同一套规则（`MPCDailyPacing`）：塔层首通每天 4 层，跳过的天照算。
   - 开塔层票据时判断，超出的直接拒绝（`dailyLimit`），不预留任何东西；已通关的楼层重打不受限。
   - 每个角色有开始日：新号从建号当天算；运维设角色时，照单机迁移旧档的办法往前推，推到下一层今天能打为止。
-  - 服务器的一天从 `LedgerPolicy.pacingTimeZone` 零点开始（候选 `Asia/Shanghai`）。
+  - 服务器的一天从 `LedgerPolicy.pacingTimeZone` 零点开始（用户 2026-09-30 定：太平洋时间，`America/Los_Angeles`）。
   - 旧库自动升级到 schema 2。
+- **主线战斗**（2026-09-30）：主线票据按天放开，服务器用 `MPCStoryBattleStepper` 复算，赢了才记通关；首通铜币等经济重定后再发。见 [主线 v1 记录](../docs/development/shared-server-m0-20260929/STORY_BATTLE_V1_20260930.md)。
 - **本地财富带入**（用户 2026-09-29 定带入，2026-09-30 定折算）：
   - 最多计 12,000 本地铜，按 15% 折成共享铜（最多 1,800），和共享服每日玩法按单机 15% 付的比例一致。
   - 每个账号一次；同一份存档指纹只能带一次。
@@ -53,13 +54,13 @@ MISTPORT_DB=./dev.sqlite MISTPORT_PORT=8080 MISTPORT_ADMIN_TOKEN=<至少16位> s
 |---|---|---|
 | GET | `/health` | 服务与战斗规则版本 |
 | POST | `/v0/accounts` | 建账号，返回 `accountID` 和 `token`（只给一次） |
-| GET | `/v0/me` | 自己的铜、物品和角色；`pacingDay`（第几天）、`towerFirstClearsAllowed`（到今天为止最多首通几层） |
+| GET | `/v0/me` | 自己的铜、物品和角色；`storyCleared`、`nextMissionOpen`、`maskCracks`；`pacingDay`（第几天）、`towerFirstClearsAllowed`（到今天为止最多首通几层） |
 | POST | `/v0/import` | `{op, fingerprint, copper}` 本地财富带入，回执含计入的本地铜和发出的共享铜 |
 | GET | `/v0/market?item=` | 公开挂单 |
 | POST | `/v0/market/listings` | `{op, item, quantity, unitPrice}` 挂单 |
 | POST | `/v0/market/listings/:id/buy` | `{op, quantity}` 买入 |
 | POST | `/v0/market/listings/:id/cancel` | `{op}` 撤单 |
-| POST | `/v0/battles` | `{op, battle: {kind: "tower"/"lights-public", floor, side, consumables}}` 开票 |
+| POST | `/v0/battles` | `{op, battle: {kind: "tower"/"lights-public"/"story", floor, side, mission, consumables}}` 开票 |
 | POST | `/v0/battles/:id/settle` | `{op, log}` 提交操作记录结算 |
 | GET | `/v0/events/lights` | 亮灯事件两派公共贡献 |
 | GET | `/v0/admin/audit` | 审计（需 `X-Admin-Token`） |
