@@ -1,6 +1,6 @@
 # H3：住处自检与界面复看 · 2026-09-30
 
-**H3 尚未完成，PR 保持草稿。** iPhone 13 当前在 devicectl 中为 `unavailable`，没有安装 169.12，没有读取真实设备 Preferences，也没有真机截图或用户视觉认可。
+**H3 尚未完成，[PR #35](https://github.com/andrewlinbridgeedu-droid/port/pull/35) 保持草稿、未合并。** iPhone 13 当前在 devicectl 中为 `unavailable`，没有安装 169.12，没有读取真实设备 Preferences，也没有真机截图或用户视觉认可。
 
 H2 已由 [PR #34](https://github.com/andrewlinbridgeedu-droid/port/pull/34) 合入 main（`bfdb800e8fd8e81bde830cd86f43aee3dd839355`）。H3 从该 main 新开 `codex/housing-h3-verification-20260930`。下面的结果只证明已执行的范围，不能替代真机复看。
 

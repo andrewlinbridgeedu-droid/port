@@ -11,7 +11,7 @@
 
 - H0 三张风格板用户回复“认可”，PR #32 已合入 main。H1 经 [PR #33](https://github.com/andrewlinbridgeedu-droid/port/pull/33) 合入 main（`7b85f0f`）：六处住处、分层赁屋行、图标、封蜡与门牌。地图 v1 被拒绝，当前选房地图直接使用首页原画，左侧高级住宅区可选、右侧贵族区不列普通租房。H1 最终视觉认可仍待 H3 真机。
 - H2 经 [PR #34](https://github.com/andrewlinbridgeedu-droid/port/pull/34) 合入 main（`bfdb800e`）。已接赁屋行、五步选房、换餐、太平洋日日结、HousingService 账本适配器、带回执的体力扣除、首页门牌／灯与高地告示入口。签名 Debug Build169.11 与规则库 557 项测试通过；见 [H2 行为与验证边界](housing-app-20260930/README.md)。
-- H3 新分支 `codex/housing-h3-verification-20260930` 从 `bfdb800e` 开始，保持草稿：签名 Debug Build169.12 构建通过，模拟器生产 Swift 住处自检 21 项、原有 11 组自检通过，导出 11 张原样模拟器截图。铜门牌提高对比度；首页灯按远近缩放，拱廊住处锚点移到墙面 `(0.145, 0.560)`，仍待真机认可。复现方法、报告与截图见 [H3 记录](housing-app-20260930/VERIFICATION-H3.md)。
+- H3 [草稿 PR #35](https://github.com/andrewlinbridgeedu-droid/port/pull/35)，新分支 `codex/housing-h3-verification-20260930` 从 `bfdb800e` 开始，尚未合并：签名 Debug Build169.12 构建通过，模拟器生产 Swift 住处自检 21 项、原有 11 组自检通过，导出 11 张原样模拟器截图。铜门牌提高对比度；首页灯按远近缩放，拱廊住处锚点移到墙面 `(0.145, 0.560)`，仍待真机认可。复现方法、报告与截图见 [H3 记录](housing-app-20260930/VERIFICATION-H3.md)。
 - iPhone 13 当前 `unavailable`，169.12 未装机、未读写真实玩家 Preferences，逐文件对比和真机截图未做。不要把模拟器、构建或自检当作用户视觉认可。下一步先连接、解锁，再备份 Preferences，成功后才装隔离测试版；见 H3 记录的操作顺序。
 - 共享服时钟、真实剩余房间和排队尚未接入，目录容量仅用于接口夹具；没有离线产品模式或旧存档迁移。
 - 15 张首页原画 SHA-256 不变，原灯光资源不变，城市委托贴片仍禁用。高地石宅在左侧高级住宅区，右侧贵族入住条件尚未定义；具体高地任务未开放。
