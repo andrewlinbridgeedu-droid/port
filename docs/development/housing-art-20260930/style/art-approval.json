@@ -1,0 +1,26 @@
+{
+  "task": "H0",
+  "status": "user-approved",
+  "approvedOn": "2026-09-30",
+  "reviewedCommit": "6feddd5799628593aabdb1dc9c6d2098068377d6",
+  "userStatement": "认可",
+  "clarifiedQuestion": "你是说“认可”这三张风格板吗？确认后我就合并 PR #32，继续 H1。",
+  "pullRequest": "https://github.com/andrewlinbridgeedu-droid/port/pull/32",
+  "boards": [
+    {
+      "file": "01-stone-arches-v1.png",
+      "sha256": "db9b31e65cd36151234027988df84130a658c0f7975e1ccd62083ab7b10e704e"
+    },
+    {
+      "file": "02-bell-lantern-v1.png",
+      "sha256": "e25c9384d1775d79c667afbe8479ec5dbf43e8dacaedacf143df2e4788c522bd"
+    },
+    {
+      "file": "03-iron-glass-v1.png",
+      "sha256": "5823bdecaab1c86e7e4305fdec7d809f3c089876c28583a350eefe562d94fc75"
+    }
+  ],
+  "H1Authorized": true,
+  "runtimeIntegration": "not-started",
+  "deviceInstalled": false
+}
