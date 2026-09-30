@@ -6,6 +6,7 @@ from PIL import Image
 HERE=Path(__file__).resolve().parent
 REPO=HERE.parents[2]
 BASE='485b5d67308f2ea9dddac476d74a8d9af4f10cfa'
+SCOPE_BASE='3c66713a7ae2c584cbaaa525b0c989aa8c815c01'
 LAYOUT='mistport-ios/Mistport/WisteriaMap/home-map-layout.json'
 
 def main():
@@ -20,7 +21,7 @@ def main():
     assert layout==old
     assert len(entries)==12 and len({e['id'] for e in entries})==12
     for entry in entries:
-        assert entry['enabled'] is False and entry['reviewStatus']=='pending-user-art-approval'
+        assert entry['enabled'] is False and entry['reviewStatus']=='user-art-approved'
         assert entry['artRevision']==3 and entry['coordinateUnit']=='painting-height=1'
         assert entry['zone'] in ['plaza','yard'] and 'lighting' not in entry
         assert '/assets/Commission' in entry['file'] and 'V3' in entry['file'] and 'history' not in entry['file']
@@ -43,7 +44,14 @@ def main():
     assert review['previewOnly'] and review['originalsUnchanged'] and review['comparisonCount']==30
     assert len(list((HERE/'comparisons').glob('*.png')))==30
     assert all(e['site'] in ['fountain','yard'] and (HERE/e['comparison']).is_file() for e in review['comparisons'])
-    changed=subprocess.check_output(['git','diff','--name-only',BASE],cwd=REPO,text=True).splitlines()
+    approval=json.loads((HERE/'art-approval.json').read_text())
+    assert approval['status']=='user-approved' and approval['artRevision']==3
+    assert approval['runtimeIntegration']=='not-started'
+    assert len(approval['assets'])==12
+    assert {e['file'] for e in approval['assets']}=={str(p.relative_to(HERE)) for p in images}
+    for entry in approval['assets']:
+        assert hashlib.sha256((HERE/entry['file']).read_bytes()).hexdigest()==entry['sha256']
+    changed=subprocess.check_output(['git','diff','--name-only',SCOPE_BASE],cwd=REPO,text=True).splitlines()
     assert all(p in [LAYOUT,'docs/development/HANDOFF_WALLS_20260929.md'] or p.startswith('docs/development/commission-decals-20260929/') for p in changed),changed
     report={'artRevision':3,'originalPlatesUnchanged':15,'existingCityLightsUnchanged':True,
             'existingLayoutFieldsUnchanged':True,'disabledPlacementEntries':12,'transparent512Assets':12,
@@ -51,7 +59,8 @@ def main():
             'coverage':'2 places × 5 seasons × 3 times; exactly one decal per selected scene',
             'withdrawnDrafts':'Five added boulevard lamps and all associated glow/order layers retained in history only',
             'appSourceOrAssetCatalogChanged':False,'iOSBuildRun':False,'deviceInstalled':False,
-            'playerSavesTouched':False,'userVisualApproval':'pending','imagesTrackedBy':'Git LFS'}
+            'playerSavesTouched':False,'userVisualApproval':'approved',
+            'approvalRecord':'art-approval.json','imagesTrackedBy':'Git LFS'}
     (HERE/'validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
     print(json.dumps(report,ensure_ascii=False))
 

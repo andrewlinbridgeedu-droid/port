@@ -117,5 +117,7 @@
     }
   ],
   "historicalProvenance": "history/v2/generation-paths.json",
-  "notes": "用户最新明确不加灯；本版只增强喷泉和货场。逐时段图像生成器绘色，脚本只做透明配准与叠图。未接 App、未装机、用户看图确认仍待完成。"
+  "notes": "用户已明确认可喷泉和货场第三版，并授权合并 PR #22；不加灯。逐时段图像生成器绘色，脚本只做透明配准与叠图。图稿与用户认可时的 SHA-256 一致；App 尚未接入，未装机。",
+  "userVisualApproval": "approved",
+  "approvalRecord": "art-approval.json"
 }

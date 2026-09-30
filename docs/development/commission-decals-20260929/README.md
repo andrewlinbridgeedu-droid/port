@@ -1,6 +1,6 @@
-# 城市委托贴片 · 第三版，待用户确认
+# 城市委托贴片 · 第三版，用户已认可
 
-[草稿 PR #22](https://github.com/andrewlinbridgeedu-droid/port/pull/22)，分支 codex/commission-decals-20260929。按用户最新要求，**本版只做喷泉和货场，不新增路灯**。只提交图稿、候选坐标和离线对比；用户确认前不接 App、不装机、不合并。
+[PR #22](https://github.com/andrewlinbridgeedu-droid/port/pull/22)，分支 codex/commission-decals-20260929。用户于 2026-09-29 明确认可喷泉、货场第三版，并授权合并 PR；认可记录及 12 张贴片的 SHA-256 见 [art-approval.json](art-approval.json)。**本版只做喷泉和货场，不新增路灯**。本 PR 仅交图稿、坐标和离线对比；App 接入及装机另留后续任务。
 
 ## 本版变化
 
@@ -11,6 +11,8 @@
 另一个 agent 的参考意见提的是“补地面光晕”，没有要求加更多灯；五盏来自最初的 4–5 盏要求。用户最新明确不加灯后，该要求已撤回。旧稿只供追溯，不能用于 App 接入。
 
 ## 看图
+
+以下图内“待确认”字样是出图时的记录；用户已认可第三版，图片与认可时保持一致。
 
 ![上一版与第三版](revision-v3-overview.jpg)
 
@@ -34,7 +36,7 @@ assets/ 根目录只有本版 **12 张 512×512 RGBA**：两处各有普通白�
 | 喷泉广场 | (2090,1000,690,690) | 花坛留在喷泉台面 |
 | 工坊货场 | (3016,1000,1080,1080) | 扩到可见前景地面，吊臂仍是原吊臂 |
 
-[home-map-layout.json](../../../mistport-ios/Mistport/WisteriaMap/home-map-layout.json) 的 commissionDecals 仅保留这两处的 12 条记录，全部 enabled:false、reviewStatus:pending-user-art-approval。坐标 x、y、宽、高均除以画高 2305；at 是完整透明方形画布中心。file 指向 docs 图稿，原有布局字段不变。没有增加 Swift 读取或绘制逻辑，没有把图加入 AssetCatalog。
+[home-map-layout.json](../../../mistport-ios/Mistport/WisteriaMap/home-map-layout.json) 的 commissionDecals 仅保留这两处的 12 条记录，全部 enabled:false、reviewStatus:user-art-approved。图稿已获认可，运行时接入尚未开始。坐标 x、y、宽、高均除以画高 2305；at 是完整透明方形画布中心。file 指向 docs 图稿，原有布局字段不变。没有增加 Swift 读取或绘制逻辑，没有把图加入 AssetCatalog。
 
 ## 提示词、原件与复现
 
@@ -47,4 +49,4 @@ assets/ 根目录只有本版 **12 张 512×512 RGBA**：两处各有普通白�
 
 依次运行本目录 prepare_assets.py、prepare_layout.py、render_review.py、validate_delivery.py，可复现透明贴片、禁用坐标和全部离线对比。需要 Python 3、Pillow 和系统宋体。
 
-验证见 [validation.json](validation.json)：15 张首页原画与既有灯光不变；两处 × 15 场景覆盖，12 张透明贴片、12 条禁用坐标。未运行 iOS 构建或规则测试，未修改玩法、设备或玩家存档。生成完成和数据检查通过不代表用户视觉认可，本版仍等用户看图确认。
+验证见 [validation.json](validation.json)：15 张首页原画与既有灯光不变；两处 × 15 场景覆盖，12 张透明贴片、12 条禁用坐标；贴片哈希与用户认可记录一致。未运行 iOS 构建或规则测试，未修改玩法、设备或玩家存档。本版的视觉认可来自用户本次明确回复，不来自生成结果或数据检查。

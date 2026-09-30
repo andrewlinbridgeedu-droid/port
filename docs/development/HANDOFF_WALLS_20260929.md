@@ -11,8 +11,8 @@
   - 台阶大道不加路灯；
   - 本交接。
 
-  新会话从 `main` 开始。本页也被草稿 PR #22 改过，已试合并，没有冲突。
-- 草稿 [PR #22](https://github.com/andrewlinbridgeedu-droid/port/pull/22)（`codex/commission-decals-20260929`，Codex）是城市委托的街景贴片图稿，等用户看图，不能合并。
+  新会话从 `main` 开始。PR #22 分支已同步本轮 main，没有冲突。
+- [PR #22](https://github.com/andrewlinbridgeedu-droid/port/pull/22)（`codex/commission-decals-20260929`，Codex）的**喷泉、货场第三版已由用户在 2026-09-29 明确认可并授权合并**。当前交付为 12 张透明贴片、30 幅离线对比，未接 App、未装机；不新增路灯。认可原话、图稿哈希及运行时状态见[认可记录](commission-decals-20260929/art-approval.json)，合并结果以 PR 记录为准。
 
 ### 本轮做了什么（云端，Linux）
 
@@ -40,9 +40,9 @@
 
 **Mac（Codex），按顺序：**
 1. 首页任务 1 真机收尾：截图、11 组 DEBUG 自检、Preferences 比较，交用户看。
-2. PR #22：
-   - 先删掉大道部分：贴片、灯芯、落地光、LightOrder 数值图、对比图，以及 `home-map-layout.json` 里 `commissionDecals` 和 `lighting.ground` 中大道的条目；
-   - 喷泉、货场等用户看图确认后再接 App。
+2. PR #22 美术已获用户认可：
+   - 当前交付及 `commissionDecals` 中的大道新增灯和全部配套光效已移除；旧稿只留历史目录，不参与显示。
+   - 喷泉、货场图稿已认可；App 接入与装机是后续任务。12 条坐标继续 `enabled:false`，`reviewStatus:user-art-approved`。
 3. [首页任务单](CODEX_TASKS_HOME_MAP_20260929.md)的任务 2（送信）、任务 3（B07 六环）。
 4. [城市贡献度任务单](CODEX_TASKS_CITY_CONTRIBUTION_20260929.md)第 1 步（记分和迁移）；第 2 步（按档开放）等送信做完。
 5. [共享服 App 任务单](CODEX_TASKS_SHARED_SERVER_M0_20260929.md)：
@@ -56,7 +56,6 @@
 
 ### 还要用户定或认可
 
-- PR #22 喷泉和货场的图稿。第二版货场已改成深蓝浅金的港务帆布、8 只货箱堆三层，附了手机宽度预览。
 - 首页标注位置（在任务 1 的真机截图上复核），以及首页、柜台分层、八方向行走、底栏缩小的真机认可。
 - **每天的内容时长**：模拟器估算一般速度每天只有约 12 分钟正经内容，离“每天 1–2 小时”差很远。改目标（例如每天 15–30 分钟）、加内容，还是两者结合，还没定。见[人类计时记录](human-timing-20260929/README.md)。
 

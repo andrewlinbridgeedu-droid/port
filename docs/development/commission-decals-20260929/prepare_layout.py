@@ -7,6 +7,8 @@ REPO = HERE.parents[2]
 LAYOUT = REPO / 'mistport-ios/Mistport/WisteriaMap/home-map-layout.json'
 REGIONS = json.loads((HERE / 'regions.json').read_text())
 PREFIXES = {'fountain': 'CommissionFountainV3', 'yard': 'CommissionYardV3'}
+APPROVAL = json.loads((HERE / 'art-approval.json').read_text())
+assert APPROVAL['status'] == 'user-approved' and APPROVAL['artRevision'] == 3
 
 def main():
     entries = []
@@ -24,7 +26,7 @@ def main():
                     'anchor': 'center', 'coordinateUnit': 'painting-height=1',
                     'seasons': ['winterSnow'] if snow else ['spring', 'summer', 'autumn', 'winter'],
                     'times': [time.lower()],
-                    'enabled': False, 'reviewStatus': 'pending-user-art-approval',
+                    'enabled': False, 'reviewStatus': 'user-art-approved',
                 }
                 entry['artRevision'] = 3
                 entries.append(entry)

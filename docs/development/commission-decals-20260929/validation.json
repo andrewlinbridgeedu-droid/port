@@ -14,6 +14,7 @@
   "iOSBuildRun": false,
   "deviceInstalled": false,
   "playerSavesTouched": false,
-  "userVisualApproval": "pending",
+  "userVisualApproval": "approved",
+  "approvalRecord": "art-approval.json",
   "imagesTrackedBy": "Git LFS"
 }
