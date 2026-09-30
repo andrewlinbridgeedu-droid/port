@@ -19,22 +19,20 @@
 - 测试在 `ChurchBattleDriverTests.swift`。
 - 驱动器现在和调参用的塔层验证模型（`MPCChurchTowerVerificationRunner`、模拟器 `TowerDriver`）一致，**和 App 还不一致**。
 
-## 1. 先把 App 与驱动器的差别搬进规则库
+## 1. 先把 App 与驱动器的差别搬进规则库（已完成，2026-09-30 云端）
 
-逐条核对 `tickContinuousCombat()` 中 `session.isChurchCombat` 的分支和敌人出手部分。凡是影响胜负、血量、时机的，都要搬进 `MPCChurchBattleStepper`，不能留在视图或 Unity 里。已看到的差别：
+已完成，见 [church-battle-v2 记录](shared-server-m0-20260929/CHURCH_BATTLE_V2_20260930.md)：
+- 找到的差别共 8 处，比原来列的 6 处多出两处：等待蓄力时隔 0.25 秒再试；不在塔层表里的敌人的开场延迟。另外补上了缄卷镇纸封招。
+- 规则版本改为 `church-battle-v2`。
+- 塔层验证模型和模拟器的 `TowerDriver` 都改走推进器。
+- 调数结论不变：墙关探针、关卡门槛表、一百层塔、各路线里程碑、时间扰动样本都没有胜负变化。
 
-| # | App 现在 | 驱动器现在 |
-|---|---|---|
-| 1 | 敌人死时还有已出手的攻击：`cancelCommittedEnemyImpact` 撤销 | 照常结算（`endRound`） |
-| 2 | Unity 回调 `enemy-cancel:<id>` → `cancelTargetedSupport`，该敌人立即可再出手 | 没有 |
-| 3 | 换波时清空所有待命中攻击、出手时刻，目标改为第一个活着的敌人 | 待命中攻击跨波保留 |
-| 4 | 没有蓄力的教会敌人：出手后固定 0.5 秒结算，0.5 秒后可再出手；是否等 Unity 接触回调需核对 | 按 `MPCChurchTowerCatalog.contactDuration` 结算，结算后立即可再出手 |
-| 5 | 玩家出招的命中时刻可能取自 Unity 接触回调（`pendingPlayerImpact`） | 固定取 `playerContact`（与塔层验证模型相同） |
-| 6 | 真实时间（`systemUptime`） | 固定 50 毫秒一格 |
+接入时要注意的新事件：
+- `enemyCancelled`：收起这次出手动画；
+- `newWave`：按新一波重建战场；
+- `cast.sealed`：不播这一招的渲染，时间照旧。
 
-- 规则以 App 现行手感为准。每搬一条都在规则库补测试，并在 `ChurchBattleDriverTests` 里保留“录制＝复算”。
-- 规则版本改成 `church-battle-v2`（`MPCBattleInputLog.currentVersion`）。
-- 搬完后，模拟器的 `TowerDriver` 和 `MPCChurchTowerVerificationRunner` 也改用 stepper，再跑一次墙关探针和塔层验收，看调数结论变不变。变了要报告，不要自己改平衡。
+敌人攻击的命中时刻取 `MPCChurchTowerCatalog.contactDuration`，玩家出招取 `MPCChurchBattleDriver.playerContact`。Unity 的 `enemy:`、`enemy-cancel:`、`player` 接触回调在教会战斗里不再决定结算，动画要对齐这两张表。
 
 ## 2. App 改用 stepper
 

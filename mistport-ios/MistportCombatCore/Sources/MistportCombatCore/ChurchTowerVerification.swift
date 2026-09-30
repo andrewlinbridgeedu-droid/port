@@ -41,105 +41,76 @@ public enum MPCChurchTowerVerificationRunner {
         loadout.churchGear = earnedGear.stats
         return loadout
     }
-    public static func playerContact(_ skill: FoolSkillID) -> Double {
-        switch skill {
-        case .sidestepStrike: 0.6192
-        case .identityDisplacement: 0.441
-        case .fabricatedEvidence: 0.543
-        case .mirrorPursuit, .backstageChange: 0.705
-        case .absurdFinale: 0.885
-        case .turnTheTables: 0.63
-        case .namelessStage: 0.96
-        default: 0.38
-        }
-    }
-    public static func run(number: Int, route: Route = .medal, medalOffset: Double = 22, jitter: Double = 0, seed: UInt64 = 1, passive: String? = nil) throws -> Report {
+    public static func playerContact(_ skill: FoolSkillID) -> Double { MPCChurchBattleDriver.playerContact(skill) }
+
+    /// Plays one church-family battle through `MPCChurchBattleStepper` (the App's rules)
+    /// with this runner's choices as player inputs: target back sacs, then crowns, then
+    /// escorts, then anything not guarding; the medal on a timer; the blank card against
+    /// heavy hits (route .blankCard, Q17+); the ultimate once in the final wave.
+    /// `encounterID` plays another church battle (bounty, street) with floor `number`'s
+    /// loadout unless `suppliedLoadout` is given. `jitter` and `actionDelay` are model-only timing.
+    public static func run(number: Int, route: Route = .medal, medalOffset: Double = 22, jitter: Double = 0, seed: UInt64 = 1,
+                           passive: String? = nil, suppliedLoadout: MPCChapterOneLoadout? = nil, actionDelay: Double = 0,
+                           encounterID: String? = nil) throws -> Report {
         let floor = MPCChurchTowerCatalog.floor(number: number)!
         var loadout = recommendedLoadout(for: floor, route: route)
         if let passive { loadout.relicIDs = [passive] }
-        let sequence = loadout.normalSkillIDs
-        var s = try MPCChapterOneEncounterSession.start(encounterID: floor.id, companionIDs: [], loadout: loadout)
-        var randomState = seed
+        if let suppliedLoadout { loadout = suppliedLoadout }
+        let heavy: Set<String> = ["archive_slam", "tower_heavy_cut", "tower_piercing_claw", "tower_heavy_claw", "tower_cut_first"]
+        // The policy's own clock noise (medal timing), separate from the stepper's.
+        var randomState = seed ^ 0x9E37_79B9_7F4A_7C15
         func variation() -> Double {
+            guard jitter != 0 else { return 0 }
             randomState = randomState &* 6364136223846793005 &+ 1442695040888963407
             return (Double((randomState >> 32) % 10001) / 5000 - 1) * jitter
         }
         var nextMedalAt = max(0, medalOffset + variation())
-        var scheduler = ContinuousSkillScheduler(), playerAt = 0.0, basicAt = 0.0
-        var hit: (FoolSkillID?, String, Double)?
-        var ready: [String: Double] = [:], pending: [String: Double] = [:]
-        var elapsed = 0.0, wave = -1, waveHP: [Int] = [], rosters: [[String]] = []
-        var casts: [String: Int] = [:], medals = 0
-        var ultimateRequested = false
-        for tick in 0..<12000 where s.outcome == .inProgress {
-            let now = Double(tick) * 0.05
-            elapsed = now
-            _ = s.advanceEmeraldPoison(at: now)
-            guard s.outcome == .inProgress else { break }
-            if wave != s.waveIndex {
+        var ultimateAsked = false
+        let usesMedal = loadout.selectedActiveRelicID == MPCChapterOneCatalog.usurpedLifeMedalRelicID
+        let usesBlankCard = route == .blankCard && mission(for: floor) >= 17
+        func policy(_ view: MPCChurchBattleDriver.View) -> [MPCBattleInput] {
+            var out: [MPCBattleInput] = []
+            var trial = view.session
+            let alive = trial.enemies.filter(\.isAlive)
+            let species = { (e: MPCRuntimeEnemy) in MPCChurchTowerCatalog.enemyConfiguration(contentID: e.contentID)?.species }
+            guard let target = alive.first(where: { species($0) == .backSac }) ?? alive.first(where: { species($0) == .crown })
+                    ?? alive.first(where: { $0.contentID.contains("escort") || $0.contentID.contains("life_vessel") })
+                    ?? alive.first(where: { $0.currentIntent != "guard" }) ?? alive.first else { return out }
+            if target.id != view.target { out.append(.init(tick: view.tick, kind: .target, enemyID: target.id)) }
+            if usesBlankCard, let incoming = view.incoming.keys.sorted().first(where: { id in
+                Double(view.incoming[id]! - view.tick) * MPCChurchBattleDriver.step <= 0.25
+                    && trial.enemies.contains { $0.id == id && heavy.contains($0.currentIntent) }
+            }), trial.activateBlankNameCard(isOwned: true, targetID: incoming, at: view.now) {
+                out.append(.init(tick: view.tick, kind: .blankCard, enemyID: incoming))
+            }
+            if usesMedal, view.now >= nextMedalAt, target.currentIntent != "guard", trial.activateUsurpedLifeMedal(isOwned: true, at: view.now) {
+                out.append(.init(tick: view.tick, kind: .medal))
+                nextMedalAt = trial.usurpedLifeMedalReadyAt + max(0, variation())
+            }
+            if !ultimateAsked, loadout.isUltimateUnlocked, trial.waveIndex == floor.waves.count - 1, view.now >= 12,
+               trial.canUseFoolSkill(.namelessStage) {
+                ultimateAsked = true
+                out.append(.init(tick: view.tick, kind: .ultimate))
+            }
+            return out
+        }
+        var stepper = try MPCChurchBattleStepper(encounterID: encounterID ?? floor.id, loadout: loadout,
+                                                 tuning: .init(jitter: jitter, seed: seed, actionDelay: actionDelay))
+        var wave = -1, waveHP: [Int] = [], rosters: [[String]] = []
+        var casts: [String: Int] = [:]
+        while !stepper.isFinished {
+            let view = stepper.view
+            if view.session.outcome == .inProgress, wave != view.session.waveIndex {
+                let s = view.session
                 wave = s.waveIndex; waveHP.append(s.playerHP)
                 rosters.append(s.enemies.compactMap { MPCChapterOneBattleIdentity.visualDescriptor(for: $0.id, in: s.enemies, encounterID: s.encounter.id) })
             }
-            let alive = s.enemies.filter(\.isAlive)
-            let target = alive.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .backSac }
-                ?? alive.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .crown }
-                ?? alive.first { $0.currentIntent != "guard" } ?? alive.first
-            if let target {
-                s.updateRelicTarget(target.id, at: now)
-                if route == .blankCard && mission(for: floor) >= 17,
-                   let incoming = pending.keys.sorted().first(where: { id in
-                       pending[id]! - now <= 0.25 && s.enemies.contains { $0.id == id && ["archive_slam", "tower_heavy_cut", "tower_piercing_claw", "tower_heavy_claw", "tower_cut_first"].contains($0.currentIntent) }
-                   }) {
-                    _ = s.activateBlankNameCard(isOwned: true, targetID: incoming, at: now)
-                }
-                if route != .unprepared && now >= nextMedalAt && target.currentIntent != "guard" {
-                    if s.activateUsurpedLifeMedal(isOwned: true, at: now) { medals += 1; nextMedalAt = s.usurpedLifeMedalReadyAt + max(0, variation()) }
-                }
-            }
-            if let p = hit, now >= p.2 {
-                hit = nil
-                if s.enemies.contains(where: { $0.id == p.1 && $0.isAlive }) {
-                    if let skill = p.0 { _ = try s.useFoolSkill(skill, targetID: p.1, usesRealtimeCooldown: true) }
-                    else { _ = try s.useBasicAction(.damage, targetID: p.1) }
-                }
-            }
-            guard s.outcome == .inProgress else { break }
-            for id in pending.keys.sorted() where now >= pending[id]! {
-                pending[id] = nil
-                guard s.enemies.contains(where: { $0.id == id }) else { continue }
-                try s.endRound(actingEnemyID: id, at: now)
-                ready[id] = now
-                if s.outcome != .inProgress { break }
-            }
-            guard s.outcome == .inProgress else { break }
-            for enemy in s.enemies.filter(\.isAlive) {
-                if ready[enemy.id] == nil { ready[enemy.id] = now + (MPCChurchTowerCatalog.enemyConfiguration(contentID: enemy.contentID)?.initialDelay ?? 3) }
-                guard now >= ready[enemy.id]!, pending[enemy.id] == nil else { continue }
-                let preparation = s.authoredPreparationDuration(for: enemy.id)
-                if s.churchPreparationMustWait(enemyID: enemy.id, pendingEnemyIDs: Set(pending.keys)) { continue }
-                if s.consumeEnemyDelay(for: enemy.id) { ready[enemy.id] = now + 3.2 * enemy.attackIntervalMultiplier; continue }
-                let contact = MPCChurchTowerCatalog.contactDuration(contentID: enemy.contentID, intent: enemy.currentIntent)
-                s.commitEnemyImpact(from: enemy.id)
-                pending[enemy.id] = now + (preparation ?? max(0.15, contact + variation()))
-            }
-            guard let target, s.enemies.contains(where: { $0.id == target.id && $0.isAlive }), now >= playerAt, hit == nil else { continue }
-            // A legal once-per-floor ultimate, saved for the final wave.
-            // The real skill implementation handles target state and damage.
-            if !ultimateRequested && loadout.isUltimateUnlocked && s.waveIndex == floor.waves.count - 1 && now >= 12 && s.canUseFoolSkill(.namelessStage) {
-                ultimateRequested = true
-                playerAt = now + 1.75
-                hit = (.namelessStage, target.id, now + playerContact(.namelessStage))
-                casts[FoolSkillID.namelessStage.rawValue, default: 0] += 1
-            } else if let skill = scheduler.next(in: sequence, at: now) {
-                scheduler.didCast(skill, at: now); playerAt = now + 1.75 + max(0, variation())
-                hit = (skill, target.id, now + max(0.15, playerContact(skill) + variation()))
-                casts[skill.rawValue, default: 0] += 1
-            } else if now >= basicAt {
-                basicAt = now + 2.4; playerAt = now + 1.65 + max(0, variation())
-                hit = (nil, target.id, now + max(0.15, 0.58 + variation()))
-                casts["basic", default: 0] += 1
-            }
+            let events = try stepper.step(view.session.outcome == .inProgress ? policy(view) : [])
+            if let cast = events.cast { casts[cast.skill?.rawValue ?? "basic", default: 0] += 1 }
         }
-        return .init(floor: number, mission: mission(for: floor), route: route, session: s, seconds: elapsed, waveEntryHP: waveHP, rosterDescriptors: rosters, skillCasts: casts, medalUses: medals)
+        let medals = stepper.inputs.filter { $0.kind == .medal }.count
+        return .init(floor: number, mission: mission(for: floor), route: route, session: stepper.session,
+                     seconds: max(0, stepper.now - MPCChurchBattleDriver.step), waveEntryHP: waveHP,
+                     rosterDescriptors: rosters, skillCasts: casts, medalUses: medals)
     }
 }
