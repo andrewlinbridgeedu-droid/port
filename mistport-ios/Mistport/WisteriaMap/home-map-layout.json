@@ -102,5 +102,325 @@
     {"holdID": "H8", "entryID": "e-yard-south", "points": [[1.52, 0.925], [1.465, 0.91], [1.39, 0.875]]},
     {"holdID": "H9", "entryID": "e-yard-east", "points": [[1.68, 0.685], [1.65, 0.7], [1.64, 0.725], [1.6, 0.756]]},
     {"holdID": "H10", "entryID": "e-yard-north", "points": [[1.555, 0.753], [1.56, 0.79], [1.515, 0.817]]}
+  ],
+  "commissionDecals": [
+    {
+      "id": "fountain-day",
+      "place": "喷泉广场",
+      "zone": "plaza",
+      "file": "docs/development/commission-decals-20260929/assets/CommissionFountainV3Day.png",
+      "at": [
+        1.05639913,
+        0.5835141
+      ],
+      "size": [
+        0.29934924,
+        0.29934924
+      ],
+      "anchor": "center",
+      "coordinateUnit": "painting-height=1",
+      "seasons": [
+        "spring",
+        "summer",
+        "autumn",
+        "winter"
+      ],
+      "times": [
+        "day"
+      ],
+      "enabled": false,
+      "reviewStatus": "user-art-approved",
+      "artRevision": 3
+    },
+    {
+      "id": "fountain-sunset",
+      "place": "喷泉广场",
+      "zone": "plaza",
+      "file": "docs/development/commission-decals-20260929/assets/CommissionFountainV3Sunset.png",
+      "at": [
+        1.05639913,
+        0.5835141
+      ],
+      "size": [
+        0.29934924,
+        0.29934924
+      ],
+      "anchor": "center",
+      "coordinateUnit": "painting-height=1",
+      "seasons": [
+        "spring",
+        "summer",
+        "autumn",
+        "winter"
+      ],
+      "times": [
+        "sunset"
+      ],
+      "enabled": false,
+      "reviewStatus": "user-art-approved",
+      "artRevision": 3
+    },
+    {
+      "id": "fountain-night",
+      "place": "喷泉广场",
+      "zone": "plaza",
+      "file": "docs/development/commission-decals-20260929/assets/CommissionFountainV3Night.png",
+      "at": [
+        1.05639913,
+        0.5835141
+      ],
+      "size": [
+        0.29934924,
+        0.29934924
+      ],
+      "anchor": "center",
+      "coordinateUnit": "painting-height=1",
+      "seasons": [
+        "spring",
+        "summer",
+        "autumn",
+        "winter"
+      ],
+      "times": [
+        "night"
+      ],
+      "enabled": false,
+      "reviewStatus": "user-art-approved",
+      "artRevision": 3
+    },
+    {
+      "id": "fountain-snow-day",
+      "place": "喷泉广场",
+      "zone": "plaza",
+      "file": "docs/development/commission-decals-20260929/assets/CommissionFountainV3SnowDay.png",
+      "at": [
+        1.05639913,
+        0.5835141
+      ],
+      "size": [
+        0.29934924,
+        0.29934924
+      ],
+      "anchor": "center",
+      "coordinateUnit": "painting-height=1",
+      "seasons": [
+        "winterSnow"
+      ],
+      "times": [
+        "day"
+      ],
+      "enabled": false,
+      "reviewStatus": "user-art-approved",
+      "artRevision": 3
+    },
+    {
+      "id": "fountain-snow-sunset",
+      "place": "喷泉广场",
+      "zone": "plaza",
+      "file": "docs/development/commission-decals-20260929/assets/CommissionFountainV3SnowSunset.png",
+      "at": [
+        1.05639913,
+        0.5835141
+      ],
+      "size": [
+        0.29934924,
+        0.29934924
+      ],
+      "anchor": "center",
+      "coordinateUnit": "painting-height=1",
+      "seasons": [
+        "winterSnow"
+      ],
+      "times": [
+        "sunset"
+      ],
+      "enabled": false,
+      "reviewStatus": "user-art-approved",
+      "artRevision": 3
+    },
+    {
+      "id": "fountain-snow-night",
+      "place": "喷泉广场",
+      "zone": "plaza",
+      "file": "docs/development/commission-decals-20260929/assets/CommissionFountainV3SnowNight.png",
+      "at": [
+        1.05639913,
+        0.5835141
+      ],
+      "size": [
+        0.29934924,
+        0.29934924
+      ],
+      "anchor": "center",
+      "coordinateUnit": "painting-height=1",
+      "seasons": [
+        "winterSnow"
+      ],
+      "times": [
+        "night"
+      ],
+      "enabled": false,
+      "reviewStatus": "user-art-approved",
+      "artRevision": 3
+    },
+    {
+      "id": "yard-day",
+      "place": "工坊货场",
+      "zone": "yard",
+      "file": "docs/development/commission-decals-20260929/assets/CommissionYardV3Day.png",
+      "at": [
+        1.54273319,
+        0.6681128
+      ],
+      "size": [
+        0.46854664,
+        0.46854664
+      ],
+      "anchor": "center",
+      "coordinateUnit": "painting-height=1",
+      "seasons": [
+        "spring",
+        "summer",
+        "autumn",
+        "winter"
+      ],
+      "times": [
+        "day"
+      ],
+      "enabled": false,
+      "reviewStatus": "user-art-approved",
+      "artRevision": 3
+    },
+    {
+      "id": "yard-sunset",
+      "place": "工坊货场",
+      "zone": "yard",
+      "file": "docs/development/commission-decals-20260929/assets/CommissionYardV3Sunset.png",
+      "at": [
+        1.54273319,
+        0.6681128
+      ],
+      "size": [
+        0.46854664,
+        0.46854664
+      ],
+      "anchor": "center",
+      "coordinateUnit": "painting-height=1",
+      "seasons": [
+        "spring",
+        "summer",
+        "autumn",
+        "winter"
+      ],
+      "times": [
+        "sunset"
+      ],
+      "enabled": false,
+      "reviewStatus": "user-art-approved",
+      "artRevision": 3
+    },
+    {
+      "id": "yard-night",
+      "place": "工坊货场",
+      "zone": "yard",
+      "file": "docs/development/commission-decals-20260929/assets/CommissionYardV3Night.png",
+      "at": [
+        1.54273319,
+        0.6681128
+      ],
+      "size": [
+        0.46854664,
+        0.46854664
+      ],
+      "anchor": "center",
+      "coordinateUnit": "painting-height=1",
+      "seasons": [
+        "spring",
+        "summer",
+        "autumn",
+        "winter"
+      ],
+      "times": [
+        "night"
+      ],
+      "enabled": false,
+      "reviewStatus": "user-art-approved",
+      "artRevision": 3
+    },
+    {
+      "id": "yard-snow-day",
+      "place": "工坊货场",
+      "zone": "yard",
+      "file": "docs/development/commission-decals-20260929/assets/CommissionYardV3SnowDay.png",
+      "at": [
+        1.54273319,
+        0.6681128
+      ],
+      "size": [
+        0.46854664,
+        0.46854664
+      ],
+      "anchor": "center",
+      "coordinateUnit": "painting-height=1",
+      "seasons": [
+        "winterSnow"
+      ],
+      "times": [
+        "day"
+      ],
+      "enabled": false,
+      "reviewStatus": "user-art-approved",
+      "artRevision": 3
+    },
+    {
+      "id": "yard-snow-sunset",
+      "place": "工坊货场",
+      "zone": "yard",
+      "file": "docs/development/commission-decals-20260929/assets/CommissionYardV3SnowSunset.png",
+      "at": [
+        1.54273319,
+        0.6681128
+      ],
+      "size": [
+        0.46854664,
+        0.46854664
+      ],
+      "anchor": "center",
+      "coordinateUnit": "painting-height=1",
+      "seasons": [
+        "winterSnow"
+      ],
+      "times": [
+        "sunset"
+      ],
+      "enabled": false,
+      "reviewStatus": "user-art-approved",
+      "artRevision": 3
+    },
+    {
+      "id": "yard-snow-night",
+      "place": "工坊货场",
+      "zone": "yard",
+      "file": "docs/development/commission-decals-20260929/assets/CommissionYardV3SnowNight.png",
+      "at": [
+        1.54273319,
+        0.6681128
+      ],
+      "size": [
+        0.46854664,
+        0.46854664
+      ],
+      "anchor": "center",
+      "coordinateUnit": "painting-height=1",
+      "seasons": [
+        "winterSnow"
+      ],
+      "times": [
+        "night"
+      ],
+      "enabled": false,
+      "reviewStatus": "user-art-approved",
+      "artRevision": 3
+    }
   ]
 }

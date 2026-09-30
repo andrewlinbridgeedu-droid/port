@@ -1,0 +1,412 @@
+{
+  "artRevision": 3,
+  "unit": "512-pixel asset canvas",
+  "artworkRepaintedByScript": false,
+  "addedLamps": 0,
+  "registrations": [
+    {
+      "file": "CommissionFountainV3Day.png",
+      "flowerbedSourceBounds": [
+        23,
+        188,
+        500,
+        384
+      ],
+      "flowerbedTargetBounds": [
+        122,
+        202,
+        400,
+        287
+      ],
+      "pennants": "original painted Day crop [0,0,512,237]"
+    },
+    {
+      "file": "CommissionYardV3Day.png",
+      "canvasSourceBounds": [
+        323,
+        55,
+        451,
+        269
+      ],
+      "canvasInOld800Frame": [
+        315,
+        71,
+        400,
+        190
+      ],
+      "canvasRotationDegreesClockwise": 15,
+      "old800FrameOffsetInNew1080Frame": [
+        280,
+        0
+      ],
+      "crateSourceBounds": [
+        118,
+        9,
+        396,
+        188
+      ],
+      "crateTargetBounds": [
+        130,
+        397,
+        240,
+        485
+      ],
+      "crateFootNativePixels": [
+        274.21875,
+        1023.046875,
+        506.25
+      ]
+    },
+    {
+      "file": "CommissionFountainV3Sunset.png",
+      "groups": [
+        {
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "sourceBounds": [
+            62,
+            110,
+            463,
+            289
+          ],
+          "targetBounds": [
+            62,
+            110,
+            462,
+            287
+          ]
+        }
+      ]
+    },
+    {
+      "file": "CommissionFountainV3Night.png",
+      "groups": [
+        {
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "sourceBounds": [
+            61,
+            109,
+            463,
+            289
+          ],
+          "targetBounds": [
+            62,
+            110,
+            462,
+            287
+          ]
+        }
+      ]
+    },
+    {
+      "file": "CommissionFountainV3SnowDay.png",
+      "groups": [
+        {
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "sourceBounds": [
+            46,
+            106,
+            466,
+            346
+          ],
+          "targetBounds": [
+            62,
+            108,
+            462,
+            287
+          ]
+        }
+      ]
+    },
+    {
+      "file": "CommissionFountainV3SnowSunset.png",
+      "groups": [
+        {
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "sourceBounds": [
+            49,
+            149,
+            468,
+            346
+          ],
+          "targetBounds": [
+            62,
+            108,
+            462,
+            287
+          ]
+        }
+      ]
+    },
+    {
+      "file": "CommissionFountainV3SnowNight.png",
+      "groups": [
+        {
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            512
+          ],
+          "sourceBounds": [
+            60,
+            107,
+            464,
+            294
+          ],
+          "targetBounds": [
+            62,
+            108,
+            462,
+            287
+          ]
+        }
+      ]
+    },
+    {
+      "file": "CommissionYardV3Sunset.png",
+      "groups": [
+        {
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            265
+          ],
+          "sourceBounds": [
+            344,
+            50,
+            433,
+            187
+          ],
+          "targetBounds": [
+            350,
+            53,
+            416,
+            154
+          ]
+        },
+        {
+          "sourceRegion": [
+            0,
+            265,
+            512,
+            512
+          ],
+          "sourceBounds": [
+            108,
+            94,
+            267,
+            217
+          ],
+          "targetBounds": [
+            130,
+            397,
+            240,
+            485
+          ]
+        }
+      ]
+    },
+    {
+      "file": "CommissionYardV3Night.png",
+      "groups": [
+        {
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            265
+          ],
+          "sourceBounds": [
+            346,
+            47,
+            426,
+            164
+          ],
+          "targetBounds": [
+            350,
+            53,
+            416,
+            154
+          ]
+        },
+        {
+          "sourceRegion": [
+            0,
+            265,
+            512,
+            512
+          ],
+          "sourceBounds": [
+            117,
+            108,
+            239,
+            203
+          ],
+          "targetBounds": [
+            130,
+            397,
+            240,
+            485
+          ]
+        }
+      ]
+    },
+    {
+      "file": "CommissionYardV3SnowDay.png",
+      "groups": [
+        {
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            265
+          ],
+          "sourceBounds": [
+            340,
+            43,
+            420,
+            170
+          ],
+          "targetBounds": [
+            350,
+            51,
+            416,
+            154
+          ]
+        },
+        {
+          "sourceRegion": [
+            0,
+            265,
+            512,
+            512
+          ],
+          "sourceBounds": [
+            98,
+            83,
+            256,
+            215
+          ],
+          "targetBounds": [
+            130,
+            395,
+            240,
+            485
+          ]
+        }
+      ]
+    },
+    {
+      "file": "CommissionYardV3SnowSunset.png",
+      "groups": [
+        {
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            265
+          ],
+          "sourceBounds": [
+            327,
+            47,
+            412,
+            172
+          ],
+          "targetBounds": [
+            350,
+            51,
+            416,
+            154
+          ]
+        },
+        {
+          "sourceRegion": [
+            0,
+            265,
+            512,
+            512
+          ],
+          "sourceBounds": [
+            109,
+            108,
+            238,
+            211
+          ],
+          "targetBounds": [
+            130,
+            395,
+            240,
+            485
+          ]
+        }
+      ]
+    },
+    {
+      "file": "CommissionYardV3SnowNight.png",
+      "groups": [
+        {
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            265
+          ],
+          "sourceBounds": [
+            348,
+            47,
+            419,
+            155
+          ],
+          "targetBounds": [
+            350,
+            51,
+            416,
+            154
+          ]
+        },
+        {
+          "sourceRegion": [
+            0,
+            265,
+            512,
+            512
+          ],
+          "sourceBounds": [
+            96,
+            103,
+            253,
+            228
+          ],
+          "targetBounds": [
+            130,
+            395,
+            240,
+            485
+          ]
+        }
+      ]
+    }
+  ],
+  "note": "Palette and snow are individually image-generated. Code only crops, rotates, scales and places painted pixels."
+}

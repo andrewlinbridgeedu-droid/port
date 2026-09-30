@@ -1,0 +1,243 @@
+{
+  "previewOnly": true,
+  "outputs": [
+    {
+      "asset": "CommissionFountainDay.png",
+      "source": "generated/CommissionFountainDay-v4.png",
+      "prompts": [
+        "fountain-day-local-redraw-v2",
+        "fountain-extract-v2",
+        "fountain-position-v3",
+        "fountain-terrace-registration-v4"
+      ],
+      "generation": "exec-bfceef41-a635-4217-b6da-1030b3eb337b"
+    },
+    {
+      "asset": "CommissionBoulevardDay.png",
+      "source": "generated/CommissionBoulevardDay.png",
+      "prompts": [
+        "boulevard-day"
+      ],
+      "generation": "exec-e8adad67-fcfa-4560-abf0-07c950a5f916"
+    },
+    {
+      "asset": "CommissionBoulevardLights.png",
+      "source": "generated/CommissionBoulevardLights-v3.png",
+      "prompts": [
+        "boulevard-glow-v2",
+        "boulevard-glow-register-v3"
+      ],
+      "generation": "exec-2436b9f3-48e3-4dff-bc1e-790003f2de2a"
+    },
+    {
+      "asset": "CommissionFountainSunset.png",
+      "source": "generated/CommissionFountainSunset.png",
+      "prompts": [
+        "fountain-sunset"
+      ],
+      "generation": "exec-1f3f5107-78ba-4856-8e21-e8467e66e398"
+    },
+    {
+      "asset": "CommissionFountainNight.png",
+      "source": "generated/CommissionFountainNight.png",
+      "prompts": [
+        "fountain-night"
+      ],
+      "generation": "exec-2afed6cb-f932-4a92-9257-605cfb77a65a"
+    },
+    {
+      "asset": "CommissionFountainSnowDay.png",
+      "source": "generated/CommissionFountainSnowDay.png",
+      "prompts": [
+        "fountain-snow-day"
+      ],
+      "generation": "exec-f09fa445-0e82-491d-879c-e83000f1e157"
+    },
+    {
+      "asset": "CommissionFountainSnowSunset.png",
+      "source": "generated/CommissionFountainSnowSunset.png",
+      "prompts": [
+        "fountain-snow-sunset"
+      ],
+      "generation": "exec-72265b09-8e51-4806-b2bc-5353033e270a"
+    },
+    {
+      "asset": "CommissionFountainSnowNight.png",
+      "source": "generated/CommissionFountainSnowNight.png",
+      "prompts": [
+        "fountain-snow-night"
+      ],
+      "generation": "exec-7b8a619c-11ed-42ad-a828-77ca17aff94c"
+    },
+    {
+      "asset": "CommissionBoulevardSunset.png",
+      "source": "generated/CommissionBoulevardSunset.png",
+      "prompts": [
+        "boulevard-sunset"
+      ],
+      "generation": "exec-a689a228-9976-40d2-854d-3844156f1197"
+    },
+    {
+      "asset": "CommissionBoulevardNight.png",
+      "source": "generated/CommissionBoulevardNight.png",
+      "prompts": [
+        "boulevard-night"
+      ],
+      "generation": "exec-35e5fc84-6bd1-4cb0-9633-be8dcd7091b2"
+    },
+    {
+      "asset": "CommissionBoulevardSnowDay.png",
+      "source": "generated/CommissionBoulevardSnowDay.png",
+      "prompts": [
+        "boulevard-snow-day"
+      ],
+      "generation": "exec-f84e0ef6-934f-4477-b576-6aad7ae4bf86"
+    },
+    {
+      "asset": "CommissionBoulevardSnowSunset.png",
+      "source": "generated/CommissionBoulevardSnowSunset.png",
+      "prompts": [
+        "boulevard-snow-sunset"
+      ],
+      "generation": "exec-b67d463c-6511-46e3-9309-a93609b275bd"
+    },
+    {
+      "asset": "CommissionBoulevardSnowNight.png",
+      "source": "generated/CommissionBoulevardSnowNight.png",
+      "prompts": [
+        "boulevard-snow-night"
+      ],
+      "generation": "exec-4beddfb4-6990-4597-90be-899cbbfdfb0c"
+    },
+    {
+      "asset": "CommissionYardV2Day.png",
+      "source": "generated/CommissionYardV2Day.png",
+      "prompts": [
+        "yard-v2-day"
+      ],
+      "generation": "exec-8fb44d64-bc57-4948-9bfd-49f34245a33e"
+    },
+    {
+      "asset": "CommissionYardV2Sunset.png",
+      "source": "generated/CommissionYardV2Sunset.png",
+      "prompts": [
+        "yard-v2-sunset"
+      ],
+      "generation": "exec-137c7e55-3d64-4769-9344-a6ae8ad2cd73"
+    },
+    {
+      "asset": "CommissionYardV2Night.png",
+      "source": "generated/CommissionYardV2Night.png",
+      "prompts": [
+        "yard-v2-night"
+      ],
+      "generation": "exec-0df9d5be-ca9d-4d57-8c29-4ea9ec5431e3"
+    },
+    {
+      "asset": "CommissionYardV2SnowDay.png",
+      "source": "generated/CommissionYardV2SnowDay.png",
+      "prompts": [
+        "yard-v2-snow-day"
+      ],
+      "generation": "exec-07cd6a8f-7d06-44d6-8493-ce6876e8d9c6"
+    },
+    {
+      "asset": "CommissionYardV2SnowSunset.png",
+      "source": "generated/CommissionYardV2SnowSunset.png",
+      "prompts": [
+        "yard-v2-snow-sunset"
+      ],
+      "generation": "exec-3599e2b9-b468-4a98-a24e-2d6bd543b733"
+    },
+    {
+      "asset": "CommissionYardV2SnowNight.png",
+      "source": "generated/CommissionYardV2SnowNight.png",
+      "prompts": [
+        "yard-v2-snow-night"
+      ],
+      "generation": "exec-007b9047-d8e1-450b-a7f3-1f1666b2195b"
+    },
+    {
+      "asset": "CommissionBoulevardGroundLights.png",
+      "source": "generated/CommissionBoulevardGroundLights.png",
+      "prompts": [
+        "boulevard-ground-v2-clean"
+      ],
+      "generation": "exec-d89a7bc9-20a4-4bc1-a4b1-8ef6b2c48d97"
+    },
+    {
+      "asset": "CommissionBoulevardSnowGroundLights.png",
+      "source": "generated/CommissionBoulevardSnowGroundLights.png",
+      "prompts": [
+        "boulevard-snow-ground-v2-clean"
+      ],
+      "generation": "exec-2520709c-0fc6-4f3a-a6b3-c1a62eff14b4"
+    }
+  ],
+  "localRedrawInputs": [
+    "generated/fountain-day-local-redraw-v2.png",
+    "generated/yard-day-local-redraw-v2.png"
+  ],
+  "promptDirectory": "prompts",
+  "discardedInitialAttempts": [
+    "fountain-day",
+    "yard-day",
+    "boulevard-glow",
+    "boulevard-ground-v2",
+    "boulevard-snow-ground-v2"
+  ],
+  "notes": "第二版按参考意见增强货场并增加纯落地光。图像生成器负责画图，脚本只做透明内容配准和离线叠图；原画不变。参考意见不代表用户视觉认可。",
+  "supersededYardV1": [
+    {
+      "asset": "history/yard-v1/CommissionYardDay.png",
+      "source": "generated/CommissionYardDay-v3.png",
+      "prompts": [
+        "yard-day-local-redraw-v2",
+        "yard-extract-v2",
+        "yard-position-v3"
+      ],
+      "generation": "exec-a3716e69-55e0-4627-91d0-0766469000b2"
+    },
+    {
+      "asset": "history/yard-v1/CommissionYardSunset.png",
+      "source": "generated/CommissionYardSunset.png",
+      "prompts": [
+        "yard-sunset"
+      ],
+      "generation": "exec-89daca99-e913-46bb-8c98-5ba783360133"
+    },
+    {
+      "asset": "history/yard-v1/CommissionYardNight.png",
+      "source": "generated/CommissionYardNight.png",
+      "prompts": [
+        "yard-night"
+      ],
+      "generation": "exec-ab50f349-f510-46d3-a1d1-894acbb3f4ab"
+    },
+    {
+      "asset": "history/yard-v1/CommissionYardSnowDay.png",
+      "source": "generated/CommissionYardSnowDay.png",
+      "prompts": [
+        "yard-snow-day"
+      ],
+      "generation": "exec-c1165fa5-3e60-4314-b241-1662853e4c65"
+    },
+    {
+      "asset": "history/yard-v1/CommissionYardSnowSunset.png",
+      "source": "generated/CommissionYardSnowSunset.png",
+      "prompts": [
+        "yard-snow-sunset"
+      ],
+      "generation": "exec-8faf91c6-f61f-49ea-ae26-b7d1cde25be2"
+    },
+    {
+      "asset": "history/yard-v1/CommissionYardSnowNight.png",
+      "source": "generated/CommissionYardSnowNight.png",
+      "prompts": [
+        "yard-snow-night"
+      ],
+      "generation": "exec-1e36c839-7846-424b-9692-01d616055ccc"
+    }
+  ],
+  "artRevision": 2
+}
