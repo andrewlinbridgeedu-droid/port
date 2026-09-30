@@ -5,7 +5,7 @@ root=Path(__file__).resolve().parents[2]
 out=root/'output/spell-character-delivery'
 out.mkdir(parents=True,exist_ok=True)
 items=[]
-hero=[(1,'错步穿行'),(2,'假面谕令'),(4,'身份错置'),(5,'伪证烙印'),(6,'错影追猎'),(7,'荒谬归结'),(8,'反客为主'),(9,'后手改写'),(10,'无名宣告')]
+hero=[(1,'错步穿行'),(2,'假面谕令'),(4,'身份错置'),(5,'伪证烙印'),(6,'双影追猎'),(7,'荒谬归结'),(8,'反客为主'),(9,'后手改写'),(10,'无名宣告')]
 for i,name in hero:items.append(('主角 · '+name,root/f'output/hero-identity-runtime/fool_skill_{i:02d}',f'hero-{i:02d}'))
 for kind,name in [('Hound','猎犬'),('Emerald','翠焰亡灵'),('Archivist','档案守卫'),('Matriarch','织幕女主')]:
  for n in (1,2):items.append((f'{name} · 法术{n}',root/f'output/cinematic-enemy-runtime/{kind}-{n}',f'{kind}-{n}'))

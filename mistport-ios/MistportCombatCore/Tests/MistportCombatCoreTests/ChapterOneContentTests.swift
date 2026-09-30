@@ -68,7 +68,7 @@ struct ChapterOneContentTests {
     @Test("Formal card and combo names match the v2.1 design pack")
     func v21Names() {
         #expect(MPCChapterOneCatalog.skills.map(\.name) == [
-            "错步穿行", "假面谕令", "身份错置", "伪证烙印", "错影追猎",
+            "错步穿行", "假面谕令", "身份错置", "伪证烙印", "双影追猎",
             "荒谬归结", "反客为主", "后手改写", "无名宣告"
         ])
         #expect(MPCChapterOneCatalog.combos.count == 9)
