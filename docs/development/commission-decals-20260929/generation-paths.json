@@ -1,0 +1,123 @@
+{
+  "artRevision": 3,
+  "previewOnly": true,
+  "addedLamps": 0,
+  "outputs": [
+    {
+      "asset": "CommissionFountainV3Day.png",
+      "source": "generated/CommissionFountainV3FlowerbedDay.png",
+      "additionalSource": "generated/CommissionFountainDay-v4.png",
+      "prompts": [
+        "fountain-v3-day",
+        "fountain-v3-flowerbed-extract"
+      ],
+      "generation": "exec-d7e94d77-f9a4-4aa6-9054-74420e9df178",
+      "note": "New painted flowerbed, original Day pennants; registered assembly."
+    },
+    {
+      "asset": "CommissionYardV3Day.png",
+      "source": "generated/CommissionYardV3Day.png",
+      "prompts": [
+        "yard-v3-day"
+      ],
+      "generation": "exec-5d99a5ab-22e0-4f84-acb8-c248974eb6ff"
+    },
+    {
+      "asset": "CommissionFountainV3Sunset.png",
+      "source": "generated/CommissionFountainV3Sunset.png",
+      "prompts": [
+        "fountain-v3-sunset"
+      ],
+      "generation": "exec-5457a0fd-7cca-496f-8e4f-9fbbbefc6768"
+    },
+    {
+      "asset": "CommissionFountainV3Night.png",
+      "source": "generated/CommissionFountainV3Night.png",
+      "prompts": [
+        "fountain-v3-night"
+      ],
+      "generation": "exec-a1240d0e-db08-4ecc-828b-d5d3bea6196a"
+    },
+    {
+      "asset": "CommissionFountainV3SnowDay.png",
+      "source": "generated/CommissionFountainV3SnowDay.png",
+      "prompts": [
+        "fountain-v3-snowday"
+      ],
+      "generation": "exec-4baaccce-0aa0-4f59-b1ef-5d996af03f9a"
+    },
+    {
+      "asset": "CommissionFountainV3SnowSunset.png",
+      "source": "generated/CommissionFountainV3SnowSunset.png",
+      "prompts": [
+        "fountain-v3-snowsunset"
+      ],
+      "generation": "exec-084c1e30-547c-46d4-8ef3-687308454cff"
+    },
+    {
+      "asset": "CommissionFountainV3SnowNight.png",
+      "source": "generated/CommissionFountainV3SnowNight.png",
+      "prompts": [
+        "fountain-v3-snownight"
+      ],
+      "generation": "exec-47f1b156-d320-4387-a91d-d39e88101687"
+    },
+    {
+      "asset": "CommissionYardV3Sunset.png",
+      "source": "generated/CommissionYardV3Sunset.png",
+      "prompts": [
+        "yard-v3-sunset"
+      ],
+      "generation": "exec-e4d518b1-658a-4596-a868-13dc84116ca8"
+    },
+    {
+      "asset": "CommissionYardV3Night.png",
+      "source": "generated/CommissionYardV3Night.png",
+      "prompts": [
+        "yard-v3-night"
+      ],
+      "generation": "exec-9732c0f5-47bd-47f0-bcd0-b0d25f5a9eec"
+    },
+    {
+      "asset": "CommissionYardV3SnowDay.png",
+      "source": "generated/CommissionYardV3SnowDay.png",
+      "prompts": [
+        "yard-v3-snowday"
+      ],
+      "generation": "exec-b6f65133-bb98-4962-81e6-418a5670c058"
+    },
+    {
+      "asset": "CommissionYardV3SnowSunset.png",
+      "source": "generated/CommissionYardV3SnowSunset.png",
+      "prompts": [
+        "yard-v3-snowsunset"
+      ],
+      "generation": "exec-2a5bb5ef-fc1a-4334-a558-0d158834a793"
+    },
+    {
+      "asset": "CommissionYardV3SnowNight.png",
+      "source": "generated/CommissionYardV3SnowNight.png",
+      "prompts": [
+        "yard-v3-snownight"
+      ],
+      "generation": "exec-373d2e2c-6a58-4719-a6dc-c08078547364"
+    }
+  ],
+  "promptDirectory": "prompts",
+  "registeredEditInputs": [
+    "generated/CommissionFountainV3Day-registered.png",
+    "generated/CommissionYardV3Day-registered.png"
+  ],
+  "discardedCurrentCandidates": [
+    {
+      "source": "generated/CommissionFountainV3Day-initial.png",
+      "generation": "exec-182e0c30-af69-4007-9afa-614fa4c6d1d4",
+      "prompt": "fountain-v3-day",
+      "reason": "Initial enlarged combined composition protruded over the balustrade; only its repainted flowerbed was extracted and registered back onto the fountain terrace."
+    }
+  ],
+  "historicalProvenance": "history/v2/generation-paths.json",
+  "notes": "用户已明确认可喷泉和货场第三版，并授权合并 PR #22；不加灯。逐时段图像生成器绘色，脚本只做透明配准与叠图。图稿与用户认可时的 SHA-256 一致；App 尚未接入，未装机。",
+  "userVisualApproval": "approved",
+  "approvalRecord": "art-approval.json"
+}

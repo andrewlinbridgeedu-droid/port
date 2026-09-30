@@ -1,0 +1,20 @@
+{
+  "artRevision": 3,
+  "originalPlatesUnchanged": 15,
+  "existingCityLightsUnchanged": true,
+  "existingLayoutFieldsUnchanged": true,
+  "disabledPlacementEntries": 12,
+  "transparent512Assets": 12,
+  "addedLamps": 0,
+  "addedLampGlowLayers": 0,
+  "beforeAfterComparisons": 30,
+  "coverage": "2 places × 5 seasons × 3 times; exactly one decal per selected scene",
+  "withdrawnDrafts": "Five added boulevard lamps and all associated glow/order layers retained in history only",
+  "appSourceOrAssetCatalogChanged": false,
+  "iOSBuildRun": false,
+  "deviceInstalled": false,
+  "playerSavesTouched": false,
+  "userVisualApproval": "approved",
+  "approvalRecord": "art-approval.json",
+  "imagesTrackedBy": "Git LFS"
+}

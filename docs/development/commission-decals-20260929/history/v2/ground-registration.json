@@ -1,0 +1,192 @@
+{
+  "imagegenPainted": true,
+  "proceduralPainting": false,
+  "frame": [
+    1150,
+    1225,
+    1080,
+    1080
+  ],
+  "assets": [
+    {
+      "file": "CommissionBoulevardGroundLights.png",
+      "pools": [
+        {
+          "sourceBounds": [
+            48,
+            115,
+            119,
+            161
+          ],
+          "targetCenter": [
+            118,
+            163
+          ],
+          "targetSize": [
+            26,
+            16
+          ],
+          "lampIndex": 0
+        },
+        {
+          "sourceBounds": [
+            66,
+            156,
+            158,
+            211
+          ],
+          "targetCenter": [
+            149,
+            216
+          ],
+          "targetSize": [
+            38,
+            22
+          ],
+          "lampIndex": 1
+        },
+        {
+          "sourceBounds": [
+            101,
+            210,
+            221,
+            280
+          ],
+          "targetCenter": [
+            193,
+            282
+          ],
+          "targetSize": [
+            50,
+            30
+          ],
+          "lampIndex": 2
+        },
+        {
+          "sourceBounds": [
+            162,
+            277,
+            316,
+            367
+          ],
+          "targetCenter": [
+            263,
+            357
+          ],
+          "targetSize": [
+            70,
+            42
+          ],
+          "lampIndex": 3
+        },
+        {
+          "sourceBounds": [
+            246,
+            345,
+            471,
+            458
+          ],
+          "targetCenter": [
+            343,
+            418
+          ],
+          "targetSize": [
+            98,
+            58
+          ],
+          "lampIndex": 4
+        }
+      ]
+    },
+    {
+      "file": "CommissionBoulevardSnowGroundLights.png",
+      "pools": [
+        {
+          "sourceBounds": [
+            60,
+            152,
+            127,
+            197
+          ],
+          "targetCenter": [
+            118,
+            163
+          ],
+          "targetSize": [
+            26,
+            16
+          ],
+          "lampIndex": 0
+        },
+        {
+          "sourceBounds": [
+            82,
+            189,
+            172,
+            241
+          ],
+          "targetCenter": [
+            149,
+            216
+          ],
+          "targetSize": [
+            38,
+            22
+          ],
+          "lampIndex": 1
+        },
+        {
+          "sourceBounds": [
+            117,
+            232,
+            238,
+            300
+          ],
+          "targetCenter": [
+            193,
+            282
+          ],
+          "targetSize": [
+            50,
+            30
+          ],
+          "lampIndex": 2
+        },
+        {
+          "sourceBounds": [
+            182,
+            294,
+            347,
+            380
+          ],
+          "targetCenter": [
+            263,
+            357
+          ],
+          "targetSize": [
+            70,
+            42
+          ],
+          "lampIndex": 3
+        },
+        {
+          "sourceBounds": [
+            258,
+            366,
+            498,
+            488
+          ],
+          "targetCenter": [
+            343,
+            418
+          ],
+          "targetSize": [
+            98,
+            58
+          ],
+          "lampIndex": 4
+        }
+      ]
+    }
+  ]
+}
