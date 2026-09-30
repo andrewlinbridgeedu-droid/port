@@ -1,0 +1,27 @@
+{
+  "task": "H0",
+  "date": "2026-09-30",
+  "baseCommit": "d07d39ddeeca6a2c077cb4424bbbbbedd7fa4164",
+  "originalBoards": 3,
+  "boardDimensions": [
+    1536,
+    1024
+  ],
+  "exactPrompts": 3,
+  "generatedPNGCopiedWithoutEditing": true,
+  "homeMapOriginalsUnchanged": 15,
+  "appOrRuleCodeChanged": false,
+  "assetCatalogChanged": false,
+  "iOSBuildRun": false,
+  "deviceInstalled": false,
+  "playerPreferencesTouched": false,
+  "visualReview": {
+    "agent": "All three outputs inspected for architectural identity, material continuity, fog, lighting and numbered/seal-pattern doorways; concept continuity, not a registered map or exact stitched panorama.",
+    "user": "pending; no approval inferred from generation or validation"
+  },
+  "H1Started": false,
+  "H2Started": false,
+  "H3Started": false,
+  "imagesTrackedBy": "Git LFS; staged pointer SHA-256 checked for all 3 boards",
+  "changeScope": "docs/development/housing-art-20260930/ and HANDOFF_WALLS_20260929.md only"
+}

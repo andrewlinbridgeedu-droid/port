@@ -1,0 +1,176 @@
+{
+  "task": "H0",
+  "date": "2026-09-30",
+  "baseCommit": "d07d39ddeeca6a2c077cb4424bbbbbedd7fa4164",
+  "branch": "codex/housing-h0-style-boards-20260930",
+  "artRevision": 1,
+  "status": "awaiting-user-visual-approval",
+  "generationMode": "built-in image_gen; no CLI/API fallback",
+  "boards": [
+    {
+      "id": "stone-arches",
+      "label": "石拱层",
+      "file": "01-stone-arches-v1.png",
+      "prompt": "prompts/01-stone-arches-v1.txt",
+      "sha256": "db9b31e65cd36151234027988df84130a658c0f7975e1ccd62083ab7b10e704e",
+      "promptSha256": "16d2983a105897a0416788c017d3600292231cf6707124ac526c55f3bd39f8d2",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "tool": "built-in image_gen",
+      "generatedSourceBasename": "exec-5943d045-e15b-44ee-95c0-2643e14e1d83.png",
+      "referenceOrder": [
+        "CitySpringDay",
+        "CitySummerDay",
+        "CityAutumnDay",
+        "CityWinterDay"
+      ],
+      "postprocessing": "none; generated PNG copied byte-for-byte",
+      "agentVisualReview": "reviewed; awaiting user approval"
+    },
+    {
+      "id": "bell-lantern",
+      "label": "钟灯层",
+      "file": "02-bell-lantern-v1.png",
+      "prompt": "prompts/02-bell-lantern-v1.txt",
+      "sha256": "e25c9384d1775d79c667afbe8479ec5dbf43e8dacaedacf143df2e4788c522bd",
+      "promptSha256": "d11a7ece2b81309851295cc4a4e5a69343d534ed793cae08b2562ace560c4192",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "tool": "built-in image_gen",
+      "generatedSourceBasename": "exec-2fefee91-8f55-4598-a20c-3eff33f75666.png",
+      "referenceOrder": [
+        "01-stone-arches-v1.png",
+        "CitySpringDay",
+        "CityAutumnDay"
+      ],
+      "postprocessing": "none; generated PNG copied byte-for-byte",
+      "agentVisualReview": "reviewed; awaiting user approval"
+    },
+    {
+      "id": "iron-glass",
+      "label": "铁玻层",
+      "file": "03-iron-glass-v1.png",
+      "prompt": "prompts/03-iron-glass-v1.txt",
+      "sha256": "5823bdecaab1c86e7e4305fdec7d809f3c089876c28583a350eefe562d94fc75",
+      "promptSha256": "57affe3444c4549646612205f5f771f5873c7542836db93b54555ef5a79061b1",
+      "size": [
+        1536,
+        1024
+      ],
+      "mode": "RGB",
+      "tool": "built-in image_gen",
+      "generatedSourceBasename": "exec-815d1bcc-d10e-4dfe-97ac-7af42e17bf5a.png",
+      "referenceOrder": [
+        "01-stone-arches-v1.png",
+        "02-bell-lantern-v1.png",
+        "CitySummerDay",
+        "CityAutumnDay"
+      ],
+      "postprocessing": "none; generated PNG copied byte-for-byte",
+      "agentVisualReview": "reviewed; awaiting user approval"
+    }
+  ],
+  "homeMapOriginals": [
+    {
+      "name": "CitySpringDay",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CitySpringDay.imageset/CitySpringDay.jpg",
+      "sha256": "45908c900de559adf7dfa028555275125e79a53f3643eab4da95d671d45a2687",
+      "usedAsGenerationReference": true
+    },
+    {
+      "name": "CitySpringSunset",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CitySpringSunset.imageset/CitySpringSunset.jpg",
+      "sha256": "f4e52d9019ff690323805ef77356ef47dd01e2df20f708534be48551c14f169d",
+      "usedAsGenerationReference": false
+    },
+    {
+      "name": "CitySpringNight",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CitySpringNight.imageset/CitySpringNight.jpg",
+      "sha256": "bf8e7a64b853217939a2a15ee997336b1d3a6de9831160fadf4ce14ba07c8c72",
+      "usedAsGenerationReference": false
+    },
+    {
+      "name": "CitySummerDay",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CitySummerDay.imageset/CitySummerDay.jpg",
+      "sha256": "dda611df52fb6f55375729aadd968e4e26f4f031b1100b84506b25e9d9fcf5e9",
+      "usedAsGenerationReference": true
+    },
+    {
+      "name": "CitySummerSunset",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CitySummerSunset.imageset/CitySummerSunset.jpg",
+      "sha256": "424edefac1216f1bdaa50944643c95c07d9b2950c82327e0dd42701dcc04f21d",
+      "usedAsGenerationReference": false
+    },
+    {
+      "name": "CitySummerNight",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CitySummerNight.imageset/CitySummerNight.jpg",
+      "sha256": "4c839ce0583a591ce12142eea4fc46c1575d7bcace0104d523d4d0952b49891c",
+      "usedAsGenerationReference": false
+    },
+    {
+      "name": "CityAutumnDay",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityAutumnDay.imageset/CityAutumnDay.jpg",
+      "sha256": "82ef7c09c4a83b972617d4783d3c803e49c409d9f1f494bf26acdf8d06a3ace9",
+      "usedAsGenerationReference": true
+    },
+    {
+      "name": "CityAutumnSunset",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityAutumnSunset.imageset/CityAutumnSunset.jpg",
+      "sha256": "a4ded1119c5715166c88099764ee0320f82e37c9a5ba47f97f678d6ef2cbe81e",
+      "usedAsGenerationReference": false
+    },
+    {
+      "name": "CityAutumnNight",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityAutumnNight.imageset/CityAutumnNight.jpg",
+      "sha256": "f3c62f9368132de08aec5ae38910597608a508aa0e782577bb3b4ba8a70031a1",
+      "usedAsGenerationReference": false
+    },
+    {
+      "name": "CityWinterDay",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityWinterDay.imageset/CityWinterDay.jpg",
+      "sha256": "c20f23cb0a324b2aaa7838cbbbf61ec42f5e9348142e30b43adcf3aa993acd67",
+      "usedAsGenerationReference": true
+    },
+    {
+      "name": "CityWinterSunset",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityWinterSunset.imageset/CityWinterSunset.jpg",
+      "sha256": "b535eaefad3fe0ad1024317b10966050c6f0ca9ea8c166668368298ac4d2cdaf",
+      "usedAsGenerationReference": false
+    },
+    {
+      "name": "CityWinterNight",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityWinterNight.imageset/CityWinterNight.jpg",
+      "sha256": "f5878e6aa1e1d1704730fec0f3742c3b5a28d9651b4006936d64640b2c794a81",
+      "usedAsGenerationReference": false
+    },
+    {
+      "name": "CityWinterSnowDay",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityWinterSnowDay.imageset/CityWinterSnowDay.jpg",
+      "sha256": "a565e7f671a7b020c92b806d54bfbac10cc1debbd897e19df3268c105398adae",
+      "usedAsGenerationReference": false
+    },
+    {
+      "name": "CityWinterSnowSunset",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityWinterSnowSunset.imageset/CityWinterSnowSunset.jpg",
+      "sha256": "c668ae2d6b549581d2db2802aa5ad224db372a91f9b1f29092c194b9bf8b1d36",
+      "usedAsGenerationReference": false
+    },
+    {
+      "name": "CityWinterSnowNight",
+      "path": "mistport-ios/Mistport/Assets.xcassets/CityWinterSnowNight.imageset/CityWinterSnowNight.jpg",
+      "sha256": "6e6196fa01c0a41552d82450b0725897515d132c15471ad98625d79cc751af63",
+      "usedAsGenerationReference": false
+    }
+  ],
+  "approvalGate": {
+    "H1Art": "not-started; requires user approval of H0 boards",
+    "H2App": "not-started",
+    "H3DeviceValidation": "not-started"
+  }
+}
