@@ -80,6 +80,8 @@ class Ext:
     # day's basket sales (from NPC households) and open-service sales (from business).
     tax: float = 0.0
     import_cap: int = 0
+    # Local copper counts at this rate when it enters the shared server (1 = one for one).
+    import_rate: float = 1.0
     need_increment: float | None = None
     unbacked_per_active: int = 0
     underground: bool = False
@@ -128,7 +130,7 @@ def _fresh(self, p, instant_full=False):
     out = _orig_fresh(self, p, instant_full)
     if IN_INIT and EXT.import_cap > 0 and self.rng.random() < LOCAL_SAVE_SHARE:
         balance = min(LOCAL_BALANCE_CAP, int(self.rng.lognormvariate(math.log(LOCAL_BALANCE_MEDIAN), LOCAL_BALANCE_SIGMA)))
-        amount = min(EXT.import_cap, balance)
+        amount = int(min(EXT.import_cap, balance) * EXT.import_rate)
         self.mint_to_player(p, amount)
         STATS["import_minted"] += amount
     return out
