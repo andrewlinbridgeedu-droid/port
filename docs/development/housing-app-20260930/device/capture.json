@@ -1,0 +1,27 @@
+{
+  "source": "physical-device-native-window",
+  "device": "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+  "build": "169.12",
+  "screenshots": [
+    {
+      "file": "housing-home.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "262b62dc1627932025535c3dc0297684a449294acf3722408ea9072ac5f48ff8"
+    },
+    {
+      "file": "housing-home-night.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "cb422d873bf65c3fa5e64e791d185f5541d56df2200f06692a76543bf0fecc46"
+    },
+    {
+      "file": "housing-agency.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "a3787d35febba01e72d3a19f016f6c46e550bae6d9b8bded6aa68e8832f6f7ed"
+    }
+  ],
+  "isolatedFixture": true,
+  "userVisualApproval": false
+}

@@ -1,0 +1,31 @@
+{
+  "beforeFiles": 194,
+  "afterFiles": 212,
+  "playerByteIdentical": true,
+  "addedPlayerKeys": [],
+  "changedOrRemovedPlayerKeys": [],
+  "changedOrRemovedOtherFiles": [],
+  "allowedTestSuiteChanges": [],
+  "newFiles": [
+    "mistport.church-services-check.277ADCD9-2118-477D-B4B9-59EBD644BC75.plist",
+    "mistport.city-events-check.5A22264C-B666-480A-A5AA-D53325ACBBDB.plist",
+    "mistport.daily-pacing.02F9A7F9-1947-43F7-AB8C-33DE0825860F.old.plist",
+    "mistport.daily-pacing.02F9A7F9-1947-43F7-AB8C-33DE0825860F.plist",
+    "mistport.daily-work-check.264DD078-4E86-42F2-9EC0-EAD4C97724DA.plist",
+    "mistport.daily-workshop-check.CC0765FC-CEDF-4411-A872-80D68695281D.plist",
+    "mistport.early-relic-shop-check.F7BABD9C-7AC4-4206-91A9-E51CAC677E2A.plist",
+    "mistport.housing-check.corrupt.E1AB0649-F4E5-4AEE-A4C9-392F4B25C84B.plist",
+    "mistport.housing-check.main.A1B51850-A1D3-4FA4-8D8A-6B962D2144CE.plist",
+    "mistport.housing-check.poor.8F72CF8C-0886-4C7D-AEE4-9F94CD92F143.plist",
+    "mistport.housing-device-walk.20260930.plist",
+    "mistport.housing-verification-shell.20260930.plist",
+    "mistport.local-workshop-check.42ECFFAF-6BF5-41C3-95BF-0A54394B8A47.first-clear.plist",
+    "mistport.local-workshop-check.42ECFFAF-6BF5-41C3-95BF-0A54394B8A47.plist",
+    "mistport.material-procurement-check.B86DF28D-9288-4BCF-BDA8-BE6A3882A376.plist",
+    "mistport.neighbors-check.862700C1-C173-4EB5-BF3D-992B29DC6C8E.plist",
+    "mistport.newspaper-check.9423FACD-1197-4E45-8841-FD6DB8EFF876.plist",
+    "mistport.remnants-check.1B11A152-93CA-40F5-8E9F-38C0B601C895.plist"
+  ],
+  "passed": true,
+  "newFilesAllIsolatedTestSuites": true
+}

@@ -1,0 +1,26 @@
+{
+  "checks" : [
+    "daily payment uses catalog prices",
+    "concurrent first-open requests debit once",
+    "reopening does not pay twice",
+    "seven-day lease is not prepaid",
+    "new housing does not grant an unpaid bonus today",
+    "meal change preserves lease and today's receipt",
+    "next Pacific day applies paid highland eligibility",
+    "normal task deducts rule cost",
+    "same receipt does not spend twice",
+    "actual story entry does not spend stamina",
+    "story tower and bounty category is free",
+    "insufficient stamina preserves wallet and receipts",
+    "normal clock restores stamina continuously",
+    "lamp forecast returns positive recovery time",
+    "interrupted journal restores matching wallet housing and stamina once",
+    "unpaid days recover only at base speed",
+    "unaffordable luxury downgrades without debt",
+    "below recovery line enters free shelter",
+    "full rooms reject lease without saving partial payment",
+    "unreadable housing data is never replaced or charged",
+    "Pacific DST repeated hour keeps one day identity"
+  ],
+  "passed" : true
+}

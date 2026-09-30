@@ -1,0 +1,102 @@
+{
+  "build": "169.12",
+  "installed": true,
+  "device": "iPhone 13",
+  "deviceIdentifier": "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+  "osVersion": "26.6",
+  "transport": "localNetwork",
+  "housingChecksPassed": 21,
+  "existingSelfCheckGroupsPassed": 11,
+  "passingMarkers": [
+    "HOUSING_VERIFY_PASS",
+    "DAILY_PACING_VERIFY_PASS",
+    "DAILY_WORK_VERIFY_PASS",
+    "NEWSPAPER_VERIFY_PASS",
+    "REMNANTS_VERIFY_PASS",
+    "NEIGHBORS_VERIFY_PASS",
+    "CITY_EVENTS_VERIFY_PASS",
+    "DAILY_WORKSHOP_VERIFY_PASS",
+    "CHURCH_SERVICES_VERIFY_PASS",
+    "EARLY_RELIC_SHOP_VERIFY_PASS",
+    "LOCAL_WORKSHOP_VERIFY_PASS",
+    "CHURCH_TOWER_100_PASS"
+  ],
+  "screenshots": [
+    {
+      "file": "housing-agency.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "a3787d35febba01e72d3a19f016f6c46e550bae6d9b8bded6aa68e8832f6f7ed"
+    },
+    {
+      "file": "housing-cards.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "3d289d61b436dd85b1184dd25bd1d51e0327204dd44798954a21f85665996171"
+    },
+    {
+      "file": "housing-districts.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "71ce2559482ec039b48408fcdd6fa6cfed9866bf3bd78d2ad4377ceaa63f3536"
+    },
+    {
+      "file": "housing-highland.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "fea1d99b76eefe0791b60e56fc91438254984e1cec74e33cdccaf98ed64a6252"
+    },
+    {
+      "file": "housing-home-night.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "cb422d873bf65c3fa5e64e791d185f5541d56df2200f06692a76543bf0fecc46"
+    },
+    {
+      "file": "housing-home.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "262b62dc1627932025535c3dc0297684a449294acf3722408ea9072ac5f48ff8"
+    },
+    {
+      "file": "housing-interior.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "92ddfce238e6577a54d1b4279a48e0f85e33893cd49a4223e75675973e850659"
+    },
+    {
+      "file": "housing-lease.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "80278aa2f544c0cda2fa2923b4162fb95533d1915fd8b97d8b210d7f98d92cbb"
+    },
+    {
+      "file": "housing-moving.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "730371c2895b36aaa1298dc6f8421ddecffa86b1f67ce35392c5f5ec84887a29"
+    },
+    {
+      "file": "housing-residence.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "f9759fc4d12891e7a2fd0570b72d09a8b12bf36f145e2b49e837411ffa093edb"
+    },
+    {
+      "file": "housing-stamina.png",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "b78346ff27a46484db2a9f5487d4659008b878370d701bb2d52f5540ddb522e4"
+    }
+  ],
+  "screenshotsSource": "native physical-device window PNG; not simulator",
+  "playerPreferencesByteIdentical": true,
+  "preexistingPreferencesByteIdentical": 194,
+  "newIsolatedSuiteFiles": 18,
+  "privatePreferencesBackups": "external SSD; raw values and per-file hash manifest excluded from repository",
+  "activeAccount": "mistport.housing-device-walk.20260930",
+  "lastLaunchedScreen": "home",
+  "userVisualApproval": false,
+  "manualRentalAndSealReview": "pending user",
+  "unityVisualAcceptance": false
+}

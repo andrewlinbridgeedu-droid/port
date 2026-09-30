@@ -1,11 +1,11 @@
 {
   "task": "H3",
-  "status": "draft-awaiting-physical-device-and-user-review",
+  "status": "draft-awaiting-user-device-review",
   "baseMain": "bfdb800e8fd8e81bde830cd86f43aee3dd839355",
   "signedDeviceBuild": {
     "version": "169.12",
     "passed": true,
-    "installed": false,
+    "installed": true,
     "derivedDataOnExternalSSD": true
   },
   "simulator": {
@@ -195,17 +195,16 @@
   "originalLightsAndLightOrderChanged": [],
   "commissionDecalsEnabled": false,
   "housingArtFinalUserApproval": false,
-  "physicalDeviceScreenshots": 0,
+  "physicalDeviceScreenshots": 11,
   "deviceVisualApproval": "pending user",
-  "physicalDeviceState": "unavailable",
-  "physicalPreferencesAccessed": false,
-  "physicalPreferencesCompared": false,
-  "playerPreferencesSafety": "unverified on physical device; no physical access or installation this run",
+  "physicalDeviceState": "available; 169.12 installed and launched",
+  "physicalPreferencesAccessed": true,
+  "physicalPreferencesCompared": true,
+  "playerPreferencesSafety": "all 194 preexisting files byte-identical; 18 added isolated test-suite files",
   "sharedServerClockAndOccupancy": "not connected; rules adapter only",
   "outstanding": [
-    "physical Preferences before/after audit",
-    "isolated device install and self-checks",
-    "physical screenshots and manual rental/return/seal interactions",
+    "manual return / full rental sequence / hotspots and seal animation on physical device",
     "user visual review"
-  ]
+  ],
+  "deviceEvidence": "device/validation-device.json"
 }

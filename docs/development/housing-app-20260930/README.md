@@ -2,7 +2,7 @@
 
 H0 已获用户认可，H1 图稿经 PR #33 合入。H2 从最新 main `7b85f0f` 新开 `codex/housing-h2-app-20260930`。
 
-H2 已经 [PR #34](https://github.com/andrewlinbridgeedu-droid/port/pull/34) 合入 main（`bfdb800e`）。H3 的 169.12 构建、21 项住处自检、11 组旧自检及 11 张模拟器截图见 [H3 验证记录](VERIFICATION-H3.md)；手机尚未连接，真机、Preferences 比较和用户视觉认可仍待完成。以下 H2 记录保留该次验证时点，不把后续模拟器结果写成真机结果。
+H2 已经 [PR #34](https://github.com/andrewlinbridgeedu-droid/port/pull/34) 合入 main（`bfdb800e`）。用户授权装机后，H3 的 169.12 已装 iPhone 13，21 项住处自检和 11 组旧自检真机通过，11 张真机截图已导出，194 份原有 Preferences 全部逐字节不变；见 [H3 验证记录](VERIFICATION-H3.md)。手动完整流程和用户视觉认可仍待完成，PR #35 保持草稿。以下 H2 记录保留该次验证时点。
 
 ## 行为
 

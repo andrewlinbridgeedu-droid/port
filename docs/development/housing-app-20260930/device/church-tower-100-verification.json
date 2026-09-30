@@ -1,0 +1,5540 @@
+{
+  "floors" : [
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 8,
+      "firstClearMerit" : 2,
+      "floor" : 1,
+      "medalUses" : 0,
+      "missionCompleted" : 7,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 740,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 20.650000000000002,
+      "skillCasts" : {
+        "basic" : 5,
+        "fool_skill_01" : 6
+      },
+      "skillIDs" : [
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 2,
+      "talents" : [
+
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1000
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 8,
+      "firstClearMerit" : 2,
+      "floor" : 2,
+      "medalUses" : 1,
+      "missionCompleted" : 7,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 550,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 24.650000000000002,
+      "skillCasts" : {
+        "basic" : 6,
+        "fool_skill_01" : 7
+      },
+      "skillIDs" : [
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 2,
+      "talents" : [
+
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1000
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 8,
+      "firstClearMerit" : 2,
+      "floor" : 3,
+      "medalUses" : 1,
+      "missionCompleted" : 7,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 587,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 22.350000000000001,
+      "skillCasts" : {
+        "basic" : 6,
+        "fool_skill_01" : 6
+      },
+      "skillIDs" : [
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 2,
+      "talents" : [
+
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1000
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 8,
+      "firstClearMerit" : 2,
+      "floor" : 4,
+      "medalUses" : 1,
+      "missionCompleted" : 7,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 513,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.350000000000001,
+      "skillCasts" : {
+        "basic" : 7,
+        "fool_skill_01" : 7
+      },
+      "skillIDs" : [
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 2,
+      "talents" : [
+
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1000
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 8,
+      "firstClearMerit" : 2,
+      "floor" : 5,
+      "medalUses" : 1,
+      "missionCompleted" : 7,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 628,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 24.650000000000002,
+      "skillCasts" : {
+        "basic" : 6,
+        "fool_skill_01" : 7
+      },
+      "skillIDs" : [
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 2,
+      "talents" : [
+
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1160
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 8,
+      "firstClearMerit" : 2,
+      "floor" : 6,
+      "medalUses" : 0,
+      "missionCompleted" : 7,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 842,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@moonfang",
+          "clock-guard-instance-3@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 16.649999999999999,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_01" : 5
+      },
+      "skillIDs" : [
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 2,
+      "talents" : [
+
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1160
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 8,
+      "firstClearMerit" : 2,
+      "floor" : 7,
+      "medalUses" : 0,
+      "missionCompleted" : 7,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 797,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@moonfang",
+          "clock-guard-instance-3@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 20.650000000000002,
+      "skillCasts" : {
+        "basic" : 5,
+        "fool_skill_01" : 6
+      },
+      "skillIDs" : [
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 2,
+      "talents" : [
+
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1160
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 8,
+      "firstClearMerit" : 2,
+      "floor" : 8,
+      "medalUses" : 1,
+      "missionCompleted" : 7,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 684,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 24.650000000000002,
+      "skillCasts" : {
+        "basic" : 6,
+        "fool_skill_01" : 7
+      },
+      "skillIDs" : [
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 2,
+      "talents" : [
+
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1160
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 8,
+      "firstClearMerit" : 2,
+      "floor" : 9,
+      "medalUses" : 1,
+      "missionCompleted" : 7,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 650,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.350000000000001,
+      "skillCasts" : {
+        "basic" : 7,
+        "fool_skill_01" : 7
+      },
+      "skillIDs" : [
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 2,
+      "talents" : [
+
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1270
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 8,
+      "firstClearMerit" : 2,
+      "floor" : 10,
+      "medalUses" : 1,
+      "missionCompleted" : 7,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 586,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 30.350000000000001,
+      "skillCasts" : {
+        "basic" : 8,
+        "fool_skill_01" : 8
+      },
+      "skillIDs" : [
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 2,
+      "talents" : [
+
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1270
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 10,
+      "firstClearMerit" : 2,
+      "floor" : 11,
+      "medalUses" : 0,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1270,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 11.050000000000001,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_01" : 2,
+        "fool_skill_04" : 1,
+        "fool_skill_05" : 2,
+        "fool_skill_06" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1270
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 10,
+      "firstClearMerit" : 2,
+      "floor" : 12,
+      "medalUses" : 0,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1173,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 14.35,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_01" : 2,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 2,
+        "fool_skill_06" : 2
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1270
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 10,
+      "firstClearMerit" : 2,
+      "floor" : 13,
+      "medalUses" : 0,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1139,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 19.900000000000002,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_01" : 3,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 3,
+        "fool_skill_06" : 3
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1270
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 10,
+      "firstClearMerit" : 2,
+      "floor" : 14,
+      "medalUses" : 1,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 893,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@crimson-brute",
+          "clock-guard-instance-3@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@veil-oracle",
+          "clock-guard-instance-3@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 23.199999999999999,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_01" : 4,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 3,
+        "fool_skill_06" : 3
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1270,
+        1190
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 10,
+      "firstClearMerit" : 2,
+      "floor" : 15,
+      "medalUses" : 0,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1139,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 18.050000000000001,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_01" : 3,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 3,
+        "fool_skill_06" : 2
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1270
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 10,
+      "firstClearMerit" : 2,
+      "floor" : 16,
+      "medalUses" : 1,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 853,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@golden-throat"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.5,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_01" : 4,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1270,
+        1190
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 10,
+      "firstClearMerit" : 2,
+      "floor" : 17,
+      "medalUses" : 1,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 853,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@moonfang"
+        ],
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.5,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_01" : 4,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1270,
+        1270
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 10,
+      "firstClearMerit" : 2,
+      "floor" : 18,
+      "medalUses" : 1,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 833,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@crimson-brute",
+          "clock-guard-instance-3@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 23.199999999999999,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_01" : 4,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 3,
+        "fool_skill_06" : 3
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1270,
+        1110
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 10,
+      "firstClearMerit" : 2,
+      "floor" : 19,
+      "medalUses" : 1,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 827,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@veil-oracle",
+          "clock-guard-instance-3@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 28.550000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_01" : 4,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1270,
+        1156
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 10,
+      "firstClearMerit" : 2,
+      "floor" : 20,
+      "medalUses" : 1,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 807,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@veil-oracle",
+          "clock-guard-instance-3@copperback"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 28.550000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_01" : 4,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1270,
+        1190
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 12,
+      "firstClearMerit" : 2,
+      "floor" : 21,
+      "medalUses" : 0,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1207,
+      "rosters" : [
+        [
+          "clock-guard-primary@shellback",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 19.900000000000002,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_01" : 3,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 3,
+        "fool_skill_06" : 3
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1360
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 12,
+      "firstClearMerit" : 2,
+      "floor" : 22,
+      "medalUses" : 0,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1266,
+      "rosters" : [
+        [
+          "clock-guard-primary@shellback",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 14.35,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_01" : 2,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 2,
+        "fool_skill_06" : 2
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1360
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 12,
+      "firstClearMerit" : 2,
+      "floor" : 23,
+      "medalUses" : 0,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1240,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@shellback",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 18.050000000000001,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_01" : 3,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 3,
+        "fool_skill_06" : 2
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1360
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 12,
+      "firstClearMerit" : 2,
+      "floor" : 24,
+      "medalUses" : 1,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 926,
+      "rosters" : [
+        [
+          "clock-guard-primary@copperback",
+          "clock-guard-secondary@copperback"
+        ],
+        [
+          "clock-guard-primary@shellback",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 24.850000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_01" : 4,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1360,
+        1322
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 12,
+      "firstClearMerit" : 2,
+      "floor" : 25,
+      "medalUses" : 1,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 841,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 23.199999999999999,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_01" : 4,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 3,
+        "fool_skill_06" : 3
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1360
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 12,
+      "firstClearMerit" : 2,
+      "floor" : 26,
+      "medalUses" : 1,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 945,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@moonfang"
+        ],
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@shellback",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.5,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_01" : 4,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1360,
+        1360
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 12,
+      "firstClearMerit" : 2,
+      "floor" : 27,
+      "medalUses" : 1,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 909,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@moonfang",
+          "clock-guard-instance-3@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@shellback",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.5,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_01" : 4,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1360,
+        1284
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 12,
+      "firstClearMerit" : 2,
+      "floor" : 28,
+      "medalUses" : 1,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 860,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@shellback",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 35.350000000000001,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_01" : 6,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 4
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1360,
+        1248
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 12,
+      "firstClearMerit" : 2,
+      "floor" : 29,
+      "medalUses" : 1,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 878,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@shellback",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 28.550000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_01" : 4,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1360,
+        1190
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 12,
+      "firstClearMerit" : 2,
+      "floor" : 30,
+      "medalUses" : 1,
+      "missionCompleted" : 10,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 827,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ],
+        [
+          "clock-guard-primary@shellback",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 35.350000000000001,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_01" : 6,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 4
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_01"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : false,
+      "waveEntryHP" : [
+        1360,
+        1248
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 14,
+      "firstClearMerit" : 3,
+      "floor" : 31,
+      "medalUses" : 0,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1250,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@moonfang",
+          "clock-guard-instance-3@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 16.199999999999999,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 3,
+        "fool_skill_06" : 2,
+        "fool_skill_07" : 1,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1360
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 14,
+      "firstClearMerit" : 3,
+      "floor" : 32,
+      "medalUses" : 0,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1174,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@crimson-brute",
+          "clock-guard-instance-3@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 18.149999999999999,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 3,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 1,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1360
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 14,
+      "firstClearMerit" : 3,
+      "floor" : 33,
+      "medalUses" : 0,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1174,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 18.149999999999999,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 3,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 1,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1360
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 14,
+      "firstClearMerit" : 3,
+      "floor" : 34,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 990,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@golden-throat"
+        ],
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.800000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1360,
+        1320
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 14,
+      "firstClearMerit" : 3,
+      "floor" : 35,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 851,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 24.75,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1360
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 14,
+      "firstClearMerit" : 3,
+      "floor" : 36,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 938,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@moonfang",
+          "clock-guard-instance-3@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 30,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1360,
+        1250
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 14,
+      "firstClearMerit" : 3,
+      "floor" : 37,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 827,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@veil-oracle",
+          "clock-guard-instance-3@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 32.300000000000004,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1360,
+        1204
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 14,
+      "firstClearMerit" : 3,
+      "floor" : 38,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 918,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ],
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 32.300000000000004,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1360,
+        1224
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 14,
+      "firstClearMerit" : 3,
+      "floor" : 39,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 866,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 32.300000000000004,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1360,
+        1154
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 14,
+      "firstClearMerit" : 3,
+      "floor" : 40,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 770,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ],
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 37.250000000000007,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_04" : 4,
+        "fool_skill_05" : 6,
+        "fool_skill_06" : 5,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1360,
+        1154
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 16,
+      "firstClearMerit" : 3,
+      "floor" : 41,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 978,
+      "rosters" : [
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.800000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 16,
+      "firstClearMerit" : 3,
+      "floor" : 42,
+      "medalUses" : 0,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1346,
+      "rosters" : [
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@moonfang",
+          "clock-guard-instance-3@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 20.050000000000001,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 3,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 16,
+      "firstClearMerit" : 3,
+      "floor" : 43,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 936,
+      "rosters" : [
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 24.75,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 16,
+      "firstClearMerit" : 3,
+      "floor" : 44,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1043,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@moonfang"
+        ],
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 31.800000000000001,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460,
+        1418
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 16,
+      "firstClearMerit" : 3,
+      "floor" : 45,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 983,
+      "rosters" : [
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@shellback",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 24.75,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 16,
+      "firstClearMerit" : 3,
+      "floor" : 46,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 981,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@crimson-brute",
+          "clock-guard-instance-3@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 35.050000000000004,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 4,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 5,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460,
+        1350
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 16,
+      "firstClearMerit" : 3,
+      "floor" : 47,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 928,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@crimson-brute",
+          "clock-guard-instance-3@copperback"
+        ],
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@shellback",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 35.050000000000004,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 4,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 5,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460,
+        1331
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 16,
+      "firstClearMerit" : 3,
+      "floor" : 48,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 862,
+      "rosters" : [
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 40.850000000000009,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 4,
+        "fool_skill_05" : 6,
+        "fool_skill_06" : 6,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460,
+        1329
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 16,
+      "firstClearMerit" : 3,
+      "floor" : 49,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 902,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ],
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 40.850000000000009,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 4,
+        "fool_skill_05" : 6,
+        "fool_skill_06" : 6,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460,
+        1304
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 16,
+      "firstClearMerit" : 3,
+      "floor" : 50,
+      "medalUses" : 1,
+      "missionCompleted" : 13,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 917,
+      "rosters" : [
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 35.100000000000001,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 4,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 5,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460,
+        1346
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 18,
+      "firstClearMerit" : 3,
+      "floor" : 51,
+      "medalUses" : 0,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1416,
+      "rosters" : [
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@veil-oracle",
+          "clock-guard-instance-3@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 16.199999999999999,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 3,
+        "fool_skill_06" : 2,
+        "fool_skill_07" : 1,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 18,
+      "firstClearMerit" : 3,
+      "floor" : 52,
+      "medalUses" : 0,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1344,
+      "rosters" : [
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 18.149999999999999,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 3,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 1,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 18,
+      "firstClearMerit" : 3,
+      "floor" : 53,
+      "medalUses" : 0,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1344,
+      "rosters" : [
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 18.149999999999999,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 3,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 1,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 18,
+      "firstClearMerit" : 3,
+      "floor" : 54,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1095,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@moonfang",
+          "clock-guard-instance-3@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@crimson-brute",
+          "clock-guard-instance-3@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 23.199999999999999,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460,
+        1460
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 18,
+      "firstClearMerit" : 3,
+      "floor" : 55,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1008,
+      "rosters" : [
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 23.100000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 18,
+      "firstClearMerit" : 3,
+      "floor" : 56,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1059,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@veil-oracle",
+          "clock-guard-instance-3@copperback"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.900000000000002,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460,
+        1460
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 18,
+      "firstClearMerit" : 3,
+      "floor" : 57,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1025,
+      "rosters" : [
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@moonfang",
+          "clock-guard-instance-3@golden-throat"
+        ],
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.800000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460,
+        1366
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 18,
+      "firstClearMerit" : 3,
+      "floor" : 58,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1025,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@moonfang",
+          "clock-guard-instance-3@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.800000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460,
+        1366
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 18,
+      "firstClearMerit" : 3,
+      "floor" : 59,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1025,
+      "rosters" : [
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@crimson-brute",
+          "clock-guard-instance-3@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.800000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460,
+        1366
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 18,
+      "firstClearMerit" : 3,
+      "floor" : 60,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 965,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 31.949999999999999,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 5,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1460,
+        1316
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 20,
+      "firstClearMerit" : 4,
+      "floor" : 61,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1128,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@golden-throat"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.800000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1503
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 20,
+      "firstClearMerit" : 4,
+      "floor" : 62,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1145,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@moonfang"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@veil-oracle",
+          "clock-guard-instance-3@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 24.850000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1560
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 20,
+      "firstClearMerit" : 4,
+      "floor" : 63,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1036,
+      "rosters" : [
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@crimson-brute",
+          "clock-guard-instance-3@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 28.449999999999999,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1427
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 20,
+      "firstClearMerit" : 4,
+      "floor" : 64,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1053,
+      "rosters" : [
+        [
+          "clock-guard-primary@golden-throat",
+          "clock-guard-secondary@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 23.300000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1560
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 20,
+      "firstClearMerit" : 4,
+      "floor" : 65,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1128,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@crimson-brute",
+          "clock-guard-instance-3@copperback"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@shellback",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.800000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1503
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 20,
+      "firstClearMerit" : 4,
+      "floor" : 66,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1093,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@moonfang",
+          "clock-guard-instance-3@golden-throat"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 31.800000000000001,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1503
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 20,
+      "firstClearMerit" : 4,
+      "floor" : 67,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1124,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@moonfang"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@crimson-brute",
+          "clock-guard-instance-3@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 43.950000000000003,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 5,
+        "fool_skill_05" : 7,
+        "fool_skill_06" : 6,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1560,
+        2248
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 20,
+      "firstClearMerit" : 4,
+      "floor" : 68,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1078,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 31.800000000000001,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1468
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 20,
+      "firstClearMerit" : 4,
+      "floor" : 69,
+      "medalUses" : 1,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1101,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@shellback",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.800000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1468
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 20,
+      "firstClearMerit" : 4,
+      "floor" : 70,
+      "medalUses" : 2,
+      "missionCompleted" : 16,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 669,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@shellback",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 49.450000000000003,
+      "skillCasts" : {
+        "basic" : 5,
+        "fool_skill_04" : 5,
+        "fool_skill_05" : 7,
+        "fool_skill_06" : 7,
+        "fool_skill_07" : 4,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1468,
+        1067
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 22,
+      "firstClearMerit" : 4,
+      "floor" : 71,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1143,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@moonfang"
+        ],
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 24.850000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1523
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 22,
+      "firstClearMerit" : 4,
+      "floor" : 72,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1170,
+      "rosters" : [
+        [
+          "clock-guard-primary@golden-throat",
+          "clock-guard-secondary@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@shellback",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 23.300000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 2,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1560
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 22,
+      "firstClearMerit" : 4,
+      "floor" : 73,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1160,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@crimson-brute",
+          "clock-guard-instance-3@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.900000000000002,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1557
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 22,
+      "firstClearMerit" : 4,
+      "floor" : 74,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1158,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@veil-oracle",
+          "clock-guard-instance-3@copperback"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@moonfang",
+          "clock-guard-instance-3@golden-throat"
+        ],
+        [
+          "clock-guard-primary@shellback",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 42.150000000000006,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 5,
+        "fool_skill_05" : 6,
+        "fool_skill_06" : 6,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1560,
+        2340
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 22,
+      "firstClearMerit" : 4,
+      "floor" : 75,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1102,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@veil-oracle",
+          "clock-guard-instance-3@golden-throat"
+        ],
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@moonfang"
+        ],
+        [
+          "clock-guard-primary@shellback",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 37.050000000000004,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_04" : 4,
+        "fool_skill_05" : 6,
+        "fool_skill_06" : 5,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1523,
+        1469
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 22,
+      "firstClearMerit" : 4,
+      "floor" : 76,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1136,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ],
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 28.350000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1514
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 22,
+      "firstClearMerit" : 4,
+      "floor" : 77,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1078,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@crimson-brute",
+          "clock-guard-instance-3@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@shellback",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 35.450000000000003,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_04" : 4,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 5,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1437,
+        2156
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 22,
+      "firstClearMerit" : 4,
+      "floor" : 78,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1170,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 28.350000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1560
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 22,
+      "firstClearMerit" : 4,
+      "floor" : 79,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1136,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 28.350000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1514
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 22,
+      "firstClearMerit" : 4,
+      "floor" : 80,
+      "medalUses" : 2,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 822,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ],
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ],
+        [
+          "clock-guard-primary@shellback",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 49.450000000000003,
+      "skillCasts" : {
+        "basic" : 5,
+        "fool_skill_04" : 5,
+        "fool_skill_05" : 7,
+        "fool_skill_06" : 7,
+        "fool_skill_07" : 4,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1560,
+        1514,
+        1096
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 24,
+      "firstClearMerit" : 4,
+      "floor" : 81,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1245,
+      "rosters" : [
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.800000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1660
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 24,
+      "firstClearMerit" : 4,
+      "floor" : 82,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1239,
+      "rosters" : [
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.900000000000002,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1659
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 24,
+      "firstClearMerit" : 4,
+      "floor" : 83,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1240,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@crimson-brute",
+          "clock-guard-instance-3@copperback"
+        ],
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@shellback",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 24.850000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 3,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1659
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 24,
+      "firstClearMerit" : 4,
+      "floor" : 84,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1213,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@golden-throat"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@frilled-naga",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.900000000000002,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1660
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 24,
+      "firstClearMerit" : 4,
+      "floor" : 85,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1188,
+      "rosters" : [
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@moonfang",
+          "clock-guard-instance-3@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.800000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1583
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 24,
+      "firstClearMerit" : 4,
+      "floor" : 86,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1221,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@veil-oracle",
+          "clock-guard-instance-3@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@boneclaw",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.900000000000002,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1627
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 24,
+      "firstClearMerit" : 4,
+      "floor" : 87,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1214,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@shellback",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 26.800000000000001,
+      "skillCasts" : {
+        "basic" : 2,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1618
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 24,
+      "firstClearMerit" : 4,
+      "floor" : 88,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1202,
+      "rosters" : [
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@golden-throat"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 43.950000000000003,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 5,
+        "fool_skill_05" : 7,
+        "fool_skill_06" : 6,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1602,
+        2403
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 24,
+      "firstClearMerit" : 4,
+      "floor" : 89,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1202,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ],
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 25.150000000000002,
+      "skillCasts" : {
+        "basic" : 1,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 4,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1602
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 24,
+      "firstClearMerit" : 4,
+      "floor" : 90,
+      "medalUses" : 2,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 924,
+      "rosters" : [
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ],
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 49.450000000000003,
+      "skillCasts" : {
+        "basic" : 5,
+        "fool_skill_04" : 5,
+        "fool_skill_05" : 7,
+        "fool_skill_06" : 7,
+        "fool_skill_07" : 4,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1660,
+        1231
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 26,
+      "firstClearMerit" : 5,
+      "floor" : 91,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1133,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 30.050000000000001,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_04" : 3,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 4,
+        "fool_skill_07" : 2,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1510
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 26,
+      "firstClearMerit" : 5,
+      "floor" : 92,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1211,
+      "rosters" : [
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@copperback"
+        ],
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@golden-throat"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 37.050000000000004,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_04" : 4,
+        "fool_skill_05" : 6,
+        "fool_skill_06" : 5,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1659,
+        2421
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 26,
+      "firstClearMerit" : 5,
+      "floor" : 93,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1245,
+      "rosters" : [
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@crimson-brute",
+          "clock-guard-instance-3@golden-throat"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@golden-throat",
+          "clock-guard-instance-3@moonfang"
+        ],
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@shellback",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 35.500000000000007,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_04" : 4,
+        "fool_skill_05" : 5,
+        "fool_skill_06" : 5,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1659,
+        2489
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 26,
+      "firstClearMerit" : 5,
+      "floor" : 94,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1239,
+      "rosters" : [
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@moonfang",
+          "clock-guard-instance-3@moonfang"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 43.950000000000003,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 5,
+        "fool_skill_05" : 7,
+        "fool_skill_06" : 6,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1659,
+        2484
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 26,
+      "firstClearMerit" : 5,
+      "floor" : 95,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1229,
+      "rosters" : [
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@veil-oracle",
+          "clock-guard-instance-3@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@saltmaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 43.900000000000006,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 5,
+        "fool_skill_05" : 7,
+        "fool_skill_06" : 6,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1639,
+        2457
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 26,
+      "firstClearMerit" : 5,
+      "floor" : 96,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1212,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@boneclaw",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ],
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 43.900000000000006,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 5,
+        "fool_skill_05" : 7,
+        "fool_skill_06" : 6,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1616,
+        2424
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 26,
+      "firstClearMerit" : 5,
+      "floor" : 97,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1212,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@ironclaw",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@copperback",
+          "clock-guard-instance-3@golden-throat"
+        ],
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@shellback",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 39.000000000000007,
+      "skillCasts" : {
+        "basic" : 3,
+        "fool_skill_04" : 4,
+        "fool_skill_05" : 6,
+        "fool_skill_06" : 6,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1616,
+        2424
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 26,
+      "firstClearMerit" : 5,
+      "floor" : 98,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1209,
+      "rosters" : [
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@copperback",
+          "clock-guard-instance-4@golden-throat"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ],
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 45.550000000000004,
+      "skillCasts" : {
+        "basic" : 5,
+        "fool_skill_04" : 5,
+        "fool_skill_05" : 7,
+        "fool_skill_06" : 6,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1639,
+        1212
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 26,
+      "firstClearMerit" : 5,
+      "floor" : 99,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1149,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@golden-throat",
+          "clock-guard-instance-4@moonfang"
+        ],
+        [
+          "clock-guard-primary@ironclaw",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@frilled-naga",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 42.050000000000004,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 5,
+        "fool_skill_05" : 6,
+        "fool_skill_06" : 6,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1545,
+        2298
+      ]
+    },
+    {
+      "activeRelic" : "relic_usurped_life_medal",
+      "firstClearCoins" : 26,
+      "firstClearMerit" : 5,
+      "floor" : 100,
+      "medalUses" : 1,
+      "missionCompleted" : 20,
+      "outcome" : "victory",
+      "passiveRelics" : [
+
+      ],
+      "playerHP" : 1149,
+      "rosters" : [
+        [
+          "clock-guard-primary@stonehide",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@moonfang",
+          "clock-guard-instance-4@crimson-brute"
+        ],
+        [
+          "clock-guard-primary@boneclaw",
+          "clock-guard-secondary@saltmaw",
+          "clock-guard-instance-3@crimson-brute",
+          "clock-guard-instance-4@veil-oracle"
+        ],
+        [
+          "clock-guard-primary@frilled-naga",
+          "clock-guard-secondary@stonehide",
+          "clock-guard-instance-3@veil-oracle",
+          "clock-guard-instance-4@copperback"
+        ]
+      ],
+      "route" : "medal",
+      "seconds" : 43.900000000000006,
+      "skillCasts" : {
+        "basic" : 4,
+        "fool_skill_04" : 5,
+        "fool_skill_05" : 7,
+        "fool_skill_06" : 6,
+        "fool_skill_07" : 3,
+        "fool_skill_10" : 1
+      },
+      "skillIDs" : [
+        "fool_skill_05",
+        "fool_skill_04",
+        "fool_skill_06",
+        "fool_skill_07"
+      ],
+      "slotCapacity" : 4,
+      "talents" : [
+        "omen.0",
+        "omen.1",
+        "omen.2",
+        "omen.3",
+        "omen.4",
+        "omen.5",
+        "trickery.0",
+        "trickery.1",
+        "trickery.2",
+        "trickery.3",
+        "trickery.4",
+        "trickery.5"
+      ],
+      "ultimateUnlocked" : true,
+      "waveEntryHP" : [
+        1660,
+        1545,
+        2298
+      ]
+    }
+  ],
+  "passed" : true,
+  "playerSaveModified" : false,
+  "schema" : 1,
+  "verification" : "shipping-core-on-device",
+  "visualAcceptance" : false,
+  "wallSeconds" : 6.2922229766845703,
+  "wins" : 100
+}
