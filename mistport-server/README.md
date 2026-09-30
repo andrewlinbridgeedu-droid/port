@@ -14,7 +14,7 @@ MISTPORT_DB=./dev.sqlite MISTPORT_PORT=8080 MISTPORT_ADMIN_TOKEN=<至少16位> s
 - Linux 需要 `libsqlite3-dev`，macOS 用系统自带的 SQLite。
 - 依赖本仓库的 `mistport-ios/MistportCombatCore`，战斗规则和 App 是同一份代码。
 - 选型（2026-09-30 定）：M2 小服用这套 Swift＋SQLite 单权威服务。
-  - 部署在一台 Linux 服务器上，前面用 Caddy 做 TLS。
+  - 部署在现有的 EC2（Ubuntu）上，前面用 Caddy 或已有的网页服务做 TLS；要改的 EC2 设置见 M0 记录。
   - 用 Litestream 把 SQLite 持续备份到对象存储。
   - 扩到 2,000 注册前做 200 人同时在线压测；不过线再换 PostgreSQL。
 
