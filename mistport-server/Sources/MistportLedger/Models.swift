@@ -20,6 +20,9 @@ public struct LedgerPolicy: Codable, Sendable, Equatable {
     public var lightsPublicReward: Int64 = 12
     public var maxQuantity: Int64 = 9_999
     public var maxUnitPrice: Int64 = 1_000_000
+    /// Daily pacing (MPCDailyPacing, same rules as single player): a server day starts at
+    /// midnight in this time zone. Candidate, to be confirmed with the user.
+    public var pacingTimeZone = "Asia/Shanghai"
     public init() {}
 }
 
@@ -31,6 +34,8 @@ public enum LedgerError: String, Error, Codable, Sendable {
     case soldOut, listingClosed, ownListing, notSeller
     case alreadyImported, fingerprintUsed
     case notEligible, alreadyAttempted, budgetExhausted
+    /// Today's first clears are used up (MPCDailyPacing); checked before the battle opens.
+    case dailyLimit
     case ticketClosed, ticketExpired, encounterMismatch
 }
 
@@ -46,6 +51,10 @@ public struct AccountView: Codable, Sendable, Equatable {
     /// The server-held character: its loadout is the tower verification loadout for this floor.
     public let characterFloor: Int
     public let maxFloor: Int
+    /// The character's pacing day (1 on its first server day) and how many tower floors
+    /// may have been first-cleared by the end of today.
+    public let pacingDay: Int
+    public let towerFirstClearsAllowed: Int
 }
 
 public struct LotMove: Codable, Sendable, Equatable {

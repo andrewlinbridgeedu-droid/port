@@ -6,7 +6,7 @@
 
 ```sh
 swift build
-swift test                     # 账本 14 项 + HTTP 端到端 2 项
+swift test                     # 账本 18 项 + HTTP 端到端 2 项
 MISTPORT_DB=./dev.sqlite MISTPORT_PORT=8080 MISTPORT_ADMIN_TOKEN=<至少16位> swift run mistport-server
 ```
 
@@ -36,6 +36,12 @@ MISTPORT_DB=./dev.sqlite MISTPORT_PORT=8080 MISTPORT_ADMIN_TOKEN=<至少16位> s
   - 开票：先检查资格（塔层不能越级；亮灯公共目标每个账号一次），再从城市预算预留奖励，并把带进战斗的药放进票据托管。预算不够就不开战，不会打赢后才发现付不出。
   - 结算：服务器用自己保存的角色配装和 `MPCChurchBattleDriver` 复算客户端提交的操作记录。确认打赢，才付奖励（塔层还会掉材料）；打输或记录非法，奖励退回城市预算。用掉的药销毁，没用的退回。每张票只结算一次。
   - 过期：票据超过 30 分钟未结算自动关闭，奖励和药退回。
+- **按天放开**（2026-09-30）：
+  - 和单机同一套规则（`MPCDailyPacing`）：塔层首通每天 4 层，跳过的天照算。
+  - 开塔层票据时判断，超出的直接拒绝（`dailyLimit`），不预留任何东西；已通关的楼层重打不受限。
+  - 每个角色有开始日：新号从建号当天算；运维设角色时，照单机迁移旧档的办法往前推，推到下一层今天能打为止。
+  - 服务器的一天从 `LedgerPolicy.pacingTimeZone` 零点开始（候选 `Asia/Shanghai`）。
+  - 旧库自动升级到 schema 2。
 - **本地财富带入**（用户 2026-09-29 定带入，2026-09-30 定折算）：
   - 最多计 12,000 本地铜，按 15% 折成共享铜（最多 1,800），和共享服每日玩法按单机 15% 付的比例一致。
   - 每个账号一次；同一份存档指纹只能带一次。
@@ -47,7 +53,7 @@ MISTPORT_DB=./dev.sqlite MISTPORT_PORT=8080 MISTPORT_ADMIN_TOKEN=<至少16位> s
 |---|---|---|
 | GET | `/health` | 服务与战斗规则版本 |
 | POST | `/v0/accounts` | 建账号，返回 `accountID` 和 `token`（只给一次） |
-| GET | `/v0/me` | 自己的铜、物品和角色 |
+| GET | `/v0/me` | 自己的铜、物品和角色；`pacingDay`（第几天）、`towerFirstClearsAllowed`（到今天为止最多首通几层） |
 | POST | `/v0/import` | `{op, fingerprint, copper}` 本地财富带入，回执含计入的本地铜和发出的共享铜 |
 | GET | `/v0/market?item=` | 公开挂单 |
 | POST | `/v0/market/listings` | `{op, item, quantity, unitPrice}` 挂单 |
