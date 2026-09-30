@@ -1,0 +1,18 @@
+{
+ "kept": false,
+ "normal": {
+  "launch_base·定案": true,
+  "steady_fresh20·定案": true,
+  "dormant_return_200·定案": true,
+  "investment_heat·定案": true,
+  "supply_half_90_repair·定案": true,
+  "launch_base·定案·带入12000按15%": true,
+  "launch_base·定案·带入12000不折算": true,
+  "launch_base·定案·地下委托": true,
+  "steady_fresh20·定案·地下委托": true
+ },
+ "controls": {
+  "反例·照单机发币": true,
+  "反例·每活跃玩家每天无源+30": false
+ }
+}

@@ -6,6 +6,8 @@
 python3 tools/economy-decisions/shared_decisions.py --out <输出目录> --workers 4
 python3 tools/economy-decisions/fee_sweep.py --out <输出目录> --workers 4
 python3 tools/economy-decisions/import_market.py --out <输出目录> --workers 4
+python3 tools/economy-decisions/scale_check.py --out <输出目录> --workers 4    # S2：NPC 物价乘 16 的复核
+python3 tools/economy-decisions/final_check.py --out <输出目录> --workers 4    # 2026-09-30 定案复核
 ```
 
 判定结果见 [`docs/development/shared-economy-decisions-20260929/`](../../docs/development/shared-economy-decisions-20260929/README.md)。

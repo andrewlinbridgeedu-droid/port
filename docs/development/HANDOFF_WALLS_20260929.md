@@ -1,6 +1,75 @@
-# 交接：墙关调数、按天推进与每日玩法 · 2026-09-29（第五轮）
+# 交接：墙关调数、按天推进、每日玩法与共享服 · 2026-09-30（第六轮）
 
-## 现在在哪（2026-09-29 深夜，先读这一节）
+## 现在在哪（2026-09-30，先读这一节）
+
+### 分支
+
+- 本轮云端的工作已通过 [PR #23](https://github.com/andrewlinbridgeedu-droid/port/pull/23) 合进 `main`：
+  - 共享服 M0 技术小样；
+  - 用户授权代定的经济与选型；
+  - EC2 部署清单；
+  - 台阶大道不加路灯；
+  - 本交接。
+
+  新会话从 `main` 开始。本页也被草稿 PR #22 改过，已试合并，没有冲突。
+- 草稿 [PR #22](https://github.com/andrewlinbridgeedu-droid/port/pull/22)（`codex/commission-decals-20260929`，Codex）是城市委托的街景贴片图稿，等用户看图，不能合并。
+
+### 本轮做了什么（云端，Linux）
+
+1. **共享服 M0 技术小样**（用户定“做共享服”）。[记录](shared-server-m0-20260929/README.md)。
+   - 规则库 `ChurchBattleDriver.swift`：
+     - `MPCChurchBattleStepper`：教会系战斗（塔层、通缉、街头战、亮灯公共目标）50 毫秒一格推进，只收玩家的五种操作，并返回给 Unity 播放的事件；
+     - `MPCChurchBattleDriver`：录制和复算操作记录。
+     - 规则库 534 项测试全过。
+   - 服务端 [`mistport-server/`](../../mistport-server/README.md)：Swift、Hummingbird 2.17、SQLite，16 项测试全过。
+     - 账本：铜的发行、转账、销毁分开记；物品批次带来源；操作号防重复；挂单托管、钱货一次交换（40 人抢最后一件只成一笔）。
+     - 战斗：开战前从城市预算预留奖励；服务器用自己保存的角色复算操作记录，确认打赢才付，只付一次。
+     - 另有本地铜带入和审计。
+     - HTTP 端到端跑通了“一笔交易＋一场亮灯公共目标”。
+2. **用户说“你帮我定”，以下已代定**。依据见[共享服经济判定“定案”](shared-economy-decisions-20260929/README.md)。
+   - 经济：保留 24/12，单机数值不动。共享服每日玩法按单机的 15% 付，由城市预算出（城市预算每天最多从 NPC 销售额收 20%）；玩家每个活跃日买一份篮子。
+   - 没选“NPC 物价乘 16”：在那个量级下模型测不出通胀，而且每天一份篮子会让三到五成玩家低于恢复线。
+   - 本地铜：最多计 12,000，按 15% 折成共享铜，服务端已实现。
+   - 其他数值：交易费 5% 进城市预算；亮灯公共目标奖励 12 铜。
+   - 定案复核：9 个情景全部过线。但玩家每天买篮子以后，价格线挡不住小额凭空发币，所以通胀监控以账本按来源的发行为主，价格只作辅助。
+   - 服务端选型：Swift＋SQLite 单服务；Caddy 或已有网页服务做 HTTPS，Litestream 备份到 S3；扩到 2,000 注册前压测，不过线再换 PostgreSQL。
+3. **部署用现有 EC2**（之前生成 4K 酒馆图用过的那台 Ubuntu），**现在不用改任何设置**。M2 小服开测前要改安全组、弹性 IP 和域名、S3 备份权限等，清单在 [M0 记录](shared-server-m0-20260929/README.md#部署到-ec2-时要改的设置m2-小服开测前做现在不用动)。云端连不到这台机器，要由有 SSH 权限的人操作。
+4. **台阶大道不加路灯**（用户定）。城市委托第一批街景改为喷泉、货场两处。原任务单“一排 4–5 盏”是写任务单时加的细节，不是用户的要求。设计稿 6.5 节和[城市贡献度任务单 2.5 节](CODEX_TASKS_CITY_CONTRIBUTION_20260929.md#25-城市委托的街景贴片画景色)已改。
+
+### 接下来
+
+**Mac（Codex），按顺序：**
+1. 首页任务 1 真机收尾：截图、11 组 DEBUG 自检、Preferences 比较，交用户看。
+2. PR #22：
+   - 先删掉大道部分：贴片、灯芯、落地光、LightOrder 数值图、对比图，以及 `home-map-layout.json` 里 `commissionDecals` 和 `lighting.ground` 中大道的条目；
+   - 喷泉、货场等用户看图确认后再接 App。
+3. [首页任务单](CODEX_TASKS_HOME_MAP_20260929.md)的任务 2（送信）、任务 3（B07 六环）。
+4. [城市贡献度任务单](CODEX_TASKS_CITY_CONTRIBUTION_20260929.md)第 1 步（记分和迁移）；第 2 步（按档开放）等送信做完。
+5. [共享服 App 任务单](CODEX_TASKS_SHARED_SERVER_M0_20260929.md)：
+   - 先把 App 教会战斗的现行规则搬进 stepper，已列出 6 处差别；
+   - 再让 App 由 stepper 推进，Unity 只负责播放。
+
+**云端也能做：**
+- 加急委托、街区难题、城市委托三类新内容的铜币，放进 `tools/daily-loop/budget.py` 和进度模拟器重算，交用户确认（城市贡献度任务单第 3 节）。
+- 共享服 App 任务单第 1 步：把 App 教会战斗的规则搬进规则库的 stepper，并补测试。这一步只改规则库，不需要 Mac。
+- 共享服下一批：服务端按天放开（接 `MPCDailyPacing`），以及共享服角色成长的设计。
+
+### 还要用户定或认可
+
+- PR #22 喷泉和货场的图稿。第二版货场已改成深蓝浅金的港务帆布、8 只货箱堆三层，附了手机宽度预览。
+- 首页标注位置（在任务 1 的真机截图上复核），以及首页、柜台分层、八方向行走、底栏缩小的真机认可。
+- **每天的内容时长**：模拟器估算一般速度每天只有约 12 分钟正经内容，离“每天 1–2 小时”差很远。改目标（例如每天 15–30 分钟）、加内容，还是两者结合，还没定。见[人类计时记录](human-timing-20260929/README.md)。
+
+### 没验证的
+
+- 共享服：
+  - App 没接；驱动器现在和调参模型一致，和 App 不一致；
+  - 服务器上的角色是运营工具设的；
+  - 没有正式登录、TLS、限流、备份演练和压测。
+- 经济判定都是模型结论，不是游戏实测，也不能证明不会通胀。
+- 本轮没改 App 代码，不需要在 Mac 上重新编译。
+
+## 2026-09-29 深夜的状态（历史，已由上一节更新）
 
 `main` 已包含：
 - 首页港城设计稿（含城市贡献度第 6 节）；
@@ -117,12 +186,12 @@
 
 每日玩法任务 0 已完成编译、自检及存档差异核对，Build 161 已装 iPhone 13；516 个规则测试及五组 DEBUG 自检通过。修正深井地图层号未按每日额度变灰的问题。详情、截图、真实旧档通缉迁移的额外变化和待用户验收项见 [任务 0 记录](daily-loop-task0-20260929/README.md)。以下云端“未编译”记录保留为历史，不代表当前构建状态。
 
-接手前按顺序读：本页 → [每日玩法第二阶段记录](daily-content-phase2-20260929/README.md) → [第一阶段记录](workshop-phase1-20260929/README.md) → [每日玩法与经济设计](../../mistport-ios/docs/game-design/chapter-one-30/DAILY_LOOP_AND_ECONOMY_20260929.md) → [按天推进报告](progression-sim-20260929-daily-pacing/README.md) → [第二轮调数报告](progression-sim-20260929-tower-check/README.md) → [第一轮调数报告](progression-sim-20260929/README.md) → [HANDOFF_PROGRESSION_UI_20260928.md](HANDOFF_PROGRESSION_UI_20260928.md) → [HANDOFF_M0_20260928.md](HANDOFF_M0_20260928.md)。回复用户用中文。
+接手前按顺序读：本页 → [共享服 M0 记录](shared-server-m0-20260929/README.md) → [共享服经济判定](shared-economy-decisions-20260929/README.md) → [每日玩法第二阶段记录](daily-content-phase2-20260929/README.md) → [第一阶段记录](workshop-phase1-20260929/README.md) → [每日玩法与经济设计](../../mistport-ios/docs/game-design/chapter-one-30/DAILY_LOOP_AND_ECONOMY_20260929.md) → [按天推进报告](progression-sim-20260929-daily-pacing/README.md) → [第二轮调数报告](progression-sim-20260929-tower-check/README.md) → [第一轮调数报告](progression-sim-20260929/README.md) → [HANDOFF_PROGRESSION_UI_20260928.md](HANDOFF_PROGRESSION_UI_20260928.md) → [HANDOFF_M0_20260928.md](HANDOFF_M0_20260928.md)。回复用户用中文。
 
 ## 仓库与分支
 
 - **工作仓库：`github.com/andrewlinbridgeedu-droid/port`**（用户 2026-09-29 定为以后唯一的工作仓库）。换 Claude 账号也可以继续：新账号连上有这个仓库权限的 GitHub 账号，开会话时选这个仓库，先读本页。
-- **从 `main` 起步。** 2026-09-29 已通过 PR #1 把所有分支的工作合进 `main`（合并提交 `9b62e55`）。新会话从 `main` 开始；`claude/world-economy-m0`、`claude/world-economy-m0-u62oho`、`claude/nifty-planck-80307c` 都已并入，不要再在旧分支上继续。
+- **从 `main` 起步。** 2026-09-29 已通过 PR #1 把所有分支的工作合进 `main`（合并提交 `9b62e55`）。新会话从 `main` 开始，`claude/world-economy-m0`、`claude/world-economy-m0-u62oho` 都已并入。`claude/nifty-planck-80307c` 在 2026-09-30 的工作也已由 PR #23 合入。
 - 第一轮交接提到的 `showcase.py` 冲突已合好（保留 PIL 画字，字体优先用 main 选的华文黑体）。
 
 ## 第四轮：按天推进第二步（App 接入，云端写，没编译）
@@ -195,7 +264,7 @@
 2. **按天推进第二步：在 Mac 上编译并验证第四轮的接入**。`xcodebuild` 修掉类型错误；跑 `--verify-daily-pacing` 和 `--verify-player-growth`；真机上先备份 Preferences，确认用户真实存档第一次打开时被迁移（下一关当天可打），并逐文件核对只多了 `mistport.daily-pacing.start.v1` 一个键。可选：把 `todaySummary` 放到城市页；任务板上锁住的关显示原因。
 3. 交给 Codex（Mac）：拉 `main`，`xcodebuild`，按惯例备份 Preferences 后装机；看“封线装备”页通缉栏、通缉案卷的遗落物说明、墙关失败提示（含“换上深井第 N 层或更深的装备”）、通缉战败说明，以及几个新机制的实际手感。装机、编号、SSD、存档隔离规矩见 `HANDOFF_PROGRESSION_UI_20260928.md` 和 `AGENTS.md`。
 4. 用户对上面两条可选项的意见。
-5. 其余 7 件遗落物效果；第二章核心人物战、死亡与继任；服务端账户与可信战斗结算小样。
+5. 其余 7 件遗落物效果；第二章核心人物战、死亡与继任；服务端账户与可信战斗结算小样（2026-09-29 已在云端做出，见本页顶部“共享服 M0”）。
 
 ## 常用命令
 
@@ -217,6 +286,15 @@ python3 tools/progression-sim/report.py <输出目录>
 ```
 
 可调键名见 `tools/progression-sim/Sources/ProgressionSim/Walls.swift` 的 `WallTuning`。
+
+```sh
+# 共享服服务端（Swift 6.0 起，Linux 需 libsqlite3-dev，首次要能连 GitHub 拉依赖）
+cd mistport-server && swift test
+MISTPORT_DB=./dev.sqlite MISTPORT_ADMIN_TOKEN=<至少16位> swift run mistport-server
+# 共享服经济：定案复核（约 20 秒）与全部判定（约 6 分钟）
+python3 tools/economy-decisions/final_check.py --out <目录>
+python3 tools/economy-decisions/shared_decisions.py --out <目录> --workers 4
+```
 
 ## 在 Linux 云端跑 Swift
 
