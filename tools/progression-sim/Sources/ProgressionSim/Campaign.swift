@@ -57,6 +57,11 @@ struct Assumptions: Codable, Sendable {
     /// only while the player holds less than the recovery line for their progress
     /// (180 before Q17, 380 from Q17, 460 from Q20, 600 from Q23, 400 after Q30). SHARED_J0=1.
     var sharedJ0 = ProcessInfo.processInfo.environment["SHARED_J0"] == "1"
+    /// Housing, food and stamina (HOUSING_STAMINA_ARCHITECTURE_20260930.md). HOUSING=1 replaces
+    /// BASKET: each day the player takes the best tier whose two weeks they can pay while staying
+    /// above the recovery line. STAMINA=1: 100 + the tier's bonus a day; daily-loop actions cost it.
+    var housing = ProcessInfo.processInfo.environment["HOUSING"] == "1"
+    var stamina = ProcessInfo.processInfo.environment["STAMINA"] == "1"
     /// Tier content pays no copper during chapter one (user decision 2026-09-30).
     var tierCopperInChapterOne = ProcessInfo.processInfo.environment["TIER_COPPER_CH1"] == "1"
     /// Human-pace runs (HumanTiming.swift): when set, every non-battle second above is
@@ -198,8 +203,11 @@ struct DailyContentSummary: Codable {
     let contributionByDay: [Int]
     /// Tier content done: urgent, joint, commission (count).
     let tierContent: [String: Int]
-    /// Shared-server baskets (BASKET): bought and missed days.
+    /// Shared-server baskets (BASKET or HOUSING): bought and missed days.
     let baskets: [String: Int]
+    /// HOUSING: days spent at each daily living cost; STAMINA: actions skipped for lack of stamina.
+    let housingDays: [String: Int]
+    let staminaShort: Int
 }
 
 struct WorkshopSummary: Codable {
@@ -255,6 +263,16 @@ final class Campaign {
     var contributionByDay: [Int] = []
     var tierContentDays = Set<String>()
     var basketsBought = 0, basketsMissed = 0
+    /// Daily living by tier (bed + food a day → stamina bonus), best first; 12 is the basic basket.
+    static let housingTiers: [(cost: Int, bonus: Int)] = [(50, 20), (30, 15), (24, 9), (18, 6), (12, 0)]
+    var housingDays: [String: Int] = [:]
+    var staminaLeft = 100, staminaShort = 0
+    func useStamina(_ cost: Int) -> Bool {
+        guard assumptions.stamina else { return true }
+        guard staminaLeft >= cost else { staminaShort += 1; return false }
+        staminaLeft -= cost
+        return true
+    }
     /// Shared J0 jobs allowed a day while below the recovery line (V3: 1; SHARED_J0_PER_DAY).
     var sharedJ0Day = 0, sharedJ0Count = 0
     let sharedJ0PerDay = Int(ProcessInfo.processInfo.environment["SHARED_J0_PER_DAY"] ?? "") ?? 1
@@ -379,7 +397,8 @@ final class Campaign {
 
     @discardableResult func postal(upTo target: Int) -> Bool {
         while copper < target && work.preview(day: dayNumber, copper: Shop.postalPay) * 2 >= Shop.postalPay
-                && (!assumptions.sharedJ0 || (copper < recoveryLine && sharedJ0Today(counting: false) < sharedJ0PerDay)) {
+                && (!assumptions.sharedJ0 || (copper < recoveryLine && sharedJ0Today(counting: false) < sharedJ0PerDay))
+                && useStamina(10) {
             if assumptions.sharedJ0 { _ = sharedJ0Today(counting: true) }
             postalJobs += 1
             let pay = work.settle(receiptID: "postal-\(postalJobs)", day: dayNumber, copper: Shop.postalPay, merit: 0)
@@ -393,7 +412,12 @@ final class Campaign {
     }
 
     func nextDay() {
-        if assumptions.basketCost > 0 {
+        var bonus = 0
+        if assumptions.housing {
+            let tier = Self.housingTiers.first { copper >= recoveryLine + 14 * $0.cost } ?? Self.housingTiers.last!
+            if copper >= tier.cost { copper -= tier.cost; basketsBought += 1; bonus = tier.bonus } else { basketsMissed += 1 }
+            housingDays["\(tier.cost)", default: 0] += 1
+        } else if assumptions.basketCost > 0 {
             if copper >= assumptions.basketCost { copper -= assumptions.basketCost; basketsBought += 1 } else { basketsMissed += 1 }
         }
         if let m = model { busy("newspaper", total(m.newspaper)) }
@@ -402,6 +426,7 @@ final class Campaign {
         dailyContent()
         missedErrands += neighbors.offers.filter { $0.day == dayNumber && !$0.done }.map(\.errandID)
         day += 1; dayMinutes.append(0)
+        staminaLeft = 100 + bonus
         if churchOpen { refreshBoard() }
     }
 
@@ -415,11 +440,12 @@ final class Campaign {
         orders.open(day: dayNumber, bonus: effects.orderBudgetBonus)
         func craft(_ recipeID: String) -> Bool {
             let cost = MPCCraftingCatalog.baseStock(MPCCraftingCatalog.recipe(recipeID)!, surcharge: effects.craftSurcharge)
-            guard copper - cost >= salvePrice else { return false }
+            guard copper - cost >= salvePrice, useStamina(5) else { return false }
             let made = (try? crafting.craft(receiptID: "craft-\(crafts)", recipeID: recipeID, day: dayNumber,
                                             completedMissions: completedMissions, coins: &copper,
                                             inventory: &inventory, gear: &gear, surcharge: effects.craftSurcharge)) == true
             if made { crafts += 1; baseStockCopper += cost; busy("workshop", model.map { total($0.craft) } ?? assumptions.craftSeconds) }
+            else if assumptions.stamina { staminaLeft += 5 }
             return made
         }
         func sell(_ item: String, keeping keep: Int) -> Bool {
@@ -456,7 +482,7 @@ final class Campaign {
                 let keep = reserved[need.itemID, default: 0]
                 stock(need.itemID, events.remaining(event, itemID: need.itemID) + keep)
                 let spare = inventory[need.itemID, default: 0] - keep
-                guard spare > 0 else { continue }
+                guard spare > 0, useStamina(5) else { continue }
                 tickets += 1
                 let before = copper
                 var delivered = false
@@ -519,6 +545,7 @@ final class Campaign {
             ("commission", .cityCommission, dayNumber % 7 == 0, 60, assumptions.cityCommissionSeconds),
         ]
         for (name, feature, today, pay, seconds) in offers where today && contribution.isOpen(feature) {
+            guard useStamina(name == "urgent" ? 15 : name == "joint" ? 25 : 35) else { continue }
             guard tierContentDays.insert("\(name)-\(dayNumber)").inserted else { continue }
             busy(name, seconds)
             if q < 30 && !assumptions.tierCopperInChapterOne { tierContentDone[name, default: 0] += 1; contribute("\(name)-\(dayNumber)", .errand); continue }
@@ -533,7 +560,7 @@ final class Campaign {
         defer { tierContent() }
         if let m = model, neighbors.offers.contains(where: { $0.day == dayNumber && !$0.done }) { busy("errand", total(m.streetOpen)) }
         for offer in neighbors.offers where offer.day == dayNumber && !offer.done {
-            guard let errand = offer.errand else { continue }
+            guard let errand = offer.errand, useStamina(errand.kind == .deliver ? 10 : 15) else { continue }
             var reward: MPCNeighborLedger.Reward?
             switch errand.kind {
             case .deliver: loopIncome("errand") { reward = try? neighbors.deliver(offerID: offer.id, coins: &copper, inventory: &inventory) }
@@ -555,6 +582,7 @@ final class Campaign {
             var tries = 0
             while tries < 3, events.status(event.id, day: dayNumber) == .running, events.winsLeft(event) > 0,
                   events.winsCounted(event.id, day: dayNumber) < MPCCityEventCatalog.countedWinsPerDay {
+                guard useStamina(15) else { break }
                 tries += 1; tickets += 1
                 let ticket = "event-\(tickets)"
                 guard let id = try? events.beginBattle(ticket: ticket, eventID: event.id, day: dayNumber) else { break }
@@ -566,7 +594,8 @@ final class Campaign {
                 if events.status(event.id, day: dayNumber) == .succeeded { contribute("event-success-\(event.id)", .eventSuccess) }
             }
         }
-        if let job = try? remnants.accept(day: dayNumber, closedCaseIDs: cleared, highestTowerFloor: tower), !job.claimed {
+        if assumptions.stamina ? staminaLeft >= 20 : true,
+           let job = try? remnants.accept(day: dayNumber, closedCaseIDs: cleared, highestTowerFloor: tower), !job.claimed, useStamina(20) {
             busy("remnant", model.map { total($0.remnant(job.remnant!, lead: job.lead)) } ?? assumptions.remnantInvestigationSeconds)
             _ = try? remnants.answer(day: dayNumber, choiceID: job.remnant!.leads[job.lead].correctChoiceID)
             for _ in 0..<2 where remnants.job(day: dayNumber)?.won == false {
@@ -883,7 +912,8 @@ final class Campaign {
                                       missedErrands: missedErrands,
                                       contribution: contribution.points, contributionTierDays: contributionTierDays,
                                       contributionByDay: contributionByDay, tierContent: tierContentDone,
-                                      baskets: ["bought": basketsBought, "missed": basketsMissed]),
+                                      baskets: ["bought": basketsBought, "missed": basketsMissed],
+                                      housingDays: housingDays, staminaShort: staminaShort),
                          merit: merit, towerFloor: tower, bountiesCleared: cleared.sorted(),
                          passives: passives, bountyRelics: relics.ownedIDs.sorted(), milestones: milestones, visits: visits)
     }

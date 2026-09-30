@@ -52,7 +52,12 @@
   - 加一个每天 12 铜的基本篮子（新机制，形式待用户定）。
   - 两套模型都过线，App 还没改。
 - **旧存档不迁移，所有人从头开始**；**不能离线玩**（用户 2026-09-30 定）。
-- **加每天的基本篮子，并扩展成住处、饮食和体力系统**，还要有富人区专属任务、雾港建筑文化和找住处界面（Codex 画）。设计稿见 [HOUSING_STAMINA_ARCHITECTURE_20260930.md](../../mistport-ios/docs/game-design/chapter-one-30/HOUSING_STAMINA_ARCHITECTURE_20260930.md)。用户已认可体力节奏、住处饮食档位和价格、富人区任务奖励、雾港三层建筑；找住处另开房屋中介“门牌所”。下一步：服务器模型加房间档重跑、模拟器改用体力，再交 Codex 画风格板。
+- **加每天的基本篮子，并扩展成住处、饮食和体力系统**，还要有富人区专属任务、雾港建筑文化和找住处界面（Codex 画）。设计稿见 [HOUSING_STAMINA_ARCHITECTURE_20260930.md](../../mistport-ios/docs/game-design/chapter-one-30/HOUSING_STAMINA_ARCHITECTURE_20260930.md)。用户已认可体力节奏、住处饮食档位和价格、富人区任务奖励、雾港三层建筑；找住处另开房屋中介“赁屋行”。已完成：
+  - 服务器模型加住处档重跑：9 个情景全部过线，发行量不变；
+  - 模拟器加体力和住处自选：第一章 9／9 按时通关；
+  - 规则库 `HousingStamina.swift` 已写好，555 项测试全过。
+
+  见 [housing-economy-20260930](housing-economy-20260930/)。房屋中介改名“赁屋行”（用户定）。Mac 上的实装见 [Codex 住处任务单](CODEX_TASKS_HOUSING_20260930.md)：先画 3 张风格板给用户认可。
 - 用户要等全部接进游戏再测。
 
 ### 接下来
