@@ -44,6 +44,21 @@ struct Assumptions: Codable, Sendable {
     var urgentErrandSeconds = 180.0
     var jointErrandSeconds = 360.0
     var cityCommissionSeconds = 600.0
+    /// Shared server (user 2026-09-30: there is only the shared server): the share of the
+    /// daily-loop copper the game actually pays (postal J0, errands, remnants, events,
+    /// workshop net profit, tier content). One-time rewards and NPC prices are unchanged.
+    /// LOOP_SCALE=0.15 is the shared-economy ceiling with margin; 1 is the old single player.
+    var loopScale = Double(ProcessInfo.processInfo.environment["LOOP_SCALE"] ?? "") ?? 1
+    /// Shared server's protected basket, one per active day (shared-economy decision D3: 12 copper),
+    /// in this model's units: with every game copper amount scaled by k, it costs 12 / k here.
+    /// BASKET=80 is k = 0.15. Bought first each day while copper allows; missed days are counted.
+    var basketCost = Int(ProcessInfo.processInfo.environment["BASKET"] ?? "") ?? 0
+    /// Shared J0 (V3 model, docs/development/economy-2000-v3-pro-source): a posting job pays
+    /// only while the player holds less than the recovery line for their progress
+    /// (180 before Q17, 380 from Q17, 460 from Q20, 600 from Q23, 400 after Q30). SHARED_J0=1.
+    var sharedJ0 = ProcessInfo.processInfo.environment["SHARED_J0"] == "1"
+    /// Tier content pays no copper during chapter one (user decision 2026-09-30).
+    var tierCopperInChapterOne = ProcessInfo.processInfo.environment["TIER_COPPER_CH1"] == "1"
     /// Human-pace runs (HumanTiming.swift): when set, every non-battle second above is
     /// replaced by the step model and battles run at the pace's action delay.
     var pace: HumanPace? = nil
@@ -183,6 +198,8 @@ struct DailyContentSummary: Codable {
     let contributionByDay: [Int]
     /// Tier content done: urgent, joint, commission (count).
     let tierContent: [String: Int]
+    /// Shared-server baskets (BASKET): bought and missed days.
+    let baskets: [String: Int]
 }
 
 struct WorkshopSummary: Codable {
@@ -237,6 +254,15 @@ final class Campaign {
     var contributionTierDays: [String: Int] = [:]
     var contributionByDay: [Int] = []
     var tierContentDays = Set<String>()
+    var basketsBought = 0, basketsMissed = 0
+    /// Shared J0 jobs allowed a day while below the recovery line (V3: 1; SHARED_J0_PER_DAY).
+    var sharedJ0Day = 0, sharedJ0Count = 0
+    let sharedJ0PerDay = Int(ProcessInfo.processInfo.environment["SHARED_J0_PER_DAY"] ?? "") ?? 1
+    func sharedJ0Today(counting: Bool) -> Int {
+        if sharedJ0Day != dayNumber { sharedJ0Day = dayNumber; sharedJ0Count = 0 }
+        if counting { sharedJ0Count += 1 }
+        return sharedJ0Count
+    }
     var tierContentDone: [String: Int] = [:]
     var usesDailyContent: Bool { usesWorkshop }
     var city: MPCCityEvent.Effects { events.effects(day: dayNumber) }
@@ -323,6 +349,18 @@ final class Campaign {
 
     /// J0 seal checks until `target` copper, paid through the day's taper. A player stops
     /// once a job would pay only a tenth; if that leaves them short, they wait for tomorrow.
+    /// Pays only `loopScale` of the copper the daily-loop step `body` added.
+    /// `channel` also takes the unpaid part off `earned`; pass nil where `earned` is counted from the delta.
+    func loopIncome(_ channel: String?, _ body: () -> Void) {
+        let before = copper
+        body()
+        let gained = copper - before
+        guard gained > 0, assumptions.loopScale != 1 else { return }
+        let kept = Int((Double(gained) * assumptions.loopScale).rounded())
+        copper = before + kept
+        if let channel { earned[channel, default: 0] -= gained - kept }
+    }
+
     func contribute(_ receiptID: String, _ source: MPCCityContribution.Source) {
         contribution.record(receiptID: receiptID, source: source, day: dayNumber)
         while contributionByDay.count < dayNumber { contributionByDay.append(contributionByDay.last ?? 0) }
@@ -335,11 +373,18 @@ final class Campaign {
         }
     }
 
+    /// RECOVERY_PRE17 overrides the first line (180) to test candidates.
+    var recoveryLine: Int { q >= 30 ? 400 : q >= 23 ? 600 : q >= 20 ? 460 : q >= 17 ? 380
+        : Int(ProcessInfo.processInfo.environment["RECOVERY_PRE17"] ?? "") ?? 180 }
+
     @discardableResult func postal(upTo target: Int) -> Bool {
-        while copper < target && work.preview(day: dayNumber, copper: Shop.postalPay) * 2 >= Shop.postalPay {
+        while copper < target && work.preview(day: dayNumber, copper: Shop.postalPay) * 2 >= Shop.postalPay
+                && (!assumptions.sharedJ0 || (copper < recoveryLine && sharedJ0Today(counting: false) < sharedJ0PerDay)) {
+            if assumptions.sharedJ0 { _ = sharedJ0Today(counting: true) }
             postalJobs += 1
             let pay = work.settle(receiptID: "postal-\(postalJobs)", day: dayNumber, copper: Shop.postalPay, merit: 0)
-            copper += pay.copper; earned["postal", default: 0] += pay.copper
+            if assumptions.sharedJ0 { copper += pay.copper; earned["postal", default: 0] += pay.copper }
+            else { loopIncome("postal") { copper += pay.copper; earned["postal", default: 0] += pay.copper } }
             contribute("postal-\(postalJobs)", .post)
             busy("postal", model.map { total($0.postal) } ?? assumptions.postalSeconds)
         }
@@ -348,6 +393,9 @@ final class Campaign {
     }
 
     func nextDay() {
+        if assumptions.basketCost > 0 {
+            if copper >= assumptions.basketCost { copper -= assumptions.basketCost; basketsBought += 1 } else { basketsMissed += 1 }
+        }
         if let m = model { busy("newspaper", total(m.newspaper)) }
         if usesDailyContent { neighbors.open(day: dayNumber, completedMissions: completedMissions) }
         workshopSession()
@@ -377,8 +425,11 @@ final class Campaign {
         func sell(_ item: String, keeping keep: Int) -> Bool {
             let spare = inventory[item, default: 0] - keep
             guard spare > 0 else { return false }
-            let units = (try? orders.sell(receiptID: "sale-\(unitsSold)-\(item)", itemID: item, count: spare,
-                                           day: dayNumber, coins: &copper, inventory: &inventory, bonus: effects.orderBudgetBonus)) ?? 0
+            var units = 0
+            loopIncome("workshop") {
+                units = (try? orders.sell(receiptID: "sale-\(unitsSold)-\(item)", itemID: item, count: spare,
+                                          day: dayNumber, coins: &copper, inventory: &inventory, bonus: effects.orderBudgetBonus)) ?? 0
+            }
             guard units > 0 else { return false }
             unitsSold += units
             earned["workshop", default: 0] += units * MPCWorkshopOrderBoard.prices[item]!
@@ -408,8 +459,12 @@ final class Campaign {
                 guard spare > 0 else { continue }
                 tickets += 1
                 let before = copper
-                if (try? events.deliver(id: "deliver-\(tickets)", eventID: event.id, itemID: need.itemID, count: spare,
-                                        day: dayNumber, coins: &copper, inventory: &inventory)) != nil {
+                var delivered = false
+                loopIncome(nil) {
+                    delivered = (try? events.deliver(id: "deliver-\(tickets)", eventID: event.id, itemID: need.itemID, count: spare,
+                                                     day: dayNumber, coins: &copper, inventory: &inventory)) != nil
+                }
+                if delivered {
                     earned["event", default: 0] += copper - before
                     busy("event", model.map { total($0.eventDelivery) } ?? assumptions.eventDeliverySeconds)
                     if let m = model, briefedEvents.insert(event.id).inserted { busy("event", total([m.eventBriefing(event)])) }
@@ -466,7 +521,8 @@ final class Campaign {
         for (name, feature, today, pay, seconds) in offers where today && contribution.isOpen(feature) {
             guard tierContentDays.insert("\(name)-\(dayNumber)").inserted else { continue }
             busy(name, seconds)
-            copper += pay; earned[name, default: 0] += pay
+            if q < 30 && !assumptions.tierCopperInChapterOne { tierContentDone[name, default: 0] += 1; contribute("\(name)-\(dayNumber)", .errand); continue }
+            loopIncome(name) { copper += pay; earned[name, default: 0] += pay }
             tierContentDone[name, default: 0] += 1
             contribute("\(name)-\(dayNumber)", .errand)
         }
@@ -480,15 +536,15 @@ final class Campaign {
             guard let errand = offer.errand else { continue }
             var reward: MPCNeighborLedger.Reward?
             switch errand.kind {
-            case .deliver: reward = try? neighbors.deliver(offerID: offer.id, coins: &copper, inventory: &inventory)
-            case .find: reward = try? neighbors.answer(offerID: offer.id, choiceID: errand.correctChoiceID!, coins: &copper)
-            case .message: reward = try? neighbors.relay(offerID: offer.id, to: errand.recipientID!, coins: &copper)
+            case .deliver: loopIncome("errand") { reward = try? neighbors.deliver(offerID: offer.id, coins: &copper, inventory: &inventory) }
+            case .find: loopIncome("errand") { reward = try? neighbors.answer(offerID: offer.id, choiceID: errand.correctChoiceID!, coins: &copper) }
+            case .message: loopIncome("errand") { reward = try? neighbors.relay(offerID: offer.id, to: errand.recipientID!, coins: &copper) }
             case .pest:
                 tickets += 1
                 let ticket = "errand-\(tickets)"
                 guard let id = try? neighbors.beginPest(offerID: offer.id, ticket: ticket) else { continue }
                 let fight = streetFight(id, kind: "errand")
-                reward = try? neighbors.settlePest(offerID: offer.id, ticket: ticket, session: fight.session, coins: &copper)
+                loopIncome("errand") { reward = try? neighbors.settlePest(offerID: offer.id, ticket: ticket, session: fight.session, coins: &copper) }
             }
             busy("errand", model.map { total($0.errand(errand, asker: offer.neighborID)) }
                  ?? assumptions.errandSeconds + (errand.kind == .message ? assumptions.messageWalkSeconds : 0))
@@ -504,7 +560,7 @@ final class Campaign {
                 guard let id = try? events.beginBattle(ticket: ticket, eventID: event.id, day: dayNumber) else { break }
                 let fight = streetFight(id, kind: "event")
                 let before = copper, winsBefore = events.progress[event.id]?.wins ?? 0
-                _ = try? events.settleBattle(ticket: ticket, session: fight.session, day: dayNumber, coins: &copper)
+                loopIncome(nil) { _ = try? events.settleBattle(ticket: ticket, session: fight.session, day: dayNumber, coins: &copper) }
                 earned["event", default: 0] += copper - before
                 if (events.progress[event.id]?.wins ?? 0) > winsBefore { contribute(ticket, .eventBattle) }
                 if events.status(event.id, day: dayNumber) == .succeeded { contribute("event-success-\(event.id)", .eventSuccess) }
@@ -520,7 +576,9 @@ final class Campaign {
                 let fight = streetFight(id, kind: "remnant")
                 _ = try? remnants.settleBattle(day: dayNumber, ticket: ticket, session: fight.session)
             }
-            if let payout = try? remnants.claim(day: dayNumber, today: dayNumber, work: &work, coins: &copper, inventory: &inventory) {
+            var claimed: MPCDailyWorkLedger.Payout?
+            loopIncome("remnant") { claimed = try? remnants.claim(day: dayNumber, today: dayNumber, work: &work, coins: &copper, inventory: &inventory) }
+            if let payout = claimed {
                 remnantsDone += 1; earned["remnant", default: 0] += payout.copper
                 contribute("remnant-day-\(dayNumber)", .remnant)
             }
@@ -582,7 +640,10 @@ final class Campaign {
             wear(passive, won: won)
             if won {
                 let reward = MPCChapterOneThirtyMissionContract.firstClear(for: mission)!
-                copper += reward.copper; merit += reward.merit; earned["main", default: 0] += reward.copper
+                // EARLY_SHIFT=n: n more copper on Q3 and on Q5, 2n less on Q30 (same chapter total).
+                let shift = Int(ProcessInfo.processInfo.environment["EARLY_SHIFT"] ?? "") ?? 0
+                let paid = reward.copper + ([3, 5].contains(mission) ? shift : mission == 30 ? -2 * shift : 0)
+                copper += paid; merit += reward.merit; earned["main", default: 0] += paid
                 q = mission
                 contribute("mission-\(mission)", .mission)
                 visit("main", key, won: true, attempts: attempts, seconds: total)
@@ -801,7 +862,7 @@ final class Campaign {
             // Side content may have made a plan winnable that only works with the salve.
             if !advanced { advanced = retryWithFreshSalves() }
             // Out of today's J0 work before the copper was there: tomorrow pays in full again.
-            if !advanced && copperShort && copperWaits < 3 { copperWaits += 1; nextDay(); continue }
+            if !advanced && copperShort && copperWaits < (Int(ProcessInfo.processInfo.environment["COPPER_WAITS"] ?? "") ?? 3) { copperWaits += 1; nextDay(); continue }
             if !advanced { stuckAt = q + 1; break }
         }
         return RunResult(policy: policy.rawValue, profile: profile.name, startOffset: startOffset, assumptions: assumptions,
@@ -821,7 +882,8 @@ final class Campaign {
                                       storiesUnlocked: MPCNeighborCatalog.all.reduce(0) { $0 + neighbors.stories($1.id).count },
                                       missedErrands: missedErrands,
                                       contribution: contribution.points, contributionTierDays: contributionTierDays,
-                                      contributionByDay: contributionByDay, tierContent: tierContentDone),
+                                      contributionByDay: contributionByDay, tierContent: tierContentDone,
+                                      baskets: ["bought": basketsBought, "missed": basketsMissed]),
                          merit: merit, towerFloor: tower, bountiesCleared: cleared.sorted(),
                          passives: passives, bountyRelics: relics.ownedIDs.sorted(), milestones: milestones, visits: visits)
     }

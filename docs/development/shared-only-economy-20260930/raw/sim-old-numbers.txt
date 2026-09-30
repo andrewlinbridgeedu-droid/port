@@ -1,0 +1,19 @@
+mainOnly      high   day+0: reached Q7 STUCK at Q8 · 123 min · 贡献 24 档日 -/-/-
+mainOnly      medium day+0: reached Q7 STUCK at Q8 · 123 min · 贡献 24 档日 -/-/-
+mainOnly      low    day+0: reached Q7 STUCK at Q8 · 177 min · 贡献 26 档日 -/-/-
+mainTower     high   day+0: reached Q11 STUCK at Q12 · 150 min · 贡献 32 档日 -/-/-
+mainTower     medium day+0: reached Q11 STUCK at Q12 · 151 min · 贡献 32 档日 -/-/-
+mainTower     low    day+0: reached Q11 STUCK at Q12 · 225 min · 贡献 34 档日 -/-/-
+mainBounty    high   day+0: reached Q7 STUCK at Q8 · 301 min · 贡献 82 档日 -/-/-
+mainBounty    medium day+0: reached Q7 STUCK at Q8 · 340 min · 贡献 102 档日 -/-/-
+mainBounty    low    day+0: reached Q7 STUCK at Q8 · 371 min · 贡献 74 档日 -/-/-
+all           high   day+0: reached Q30 done · 715 min · 贡献 440 档日 6/12/18
+all           medium day+0: reached Q30 done · 726 min · 贡献 440 档日 6/12/18
+all           low    day+0: reached Q30 done · 852 min · 贡献 440 档日 7/12/18
+completionist high   day+0: reached Q30 done · 720 min · 贡献 440 档日 6/12/18
+completionist medium day+0: reached Q30 done · 732 min · 贡献 440 档日 6/12/18
+completionist low    day+0: reached Q30 done · 872 min · 贡献 438 档日 7/12/18
+hinted        high   day+0: reached Q30 done · 555 min · 贡献 104 档日 -/-/-
+hinted        medium day+0: reached Q30 done · 568 min · 贡献 104 档日 -/-/-
+hinted        low    day+0: reached Q30 done · 646 min · 贡献 112 档日 -/-/-
+Wrote 18 serial runs and 90 gate checks to /tmp/claude-0/-home-user-port/ca71bf00-1d80-5edc-86c5-4b5dfda8d5d3/scratchpad/loop-1
