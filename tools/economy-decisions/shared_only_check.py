@@ -24,6 +24,8 @@ ap.add_argument("--share", type=float, default=0.15)
 ap.add_argument("--tier-post", type=float, default=33.6)
 ap.add_argument("--early-shift", type=int, default=100,
                 help="copper moved to the Q3 and Q5 first clears, taken evenly from Q26-Q30")
+ap.add_argument("--housing", action="store_true",
+                help="housing and food tiers above the 12-copper basket (HOUSING_STAMINA_ARCHITECTURE_20260930.md)")
 ap.add_argument("--workers", type=int, default=4)
 args = ap.parse_args()
 
@@ -40,6 +42,30 @@ if args.early_shift:
     assert sum(rewards) == sum(v3.MAINLINE_REWARDS) and min(rewards) > 0
     v3.MAINLINE_REWARDS = rewards
     v3.REWARD_QUEUE = v3.build_reward_queue()
+# Housing and food above the basket: daily total per tier (bed + food) and rooms on a 2,000-player
+# server. Each active day a player takes the best tier with rooms left whose two weeks they can pay
+# while staying above their recovery line (richest first, a stand-in for leases and queues). The
+# part above the basket is paid to NPC merchants (general business), like open services.
+HOUSING = [(50, 80), (30, 200), (24, 600), (18, 1200)]
+if args.housing:
+    _loop = sd._daily_loop
+    def _daily_loop_with_housing(world, active_ids):
+        _loop(world, active_ids)
+        rooms = {total: n for total, n in HOUSING}
+        for pid in sorted(active_ids, key=lambda i: -world.residents[i].cash):
+            p = world.residents[pid]
+            floor = sd.v3.recovery_floor(world.cfg, p.q_completed)
+            for total, _ in HOUSING:
+                extra = total - 12
+                if rooms[total] > 0 and p.cash >= floor + 14 * total:
+                    rooms[total] -= 1
+                    p.cash -= extra
+                    world.general_business_cash += extra
+                    sd.STATS["housing_paid"] = sd.STATS.get("housing_paid", 0) + extra
+                    sd.STATS.setdefault("housing_days", {}).setdefault(total, 0)
+                    sd.STATS["housing_days"][total] += 1
+                    break
+    sd._daily_loop = _daily_loop_with_housing
 fc.SHARE = args.share
 sys.argv = ["final_check.py", "--out", args.out, "--workers", str(args.workers)]
 fc.main()
