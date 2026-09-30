@@ -648,6 +648,7 @@ final class GameStore {
         if launchArguments.contains("--verify-church-tower") { Self.verifyChurchTower() }
         if launchArguments.contains("--verify-church-tower-100") { Self.verifyChurchTowerHundred() }
         if launchArguments.contains("--verify-player-growth") { Self.verifyPlayerGrowthPersistence() }
+        if launchArguments.contains("--verify-housing") { Task { await Self.verifyHousing() } }
         if launchArguments.contains("--verify-daily-pacing") { Self.verifyDailyPacing() }
         if launchArguments.contains("--verify-daily-work") { Task { await Self.verifyDailyWorkIntegration() } }
         if launchArguments.contains("--verify-newspaper") { Task { await Self.verifyNewspaperIntegration() } }
@@ -2663,7 +2664,7 @@ extension GameStore {
                 }
             }
             let payload: [String: Any] = [
-                "schema": 1, "verification": "shipping-core-on-device",
+                "schema": 1, "verification": Self.verificationRuntimeScope,
                 "playerSaveModified": false, "visualAcceptance": false,
                 "passed": wins == 100 && rows.count == 100, "wins": wins,
                 "wallSeconds": Date().timeIntervalSince(started), "floors": rows
@@ -5203,4 +5204,146 @@ extension GameStore {
 #if DEBUG
 @MainActor
 private func housingAssert(_ condition: Bool, _ message: String = "", file: StaticString = #filePath, line: UInt = #line) { assert(condition, message, file: file, line: line) }
+#endif
+
+#if DEBUG
+extension GameStore {
+    static func housingDeviceWalkDefaults() -> UserDefaults {
+        let suite = "mistport.housing-device-walk.20260930"
+        let defaults = UserDefaults(suiteName: suite)!
+        defaults.set(Pathway.ID.fool.rawValue, forKey: PersistenceKey.selectedPathID)
+        defaults.set(CharacterGender.male.rawValue, forKey: PersistenceKey.selectedCharacterGender)
+        if !defaults.bool(forKey: "housing-review-seeded") {
+            let seed = GameStore(launchArguments: [], defaults: defaults)
+            seed.debugJumpToOldClockMission(8, enterImmediately: false)
+            seed.venueCoins = 2_000
+            seed.persistChapterProgress()
+            defaults.set("愚者", forKey: "mistport.player.display-name")
+            defaults.set(true, forKey: "housing-review-seeded")
+        }
+        let fixture = GameStore(launchArguments: [], defaults: defaults)
+        fixture.completeChapterOneTutorial(.opening)
+        fixture.completeChapterOneTutorial(.cityMission)
+        fixture.markDailyNewspaperSeen()
+        return defaults
+    }
+    static func verifyHousing() async {
+        let suites = ["main", "poor", "full", "corrupt"].map { "mistport.housing-check.\($0)." + UUID().uuidString }
+        defer { suites.forEach { UserDefaults(suiteName: $0)?.removePersistentDomain(forName: $0) } }
+        var checks: [String] = []
+        func check(_ value: Bool, _ label: String) throws {
+            guard value else { throw NSError(domain: "HousingVerification", code: 1, userInfo: [NSLocalizedDescriptionKey: label]) }
+            checks.append(label)
+        }
+        let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        do {
+            var now = ISO8601DateFormatter().date(from: "2026-10-01T19:00:00Z")!
+            let defaults = UserDefaults(suiteName: suites[0])!
+            let store = GameStore(launchArguments: [], defaults: defaults)
+            store.pacingClock = { now }; store.venueCoins = 1_000
+            await store.openHousingDay()
+            let initial = store.venueCoins, paid = store.housingPayment!, firstRecord = store.housingRecord!
+            try check(initial == 1_000 - paid.copper && paid.copper == MPCHousingCatalog.lodging(paid.lodgingID)!.copperPerDay + MPCHousingCatalog.meal(paid.mealID)!.copperPerDay, "daily payment uses catalog prices")
+            let openings = (0..<10).map { _ in Task { @MainActor in await store.openHousingDay() } }
+            for opening in openings { await opening.value }
+            try check(store.venueCoins == initial && store.housingRecord == firstRecord, "concurrent first-open requests debit once")
+            let reopened = GameStore(launchArguments: [], defaults: defaults)
+            reopened.pacingClock = { now }; await reopened.openHousingDay()
+            try check(reopened.venueCoins == initial && reopened.housingPayment == paid, "reopening does not pay twice")
+            try await store.signHousing(lodgingID: "highland_house", mealID: "house_kitchen")
+            let end = store.housingRecord!.ledger.leaseEndsDay
+            try check(end == HousingServerDay.number(now) + MPCHousingCatalog.leaseDays - 1 && store.venueCoins == initial, "seven-day lease is not prepaid")
+            try check(!store.housingHighlandEligible && store.housingRecord!.stamina.recoveryPerDay == paid.recoveryPerDay, "new housing does not grant an unpaid bonus today")
+            try await store.changeHousingMeal("cafe")
+            try check(store.housingRecord!.ledger.leaseEndsDay == end && store.housingPayment == paid && store.venueCoins == initial, "meal change preserves lease and today's receipt")
+            now = now.addingTimeInterval(86_400); await store.openHousingDay()
+            let highland = store.housingPayment!, cash = store.venueCoins
+            try check(highland.lodgingID == "highland_house" && highland.mealID == "cafe" && store.housingHighlandEligible, "next Pacific day applies paid highland eligibility")
+            let before = store.currentStamina
+            try await store.housingAction(.remnant, receipt: "housing-check-remnant") { try store.updateChurchServices { _ in } }
+            try check(store.currentStamina == before - MPCStamina.cost(.remnant), "normal task deducts rule cost")
+            try await store.housingAction(.remnant, receipt: "housing-check-remnant") { try store.updateChurchServices { _ in } }
+            try check(store.currentStamina == before - MPCStamina.cost(.remnant), "same receipt does not spend twice")
+            let afterSpend = store.housingRecord!.stamina
+            let storySessionValue = store.currentStamina
+            store.beginMission(GameContent.chapterOneDistricts[0].missions[0])
+            try check(store.phase == .dungeon && store.currentStamina == storySessionValue, "actual story entry does not spend stamina")
+            store.returnToCity()
+            try await store.housingAction(.storyOrChurch, receipt: "housing-check-story") { try store.updateChurchServices { _ in } }
+            try check(store.currentStamina == storySessionValue && MPCStamina.cost(.storyOrChurch) == 0, "story tower and bounty category is free")
+            for n in 0..<2 { try await store.housingAction(.cityCommission, receipt: "housing-budget-\(n)") { try store.updateChurchServices { _ in } } }
+            let failedBefore = store.housingRecord!
+            do {
+                try await store.housingAction(.cityCommission, receipt: "housing-too-low") { try store.updateChurchServices { _ in } }
+                throw NSError(domain: "UnexpectedStaminaAllowance", code: 1)
+            } catch MPCStaminaState.Failure.notEnough(let needed, let available) {
+                try check(needed == MPCStamina.cost(.cityCommission) && available < needed && store.housingRecord == failedBefore && store.venueCoins == cash, "insufficient stamina preserves wallet and receipts")
+            }
+            now = now.addingTimeInterval(3_600)
+            try check(store.currentStamina > failedBefore.stamina.available(at: failedBefore.stamina.settledAt), "normal clock restores stamina continuously")
+            try check(afterSpend.secondsUntil(MPCStamina.maximum, at: afterSpend.settledAt) > 0, "lamp forecast returns positive recovery time")
+            let acceptedHousing = store.housingRecord!
+            let pending = ChurchServicesReceipt(state: store.churchServices, housing: acceptedHousing,
+                coins: store.venueCoins, lifetime: store.chapterOneCampaign.lifetimeChurchMerit,
+                available: store.chapterOneCampaign.spendableChurchMerit)
+            defaults.set(try JSONEncoder().encode(firstRecord), forKey: RulesHousingService.persistenceKey)
+            defaults.set(1, forKey: PersistenceKey.venueCoins)
+            defaults.set(try JSONEncoder().encode(pending), forKey: "mistport.church.services.pending.v1")
+            let recovered = GameStore(launchArguments: [], defaults: defaults)
+            try check(recovered.housingRecord == acceptedHousing && recovered.venueCoins == pending.coins
+                && defaults.object(forKey: "mistport.church.services.pending.v1") == nil,
+                "interrupted journal restores matching wallet housing and stamina once")
+            // No unpaid luxury bonus accrues after the paid day's midnight.
+            let service = RulesHousingService(defaults: defaults)
+            var drained = service.record!
+            for n in 0..<5 { try? drained.stamina.spend(.remnant, receiptID: "drain-\(n)", at: now.timeIntervalSince1970) }
+            let expiry = drained.bonusExpiresAt!
+            try service.commit(drained)
+            let later = expiry.addingTimeInterval(3_600)
+            let expected = min(Double(MPCStamina.maximum), drained.stamina.current(at: expiry.timeIntervalSince1970) + Double(MPCStamina.baseRecoveryPerDay) / 24)
+            let projected = try await service.prepareSpend(.storyOrChurch, receiptID: "after-midnight", at: later)
+            try check(abs(projected.stamina.value - expected) < 0.001 && projected.stamina.recoveryPerDay == MPCStamina.baseRecoveryPerDay, "unpaid days recover only at base speed")
+            let poorDefaults = UserDefaults(suiteName: suites[1])!
+            let poor = GameStore(launchArguments: [], defaults: poorDefaults)
+            poor.pacingClock = { now }; poor.venueCoins = 1_000
+            try await poor.signHousing(lodgingID: "highland_house", mealID: "house_kitchen")
+            now = now.addingTimeInterval(86_400); poor.venueCoins = 120
+            await poor.openHousingDay()
+            try check(poor.housingPayment!.downgraded && poor.housingHomeID == "dock_bunk" && !poor.housingHighlandEligible, "unaffordable luxury downgrades without debt")
+            now = now.addingTimeInterval(86_400); poor.venueCoins = 60
+            await poor.openHousingDay()
+            try check(poor.housingHomeID == MPCHousingCatalog.shelterID && poor.housingPayment!.copper == 0 && poor.venueCoins == 60, "below recovery line enters free shelter")
+            let fullDefaults = UserDefaults(suiteName: suites[2])!
+            let fullService = RulesHousingService(defaults: fullDefaults, roomCounts: ["bell_loft": 0])
+            do {
+                _ = try await fullService.prepareLease(lodgingID: "bell_loft", mealID: "cafe", at: now, cash: 1_000, completedMissions: 5)
+                throw NSError(domain: "UnexpectedFullRoom", code: 1)
+            } catch MPCHousingLedger.Failure.noRoom { try check(fullService.record == nil, "full rooms reject lease without saving partial payment") }
+            let corruptDefaults = UserDefaults(suiteName: suites[3])!
+            let corrupt = Data("unreadable".utf8); corruptDefaults.set(corrupt, forKey: RulesHousingService.persistenceKey)
+            let bad = GameStore(launchArguments: [], defaults: corruptDefaults); bad.venueCoins = 777
+            await bad.openHousingDay()
+            try check(corruptDefaults.data(forKey: RulesHousingService.persistenceKey) == corrupt && bad.venueCoins == 777, "unreadable housing data is never replaced or charged")
+            let dstA = ISO8601DateFormatter().date(from: "2026-11-01T08:30:00Z")!, dstB = ISO8601DateFormatter().date(from: "2026-11-01T09:30:00Z")!
+            try check(HousingServerDay.number(dstA) == HousingServerDay.number(dstB) && HousingServerDay.nextBoundary(dstA).timeIntervalSince(HousingServerDay.calendar.startOfDay(for: dstA)) == 25 * 3_600, "Pacific DST repeated hour keeps one day identity")
+            try JSONSerialization.data(withJSONObject: ["passed": true, "checks": checks], options: [.prettyPrinted, .sortedKeys]).write(to: folder.appendingPathComponent("housing-verification.json"))
+            NSLog("HOUSING_VERIFY_PASS: %d checks", checks.count)
+        } catch {
+            try? JSONSerialization.data(withJSONObject: ["passed": false, "checks": checks, "error": String(describing: error)], options: [.prettyPrinted, .sortedKeys]).write(to: folder.appendingPathComponent("housing-verification.json"))
+            NSLog("HOUSING_VERIFY_FAIL: %@", String(describing: error))
+        }
+    }
+}
+#endif
+
+#if DEBUG
+extension GameStore {
+    nonisolated static var verificationRuntimeScope: String {
+        #if targetEnvironment(simulator)
+        "shipping-core-on-simulator"
+        #else
+        "shipping-core-on-device"
+        #endif
+    }
+}
 #endif

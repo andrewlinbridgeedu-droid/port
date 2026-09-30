@@ -1,0 +1,211 @@
+{
+  "task": "H3",
+  "status": "draft-awaiting-physical-device-and-user-review",
+  "baseMain": "bfdb800e8fd8e81bde830cd86f43aee3dd839355",
+  "signedDeviceBuild": {
+    "version": "169.12",
+    "passed": true,
+    "installed": false,
+    "derivedDataOnExternalSSD": true
+  },
+  "simulator": {
+    "name": "Mistport Workshop Integration",
+    "id": "4355D11F-63D1-4874-BAC6-E5E372D40EA7",
+    "runtime": "iOS 26.5",
+    "architecture": "arm64",
+    "bundle": "local.mistport.housing-integration",
+    "bundleVersion": "78",
+    "unityPresentationIncluded": false
+  },
+  "housingChecks": {
+    "passed": true,
+    "count": 21,
+    "report": "simulator/housing-verification.json"
+  },
+  "existingSelfCheckGroups": 11,
+  "passingMarkers": [
+    "HOUSING_VERIFY_PASS",
+    "DAILY_PACING_VERIFY_PASS",
+    "DAILY_WORK_VERIFY_PASS",
+    "NEWSPAPER_VERIFY_PASS",
+    "REMNANTS_VERIFY_PASS",
+    "NEIGHBORS_VERIFY_PASS",
+    "CITY_EVENTS_VERIFY_PASS",
+    "DAILY_WORKSHOP_VERIFY_PASS",
+    "CHURCH_SERVICES_VERIFY_PASS",
+    "EARLY_RELIC_SHOP_VERIFY_PASS",
+    "LOCAL_WORKSHOP_VERIFY_PASS",
+    "CHURCH_TOWER_100_PASS"
+  ],
+  "additionalProcurementCheck": true,
+  "selfCheckLog": "simulator/selfchecks.log",
+  "screenshots": [
+    {
+      "file": "simulator/housing-agency.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "2c9c5ab9ebd98002f6d5768cc688b2fd4cf95ff712177b3aa52220a661ca2eb8"
+    },
+    {
+      "file": "simulator/housing-cards.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "844081c074f1cbdb5168193727d9d0f5b5d5f238229a17db8de6c9a8cddf53df"
+    },
+    {
+      "file": "simulator/housing-districts.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "5fcada442e84a87171f32cf4797c3932e6ab757d8aa7cec97e8163cc74f9388f"
+    },
+    {
+      "file": "simulator/housing-highland.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "928943644f0f2241c67aec43ead728c9bc9612629fc05ca056e1f8b2eda1ff58"
+    },
+    {
+      "file": "simulator/housing-home-night.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "b488240b19dc987334fe1960112a97b90a34513bf0ed46d8a9888ba3bbb30bc2"
+    },
+    {
+      "file": "simulator/housing-home.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "6e2055f24347f4235cd48bc621a7217dd0f4c886d0293c654e32621776eaac4f"
+    },
+    {
+      "file": "simulator/housing-interior.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "bf9183c46ca1007951f493050d7f908609e4466b790ee6b0cb7f2a2eb1604fa1"
+    },
+    {
+      "file": "simulator/housing-lease.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "6243a3bc8436dac00d06edbd1eed5c404df38705e0547d67448baf394b1ffa88"
+    },
+    {
+      "file": "simulator/housing-moving.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "bb194bdf4b733ab0f50af0f046bec97c359eb486b1fad3586632984735a3c6e8"
+    },
+    {
+      "file": "simulator/housing-residence.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "982aa7eac3661c803baac943abb840c6f3e613568393f56b694451d0327f648c"
+    },
+    {
+      "file": "simulator/housing-stamina.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "0a9d8a8e7fd7cfb8e34a5e27c8b25bdcf45203b87e75e5cc60520bf580f1b907"
+    }
+  ],
+  "sourceHashes": {
+    "mistport-ios/Mistport/GameStore.swift": "c8c2eecfff4953475d9d6f46eeba31c2519755e9922e1d9092507afad2830ce8",
+    "mistport-ios/Mistport/HousingService.swift": "f637d070eba8723113588b45402e3919374ef5b9e141d067321f73f830e6085f",
+    "mistport-ios/Mistport/HousingViews.swift": "f1e98447937a9c2b25274087bd0a23c24f46dcfb7aea940f2d24b20ff4da858b",
+    "mistport-ios/Mistport/MistportApp.swift": "e3696c3d4a7a354e7ad156756d9122d3ff767bf831212f9354f4faffe663224b",
+    "mistport-ios/Mistport/WisteriaMap/housing-home-anchors.json": "40a79e73afcd9f9580472dfb4e46cfb8c4a347666ffbe9c8c988f2b54a8441cc"
+  },
+  "originalHomePaintings": [
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CityAutumnDay.imageset/CityAutumnDay.jpg",
+      "sha256": "82ef7c09c4a83b972617d4783d3c803e49c409d9f1f494bf26acdf8d06a3ace9",
+      "unchanged": true
+    },
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CityAutumnNight.imageset/CityAutumnNight.jpg",
+      "sha256": "f3c62f9368132de08aec5ae38910597608a508aa0e782577bb3b4ba8a70031a1",
+      "unchanged": true
+    },
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CityAutumnSunset.imageset/CityAutumnSunset.jpg",
+      "sha256": "a4ded1119c5715166c88099764ee0320f82e37c9a5ba47f97f678d6ef2cbe81e",
+      "unchanged": true
+    },
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CitySpringDay.imageset/CitySpringDay.jpg",
+      "sha256": "45908c900de559adf7dfa028555275125e79a53f3643eab4da95d671d45a2687",
+      "unchanged": true
+    },
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CitySpringNight.imageset/CitySpringNight.jpg",
+      "sha256": "bf8e7a64b853217939a2a15ee997336b1d3a6de9831160fadf4ce14ba07c8c72",
+      "unchanged": true
+    },
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CitySpringSunset.imageset/CitySpringSunset.jpg",
+      "sha256": "f4e52d9019ff690323805ef77356ef47dd01e2df20f708534be48551c14f169d",
+      "unchanged": true
+    },
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CitySummerDay.imageset/CitySummerDay.jpg",
+      "sha256": "dda611df52fb6f55375729aadd968e4e26f4f031b1100b84506b25e9d9fcf5e9",
+      "unchanged": true
+    },
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CitySummerNight.imageset/CitySummerNight.jpg",
+      "sha256": "4c839ce0583a591ce12142eea4fc46c1575d7bcace0104d523d4d0952b49891c",
+      "unchanged": true
+    },
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CitySummerSunset.imageset/CitySummerSunset.jpg",
+      "sha256": "424edefac1216f1bdaa50944643c95c07d9b2950c82327e0dd42701dcc04f21d",
+      "unchanged": true
+    },
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CityWinterDay.imageset/CityWinterDay.jpg",
+      "sha256": "c20f23cb0a324b2aaa7838cbbbf61ec42f5e9348142e30b43adcf3aa993acd67",
+      "unchanged": true
+    },
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CityWinterNight.imageset/CityWinterNight.jpg",
+      "sha256": "f5878e6aa1e1d1704730fec0f3742c3b5a28d9651b4006936d64640b2c794a81",
+      "unchanged": true
+    },
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CityWinterSnowDay.imageset/CityWinterSnowDay.jpg",
+      "sha256": "a565e7f671a7b020c92b806d54bfbac10cc1debbd897e19df3268c105398adae",
+      "unchanged": true
+    },
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CityWinterSnowNight.imageset/CityWinterSnowNight.jpg",
+      "sha256": "6e6196fa01c0a41552d82450b0725897515d132c15471ad98625d79cc751af63",
+      "unchanged": true
+    },
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CityWinterSnowSunset.imageset/CityWinterSnowSunset.jpg",
+      "sha256": "c668ae2d6b549581d2db2802aa5ad224db372a91f9b1f29092c194b9bf8b1d36",
+      "unchanged": true
+    },
+    {
+      "file": "mistport-ios/Mistport/Assets.xcassets/CityWinterSunset.imageset/CityWinterSunset.jpg",
+      "sha256": "b535eaefad3fe0ad1024317b10966050c6f0ca9ea8c166668368298ac4d2cdaf",
+      "unchanged": true
+    }
+  ],
+  "originalHomePaintingsUnchanged": true,
+  "originalLightsAndLightOrderChanged": [],
+  "commissionDecalsEnabled": false,
+  "housingArtFinalUserApproval": false,
+  "physicalDeviceScreenshots": 0,
+  "deviceVisualApproval": "pending user",
+  "physicalDeviceState": "unavailable",
+  "physicalPreferencesAccessed": false,
+  "physicalPreferencesCompared": false,
+  "playerPreferencesSafety": "unverified on physical device; no physical access or installation this run",
+  "sharedServerClockAndOccupancy": "not connected; rules adapter only",
+  "outstanding": [
+    "physical Preferences before/after audit",
+    "isolated device install and self-checks",
+    "physical screenshots and manual rental/return/seal interactions",
+    "user visual review"
+  ]
+}

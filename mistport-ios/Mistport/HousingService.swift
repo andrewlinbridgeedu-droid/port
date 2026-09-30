@@ -66,10 +66,12 @@ enum HousingServerDay {
 final class RulesHousingService: HousingService {
     static let persistenceKey = "mistport.housing-stamina.v1"
     private let defaults: UserDefaults
+    private let roomCounts: [String: Int]
     private(set) var record: HousingRecord?
     private(set) var isReadable = true
 
-    init(defaults: UserDefaults) {
+    init(defaults: UserDefaults, roomCounts: [String: Int] = [:]) {
+        self.roomCounts = roomCounts
         self.defaults = defaults
         if let data = defaults.data(forKey: Self.persistenceKey) {
             do { record = try JSONDecoder().decode(HousingRecord.self, from: data) }
@@ -127,7 +129,7 @@ final class RulesHousingService: HousingService {
         guard isReadable else { throw HousingServiceFailure.unreadable }
         // Single-ledger capacity fixture, never a claim about live shared-server occupancy.
         return MPCHousingCatalog.lodgings.map { lodging in
-            .init(id: lodging.id, roomsLeft: lodging.rooms, capacity: lodging.rooms)
+            .init(id: lodging.id, roomsLeft: roomCounts[lodging.id] ?? lodging.rooms, capacity: lodging.rooms)
         }
     }
     func commit(_ record: HousingRecord) throws {

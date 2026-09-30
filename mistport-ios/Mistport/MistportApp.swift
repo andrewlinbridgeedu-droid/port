@@ -44,6 +44,8 @@ struct MistportApp: App {
     #endif
     private static var playerDefaults: UserDefaults {
         #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--housing-device-walk") { return GameStore.housingDeviceWalkDefaults() }
+        if ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--verify-") }) { return UserDefaults(suiteName: "mistport.housing-verification-shell.20260930")! }
         if ProcessInfo.processInfo.arguments.contains("--daily-pacing-device-walk") {
             return dailyWalkDefaults
         }
@@ -93,7 +95,17 @@ struct MistportApp: App {
     var body: some Scene {
         WindowGroup {
             #if DEBUG
-            if ProcessInfo.processInfo.arguments.contains("--daily-pacing-device-walk") {
+            if ProcessInfo.processInfo.arguments.contains("--housing-device-walk") {
+                HousingDeviceReviewRoot(game: game, storefront: storefront)
+                    .defaultAppStorage(Self.playerDefaults)
+                    .task {
+                        UIApplication.shared.isIdleTimerDisabled = true
+                        game.markDailyNewspaperSeen(); game.begin(); await game.openHousingDay()
+                        try? await Task.sleep(for: .seconds(4))
+                        let screen = ProcessInfo.processInfo.arguments.first { $0.hasPrefix("--housing-screen=") }?.dropFirst(17) ?? "agency"
+                        HomeFrameSampler.saveScreenshot("housing-\(screen).png")
+                    }
+            } else if ProcessInfo.processInfo.arguments.contains("--daily-pacing-device-walk") {
                 Group {
                     if let kind = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--daily-street-kind=") })?.dropFirst(20) {
                         DailyStreetReviewView(game: game, kind: String(kind))

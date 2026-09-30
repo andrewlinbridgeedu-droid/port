@@ -104,6 +104,18 @@ struct HousingSearchView: View {
             if !message.isEmpty { Text(message).font(.footnote).foregroundStyle(.red) }
         }.task {
             await game.openHousingDay()
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--housing-device-walk") {
+                let screen = ProcessInfo.processInfo.arguments.first { $0.hasPrefix("--housing-screen=") }.map { String($0.dropFirst(17)) }
+                switch screen {
+                case "cards": step = .cards(.oldArcade)
+                case "interior": step = .interior("arcade_room")
+                case "lease": mealID = "bakery"; step = .lease("arcade_room")
+                case "moving": try? await game.signHousing(lodgingID: "arcade_room", mealID: "bakery"); step = .moving("arcade_room")
+                default: break
+                }
+            }
+            #endif
             do { rooms = try await game.housingRooms() } catch { message = game.housingError(error) }
         }
     }
@@ -142,7 +154,7 @@ struct HousingSearchView: View {
                     Text("附近饮食：" + nearbyMeals(lodging).map(\.name).joined(separator: "、")).font(.footnote)
                     Text(availability(lodging)).font(.caption)
                     if game.housingRecord?.queuedLodgingIDs.contains(lodging.id) == true { Text("已登记等候").font(.caption) }
-                    Button("进屋看看") { detail = ""; step = .interior(lodging.id) }.buttonStyle(.borderedProminent)
+                    Button("进屋看看") { detail = ""; step = .interior(lodging.id) }.buttonStyle(.borderedProminent).foregroundStyle(.white)
                     if lodging.rooms != nil {
                         Button("登记等候") { Task { do { try await game.queueHousing(lodging.id); message = "已登记，房间消息以共享服为准。" } catch { message = game.housingError(error) } } }
                     }
@@ -170,7 +182,7 @@ struct HousingSearchView: View {
                     Button("选这间 · 看七天约") {
                         mealID = nearbyMeals(lodging).contains { $0.id == game.housingMealID } ? game.housingMealID : MPCHousingCatalog.basicMealID
                         step = .lease(id)
-                    }.buttonStyle(.borderedProminent)
+                    }.buttonStyle(.borderedProminent).foregroundStyle(.white)
                 }
             }
         }
@@ -200,7 +212,7 @@ struct HousingSearchView: View {
                             step = .moving(id)
                         } catch { message = game.housingError(error) }
                     }
-                }.buttonStyle(.borderedProminent).disabled(isSigning)
+                }.buttonStyle(.borderedProminent).foregroundStyle(.white).disabled(isSigning)
                 if isSigning {
                     Image(uiImage: HousingAtlas.frame("HousingSeal20260930", index: stampFrame, columns: 2, rows: 2))
                         .resizable().scaledToFit().frame(height: 120).accessibilityLabel("封蜡盖章")
@@ -214,7 +226,7 @@ struct HousingSearchView: View {
             if let home = HousingArt.home(id) { Image(home.exterior).resizable().aspectRatio(1.5, contentMode: .fit).transition(.opacity) }
             HousingDoorplate(name: game.housingPlayerName)
             Text("门牌已经挂好。\(MPCHousingCatalog.lodging(id)?.name ?? "住处")等你回来。").font(.headline)
-            Button("回港城") { dismiss() }.buttonStyle(.borderedProminent)
+            Button("回港城") { dismiss() }.buttonStyle(.borderedProminent).foregroundStyle(.white)
         }.animation(.easeInOut(duration: 0.6), value: game.housingHomeID)
     }
 }
@@ -277,7 +289,7 @@ struct HousingResidenceView: View {
             if !detail.isEmpty { Text(detail).font(.footnote) }
             Text(game.housingDailyNotice).font(.footnote)
             HousingMealChoices(game: game)
-            Button("去赁屋行换住处") { finding = true }.buttonStyle(.borderedProminent)
+            Button("去赁屋行换住处") { finding = true }.buttonStyle(.borderedProminent).foregroundStyle(.white)
         }.task { await game.openHousingDay() }.sheet(isPresented: $finding) { HousingSearchView(game: game) }
     }
 }
@@ -365,7 +377,9 @@ struct HousingDoorplate: View {
                 Text(name).font(.system(size: max(10, g.size.width * 0.05), weight: .bold, design: .serif))
                     .lineLimit(1).minimumScaleFactor(0.5).frame(width: g.size.width * 0.65)
                     .position(x: g.size.width * 0.5, y: g.size.height * 0.66)
-            }}.accessibilityLabel("\(name)的铜门牌")
+            }}.foregroundStyle(Color(red: 0.96, green: 0.83, blue: 0.57))
+            .shadow(color: .black.opacity(0.7), radius: 0, x: 0, y: 1)
+            .accessibilityLabel("\(name)的铜门牌")
     }
 }
 
@@ -376,19 +390,21 @@ struct HousingHomeMarker: View {
     let onOpen: () -> Void
     var body: some View {
         if let point = HousingArt.anchors[lodgingID] {
-            let size = max(30, painting.height * 0.075)
+            let scale = ["shelter": 0.022, "dock_bunk": 0.025, "arcade_room": 0.055,
+                         "canal_house": 0.027, "bell_loft": 0.022, "highland_house": 0.019][lodgingID] ?? 0.025
+            let size = max(10, painting.height * scale)
             Button(action: onOpen) {
                 ZStack {
                     Image("HousingLamp20260930").resizable().scaledToFit()
                     Image("HousingLampGlow20260930").resizable().scaledToFit().opacity(glow)
                 }.frame(width: size, height: size)
                     .overlay(alignment: .bottom) {
-                        Text(playerName).font(.system(size: 9, weight: .semibold, design: .serif)).lineLimit(1).minimumScaleFactor(0.5)
+                        Text(playerName).foregroundStyle(Color(red: 0.96, green: 0.83, blue: 0.57)).font(.system(size: 9, weight: .semibold, design: .serif)).lineLimit(1).minimumScaleFactor(0.5)
                             .padding(.horizontal, 5).padding(.vertical, 3)
                             .background { Image("HousingDoorplate20260930").resizable() }
                             .offset(y: 12)
                     }
-            }.buttonStyle(.plain).accessibilityLabel("回到\(playerName)的住处")
+            }.buttonStyle(.plain).frame(minWidth: 44, minHeight: 44).contentShape(Rectangle()).accessibilityLabel("回到\(playerName)的住处")
                 .position(x: painting.minX + point[0] * painting.height, y: painting.minY + point[1] * painting.height)
         }
     }
@@ -421,3 +437,21 @@ struct HousingMealChoicesLink: View {
             .sheet(isPresented: $opened) { HousingMealCounterView(game: game, venue: venue) }
     }
 }
+
+#if DEBUG
+struct HousingDeviceReviewRoot: View {
+    @Bindable var game: GameStore
+    @Bindable var storefront: Storefront
+    private var screen: String { ProcessInfo.processInfo.arguments.first { $0.hasPrefix("--housing-screen=") }.map { String($0.dropFirst(17)) } ?? "agency" }
+    var body: some View {
+        switch screen {
+        case "districts", "cards", "interior", "lease", "moving": HousingSearchView(game: game)
+        case "home": ContentView(game: game, storefront: storefront)
+        case "stamina": HousingStaminaView(game: game)
+        case "residence": HousingResidenceView(game: game)
+        case "highland": HousingHighlandBoardView(game: game)
+        default: HousingAgencyView(game: game)
+        }
+    }
+}
+#endif
