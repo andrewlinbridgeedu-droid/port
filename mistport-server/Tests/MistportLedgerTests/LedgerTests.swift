@@ -300,3 +300,72 @@ struct LedgerBattleTests {
         #expect(try ledger.audit().ok)
     }
 }
+
+@Suite("Ledger: daily pacing on the server (MPCDailyPacing)")
+struct LedgerPacingTests {
+    /// Wins tower floor `number` for the account with the runner's honest inputs.
+    private func win(_ ledger: Ledger, _ account: String, floor number: Int, op: String) throws -> SettlementReceipt {
+        let ticket = try ledger.openTicket(account: account, op: op + "-open", request: .init(kind: .tower, floor: number))
+        let (_, log) = try play(ticket, policy: honestPolicy())
+        return try ledger.settle(account: account, op: op + "-settle", ticketID: ticket.ticketID, log: log)
+    }
+
+    @Test("a new character first-clears four floors on day 1; the fifth waits for the next day, judged before the battle")
+    func towerFirstClearsOpenByDay() throws {
+        let clock = TestClock()
+        let ledger = try makeLedger(clock: clock)
+        let player = try ledger.createPlayer()
+        let me = try ledger.account(player.accountID)
+        #expect(me.pacingDay == 1 && me.towerFirstClearsAllowed == MPCDailyPacing.towerFloorsPerDay)
+        // The operator gives the character a strong loadout without moving its progress.
+        try ledger.setCharacter(account: player.accountID, floor: 30, maxFloor: 0)
+        for number in 1...MPCDailyPacing.towerFloorsPerDay {
+            #expect(try win(ledger, player.accountID, floor: number, op: "f\(number)").status == .won)
+        }
+        let budget = try ledger.cash(Ledger.cityBudget)
+        #expect(throws: LedgerError.dailyLimit) { try ledger.openTicket(account: player.accountID, op: "f5", request: .init(kind: .tower, floor: 5)) }
+        // Nothing was reserved or moved for the refused battle.
+        #expect(try ledger.cash(Ledger.cityBudget) == budget)
+        // Replays of cleared floors are never limited.
+        #expect(try win(ledger, player.accountID, floor: 2, op: "replay").status == .won)
+        clock.advance(24 * 3600)
+        #expect(try ledger.account(player.accountID).pacingDay == 2)
+        #expect(try win(ledger, player.accountID, floor: 5, op: "f5-next").status == .won)
+        #expect(try ledger.audit().ok)
+    }
+
+    @Test("days a player skips still count, so they can catch up")
+    func skippedDaysCount() throws {
+        let clock = TestClock()
+        let ledger = try makeLedger(clock: clock)
+        let player = try ledger.createPlayer()
+        clock.advance(4 * 24 * 3600)
+        let me = try ledger.account(player.accountID)
+        #expect(me.pacingDay == 5 && me.towerFirstClearsAllowed == 5 * MPCDailyPacing.towerFloorsPerDay)
+    }
+
+    @Test("an operator-set character keeps the next floor open today, like a migrated single-player save")
+    func operatorCharacterIsMigrated() throws {
+        let ledger = try makeLedger()
+        let player = try ledger.createPlayer()
+        try ledger.setCharacter(account: player.accountID, floor: 60)
+        let me = try ledger.account(player.accountID)
+        #expect(me.towerFirstClearsAllowed > me.maxFloor)
+        _ = try ledger.openTicket(account: player.accountID, op: "open", request: .init(kind: .tower, floor: 60))
+    }
+
+    @Test("a database made before pacing is upgraded: its characters start on their account's day")
+    func schemaUpgrade() throws {
+        let path = temporaryDatabase()
+        let clock = TestClock()
+        let first = try makeLedger(clock: clock, path: path)
+        let player = try first.createPlayer()
+        // Turn it back into a schema-1 database: no pacing column.
+        let raw = try Database(path: path)
+        try raw.execute("ALTER TABLE characters DROP COLUMN pacing_start")
+        #expect(!(try raw.query("PRAGMA table_info(characters)").contains { $0.string("name") == "pacing_start" }))
+        clock.advance(2 * 24 * 3600)
+        let reopened = try makeLedger(clock: clock, path: path)
+        #expect(try reopened.account(player.accountID).pacingDay == 3)
+    }
+}

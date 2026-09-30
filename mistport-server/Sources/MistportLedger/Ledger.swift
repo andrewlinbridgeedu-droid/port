@@ -78,7 +78,28 @@ public final class Ledger: @unchecked Sendable {
                 try db.run("INSERT INTO meta(key, value) VALUES('genesis', ?)", [.text(String(clock()))])
                 try db.run("INSERT INTO meta(key, value) VALUES('schema', '1')")
             }
+            // Schema 2: characters carry the day their pacing starts (unix seconds). Existing
+            // characters start on their account's creation day.
+            if !(try db.query("PRAGMA table_info(characters)").contains { $0.string("name") == "pacing_start" }) {
+                try db.execute("ALTER TABLE characters ADD COLUMN pacing_start INTEGER")
+                try db.execute("UPDATE characters SET pacing_start = (SELECT created_at FROM accounts WHERE accounts.id = characters.account)")
+            }
+            try db.run("INSERT INTO meta(key, value) VALUES('schema', '2') ON CONFLICT(key) DO UPDATE SET value = '2'")
         }
+    }
+
+    // MARK: Daily pacing
+
+    private var pacingCalendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: policy.pacingTimeZone) ?? TimeZone(secondsFromGMT: 8 * 3600)!
+        return calendar
+    }
+
+    /// The character's pacing day now: 1 on its first server day, days skipped still count.
+    private func pacingDay(start: Int64) -> Int {
+        MPCDailyPacing.dayNumber(start: Date(timeIntervalSince1970: TimeInterval(start)),
+                                 now: Date(timeIntervalSince1970: TimeInterval(clock())), calendar: pacingCalendar)
     }
 
     // MARK: Accounts
@@ -90,7 +111,7 @@ public final class Ledger: @unchecked Sendable {
                 let token = Self.randomHex(32)
                 try db.run("INSERT INTO accounts(id, kind, token_hash, cash, created_at) VALUES(?, 'player', ?, 0, ?)",
                            [.text(id), .text(Self.sha256(token)), .int(clock())])
-                try db.run("INSERT INTO characters(account, floor, max_floor) VALUES(?, 1, 0)", [.text(id)])
+                try db.run("INSERT INTO characters(account, floor, max_floor, pacing_start) VALUES(?, 1, 0, ?)", [.text(id), .int(clock())])
                 return AccountCreated(accountID: id, token: token)
             }
         }
@@ -106,11 +127,13 @@ public final class Ledger: @unchecked Sendable {
 
     public func account(_ id: String) throws -> AccountView {
         try locked {
-            guard let row = try db.query("SELECT a.cash, c.floor, c.max_floor FROM accounts a JOIN characters c ON c.account = a.id WHERE a.id = ?", [.text(id)]).first else {
+            guard let row = try db.query("SELECT a.cash, c.floor, c.max_floor, c.pacing_start FROM accounts a JOIN characters c ON c.account = a.id WHERE a.id = ?", [.text(id)]).first else {
                 throw LedgerError.notFound
             }
+            let day = pacingDay(start: row.int("pacing_start"))
             return AccountView(accountID: id, cash: row.int("cash"), items: try itemsOwned(by: id),
-                               characterFloor: Int(row.int("floor")), maxFloor: Int(row.int("max_floor")))
+                               characterFloor: Int(row.int("floor")), maxFloor: Int(row.int("max_floor")),
+                               pacingDay: day, towerFirstClearsAllowed: MPCDailyPacing.towerFirstClearsAllowed(day: day))
         }
     }
 
@@ -120,15 +143,19 @@ public final class Ledger: @unchecked Sendable {
 
     /// Test and operator tool: sets which tower-floor loadout the server character uses.
     /// The shared character progression is not built yet; this is not a player action.
-    /// `maxFloor` defaults to the floor below, so that floor can be fought.
+    /// `maxFloor` defaults to the floor below, so that floor can be fought. Like a single-player
+    /// save migrated into daily pacing, the character's pacing start moves back just far enough
+    /// that the next floor is open today (MPCDailyPacing.migratedStart).
     public func setCharacter(account: String, floor: Int, maxFloor: Int? = nil) throws {
         let floors = MPCChurchTowerCatalog.floors.count
         let cleared = maxFloor ?? floor - 1
         guard (1...floors).contains(floor), (0..<floors).contains(cleared) else { throw LedgerError.invalidRequest }
         try locked {
             try db.transaction {
-                guard try db.run("UPDATE characters SET floor = ?, max_floor = ? WHERE account = ?",
-                                 [.int(Int64(floor)), .int(Int64(cleared)), .text(account)]) == 1 else { throw LedgerError.notFound }
+                let start = MPCDailyPacing.migratedStart(today: Date(timeIntervalSince1970: TimeInterval(clock())), completedMissions: 0,
+                                                         clearedTowerFloors: cleared, calendar: pacingCalendar)
+                guard try db.run("UPDATE characters SET floor = ?, max_floor = ?, pacing_start = MIN(pacing_start, ?) WHERE account = ?",
+                                 [.int(Int64(floor)), .int(Int64(cleared)), .int(Int64(start.timeIntervalSince1970)), .text(account)]) == 1 else { throw LedgerError.notFound }
             }
         }
     }
@@ -240,14 +267,21 @@ public final class Ledger: @unchecked Sendable {
     public func openTicket(account: String, op: String, request: BattleRequest) throws -> TicketReceipt {
         try expireTickets()
         return try operation("open-ticket", account: account, op: op, payload: request) {
-            guard let character = try db.query("SELECT floor, max_floor FROM characters WHERE account = ?", [.text(account)]).first else { throw LedgerError.notFound }
+            guard let character = try db.query("SELECT floor, max_floor, pacing_start FROM characters WHERE account = ?", [.text(account)]).first else { throw LedgerError.notFound }
             let id = "t-" + Self.randomHex(8)
             let encounter: String
             var reward: Int64 = 0
             switch request.kind {
             case .tower:
                 guard let number = request.floor, let floor = MPCChurchTowerCatalog.floor(number: number) else { throw LedgerError.invalidRequest }
-                guard number <= Int(character.int("max_floor")) + 1 else { throw LedgerError.notEligible }
+                let cleared = Int(character.int("max_floor"))
+                guard number <= cleared + 1 else { throw LedgerError.notEligible }
+                // Daily pacing, judged before the battle so a win always pays. Replays of
+                // cleared floors are never limited.
+                if number == cleared + 1,
+                   !MPCDailyPacing.canFirstClearTower(clearedFloors: cleared, day: pacingDay(start: character.int("pacing_start"))) {
+                    throw LedgerError.dailyLimit
+                }
                 encounter = floor.id
             case .lightsPublic:
                 guard let raw = request.side, let side = MPCLightsPublicTarget.Faction(rawValue: raw) else { throw LedgerError.invalidRequest }
