@@ -1,0 +1,3 @@
+Use case: precise-object-edit
+Edit target: the supplied EMPTY housing-agency background.
+Remove the TWO tiny dark human silhouettes standing on the distant waterfront railing visible through the middle window, near image coordinates x=0.44,y=0.49. Restore only the fog, stone railing and empty harbor view where they stood. No human at any depth, no silhouettes, no statues with human shapes. Preserve the entire rest of the image EXACTLY: same 1536x1024 full-frame composition, counter wood grain and objects, chair, blank copper plate wall, lamp, ledger, window masonry, lighting and fog. No cropping, zooming, rebuilding or new objects. This background is for separate transparent NPC layers.

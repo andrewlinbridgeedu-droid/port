@@ -1,0 +1,13 @@
+{
+  "id": "canal-house-interior",
+  "file": "housing/canal-house-interior-v1.png",
+  "prompt": "prompts/canal-house-interior-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-d702473f-0563-4e5b-af8a-f416b8a6ae27.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/housing/canal-house-exterior-v1.png",
+    "docs/development/housing-art-20260930/style/03-iron-glass-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending"
+}

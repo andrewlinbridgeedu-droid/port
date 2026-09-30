@@ -1,0 +1,13 @@
+{
+  "id": "home-house-lamp-glow",
+  "file": "home/house-lamp-glow-v1.png",
+  "prompt": "prompts/home-house-lamp-glow-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-44ef9fe0-58da-43d1-8b4b-5ff511d6ec3a.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/home/house-lamp-base-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending",
+  "transparentRequested": true
+}

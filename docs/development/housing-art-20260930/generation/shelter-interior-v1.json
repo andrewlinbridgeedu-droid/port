@@ -1,0 +1,13 @@
+{
+  "id": "shelter-interior",
+  "file": "housing/shelter-interior-v1.png",
+  "prompt": "prompts/shelter-interior-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-6bcba9e5-59a6-4e5e-a88f-380c1186e666.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/housing/shelter-exterior-v1.png",
+    "docs/development/housing-art-20260930/style/02-bell-lantern-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending"
+}

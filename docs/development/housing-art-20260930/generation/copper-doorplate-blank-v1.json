@@ -1,0 +1,14 @@
+{
+  "id": "copper-doorplate-blank",
+  "file": "ui/copper-doorplate-blank-v1.png",
+  "prompt": "prompts/copper-doorplate-blank-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-09b93f21-da7a-401e-bcad-f81445ee1946.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/agency/nameplate-v1.png",
+    "docs/development/housing-art-20260930/style/01-stone-arches-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending",
+  "transparentRequested": true
+}

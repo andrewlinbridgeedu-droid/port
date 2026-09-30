@@ -1,0 +1,23 @@
+{
+  "coordinateUnit": "image-normalized-top-left",
+  "background": "agency/background-v2.png",
+  "foreground": "agency/foreground-v1.png",
+  "clerk": "agency/clerk-v1.png",
+  "canvas": [
+    1536,
+    1024
+  ],
+  "clerkFrame": {
+    "x": 0.31,
+    "y": 0.09,
+    "width": 0.38,
+    "height": 0.855
+  },
+  "layerOrder": [
+    "background",
+    "clerk",
+    "foreground"
+  ],
+  "counterBackEdgeY": 0.635,
+  "reviewStatus": "agent-preview; user-approval-pending"
+}

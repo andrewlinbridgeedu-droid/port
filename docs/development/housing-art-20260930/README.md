@@ -1,7 +1,34 @@
 # 赁屋行、住处与雾港建筑美术 · 2026-09-30
 
-当前仅交 [H0 三张建筑风格板](style/README.md)，[PR #32](https://github.com/andrewlinbridgeedu-droid/port/pull/32)，**用户已于 2026-09-30 认可**。分支 `codex/housing-h0-style-boards-20260930`，从最新 main `d07d39d` 开始。
+H0 三张风格板已获用户认可，PR #32 已合并。H1 从 main `b98e213` 开分支 `codex/housing-h1-art-20260930`，提供 22 张当前 PNG、18 个室内细节位置、分层排版及逐图提示词。**H1 美术最终视觉认可仍待用户在 H3 真机复看；本任务不接 App、不装机。**
 
-用户已认可 H0，H1 六处住处、赁屋行柜台和界面素材将于 H0 合并后在新分支开始；H2 App、H3 自检与装机也未开始。风格板留在 docs，不接 AssetCatalog、不改首页原画。
+## 最新地理修正
 
-后续按 [任务单](../CODEX_TASKS_HOUSING_20260930.md) 和 [设计稿](../../../mistport-ios/docs/game-design/chapter-one-30/HOUSING_STAMINA_ARCHITECTURE_20260930.md) 做；H2 的体力花费、住处和饮食价格必须取规则库 `HousingStamina.swift`，通过 `HousingService` 接口隔离实现。
+用户指定：首页左侧远景为高级住宅区，右侧远景住宅带为贵族区，很少能进去住。常规高档住处放左侧；右侧贵族区不列入常规租房卡片，特殊入住条件另定。
+
+独立地图初稿改变了港城地貌，已撤回，禁止接 App。修正版直接沿用首页秋景原画缩览，另叠可修改区名和选房数据，不改岸线、地势、道路或地标。见 [坐标](map/geography-v2.json)、[交互排版预览](map/geography-preview-v2.html)。
+
+![修正版地图，小屏排版预览](previews/geography-v2-mobile.jpg)
+
+这是浏览器排版证据，不是 App 或真机截图；入口位置仍为提案。
+
+## 素材
+
+- 六处住处各一张雾中白天外观、一张无人室内。每处三个细节及说明见 [hotspots.json](housing/hotspots.json)。避难屋室内用 v2。
+- 赁屋行：空白名牌、无人背景 v2、透明新柜员、透明柜台前景。换人只换人物。[分层坐标](agency/layers.json)、[可切换前景的预览](agency/layer-preview.html)。
+- 铜门牌：空白版与示例港册号 017 刻字版，玩家名保留原生文字层；首页门牌共用空白模板。
+- 封蜡盖章：四帧 2×2 RGBA 图集，抬起、落下、压印、提起。
+- 体力灯罩：五档亮度 3×2 RGBA 图集，末格透明；图里不写数值。
+- 住处灯：无光灯具与单独透明光效，同一画布配准。H2 跟随首页夜间灯光阶段叠加，不覆盖原有 City 灯光或顺序图。
+
+![赁屋行三层合成，浏览器预览](previews/counter-layers-v1.jpg)
+
+[materials.json](materials.json) 是当前文件清单，含图集帧序、门牌文字区及首页灯牌位置提案。逐图提示词在 `prompts/`，来源和参考顺序在 `generation/`。PNG 直接复制工具原图，没有程序重画或滤镜调色。
+
+## 验证与边界
+
+已核对 22 张当前图存在、尺寸和透明通道、18 个细节点、柜台遮挡、小屏地图标注，15 张首页原画 SHA-256 全部不变。见 [验证记录](validation-h1.json)。图片和预览按 LFS 提交。
+
+未验证 App 构建、装机、真机流程、服务器房间余量和排队。未访问玩家 Preferences，未改存档、规则库、AssetCatalog、运行时布局或构建号。H1 图稿与位置未获得用户最终视觉认可。
+
+避难屋室内 v1、赁屋行背景 v1、独立地图 v1 为历史稿，不参与运行时。后续只取当前清单，价格、容量、租期、恢复线和体力花费均取 `HousingStamina.swift`，通过 `HousingService` 隔离。

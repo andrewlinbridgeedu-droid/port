@@ -1,0 +1,14 @@
+{
+  "id": "seal-stamp-atlas",
+  "file": "ui/seal-stamp-atlas-v1.png",
+  "prompt": "prompts/seal-stamp-atlas-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-8fc344dc-2882-4790-beee-20bef3cf85a9.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/agency/nameplate-v1.png",
+    "docs/development/housing-art-20260930/agency/background-v2.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending",
+  "transparentRequested": true
+}

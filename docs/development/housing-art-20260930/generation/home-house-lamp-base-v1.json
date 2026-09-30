@@ -1,0 +1,14 @@
+{
+  "id": "home-house-lamp-base",
+  "file": "home/house-lamp-base-v1.png",
+  "prompt": "prompts/home-house-lamp-base-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-8c8059a0-c783-4251-87a9-82edf8b9f024.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/style/02-bell-lantern-v1.png",
+    "mistport-ios/Mistport/Assets.xcassets/CityAutumnDay.imageset/CityAutumnDay.jpg"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending",
+  "transparentRequested": true
+}

@@ -1,0 +1,12 @@
+{
+  "id": "arcade-room-exterior",
+  "file": "housing/arcade-room-exterior-v1.png",
+  "prompt": "prompts/arcade-room-exterior-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-5b1dfaf0-f28c-4322-9a76-2a5683ae9d84.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/style/01-stone-arches-v1.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending"
+}

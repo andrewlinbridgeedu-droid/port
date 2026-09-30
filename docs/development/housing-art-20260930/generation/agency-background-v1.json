@@ -1,0 +1,14 @@
+{
+  "id": "agency-background",
+  "file": "agency/background-v1.png",
+  "prompt": "prompts/agency-background-v1.txt",
+  "source": "/Users/andrewlin/.codex/generated_images/01a0ec56-5323-7e53-9189-089cfb245c80/exec-1ccb05a6-5711-4899-9299-21c9583d140f.png",
+  "referenceOrder": [
+    "docs/development/housing-art-20260930/style/01-stone-arches-v1.png",
+    "mistport-ios/Mistport/Assets.xcassets/HomeCityHallEmpty20260929.imageset/art.png"
+  ],
+  "tool": "built-in image_gen",
+  "postprocessing": "none",
+  "userVisualApproval": "pending",
+  "transparentRequested": false
+}
