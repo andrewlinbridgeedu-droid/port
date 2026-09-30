@@ -1,6 +1,8 @@
 # 城市委托贴片 · 第三版，用户已认可
 
-[PR #22](https://github.com/andrewlinbridgeedu-droid/port/pull/22)，分支 codex/commission-decals-20260929。用户于 2026-09-29 明确认可喷泉、货场第三版，并授权合并 PR；认可记录及 12 张贴片的 SHA-256 见 [art-approval.json](art-approval.json)。**本版只做喷泉和货场，不新增路灯**。本 PR 仅交图稿、坐标和离线对比；App 接入及装机另留后续任务。
+[PR #22](https://github.com/andrewlinbridgeedu-droid/port/pull/22) 已合入 main（`1f6a859`）。用户于 2026-09-29 明确认可喷泉、货场第三版；认可记录及 12 张贴片的 SHA-256 见 [art-approval.json](art-approval.json)。**本版只做喷泉和货场，不新增路灯**。本 PR 仅交图稿、坐标和离线对比。
+
+**首页显示条件（用户合并后明确）：**图稿先保存在仓库，等城市贡献度第 4 档的“城市委托”（`.cityCommission`）功能做进 App，玩家完成对应委托并保存完成状态后，才显示对应贴片。美术认可、PR 合并或达到第 4 档本身都不会直接显示变化。当前 12 条记录保持 `enabled:false`，App 接入与装机留后续任务。
 
 ## 本版变化
 

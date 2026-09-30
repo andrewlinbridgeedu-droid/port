@@ -16,5 +16,11 @@
   "playerSavesTouched": false,
   "userVisualApproval": "approved",
   "approvalRecord": "art-approval.json",
-  "imagesTrackedBy": "Git LFS"
+  "imagesTrackedBy": "Git LFS",
+  "displayPrerequisites": {
+    "feature": "cityCommission",
+    "contributionTier": 4,
+    "requiresAppIntegration": true,
+    "requiresCompletedCommission": true
+  }
 }
