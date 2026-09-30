@@ -5535,6 +5535,6 @@
   "schema" : 1,
   "verification" : "shipping-core-on-simulator",
   "visualAcceptance" : false,
-  "wallSeconds" : 1.7904050350189209,
+  "wallSeconds" : 2.0009359121322632,
   "wins" : 100
 }

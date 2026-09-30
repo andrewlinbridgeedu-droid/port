@@ -768,6 +768,32 @@ import UIKit
 
 /// Display-link callbacks measure main-thread scheduling, not GPU-presented frames.
 @MainActor
+enum HousingManualRecorder {
+    private static let session = "housing-manual-" + UUID().uuidString
+    private static var events: [[String: Any]] = []
+    static func capture(_ name: String, delay: Int = 80) {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard arguments.contains("--housing-device-walk"), arguments.contains("--housing-manual-record") else { return }
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(delay))
+            guard let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+            let folder = documents.appendingPathComponent(session)
+            do { try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true) }
+            catch { return }
+            let file = String(format: "%02d-%@.png", events.count, name)
+            HomeFrameSampler.saveScreenshot(session + "/" + file)
+            guard FileManager.default.fileExists(atPath: folder.appendingPathComponent(file).path) else { return }
+            events.append(["view": name, "file": file, "timestamp": Date().timeIntervalSince1970])
+            let report: [String: Any] = ["method": "Native window capture following manual UI changes; no automatic navigation",
+                "folder": session, "isolatedFixture": true, "events": events]
+            if let data = try? JSONSerialization.data(withJSONObject: report, options: [.sortedKeys, .prettyPrinted]) {
+                try? data.write(to: documents.appendingPathComponent("housing-manual-recording.json"))
+            }
+        }
+    }
+}
+
+@MainActor
 final class HomeFrameSampler: NSObject {
     static let shared = HomeFrameSampler()
     private var link: CADisplayLink?

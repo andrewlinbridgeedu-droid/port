@@ -1,12 +1,14 @@
 {
   "task": "H3",
-  "status": "draft-awaiting-user-device-review",
+  "status": "draft-revised-build-awaiting-device-connection-and-manual-review",
   "baseMain": "bfdb800e8fd8e81bde830cd86f43aee3dd839355",
   "signedDeviceBuild": {
     "version": "169.12",
     "passed": true,
-    "installed": true,
-    "derivedDataOnExternalSSD": true
+    "installed": false,
+    "derivedDataOnExternalSSD": true,
+    "revision": "neighbor-cost-and-world-copy",
+    "executableSHA256": "fac9eebdb2054d8cfdf6f95dd8234f94dee8bda8434b5c799ac769d7c3cc5274"
   },
   "simulator": {
     "name": "Mistport Workshop Integration",
@@ -19,7 +21,7 @@
   },
   "housingChecks": {
     "passed": true,
-    "count": 21,
+    "count": 22,
     "report": "simulator/housing-verification.json"
   },
   "existingSelfCheckGroups": 11,
@@ -44,75 +46,77 @@
       "file": "simulator/housing-agency.png",
       "width": 1206,
       "height": 2622,
-      "sha256": "2c9c5ab9ebd98002f6d5768cc688b2fd4cf95ff712177b3aa52220a661ca2eb8"
+      "sha256": "d853946dacb09a55999dc79760e11b0c206c672606b7d2b48c475b6a402028ff"
     },
     {
       "file": "simulator/housing-cards.png",
       "width": 1206,
       "height": 2622,
-      "sha256": "844081c074f1cbdb5168193727d9d0f5b5d5f238229a17db8de6c9a8cddf53df"
+      "sha256": "849b484eb3a0f250bb9844d02961bf6e5fce78cbc502d76517166e222749ae6c"
     },
     {
       "file": "simulator/housing-districts.png",
       "width": 1206,
       "height": 2622,
-      "sha256": "5fcada442e84a87171f32cf4797c3932e6ab757d8aa7cec97e8163cc74f9388f"
+      "sha256": "b8510b03c2bc11450a5e2f869161d2a82870b478fae61507896457d0d381635e"
     },
     {
       "file": "simulator/housing-highland.png",
       "width": 1206,
       "height": 2622,
-      "sha256": "928943644f0f2241c67aec43ead728c9bc9612629fc05ca056e1f8b2eda1ff58"
+      "sha256": "a973425d0d863d49f492eca8cce3b5dea2045ca693677b6d8b24b13e4170b795"
     },
     {
       "file": "simulator/housing-home-night.png",
       "width": 1206,
       "height": 2622,
-      "sha256": "b488240b19dc987334fe1960112a97b90a34513bf0ed46d8a9888ba3bbb30bc2"
+      "sha256": "65b9ae4ce16ad419b0217424e4a3c6d3bf13725c683a3c996e47c54b31ffa280"
     },
     {
       "file": "simulator/housing-home.png",
       "width": 1206,
       "height": 2622,
-      "sha256": "6e2055f24347f4235cd48bc621a7217dd0f4c886d0293c654e32621776eaac4f"
+      "sha256": "f57401f5d7dc1809e1b0cd958f0f56b3fb22d4463e50b14b129a3389bccc7011"
     },
     {
       "file": "simulator/housing-interior.png",
       "width": 1206,
       "height": 2622,
-      "sha256": "bf9183c46ca1007951f493050d7f908609e4466b790ee6b0cb7f2a2eb1604fa1"
+      "sha256": "9376181224ab631bff30daaa02f16942122e08c366604f92e31af54bbd682268"
     },
     {
       "file": "simulator/housing-lease.png",
       "width": 1206,
       "height": 2622,
-      "sha256": "6243a3bc8436dac00d06edbd1eed5c404df38705e0547d67448baf394b1ffa88"
+      "sha256": "1ad14f0f3d98430ede80af39be0cb8c21164e762569a2648b65309fa26f9fdcc"
     },
     {
       "file": "simulator/housing-moving.png",
       "width": 1206,
       "height": 2622,
-      "sha256": "bb194bdf4b733ab0f50af0f046bec97c359eb486b1fad3586632984735a3c6e8"
+      "sha256": "656adf8dff84bd102f7f4c2476d6138207da019ac8966726bb42a4a5b02ed809"
     },
     {
       "file": "simulator/housing-residence.png",
       "width": 1206,
       "height": 2622,
-      "sha256": "982aa7eac3661c803baac943abb840c6f3e613568393f56b694451d0327f648c"
+      "sha256": "dd69e26c922d773d203c1162993a0573c9ab7bcaf1b795924de05edba704e92e"
     },
     {
       "file": "simulator/housing-stamina.png",
       "width": 1206,
       "height": 2622,
-      "sha256": "0a9d8a8e7fd7cfb8e34a5e27c8b25bdcf45203b87e75e5cc60520bf580f1b907"
+      "sha256": "55a2629308b0c627167f4229e0e75877607dec394067cd8fa3af129980c1168f"
     }
   ],
   "sourceHashes": {
-    "mistport-ios/Mistport/GameStore.swift": "c8c2eecfff4953475d9d6f46eeba31c2519755e9922e1d9092507afad2830ce8",
-    "mistport-ios/Mistport/HousingService.swift": "f637d070eba8723113588b45402e3919374ef5b9e141d067321f73f830e6085f",
-    "mistport-ios/Mistport/HousingViews.swift": "f1e98447937a9c2b25274087bd0a23c24f46dcfb7aea940f2d24b20ff4da858b",
+    "mistport-ios/Mistport/GameStore.swift": "b9145ea5cb40e15831388521edfe1efcfdc2786505b9f15f4feb497a4258b1d3",
+    "mistport-ios/Mistport/HousingService.swift": "78935096c132b82eab95627e3f1873cfb3a100b93fc06bbd9d9ca391e3eaad02",
+    "mistport-ios/Mistport/HousingViews.swift": "9f45643175609c731fd894c14709d0cc298645c8c2afe7817416fcce60c400c7",
     "mistport-ios/Mistport/MistportApp.swift": "e3696c3d4a7a354e7ad156756d9122d3ff767bf831212f9354f4faffe663224b",
-    "mistport-ios/Mistport/WisteriaMap/housing-home-anchors.json": "40a79e73afcd9f9580472dfb4e46cfb8c4a347666ffbe9c8c988f2b54a8441cc"
+    "mistport-ios/Mistport/WisteriaMap/housing-home-anchors.json": "40a79e73afcd9f9580472dfb4e46cfb8c4a347666ffbe9c8c988f2b54a8441cc",
+    "mistport-ios/Mistport/HomeStreetScene.swift": "756080c874e292f10b4c53e9a7195c7809364bff44184df6c8a7a8045f9c6e50",
+    "mistport-ios/Mistport/SceneViews.swift": "c5f4cb529538096bbf6cebaa55b03d6313238422d1576044818329a49748b4a1"
   },
   "originalHomePaintings": [
     {
@@ -197,14 +201,17 @@
   "housingArtFinalUserApproval": false,
   "physicalDeviceScreenshots": 11,
   "deviceVisualApproval": "pending user",
-  "physicalDeviceState": "available; 169.12 installed and launched",
+  "physicalDeviceState": "unavailable; revised 169.12 not installed; previous 169.12 installed",
   "physicalPreferencesAccessed": true,
   "physicalPreferencesCompared": true,
-  "playerPreferencesSafety": "all 194 preexisting files byte-identical; 18 added isolated test-suite files",
+  "playerPreferencesSafety": "previous revision: 194 old files byte-identical + 18 isolated suites; revised device backup not yet successful",
   "sharedServerClockAndOccupancy": "not connected; rules adapter only",
   "outstanding": [
-    "manual return / full rental sequence / hotspots and seal animation on physical device",
+    "successful revised Preferences backup / install / device 22 housing + 11 groups",
+    "manual return / full rental sequence / hotspots / meal and seal animation on physical device",
+    "after-test Preferences comparison",
     "user visual review"
   ],
-  "deviceEvidence": "device/validation-device.json"
+  "deviceEvidence": "device/validation-device.json",
+  "deviceEvidenceRevision": "prior 169.12, before neighbor cost and UI copy revisions; 21 checks only"
 }

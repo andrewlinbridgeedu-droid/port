@@ -42,9 +42,9 @@ enum HousingServiceFailure: Error, LocalizedError {
     case unreadable, unavailable, shelterAutomatic
     var errorDescription: String? {
         switch self {
-        case .unreadable: "住处账本暂不可读取，请重新打开。"
+        case .unreadable: "柜员暂时没能查到你的租屋登记。请稍后再来，房钱不会重复收取。"
         case .unavailable: "房间已满，请先登记等候。"
-        case .shelterAutomatic: "施济登记会在每日生活费结算时，按恢复线安排避难屋。"
+        case .shelterAutomatic: "若钱袋已难以维持食宿，教会会替你留一处避难屋铺位。"
         }
     }
 }

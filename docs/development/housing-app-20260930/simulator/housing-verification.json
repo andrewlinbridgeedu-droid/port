@@ -20,7 +20,8 @@
     "below recovery line enters free shelter",
     "full rooms reject lease without saving partial payment",
     "unreadable housing data is never replaced or charged",
-    "Pacific DST repeated hour keeps one day identity"
+    "Pacific DST repeated hour keeps one day identity",
+    "neighbor delivery spends 10; find message and pest spend 15; pest retry spends only once"
   ],
   "passed" : true
 }

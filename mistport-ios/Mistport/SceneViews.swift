@@ -298,8 +298,7 @@ struct CityHubView: View {
                 }.lineLimit(1).frame(maxWidth: .infinity, alignment: .leading)
                 Button(action: onStamina) {
                     Image(uiImage: HousingAtlas.stamina(staminaValue)).resizable().scaledToFit().frame(width: 32, height: 36)
-                        .overlay(alignment: .bottom) { Text("\(staminaValue)").font(.system(size: 9, weight: .bold)).foregroundStyle(.white) }
-                }.accessibilityLabel("体力 \(staminaValue)，查看恢复时间")
+                }.accessibilityLabel(HousingAtlas.staminaCaption(staminaValue) + "，看看灯火")
                 Button { tasksExpanded.toggle() } label: { Image(systemName: tasksExpanded ? "chevron.up" : "chevron.down").frame(width: 44, height: 36) }
                     .accessibilityLabel(tasksExpanded ? "收起当前任务" : "展开当前任务，\(streetTargets.count)个目标")
             }

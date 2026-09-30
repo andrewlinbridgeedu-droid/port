@@ -23,7 +23,7 @@ private enum HousingArt {
     static func history(_ id: String) -> String {
         ["shelter": "教会老侧廊的施济铺位，雾夜共用一盏灯。", "dock_bunk": "旧仓房的石拱留下来，船工在木隔间里歇脚。",
          "arcade_room": "楼下开店，楼上住人；拱廊挡住一整条街的雾雨。", "canal_house": "临水的窄屋把雾收进檐沟，铁阳台上种着香草。",
-         "bell_loft": "报时钟下的斜梁阁楼，灯窗在雾中认得回家的路。", "highland_house": "左侧高级住宅区的石宅，门廊后是雾池与书房。"] [id] ?? ""
+         "bell_loft": "报时钟下的斜梁阁楼，灯窗在雾中认得回家的路。", "highland_house": "旧港高处的石宅，门廊后是雾池与书房。"] [id] ?? ""
     }
 }
 
@@ -39,6 +39,14 @@ enum HousingAtlas {
         guard let cell = cg.cropping(to: CGRect(x: index % columns * w, y: index / columns * h, width: w, height: h)) else { return UIImage() }
         let image = UIImage(cgImage: cell); cache[key] = image; return image
     }
+    static func staminaCaption(_ value: Int) -> String {
+        let fraction = Double(value) / Double(MPCStamina.maximum)
+        if fraction <= 0 { return "灯芯黯淡，先歇一歇" }
+        if fraction < 0.25 { return "灯火微弱" }
+        if fraction < 0.6 { return "灯火渐暖" }
+        if fraction < 0.9 { return "灯火明亮" }
+        return "灯火充盈"
+    }
     static func stamina(_ value: Int) -> UIImage {
         let fraction = Double(value) / Double(MPCStamina.maximum)
         let frame = fraction <= 0 ? 0 : fraction < 0.25 ? 1 : fraction < 0.6 ? 2 : fraction < 0.9 ? 3 : 4
@@ -48,13 +56,14 @@ enum HousingAtlas {
 
 private struct HousingPage<Content: View>: View {
     let title: String
+    var backTitle = "返回港城"
     @ViewBuilder let content: () -> Content
     @Environment(\.dismiss) private var dismiss
     var body: some View {
         VStack(spacing: 0) {
             HStack {
                 Text(title).font(.system(size: 22, weight: .bold, design: .serif))
-                Spacer(); Button("返回港城") { dismiss() }.font(.subheadline.bold())
+                Spacer(); Button(backTitle) { dismiss() }.font(.subheadline.bold())
             }.padding(18).foregroundStyle(Color(red: 0.9, green: 0.8, blue: 0.55))
                 .background(Color(red: 0.12, green: 0.18, blue: 0.19))
             ScrollView { VStack(alignment: .leading, spacing: 18, content: content).padding(18).frame(maxWidth: .infinity, alignment: .leading) }
@@ -71,7 +80,7 @@ struct HousingAgencyView: View {
     var body: some View {
         HomeCounterScene(title: "赁屋行", room: .rentalAgency, actorArt: "HousingAgencyClerk20260930") {
             Text("柜员 · 伊蕾娜").font(.headline)
-            Text("从港区的铺位到左侧高级住宅区，先看看，再定下来。右侧贵族区很少开放，不在普通租屋册里。")
+            Text("先挑一条喜欢的街，再进屋看看。港区有船工的铺位，旧港那头也有安静的石宅；贵族的门牌不在这本租屋册里。")
             Text(game.housingDailyNotice).font(.footnote)
             HomeCounterAction(title: "翻开住处册 · 看区选房") { choosing = true }
             HomeCounterAction(title: "我的住处与饮食") { showingHome = true }
@@ -83,7 +92,7 @@ struct HousingAgencyView: View {
 
 struct HousingSearchView: View {
     @Bindable var game: GameStore
-    private enum Step { case districts, cards(MPCHousingCatalog.District), interior(String), lease(String), moving(String) }
+    private enum Step: Equatable { case districts, cards(MPCHousingCatalog.District), interior(String), lease(String), moving(String) }
     @State private var step: Step = .districts
     @State private var rooms: [HousingRoomAvailability] = []
     @State private var message = ""
@@ -93,7 +102,7 @@ struct HousingSearchView: View {
     @State private var stampFrame = 0
     @Environment(\.dismiss) private var dismiss
     var body: some View {
-        HousingPage(title: "赁屋行 · 找住处") {
+        HousingPage(title: "赁屋行 · 找住处", backTitle: "返回") {
             switch step {
             case .districts: districts
             case .cards(let district): cards(district)
@@ -102,7 +111,19 @@ struct HousingSearchView: View {
             case .moving(let id): moving(id)
             }
             if !message.isEmpty { Text(message).font(.footnote).foregroundStyle(.red) }
-        }.task {
+        }.onChange(of: step) { _, next in
+            switch next {
+            case .districts: recordManualView("districts")
+            case .cards: recordManualView("cards")
+            case .interior: recordManualView("interior")
+            case .lease: recordManualView("lease")
+            case .moving: recordManualView("moving")
+            }
+        }.onChange(of: detail) { _, _ in recordManualView("interior-detail") }
+            .onChange(of: isSigning) { _, signing in if signing { recordManualView("seal-0", delay: 30) } }
+            .onChange(of: stampFrame) { _, frame in recordManualView("seal-\(frame)", delay: 30) }
+        .task {
+            recordManualView("districts")
             await game.openHousingDay()
             #if DEBUG
             if ProcessInfo.processInfo.arguments.contains("--housing-device-walk") {
@@ -119,11 +140,16 @@ struct HousingSearchView: View {
             do { rooms = try await game.housingRooms() } catch { message = game.housingError(error) }
         }
     }
+    private func recordManualView(_ name: String, delay: Int = 80) {
+        #if DEBUG
+        HousingManualRecorder.capture(name, delay: delay)
+        #endif
+    }
     private var districts: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("一 · 先看区").font(.title2.bold())
+            Text("雾港街区").font(.title2.bold())
             HousingDistrictMap { district in step = .cards(district) }
-            Text("左侧是高级住宅区；右侧贵族区极少开放。").font(.footnote)
+            Text("先看看各条街的房钱，再挑一处合意的门。").font(.footnote)
             ForEach([MPCHousingCatalog.District.harbor, .oldArcade, .canal, .church, .highland], id: \.rawValue) { district in
                 let homes = MPCHousingCatalog.lodgings.filter { $0.district == district }
                 Button { step = .cards(district) } label: {
@@ -139,24 +165,24 @@ struct HousingSearchView: View {
         }
     }
     private func districtAvailability(_ homes: [MPCHousingCatalog.Lodging]) -> String {
-        homes.contains { $0.rooms == nil } ? "铺位不设总量" : "房量待共享服确认"
+        homes.contains { $0.rooms == nil } ? "可登记铺位" : "向柜员问空房"
     }
     private func cards(_ district: MPCHousingCatalog.District) -> some View {
         VStack(alignment: .leading, spacing: 20) {
             Button("‹ 返回看区") { step = .districts }
-            Text("二 · \(HousingArt.districtName(district))").font(.title2.bold())
+            Text("\(HousingArt.districtName(district))").font(.title2.bold())
             ForEach(MPCHousingCatalog.lodgings.filter { $0.district == district }) { lodging in
                 VStack(alignment: .leading, spacing: 10) {
                     if let art = HousingArt.home(lodging.id) { Image(art.exterior).resizable().aspectRatio(1.5, contentMode: .fit) }
                     Text(lodging.name).font(.system(size: 23, weight: .bold, design: .serif))
-                    Text("住处 \(lodging.copperPerDay) 铜／日 · 恢复 +\(lodging.staminaBonus)／日")
+                    Text("房钱 \(lodging.copperPerDay) 铜／日")
                     Text(HousingArt.history(lodging.id)).font(.footnote)
                     Text("附近饮食：" + nearbyMeals(lodging).map(\.name).joined(separator: "、")).font(.footnote)
                     Text(availability(lodging)).font(.caption)
                     if game.housingRecord?.queuedLodgingIDs.contains(lodging.id) == true { Text("已登记等候").font(.caption) }
                     Button("进屋看看") { detail = ""; step = .interior(lodging.id) }.buttonStyle(.borderedProminent).foregroundStyle(.white)
                     if lodging.rooms != nil {
-                        Button("登记等候") { Task { do { try await game.queueHousing(lodging.id); message = "已登记，房间消息以共享服为准。" } catch { message = game.housingError(error) } } }
+                        Button("登记等候") { Task { do { try await game.queueHousing(lodging.id); message = "伊蕾娜记下了你的名字，有空房时会留意。" } catch { message = game.housingError(error) } } }
                     }
                 }.padding(12).background(.white.opacity(0.25), in: RoundedRectangle(cornerRadius: 10))
             }
@@ -166,20 +192,20 @@ struct HousingSearchView: View {
         MPCHousingCatalog.meals.filter { $0.requiresLodgingID == nil || $0.requiresLodgingID == lodging.id }
     }
     private func availability(_ lodging: MPCHousingCatalog.Lodging) -> String {
-        if lodging.belowRecoveryLineOnly { return "按恢复线施济登记，不签租约。" }
-        return lodging.rooms == nil ? "不设房间总量" : "房间限量 · 剩余房间待共享服确认"
+        if lodging.belowRecoveryLineOnly { return "教会留给一时拮据的人，不收房钱。" }
+        return lodging.rooms == nil ? "可到柜台登记铺位" : "空房不多，可请伊蕾娜留意。"
     }
     private func interior(_ id: String) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             if let home = HousingArt.home(id), let lodging = MPCHousingCatalog.lodging(id) {
-                Button("‹ 返回房子卡片") { step = .cards(lodging.district) }
-                Text("三 · \(home.name)").font(.title2.bold())
+                Button("‹ 回住处册") { step = .cards(lodging.district) }
+                Text("\(home.name)").font(.title2.bold())
                 HousingInteriorArtwork(homeID: id) { detail = $0 }
-                Text(detail.isEmpty ? "点亮的细节点可以看看窗、灯和屋子的来历。" : detail).font(.footnote)
+                Text(detail.isEmpty ? "窗边、炉火和门楣，都藏着这间屋子的旧事。" : detail).font(.footnote)
                 if lodging.belowRecoveryLineOnly {
-                    Text("今天余额低于恢复线时，日结会按规则安排这里。").font(.footnote)
+                    Text("若钱袋已难以维持食宿，教会会替你留一处铺位。").font(.footnote)
                 } else {
-                    Button("选这间 · 看七天约") {
+                    Button("选这间 · 看租约") {
                         mealID = nearbyMeals(lodging).contains { $0.id == game.housingMealID } ? game.housingMealID : MPCHousingCatalog.basicMealID
                         step = .lease(id)
                     }.buttonStyle(.borderedProminent).foregroundStyle(.white)
@@ -191,16 +217,15 @@ struct HousingSearchView: View {
         VStack(alignment: .leading, spacing: 16) {
             if let lodging = MPCHousingCatalog.lodging(id) {
                 Button("‹ 回屋看看") { step = .interior(id) }.disabled(isSigning)
-                Text("四 · 七天租约").font(.title2.bold())
+                Text("七日租约").font(.title2.bold())
                 HousingDoorplate(name: lodging.name)
                 Picker("日常饮食", selection: $mealID) { ForEach(nearbyMeals(lodging)) { meal in Text("\(meal.name) · \(meal.copperPerDay) 铜／日").tag(meal.id) } }
                     .pickerStyle(.menu)
                 let meal = MPCHousingCatalog.meal(mealID)
                 let perDay = lodging.copperPerDay + (meal?.copperPerDay ?? 0)
-                Text("每天 \(perDay) 铜 · \(MPCHousingCatalog.leaseDays) 天预计 \(perDay * MPCHousingCatalog.leaseDays) 铜").font(.headline)
-                Text("签约不预付七天；每天第一次打开时付生活费，余额不足会降档。今天已付的费用与恢复速度不变，新选择从下一次日结生效。").font(.footnote)
-                Text("恢复 \(MPCHousingCatalog.recoveryPerDay(lodgingID: id, mealID: mealID))／日 · 体力上限 \(MPCStamina.maximum)").font(.footnote)
-                Button(isSigning ? "封蜡登记中…" : "签约并搬家") {
+                Text("房钱与伙食每日 \(perDay) 铜 · 七日合计 \(perDay * MPCHousingCatalog.leaseDays) 铜").font(.headline)
+                Text("租期七日，房钱与伙食按日收，不必一次付清。今晨的费用已经付过，新约明晨起计；若钱袋紧了，伊蕾娜会另替你安排便宜些的食宿。").font(.footnote)
+                Button(isSigning ? "伊蕾娜正盖上封蜡…" : "签约并搬家") {
                     Task {
                         isSigning = true; defer { isSigning = false }
                         do {
@@ -222,11 +247,11 @@ struct HousingSearchView: View {
     }
     private func moving(_ id: String) -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("五 · 搬到新住处").font(.title2.bold())
+            Text("你的新门牌").font(.title2.bold())
             if let home = HousingArt.home(id) { Image(home.exterior).resizable().aspectRatio(1.5, contentMode: .fit).transition(.opacity) }
             HousingDoorplate(name: game.housingPlayerName)
             Text("门牌已经挂好。\(MPCHousingCatalog.lodging(id)?.name ?? "住处")等你回来。").font(.headline)
-            Button("回港城") { dismiss() }.buttonStyle(.borderedProminent).foregroundStyle(.white)
+            Button("收好门牌 · 返回") { dismiss() }.buttonStyle(.borderedProminent).foregroundStyle(.white)
         }.animation(.easeInOut(duration: 0.6), value: game.housingHomeID)
     }
 }
@@ -247,7 +272,7 @@ private struct HousingDistrictMap: View {
                     }
                 }
                 ForEach(HousingArt.geography?.restrictedAreas ?? []) { area in
-                    Text("贵族区 · 极少开放").font(.system(size: 9, weight: .semibold)).foregroundStyle(.white)
+                    Text("贵族区 · 谢绝访客").font(.system(size: 9, weight: .semibold)).foregroundStyle(.white)
                         .padding(4).background(.black.opacity(0.65), in: Capsule())
                         .position(x: area.labelAt[0] * h, y: area.labelAt[1] * h)
                 }
@@ -282,7 +307,7 @@ struct HousingResidenceView: View {
     @State private var detail = ""
     @State private var finding = false
     var body: some View {
-        HousingPage(title: "我的住处") {
+        HousingPage(title: "我的住处", backTitle: "返回") {
             HousingDoorplate(name: game.housingPlayerName)
             Text(MPCHousingCatalog.lodging(game.housingHomeID)?.name ?? "住处").font(.title2.bold())
             HousingInteriorArtwork(homeID: game.housingHomeID) { detail = $0 }
@@ -301,7 +326,7 @@ private struct HousingMealChoices: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("每日饮食").font(.headline)
-            Text("今天已付不重扣，换餐从下一次日结生效；租约日期不延长。").font(.footnote)
+            Text("今晨的饭钱已经付过。换一处吃饭，明晨起安排，房期照旧。").font(.footnote)
             ForEach(MPCHousingCatalog.meals.filter { $0.requiresLodgingID == nil || $0.requiresLodgingID == game.housingHomeID }) { meal in
                 Button {
                     Task {
@@ -311,7 +336,7 @@ private struct HousingMealChoices: View {
                     }
                 } label: {
                     HStack {
-                        VStack(alignment: .leading) { Text(meal.name); Text("\(meal.copperPerDay) 铜／日 · 恢复 +\(meal.staminaBonus)").font(.caption) }
+                        VStack(alignment: .leading) { Text(meal.name); Text("\(meal.copperPerDay) 铜／日").font(.caption) }
                         Spacer(); if game.housingMealID == meal.id { Image(systemName: "checkmark.seal.fill") }
                     }.padding(12).background(.white.opacity(0.3), in: RoundedRectangle(cornerRadius: 8))
                 }.buttonStyle(.plain).disabled(busy)
@@ -343,12 +368,8 @@ struct HousingStaminaView: View {
                 let value = stamina.available(at: now.timeIntervalSince1970)
                 VStack(alignment: .leading, spacing: 14) {
                     Image(uiImage: HousingAtlas.stamina(value)).resizable().scaledToFit().frame(height: 170).frame(maxWidth: .infinity)
-                    Text("体力 \(value)／\(MPCStamina.maximum)").font(.title2.bold())
-                    Text("恢复 \(stamina.recoveryPerDay)／日 · 预计 \(now.addingTimeInterval(stamina.secondsUntil(MPCStamina.maximum, at: now.timeIntervalSince1970)).formatted(date: .abbreviated, time: .shortened)) 回满").font(.footnote)
-                    Text(game.housingDailyNotice).font(.footnote)
-                    ForEach(MPCStamina.Activity.allCases, id: \.rawValue) { activity in
-                        HStack { Text(activity.housingTitle); Spacer(); Text("\(MPCStamina.cost(activity)) 体力") }.font(.subheadline)
-                    }
+                    Text(HousingAtlas.staminaCaption(value)).font(.title2.bold())
+                    Text("照顾好起居，灯火会随着歇息慢慢恢复。").font(.body)
                 }
             }
         }.task { await game.openHousingDay() }
@@ -360,9 +381,8 @@ struct HousingHighlandBoardView: View {
     var body: some View {
         HousingPage(title: "高地告示处") {
             Image("HousingHighlandHouseExterior20260930").resizable().aspectRatio(1.5, contentMode: .fit)
-            Text("左侧高级住宅区 · 住高地石宅才能接").font(.title2.bold())
-            Text(game.housingHighlandEligible ? "今天石宅的生活费已付，住户资格有效。具体告示尚未开放。" : "需要实际住在高地石宅，并付过今天的石宅生活费。搬家后下一次日结生效。")
-            StaminaCostView(activity: .highlandShort); StaminaCostView(activity: .highlandLong)
+            Text("石宅住户的告示").font(.title2.bold())
+            Text(game.housingHighlandEligible ? "守门人认得你的石宅门牌。今天还没有贴出新的告示。" : "这里的告示只留给石宅住户。到伊蕾娜那里安顿好食宿，明晨登记过门牌后再来。")
         }.task { await game.openHousingDay() }
     }
 }

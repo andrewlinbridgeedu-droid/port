@@ -5070,11 +5070,11 @@ extension GameStore {
     var housingHomeID: String { housingRecord?.homeLodgingID ?? MPCHousingCatalog.basicLodgingID }
     var housingMealID: String { housingRecord?.ledger.mealID ?? MPCHousingCatalog.basicMealID }
     var housingDailyNotice: String {
-        guard let p = housingPayment else { return "今天的生活费尚未结算。" }
+        guard let p = housingPayment else { return "今晨的房钱与伙食，还等着柜员记下。" }
         let lodging = MPCHousingCatalog.lodging(p.lodgingID)?.name ?? "住处"
         let meal = MPCHousingCatalog.meal(p.mealID)?.name ?? "饮食"
-        return "今日生活费 \(p.copper) 铜 · \(lodging) · \(meal)"
-            + (p.downgraded ? "。余额不足以保留原档位，今天已安排较便宜的住处与饮食。" : "。")
+        return "今晨付过 \(p.copper) 铜，住\(lodging)，在\(meal)用餐。"
+            + (p.downgraded ? "钱袋紧了些，伊蕾娜替你另安排了能负担的住处和饭食。" : "")
     }
     var currentStamina: Int { _ = housingDisplayTick; return housingRecord?.stamina.available(at: housingNow.timeIntervalSince1970) ?? MPCStamina.maximum }
     var housingHighlandEligible: Bool {
@@ -5121,18 +5121,23 @@ extension GameStore {
         try commitChurchServices(churchServices, housing: r)
     }
     func housingError(_ error: Error) -> String {
-        if case MPCStaminaState.Failure.notEnough(let needed, let available) = error {
+        if case MPCStaminaState.Failure.notEnough(let needed, _) = error {
             let seconds = housingRecord?.stamina.secondsUntil(needed, at: housingNow.timeIntervalSince1970) ?? 0
-            return "还差 \(needed - available) 体力，预计 \(housingNow.addingTimeInterval(seconds).formatted(date: .omitted, time: .shortened)) 够用。"
+            let time = housingNow.addingTimeInterval(seconds).formatted(.dateTime.locale(Locale(identifier: "zh_Hans_CN")).hour().minute())
+            return "灯火不够支撑这趟奔忙了。先歇一歇，约到\(time)再来。"
         }
         if let failure = error as? HousingServiceFailure { return failure.localizedDescription }
         if let failure = error as? MPCHousingLedger.Failure {
             switch failure { case .noRoom: return "房间已满，可以先登记等候。"; case .notAllowed: return "这个住处暂不提供该饮食。"; case .unknown: return "未找到这份住处登记。" }
         }
-        return "操作未完成，请核对物品、任务进度或未结束的行动。"
+        return "这件事还没办妥。先收好手头的物件，把未了的事安顿下来再来。"
     }
     func staminaActivityForNeighbor(_ id: String) -> MPCStamina.Activity {
-        neighbors.offers.first { $0.id == id }?.errand?.kind == .message ? .errandThreeStep : .errandTwoStep
+        guard let kind = neighbors.offers.first(where: { $0.id == id })?.errand?.kind else { return .errandTwoStep }
+        switch kind {
+        case .deliver: return .errandTwoStep
+        case .find, .pest, .message: return .errandThreeStep
+        }
     }
     private func housingAction<T>(_ activity: MPCStamina.Activity, receipt: String, _ body: () throws -> T) async throws -> T {
         await housingGate.acquire(); defer { housingGate.release(); pendingHousingRecord = nil }
@@ -5177,7 +5182,7 @@ extension GameStore {
         try await housingAction(.errandThreeStep, receipt: "neighbor-" + offerID) { try relayNeighborBody(offerID) }
     }
     func beginNeighborPest(offerID: String, ticket: String, skills: [FoolSkillID]) async throws -> MPCChapterOneEncounterSession {
-        try await housingAction(.errandTwoStep, receipt: "neighbor-" + offerID) { try beginNeighborPestBody(offerID: offerID, ticket: ticket, skills: skills) }
+        try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try beginNeighborPestBody(offerID: offerID, ticket: ticket, skills: skills) }
     }
     func answerRemnant(day: Int, choiceID: String) async throws -> Bool {
         try await housingAction(.remnant, receipt: "remnant-\(day)") { try answerRemnantBody(day: day, choiceID: choiceID) }
@@ -5228,7 +5233,7 @@ extension GameStore {
         return defaults
     }
     static func verifyHousing() async {
-        let suites = ["main", "poor", "full", "corrupt"].map { "mistport.housing-check.\($0)." + UUID().uuidString }
+        let suites = ["main", "poor", "full", "corrupt", "neighbors"].map { "mistport.housing-check.\($0)." + UUID().uuidString }
         defer { suites.forEach { UserDefaults(suiteName: $0)?.removePersistentDomain(forName: $0) } }
         var checks: [String] = []
         func check(_ value: Bool, _ label: String) throws {
@@ -5326,6 +5331,37 @@ extension GameStore {
             try check(corruptDefaults.data(forKey: RulesHousingService.persistenceKey) == corrupt && bad.venueCoins == 777, "unreadable housing data is never replaced or charged")
             let dstA = ISO8601DateFormatter().date(from: "2026-11-01T08:30:00Z")!, dstB = ISO8601DateFormatter().date(from: "2026-11-01T09:30:00Z")!
             try check(HousingServerDay.number(dstA) == HousingServerDay.number(dstB) && HousingServerDay.nextBoundary(dstA).timeIntervalSince(HousingServerDay.calendar.startOfDay(for: dstA)) == 25 * 3_600, "Pacific DST repeated hour keeps one day identity")
+            let errands = GameStore(launchArguments: [], defaults: UserDefaults(suiteName: suites[4])!)
+            let errandClock = now
+            errands.pacingClock = { errandClock }; errands.debugJumpToOldClockMission(6, enterImmediately: false)
+            errands.venueCoins = 1_000
+            for recipe in MPCCraftingCatalog.basics { errands.chapterOneCampaign.inventory[recipe.output] = 1_000 }
+            errands.persistChapterProgress(); await errands.openHousingDay()
+            var checkedKinds: Set<String> = [], correctCosts = true
+            for day in 2...28 where checkedKinds.count < 4 {
+                errands.debugSetPacingDay(day); try errands.openNeighborDay()
+                for offer in errands.neighbors.offers where !checkedKinds.contains(offer.errand!.kind.rawValue) {
+                    let errand = offer.errand!, expected: MPCStamina.Activity = errand.kind == .deliver ? .errandTwoStep : .errandThreeStep
+                    correctCosts = correctCosts && errands.staminaActivityForNeighbor(offer.id) == expected
+                        && MPCStamina.cost(expected) == (errand.kind == .deliver ? 10 : 15)
+                    try errands.talkToNeighbor(offer.neighborID)
+                    let before = errands.currentStamina
+                    switch errand.kind {
+                    case .deliver: _ = try await errands.deliverNeighbor(offer.id)
+                    case .find: _ = try await errands.answerNeighbor(offer.id, choiceID: errand.correctChoiceID!)
+                    case .message: try await errands.acceptNeighborMessage(offer.id)
+                    case .pest:
+                        _ = try await errands.beginNeighborPest(offerID: offer.id, ticket: "housing-pest-first", skills: [])
+                        try errands.abandonNeighborPest(offerID: offer.id, ticket: "housing-pest-first")
+                        _ = try await errands.beginNeighborPest(offerID: offer.id, ticket: "housing-pest-retry", skills: [])
+                        try errands.abandonNeighborPest(offerID: offer.id, ticket: "housing-pest-retry")
+                    }
+                    correctCosts = correctCosts && before - errands.currentStamina == MPCStamina.cost(expected)
+                    checkedKinds.insert(errand.kind.rawValue)
+                }
+            }
+            try check(correctCosts && checkedKinds == ["deliver", "find", "pest", "message"],
+                "neighbor delivery spends 10; find message and pest spend 15; pest retry spends only once")
             try JSONSerialization.data(withJSONObject: ["passed": true, "checks": checks], options: [.prettyPrinted, .sortedKeys]).write(to: folder.appendingPathComponent("housing-verification.json"))
             NSLog("HOUSING_VERIFY_PASS: %d checks", checks.count)
         } catch {
