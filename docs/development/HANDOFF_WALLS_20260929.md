@@ -4,14 +4,14 @@
 
 ### 分支
 
-- `main` 在 `485b5d6`（PR #21）。
-- **本轮云端的工作在 `claude/nifty-planck-80307c`，比 `main` 多 4 个提交，还没合进 `main`**：
-  - `b1fe804` 共享服 M0 技术小样；
-  - `67527ef` 用户授权代定的经济与选型；
-  - `065db7e` EC2 部署清单；
-  - `3448f87` 台阶大道不加路灯。
+- 本轮云端的工作已通过 [PR #23](https://github.com/andrewlinbridgeedu-droid/port/pull/23) 合进 `main`：
+  - 共享服 M0 技术小样；
+  - 用户授权代定的经济与选型；
+  - EC2 部署清单；
+  - 台阶大道不加路灯；
+  - 本交接。
 
-  新会话先把它合进 `main`（开 PR）。本页也被草稿 PR #22 改过，但改的不是同几行。
+  新会话从 `main` 开始。本页也被草稿 PR #22 改过，已试合并，没有冲突。
 - 草稿 [PR #22](https://github.com/andrewlinbridgeedu-droid/port/pull/22)（`codex/commission-decals-20260929`，Codex）是城市委托的街景贴片图稿，等用户看图，不能合并。
 
 ### 本轮做了什么（云端，Linux）
@@ -185,7 +185,7 @@
 ## 仓库与分支
 
 - **工作仓库：`github.com/andrewlinbridgeedu-droid/port`**（用户 2026-09-29 定为以后唯一的工作仓库）。换 Claude 账号也可以继续：新账号连上有这个仓库权限的 GitHub 账号，开会话时选这个仓库，先读本页。
-- **从 `main` 起步。** 2026-09-29 已通过 PR #1 把所有分支的工作合进 `main`（合并提交 `9b62e55`）。新会话从 `main` 开始，`claude/world-economy-m0`、`claude/world-economy-m0-u62oho` 都已并入。**例外**：`claude/nifty-planck-80307c` 在 2026-09-30 又有 4 个提交没合进 `main`（见本页顶部），先合并再开新工作。
+- **从 `main` 起步。** 2026-09-29 已通过 PR #1 把所有分支的工作合进 `main`（合并提交 `9b62e55`）。新会话从 `main` 开始，`claude/world-economy-m0`、`claude/world-economy-m0-u62oho` 都已并入。`claude/nifty-planck-80307c` 在 2026-09-30 的工作也已由 PR #23 合入。
 - 第一轮交接提到的 `showcase.py` 冲突已合好（保留 PIL 画字，字体优先用 main 选的华文黑体）。
 
 ## 第四轮：按天推进第二步（App 接入，云端写，没编译）
