@@ -40,7 +40,7 @@ MISTPORT_DB=./dev.sqlite MISTPORT_PORT=8080 MISTPORT_ADMIN_TOKEN=<至少16位> s
   - 和单机同一套规则（`MPCDailyPacing`）：塔层首通每天 4 层，跳过的天照算。
   - 开塔层票据时判断，超出的直接拒绝（`dailyLimit`），不预留任何东西；已通关的楼层重打不受限。
   - 每个角色有开始日：新号从建号当天算；运维设角色时，照单机迁移旧档的办法往前推，推到下一层今天能打为止。
-  - 服务器的一天从 `LedgerPolicy.pacingTimeZone` 零点开始（候选 `Asia/Shanghai`）。
+  - 服务器的一天从 `LedgerPolicy.pacingTimeZone` 零点开始（用户 2026-09-30 定：太平洋时间，`America/Los_Angeles`）。
   - 旧库自动升级到 schema 2。
 - **本地财富带入**（用户 2026-09-29 定带入，2026-09-30 定折算）：
   - 最多计 12,000 本地铜，按 15% 折成共享铜（最多 1,800），和共享服每日玩法按单机 15% 付的比例一致。

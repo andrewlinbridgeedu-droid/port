@@ -20,9 +20,9 @@ public struct LedgerPolicy: Codable, Sendable, Equatable {
     public var lightsPublicReward: Int64 = 12
     public var maxQuantity: Int64 = 9_999
     public var maxUnitPrice: Int64 = 1_000_000
-    /// Daily pacing (MPCDailyPacing, same rules as single player): a server day starts at
-    /// midnight in this time zone. Candidate, to be confirmed with the user.
-    public var pacingTimeZone = "Asia/Shanghai"
+    /// Daily pacing (MPCDailyPacing): a server day starts at midnight Pacific time
+    /// (user decision 2026-09-30; follows daylight saving, so PST in winter, PDT in summer).
+    public var pacingTimeZone = "America/Los_Angeles"
     public init() {}
 }
 
