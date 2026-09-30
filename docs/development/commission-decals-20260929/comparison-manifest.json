@@ -1,320 +1,215 @@
 {
   "previewOnly": true,
   "originalsUnchanged": true,
-  "comparisonCount": 45,
+  "comparisonCount": 30,
   "comparisons": [
     {
       "site": "fountain",
       "plate": "CitySpringDay",
-      "decal": "assets/CommissionFountainDay.png",
+      "decal": "assets/CommissionFountainV3Day.png",
       "comparison": "comparisons/fountain-CitySpringDay.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "fountain",
       "plate": "CitySpringSunset",
-      "decal": "assets/CommissionFountainSunset.png",
+      "decal": "assets/CommissionFountainV3Sunset.png",
       "comparison": "comparisons/fountain-CitySpringSunset.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "fountain",
       "plate": "CitySpringNight",
-      "decal": "assets/CommissionFountainNight.png",
+      "decal": "assets/CommissionFountainV3Night.png",
       "comparison": "comparisons/fountain-CitySpringNight.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "fountain",
       "plate": "CitySummerDay",
-      "decal": "assets/CommissionFountainDay.png",
+      "decal": "assets/CommissionFountainV3Day.png",
       "comparison": "comparisons/fountain-CitySummerDay.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "fountain",
       "plate": "CitySummerSunset",
-      "decal": "assets/CommissionFountainSunset.png",
+      "decal": "assets/CommissionFountainV3Sunset.png",
       "comparison": "comparisons/fountain-CitySummerSunset.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "fountain",
       "plate": "CitySummerNight",
-      "decal": "assets/CommissionFountainNight.png",
+      "decal": "assets/CommissionFountainV3Night.png",
       "comparison": "comparisons/fountain-CitySummerNight.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "fountain",
       "plate": "CityAutumnDay",
-      "decal": "assets/CommissionFountainDay.png",
+      "decal": "assets/CommissionFountainV3Day.png",
       "comparison": "comparisons/fountain-CityAutumnDay.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "fountain",
       "plate": "CityAutumnSunset",
-      "decal": "assets/CommissionFountainSunset.png",
+      "decal": "assets/CommissionFountainV3Sunset.png",
       "comparison": "comparisons/fountain-CityAutumnSunset.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "fountain",
       "plate": "CityAutumnNight",
-      "decal": "assets/CommissionFountainNight.png",
+      "decal": "assets/CommissionFountainV3Night.png",
       "comparison": "comparisons/fountain-CityAutumnNight.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "fountain",
       "plate": "CityWinterDay",
-      "decal": "assets/CommissionFountainDay.png",
+      "decal": "assets/CommissionFountainV3Day.png",
       "comparison": "comparisons/fountain-CityWinterDay.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "fountain",
       "plate": "CityWinterSunset",
-      "decal": "assets/CommissionFountainSunset.png",
+      "decal": "assets/CommissionFountainV3Sunset.png",
       "comparison": "comparisons/fountain-CityWinterSunset.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "fountain",
       "plate": "CityWinterNight",
-      "decal": "assets/CommissionFountainNight.png",
+      "decal": "assets/CommissionFountainV3Night.png",
       "comparison": "comparisons/fountain-CityWinterNight.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "fountain",
       "plate": "CityWinterSnowDay",
-      "decal": "assets/CommissionFountainSnowDay.png",
+      "decal": "assets/CommissionFountainV3SnowDay.png",
       "comparison": "comparisons/fountain-CityWinterSnowDay.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "fountain",
       "plate": "CityWinterSnowSunset",
-      "decal": "assets/CommissionFountainSnowSunset.png",
+      "decal": "assets/CommissionFountainV3SnowSunset.png",
       "comparison": "comparisons/fountain-CityWinterSnowSunset.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "fountain",
       "plate": "CityWinterSnowNight",
-      "decal": "assets/CommissionFountainSnowNight.png",
+      "decal": "assets/CommissionFountainV3SnowNight.png",
       "comparison": "comparisons/fountain-CityWinterSnowNight.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CitySpringDay",
-      "decal": "assets/CommissionBoulevardDay.png",
-      "comparison": "comparisons/boulevard-CitySpringDay.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CitySpringSunset",
-      "decal": "assets/CommissionBoulevardSunset.png",
-      "comparison": "comparisons/boulevard-CitySpringSunset.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CitySpringNight",
-      "decal": "assets/CommissionBoulevardNight.png",
-      "comparison": "comparisons/boulevard-CitySpringNight.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CitySummerDay",
-      "decal": "assets/CommissionBoulevardDay.png",
-      "comparison": "comparisons/boulevard-CitySummerDay.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CitySummerSunset",
-      "decal": "assets/CommissionBoulevardSunset.png",
-      "comparison": "comparisons/boulevard-CitySummerSunset.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CitySummerNight",
-      "decal": "assets/CommissionBoulevardNight.png",
-      "comparison": "comparisons/boulevard-CitySummerNight.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CityAutumnDay",
-      "decal": "assets/CommissionBoulevardDay.png",
-      "comparison": "comparisons/boulevard-CityAutumnDay.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CityAutumnSunset",
-      "decal": "assets/CommissionBoulevardSunset.png",
-      "comparison": "comparisons/boulevard-CityAutumnSunset.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CityAutumnNight",
-      "decal": "assets/CommissionBoulevardNight.png",
-      "comparison": "comparisons/boulevard-CityAutumnNight.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CityWinterDay",
-      "decal": "assets/CommissionBoulevardDay.png",
-      "comparison": "comparisons/boulevard-CityWinterDay.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CityWinterSunset",
-      "decal": "assets/CommissionBoulevardSunset.png",
-      "comparison": "comparisons/boulevard-CityWinterSunset.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CityWinterNight",
-      "decal": "assets/CommissionBoulevardNight.png",
-      "comparison": "comparisons/boulevard-CityWinterNight.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CityWinterSnowDay",
-      "decal": "assets/CommissionBoulevardSnowDay.png",
-      "comparison": "comparisons/boulevard-CityWinterSnowDay.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CityWinterSnowSunset",
-      "decal": "assets/CommissionBoulevardSnowSunset.png",
-      "comparison": "comparisons/boulevard-CityWinterSnowSunset.png",
-      "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
-    },
-    {
-      "site": "boulevard",
-      "plate": "CityWinterSnowNight",
-      "decal": "assets/CommissionBoulevardSnowNight.png",
-      "comparison": "comparisons/boulevard-CityWinterSnowNight.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CitySpringDay",
-      "decal": "assets/CommissionYardV2Day.png",
+      "decal": "assets/CommissionYardV3Day.png",
       "comparison": "comparisons/yard-CitySpringDay.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CitySpringSunset",
-      "decal": "assets/CommissionYardV2Sunset.png",
+      "decal": "assets/CommissionYardV3Sunset.png",
       "comparison": "comparisons/yard-CitySpringSunset.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CitySpringNight",
-      "decal": "assets/CommissionYardV2Night.png",
+      "decal": "assets/CommissionYardV3Night.png",
       "comparison": "comparisons/yard-CitySpringNight.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CitySummerDay",
-      "decal": "assets/CommissionYardV2Day.png",
+      "decal": "assets/CommissionYardV3Day.png",
       "comparison": "comparisons/yard-CitySummerDay.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CitySummerSunset",
-      "decal": "assets/CommissionYardV2Sunset.png",
+      "decal": "assets/CommissionYardV3Sunset.png",
       "comparison": "comparisons/yard-CitySummerSunset.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CitySummerNight",
-      "decal": "assets/CommissionYardV2Night.png",
+      "decal": "assets/CommissionYardV3Night.png",
       "comparison": "comparisons/yard-CitySummerNight.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CityAutumnDay",
-      "decal": "assets/CommissionYardV2Day.png",
+      "decal": "assets/CommissionYardV3Day.png",
       "comparison": "comparisons/yard-CityAutumnDay.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CityAutumnSunset",
-      "decal": "assets/CommissionYardV2Sunset.png",
+      "decal": "assets/CommissionYardV3Sunset.png",
       "comparison": "comparisons/yard-CityAutumnSunset.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CityAutumnNight",
-      "decal": "assets/CommissionYardV2Night.png",
+      "decal": "assets/CommissionYardV3Night.png",
       "comparison": "comparisons/yard-CityAutumnNight.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CityWinterDay",
-      "decal": "assets/CommissionYardV2Day.png",
+      "decal": "assets/CommissionYardV3Day.png",
       "comparison": "comparisons/yard-CityWinterDay.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CityWinterSunset",
-      "decal": "assets/CommissionYardV2Sunset.png",
+      "decal": "assets/CommissionYardV3Sunset.png",
       "comparison": "comparisons/yard-CityWinterSunset.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CityWinterNight",
-      "decal": "assets/CommissionYardV2Night.png",
+      "decal": "assets/CommissionYardV3Night.png",
       "comparison": "comparisons/yard-CityWinterNight.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CityWinterSnowDay",
-      "decal": "assets/CommissionYardV2SnowDay.png",
+      "decal": "assets/CommissionYardV3SnowDay.png",
       "comparison": "comparisons/yard-CityWinterSnowDay.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CityWinterSnowSunset",
-      "decal": "assets/CommissionYardV2SnowSunset.png",
+      "decal": "assets/CommissionYardV3SnowSunset.png",
       "comparison": "comparisons/yard-CityWinterSnowSunset.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     },
     {
       "site": "yard",
       "plate": "CityWinterSnowNight",
-      "decal": "assets/CommissionYardV2SnowNight.png",
+      "decal": "assets/CommissionYardV3SnowNight.png",
       "comparison": "comparisons/yard-CityWinterSnowNight.png",
       "lighting": "existing CityLights R/G order, sunset on=0.20 strength=0.60; night on=1 off=0"
     }

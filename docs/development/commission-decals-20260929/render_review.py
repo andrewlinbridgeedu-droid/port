@@ -9,7 +9,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
 ASSETS = REPO / 'mistport-ios/Mistport/Assets.xcassets'
 REGIONS = json.loads((HERE / 'regions.json').read_text())
-PREFIXES = {'fountain': 'CommissionFountain', 'boulevard': 'CommissionBoulevard', 'yard': 'CommissionYardV2'}
+PREFIXES = {'fountain': 'CommissionFountainV3', 'yard': 'CommissionYardV3'}
 SEASONS = {'Spring': '春', 'Summer': '夏', 'Autumn': '秋', 'Winter': '冬', 'WinterSnow': '冬雪'}
 TIMES = {'Day': '白天', 'Sunset': '黄昏', 'Night': '夜晚'}
 FONT_PATH = '/System/Library/Fonts/Supplemental/Songti.ttc'
@@ -52,28 +52,18 @@ def placed(file, frame, box, mode='RGBA', resampling=Image.Resampling.LANCZOS):
         canvas.paste(source.crop((left-x, top-y, right-x, bottom-y)), (left-box[0], top-box[1]))
     return canvas
 
-def added_light(after, file, order_file, frame, box, time, intensity=1):
-    glow = placed(file, frame, box)
-    order = placed(order_file, frame, box, 'RGB', Image.Resampling.NEAREST)
-    on, strength = (0.20, 0.60) if time == 'Sunset' else (1.0, 1.0)
-    show = order.getchannel('R').point(lambda v: 255 if v / 255 >= max(0.002, 1 - on) else 0)
-    alpha = ImageChops.multiply(glow.getchannel('A'), show)
-    added = Image.composite(glow.convert('RGB'), Image.new('RGB', after.size), alpha).point(lambda v: round(v * strength * intensity))
-    return ImageChops.add(after.convert('RGB'), added)
-
-def after_image(before, site, season, time, box, version=2):
-    frame = REGIONS[site]['rect']
-    file = selected_asset(site, season, time)
-    if site == 'yard' and version == 1:
-        file = HERE / 'assets/history/yard-v1' / ('CommissionYard' + ('Snow' if season == 'WinterSnow' else '') + time + '.png')
+def after_image(before, site, season, time, box):
     after = before.convert('RGBA')
-    after.alpha_composite(placed(file, frame, box))
-    if site == 'boulevard' and time != 'Day':
-        after = added_light(after, HERE / 'assets/CommissionBoulevardLights.png', HERE / 'assets/CommissionBoulevardLightOrder.png', frame, box, time)
-        if version == 2:
-            snow = 'Snow' if season == 'WinterSnow' else ''
-            after = added_light(after, HERE / 'assets' / ('CommissionBoulevard' + snow + 'GroundLights.png'), HERE / 'assets/CommissionBoulevardGroundLightOrder.png', REGIONS[site]['groundLightingRect'], box, time, .28)
+    after.alpha_composite(placed(selected_asset(site,season,time),REGIONS[site]['rect'],box))
     return after.convert('RGB')
+
+def previous_image(before, site, season, time, box):
+    prefix='CommissionFountain' if site=='fountain' else 'CommissionYardV2'
+    folder='fountain-v1' if site=='fountain' else 'yard-v2'
+    file=HERE/'assets/history'/folder/(prefix+('Snow' if season=='WinterSnow' else '')+time+'.png')
+    frame=[2090,1000,690,690] if site=='fountain' else [3296,1000,800,800]
+    out=before.convert('RGBA');out.alpha_composite(placed(file,frame,box))
+    return out.convert('RGB')
 
 
 def main():
@@ -113,7 +103,7 @@ def main():
             for season, time, tile in tiles:
                 contact.paste(tile, (list(TIMES).index(time) * 540, list(SEASONS).index(season) * cell_h))
             contact.save(HERE / (site + '-all-seasons.jpg'), quality=94)
-    if len(preview_rows) == 3:
+    if len(preview_rows) == 2:
         overview = Image.new('RGB', (1000, sum(im.height for im in preview_rows) + 32), '#18242c')
         top = 0
         for row in preview_rows:
@@ -123,38 +113,35 @@ def main():
     (HERE / 'comparison-manifest.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
     print('Originals unchanged: 15; comparisons:', len(records))
 
-    # Matching crops compare the feedback revision against the original PR art.
-    revision_rows = []
-    for site, time in [('boulevard', 'Night'), ('yard', 'Day')]:
-        x, y, w, h = REGIONS[site].get('reviewRect', REGIONS[site]['rect'])
-        box = (x, y, x+w, y+h)
-        before = lighting('Autumn', time, box)
-        old = after_image(before, site, 'Autumn', time, box, version=1)
-        new = after_image(before, site, 'Autumn', time, box)
-        pair = Image.new('RGB', (2*w+16, h+60), '#18242c')
-        pair.paste(old, (0,60)); pair.paste(new,(w+16,60))
-        d = ImageDraw.Draw(pair)
-        d.text((12,12), REGIONS[site]['name'] + ' · 原 PR 图稿', font=TITLE_FONT, fill='#efe5cf')
-        d.text((w+28,12), '修订图稿 · 待确认', font=TITLE_FONT, fill='#efe5cf')
-        revision_rows.append(pair.resize((1000, round(pair.height*1000/pair.width)), Image.Resampling.LANCZOS))
-    revision = Image.new('RGB',(1000,sum(im.height for im in revision_rows)+16),'#18242c')
-    y = 0
-    for im in revision_rows:
-        revision.paste(im,(0,y)); y += im.height+16
-    revision.save(HERE/'revision-v2-overview.jpg',quality=95)
-
-    # Realistic 390pt viewport scaling; this is an offline art preview, not a device capture.
-    box = (2914, 0, 4096, 2305)
-    base = lighting('Autumn','Day',box)
-    phone = Image.new('RGB',(796,810),'#18242c')
-    d = ImageDraw.Draw(phone)
-    d.text((12,12),'货场 · 手机宽度参考 · 原稿',font=FONT,fill='#efe5cf')
-    d.text((410,12),'新版 · 离线图，非真机',font=FONT,fill='#efe5cf')
-    for version, x in [(1,0),(2,406)]:
-        scene = after_image(base,'yard','Autumn','Day',box,version=version)
-        phone.paste(scene.resize((390,760),Image.Resampling.LANCZOS),(x,50))
-    phone.save(HERE/'yard-phone-width-v2.jpg',quality=96)
-
+    # Same world frames compare the prior reviewed revision with this revision.
+    revision_rows=[]
+    for site in REGIONS:
+        x,y,w,h=REGIONS[site]['rect'];box=(x,y,x+w,y+h)
+        base=lighting('Autumn','Day',box)
+        old=previous_image(base,site,'Autumn','Day',box)
+        new=after_image(base,site,'Autumn','Day',box)
+        pair=Image.new('RGB',(2*w+16,h+60),'#18242c');pair.paste(old,(0,60));pair.paste(new,(w+16,60))
+        d=ImageDraw.Draw(pair)
+        d.text((12,12),REGIONS[site]['name']+' · 上一版',font=TITLE_FONT,fill='#efe5cf')
+        d.text((w+28,12),'第三版 · 待确认',font=TITLE_FONT,fill='#efe5cf')
+        pair.save(HERE/(site+'-v3-revision.jpg'),quality=96)
+        revision_rows.append(pair.resize((1000,round(pair.height*1000/pair.width)),Image.Resampling.LANCZOS))
+    revision=Image.new('RGB',(1000,sum(im.height for im in revision_rows)+16),'#18242c')
+    y=0
+    for im in revision_rows:revision.paste(im,(0,y));y+=im.height+16
+    revision.save(HERE/'revision-v3-overview.jpg',quality=96)
+    # Two representative 390pt viewports, each at height 760. Offline, not device evidence.
+    phone_rows=[]
+    for site,box in [('fountain',(1619,0,2801,2305)),('yard',(2914,0,4096,2305))]:
+        base=lighting('Autumn','Day',box)
+        phone=Image.new('RGB',(796,810),'#18242c');d=ImageDraw.Draw(phone)
+        d.text((12,12),REGIONS[site]['name']+' · 上一版',font=FONT,fill='#efe5cf')
+        d.text((410,12),'第三版 · 离线手机比例',font=FONT,fill='#efe5cf')
+        for im,x in [(previous_image(base,site,'Autumn','Day',box),0),(after_image(base,site,'Autumn','Day',box),406)]:
+            phone.paste(im.resize((390,760),Image.Resampling.LANCZOS),(x,50))
+        phone_rows.append(phone)
+    phones=Image.new('RGB',(796,1636),'#18242c');phones.paste(phone_rows[0],(0,0));phones.paste(phone_rows[1],(0,826))
+    phones.save(HERE/'phone-width-v3.jpg',quality=96)
 
 if __name__ == '__main__':
     main()
