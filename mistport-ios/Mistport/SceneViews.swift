@@ -35,6 +35,11 @@ struct CityHubView: View {
     let onInventory: () -> Void
     let onEnterVenue: (String) -> Void
     var onNewspaper: () -> Void = {}
+    var housingLodgingID: String?
+    var housingPlayerName = ""
+    var staminaValue = MPCStamina.maximum
+    var onStamina: () -> Void = {}
+    var onHousing: () -> Void = {}
     var homeIsActive = true
     var streetTargets: [MPCStreetTaskTarget] = []
     var focusID: String?
@@ -121,7 +126,7 @@ struct CityHubView: View {
         let panoramaWidth = panoramaWidth(for: viewport)
 
         return ZStack {
-            CityLivingScene(isActive: homeIsActive, showsNearPeople: false)
+            CityLivingScene(isActive: homeIsActive, showsNearPeople: false, housingLodgingID: housingLodgingID, housingPlayerName: housingPlayerName, onHousing: onHousing)
                 .frame(width: panoramaWidth, height: viewport.height)
 
             let painting = HarborPainting.rect(in: CGSize(width: panoramaWidth, height: viewport.height))
@@ -257,8 +262,15 @@ struct CityHubView: View {
         }
         return ZStack {
             ForEach(HomeMapLayout.current.buildings, id: \.id) { building in
+                if building.id == "housing" {
+                    Button { onCounter("housing") } label: {
+                        Image("HousingAgencyNameplate20260930").resizable().scaledToFit().frame(width: 85, height: 32)
+                            .overlay { Text("赁屋行").font(.system(size: 13, weight: .bold, design: .serif)).foregroundStyle(Color(red: 0.93, green: 0.84, blue: 0.60)).offset(x: 9) }
+                    }.position(at(building.at![0], building.at![1]))
+                } else {
                 CityLandmarkTag(title: building.id == "industry" ? "工业委员会" : building.name!, action: buildingAction(building.id!))
                     .position(at(building.at![0], building.at![1]))
+                }
             }
         }
         .frame(width: panoramaWidth, height: size.height)
@@ -269,7 +281,7 @@ struct CityHubView: View {
         case "tavern": serviceIsUnlocked(.church) && path?.id == .fool ? onBountyTavern : nil
         case "industry": onBuild
         case "newspaper": onNewspaper
-        case "cityhall", "police", "post", "clinic", "harbor", "oldstreet", "board", "cafe": { onCounter(id) }
+        case "housing", "highland-board", "cityhall", "police", "post", "clinic", "harbor", "oldstreet", "board", "cafe": { onCounter(id) }
         default: nil
         }
     }
@@ -284,6 +296,10 @@ struct CityHubView: View {
                     if let target = trackedTarget { center(HomeMapLayout.current.targetPoint(target)[0], in: viewport) }
                     else { onStory() }
                 }.lineLimit(1).frame(maxWidth: .infinity, alignment: .leading)
+                Button(action: onStamina) {
+                    Image(uiImage: HousingAtlas.stamina(staminaValue)).resizable().scaledToFit().frame(width: 32, height: 36)
+                        .overlay(alignment: .bottom) { Text("\(staminaValue)").font(.system(size: 9, weight: .bold)).foregroundStyle(.white) }
+                }.accessibilityLabel("体力 \(staminaValue)，查看恢复时间")
                 Button { tasksExpanded.toggle() } label: { Image(systemName: tasksExpanded ? "chevron.up" : "chevron.down").frame(width: 44, height: 36) }
                     .accessibilityLabel(tasksExpanded ? "收起当前任务" : "展开当前任务，\(streetTargets.count)个目标")
             }

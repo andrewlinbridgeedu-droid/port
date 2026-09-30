@@ -179,10 +179,11 @@ struct LocalWorkshopView: View {
                 Text("织造").tag(MPCCraftRecipe.Craft.weaving)
             }.pickerStyle(.segmented)
             Text("本门熟练 \(game.craftingLedger.points(selectedCraft))/20").font(.headline)
-            Text(game.workshopProficiencyNotice).font(.caption).foregroundStyle(.secondary)
+            StaminaCostView(activity: .craft)
+                    Text(game.workshopProficiencyNotice).font(.caption).foregroundStyle(.secondary)
             ForEach(MPCCraftingCatalog.all.filter { $0.craft == selectedCraft }) { recipe in
                 WorkshopRecipeRow(game: game, recipe: recipe) { recipeID in
-                    perform("制作完成。") { try game.craftDailyWorkshop(recipeID: recipeID) }
+                    Task { do { try await game.craftDailyWorkshop(recipeID: recipeID); message = "制作完成。" } catch { message = game.housingError(error) } }
                 }
             }
         }

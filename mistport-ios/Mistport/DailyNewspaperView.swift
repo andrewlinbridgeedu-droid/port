@@ -126,6 +126,7 @@ struct DailyNewspaperView: View {
                 Text("街头消息 · 教会公告 · 港城生活")
             }.font(.system(size: 10, design: .serif))
             paperRule(thickness: 2)
+            Text(game.housingDailyNotice).font(.system(size: 12, design: .serif))
             Text(game.todayPacingSummary).font(.system(size: 14, weight: .semibold, design: .serif))
             row("主线进展", destination: .story) {
                 if let next = game.nextChapterMission {

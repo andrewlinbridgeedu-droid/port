@@ -7,15 +7,13 @@
 - 首页原画左侧远景为高级住宅区，右侧远景住宅带为贵族区；贵族区很少能进去住，不列入常规租房卡片。住处规则中的 `highland_house` 对应左侧高级住宅区，不把右侧贵族区当作普通高档租屋。
 - H1 的独立五区地图初稿被用户指出偏离港城地貌，已撤回，禁止接 App。改用首页全景原样缩览，区名和选房数据另外叠加；不改岸线、地势、道路、建筑或 15 张首页原画。见 [修正版地理提案](housing-art-20260930/map/geography-v2.json) 和 [预览](housing-art-20260930/map/geography-preview-v2.html)。位置仍待复看，特殊贵族入住条件尚未定义。
 
-### 当前 Mac 任务：H1 住处与赁屋行美术（H0 已认可并合入 main）
+### 当前 Mac 任务：H2 已接入，接着做 H3 自检与真机截图
 
-- H0 已通过 PR #32 合入 main（`b98e213`）。H1 分支 `codex/housing-h1-art-20260930` 从该 main 开始，交六处住处、18 个细节点、赁屋行分层柜台、名牌、铜门牌、四帧封蜡、五档体力灯罩、住处灯与光效。见 [H1 素材和预览](housing-art-20260930/README.md)。
-- H1 仅交图稿和 docs。已核对透明通道、尺寸、细节点、柜台遮挡和小屏地图；15 张首页原画哈希不变。未改 App、规则库、运行时布局、构建号，未装机或访问玩家 Preferences。H1 最终视觉认可待 H3 真机复看。
-
-- 本单按 [住处任务单](CODEX_TASKS_HOUSING_20260930.md) H0–H3 做，暂不沿下方旧任务顺序继续。H0 分支 `codex/housing-h0-style-boards-20260930` 从当时最新 main `d07d39d` 开始。
-- 已出三张 1536×1024 PNG：石拱层、钟灯层、铁玻层，沿一条雾中街道从老城到港区；使用首页四季原画作只读风格参考，后两张延续前面的水渠、铺石与地标。见 [H0 图稿、提示词和验证](housing-art-20260930/style/README.md)。这是建筑方向稿，不是地图配准贴片。
-- **用户已于 2026-09-30 回复“认可”，确认三张 H0 风格板，并授权合并 [PR #32](https://github.com/andrewlinbridgeedu-droid/port/pull/32)、继续 H1。**认可原话和图稿哈希见 [认可记录](housing-art-20260930/style/art-approval.json)。H0 已合并，H1 已从最新 main 新开分支并交图；H2 App、H3 自检／装机尚未开始。图及提示词保存在 docs；15 张首页原画哈希不变，未修改 App、规则库、AssetCatalog、运行时布局或构建编号，未访问玩家 Preferences。
-- 接着按 H1、H2、H3 依次做，各任务单独 PR。H2 的住处、饮食价格和体力花费一律取 `HousingStamina.swift`，放在 `HousingService` 接口后面；构建编号低于 170，DerivedData 与归档放 SSD，装机前后逐文件核对 Preferences。
+- H0 三张风格板用户回复“认可”，PR #32 已合入 main。H1 经 [PR #33](https://github.com/andrewlinbridgeedu-droid/port/pull/33) 合入 main（`7b85f0f`）：六处住处、分层赁屋行、图标、封蜡与门牌。地图 v1 被拒绝，当前选房地图直接使用首页原画，左侧高级住宅区可选、右侧贵族区不列普通租房。H1 最终视觉认可仍待 H3 真机。
+- H2 分支 `codex/housing-h2-app-20260930` 从该最新 main 开始。已接赁屋行、五步选房、换餐、太平洋日日结、HousingService 账本适配器、带回执的体力扣除、首页门牌／灯与高地告示入口。签名 Debug Build169.11 与规则库 557 项测试通过；见 [H2 行为与验证边界](housing-app-20260930/README.md)。
+- 未装机、未读写真实玩家 Preferences，最终 DEBUG 集成检查与真机截图留 H3。不能把构建或规则测试当作用户视觉认可。共享服时钟、真实剩余房间和排队尚未接入，目录容量仅用于接口夹具；没有离线产品模式或旧存档迁移。
+- 15 张首页原画 SHA-256 不变，原灯光资源不变，城市委托贴片仍禁用。高地石宅在左侧高级住宅区，右侧贵族入住条件尚未定义；具体高地任务未开放。
+- 按 [住处任务单](CODEX_TASKS_HOUSING_20260930.md) 继续 H3：`--verify-housing`、现有自检、真机截图，以及装机前后逐文件核对 Preferences；构建低于 170，DerivedData 和归档在 SSD，链接不动。
 
 ### 分支
 

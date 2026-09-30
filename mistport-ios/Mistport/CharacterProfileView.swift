@@ -510,9 +510,10 @@ struct CharacterProfileView: View {
                     Text(["请选择收件人", "请选择投递街道", "请选择封记"][game.postalJobStep]).font(.caption.bold())
                     HStack {
                         ForEach(game.postalJobOptions, id: \.self) { answer in
-                            let serial = game.postalJobSerial
+                            StaminaCostView(activity: .post)
+            let serial = game.postalJobSerial
                             let step = game.postalJobStep
-                            Button(answer) { game.verifyPostalField(answer, serial: serial, step: step) }
+                            Button(answer) { Task { await game.verifyPostalField(answer, serial: serial, step: step) } }
                                 .buttonStyle(.bordered)
                         }
                     }

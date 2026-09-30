@@ -23,7 +23,7 @@ struct NeighborConversationView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(offer.errand?.request ?? "")
                                 Button("把话带到 · \(offer.errand?.copper ?? 0) 铜") {
-                                    perform { try game.relayNeighbor(offer.id) }
+                                    perform { try await game.relayNeighbor(offer.id) }
                                     if game.neighbors.offers.first(where: { $0.id == offer.id })?.done == true { message = (offer.errand?.reply ?? "") + "\n" + message }
                                 }
                             }
@@ -53,7 +53,7 @@ struct NeighborConversationView: View {
                     saveDailyLoopReviewFrame("map-talk-\(neighborID)")
                     if args.contains("--daily-map-recipient"), neighborID == "west-lane",
                        let offer = game.neighbors.offers.first(where: { $0.errand?.recipientID == neighborID && game.canRelayNeighbor($0.id) }) {
-                        perform { try game.relayNeighbor(offer.id) }
+                        perform { try await game.relayNeighbor(offer.id) }
                         NSLog("DAILY_MAP_RELAY: completed=%@", game.neighbors.offers.first { $0.id == offer.id }?.done == true ? "true" : "false")
                         try? await Task.sleep(for: .seconds(1))
                         saveDailyLoopReviewFrame("map-relay-complete")
@@ -81,24 +81,28 @@ struct NeighborConversationView: View {
             } else if offer.day != game.pacingDay {
                 Text("这条请求已过期。")
             } else {
+                StaminaCostView(activity: game.staminaActivityForNeighbor(offer.id))
                 Text("完成得 \(errand.copper) 铜 · 好感 +1").font(.subheadline)
                 switch errand.kind {
                 case .deliver:
                     let stock = game.chapterOneCampaign.inventory[errand.itemID ?? "", default: 0]
                     Text("需要 \(GameStore.workshopItemName(errand.itemID ?? "")) ×\(errand.count) · 持有 \(stock)")
-                    Button("交给街坊") { perform { try game.deliverNeighbor(offer.id) } }.disabled(stock < errand.count)
+                    Button("交给街坊") { perform { try await game.deliverNeighbor(offer.id) } }.disabled(stock < errand.count)
                     if stock < errand.count { Text("货物不足，先到工坊制作。").font(.footnote) }
                 case .find:
                     Text(errand.question ?? "")
                     ForEach(errand.choices, id: \.id) { choice in
                         let excluded = offer.excludedChoiceIDs.contains(choice.id)
-                        Button { perform { try game.answerNeighbor(offer.id, choiceID: choice.id) } } label: {
+                        Button { perform { try await game.answerNeighbor(offer.id, choiceID: choice.id) } } label: {
                             Text(choice.text).strikethrough(excluded).frame(maxWidth: .infinity, alignment: .leading)
                         }.disabled(excluded)
                         if excluded { Text(choice.explanation).font(.footnote).foregroundStyle(.secondary) }
                     }
                     Text("答错只划掉选项，不扣铜。").font(.footnote)
                 case .message:
+                    if !game.canRelayNeighbor(offer.id) {
+                        Button("接下传话") { Task { do { try await game.acceptNeighborMessage(offer.id); message = "话记住了，可以前往接话的人。" } catch { message = game.housingError(error) } } }
+                    }
                     Text("已记下口信。请到 \(MPCNeighborCatalog.neighbor(errand.recipientID ?? "")?.name ?? "收话人") 面前交谈。")
                 case .pest:
                     Button("去赶走塔怪") { battle = .init(id: UUID().uuidString, offerID: offer.id) }.buttonStyle(.borderedProminent)
@@ -106,11 +110,13 @@ struct NeighborConversationView: View {
             }
         }
     }
-    private func perform(_ action: () throws -> MPCNeighborLedger.Reward?) {
+    private func perform(_ action: @escaping () async throws -> MPCNeighborLedger.Reward?) {
+        Task {
         do {
-            if let reward = try action() { message = reward.thanks + "\n已收 \(reward.copper) 铜，好感 \(reward.affinity)。" + (reward.story.map { "\n" + $0 } ?? "") }
+            if let reward = try await action() { message = reward.thanks + "\n已收 \(reward.copper) 铜，好感 \(reward.affinity)。" + (reward.story.map { "\n" + $0 } ?? "") }
             else { message = "这条线索对不上，已划掉该选项；没有扣铜。" }
-        } catch { message = "未能完成：请核对库存、今日委托，或走到正确的街坊面前。" }
+        } catch { message = game.housingError(error) }
+        }
     }
 }
 
@@ -168,10 +174,10 @@ struct NeighborPestBattleView: View {
                     showsStartTutorialHint: false,
                     onStart: {
                         game.saveChapterOneBattleLoadout(skills)
-                        do {
-                            configuredSession = try game.beginNeighborPest(offerID: offerID, ticket: battleID, skills: skills)
+                        Task { do {
+                            configuredSession = try await game.beginNeighborPest(offerID: offerID, ticket: battleID, skills: skills)
                             started = true
-                        } catch { startError = "无法开始：请检查今日委托、交谈对象和未结束的票据。" }
+                        } catch { startError = game.housingError(error) } }
                     })
                 VStack { HStack { Button("返回街坊") { onClose() }; Spacer() }; Spacer() }.padding()
             }

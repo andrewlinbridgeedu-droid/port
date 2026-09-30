@@ -11,6 +11,7 @@ struct RemnantCasesView: View {
         MistportNewsprintPage(title: "无名残余案", day: game.pacingDay) {
             Text("通缉结案后，每天有一个当地小案。未接的日子不累计；保留最近 7 天，在途战斗和已胜未领报酬另行保留。").font(.footnote).foregroundStyle(.secondary)
             Text(game.repeatWorkNotice)
+            StaminaCostView(activity: .remnant)
             if let today = game.todayRemnant {
                 if game.remnants.job(day: game.pacingDay) == nil {
                     Text(today.title).font(.headline)
@@ -51,14 +52,14 @@ struct RemnantCasesView: View {
                     ForEach(lead.choices, id: \.id) { choice in
                         let excluded = job.excludedChoiceIDs.contains(choice.id)
                         Button {
-                            do { message = try game.answerRemnant(day: job.day, choiceID: choice.id) ? "线索对上了，可以前往清理。" : "线索不符，已划掉；不扣铜。" }
-                            catch { message = "这条线索暂时不可选。" }
+                            Task { do { message = try await game.answerRemnant(day: job.day, choiceID: choice.id) ? "线索对上了，可以前往清理。" : "线索不符，已划掉；不扣铜。" }
+                            catch { message = game.housingError(error) } }
                         } label: { Text(choice.text).strikethrough(excluded).frame(maxWidth: .infinity, alignment: .leading) }
                             .disabled(excluded)
                         if excluded { Text(choice.explanation).font(.footnote).foregroundStyle(.secondary) }
                     }
                 } else {
-                    Text("调查完成。当前预计：\(game.repeatWorkPreview(copper: MPCRemnantCatalog.copper))，另得材料 ×2；铜币按领奖时的工作单数计算。")
+                    Text("调查完成。当前预计：\(game.repeatWorkPreview(copper: MPCRemnantCatalog.copper))，另得材料 ×2。")
                     Button("前往清理") { battle = .init(id: UUID().uuidString, day: job.day) }.buttonStyle(.borderedProminent)
                 }
             }
@@ -124,10 +125,10 @@ struct RemnantBattleView: View {
                     showsStartTutorialHint: false,
                     onStart: {
                         game.saveChapterOneBattleLoadout(skills)
-                        do {
-                            configuredSession = try game.beginRemnant(day: day, ticket: battleID, skills: skills)
+                        Task { do {
+                            configuredSession = try await game.beginRemnant(day: day, ticket: battleID, skills: skills)
                             started = true
-                        } catch { startError = "无法开始：请检查调查进度、保留期限和未结束的票据。" }
+                        } catch { startError = game.housingError(error) } }
                     })
                 VStack { HStack { Button("返回案卷") { onClose() }; Spacer() }; Spacer() }.padding()
             }

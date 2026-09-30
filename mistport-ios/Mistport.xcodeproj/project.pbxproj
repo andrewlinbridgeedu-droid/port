@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE3001000000000000000002 /* HousingViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3002000000000000000002; };
+		CE3001000000000000000001 /* HousingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3002000000000000000001; };
 		CE2901000000000000000001 /* HomeStreetScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2901000000000000000002; };
 		C92800000000000000000001 /* LocalWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92800000000000000000002; };
 		C92900000000000000000001 /* CityEventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92900000000000000000002; };
@@ -100,6 +102,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CE3002000000000000000002 /* HousingViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HousingViews.swift; sourceTree = "<group>"; };
+		CE3002000000000000000001 /* HousingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HousingService.swift; sourceTree = "<group>"; };
 		CE2901000000000000000002 /* HomeStreetScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeStreetScene.swift; sourceTree = "<group>"; };
 		C92800000000000000000002 /* LocalWorkshopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/LocalWorkshopView.swift; sourceTree = SOURCE_ROOT; };
 		C92900000000000000000002 /* CityEventsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/CityEventsView.swift; sourceTree = SOURCE_ROOT; };
@@ -212,6 +216,8 @@
 				A20000000000000000000015 /* VenueModels.swift */,
 				A20000000000000000000008 /* WorldModels.swift */,
 				A20000000000000000000003 /* GameStore.swift */,
+				CE3002000000000000000002 /* HousingViews.swift */,
+				CE3002000000000000000001 /* HousingService.swift */,
 				A20000000000000000000004 /* Storefront.swift */,
 				A20000000000000000000005 /* ContentView.swift */,
 				B70000000000000000000002 /* BountyCityInvestigationView.swift */,
@@ -431,6 +437,8 @@
 				A10000000000000000000015 /* VenueModels.swift in Sources */,
 				A10000000000000000000008 /* WorldModels.swift in Sources */,
 				A10000000000000000000003 /* GameStore.swift in Sources */,
+				CE3001000000000000000002 /* HousingViews.swift in Sources */,
+				CE3001000000000000000001 /* HousingService.swift in Sources */,
 				A10000000000000000000004 /* Storefront.swift in Sources */,
 				A10000000000000000000005 /* ContentView.swift in Sources */,
 				A10000000000000000000006 /* GameViews.swift in Sources */,

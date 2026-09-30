@@ -401,11 +401,13 @@ struct HomeServiceGreetingView: View {
 }
 
 struct HomeCafeWelcomeView: View {
+    @Bindable var game: GameStore
     @Environment(\.dismiss) private var dismiss
     var body: some View {
         HomeCounterScene(title: "午夜钟咖啡馆", room: .cafe, actorArt: "PortraitMollyWynn") {
             Text("店主 · 莫莉·温恩").font(.headline)
             Text("今天也请多关照。补给随主线开放，你可以先坐一会儿。")
+            HousingMealChoicesLink(game: game, venue: "cafe")
             HomeCounterAction(title: "离开咖啡馆") { dismiss() }
         }
     }
@@ -415,11 +417,14 @@ struct HomeCafeWelcomeView: View {
 /// empty painting, masked at the counter edge; no composite bitmap is created.
 struct HomeSceneRoom {
     let backgroundArt: String
+    var foregroundArt: String? = nil
     var aspectRatio: CGFloat = 1.5
     var counterEdge: [CGPoint] = [.init(x: 0, y: 0.70), .init(x: 1, y: 0.70)]
     var actorX: CGFloat = 0.5
     var actorTop: CGFloat = 0.12
     var actorHeight: CGFloat = 0.90
+
+    static let rentalAgency = Self(backgroundArt: "HousingAgencyBackground20260930", foregroundArt: "HousingAgencyForeground20260930", actorTop: 0.09, actorHeight: 0.855)
 
     static let cafe = Self(backgroundArt: "HomeCafeEmpty20260929", aspectRatio: 944.0 / 1664.0,
                            counterEdge: [.init(x: 0, y: 0.82), .init(x: 1, y: 0.87)],
@@ -482,6 +487,10 @@ struct HomeSceneArtwork: View {
                     .frame(height: geometry.size.height * room.actorHeight)
                     .position(x: geometry.size.width * room.actorX,
                               y: geometry.size.height * (room.actorTop + room.actorHeight / 2))
+                if let foreground = room.foregroundArt {
+                    Image(foreground).resizable().scaledToFill()
+                        .frame(width: geometry.size.width, height: geometry.size.height).clipped()
+                } else {
                 Image(room.backgroundArt).resizable().scaledToFill()
                     .frame(width: geometry.size.width, height: geometry.size.height).clipped()
                     .mask {
@@ -494,6 +503,7 @@ struct HomeSceneArtwork: View {
                             path.addLine(to: CGPoint(x: 0, y: geometry.size.height)); path.closeSubpath()
                         }
                     }
+                }
             }.clipped()
         }.aspectRatio(room.aspectRatio, contentMode: .fit).accessibilityHidden(true)
     }
@@ -613,6 +623,10 @@ struct HomeCounterView: View {
         let building = HomeMapLayout.current.building(buildingID)!
         HomeCounterScene(title: building.name!, room: room, actorArt: staffArt(activeStaffName)) {
                 Text(greeting.isEmpty ? "\(activeStaffName) · 请问有什么事？" : greeting).font(.callout)
+                if ["harbor", "oldstreet", "cafe"].contains(buildingID) {
+                    let venue = buildingID == "harbor" ? "soup" : buildingID == "oldstreet" ? "bakery" : "cafe"
+                    HousingMealChoicesLink(game: game, venue: venue)
+                }
                 ForEach(staffNames, id: \.self) { name in
                     HomeCounterAction(title: name, detail: activeStaffName == name ? "正在接待" : nil) { selectStaff(name) }
                 }

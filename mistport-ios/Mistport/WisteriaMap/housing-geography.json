@@ -1,0 +1,115 @@
+{
+  "version": 2,
+  "status": "user-geography-correction; preview-pending",
+  "source": "mistport-ios/Mistport/Assets.xcassets/CityAutumnDay.imageset/CityAutumnDay.jpg",
+  "coordinateUnit": "painting-height=1",
+  "sourceMustRemainUnmodified": true,
+  "rejected": [
+    {
+      "file": "map/district-map-v1.png",
+      "reason": "用户指出偏离港城地貌；不得接 App。"
+    }
+  ],
+  "districts": [
+    {
+      "id": "highland",
+      "name": "高级住宅区",
+      "at": [
+        0.29,
+        0.28
+      ],
+      "note": "用户标明的左侧远景住宅区；高地石宅归在这里。",
+      "referenceBounds": [
+        0.068,
+        0.194,
+        0.258,
+        0.34
+      ],
+      "labelAt": [
+        0.29,
+        0.13
+      ]
+    },
+    {
+      "id": "church",
+      "name": "教会区",
+      "at": [
+        0.509,
+        0.311
+      ],
+      "note": "现有钟楼与教会侧廊。",
+      "labelAt": [
+        0.58,
+        0.36
+      ]
+    },
+    {
+      "id": "oldArcade",
+      "name": "老城拱廊",
+      "at": [
+        0.27,
+        0.58
+      ],
+      "note": "左侧台阶大道拱廊，赁屋行所在街区。",
+      "labelAt": [
+        0.27,
+        0.69
+      ]
+    },
+    {
+      "id": "canal",
+      "name": "运河新城",
+      "at": [
+        0.43,
+        0.45
+      ],
+      "note": "沿原画左中既有水道选房，不开挖新运河。",
+      "labelAt": [
+        0.43,
+        0.49
+      ]
+    },
+    {
+      "id": "harbor",
+      "name": "港区",
+      "at": [
+        1.55,
+        0.42
+      ],
+      "note": "右侧现有泊位与港务街区。",
+      "labelAt": [
+        1.55,
+        0.52
+      ]
+    }
+  ],
+  "restrictedAreas": [
+    {
+      "id": "nobility",
+      "name": "贵族区",
+      "at": [
+        1.13,
+        0.3
+      ],
+      "note": "用户标明的右侧远景住宅带；很少能进去住，不列入常规租房卡片。具体特殊入住条件尚未定义。",
+      "referenceBounds": [
+        0.378,
+        0.233,
+        0.896,
+        0.371
+      ],
+      "regularRentals": false,
+      "labelAt": [
+        1.13,
+        0.23
+      ]
+    }
+  ],
+  "notes": [
+    "五个可选住处区和贵族区分开；高级住宅区不是贵族区。",
+    "规则库的 highland/highland_house 标识保留，地理指向左侧高级住宅区。",
+    "名称与选房数据用可修改的界面层显示。",
+    "区入口位置为提案，待复看，不代表精确行政边界。",
+    "价格、体力和房间数一律取规则库/服务，不写入美术。"
+  ]
+}
