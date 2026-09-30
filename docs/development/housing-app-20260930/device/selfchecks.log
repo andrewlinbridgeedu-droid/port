@@ -1,127 +1,120 @@
-09:07:54  Acquired tunnel connection to device.
-09:07:54  Enabling developer disk image services.
-09:07:55  Acquired usage assertion.
+11:43:30  Acquired tunnel connection to device.
+11:43:30  Enabling developer disk image services.
+11:43:31  Acquired usage assertion.
 Launched application with com.yourcompany.mistport bundle identifier.
 Waiting for the application to terminate…
-2026-09-30 09:07:56.451 Mistport[739:24609] CHURCH_SERVICES_VERIFY_PASS: borrow equip reserve restore settle return, ownership isolation, bounty evidence and idempotent reward, atomic recovery
-2026-09-30 09:07:56.473 Mistport[739:24609] DAILY_PACING_VERIFY_PASS: new save day 1, Q4 tomorrow, replay open, next day, reopen, church after Q7, tower 4/day, migration once, restart
-2026-09-30 09:07:56.485 Mistport[739:24609] ADVANCEMENT_PROCUREMENT_VERIFY_PASS: no old drops, milestones, old ownership, one debit, restore, journal
-2026-09-30 09:07:56.485 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 1 victory hp=740 seconds=20.65
-2026-09-30 09:07:56.553 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 2 victory hp=550 seconds=24.65
-2026-09-30 09:07:56.601 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 3 victory hp=587 seconds=22.35
-2026-09-30 09:07:56.645 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 4 victory hp=513 seconds=26.35
-2026-09-30 09:07:56.707 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 5 victory hp=628 seconds=24.65
-2026-09-30 09:07:56.741 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 6 victory hp=842 seconds=16.65
-2026-09-30 09:07:56.798 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 7 victory hp=797 seconds=20.65
-2026-09-30 09:07:56.865 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 8 victory hp=684 seconds=24.65
-2026-09-30 09:07:56.932 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 9 victory hp=650 seconds=26.35
-2026-09-30 09:07:57.007 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 10 victory hp=586 seconds=30.35
-2026-09-30 09:07:57.056 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 11 victory hp=1270 seconds=11.05
-2026-09-30 09:07:57.084 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 12 victory hp=1173 seconds=14.35
-2026-09-30 09:07:57.128 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 13 victory hp=1139 seconds=19.90
-2026-09-30 09:07:57.178 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 14 victory hp=893 seconds=23.20
-2026-09-30 09:07:57.218 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 15 victory hp=1139 seconds=18.05
-2026-09-30 09:07:57.278 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 16 victory hp=853 seconds=26.50
-2026-09-30 09:07:57.336 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 17 victory hp=853 seconds=26.50
-2026-09-30 09:07:57.401 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 18 victory hp=833 seconds=23.20
-2026-09-30 09:07:57.463 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 19 victory hp=827 seconds=28.55
-2026-09-30 09:07:57.530 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 20 victory hp=807 seconds=28.55
-2026-09-30 09:07:57.573 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 21 victory hp=1207 seconds=19.90
-2026-09-30 09:07:57.609 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 22 victory hp=1266 seconds=14.35
-2026-09-30 09:07:57.629 Mistport[739:24609] CHURCH_DELIVERY_RENDER_SAVED
-2026-09-30 09:07:57.661 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 23 victory hp=1240 seconds=18.05
-2026-09-30 09:07:57.740 Mistport[739:24609] DAILY_WORK_VERIFY_PASS: empty migration once, shared J0/J1/J2/story counter, full base pay with stamina, two merit jobs, duplicate callbacks, reopen, journal recovery, next day, restart
-2026-09-30 09:07:57.740 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 24 victory hp=926 seconds=24.85
-2026-09-30 09:07:57.756 Mistport[739:24609] NEWSPAPER_VERIFY_PASS: migrate once, days 4/11/18/25, first opening only, repeat read, relaunch, clock rollback, summaries do not mutate gameplay ledgers, restart
-2026-09-30 09:07:57.793 Mistport[739:24609] REMNANTS_VERIFY_PASS: empty migration once, closed-bounty gate, one case/day, wrong answer free, band, abandon, real runtime win, cross-week pending/earned reward, full base pay, duplicate claim, atomic recovery, no relic/merit grants, cleanup, reset
-2026-09-30 09:07:57.808 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 25 victory hp=841 seconds=23.20
-2026-09-30 09:07:57.874 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 26 victory hp=945 seconds=26.50
-2026-09-30 09:07:57.932 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 27 victory hp=909 seconds=26.50
-2026-09-30 09:07:58.009 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 28 victory hp=860 seconds=35.35
-2026-09-30 09:07:58.078 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 29 victory hp=878 seconds=28.55
-2026-09-30 09:07:58.158 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 30 victory hp=827 seconds=35.35
-2026-09-30 09:07:58.189 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 31 victory hp=1250 seconds=16.20
-2026-09-30 09:07:58.225 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 32 victory hp=1174 seconds=18.15
-2026-09-30 09:07:58.233 Mistport[739:24609] NEIGHBORS_VERIFY_PASS: migration once, daily 2-3 offers, proximity conversation required, actual recipient, wrong answers free, four kinds, no double rewards, pest abandon/retry, all 23 in turn, stories at 2/3, expiry, reopen, reset
-2026-09-30 09:07:58.261 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 33 victory hp=1174 seconds=18.15
-2026-09-30 09:07:58.291 Mistport[739:24609] CITY_EVENTS_VERIFY_PASS: migrate once, delivery receipts, finite escrow, real runtime victories, daily cap, persisted start day, cross-day victory payout, duplicate settlement, success/failure prices, retreat, reset
-2026-09-30 09:07:58.318 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 34 victory hp=990 seconds=26.80
-2026-09-30 09:07:58.379 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 35 victory hp=851 seconds=24.75
-2026-09-30 09:07:58.442 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 36 victory hp=938 seconds=30.00
-2026-09-30 09:07:58.510 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 37 victory hp=827 seconds=32.30
-2026-09-30 09:07:58.525 Mistport[739:24609] DAILY_WORKSHOP_VERIFY_PASS: migration once, Q5/day3, five daily crafts, duplicate craft/order, finite orders, first/repeat species drops, retired tickets, fourteen recipes, wear gate, tower depth, wear once, repair once, reopen
-2026-09-30 09:07:58.557 Mistport[739:24609] EARLY_RELIC_SHOP_VERIFY_PASS: locked, debit, duplicate, manual equip, restore, journal, postal verification
-2026-09-30 09:07:58.586 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 38 victory hp=918 seconds=32.30
-2026-09-30 09:07:58.588 Mistport[739:24609] HOUSING_VERIFY_PASS: 21 checks
-2026-09-30 09:07:58.659 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 39 victory hp=866 seconds=32.30
-2026-09-30 09:07:58.746 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 40 victory hp=770 seconds=37.25
-2026-09-30 09:07:58.803 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 41 victory hp=978 seconds=26.80
-2026-09-30 09:07:58.840 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 42 victory hp=1346 seconds=20.05
-2026-09-30 09:07:58.890 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 43 victory hp=936 seconds=24.75
-2026-09-30 09:07:58.949 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 44 victory hp=1043 seconds=31.80
-2026-09-30 09:07:58.997 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 45 victory hp=983 seconds=24.75
-2026-09-30 09:07:59.067 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 46 victory hp=981 seconds=35.05
-2026-09-30 09:07:59.151 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 47 victory hp=928 seconds=35.05
-2026-09-30 09:07:59.243 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 48 victory hp=862 seconds=40.85
-2026-09-30 09:07:59.328 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 49 victory hp=902 seconds=40.85
-2026-09-30 09:07:59.401 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 50 victory hp=917 seconds=35.10
-2026-09-30 09:07:59.433 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 51 victory hp=1416 seconds=16.20
-2026-09-30 09:07:59.466 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 52 victory hp=1344 seconds=18.15
-2026-09-30 09:07:59.501 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 53 victory hp=1344 seconds=18.15
-2026-09-30 09:07:59.553 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 54 victory hp=1095 seconds=23.20
-2026-09-30 09:07:59.604 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 55 victory hp=1008 seconds=23.10
-2026-09-30 09:07:59.666 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 56 victory hp=1059 seconds=26.90
-2026-09-30 09:07:59.715 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 57 victory hp=1025 seconds=26.80
-2026-09-30 09:07:59.775 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 58 victory hp=1025 seconds=26.80
-2026-09-30 09:07:59.832 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 59 victory hp=1025 seconds=26.80
-2026-09-30 09:07:59.899 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 60 victory hp=965 seconds=31.95
-2026-09-30 09:07:59.953 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 61 victory hp=1128 seconds=26.80
-2026-09-30 09:08:00.007 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 62 victory hp=1145 seconds=24.85
-2026-09-30 09:08:00.067 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 63 victory hp=1036 seconds=28.45
-2026-09-30 09:08:00.118 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 64 victory hp=1053 seconds=23.30
-2026-09-30 09:08:00.171 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 65 victory hp=1128 seconds=26.80
-2026-09-30 09:08:00.235 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 66 victory hp=1093 seconds=31.80
-2026-09-30 09:08:00.325 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 67 victory hp=1124 seconds=43.95
-2026-09-30 09:08:00.390 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 68 victory hp=1078 seconds=31.80
-2026-09-30 09:08:00.445 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 69 victory hp=1101 seconds=26.80
-2026-09-30 09:08:00.546 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 70 victory hp=669 seconds=49.45
-2026-09-30 09:08:00.598 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 71 victory hp=1143 seconds=24.85
-2026-09-30 09:08:00.646 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 72 victory hp=1170 seconds=23.30
-2026-09-30 09:08:00.703 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 73 victory hp=1160 seconds=26.90
-2026-09-30 09:08:00.789 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 74 victory hp=1158 seconds=42.15
-2026-09-30 09:08:00.870 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 75 victory hp=1102 seconds=37.05
-2026-09-30 09:08:00.933 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 76 victory hp=1136 seconds=28.35
-2026-09-30 09:08:01.011 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 77 victory hp=1078 seconds=35.45
-2026-09-30 09:08:01.072 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 78 victory hp=1170 seconds=28.35
-2026-09-30 09:08:01.134 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 79 victory hp=1136 seconds=28.35
-2026-09-30 09:08:01.239 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 80 victory hp=822 seconds=49.45
-2026-09-30 09:08:01.296 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 81 victory hp=1245 seconds=26.80
-2026-09-30 09:08:01.355 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 82 victory hp=1239 seconds=26.90
-2026-09-30 09:08:01.405 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 83 victory hp=1240 seconds=24.85
-2026-09-30 09:08:01.461 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 84 victory hp=1213 seconds=26.90
-2026-09-30 09:08:01.516 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 85 victory hp=1188 seconds=26.80
-2026-09-30 09:08:01.572 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 86 victory hp=1221 seconds=26.90
-2026-09-30 09:08:01.631 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 87 victory hp=1214 seconds=26.80
-2026-09-30 09:08:01.725 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 88 victory hp=1202 seconds=43.95
-2026-09-30 09:08:01.785 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 89 victory hp=1202 seconds=25.15
-2026-09-30 09:08:01.891 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 90 victory hp=924 seconds=49.45
-2026-09-30 09:08:01.960 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 91 victory hp=1133 seconds=30.05
-2026-09-30 09:08:02.039 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 92 victory hp=1211 seconds=37.05
-2026-09-30 09:08:02.113 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 93 victory hp=1245 seconds=35.50
-2026-09-30 09:08:02.205 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 94 victory hp=1239 seconds=43.95
-2026-09-30 09:08:02.295 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 95 victory hp=1229 seconds=43.90
-2026-09-30 09:08:02.387 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 96 victory hp=1212 seconds=43.90
-2026-09-30 09:08:02.470 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 97 victory hp=1212 seconds=39.00
-2026-09-30 09:08:02.565 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 98 victory hp=1209 seconds=45.55
-2026-09-30 09:08:02.653 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 99 victory hp=1149 seconds=42.05
-2026-09-30 09:08:02.745 Mistport[739:24676] CHURCH_TOWER_100_FLOOR: 100 victory hp=1149 seconds=43.90
-2026-09-30 09:08:02.760 Mistport[739:24676] CHURCH_TOWER_100_PASS: 100/100 report=/var/mobile/Containers/Data/Application/17D3E643-881C-47BA-BA0F-0E29CCA5BE5B/Documents/church-tower-100-verification.json
-App terminated due to signal 9.
-
-09:09:57  Acquired tunnel connection to device.
-09:09:57  Enabling developer disk image services.
-09:09:57  Acquired usage assertion.
-Launched application with com.yourcompany.mistport bundle identifier.
-Waiting for the application to terminate…
-2026-09-30 09:09:59.573 Mistport[769:26789] LOCAL_WORKSHOP_VERIFY_PASS: 17 checks
+2026-09-30 11:43:31.825 Mistport[2592:102076] CHURCH_SERVICES_VERIFY_PASS: borrow equip reserve restore settle return, ownership isolation, bounty evidence and idempotent reward, atomic recovery
+2026-09-30 11:43:31.845 Mistport[2592:102076] DAILY_PACING_VERIFY_PASS: new save day 1, Q4 tomorrow, replay open, next day, reopen, church after Q7, tower 4/day, migration once, restart
+2026-09-30 11:43:31.857 Mistport[2592:102076] ADVANCEMENT_PROCUREMENT_VERIFY_PASS: no old drops, milestones, old ownership, one debit, restore, journal
+2026-09-30 11:43:31.859 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 1 victory hp=740 seconds=20.65
+2026-09-30 11:43:31.906 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 2 victory hp=550 seconds=24.65
+2026-09-30 11:43:31.955 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 3 victory hp=587 seconds=22.35
+2026-09-30 11:43:32.006 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 4 victory hp=513 seconds=26.35
+2026-09-30 11:43:32.062 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 5 victory hp=628 seconds=24.65
+2026-09-30 11:43:32.096 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 6 victory hp=842 seconds=16.65
+2026-09-30 11:43:32.135 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 7 victory hp=797 seconds=20.65
+2026-09-30 11:43:32.191 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 8 victory hp=684 seconds=24.65
+2026-09-30 11:43:32.264 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 9 victory hp=650 seconds=26.35
+2026-09-30 11:43:32.342 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 10 victory hp=586 seconds=30.35
+2026-09-30 11:43:32.369 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 11 victory hp=1270 seconds=11.05
+2026-09-30 11:43:32.399 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 12 victory hp=1173 seconds=14.35
+2026-09-30 11:43:32.444 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 13 victory hp=1139 seconds=19.90
+2026-09-30 11:43:32.496 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 14 victory hp=893 seconds=23.20
+2026-09-30 11:43:32.537 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 15 victory hp=1139 seconds=18.05
+2026-09-30 11:43:32.591 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 16 victory hp=853 seconds=26.50
+2026-09-30 11:43:32.648 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 17 victory hp=853 seconds=26.50
+2026-09-30 11:43:32.699 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 18 victory hp=833 seconds=23.20
+2026-09-30 11:43:32.762 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 19 victory hp=827 seconds=28.55
+2026-09-30 11:43:32.823 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 20 victory hp=807 seconds=28.55
+2026-09-30 11:43:32.863 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 21 victory hp=1207 seconds=19.90
+2026-09-30 11:43:32.890 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 22 victory hp=1266 seconds=14.35
+2026-09-30 11:43:32.934 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 23 victory hp=1240 seconds=18.05
+2026-09-30 11:43:32.988 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 24 victory hp=926 seconds=24.85
+2026-09-30 11:43:33.039 Mistport[2592:102076] CHURCH_DELIVERY_RENDER_SAVED
+2026-09-30 11:43:33.045 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 25 victory hp=841 seconds=23.20
+2026-09-30 11:43:33.110 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 26 victory hp=945 seconds=26.50
+2026-09-30 11:43:33.142 Mistport[2592:102076] DAILY_WORK_VERIFY_PASS: empty migration once, shared J0/J1/J2/story counter, full base pay with stamina, two merit jobs, duplicate callbacks, reopen, journal recovery, next day, restart
+2026-09-30 11:43:33.158 Mistport[2592:102076] NEWSPAPER_VERIFY_PASS: migrate once, days 4/11/18/25, first opening only, repeat read, relaunch, clock rollback, summaries do not mutate gameplay ledgers, restart
+2026-09-30 11:43:33.178 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 27 victory hp=909 seconds=26.50
+2026-09-30 11:43:33.192 Mistport[2592:102076] REMNANTS_VERIFY_PASS: empty migration once, closed-bounty gate, one case/day, wrong answer free, band, abandon, real runtime win, cross-week pending/earned reward, full base pay, duplicate claim, atomic recovery, no relic/merit grants, cleanup, reset
+2026-09-30 11:43:33.257 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 28 victory hp=860 seconds=35.35
+2026-09-30 11:43:33.327 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 29 victory hp=878 seconds=28.55
+2026-09-30 11:43:33.410 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 30 victory hp=827 seconds=35.35
+2026-09-30 11:43:33.444 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 31 victory hp=1250 seconds=16.20
+2026-09-30 11:43:33.483 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 32 victory hp=1174 seconds=18.15
+2026-09-30 11:43:33.521 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 33 victory hp=1174 seconds=18.15
+2026-09-30 11:43:33.579 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 34 victory hp=990 seconds=26.80
+2026-09-30 11:43:33.628 Mistport[2592:102076] NEIGHBORS_VERIFY_PASS: migration once, daily 2-3 offers, proximity conversation required, actual recipient, wrong answers free, four kinds, no double rewards, pest abandon/retry, all 23 in turn, stories at 2/3, expiry, reopen, reset
+2026-09-30 11:43:33.638 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 35 victory hp=851 seconds=24.75
+2026-09-30 11:43:33.686 Mistport[2592:102076] CITY_EVENTS_VERIFY_PASS: migrate once, delivery receipts, finite escrow, real runtime victories, daily cap, persisted start day, cross-day victory payout, duplicate settlement, success/failure prices, retreat, reset
+2026-09-30 11:43:33.703 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 36 victory hp=938 seconds=30.00
+2026-09-30 11:43:33.775 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 37 victory hp=827 seconds=32.30
+2026-09-30 11:43:33.853 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 38 victory hp=918 seconds=32.30
+2026-09-30 11:43:33.920 Mistport[2592:102076] DAILY_WORKSHOP_VERIFY_PASS: migration once, Q5/day3, five daily crafts, duplicate craft/order, finite orders, first/repeat species drops, retired tickets, fourteen recipes, wear gate, tower depth, wear once, repair once, reopen
+2026-09-30 11:43:33.928 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 39 victory hp=866 seconds=32.30
+2026-09-30 11:43:34.018 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 40 victory hp=770 seconds=37.25
+2026-09-30 11:43:34.076 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 41 victory hp=978 seconds=26.80
+2026-09-30 11:43:34.112 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 42 victory hp=1346 seconds=20.05
+2026-09-30 11:43:34.170 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 43 victory hp=936 seconds=24.75
+2026-09-30 11:43:34.233 Mistport[2592:102076] EARLY_RELIC_SHOP_VERIFY_PASS: locked, debit, duplicate, manual equip, restore, journal, postal verification
+2026-09-30 11:43:34.234 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 44 victory hp=1043 seconds=31.80
+2026-09-30 11:43:34.284 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 45 victory hp=983 seconds=24.75
+2026-09-30 11:43:34.356 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 46 victory hp=981 seconds=35.05
+2026-09-30 11:43:34.381 Mistport[2592:102076] HOUSING_VERIFY_PASS: 22 checks
+2026-09-30 11:43:34.425 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 47 victory hp=928 seconds=35.05
+2026-09-30 11:43:34.514 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 48 victory hp=862 seconds=40.85
+2026-09-30 11:43:34.601 Mistport[2592:102076] LOCAL_WORKSHOP_VERIFY_PASS: 17 checks
+2026-09-30 11:43:34.604 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 49 victory hp=902 seconds=40.85
+2026-09-30 11:43:34.676 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 50 victory hp=917 seconds=35.10
+2026-09-30 11:43:34.707 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 51 victory hp=1416 seconds=16.20
+2026-09-30 11:43:34.743 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 52 victory hp=1344 seconds=18.15
+2026-09-30 11:43:34.780 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 53 victory hp=1344 seconds=18.15
+2026-09-30 11:43:34.833 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 54 victory hp=1095 seconds=23.20
+2026-09-30 11:43:34.885 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 55 victory hp=1008 seconds=23.10
+2026-09-30 11:43:34.947 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 56 victory hp=1059 seconds=26.90
+2026-09-30 11:43:34.999 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 57 victory hp=1025 seconds=26.80
+2026-09-30 11:43:35.058 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 58 victory hp=1025 seconds=26.80
+2026-09-30 11:43:35.119 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 59 victory hp=1025 seconds=26.80
+2026-09-30 11:43:35.187 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 60 victory hp=965 seconds=31.95
+2026-09-30 11:43:35.243 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 61 victory hp=1128 seconds=26.80
+2026-09-30 11:43:35.298 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 62 victory hp=1145 seconds=24.85
+2026-09-30 11:43:35.360 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 63 victory hp=1036 seconds=28.45
+2026-09-30 11:43:35.413 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 64 victory hp=1053 seconds=23.30
+2026-09-30 11:43:35.469 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 65 victory hp=1128 seconds=26.80
+2026-09-30 11:43:35.534 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 66 victory hp=1093 seconds=31.80
+2026-09-30 11:43:35.631 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 67 victory hp=1124 seconds=43.95
+2026-09-30 11:43:35.699 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 68 victory hp=1078 seconds=31.80
+2026-09-30 11:43:35.757 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 69 victory hp=1101 seconds=26.80
+2026-09-30 11:43:35.864 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 70 victory hp=669 seconds=49.45
+2026-09-30 11:43:35.919 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 71 victory hp=1143 seconds=24.85
+2026-09-30 11:43:35.968 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 72 victory hp=1170 seconds=23.30
+2026-09-30 11:43:36.029 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 73 victory hp=1160 seconds=26.90
+2026-09-30 11:43:36.117 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 74 victory hp=1158 seconds=42.15
+2026-09-30 11:43:36.195 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 75 victory hp=1102 seconds=37.05
+2026-09-30 11:43:36.257 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 76 victory hp=1136 seconds=28.35
+2026-09-30 11:43:36.340 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 77 victory hp=1078 seconds=35.45
+2026-09-30 11:43:36.407 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 78 victory hp=1170 seconds=28.35
+2026-09-30 11:43:36.470 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 79 victory hp=1136 seconds=28.35
+2026-09-30 11:43:36.577 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 80 victory hp=822 seconds=49.45
+2026-09-30 11:43:36.636 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 81 victory hp=1245 seconds=26.80
+2026-09-30 11:43:36.698 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 82 victory hp=1239 seconds=26.90
+2026-09-30 11:43:36.750 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 83 victory hp=1240 seconds=24.85
+2026-09-30 11:43:36.809 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 84 victory hp=1213 seconds=26.90
+2026-09-30 11:43:36.868 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 85 victory hp=1188 seconds=26.80
+2026-09-30 11:43:36.927 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 86 victory hp=1221 seconds=26.90
+2026-09-30 11:43:36.987 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 87 victory hp=1214 seconds=26.80
+2026-09-30 11:43:37.083 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 88 victory hp=1202 seconds=43.95
+2026-09-30 11:43:37.143 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 89 victory hp=1202 seconds=25.15
+2026-09-30 11:43:37.252 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 90 victory hp=924 seconds=49.45
+2026-09-30 11:43:37.323 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 91 victory hp=1133 seconds=30.05
+2026-09-30 11:43:37.405 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 92 victory hp=1211 seconds=37.05
+2026-09-30 11:43:37.484 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 93 victory hp=1245 seconds=35.50
+2026-09-30 11:43:37.581 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 94 victory hp=1239 seconds=43.95
+2026-09-30 11:43:37.674 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 95 victory hp=1229 seconds=43.90
+2026-09-30 11:43:37.772 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 96 victory hp=1212 seconds=43.90
+2026-09-30 11:43:37.857 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 97 victory hp=1212 seconds=39.00
+2026-09-30 11:43:37.953 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 98 victory hp=1209 seconds=45.55
+2026-09-30 11:43:38.060 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 99 victory hp=1149 seconds=42.05
+2026-09-30 11:43:38.156 Mistport[2592:102081] CHURCH_TOWER_100_FLOOR: 100 victory hp=1149 seconds=43.90
+2026-09-30 11:43:38.168 Mistport[2592:102081] CHURCH_TOWER_100_PASS: 100/100 report=/var/mobile/Containers/Data/Application/CA3377BD-24C3-4A30-B59D-1C1FFFBF031C/Documents/church-tower-100-verification.json
 App terminated due to signal 9.

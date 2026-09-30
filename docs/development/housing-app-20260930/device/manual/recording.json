@@ -1,0 +1,102 @@
+{
+  "events": [
+    {
+      "file": "00-districts.png",
+      "timestamp": 1790794770.890521,
+      "view": "districts"
+    },
+    {
+      "file": "01-cards.png",
+      "timestamp": 1790794795.926147,
+      "view": "cards"
+    },
+    {
+      "file": "02-districts.png",
+      "timestamp": 1790794811.413192,
+      "view": "districts"
+    },
+    {
+      "file": "03-cards.png",
+      "timestamp": 1790794823.097455,
+      "view": "cards"
+    },
+    {
+      "file": "04-interior.png",
+      "timestamp": 1790794850.682671,
+      "view": "interior"
+    },
+    {
+      "file": "05-interior-detail.png",
+      "timestamp": 1790794870.913521,
+      "view": "interior-detail"
+    },
+    {
+      "file": "06-interior-detail.png",
+      "timestamp": 1790794871.530555,
+      "view": "interior-detail"
+    },
+    {
+      "file": "07-interior-detail.png",
+      "timestamp": 1790794872.470474,
+      "view": "interior-detail"
+    },
+    {
+      "file": "08-cards.png",
+      "timestamp": 1790794888.264645,
+      "view": "cards"
+    },
+    {
+      "file": "09-interior.png",
+      "timestamp": 1790794901.802834,
+      "view": "interior"
+    },
+    {
+      "file": "10-interior-detail.png",
+      "timestamp": 1790794901.8963962,
+      "view": "interior-detail"
+    },
+    {
+      "file": "11-lease.png",
+      "timestamp": 1790794914.6831632,
+      "view": "lease"
+    },
+    {
+      "file": "12-interior.png",
+      "timestamp": 1790794933.248229,
+      "view": "interior"
+    },
+    {
+      "file": "13-lease.png",
+      "timestamp": 1790794953.89256,
+      "view": "lease"
+    },
+    {
+      "file": "14-seal-0.png",
+      "timestamp": 1790794973.780947,
+      "view": "seal-0"
+    },
+    {
+      "file": "15-seal-1.png",
+      "timestamp": 1790794973.910846,
+      "view": "seal-1"
+    },
+    {
+      "file": "16-seal-2.png",
+      "timestamp": 1790794974.038889,
+      "view": "seal-2"
+    },
+    {
+      "file": "17-seal-3.png",
+      "timestamp": 1790794974.2196221,
+      "view": "seal-3"
+    },
+    {
+      "file": "18-moving.png",
+      "timestamp": 1790794975.1039948,
+      "view": "moving"
+    }
+  ],
+  "folder": "housing-manual-4C826616-6B12-4670-9D33-C79B64289EB7",
+  "isolatedFixture": true,
+  "method": "Native window capture following manual UI changes; no automatic navigation"
+}

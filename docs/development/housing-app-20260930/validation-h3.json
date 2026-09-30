@@ -1,14 +1,17 @@
 {
   "task": "H3",
-  "status": "draft-revised-build-awaiting-device-connection-and-manual-review",
+  "status": "revised-build-installed-manual-flow-complete-export-and-preferences-pending",
   "baseMain": "bfdb800e8fd8e81bde830cd86f43aee3dd839355",
   "signedDeviceBuild": {
     "version": "169.12",
     "passed": true,
-    "installed": false,
+    "installed": true,
     "derivedDataOnExternalSSD": true,
     "revision": "neighbor-cost-and-world-copy",
-    "executableSHA256": "fac9eebdb2054d8cfdf6f95dd8234f94dee8bda8434b5c799ac769d7c3cc5274"
+    "executableSHA256": "c70de7033b0a17a970468a63966d66f0f8a43cf5f8604b13c800c1057dffc7f8",
+    "sourceCommit": "f93210dd53b8ce7bd5f35ae89e5f168064aa9030",
+    "debugDylibSHA256": "fac9eebdb2054d8cfdf6f95dd8234f94dee8bda8434b5c799ac769d7c3cc5274",
+    "hashNote": "Earlier executableSHA256 actually referred to Mistport.debug.dylib. Both signed Mach-O hashes are now labeled explicitly."
   },
   "simulator": {
     "name": "Mistport Workshop Integration",
@@ -199,19 +202,28 @@
   "originalLightsAndLightOrderChanged": [],
   "commissionDecalsEnabled": false,
   "housingArtFinalUserApproval": false,
-  "physicalDeviceScreenshots": 11,
+  "physicalDeviceScreenshots": 19,
   "deviceVisualApproval": "pending user",
-  "physicalDeviceState": "unavailable; revised 169.12 not installed; previous 169.12 installed",
+  "physicalDeviceState": "revised signed 169.12 installed; manual rental completed; transport disconnected during PNG export",
   "physicalPreferencesAccessed": true,
-  "physicalPreferencesCompared": true,
-  "playerPreferencesSafety": "previous revision: 194 old files byte-identical + 18 isolated suites; revised device backup not yet successful",
+  "physicalPreferencesCompared": false,
+  "playerPreferencesSafety": "revised installation: 212 readable Preferences backed up before install; after-test comparison pending reconnection; prior comparison retained separately",
   "sharedServerClockAndOccupancy": "not connected; rules adapter only",
   "outstanding": [
-    "successful revised Preferences backup / install / device 22 housing + 11 groups",
-    "manual return / full rental sequence / hotspots / meal and seal animation on physical device",
+    "revised static device captures",
     "after-test Preferences comparison",
+    "known CityAmbience crash under mirroring with environment audio enabled",
     "user visual review"
   ],
   "deviceEvidence": "device/validation-device.json",
-  "deviceEvidenceRevision": "prior 169.12, before neighbor cost and UI copy revisions; 21 checks only"
+  "deviceEvidenceRevision": "device JSON/log updated to 22 housing checks; static screenshots and old audit pending refresh",
+  "manualDeviceReview": {
+    "completed": true,
+    "automatedNavigation": false,
+    "recordedUIEvents": 19,
+    "sealFrames": 4,
+    "environmentAudioMuted": true,
+    "userVisualApproval": false,
+    "exportComplete": true
+  }
 }

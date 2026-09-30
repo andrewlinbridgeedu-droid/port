@@ -1,48 +1,7 @@
 {
-  "build": "169.12",
-  "installed": true,
-  "device": "iPhone 13",
-  "deviceIdentifier": "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
-  "osVersion": "26.6",
-  "transport": "localNetwork",
-  "housingChecksPassed": 22,
-  "existingSelfCheckGroupsPassed": 11,
-  "passingMarkers": [
-    "HOUSING_VERIFY_PASS",
-    "DAILY_PACING_VERIFY_PASS",
-    "DAILY_WORK_VERIFY_PASS",
-    "NEWSPAPER_VERIFY_PASS",
-    "REMNANTS_VERIFY_PASS",
-    "NEIGHBORS_VERIFY_PASS",
-    "CITY_EVENTS_VERIFY_PASS",
-    "DAILY_WORKSHOP_VERIFY_PASS",
-    "CHURCH_SERVICES_VERIFY_PASS",
-    "EARLY_RELIC_SHOP_VERIFY_PASS",
-    "LOCAL_WORKSHOP_VERIFY_PASS",
-    "CHURCH_TOWER_100_PASS"
-  ],
-  "screenshots": [],
-  "screenshotsSource": "native physical-device window PNG; not simulator",
-  "playerPreferencesByteIdentical": null,
-  "preexistingPreferencesByteIdentical": null,
-  "newIsolatedSuiteFiles": null,
-  "privatePreferencesBackups": "external SSD; raw values and per-file hash manifest excluded from repository",
-  "activeAccount": "mistport.housing-device-walk.20260930",
-  "lastLaunchedScreen": "home",
-  "userVisualApproval": false,
-  "manualRentalAndSealReview": "completed via native iPhone Mirroring; environment ambience muted using existing DEBUG argument",
-  "unityVisualAcceptance": false,
-  "revision": "neighbor-cost-and-world-copy",
-  "sourceCommit": "f93210dd53b8ce7bd5f35ae89e5f168064aa9030",
-  "screenshotsPendingRefresh": true,
-  "preferencesBeforeFiles": 212,
-  "afterTestPreferencesComparison": "pending transport reconnection",
-  "manualRecordedUIEvents": 19,
-  "sealFrames": 4,
-  "manualExportComplete": true,
-  "manualEvidence": "manual/recording.json",
-  "knownIssue": "AUDIO-MIRRORING.md",
-  "manualScreenshots": [
+  "completed": true,
+  "nativeRecordedEvents": 19,
+  "received": [
     {
       "file": "00-districts.png",
       "width": 1170,
@@ -158,5 +117,5 @@
       "sha256": "99f52c3411735191506c271c9c165dadca53a14b05e013e257f5908b638d634b"
     }
   ],
-  "manualScreenshotSource": "actual manual UI transitions exported from native physical-device window"
+  "missingOrIncomplete": []
 }

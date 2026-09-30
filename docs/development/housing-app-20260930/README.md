@@ -2,7 +2,7 @@
 
 H0 已获用户认可，H1 图稿经 PR #33 合入。H2 从最新 main `7b85f0f` 新开 `codex/housing-h2-app-20260930`。
 
-H2 已经 [PR #34](https://github.com/andrewlinbridgeedu-droid/port/pull/34) 合入 main（`bfdb800e`）。H3 [PR #35](https://github.com/andrewlinbridgeedu-droid/port/pull/35) 仍为草稿。最新修订纠正找东西／赶塔怪为 15 点，送货 10、传话 15；租屋改为世界内文案，体力灯罩只显示灯火强弱。修订版 169.12 已签名构建，模拟器 22 项住房和原有 11 组自检通过；设备连接中断，尚未重新装入／手动操作。此前 169.12 的 21 项真机自检、11 张截图、194 份 Preferences 不变仅是修订前证据，不能代替本次验证。见 [H3 验证记录](VERIFICATION-H3.md)。以下 H2 记录保留该次验证时点。
+H2 已经 [PR #34](https://github.com/andrewlinbridgeedu-droid/port/pull/34) 合入 main（`bfdb800e`）。H3 [PR #35](https://github.com/andrewlinbridgeedu-droid/port/pull/35) 仍为草稿。最新修订纠正找东西／赶塔怪为 15 点，送货 10、传话 15；租屋改为世界内文案，体力灯罩只显示灯火强弱。修订版 169.12 已装 iPhone 13，真机及模拟器 22 项住房和原有 11 组自检通过；手动完成五步、返回、细节点、滚动换餐与封蜡，19 张手动图已完整导出。局域网连接再次中断，新版阶段图与安装后 Preferences 核对尚待完成；开启环境音的镜像崩溃另行记录。此前同编号的旧证据留在历史目录，不代替本次验证。见 [H3 验证记录](VERIFICATION-H3.md)。以下 H2 记录保留该次验证时点。
 
 ## 行为
 

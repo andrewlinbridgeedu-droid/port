@@ -44,7 +44,8 @@ with tempfile.TemporaryDirectory(prefix='housing-device-capture-') as scratch:
 
     def launch(screen):
         command = ['process', 'launch', '--device', args.device, '--terminate-existing',
-                   bundle, '--', '--housing-device-walk', '--housing-screen=' + ('home' if screen == 'home-night' else screen)]
+                   bundle, '--', '--housing-device-walk', '--housing-screen=' + ('home' if screen == 'home-night' else screen),
+                   '-MistportCityMute', 'YES']  # Existing DEBUG review flag; argument domain only, no preferences write.
         if screen.startswith('home'):
             command += ['--home-map-review', '-MistportHubPanX', '0.265',
                         '-MistportCityHour', '22' if screen == 'home-night' else '12',
