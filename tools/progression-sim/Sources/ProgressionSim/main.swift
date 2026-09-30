@@ -63,7 +63,8 @@ for policy in Policy.allCases {
             let total = result.minutes.values.reduce(0, +)
             print("\(policy.rawValue.padding(toLength: 13, withPad: " ", startingAt: 0)) \(profile.name.padding(toLength: 6, withPad: " ", startingAt: 0)) day+\(offset): reached Q\(result.finalMission)"
                   + (result.stuckAt.map { " STUCK at Q\($0)" } ?? " done") + String(format: " · %.0f min", total)
-                  + " · 贡献 \(result.daily.contribution) 档日 " + (2...4).map { result.daily.contributionTierDays["\($0)"].map(String.init) ?? "-" }.joined(separator: "/"))
+                  + " · 贡献 \(result.daily.contribution) 档日 " + (2...4).map { result.daily.contributionTierDays["\($0)"].map(String.init) ?? "-" }.joined(separator: "/")
+                  + " · 街头任务 急\(result.daily.streetTasks["urgent"] ?? 0)/难\(result.daily.streetTasks["joint"] ?? 0)/城\(result.daily.streetTasks["commission"] ?? 0)")
         }
     }
 }

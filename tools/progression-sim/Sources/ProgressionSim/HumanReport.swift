@@ -80,6 +80,15 @@ enum HumanReport {
             rows.append(.init(activity: "neighbor_" + kind.rawValue, scope: "街坊委托（\(lists.count) 条平均），走近接单到完成",
                               steps: averaged(lists), battleSeconds: kind == .pest ? pest.0 : 0, battles: kind == .pest ? 1 : 0))
         }
+        let street = battle("street", per: Double(run?.battles["street"] ?? 0))
+        for kind in MPCStreetTask.Kind.allCases {
+            let tasks = MPCStreetTaskCatalog.streetTasks.filter { $0.kind == kind }
+            let lists = tasks.map { t in m.streetTaskPost(t) + t.steps.indices.flatMap { m.streetStep(t, $0) } + [m.streetThanks(t)] }
+            let fights = Double(tasks.reduce(0) { $0 + $1.steps.filter { $0.action == .battle }.count }) / Double(max(1, tasks.count))
+            let scope = ["urgent": "加急委托", "joint": "街区难题", "commission": "城市委托"][kind.rawValue]!
+            rows.append(.init(activity: "street_" + kind.rawValue, scope: "\(scope)（\(tasks.count) 条平均），接单到领奖",
+                              steps: averaged(lists), battleSeconds: (street.0 * fights * 10).rounded() / 10, battles: Int(fights.rounded())))
+        }
         let dou = m.douDizhu()
         rows.append(.init(activity: "tavern", scope: "一局两副牌斗地主（按规则库的出牌规则模拟 20 局）", steps: dou.steps))
         rows.append(.init(activity: "tavern_poker", scope: "一手五张换牌", steps: m.poker))

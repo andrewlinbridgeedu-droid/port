@@ -28,6 +28,18 @@
 
 规则库只回答“开没开”：`ledger.isOpen(.letterChains)` 等。
 
+**2026-09-30 补：加急委托、街区难题、城市委托的内容和规则已写进规则库 `StreetTasks.swift`**（[记录](street-tasks-20260930/README.md)）。App 只需要：
+1. 存档新增键保存 `MPCStreetTaskLedger`，旧档读入为空账本；每天开游戏时调用 `open(day:contributionPoints:)`。
+2. 委托板和港务处、市政厅柜台列出 `offers`；点接单调 `accept`。
+3. 首页地图用 `MPCStreetTaskCatalog.streetTargets(ledger)` 点亮目标。它和通缉目标一样给出 `personID` 或 `placeID`，新种类是 `.urgentErrand`、`.jointErrand`、`.commission`。
+4. 点到目标时，按当前步的 `action` 调用 `talk`、`handOver`、`answer`，或 `beginBattle`／`settleBattle`。街头战编号以 `church_maintenance_street_` 开头，走现有塔战演出。
+5. 完成时（`Progress.reward` 不为空）：
+   - 铜已由账本加上；
+   - `contributionReceipt` 不为空时，按 `.errand` 记城市贡献度；
+   - 对 `neighbors` 里每位调用 `MPCNeighborLedger.raiseAffinity`，返回小故事就播；
+   - 城市委托的 `sceneID` 启用 `commissionDecals` 里对应的贴片。
+6. 没开的档写“城市贡献度到 N 开放”。
+
 - `.letterChains`：邮局发的邮件包加入回信、改址、取件三种模板。没开时只有直投和认人。
 - `.urgentErrand`：委托板每天多一张加急委托（3 步，15 铜，计为 `.errand`）。
 - `.jointErrand`：逢 3 的倍数的天，委托板贴一张“街区难题”（2–3 名街坊的请求串成 4–5 步，30 铜，相关街坊各好感＋1，计为 `.errand`）。

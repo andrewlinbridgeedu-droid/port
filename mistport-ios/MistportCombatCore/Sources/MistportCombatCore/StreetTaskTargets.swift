@@ -2,7 +2,7 @@ import Foundation
 
 /// Rules publish targets; the home map owns placement and animation only.
 public struct MPCStreetTaskTarget: Equatable, Sendable, Identifiable {
-    public enum Kind: String, Codable, Sendable { case postal, neighbor, bounty, remnant }
+    public enum Kind: String, Codable, Sendable { case postal, neighbor, bounty, remnant, urgentErrand, jointErrand, commission }
     public let id: String
     public let taskID: String
     public let kind: Kind

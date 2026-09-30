@@ -35,8 +35,8 @@ for r in runs:
                  f"{sum(1 for m in by_day if m < 60)} | {total / 60:.1f} | {r['copper']} |")
 
 lines += ["", "## 时间花在哪（每天平均分钟，全都做，起始日 0）", ""]
-kinds = ["newspaper", "main", "tower", "bounty", "postal", "workshop", "errand", "event", "remnant"]
-labels = ["日刊", "主线", "塔", "通缉", "邮务", "工坊", "街坊", "事件", "残余"]
+kinds = ["newspaper", "main", "tower", "bounty", "postal", "workshop", "errand", "street", "event", "remnant"]
+labels = ["日刊", "主线", "塔", "通缉", "邮务", "工坊", "街坊", "街头任务", "事件", "残余"]
 lines += ["| 速度 | " + " | ".join(labels) + " | 合计 |", "|---|" + "---:|" * (len(kinds) + 1)]
 for r in runs:
     if r["policy"] != "all" or r["startOffset"] != runs[0]["startOffset"]:

@@ -173,6 +173,9 @@ struct DailyContentSummary: Codable {
     let contributionTierDays: [String: Int]
     /// Contribution at the end of each day, day 1 first.
     let contributionByDay: [Int]
+    /// Street tasks finished by kind (urgent, joint, commission) and home-painting scenes earned.
+    let streetTasks: [String: Int]
+    let scenes: [String]
 }
 
 struct WorkshopSummary: Codable {
@@ -221,6 +224,9 @@ final class Campaign {
     var events = MPCCityEventLedger()
     var remnants = MPCRemnantLedger()
     var neighbors = MPCNeighborLedger()
+    /// Urgent errands, joint errands and city commissions, opened by contribution tier (MPCStreetTaskLedger).
+    var streetTasks = MPCStreetTaskLedger()
+    var streetDone: [String: Int] = [:]
     var tickets = 0, errandsDone = 0, remnantsDone = 0
     var missedErrands: [String] = []
     var contribution = MPCCityContributionLedger()
@@ -337,7 +343,10 @@ final class Campaign {
 
     func nextDay() {
         if let m = model { busy("newspaper", total(m.newspaper)) }
-        if usesDailyContent { neighbors.open(day: dayNumber, completedMissions: completedMissions) }
+        if usesDailyContent {
+            neighbors.open(day: dayNumber, completedMissions: completedMissions)
+            streetTasks.open(day: dayNumber, contributionPoints: contribution.points)
+        }
         workshopSession()
         dailyContent()
         missedErrands += neighbors.offers.filter { $0.day == dayNumber && !$0.done }.map(\.errandID)
@@ -387,6 +396,13 @@ final class Campaign {
             for offer in neighbors.offers where !offer.done {
                 if let errand = offer.errand, errand.kind == .deliver, let item = errand.itemID { reserved[item, default: 0] += errand.count }
             }
+            // Street tasks' goods are made first too (they come from the four basic recipes).
+            var street: [String: Int] = [:]
+            for offer in streetTasks.offers where !offer.done {
+                guard let task = offer.task else { continue }
+                for step in task.steps.dropFirst(offer.stepIndex) { for (item, n) in step.items { street[item, default: 0] += n } }
+            }
+            for (item, n) in street.sorted(by: { $0.key < $1.key }) { reserved[item, default: 0] += n; stock(item, reserved[item]!) }
         }
         if usesDailyContent, let event = MPCCityEventCatalog.running(day: dayNumber), events.status(event.id, day: dayNumber) == .running {
             for need in event.deliveries where events.remaining(event, itemID: need.itemID) > 0 {
@@ -440,6 +456,45 @@ final class Campaign {
         return report
     }
 
+    /// Every open street task, step by step. A step that cannot be done today (goods short,
+    /// fight lost) waits for another day while the offer lasts.
+    func streetTaskRound() {
+        for offer in streetTasks.offers where !offer.done {
+            guard let task = offer.task else { continue }
+            if !offer.accepted {
+                try? streetTasks.accept(offerID: offer.id)
+                busy("street", model.map { total($0.streetTaskPost(task)) } ?? assumptions.errandSeconds / 2)
+            }
+            var finished: MPCStreetTaskLedger.Reward?
+            steps: while let current = streetTasks.offers.first(where: { $0.id == offer.id }), !current.done, let step = current.step {
+                let index = current.stepIndex
+                var progress: MPCStreetTaskLedger.Progress?
+                switch step.action {
+                case .talk: progress = try? streetTasks.talk(offerID: offer.id, at: step.target, coins: &copper)
+                case .handOver: progress = try? streetTasks.handOver(offerID: offer.id, at: step.target, coins: &copper, inventory: &inventory)
+                case .answer: progress = try? streetTasks.answer(offerID: offer.id, at: step.target, choiceID: step.correctChoiceID!, coins: &copper)
+                case .battle:
+                    tickets += 1
+                    let ticket = "street-\(tickets)"
+                    guard let id = try? streetTasks.beginBattle(offerID: offer.id, ticket: ticket) else { break steps }
+                    let fight = streetFight(id, kind: "street")
+                    progress = try? streetTasks.settleBattle(offerID: offer.id, ticket: ticket, session: fight.session, coins: &copper)
+                }
+                guard let progress else { break }
+                busy("street", model.map { total($0.streetStep(task, index)) } ?? assumptions.errandSeconds / 2)
+                if let reward = progress.reward { finished = reward }
+            }
+            guard let reward = finished else { continue }
+            streetDone[task.kind.rawValue, default: 0] += 1
+            earned["street", default: 0] += reward.copper
+            if let receipt = reward.contributionReceipt { contribute(receipt, .errand) }
+            for neighbor in reward.neighbors {
+                if let story = neighbors.raiseAffinity(neighbor), let m = model { busy("street", total([m.story(story)])) }
+            }
+            if let m = model { busy("street", total([m.streetThanks(task)])) }
+        }
+    }
+
     /// The rest of the day (all and completionist): today's neighbour errands, up to two
     /// counted event battles (three tries), and today's remnant case once a bounty is closed.
     func dailyContent() {
@@ -464,6 +519,7 @@ final class Campaign {
             if let reward { errandsDone += 1; earned["errand", default: 0] += reward.copper; contribute("errand-\(offer.id)", .errand) }
             if let m = model, let story = reward?.story { busy("errand", total([m.story(story)])) }
         }
+        streetTaskRound()
         if let event = MPCCityEventCatalog.running(day: dayNumber) {
             var tries = 0
             while tries < 3, events.status(event.id, day: dayNumber) == .running, events.winsLeft(event) > 0,
@@ -790,7 +846,7 @@ final class Campaign {
                                       storiesUnlocked: MPCNeighborCatalog.all.reduce(0) { $0 + neighbors.stories($1.id).count },
                                       missedErrands: missedErrands,
                                       contribution: contribution.points, contributionTierDays: contributionTierDays,
-                                      contributionByDay: contributionByDay),
+                                      contributionByDay: contributionByDay, streetTasks: streetDone, scenes: streetTasks.scenes),
                          merit: merit, towerFloor: tower, bountiesCleared: cleared.sorted(),
                          passives: passives, bountyRelics: relics.ownedIDs.sorted(), milestones: milestones, visits: visits)
     }

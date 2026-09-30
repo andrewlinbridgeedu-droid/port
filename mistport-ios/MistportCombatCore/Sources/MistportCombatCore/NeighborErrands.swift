@@ -427,8 +427,13 @@ public enum MPCNeighborCatalog {
     public static func askers(day: Int) -> [MPCNeighbor] {
         let count = askerCount(day: day)
         guard count > 0 else { return [] }
-        let start = (firstDay..<day).reduce(0) { $0 + askerCount(day: $1) }
+        let start = rotationStart(day: day)
         return (0..<count).map { all[(start + $0) % all.count] }
+    }
+
+    /// Position in `rotation` of the day's first asker.
+    public static func rotationStart(day: Int) -> Int {
+        day <= firstDay ? 0 : (firstDay..<day).reduce(0) { $0 + askerCount(day: $1) } % all.count
     }
 
     public static func encounterID(errandID: String, ticket: String) -> String { prefix + errandID + "_" + ticket }
@@ -528,6 +533,17 @@ public struct MPCNeighborLedger: Codable, Equatable, Sendable {
         }
         guard choiceID == errand.correctChoiceID else { offers[i].excludedChoiceIDs.insert(choiceID); return nil }
         return complete(i, errand, coins: &coins)
+    }
+
+    /// Street tasks (urgent errands, joint errands) raise a neighbour's affinity too. The
+    /// street task ledger pays each finished task once, so this is called once per task.
+    /// Returns the story unlocked at the new level, if any.
+    @discardableResult
+    public mutating func raiseAffinity(_ neighborID: String) -> String? {
+        guard let neighbor = MPCNeighborCatalog.neighbor(neighborID) else { return nil }
+        affinity[neighborID, default: 0] += 1
+        let level = affinity[neighborID]!
+        return zip(MPCNeighborCatalog.storyAffinity, neighbor.stories).first { $0.0 == level }?.1
     }
 
     /// Called when the player talks to `recipientID` with the message in hand.

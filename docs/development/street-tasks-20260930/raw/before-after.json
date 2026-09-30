@@ -1,0 +1,1208 @@
+[
+ {
+  "pace": "quick",
+  "policy": "all",
+  "offset": 0,
+  "minutesPerDay": [
+   9.8,
+   11.2
+  ],
+  "chapterHours": [
+   4.6,
+   5.2
+  ],
+  "maxDayMinutes": [
+   34,
+   35
+  ],
+  "endCopper": [
+   3486,
+   3996
+  ],
+  "earned": [
+   9152,
+   9705
+  ],
+  "streetCopper": 600,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 22
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "quick",
+  "policy": "all",
+  "offset": 30,
+  "minutesPerDay": [
+   10.0,
+   11.3
+  ],
+  "chapterHours": [
+   4.7,
+   5.3
+  ],
+  "maxDayMinutes": [
+   36,
+   36
+  ],
+  "endCopper": [
+   3756,
+   4256
+  ],
+  "earned": [
+   9152,
+   9691
+  ],
+  "streetCopper": 585,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 21
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "quick",
+  "policy": "all",
+  "offset": 90,
+  "minutesPerDay": [
+   9.8,
+   11.1
+  ],
+  "chapterHours": [
+   4.6,
+   5.2
+  ],
+  "maxDayMinutes": [
+   36,
+   36
+  ],
+  "endCopper": [
+   3494,
+   4005
+  ],
+  "earned": [
+   9152,
+   9702
+  ],
+  "streetCopper": 600,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 22
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "quick",
+  "policy": "completionist",
+  "offset": 0,
+  "minutesPerDay": [
+   10.0,
+   11.3
+  ],
+  "chapterHours": [
+   4.7,
+   5.3
+  ],
+  "maxDayMinutes": [
+   38,
+   39
+  ],
+  "endCopper": [
+   3465,
+   3975
+  ],
+  "earned": [
+   9152,
+   9705
+  ],
+  "streetCopper": 600,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 22
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "quick",
+  "policy": "completionist",
+  "offset": 30,
+  "minutesPerDay": [
+   10.4,
+   11.7
+  ],
+  "chapterHours": [
+   4.9,
+   5.5
+  ],
+  "maxDayMinutes": [
+   37,
+   37
+  ],
+  "endCopper": [
+   3278,
+   3778
+  ],
+  "earned": [
+   9152,
+   9691
+  ],
+  "streetCopper": 585,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 21
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "quick",
+  "policy": "completionist",
+  "offset": 90,
+  "minutesPerDay": [
+   10.0,
+   11.3
+  ],
+  "chapterHours": [
+   4.7,
+   5.3
+  ],
+  "maxDayMinutes": [
+   36,
+   36
+  ],
+  "endCopper": [
+   3711,
+   4222
+  ],
+  "earned": [
+   9152,
+   9702
+  ],
+  "streetCopper": 600,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 22
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "quick",
+  "policy": "hinted",
+  "offset": 0,
+  "minutesPerDay": [
+   15.6,
+   15.6
+  ],
+  "chapterHours": [
+   7.3,
+   7.3
+  ],
+  "maxDayMinutes": [
+   144,
+   144
+  ],
+  "endCopper": [
+   418,
+   418
+  ],
+  "earned": [
+   5250,
+   5250
+  ],
+  "streetCopper": 0,
+  "streetTasks": {},
+  "scenes": [],
+  "tierDays": [
+   {
+    "1": 1
+   },
+   {
+    "1": 1
+   }
+  ]
+ },
+ {
+  "pace": "quick",
+  "policy": "hinted",
+  "offset": 30,
+  "minutesPerDay": [
+   15.6,
+   15.6
+  ],
+  "chapterHours": [
+   7.3,
+   7.3
+  ],
+  "maxDayMinutes": [
+   144,
+   144
+  ],
+  "endCopper": [
+   418,
+   418
+  ],
+  "earned": [
+   5250,
+   5250
+  ],
+  "streetCopper": 0,
+  "streetTasks": {},
+  "scenes": [],
+  "tierDays": [
+   {
+    "1": 1
+   },
+   {
+    "1": 1
+   }
+  ]
+ },
+ {
+  "pace": "quick",
+  "policy": "hinted",
+  "offset": 90,
+  "minutesPerDay": [
+   15.6,
+   15.6
+  ],
+  "chapterHours": [
+   7.3,
+   7.3
+  ],
+  "maxDayMinutes": [
+   144,
+   144
+  ],
+  "endCopper": [
+   418,
+   418
+  ],
+  "earned": [
+   5250,
+   5250
+  ],
+  "streetCopper": 0,
+  "streetTasks": {},
+  "scenes": [],
+  "tierDays": [
+   {
+    "1": 1
+   },
+   {
+    "1": 1
+   }
+  ]
+ },
+ {
+  "pace": "typical",
+  "policy": "all",
+  "offset": 0,
+  "minutesPerDay": [
+   11.9,
+   13.7
+  ],
+  "chapterHours": [
+   5.6,
+   6.4
+  ],
+  "maxDayMinutes": [
+   40,
+   41
+  ],
+  "endCopper": [
+   3561,
+   4071
+  ],
+  "earned": [
+   9152,
+   9705
+  ],
+  "streetCopper": 600,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 22
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "typical",
+  "policy": "all",
+  "offset": 30,
+  "minutesPerDay": [
+   12.2,
+   13.9
+  ],
+  "chapterHours": [
+   5.7,
+   6.5
+  ],
+  "maxDayMinutes": [
+   42,
+   42
+  ],
+  "endCopper": [
+   3673,
+   4173
+  ],
+  "earned": [
+   9152,
+   9691
+  ],
+  "streetCopper": 585,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 21
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "typical",
+  "policy": "all",
+  "offset": 90,
+  "minutesPerDay": [
+   11.9,
+   13.7
+  ],
+  "chapterHours": [
+   5.6,
+   6.4
+  ],
+  "maxDayMinutes": [
+   43,
+   43
+  ],
+  "endCopper": [
+   3709,
+   4220
+  ],
+  "earned": [
+   9152,
+   9702
+  ],
+  "streetCopper": 600,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 22
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "typical",
+  "policy": "completionist",
+  "offset": 0,
+  "minutesPerDay": [
+   12.1,
+   13.9
+  ],
+  "chapterHours": [
+   5.7,
+   6.5
+  ],
+  "maxDayMinutes": [
+   45,
+   46
+  ],
+  "endCopper": [
+   3360,
+   3870
+  ],
+  "earned": [
+   9152,
+   9705
+  ],
+  "streetCopper": 600,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 22
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "typical",
+  "policy": "completionist",
+  "offset": 30,
+  "minutesPerDay": [
+   12.6,
+   14.4
+  ],
+  "chapterHours": [
+   5.9,
+   6.7
+  ],
+  "maxDayMinutes": [
+   43,
+   43
+  ],
+  "endCopper": [
+   3357,
+   3857
+  ],
+  "earned": [
+   9152,
+   9691
+  ],
+  "streetCopper": 585,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 21
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "typical",
+  "policy": "completionist",
+  "offset": 90,
+  "minutesPerDay": [
+   12.1,
+   13.9
+  ],
+  "chapterHours": [
+   5.6,
+   6.5
+  ],
+  "maxDayMinutes": [
+   43,
+   43
+  ],
+  "endCopper": [
+   3727,
+   4238
+  ],
+  "earned": [
+   9152,
+   9702
+  ],
+  "streetCopper": 600,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 22
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "typical",
+  "policy": "hinted",
+  "offset": 0,
+  "minutesPerDay": [
+   18.0,
+   18.0
+  ],
+  "chapterHours": [
+   8.4,
+   8.4
+  ],
+  "maxDayMinutes": [
+   165,
+   165
+  ],
+  "endCopper": [
+   418,
+   418
+  ],
+  "earned": [
+   5250,
+   5250
+  ],
+  "streetCopper": 0,
+  "streetTasks": {},
+  "scenes": [],
+  "tierDays": [
+   {
+    "1": 1
+   },
+   {
+    "1": 1
+   }
+  ]
+ },
+ {
+  "pace": "typical",
+  "policy": "hinted",
+  "offset": 30,
+  "minutesPerDay": [
+   18.0,
+   18.0
+  ],
+  "chapterHours": [
+   8.4,
+   8.4
+  ],
+  "maxDayMinutes": [
+   165,
+   165
+  ],
+  "endCopper": [
+   418,
+   418
+  ],
+  "earned": [
+   5250,
+   5250
+  ],
+  "streetCopper": 0,
+  "streetTasks": {},
+  "scenes": [],
+  "tierDays": [
+   {
+    "1": 1
+   },
+   {
+    "1": 1
+   }
+  ]
+ },
+ {
+  "pace": "typical",
+  "policy": "hinted",
+  "offset": 90,
+  "minutesPerDay": [
+   18.0,
+   18.0
+  ],
+  "chapterHours": [
+   8.4,
+   8.4
+  ],
+  "maxDayMinutes": [
+   165,
+   165
+  ],
+  "endCopper": [
+   418,
+   418
+  ],
+  "earned": [
+   5250,
+   5250
+  ],
+  "streetCopper": 0,
+  "streetTasks": {},
+  "scenes": [],
+  "tierDays": [
+   {
+    "1": 1
+   },
+   {
+    "1": 1
+   }
+  ]
+ },
+ {
+  "pace": "casual",
+  "policy": "all",
+  "offset": 0,
+  "minutesPerDay": [
+   15.0,
+   17.4
+  ],
+  "chapterHours": [
+   7.0,
+   8.1
+  ],
+  "maxDayMinutes": [
+   48,
+   50
+  ],
+  "endCopper": [
+   3755,
+   4265
+  ],
+  "earned": [
+   9152,
+   9705
+  ],
+  "streetCopper": 600,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 22
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "casual",
+  "policy": "all",
+  "offset": 30,
+  "minutesPerDay": [
+   15.2,
+   17.6
+  ],
+  "chapterHours": [
+   7.1,
+   8.2
+  ],
+  "maxDayMinutes": [
+   52,
+   52
+  ],
+  "endCopper": [
+   3506,
+   4006
+  ],
+  "earned": [
+   9152,
+   9691
+  ],
+  "streetCopper": 585,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 21
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "casual",
+  "policy": "all",
+  "offset": 90,
+  "minutesPerDay": [
+   15.0,
+   17.4
+  ],
+  "chapterHours": [
+   7.0,
+   8.1
+  ],
+  "maxDayMinutes": [
+   54,
+   54
+  ],
+  "endCopper": [
+   3544,
+   4055
+  ],
+  "earned": [
+   9152,
+   9702
+  ],
+  "streetCopper": 600,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 22
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "casual",
+  "policy": "completionist",
+  "offset": 0,
+  "minutesPerDay": [
+   15.2,
+   17.6
+  ],
+  "chapterHours": [
+   7.1,
+   8.2
+  ],
+  "maxDayMinutes": [
+   54,
+   56
+  ],
+  "endCopper": [
+   3773,
+   4283
+  ],
+  "earned": [
+   9152,
+   9705
+  ],
+  "streetCopper": 600,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 22
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "casual",
+  "policy": "completionist",
+  "offset": 30,
+  "minutesPerDay": [
+   15.7,
+   18.1
+  ],
+  "chapterHours": [
+   7.3,
+   8.4
+  ],
+  "maxDayMinutes": [
+   52,
+   52
+  ],
+  "endCopper": [
+   3321,
+   3821
+  ],
+  "earned": [
+   9152,
+   9691
+  ],
+  "streetCopper": 585,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 21
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "casual",
+  "policy": "completionist",
+  "offset": 90,
+  "minutesPerDay": [
+   15.1,
+   17.6
+  ],
+  "chapterHours": [
+   7.1,
+   8.2
+  ],
+  "maxDayMinutes": [
+   54,
+   54
+  ],
+  "endCopper": [
+   3367,
+   3878
+  ],
+  "earned": [
+   9152,
+   9702
+  ],
+  "streetCopper": 600,
+  "streetTasks": {
+   "commission": 2,
+   "joint": 5,
+   "urgent": 22
+  },
+  "scenes": [
+   "fountain",
+   "yard"
+  ],
+  "tierDays": [
+   {
+    "1": 1,
+    "2": 6,
+    "3": 13,
+    "4": 20
+   },
+   {
+    "1": 1,
+    "2": 6,
+    "3": 12,
+    "4": 18
+   }
+  ]
+ },
+ {
+  "pace": "casual",
+  "policy": "hinted",
+  "offset": 0,
+  "minutesPerDay": [
+   21.6,
+   21.6
+  ],
+  "chapterHours": [
+   10.1,
+   10.1
+  ],
+  "maxDayMinutes": [
+   194,
+   194
+  ],
+  "endCopper": [
+   418,
+   418
+  ],
+  "earned": [
+   5250,
+   5250
+  ],
+  "streetCopper": 0,
+  "streetTasks": {},
+  "scenes": [],
+  "tierDays": [
+   {
+    "1": 1
+   },
+   {
+    "1": 1
+   }
+  ]
+ },
+ {
+  "pace": "casual",
+  "policy": "hinted",
+  "offset": 30,
+  "minutesPerDay": [
+   21.6,
+   21.6
+  ],
+  "chapterHours": [
+   10.1,
+   10.1
+  ],
+  "maxDayMinutes": [
+   194,
+   194
+  ],
+  "endCopper": [
+   418,
+   418
+  ],
+  "earned": [
+   5250,
+   5250
+  ],
+  "streetCopper": 0,
+  "streetTasks": {},
+  "scenes": [],
+  "tierDays": [
+   {
+    "1": 1
+   },
+   {
+    "1": 1
+   }
+  ]
+ },
+ {
+  "pace": "casual",
+  "policy": "hinted",
+  "offset": 90,
+  "minutesPerDay": [
+   21.6,
+   21.6
+  ],
+  "chapterHours": [
+   10.1,
+   10.1
+  ],
+  "maxDayMinutes": [
+   194,
+   194
+  ],
+  "endCopper": [
+   418,
+   418
+  ],
+  "earned": [
+   5250,
+   5250
+  ],
+  "streetCopper": 0,
+  "streetTasks": {},
+  "scenes": [],
+  "tierDays": [
+   {
+    "1": 1
+   },
+   {
+    "1": 1
+   }
+  ]
+ }
+]
