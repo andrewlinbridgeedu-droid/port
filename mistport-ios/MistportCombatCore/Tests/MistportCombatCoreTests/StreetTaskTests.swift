@@ -205,6 +205,24 @@ struct StreetTaskTests {
         #expect(decoded == ledger)
     }
 
+    @Test("neighbour errands light the asker, then the recipient of a heard message")
+    func neighborTargets() throws {
+        var neighbors = MPCNeighborLedger(), coins = 0
+        let offers = neighbors.open(day: 2, completedMissions: Set(1...5))
+        let targets = C.neighborTargets(neighbors)
+        #expect(targets.count == offers.count && !targets.isEmpty)
+        #expect(targets.allSatisfy { $0.kind == .neighbor && $0.placeID == nil })
+        #expect(Set(targets.compactMap(\.personID)) == Set(offers.map(\.neighborID)))
+        let message = try #require(offers.first { $0.errand?.kind == .message })
+        let recipient = try #require(message.errand?.recipientID)
+        let heard = C.neighborTargets(neighbors, heardMessages: [message.id]).filter { $0.taskID == message.id }
+        #expect(heard.map(\.personID) == [recipient])
+        _ = try neighbors.relay(offerID: message.id, to: recipient, coins: &coins)
+        #expect(!C.neighborTargets(neighbors, heardMessages: [message.id]).contains { $0.taskID == message.id })
+        neighbors.open(day: 3, completedMissions: Set(1...5))
+        #expect(C.neighborTargets(neighbors).allSatisfy { $0.taskID.hasPrefix("d3-") })
+    }
+
     @Test("street tasks raise neighbour affinity and can unlock a story")
     func affinity() {
         var neighbors = MPCNeighborLedger()
