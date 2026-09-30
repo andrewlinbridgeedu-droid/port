@@ -142,5 +142,289 @@
       "scale": 0.78
     }
   ],
+  "yardV2Registration": [
+    {
+      "file": "CommissionYardV2Day.png",
+      "groups": [
+        {
+          "group": "canvas",
+          "sourceBounds": [
+            321,
+            80,
+            400,
+            215
+          ],
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            256
+          ],
+          "targetBounds": [
+            325,
+            82,
+            389,
+            196
+          ]
+        },
+        {
+          "group": "crates",
+          "sourceBounds": [
+            244,
+            64,
+            368,
+            139
+          ],
+          "sourceRegion": [
+            0,
+            256,
+            512,
+            512
+          ],
+          "targetBounds": [
+            237,
+            307,
+            338,
+            379
+          ]
+        }
+      ]
+    },
+    {
+      "file": "CommissionYardV2Sunset.png",
+      "groups": [
+        {
+          "group": "canvas",
+          "sourceBounds": [
+            324,
+            80,
+            391,
+            197
+          ],
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            256
+          ],
+          "targetBounds": [
+            325,
+            82,
+            389,
+            196
+          ]
+        },
+        {
+          "group": "crates",
+          "sourceBounds": [
+            236,
+            49,
+            340,
+            124
+          ],
+          "sourceRegion": [
+            0,
+            256,
+            512,
+            512
+          ],
+          "targetBounds": [
+            237,
+            307,
+            338,
+            379
+          ]
+        }
+      ]
+    },
+    {
+      "file": "CommissionYardV2Night.png",
+      "groups": [
+        {
+          "group": "canvas",
+          "sourceBounds": [
+            323,
+            80,
+            391,
+            199
+          ],
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            256
+          ],
+          "targetBounds": [
+            325,
+            82,
+            389,
+            196
+          ]
+        },
+        {
+          "group": "crates",
+          "sourceBounds": [
+            235,
+            49,
+            340,
+            124
+          ],
+          "sourceRegion": [
+            0,
+            256,
+            512,
+            512
+          ],
+          "targetBounds": [
+            237,
+            307,
+            338,
+            379
+          ]
+        }
+      ]
+    },
+    {
+      "file": "CommissionYardV2SnowDay.png",
+      "groups": [
+        {
+          "group": "canvas",
+          "sourceBounds": [
+            324,
+            75,
+            391,
+            199
+          ],
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            256
+          ],
+          "targetBounds": [
+            325,
+            79,
+            389,
+            196
+          ]
+        },
+        {
+          "group": "crates",
+          "sourceBounds": [
+            236,
+            48,
+            339,
+            124
+          ],
+          "sourceRegion": [
+            0,
+            256,
+            512,
+            512
+          ],
+          "targetBounds": [
+            237,
+            304,
+            338,
+            379
+          ]
+        }
+      ]
+    },
+    {
+      "file": "CommissionYardV2SnowSunset.png",
+      "groups": [
+        {
+          "group": "canvas",
+          "sourceBounds": [
+            323,
+            77,
+            391,
+            198
+          ],
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            256
+          ],
+          "targetBounds": [
+            325,
+            79,
+            389,
+            196
+          ]
+        },
+        {
+          "group": "crates",
+          "sourceBounds": [
+            234,
+            46,
+            341,
+            126
+          ],
+          "sourceRegion": [
+            0,
+            256,
+            512,
+            512
+          ],
+          "targetBounds": [
+            237,
+            304,
+            338,
+            379
+          ]
+        }
+      ]
+    },
+    {
+      "file": "CommissionYardV2SnowNight.png",
+      "groups": [
+        {
+          "group": "canvas",
+          "sourceBounds": [
+            323,
+            77,
+            391,
+            199
+          ],
+          "sourceRegion": [
+            0,
+            0,
+            512,
+            256
+          ],
+          "targetBounds": [
+            325,
+            79,
+            389,
+            196
+          ]
+        },
+        {
+          "group": "crates",
+          "sourceBounds": [
+            235,
+            48,
+            340,
+            124
+          ],
+          "sourceRegion": [
+            0,
+            256,
+            512,
+            512
+          ],
+          "targetBounds": [
+            237,
+            304,
+            338,
+            379
+          ]
+        }
+      ]
+    }
+  ],
   "artworkRepaintedByScript": false
 }

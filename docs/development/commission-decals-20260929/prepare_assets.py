@@ -9,9 +9,31 @@ def scaled(path):
     return Image.open(path).convert('RGBA').resize((512, 512), Image.Resampling.LANCZOS)
 
 def import_yard():
-    for suffix in ['Sunset', 'Night', 'SnowDay', 'SnowSunset', 'SnowNight']:
-        file = 'CommissionYard' + suffix + '.png'
-        scaled(HERE / 'generated' / file).save(HERE / 'assets' / file)
+    records = []
+    for suffix in ['Day', 'Sunset', 'Night', 'SnowDay', 'SnowSunset', 'SnowNight']:
+        file = 'CommissionYardV2' + suffix + '.png'
+        raw = HERE / 'generated' / file
+        if not raw.exists():
+            continue
+        source = scaled(raw)
+        result = Image.new('RGBA',(512,512))
+        groups = []
+        for name, region, target in [
+            ('canvas',(0,0,512,256),(325,82,389,196)),
+            ('crates',(0,256,512,512),(237,307,338,379))]:
+            crop = source.crop(region)
+            box = crop.getchannel('A').point(lambda a: 255 if a>=32 else 0).getbbox()
+            assert box, (file,name)
+            x0,y0,x1,y1 = box
+            tx0,ty0,tx1,ty1 = target
+            if suffix.startswith('Snow'):
+                ty0 -= 3
+            fitted = crop.crop(box).resize((tx1-tx0,ty1-ty0),Image.Resampling.LANCZOS)
+            result.alpha_composite(fitted,(tx0,ty0))
+            groups.append({'group':name,'sourceBounds':box,'sourceRegion':region,'targetBounds':[tx0,ty0,tx1,ty1]})
+        result.save(HERE / 'assets' / file)
+        records.append({'file':file,'groups':groups})
+    return records
 
 def register_fountain():
     source = scaled(HERE / 'generated/CommissionFountainDay-v4.png')
@@ -49,7 +71,7 @@ def register_fountain_variants():
         records.append({'file': file, 'sourcePaintedBounds': box, 'targetPaintedBounds': [tx0, ty0, tx1, ty1]})
     return records
 
-def register_glow(variants):
+def register_glow(variants, yard):
     source = scaled(HERE / 'generated/CommissionBoulevardLights-v3.png')
     targets = [(79, 70), (122, 117), (189, 163), (288, 212), (409, 273)]
     sizes = [1.0, .90, .83, .85, .78]
@@ -84,11 +106,12 @@ def register_glow(variants):
         'fountainPennantsTranslation': [0, 0],
         'fountainVariantCanvasRegistration': variants,
         'boulevardGlowRegistration': shifts,
+        'yardV2Registration': yard,
         'artworkRepaintedByScript': False,
     }, ensure_ascii=False, indent=2) + '\n')
 
 if __name__ == '__main__':
-    import_yard()
+    yard = import_yard()
     register_fountain()
     variants = register_fountain_variants()
-    register_glow(variants)
+    register_glow(variants, yard)

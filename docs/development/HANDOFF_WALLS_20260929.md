@@ -19,7 +19,8 @@
   - 规则库 `CityContribution.swift` 已写好，App 没接。
   - 街景变化用小块贴片，不重画 15 张首页原画（设计稿 6.5）。
   - 本轮用户明确先做 2.5 美术：喷泉花坛与三串彩旗、右侧栏杆五盏路灯、现有吊臂帆布与港务封签货箱。分支 `codex/commission-decals-20260929` 从 `485b5d6` 起步；[图稿与 45 幅对比](commission-decals-20260929/README.md) 待用户看图确认。
-  - 普通三时段与雪景三时段共 18 张贴片，另有路灯发光层及 R/G 顺序图。[草稿 PR #22](https://github.com/andrewlinbridgeedu-droid/port/pull/22) 已推送，108 份 PNG/JPG 经 LFS 上传；15 张首页原画 SHA-256 全部一致，45 幅对比齐全。`commissionDecals` 仅记禁用的候选坐标，图片留在 docs，**未接 App、未构建、未装机、未合并 PR**。
+  - [草稿 PR #22](https://github.com/andrewlinbridgeedu-droid/port/pull/22) 第二版按参考意见修图：喷泉保持原稿；路灯新增普通／冬雪纯落地光，按同一五组 R/G 时点亮灭；货场改现有港务处的深蓝与金色，八只货箱适度放大。手机宽度离线对比及原稿／新版对比见图稿目录，参考意见**不作为用户视觉认可**。
+  - 普通与雪景三时段共 18 张结构贴片，加灯芯及两张落地光，共 21 张 RGBA；另有两张 R/G 顺序图。15 张首页原画 SHA-256 全部一致，45 幅对比齐全；PNG/JPG 按 LFS 提交。`commissionDecals` 及 `lighting.ground` 仅记禁用的候选坐标，图片留在 docs，**未接 App、未构建、未装机、未合并 PR**。
 
 **接下来（Mac 上的 Codex）：**
 

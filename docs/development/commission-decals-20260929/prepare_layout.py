@@ -6,7 +6,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
 LAYOUT = REPO / 'mistport-ios/Mistport/WisteriaMap/home-map-layout.json'
 REGIONS = json.loads((HERE / 'regions.json').read_text())
-PREFIXES = {'fountain': 'CommissionFountain', 'boulevard': 'CommissionBoulevard', 'yard': 'CommissionYard'}
+PREFIXES = {'fountain': 'CommissionFountain', 'boulevard': 'CommissionBoulevard', 'yard': 'CommissionYardV2'}
 
 def main():
     entries = []
@@ -35,6 +35,17 @@ def main():
                         'enabledIn': ['sunset', 'night'],
                         'runtimeIntegration': 'pending-user-art-approval',
                     }
+                    gx, gy, gw, gh = region['groundLightingRect']
+                    entry['lighting']['ground'] = {
+                        'file': 'docs/development/commission-decals-20260929/assets/CommissionBoulevard' + ('Snow' if snow else '') + 'GroundLights.png',
+                        'orderFile': 'docs/development/commission-decals-20260929/assets/CommissionBoulevardGroundLightOrder.png',
+                        'at': [(gx+gw/2)/2305,(gy+gh/2)/2305],
+                        'size': [gw/2305,gh/2305],
+                        'anchor': 'center', 'coordinateUnit': 'painting-height=1',
+                        'blend': 'plusLighter', 'intensity': .28, 'enabledIn': ['sunset','night'],
+                    }
+                if site in ['boulevard','yard']:
+                    entry['artRevision'] = 2
                 entries.append(entry)
     text = LAYOUT.read_text()
     assert 'commissionDecals' not in text, 'Do not overwrite existing decal metadata'
