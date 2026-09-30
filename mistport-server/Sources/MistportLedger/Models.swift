@@ -55,6 +55,11 @@ public struct AccountView: Codable, Sendable, Equatable {
     /// may have been first-cleared by the end of today.
     public let pacingDay: Int
     public let towerFirstClearsAllowed: Int
+    /// Highest chapter-one mission won on the server, and whether the next one is open today.
+    public let storyCleared: Int
+    public let nextMissionOpen: Bool
+    /// Lifetime cracks on the ownerless mask (ten break it).
+    public let maskCracks: Int
 }
 
 public struct LotMove: Codable, Sendable, Equatable {
@@ -111,13 +116,15 @@ public struct ListingView: Codable, Sendable, Equatable {
 }
 
 public struct BattleRequest: Codable, Sendable, Equatable {
-    public enum Kind: String, Codable, Sendable { case tower, lightsPublic = "lights-public" }
+    public enum Kind: String, Codable, Sendable { case tower, lightsPublic = "lights-public", story }
     public var kind: Kind
     public var floor: Int?
     public var side: String?
+    /// Story battles: the chapter-one mission, 1–30.
+    public var mission: Int?
     public var consumables: [String: Int64]
-    public init(kind: Kind, floor: Int? = nil, side: String? = nil, consumables: [String: Int64] = [:]) {
-        self.kind = kind; self.floor = floor; self.side = side; self.consumables = consumables
+    public init(kind: Kind, floor: Int? = nil, side: String? = nil, mission: Int? = nil, consumables: [String: Int64] = [:]) {
+        self.kind = kind; self.floor = floor; self.side = side; self.mission = mission; self.consumables = consumables
     }
 }
 

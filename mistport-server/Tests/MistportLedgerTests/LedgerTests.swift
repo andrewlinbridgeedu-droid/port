@@ -369,3 +369,71 @@ struct LedgerPacingTests {
         #expect(try reopened.account(player.accountID).pacingDay == 3)
     }
 }
+
+@Suite("Ledger: story battles are replayed on the server and open by day")
+struct LedgerStoryTests {
+    /// Plays a story ticket on the client with the character the server holds and a simple policy.
+    private func playStory(_ ticket: TicketReceipt, mission: Int, cracks: Int = 0) throws -> MPCBattleInputLog {
+        var stepper = try MPCStoryBattleStepper(encounterID: ticket.encounterID, loadout: LedgerCatalog.loadout(floor: ticket.characterFloor),
+                                                mask: .init(owned: true, teachingLoan: mission == 3 || mission == 4, cracks: cracks))
+        while !stepper.isFinished {
+            let view = stepper.view
+            var out: [MPCBattleInput] = []
+            if view.session.outcome == .inProgress, let t = view.session.enemies.first(where: \.isAlive), t.id != view.target {
+                out.append(.init(tick: view.tick, kind: .target, enemyID: t.id))
+            }
+            // Q4's hound is beaten by raising the mask as its two flames come (7.8–8.4 s into
+            // each 20-second cycle); elsewhere, just before any hit lands.
+            let wantsMask = mission == 4
+                ? stepper.q4CycleStart.map { view.now >= $0 + 7.8 && view.now < $0 + 8.4 } ?? false
+                : view.incoming.values.contains(where: { $0 - view.tick <= 6 })
+            if view.session.outcome == .inProgress, stepper.maskIsReady(at: view.now), wantsMask {
+                out.append(.init(tick: view.tick, kind: .mask))
+            }
+            do { _ = try stepper.step(out) } catch MPCChurchBattleDriver.Failure.refused { _ = try stepper.step() }
+        }
+        #expect(ticket.ruleVersion == MPCBattleInputLog.storyVersion)
+        return stepper.log
+    }
+
+    private func win(_ ledger: Ledger, _ account: String, mission: Int, op: String) throws -> SettlementReceipt {
+        let ticket = try ledger.openTicket(account: account, op: op + "-open", request: .init(kind: .story, mission: mission))
+        let cracks = try ledger.account(account).maskCracks
+        return try ledger.settle(account: account, op: op + "-settle", ticketID: ticket.ticketID, log: try playStory(ticket, mission: mission, cracks: cracks))
+    }
+
+    @Test("Q1–Q3 on day 1, Q4 the next day; a win is verified by replay and recorded once")
+    func storyOpensByDay() throws {
+        let clock = TestClock()
+        let ledger = try makeLedger(clock: clock)
+        let player = try ledger.createPlayer()
+        try ledger.setCharacter(account: player.accountID, floor: 40, maxFloor: 0)
+        #expect(throws: LedgerError.notEligible) { try ledger.openTicket(account: player.accountID, op: "skip", request: .init(kind: .story, mission: 2)) }
+        for q in 1...3 { #expect(try win(ledger, player.accountID, mission: q, op: "q\(q)").status == .won, "Q\(q)") }
+        #expect(try ledger.account(player.accountID).storyCleared == 3)
+        #expect(throws: LedgerError.dailyLimit) { try ledger.openTicket(account: player.accountID, op: "q4", request: .init(kind: .story, mission: 4)) }
+        // Replaying a cleared mission is never limited and changes nothing.
+        #expect(try win(ledger, player.accountID, mission: 2, op: "replay").status == .won)
+        #expect(try ledger.account(player.accountID).storyCleared == 3)
+        clock.advance(24 * 3600)
+        #expect(try ledger.account(player.accountID).nextMissionOpen)
+        let q4 = try win(ledger, player.accountID, mission: 4, op: "q4-next")
+        #expect(q4.status == .won, "\(q4.status) \(q4.reason ?? "") hp \(q4.playerHP)")
+        #expect(try ledger.account(player.accountID).storyCleared == 4)
+        #expect(try ledger.audit().ok)
+    }
+
+    @Test("a forged story log is rejected and records nothing")
+    func forgedStoryLog() throws {
+        let ledger = try makeLedger()
+        let player = try ledger.createPlayer()
+        try ledger.setCharacter(account: player.accountID, floor: 40, maxFloor: 0)
+        let ticket = try ledger.openTicket(account: player.accountID, op: "open", request: .init(kind: .story, mission: 1))
+        var log = try playStory(ticket, mission: 1)
+        log.inputs.append(.init(tick: 5, kind: .medal))
+        log.inputs.sort { $0.tick < $1.tick }
+        let settled = try ledger.settle(account: player.accountID, op: "settle", ticketID: ticket.ticketID, log: log)
+        #expect(settled.status == .rejected)
+        #expect(try ledger.account(player.accountID).storyCleared == 0)
+    }
+}

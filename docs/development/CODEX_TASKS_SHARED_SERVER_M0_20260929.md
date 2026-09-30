@@ -46,6 +46,19 @@
 5. 战斗结束后把 `stepper.log` 存在内存里。DEBUG 下加自检 `--verify-church-replay`：打一场塔层（例如第 5 层）和一场亮灯公共目标，用 `MPCChurchBattleDriver.replay` 复算，胜负、剩余血量、用药数都要和手机上一致。
 6. 现有 11 组 DEBUG 自检照跑。装机前后按惯例逐文件核对 Preferences；这项改动不应新增或改变任何存档键。
 
+## 2.5 主线战斗也改用推进器（2026-09-30 新增）
+
+用户定只有共享服，主线 Q1–Q30 也由服务器复算。规则库已有 `MPCStoryBattleStepper`，记录版本 `story-battle-v1`，见 [主线 v1 记录](shared-server-m0-20260929/STORY_BATTLE_V1_20260930.md)。
+
+- `tickContinuousCombat()` 的主线分支改为每 50 毫秒调一次 `step`，用法和教会战斗相同。
+- 新操作：
+  - `mask`：假面按钮；
+  - `bell`：返场铃，目前未开放；
+  - `sequence`：战斗中调整出招顺序，`itemID` 是逗号分隔的技能 ID。
+- 新事件 `intervention`：Q1 玛拉介入，弹出现有的介入画面，关掉后继续推进。
+- 敌人命中时刻取推进器给的 `landsAtTick`（Unity 实测时长表），不再等 Unity 回调；动画对不上时改动画。
+- 假面裂纹以服务器为准：结算后读 `/v0/me` 的 `maskCracks`。
+
 ## 3. 交用户看的
 
 - 真机录一场塔层、一场通缉、一场街头战，和改动前的手感对比。重点看敌人出手、玩家命中和飘字是否还同步。
