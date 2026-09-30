@@ -172,5 +172,7 @@
     "H1Art": "not-started; requires user approval of H0 boards",
     "H2App": "not-started",
     "H3DeviceValidation": "not-started"
-  }
+  },
+  "pullRequest": "https://github.com/andrewlinbridgeedu-droid/port/pull/32",
+  "pullRequestState": "draft; awaiting user visual approval"
 }
