@@ -2,6 +2,13 @@
 
 ## 现在在哪（2026-09-30，先读这一节）
 
+### 2026-10-01 新增
+
+- **Q4 猎犬出招像在散步**：用户真机反馈。原因是出招时走路循环照播，身体动作只动脖子和下颚 5–7°。Mac 任务单：[CODEX_TASK_Q4_HOUND_ATTACK_20261001.md](CODEX_TASK_Q4_HOUND_ATTACK_20261001.md)。
+- **体力灯罩动画**：用户要求加动画，SwiftUI 实现在 [PR #38](https://github.com/andrewlinbridgeedu-droid/port/pull/38)，合入 H3 草稿分支 `codex/housing-h3-verification-20260930`。
+  - 云端未编译，需要 Mac 构建并在真机上核对光晕是否对准灯罩玻璃。
+  - 网页预览：https://claude.ai/artifact/XXKqCC5QV5optZpwLZY6og
+
 ### 第一章技能梳理（用户 2026-09-30 认可，云端已改规则）
 
 - [技能梳理稿](../../mistport-ios/docs/game-design/chapter-one-30/SKILL_IDENTITY_REVIEW_20260930.md)，用户认可：
