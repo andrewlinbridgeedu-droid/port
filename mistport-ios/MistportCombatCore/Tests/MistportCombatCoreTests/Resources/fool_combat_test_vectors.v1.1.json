@@ -57,7 +57,7 @@
     },
     {
       "id": "T04",
-      "description": "2层错位和伪证下错影追猎",
+      "description": "2层错位和伪证下双影追猎",
       "input": {
         "attack": 100,
         "skill": "fool_skill_06",

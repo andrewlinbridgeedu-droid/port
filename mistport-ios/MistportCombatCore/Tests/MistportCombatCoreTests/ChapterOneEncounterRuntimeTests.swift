@@ -748,7 +748,7 @@ struct ChapterOneEncounterRuntimeTests {
         }
     }
 
-    @Test("Memory leech enhanced setup adds one illusion and pays its first cleanse cost", .enabled(if: MPCChapterOneCatalog.relicsEnabled))
+    @Test("Memory leech enhanced setup adds a second illusion and pays its first cleanse cost", .enabled(if: MPCChapterOneCatalog.relicsEnabled))
     func memoryLeechEnhancedSetup() throws {
         var session = try MPCChapterOneEncounterSession.start(
             encounterID: "encounter_rain_01",
@@ -761,7 +761,7 @@ struct ChapterOneEncounterRuntimeTests {
         _ = try session.useFoolSkill(.backstageChange, targetID: nil)
         #expect(session.playerHP == 960)
         _ = try session.useFoolSkill(.maskedWhisper, targetID: target.id)
-        #expect(session.foolState(for: target.id)?.illusionStacks == 3)
+        #expect(session.foolState(for: target.id)?.illusionStacks == 4)
     }
 
     @Test("Thirteenth record previews the next intent every third round", .enabled(if: MPCChapterOneCatalog.relicsEnabled))

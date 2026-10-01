@@ -161,7 +161,7 @@
     },
     {
       "id": "fool_skill_06",
-      "name": "错影追猎",
+      "name": "双影追猎",
       "unlock_step": 10,
       "target": "SINGLE_ENEMY",
       "hits": [

@@ -331,10 +331,10 @@ public enum MPCChapterOneCatalog {
         .init(id: .maskedWhisper, name: "假面谕令", summary: "造成60%伤害并施加2层误认；召出幻影承接两次敌方攻击。CD 12秒，重复施放刷新次数，不叠加。", unlockStage: .investigationOne, isUltimate: false, tags: ["铺垫", "误认×2", "幻影承伤×2"]),
         .init(id: .identityDisplacement, name: "身份错置", summary: "误认未满4层时造成80%伤害并追加1层；达到4层时消耗误认，施加2回合「错位」并延迟目标下一次行动。", unlockStage: .investigationTwo, isUltimate: false, tags: ["误认转换", "错位", "行动延迟"]),
         .init(id: .fabricatedEvidence, name: "伪证烙印", summary: "造成70%伤害，施加1层误认；后续2个伤害技能各获得15%增伤。", unlockStage: .investigationTwo, isUltimate: false, tags: ["铺垫", "后续增伤"]),
-        .init(id: .mirrorPursuit, name: "错影追猎", summary: "造成两段65%伤害；目标处于错位时，第二段伤害提高50%。", unlockStage: .investigationThree, isUltimate: false, tags: ["两段伤害", "错位兑现"]),
+        .init(id: .mirrorPursuit, name: "双影追猎", summary: "造成两段65%伤害；目标处于错位时，第二段伤害提高50%。", unlockStage: .investigationThree, isUltimate: false, tags: ["两段伤害", "错位兑现"]),
         .init(id: .absurdFinale, name: "荒谬归结", summary: "造成150%伤害；若目标处于错位，消耗错位并追加80%伤害，同时获得30%穿甲。", unlockStage: .investigationThree, isUltimate: false, tags: ["终结", "错位兑现", "30%穿甲"]),
         .init(id: .turnTheTables, name: "反客为主", summary: "驱散一个敌方增益；成功时施加1回合错位，若没有可驱散增益则施加2层误认。", unlockStage: .investigationFour, isUltimate: false, tags: ["反制", "驱散", "错位"]),
-        .init(id: .backstageChange, name: "后手改写", summary: "净化一个自身负面状态，使下一张铺垫技能额外施加1层误认。", unlockStage: .investigationFour, isUltimate: false, tags: ["净化", "强化铺垫"]),
+        .init(id: .backstageChange, name: "后手改写", summary: "划去一项敌人施加的持续伤害（毒雾先降回初始浓度），并使下一张铺垫技能额外施加1层误认。", unlockStage: .investigationFour, isUltimate: false, tags: ["净化", "强化铺垫"]),
         .init(id: .namelessStage, name: "无名宣告", summary: "每场一次：所有敌人获得4层误认，并获得「归结准备」；下一次伤害提高25%，下一次身份错置只需消耗2层误认。", unlockStage: .investigationFour, isUltimate: true, tags: ["终极", "全体误认", "快速启动"])
     ]
 
@@ -342,12 +342,12 @@ public enum MPCChapterOneCatalog {
         .init(id: "K01", name: "假面试探", sequence: "假面谕令 → 错步穿行", purpose: "让第二张牌利用第一张牌制造的误认"),
         .init(id: "K02", name: "双面伪局", sequence: "假面谕令 → 伪证烙印", purpose: "稳定叠加误认并强化下一轮伤害"),
         .init(id: "K03", name: "身份翻面", sequence: "假面谕令 → 身份错置", purpose: "把误认转换成错位并延迟敌人"),
-        .init(id: "K04", name: "错影兑现", sequence: "身份错置 → 错影追猎", purpose: "用两段攻击兑现错位"),
+        .init(id: "K04", name: "双影兑现", sequence: "身份错置 → 双影追猎", purpose: "用两段攻击兑现错位"),
         .init(id: "K05", name: "错位归结", sequence: "身份错置 → 荒谬归结", purpose: "消费错位完成高穿甲终结"),
-        .init(id: "K06", name: "误认终结", sequence: "假面谕令 → 伪证烙印 → 身份错置 → 错影追猎 → 荒谬归结", purpose: "愚者的标准完整爆发"),
+        .init(id: "K06", name: "误认终结", sequence: "假面谕令 → 伪证烙印 → 身份错置 → 双影追猎 → 荒谬归结", purpose: "愚者的标准完整爆发"),
         .init(id: "K08", name: "夺席终演", sequence: "反客为主 → 错步穿行 → 荒谬归结", purpose: "敌人有增益时跳过常规铺垫"),
         .init(id: "K09", name: "后手重写", sequence: "后手改写 → 假面谕令 → 身份错置", purpose: "被施加负面后重建循环"),
-        .init(id: "K10", name: "无名开幕", sequence: "无名宣告 → 身份错置 → 错影追猎 → 荒谬归结", purpose: "每场一次快速启动")
+        .init(id: "K10", name: "无名开幕", sequence: "无名宣告 → 身份错置 → 双影追猎 → 荒谬归结", purpose: "每场一次快速启动")
     ]
 
     public static let passives: [MPCPassiveContent] = [
@@ -373,11 +373,11 @@ public enum MPCChapterOneCatalog {
         relic("relic_encore_bell", "不肯落幕的铃", .story, "手动打断翠焰亡灵蓄力，使本次攻击延后3秒；返场时该次攻击伤害提高50%。", "延后的攻击不会消失，返场时会以更高伤害归还。", "返场延后", "旧邮务间按取回条交出的异常物。铃声不能免除欠下的攻击，只能让它晚三秒落下。", .investigationOne),
         relic("relic_cracked_monocle", "偏差透镜", .common, "攻击4层误认目标时获得20%穿甲。攻击0层误认目标时伤害降低8%。", "必须在目标状态之间做取舍。", "误认兑现", "镜片里总有一个稍晚眨眼的人。", .investigationOne),
         relic("relic_late_second_watch", "迟滞铜片", .common, "成功应对已公布的强攻或避开攻击后，下回合额外执行1张普通技能；每场最多2次。", "只奖励对敌方意图的准确判断。", "意图应对", "它永远比归一系统慢半拍。", .investigationOne),
-        relic("relic_memory_leech_vial", "记忆蛭标本", .rare, "净化自身负面状态后，下一张铺垫技能额外施加1层误认。", "首次触发损失5%当前生命。", "净化连段", "瓶中生物记得每位持有者的噩梦。", .investigationTwo),
+        relic("relic_memory_leech_vial", "记忆蛭标本", .rare, "后手改写再净化一项持续伤害，下一张铺垫技能再多1层误认。", "首次触发损失5%当前生命。", "净化连段", "瓶中生物记得每位持有者的噩梦。", .investigationTwo),
         relic("relic_borrowed_bell", "借声铜铃", .common, "AI第一次造成破绽或降低防御时，获得10%最大生命护盾。", "同一轮不能重复触发。", "队伍协同", "铜铃从不发出自己的声音。", .investigationTwo),
         relic("relic_thirteenth_record", "预警录片", .common, "每3回合揭示额外敌方意图。揭示回合玩家伤害降低8%。", "信息越多，行动越需要克制。", "观察控制", "录片上有一声不属于任何人。", .investigationThree),
         relic("relic_clock_chaser_spur", "追猎者断刺", .rare, "完成一轮普通技能而未使用荒谬归结时，下一轮第一张伤害技能提高25%。", "只有坚持循环才会生效。", "循环奖励", "它来自一位追逐错误的人。", .investigationThree),
-        relic("relic_mirror_thread", "镜潮银线", .rare, "错影追猎第二击命中错位目标后，敌方下一次攻击提高20%。", "风险会被转移，但不会消失。", "多段协同", "银线连接的两端从不属于同一倒影。", .investigationThree),
+        relic("relic_mirror_thread", "镜潮银线", .rare, "双影追猎第二击命中错位目标后，敌方下一次攻击提高20%。", "风险会被转移，但不会消失。", "多段协同", "银线连接的两端从不属于同一倒影。", .investigationThree),
         relic("relic_trimmed_nameplate", "裁去的名牌", .rare, "敌方驱散玩家增益时，给该敌人施加2层误认。", "每次触发使玩家下一次治疗减少30%。", "反驱散", "名字被削掉后，职责仍留在背面。", .investigationFour),
         relic("relic_unified_gear", "三证环", .story, "一轮内完成铺垫、攻击、反制或净化三种不同类别行动时，获得10%最大生命护盾，并强化下一次有伤害的攻击20%。", "触发后，下一次实际结算到自身生命或护盾的敌方直接攻击提高25%；幻影承伤不消耗此负面，重复触发只刷新、不叠加。", "类别轮换与承伤风险", "三种互相矛盾的证明暂时保护持有者，也使归一系统更清楚地锁定其身体。", .investigationFour),
         relic("relic_blank_ticket", "空白戏票", .rare, "荒谬归结未消耗错位时，下一轮第一张身份错置额外施加1层误认；每场最多2次。", "需要主动保留一次错误。", "终结容错", "票面没有剧名，却写着你的座位。", .investigationFour),

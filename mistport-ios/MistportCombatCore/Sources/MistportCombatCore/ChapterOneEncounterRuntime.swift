@@ -799,6 +799,28 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     private var emeraldPoisonNextTick: TimeInterval?
     private var emeraldPoisonSourceID: String?
 
+    /// 后手改写's cleanse, worst first: thins the emerald fog back to its first concentration
+    /// (the fog itself lasts the battle), then the story core's released poison, then the
+    /// enemy damage-over-time with the most damage left. Returns what was cleansed.
+    private mutating func cleanseOnePlayerDamageOverTime() -> String? {
+        if isEmeraldPoisonActive, emeraldPoisonIntensity > 1 {
+            emeraldPoisonIntensity = 1
+            emeraldPoisonDamagePerTick = max(1, playerBaseMaxHP * 2 / 100)
+            return "毒雾浓度"
+        }
+        if let poison = campaignPrototype?.poisonRemaining, poison > 0 {
+            campaignPrototype?.poisonRemaining = 0
+            return "核心毒雾"
+        }
+        if let worst = finiteDamageTicks.indices.max(by: {
+            finiteDamageTicks[$0].damage * finiteDamageTicks[$0].remaining < finiteDamageTicks[$1].damage * finiteDamageTicks[$1].remaining
+        }) {
+            finiteDamageTicks.remove(at: worst)
+            return "持续伤害"
+        }
+        return nil
+    }
+
     public mutating func clearEmeraldPoison() {
         emeraldPoisonTicksRemaining = 0
         emeraldPoisonIntensity = 0
@@ -1199,7 +1221,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     private var blankTicketUsed: Bool
     private var healingPenaltyBP: Int
     private var previousActionCategory: MPCPlayerActionCategory?
-    private var enhancedSetupReady: Bool
+    /// Extra misread stacks the next setup card applies (后手改写 1, with the leech vial 2).
+    private var enhancedSetupStacks: Int
     private var borrowedBellTriggeredRound: Int?
     private var unreliableNarratorTriggeredRound: Int?
     private var q5PaperDoubleWasTriggered: Bool
@@ -1294,7 +1317,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             blankTicketUsed: false,
             healingPenaltyBP: 0,
             previousActionCategory: nil,
-            enhancedSetupReady: false,
+            enhancedSetupStacks: 0,
             borrowedBellTriggeredRound: nil,
             unreliableNarratorTriggeredRound: nil,
             q5PaperDoubleWasTriggered: false,
@@ -1527,17 +1550,25 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             result = .init(skillID: skillID, damage: 0, targetID: nil)
             calculationDetail = "召唤纸偶；本回合首次针对玩家的直接攻击由纸偶承受；回合结束消失；最终伤害0"
         case .backstageChange:
-            if loadout.relicIDs.contains("relic_memory_leech_vial") {
+            // The skill works on its own: strike out one enemy-applied damage over time and
+            // write one extra misread into the next setup card. The leech vial adds a second
+            // cleanse and a second extra misread. Relic costs (the needle's healing block)
+            // are the player's own bargain and are not cleansed.
+            let hasVial = loadout.relicIDs.contains("relic_memory_leech_vial")
+            var cleansed = [cleanseOnePlayerDamageOverTime()].compactMap { $0 }
+            if hasVial {
                 if !memoryLeechCostPaid {
                     playerHP = max(1, playerHP - 40)
                     memoryLeechCostPaid = true
                 }
-                enhancedSetupReady = true
-                triggeredEffects.append("记忆蛭标本：净化后强化铺垫")
+                if let second = cleanseOnePlayerDamageOverTime() { cleansed.append(second) }
+                triggeredEffects.append("记忆蛭标本：再净化一次，下一张铺垫再多1层误认")
             }
+            enhancedSetupStacks = max(enhancedSetupStacks, hasVial ? 2 : 1)
+            triggeredEffects.append("后手改写：" + (cleansed.isEmpty ? "无可净化" : "划去" + cleansed.joined(separator: "、")) + "；下一张铺垫额外\(enhancedSetupStacks)层误认")
             applyBossActionCategory(.setup)
             result = .init(skillID: skillID, damage: 0, targetID: nil)
-            calculationDetail = "净化并强化下一次铺垫；最终伤害0"
+            calculationDetail = "净化\(cleansed.count)项持续伤害，下一张铺垫额外\(enhancedSetupStacks)层误认；最终伤害0"
         case .namelessStage:
             guard !foolUltimateUsed else { throw FoolBattleError.ultimateAlreadyUsed }
             let hasSeal = loadout.relicIDs.contains("relic_nameless_seal")
@@ -1608,12 +1639,12 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 unreliableNarratorTriggeredRound = round
                 triggeredEffects.append("不可靠叙述者：额外1层误认，本回合承伤增加5%")
             }
-            if enhancedSetupReady, skillID == .maskedWhisper || skillID == .fabricatedEvidence {
+            if enhancedSetupStacks > 0, skillID == .maskedWhisper || skillID == .fabricatedEvidence {
                 var enhancedState = foolStates[id] ?? resolution.state
-                enhancedState.illusionStacks = min(4, enhancedState.illusionStacks + 1)
+                enhancedState.illusionStacks = min(4, enhancedState.illusionStacks + enhancedSetupStacks)
                 foolStates[id] = enhancedState
-                enhancedSetupReady = false
-                triggeredEffects.append("强化铺垫：额外施加1层误认")
+                triggeredEffects.append("强化铺垫：额外施加\(enhancedSetupStacks)层误认")
+                enhancedSetupStacks = 0
             }
             if loadout.passiveIDs.contains("fool_passive_03"), skillID == .identityDisplacement {
                 let healing = receivePlayerHealing(80)
@@ -3164,7 +3195,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         if hasReadyState, loadout.relicIDs.contains("relic_blank_ticket"), !blankTicketUsed {
             blankTicketUsed = true
             finaleReadyExpiresAtAction = nil
-            enhancedSetupReady = true
+            enhancedSetupStacks = max(enhancedSetupStacks, 1)
             triggeredEffects.append("空白戏票：终幕准备被保留一次")
             return
         }
