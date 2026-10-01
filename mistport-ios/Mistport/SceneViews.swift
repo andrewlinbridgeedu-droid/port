@@ -297,8 +297,12 @@ struct CityHubView: View {
                     else { onStory() }
                 }.lineLimit(1).frame(maxWidth: .infinity, alignment: .leading)
                 Button(action: onStamina) {
-                    HousingLanternIcon(value: staminaValue).frame(width: 32, height: 36)
-                }.accessibilityLabel(HousingAtlas.staminaCaption(staminaValue) + "，看看灯火")
+                    HStack(spacing: 3) {
+                        HousingLanternIcon(value: staminaValue).frame(width: 24, height: 28)
+                        Text("\(staminaValue)").font(HousingAtlas.digits(12))
+                            .contentTransition(.numericText()).animation(.easeOut(duration: 0.4), value: staminaValue)
+                    }.frame(minHeight: 36)
+                }.accessibilityLabel(HousingAtlas.staminaCaption(staminaValue) + "，体力\(staminaValue)，看看灯火")
                 Button { tasksExpanded.toggle() } label: { Image(systemName: tasksExpanded ? "chevron.up" : "chevron.down").frame(width: 44, height: 36) }
                     .accessibilityLabel(tasksExpanded ? "收起当前任务" : "展开当前任务，\(streetTargets.count)个目标")
             }

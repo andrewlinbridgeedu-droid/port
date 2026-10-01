@@ -54,6 +54,18 @@ enum HousingAtlas {
     static func stamina(_ value: Int) -> UIImage {
         frame("HousingStamina20260930", index: staminaFrame(value), columns: 3, rows: 2)
     }
+    /// Numbers follow the wallet chips on the home page: rounded, bold, monospaced digits.
+    static func digits(_ size: CGFloat) -> Font { .system(size: size, weight: .bold, design: .rounded).monospacedDigit() }
+    static func staminaText(_ value: Int) -> String { "\(value)／\(MPCStamina.maximum)" }
+    static func refillText(_ stamina: MPCStaminaState, at now: Date) -> String {
+        let seconds = stamina.secondsUntil(MPCStamina.maximum, at: now.timeIntervalSince1970)
+        guard seconds > 0 else { return "每日恢复 \(stamina.recoveryPerDay) · 灯火已满" }
+        let full = now.addingTimeInterval(seconds)
+        let when = Calendar.current.isDate(full, inSameDayAs: now)
+            ? full.formatted(date: .omitted, time: .shortened)
+            : "明日 " + full.formatted(date: .omitted, time: .shortened)
+        return "每日恢复 \(stamina.recoveryPerDay) · 约 \(when) 回满"
+    }
 }
 
 private struct HousingPage<Content: View>: View {
@@ -371,8 +383,13 @@ struct HousingStaminaView: View {
                 VStack(alignment: .leading, spacing: 14) {
                     HousingLanternStage(value: value,
                         fraction: stamina.current(at: now.timeIntervalSince1970) / Double(MPCStamina.maximum))
-                    Text(HousingAtlas.staminaCaption(value)).font(.title2.bold())
-                        .contentTransition(.opacity).animation(.easeInOut(duration: 0.6), value: HousingAtlas.staminaCaption(value))
+                    HStack(alignment: .firstTextBaseline) {
+                        Text(HousingAtlas.staminaCaption(value)).font(.title2.bold())
+                            .contentTransition(.opacity).animation(.easeInOut(duration: 0.6), value: HousingAtlas.staminaCaption(value))
+                        Spacer()
+                        Text("体力 ").font(.subheadline.bold()) + Text(HousingAtlas.staminaText(value)).font(HousingAtlas.digits(22))
+                    }
+                    Text(HousingAtlas.refillText(stamina, at: now)).font(HousingAtlas.digits(13)).foregroundStyle(.secondary)
                     Text("照顾好起居，灯火会随着歇息慢慢恢复。").font(.body)
                 }
             }
@@ -413,6 +430,11 @@ struct HousingLanternStage: View {
                     .rotationEffect(.degrees(sway(t: t, sincePush: sincePush)), anchor: .top)
                 motes(t: t, flame: flame)
                 mist(t: t, layer: 1)
+                Text(HousingAtlas.staminaText(value)).font(HousingAtlas.digits(26))
+                    .foregroundStyle(Color(red: 0.96, green: 0.83, blue: 0.57))
+                    .shadow(color: Self.amber.opacity(0.6 * min(1, flame)), radius: 8)
+                    .contentTransition(.numericText()).animation(.easeOut(duration: 0.4), value: value)
+                    .frame(maxHeight: .infinity, alignment: .bottom).padding(.bottom, 14)
             }
             .frame(height: 290).frame(maxWidth: .infinity)
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
@@ -424,7 +446,7 @@ struct HousingLanternStage: View {
         }
         .sensoryFeedback(.impact(weight: .light), trigger: pushedAt)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("体力灯罩，" + HousingAtlas.staminaCaption(value))
+        .accessibilityLabel("体力灯罩，\(HousingAtlas.staminaCaption(value))，体力\(value)，上限\(MPCStamina.maximum)")
     }
 
     private func lamp(flame: Double) -> some View {
@@ -593,7 +615,14 @@ struct HousingHomeMarker: View {
 
 struct StaminaCostView: View {
     let activity: MPCStamina.Activity
-    var body: some View { Label("\(MPCStamina.cost(activity)) 体力", systemImage: "lamp.desk.fill").font(.caption).foregroundStyle(.secondary) }
+    var body: some View {
+        HStack(spacing: 3) {
+            Image(uiImage: HousingAtlas.stamina(MPCStamina.maximum)).resizable().scaledToFit().frame(width: 14, height: 16)
+            Text("\(MPCStamina.cost(activity))").font(HousingAtlas.digits(12))
+            Text("体力").font(.caption)
+        }.foregroundStyle(.secondary)
+            .accessibilityElement(children: .ignore).accessibilityLabel("花费\(MPCStamina.cost(activity))体力")
+    }
 }
 extension MPCStamina.Activity {
     var housingTitle: String {
