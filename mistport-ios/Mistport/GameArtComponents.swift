@@ -97,6 +97,50 @@ struct GameArtPaper: View {
     }
 }
 
+/// The paper fills the viewport even when there are only a few counter actions.
+/// Its bottom safe-area backing remains paper when the content scrolls or bounces.
+struct GameArtPaperScroll<Content: View>: View {
+    var newsprint = false
+    @ViewBuilder let content: () -> Content
+    private let bottomID = "game-art-paper-bottom"
+    private var backing: Color {
+        newsprint ? Color(red: 0.93, green: 0.86, blue: 0.70) : GameArt.paper
+    }
+    var body: some View {
+        GeometryReader { viewport in
+            ScrollViewReader { reader in
+                ScrollView {
+                    VStack(spacing: 0) {
+                        content()
+                        Color.clear.frame(height: 0).id(bottomID)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: viewport.size.height, alignment: .top)
+                    .background {
+                        if newsprint {
+                            backing.overlay {
+                                LinearGradient(colors: [.brown.opacity(0.14), .clear, .brown.opacity(0.10)], startPoint: .leading, endPoint: .trailing)
+                            }
+                        } else {
+                            GameArtPaper()
+                        }
+                    }
+                }
+                .background(backing.ignoresSafeArea(edges: .bottom))
+                #if DEBUG
+                .task {
+                    let args = ProcessInfo.processInfo.arguments
+                    guard (args.contains("--daily-pacing-device-walk") || args.contains("--housing-device-walk")),
+                          args.contains("--daily-ui-review-bottom") else { return }
+                    try? await Task.sleep(for: .milliseconds(500))
+                    guard !Task.isCancelled else { return }
+                    reader.scrollTo(bottomID, anchor: .bottom)
+                }
+                #endif
+            }
+        }
+    }
+}
+
 struct GameArtGroupStyle: GroupBoxStyle {
     func makeBody(configuration: Configuration) -> some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -124,7 +168,7 @@ struct GameArtPage<Content: View>: View {
                 }.frame(maxWidth: .infinity, alignment: .leading)
                 GameArtReturnButton(title: closeTitle) { onClose?(); dismiss() }
             }.padding(18).background(GameArt.night)
-            ScrollView {
+            GameArtPaperScroll {
                 VStack(spacing: 0) {
                     if let art {
                         GeometryReader { g in
@@ -136,7 +180,6 @@ struct GameArtPage<Content: View>: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(20).foregroundStyle(GameArt.ink)
                         .environment(\.colorScheme, .light)
-                        .background { GameArtPaper() }
                         .padding(.horizontal, 12).padding(.top, art == nil ? 14 : -12).padding(.bottom, 24)
                 }
             }

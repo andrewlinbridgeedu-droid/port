@@ -524,5 +524,8 @@
   "user_visual_approval_of_new_pages": false,
   "production_art_changed": false,
   "rules_changed": false,
-  "ssd_links_changed": false
+  "ssd_links_changed": false,
+  "phase": "return-button-first-review-before-paper-fill",
+  "source_commit": "6436a914c78533dbf80c32b800265e9673df1f10",
+  "historical_record_note": "Historical hashes describe the first review. The build cache executable path has since been reused; paper-validation.json describes the latest paper-fill revision."
 }

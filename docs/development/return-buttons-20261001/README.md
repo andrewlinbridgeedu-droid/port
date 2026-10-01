@@ -1,6 +1,22 @@
-# 港城返回按钮统一 · 2026-10-01
+# 港城返回按钮与米色铺底统一 · 2026-10-01
 
 用户认可警察厅的金边切角“返回港城”按钮，要求报馆及其他地方保持一致。从最新 main `758d409` 单独开 `codex/unify-return-buttons-20261001`，没有混入草稿 PR #41 的战斗资源。
+
+## 米色铺底修订（用户最新反馈）
+
+用户指出警察厅正文下面仍有大片深色留白，要求各处用正文的米黄色一直铺到底。本修订继续提交到 [PR #42](https://github.com/andrewlinbridgeedu-droid/port/pull/42)。最新结果见 [28 张原样截图](paper-review.html) 和 [构建、源码及截图记录](paper-validation.json)。下文的 25 张截图保留为返回按钮首轮历史记录，拍摄时间早于本次铺底修正。
+
+- `GameArtPaperScroll` 让纸面至少填满可见正文区域，并用同色背景覆盖底部安全区。各柜台的 `HomeCounterScene` 和通用正文页的 `GameArtPage` 共用它，短页不再露出深色空白，长页滚到底也保持米色。
+- 报馆日刊和报纸附刊也改为连续纸面，使用原报纸米黄色与纸面阴影色；报馆编辑／排字工文字改成墨色以保持可读。标题栏和金边按钮保留原样。
+- 覆盖柜台、赁屋行、租约、商人、设置、技能说明、委托、通缉、城市事件、邻里等共用纸面页面。场景画、人物贴层、功能按钮、玩法规则与返回回调没有改变。
+- 最终模拟器编译 `BUILD SUCCEEDED`。逐张观察 20 张页面首屏和 8 张滚到底截图，包含警察厅、邮局、委托板等短页，以及市政厅、日刊、附刊、设置、商人、租约、咖啡馆、旧街铺面底部。均为正式 SwiftUI 页面原样导出，1170×2532，PNG 按 LFS 提交。
+- 滚到底截图通过现有隔离 DEBUG 模式的 `--daily-ui-review-bottom` 跳转滚动位置，不能记为手动点击或手势测试。未测全套系统字号、手动回弹手势、真机布局或 Unity；没有装机、没有访问手机 Preferences、没有修改玩家存档。DerivedData 仍在 SSD，已有链接保持原样。
+
+复跑本次截图（先构建并安装到独立模拟器）：
+
+```sh
+python3 tools/ui-art/capture_simulator.py --simulator <UUID> --destination docs/development/return-buttons-20261001/paper-screenshots --screens police cityhall harbor board post clinic oldstreet cafe agency newspaper supplement settings skill tasks bounty shop offers lease events neighbors cityhall-bottom newspaper-bottom settings-bottom shop-bottom supplement-bottom lease-bottom cafe-bottom oldstreet-bottom
+```
 
 ## 改动
 
@@ -12,7 +28,7 @@
 - 构筑页去掉“愚者攻略”的放大镜装饰，文字保持单行，避免新返回按钮使其挤成两行。
 - 翻页箭头、卡牌排序、首页信息展开／收起、街景对话气泡及战斗快捷技能弹框、正文的完整行动按钮、战后主行动不属于页面标题栏返回控件；保留其用途与布局。DEBUG 工具面板的系统工具栏不属于玩家页面。
 
-## 验证
+## 首轮返回按钮验证（铺底修正前）
 
 模拟器使用独立的 iPhone 13 / iOS 26.5 实例和 `local.mistport.housing-integration` 包；正式 Swift 源码与资产目录编译，Unity 运行时不包含在该核查宿主。所有页面通过既有 DEBUG 隔离账户打开，截图不访问真实手机容器。
 

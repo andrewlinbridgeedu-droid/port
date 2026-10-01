@@ -18,7 +18,9 @@ container = Path(subprocess.check_output(['xcrun', 'simctl', 'get_app_container'
 args.destination.mkdir(parents=True, exist_ok=True)
 manifest = args.destination / 'capture.json'
 entries = json.loads(manifest.read_text()) if manifest.exists() else []
-for page in args.screens:
+for screen in args.screens:
+    bottom = screen.endswith('-bottom')
+    page = screen.removesuffix('-bottom') if bottom else screen
     if page == 'lease':
         flags = ['--housing-device-walk', '--housing-screen=lease']
         source = 'housing-lease.png'
@@ -33,6 +35,8 @@ for page in args.screens:
         source = 'ui-art-' + page + '.png'
     else:
         raise ValueError('Unsupported screenshot: ' + page)
+    if bottom:
+        flags.append('--daily-ui-review-bottom')
     stamp = time.time()
     subprocess.run(['xcrun', 'simctl', 'launch', '--terminate-running-process', args.simulator, bundle, *flags], check=True)
     file = container / 'Documents' / source
@@ -42,9 +46,9 @@ for page in args.screens:
         time.sleep(.25)
     else:
         raise RuntimeError('No fresh screenshot: ' + page)
-    shutil.copy2(file, args.destination / (page + '.png'))
-    entries = [entry for entry in entries if entry['page'] != page]
-    entries.append({'page': page, 'file': page + '.png', 'flags': flags, 'source': 'iOS Simulator, real SwiftUI view, isolated fixture', 'captured_at': time.time()})
+    shutil.copy2(file, args.destination / (screen + '.png'))
+    entries = [entry for entry in entries if entry['page'] != screen]
+    entries.append({'page': screen, 'file': screen + '.png', 'flags': flags, 'source': 'iOS Simulator, real SwiftUI view, isolated fixture', 'captured_at': time.time()})
     manifest.write_text(json.dumps(entries, ensure_ascii=False, indent=2) + '\n')
-    print('Captured ' + page, flush=True)
+    print('Captured ' + screen, flush=True)
 (args.destination / 'capture.json').write_text(json.dumps(entries, ensure_ascii=False, indent=2) + '\n')
