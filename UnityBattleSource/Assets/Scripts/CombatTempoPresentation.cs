@@ -97,11 +97,47 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         }
         return found;
     }
+    // FBX skin bounds encompass every authored pose. Align a replacement using
+    // its actual current skin, otherwise the character can hover above its old feet.
+    internal static bool CurrentPoseBounds(Transform root, out Bounds bounds) {
+        bounds = default; bool found = false;
+        foreach (var r in root.GetComponentsInChildren<Renderer>(false)) {
+            if (!r.enabled || r is ParticleSystemRenderer || r is LineRenderer) continue;
+            if (r is SkinnedMeshRenderer skin && skin.sharedMesh) {
+                // Calculate world-space linear skinning explicitly. BakeMesh's
+                // transform-scale compensation differs from FBX renderer bounds;
+                // multiplying that snapshot by lossyScale again inflated the hero.
+                var mesh = skin.sharedMesh;
+                var vertices = mesh.vertices; var weights = mesh.boneWeights;
+                var bindposes = mesh.bindposes; var bones = skin.bones;
+                var matrices = new Matrix4x4[bindposes.Length];
+                for (int i = 0; i < matrices.Length; i++)
+                    matrices[i] = bones[i].localToWorldMatrix * bindposes[i];
+                for (int i = 0; i < vertices.Length; i++) {
+                    var weight = weights[i]; var v = vertices[i];
+                    var point = matrices[weight.boneIndex0].MultiplyPoint3x4(v) * weight.weight0
+                              + matrices[weight.boneIndex1].MultiplyPoint3x4(v) * weight.weight1
+                              + matrices[weight.boneIndex2].MultiplyPoint3x4(v) * weight.weight2
+                              + matrices[weight.boneIndex3].MultiplyPoint3x4(v) * weight.weight3;
+                    if (!found) { bounds = new Bounds(point, Vector3.zero); found = true; } else bounds.Encapsulate(point);
+                }
+            } else {
+                if (!found) { bounds = r.bounds; found = true; } else bounds.Encapsulate(r.bounds);
+            }
+        }
+        return found;
+    }
     Entry Replace(Transform original, string kind, Transform target, EnemyHandle handle)
     {
         bool refinedHero = kind == "Hero";
-        var prefab = Resources.Load<GameObject>(refinedHero ? "CombatTempo/RefinedHero/HeroRefined" : "CombatTempo/Animation/" + kind);
-        if (!original || !prefab || !BoundsOf(original, out var before)) return null;
+        string heroAsset = "CombatTempo/RefinedHeroV2/HeroMeshyV2";
+#if UNITY_EDITOR || UNITY_STANDALONE
+        if (Array.IndexOf(Environment.GetCommandLineArgs(), "--hero-v1") >= 0) heroAsset = "CombatTempo/RefinedHero/HeroRefined";
+#endif
+        var prefab = Resources.Load<GameObject>(refinedHero ? heroAsset : "CombatTempo/Animation/" + kind);
+        if (!original || !prefab) return null;
+        Bounds before;
+        if (!(refinedHero ? CurrentPoseBounds(original, out before) : BoundsOf(original, out before))) return null;
         var e = new Entry { original = original, handle = handle, previousModel = handle ? handle.Model : null };
         var skins = original.GetComponentsInChildren<SkinnedMeshRenderer>(false);
         var materials = skins.Length > 0 ? skins[0].sharedMaterials : Array.Empty<Material>();
@@ -112,21 +148,25 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         e.oldAnimator = original.GetComponentInChildren<Animator>(true);
         if (e.oldAnimator) { e.animatorEnabled = e.oldAnimator.enabled; e.oldAnimator.enabled = false; }
         var model = Instantiate(prefab, original, false); model.name = "Blender " + kind + " sample";
+        if (refinedHero) model.AddComponent<RefinedHeroAppearance>().Apply(outfit);
         // Imported FBX remains an intact skin/rig, including the new jaw and coat.
         if (!refinedHero) foreach (var skin in model.GetComponentsInChildren<SkinnedMeshRenderer>()) if (materials.Length > 0) skin.sharedMaterials = materials;
-        if (BoundsOf(model.transform, out var after) && after.size.y > .001f) {
+        Bounds after;
+        if ((refinedHero ? CurrentPoseBounds(model.transform, out after) : BoundsOf(model.transform, out after)) && after.size.y > .001f) {
             model.transform.localScale *= before.size.y / after.size.y;
-            BoundsOf(model.transform, out after);
+            if (refinedHero) CurrentPoseBounds(model.transform, out after); else BoundsOf(model.transform, out after);
             model.transform.position += new Vector3(before.center.x - after.center.x, before.min.y - after.min.y, before.center.z - after.center.z);
+#if UNITY_EDITOR || UNITY_STANDALONE
+            if (refinedHero) Debug.Log("HERO_POSE_ALIGNMENT before=" + before + " after=" + after + " scale=" + model.transform.lossyScale);
+#endif
         }
         if (!refinedHero) CloneAccessories(e.renderers, model.transform, before.size.y);
         if (refinedHero) {
             e.oldHeroIdle = original.GetComponentInChildren<HeroLivingIdle20260916>();
             if (e.oldHeroIdle) { e.heroIdleEnabled = e.oldHeroIdle.enabled; e.oldHeroIdle.enabled = false; }
-            model.AddComponent<RefinedHeroAppearance>().Apply(outfit);
         }
         e.replacement = model.transform;
-        e.body = CombatTempoAnimatedBody.Install(model, kind, target, refinedHero ? "CombatTempo/RefinedHero/HeroRefined" : null);
+        e.body = CombatTempoAnimatedBody.Install(model, kind, target, refinedHero ? heroAsset : null);
         if (handle) handle.SetTempoPresentationModel(model.transform);
         return e;
     }

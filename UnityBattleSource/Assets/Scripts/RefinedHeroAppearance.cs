@@ -1,6 +1,7 @@
+using System.Linq;
 using UnityEngine;
 
-// One mesh and Animator. Outfit selection changes surfaces, never the arena or clocks.
+// One shared body and Animator; separately tailored outfits never change the arena or clocks.
 public sealed class RefinedHeroAppearance : MonoBehaviour
 {
     public string Outfit { get; private set; } = "mistport-night";
@@ -9,6 +10,13 @@ public sealed class RefinedHeroAppearance : MonoBehaviour
     {
         if (id != "mistport-night" && id != "starlight-magician" && id != "midnight-carnival") return false;
         Outfit = id;
+        string costume = id == "starlight-magician" ? "starlight" : id == "midnight-carnival" ? "carnival" : "night";
+        bool separateCostumes = GetComponentsInChildren<Renderer>(true).Any(r => r.name.StartsWith("Outfit-"));
+        if (separateCostumes) {
+            foreach (var r in GetComponentsInChildren<Renderer>(true))
+                if (r.name.StartsWith("Outfit-")) r.enabled = r.name.StartsWith("Outfit-" + costume + "-");
+            return true;
+        }
         var coat = id == "starlight-magician" ? new Color(.62f,.58f,.47f) : id == "midnight-carnival" ? new Color(.055f,.016f,.024f) : new Color(.016f,.011f,.025f);
         var silk = id == "starlight-magician" ? new Color(.035f,.055f,.19f) : id == "midnight-carnival" ? new Color(.35f,.018f,.032f) : new Color(.072f,.018f,.15f);
         var sash = id == "midnight-carnival" ? new Color(.36f,.035f,.028f) : new Color(.018f,.22f,.25f);
