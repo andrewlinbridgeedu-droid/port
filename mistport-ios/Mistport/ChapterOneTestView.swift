@@ -5600,31 +5600,15 @@ struct ChapterSkillDetailSheet: View {
     let skill: MPCSkillContent
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 12) {
-                Image(decorative: skillCardArtName(skill.id))
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 112, height: 152)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(skill.name).font(.title3.bold())
-                    Text(skill.isUltimate ? "终极技能" : "帷幕技能")
-                        .font(.caption.bold())
-                        .foregroundStyle(.yellow)
-                    Text(skill.summary)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-            }
+        GameArtPage(title: skill.name, subtitle: skill.isUltimate ? "终极技能 · 秘仪档案" : "帷幕技能 · 秘仪档案", closeTitle: "收起") {
+            Image(decorative: skillCardArtName(skill.id))
+                .resizable().scaledToFit().frame(maxWidth: .infinity).frame(height: 190)
+                .shadow(color: .purple.opacity(0.22), radius: 12, y: 4)
+            GroupBox("技能效果") { Text(skill.summary).font(.body).lineSpacing(6).frame(maxWidth: .infinity, alignment: .leading) }
             if !skill.tags.isEmpty {
-                Text(skill.tags.joined(separator: "  ·  "))
-                    .font(.caption.bold())
-                    .foregroundStyle(.secondary)
+                Text(skill.tags.joined(separator: "  ·  ")).font(.subheadline.bold()).foregroundStyle(GameArt.ink)
             }
-            Spacer()
         }
-        .padding(22)
     }
 }
 
@@ -8539,7 +8523,7 @@ struct ChurchBountyBoard: View {
                                 }
                             }
                             Button("无名残余案 · 每日当地小案") { showsRemnants = true }
-                                .buttonStyle(.borderedProminent)
+                                .buttonStyle(GameArtButtonStyle(primary: true))
                             if !closed.isEmpty {
                                 Button { withAnimation { showsClosed.toggle() } } label: {
                                     HStack {

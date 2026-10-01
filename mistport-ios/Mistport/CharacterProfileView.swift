@@ -90,6 +90,9 @@ struct CharacterProfileView: View {
 
     @State private var selectedSection: CharacterSection = {
         let arguments = ProcessInfo.processInfo.arguments
+        #if DEBUG
+        if arguments.contains("--daily-ui-review=profile") { return .skills }
+        #endif
         if MPCChapterOneCatalog.relicsEnabled && arguments.contains("--preview-relics") { return .equipment }
         return .talent
     }()
@@ -427,7 +430,7 @@ struct CharacterProfileView: View {
                                 relicRepairNotice = "修复失败：\(error.localizedDescription)"
                             }
                         }
-                        .buttonStyle(.bordered)
+                        .buttonStyle(GameArtButtonStyle(compact: true))
                         .disabled(game.venueCoins < price)
                     }
                 }
@@ -447,7 +450,7 @@ struct CharacterProfileView: View {
                     }
                     Spacer()
                     Button(game.painSalveStock > 0 ? "已备妥" : "\(game.painSalvePrice) 铜币") { game.purchasePainSalve() }
-                        .buttonStyle(.bordered).disabled(game.painSalveStock > 0)
+                        .buttonStyle(GameArtButtonStyle(compact: true)).disabled(game.painSalveStock > 0)
                         .accessibilityLabel("采购止痛膏，\(game.painSalvePrice)铜币，恢复25%生命")
                 }
                 Divider()
@@ -461,7 +464,7 @@ struct CharacterProfileView: View {
                                 Text(EarlyRelicShop.detail(id)).font(.caption).foregroundStyle(.secondary)
                             }
                             Button("\(EarlyRelicShop.price(id) ?? 0) 铜币") { game.purchaseEarlyRelic(id) }
-                                .buttonStyle(.bordered)
+                                .buttonStyle(GameArtButtonStyle(compact: true))
                                 .accessibilityLabel("购买\(EarlyRelicShop.name(id))，\(EarlyRelicShop.price(id) ?? 0)铜币")
                         }
                     }
@@ -481,7 +484,7 @@ struct CharacterProfileView: View {
                         Spacer()
                         Button(game.advancementIngredients.contains(ingredient) ? "已持有" : "\(ingredient.purchaseOffer.price) 铜币") {
                             game.purchaseAdvancementIngredient(ingredient)
-                        }.buttonStyle(.bordered)
+                        }.buttonStyle(GameArtButtonStyle(compact: true))
                             .disabled(!game.advancementPurchaseUnlocked(ingredient) || game.advancementIngredients.contains(ingredient))
                             .accessibilityLabel("\(ingredient.name)，\(ingredient.purchaseOffer.price)铜币，第\(ingredient.purchaseOffer.unlockMission)关后开放")
                     }
@@ -514,7 +517,7 @@ struct CharacterProfileView: View {
             let serial = game.postalJobSerial
                             let step = game.postalJobStep
                             Button(answer) { Task { await game.verifyPostalField(answer, serial: serial, step: step) } }
-                                .buttonStyle(.bordered)
+                                .buttonStyle(GameArtButtonStyle(compact: true))
                         }
                     }
                 }
@@ -568,10 +571,9 @@ struct CharacterProfileView: View {
                 .font(.system(size: 9)).foregroundStyle(.yellow.opacity(0.9)).lineLimit(1)
             Button { game.upgradeFoolSkill(skill.id) } label: {
                 Text(!unlocked ? "尚未解锁" : !supported ? "无需强化" : cost.map { "强化 · \($0) 粉尘" } ?? "已满级")
-                    .font(.system(size: 11, weight: .bold)).frame(maxWidth: .infinity).frame(height: 30)
-                    .background(Color.purple.opacity(0.40), in: RoundedRectangle(cornerRadius: 7))
+                    .font(.system(size: 11, weight: .bold)).frame(maxWidth: .infinity)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(GameArtButtonStyle(compact: true))
             .disabled(!unlocked || !supported || cost == nil || game.skillDust < (cost ?? 0))
             .accessibilityLabel("强化\(skill.name)")
             .accessibilityValue("当前\(level)级，\(cost.map { "需要\($0)粉尘" } ?? "已满级")")

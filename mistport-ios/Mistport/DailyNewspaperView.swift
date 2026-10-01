@@ -28,7 +28,7 @@ struct MistportNewsprintPage<Content: View>: View {
                         HStack { Text("第 \(day) 天"); Spacer(); Text("本地消息 · 街区告示") }
                             .font(.system(size: 11, design: .serif))
                         Rectangle().fill(ink).frame(height: 2)
-                        content()
+                        content().buttonStyle(GameArtButtonStyle())
                         Rectangle().fill(ink.opacity(0.5)).frame(height: 0.7)
                         Text("雾港报馆印行").font(.system(size: 11, design: .serif)).frame(maxWidth: .infinity)
                     }.font(.system(size: 16, design: .serif)).foregroundStyle(ink).tint(ink)

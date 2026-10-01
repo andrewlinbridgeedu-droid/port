@@ -54,9 +54,9 @@ struct TavernInteriorView: View {
                     } label: {
                         Text("灰筹·莫尔")
                             .font(.system(size: 13, weight: .bold))
-                            .padding(.horizontal, 13).padding(.vertical, 8)
-                            .background(.white.opacity(0.94), in: Capsule())
-                            .foregroundStyle(Color(red: 0.20, green: 0.19, blue: 0.20))
+                            .padding(.horizontal, 13).frame(minHeight: 44)
+                            .modifier(GameArtControlSurface())
+                            .foregroundStyle(GameArt.gold)
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("与灰筹莫尔对话，前港务抵押登记员")
@@ -134,7 +134,7 @@ struct TavernInteriorView: View {
                         HStack(spacing: 10) {
                             Button("悬赏告示") { showsBoard = true }
                                 .frame(maxWidth: .infinity, minHeight: 48)
-                                .background(.white.opacity(0.16), in: Capsule())
+                                .modifier(GameArtControlSurface())
                             Button(game.tavernPokerUnlocked ? "与莫尔打牌" : "问莫尔的牌局") {
                                 if game.tavernPokerUnlocked {
                                     showsPoker = true
@@ -148,7 +148,7 @@ struct TavernInteriorView: View {
                             .accessibilityLabel(game.tavernPokerUnlocked ? "与莫尔打牌" : "向莫尔打听将来的牌局")
                             .frame(maxWidth: .infinity, minHeight: 48)
                             .foregroundStyle(Color(red: 0.10, green: 0.16, blue: 0.20))
-                            .background(gold, in: Capsule())
+                            .modifier(GameArtControlSurface(primary: true))
                         }
                         .font(.system(size: 13, weight: .bold))
                         .buttonStyle(.plain)
@@ -250,7 +250,7 @@ struct BountyPokerRound: View {
                             Button(round == nil && douGame == nil ? (isTavernFreeplay ? "离开牌桌" : "离开牌桌 · 改查公开档案") : "暂离牌桌 · 下次继续此局") { dismiss() }
                                 .font(.system(size: 12, weight: .medium))
                                 .foregroundStyle(.white.opacity(0.78))
-                                .frame(maxWidth: .infinity, minHeight: 40)
+                                .frame(maxWidth: .infinity, minHeight: 44)
                                 .buttonStyle(.plain)
                         }
                         .padding(.horizontal, 18)
@@ -300,17 +300,16 @@ struct BountyPokerRound: View {
             Button { showsHelp = true } label: {
                 Image(systemName: "questionmark")
                     .font(.system(size: 16, weight: .heavy))
-                    .frame(width: 38, height: 38)
-                    .background(gold.opacity(0.18), in: Circle())
-                    .overlay(Circle().stroke(gold.opacity(0.7), lineWidth: 1))
+                    .frame(width: 44, height: 44)
+                    .modifier(GameArtControlSurface())
             }
             .buttonStyle(.plain)
             .accessibilityLabel("查看两种牌局玩法")
             Button { dismiss() } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 13, weight: .bold))
-                    .frame(width: 38, height: 38)
-                    .background(.white.opacity(0.13), in: Circle())
+                    .frame(width: 44, height: 44)
+                    .modifier(GameArtControlSurface())
             }
             .buttonStyle(.plain)
             .accessibilityLabel("暂离牌局")
@@ -333,16 +332,20 @@ struct BountyPokerRound: View {
                 Text("\(game.venueCoins) 铜")
                     .font(.system(size: 12, weight: .bold)).foregroundStyle(gold)
                 Button { showsHelp = true } label: {
-                    Image(systemName: "questionmark.circle.fill").font(.system(size: 27))
+                    Image(systemName: "questionmark").font(.system(size: 16, weight: .bold))
+                        .frame(width: 44, height: 44).foregroundStyle(gold)
+                        .modifier(GameArtControlSurface())
                 }
                 .accessibilityLabel("查看两种牌局玩法")
                 Button { dismiss() } label: {
-                    Image(systemName: "xmark.circle.fill").font(.system(size: 27))
+                    Image(systemName: "xmark").font(.system(size: 16, weight: .bold))
+                        .frame(width: 44, height: 44).foregroundStyle(gold)
+                        .modifier(GameArtControlSurface())
                 }
                 .accessibilityLabel("暂离牌局")
                 .buttonStyle(.plain)
             }
-            .frame(height: 36)
+            .frame(height: 44)
             if let douGame {
                 HStack(alignment: .top, spacing: 12) {
                     landscapeDouSidebar(douGame)
@@ -357,8 +360,8 @@ struct BountyPokerRound: View {
                         invitation
                         Button("切回五张换牌") { mode = .simple }
                             .font(.system(size: 13, weight: .bold))
-                            .frame(maxWidth: .infinity, minHeight: 42)
-                            .background(.white.opacity(0.12), in: Capsule())
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .modifier(GameArtControlSurface())
                             .buttonStyle(.plain)
                     }
                     .frame(width: min(250, geometry.size.width * 0.30))
@@ -425,10 +428,9 @@ struct BountyPokerRound: View {
                         }
                         Spacer(minLength: 0)
                     }
-                    .foregroundStyle(featuredPrize ? Color(red: 0.08, green: 0.15, blue: 0.20) : cream)
+                    .foregroundStyle(cream)
                     .padding(.horizontal, 12).frame(maxWidth: .infinity, minHeight: 58)
-                    .background(featuredPrize ? gold : .white.opacity(0.11),
-                                in: RoundedRectangle(cornerRadius: 10))
+                    .modifier(GameArtControlSurface(selected: featuredPrize))
                 }
                 .buttonStyle(.plain)
             } else if isTavernFreeplay {
@@ -440,11 +442,9 @@ struct BountyPokerRound: View {
                     Button { wager = amount; featuredPrize = false } label: {
                         Text("\(amount) 铜")
                             .font(.system(size: 13, weight: .bold))
-                            .frame(maxWidth: .infinity, minHeight: 40)
-                            .foregroundStyle(!featuredPrize && wager == amount
-                                ? Color(red: 0.08, green: 0.15, blue: 0.20) : cream)
-                            .background(!featuredPrize && wager == amount ? gold : .white.opacity(0.11),
-                                        in: RoundedRectangle(cornerRadius: 9))
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .foregroundStyle(cream)
+                            .modifier(GameArtControlSurface(selected: !featuredPrize && wager == amount))
                     }.buttonStyle(.plain)
                 }
             }
@@ -456,8 +456,8 @@ struct BountyPokerRound: View {
                 Text(featuredPrize ? "押40铜 · 争夺\(prize?.name ?? "彩头")" : "押\(wager)铜 · 洗牌开局")
                     .font(.system(size: 15, weight: .bold, design: .serif))
                     .foregroundStyle(Color(red: 0.08, green: 0.15, blue: 0.20))
-                    .frame(maxWidth: .infinity, minHeight: 43)
-                    .background(gold, in: Capsule())
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .modifier(GameArtControlSurface(primary: true))
             }
             .buttonStyle(.plain)
             .disabled(game.venueCoins < (featuredPrize ? 40 : wager))
@@ -482,10 +482,9 @@ struct BountyPokerRound: View {
                     ForEach(0...3, id: \.self) { points in
                         Button(points == 0 ? "不叫" : "叫 \(points) 分") { bidDou(state, points: points) }
                             .font(.system(size: 12, weight: .bold))
-                            .frame(maxWidth: .infinity, minHeight: 42)
-                            .foregroundStyle(points == 0 ? cream : Color(red: 0.07, green: 0.12, blue: 0.20))
-                            .background(points == 0 ? Color.white.opacity(0.14) : gold,
-                                        in: RoundedRectangle(cornerRadius: 9))
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .foregroundStyle(cream)
+                            .modifier(GameArtControlSurface())
                             .disabled(points != 0 && points <= state.highestBid)
                             .opacity(points != 0 && points <= state.highestBid ? 0.35 : 1)
                     }
@@ -498,16 +497,16 @@ struct BountyPokerRound: View {
                     .font(.system(size: 11)).foregroundStyle(canPlay ? gold : cream)
                 HStack(spacing: 8) {
                     Button("提示") { hintDou(state) }
-                        .frame(maxWidth: .infinity, minHeight: 40)
-                        .background(.white.opacity(0.12), in: RoundedRectangle(cornerRadius: 9))
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .modifier(GameArtControlSurface())
                     Button("不出") { passDou(state) }
-                        .frame(maxWidth: .infinity, minHeight: 40)
-                        .background(.white.opacity(0.12), in: RoundedRectangle(cornerRadius: 9))
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .modifier(GameArtControlSurface())
                         .disabled(target == nil).opacity(target == nil ? 0.4 : 1)
                     Button("出牌") { playDou(state) }
-                        .frame(maxWidth: .infinity, minHeight: 40)
+                        .frame(maxWidth: .infinity, minHeight: 44)
                         .foregroundStyle(Color(red: 0.08, green: 0.15, blue: 0.20))
-                        .background(gold, in: RoundedRectangle(cornerRadius: 9))
+                        .modifier(GameArtControlSurface(primary: true))
                         .disabled(!canPlay).opacity(canPlay ? 1 : 0.4)
                 }
                 .font(.system(size: 13, weight: .bold))
@@ -521,7 +520,7 @@ struct BountyPokerRound: View {
                     if settlement.playerWon { dismiss() }
                     else { douGame = nil; douSelected.removeAll() }
                 }
-                .buttonStyle(.borderedProminent).tint(gold)
+                .buttonStyle(GameArtButtonStyle(primary: true))
             }
             if let errorText {
                 Text(errorText).font(.system(size: 10)).foregroundStyle(gold)
@@ -547,11 +546,10 @@ struct BountyPokerRound: View {
                 Text(title).font(.system(size: 14, weight: .bold, design: .serif))
                 Text(subtitle).font(.system(size: 10)).fixedSize(horizontal: false, vertical: true)
             }
-            .foregroundStyle(mode == target ? Color(red: 0.06, green: 0.15, blue: 0.20) : cream)
+            .foregroundStyle(cream)
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: 54).padding(.horizontal, 11)
-            .background(mode == target ? gold : Color.white.opacity(0.10),
-                        in: RoundedRectangle(cornerRadius: 12))
+            .modifier(GameArtControlSurface(selected: mode == target))
         }
         .buttonStyle(.plain)
         .disabled((round != nil && target != .simple) || (douGame != nil && target != .landlord))
@@ -605,10 +603,9 @@ struct BountyPokerRound: View {
                     Button { wager = amount } label: {
                         Text("\(amount) 铜")
                             .font(.system(size: 13, weight: .bold))
-                            .frame(maxWidth: .infinity, minHeight: 42)
-                            .foregroundStyle(wager == amount ? Color(red: 0.08, green: 0.15, blue: 0.20) : cream)
-                            .background(wager == amount ? gold : Color.white.opacity(0.09),
-                                        in: RoundedRectangle(cornerRadius: 10))
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .foregroundStyle(cream)
+                            .modifier(GameArtControlSurface(selected: wager == amount))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("押注\(amount)铜币")
@@ -628,7 +625,7 @@ struct BountyPokerRound: View {
                     .font(.system(size: 16, weight: .bold, design: .serif))
                     .frame(maxWidth: .infinity, minHeight: 50)
                     .foregroundStyle(Color(red: 0.09, green: 0.13, blue: 0.18))
-                    .background(gold, in: Capsule())
+                    .modifier(GameArtControlSurface(primary: true))
             }
             .buttonStyle(.plain)
             .disabled(game.venueCoins < wager && !covered)
@@ -695,7 +692,7 @@ struct BountyPokerRound: View {
                     .font(.system(size: 16, weight: .bold, design: .serif))
                     .frame(maxWidth: .infinity, minHeight: 50)
                     .foregroundStyle(Color(red: 0.09, green: 0.13, blue: 0.18))
-                    .background(gold, in: Capsule())
+                    .modifier(GameArtControlSurface(primary: true))
             }
             .buttonStyle(.plain)
         }
@@ -751,9 +748,9 @@ struct BountyPokerRound: View {
                         Text("押40铜，仅此一次；胜得\(prize.kind == .relic ? "遗落物" : "晋级主材")并退押，败失40铜。无保底、不附加倍数铜利。")
                             .font(.system(size: 11)).fixedSize(horizontal: false, vertical: true)
                     }
-                    .foregroundStyle(featuredPrize ? Color(red: 0.07, green: 0.16, blue: 0.19) : cream)
+                    .foregroundStyle(cream)
                     .frame(maxWidth: .infinity, alignment: .leading).padding(12)
-                    .background(featuredPrize ? gold : Color.white.opacity(0.12), in: RoundedRectangle(cornerRadius: 12))
+                    .modifier(GameArtControlSurface(selected: featuredPrize))
                 }.buttonStyle(.plain)
             } else if isTavernFreeplay {
                 Text("今天没有特殊彩头；普通铜币牌局照常开放。")
@@ -764,10 +761,9 @@ struct BountyPokerRound: View {
                     Button { wager = amount; featuredPrize = false } label: {
                         Text("\(amount) 铜")
                             .font(.system(size: 13, weight: .bold))
-                            .frame(maxWidth: .infinity, minHeight: 42)
-                            .foregroundStyle(wager == amount ? Color(red: 0.08, green: 0.15, blue: 0.20) : cream)
-                            .background(wager == amount ? gold : Color.white.opacity(0.09),
-                                        in: RoundedRectangle(cornerRadius: 10))
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .foregroundStyle(cream)
+                            .modifier(GameArtControlSurface(selected: !featuredPrize && wager == amount))
                     }.buttonStyle(.plain)
                 }
             }
@@ -781,7 +777,7 @@ struct BountyPokerRound: View {
                     .font(.system(size: 16, weight: .bold, design: .serif))
                     .frame(maxWidth: .infinity, minHeight: 50)
                     .foregroundStyle(Color(red: 0.09, green: 0.13, blue: 0.18))
-                    .background(gold, in: Capsule())
+                    .modifier(GameArtControlSurface(primary: true))
             }
             .buttonStyle(.plain)
             .disabled(game.venueCoins < (featuredPrize ? 40 : wager))
@@ -824,10 +820,9 @@ struct BountyPokerRound: View {
                     ForEach(0...3, id: \.self) { points in
                         Button(points == 0 ? "不叫" : "\(points)分") { bidDou(state, points: points) }
                             .font(.system(size: 12, weight: .bold))
-                            .frame(maxWidth: .infinity, minHeight: 42)
-                            .background(points == 0 ? Color.white.opacity(0.12) : gold.opacity(0.86),
-                                        in: RoundedRectangle(cornerRadius: 9))
-                            .foregroundStyle(points == 0 ? .white : Color(red: 0.07, green: 0.12, blue: 0.20))
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .modifier(GameArtControlSurface())
+                            .foregroundStyle(cream)
                             .disabled(points != 0 && points <= state.highestBid)
                             .opacity(points != 0 && points <= state.highestBid ? 0.3 : 1)
                     }
@@ -845,16 +840,16 @@ struct BountyPokerRound: View {
                 HStack(spacing: 8) {
                     Button("提示") { hintDou(state) }
                         .frame(maxWidth: .infinity, minHeight: 46)
-                        .background(Color.white.opacity(0.12), in: RoundedRectangle(cornerRadius: 10))
+                        .modifier(GameArtControlSurface())
                     Button("不出") { passDou(state) }
                         .frame(maxWidth: .infinity, minHeight: 46)
-                        .background(Color.white.opacity(0.12), in: RoundedRectangle(cornerRadius: 10))
+                        .modifier(GameArtControlSurface())
                         .disabled(target == nil)
                         .opacity(target == nil ? 0.35 : 1)
                     Button("出牌") { playDou(state) }
                         .frame(maxWidth: .infinity, minHeight: 46)
                         .foregroundStyle(Color(red: 0.08, green: 0.15, blue: 0.20))
-                        .background(gold, in: RoundedRectangle(cornerRadius: 10))
+                        .modifier(GameArtControlSurface(primary: true))
                         .disabled(!canPlay)
                         .opacity(canPlay ? 1 : 0.4)
                 }
@@ -873,7 +868,7 @@ struct BountyPokerRound: View {
                 .font(.system(size: 15, weight: .bold))
                 .foregroundStyle(Color(red: 0.08, green: 0.15, blue: 0.20))
                 .frame(maxWidth: .infinity, minHeight: 48)
-                .background(gold, in: Capsule())
+                .modifier(GameArtControlSurface(primary: true))
             }
         }
         .padding(14)

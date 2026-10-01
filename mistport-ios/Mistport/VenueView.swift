@@ -187,21 +187,14 @@ private struct VenueOfferView: View {
                     }
                 }
                 .font(.caption.bold())
-                .foregroundStyle(offer.isSold ? .white.opacity(0.34) : .black)
-                .padding(.horizontal, 9)
-                .frame(height: 30)
-                .background(
-                    offer.isSold ? Color.white.opacity(0.08) : offer.item.rarity.tint.opacity(canAfford ? 0.88 : 0.34),
-                    in: VenuePlateShape(cut: 6)
-                )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(GameArtButtonStyle(compact: true))
             .disabled(offer.isSold || !canAfford)
         }
         .foregroundStyle(.white)
         .padding(8)
         .frame(maxWidth: .infinity)
-        .frame(height: 150)
+        .frame(minHeight: 174)
         .background(.black.opacity(0.48), in: VenuePlateShape(cut: 13))
         .overlay {
             VenuePlateShape(cut: 13)
@@ -235,5 +228,24 @@ private struct VenuePlateShape: Shape {
 #Preview {
     let game = GameStore(launchArguments: ["--preview-venue"], defaults: UserDefaults(suiteName: "venue-preview") ?? .standard)
     VenueView(game: game, venue: GameContent.oldClockVenues[0])
+}
+#endif
+
+#if DEBUG
+/// The legacy rotating venue shelf is gated in this build; show its real card component without unlocking gameplay.
+struct VenueOfferArtReview: View {
+    @State private var sold: Set<String> = []
+    var body: some View {
+        GameArtPage(title: "商品柜台", subtitle: "商品组件 · 隔离预览", art: "HomeCafeEmpty20260929") {
+            Text("此处仅查看商品卡样式。正式随机货架尚未开放。")
+                .font(.caption).foregroundStyle(.secondary)
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(GameContent.oldClockVenues[0].catalog) { item in
+                    VenueOfferView(offer: VenueOffer(id: item.id, item: item, isSold: sold.contains(item.id)),
+                        canAfford: item.price <= 30, onPurchase: { sold.insert(item.id) })
+                }
+            }
+        }
+    }
 }
 #endif

@@ -10,40 +10,35 @@ struct NeighborConversationView: View {
     private struct PestTicket: Identifiable { let id: String; let offerID: String }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
-                    Text("第 \(game.pacingDay) 天 · 好感 \(game.neighbors.affinity[neighborID, default: 0])").font(.subheadline)
-                    Text("今天的请求明天会作废；已开打的赶塔怪行动可完成结算。").font(.footnote).foregroundStyle(.secondary)
-                    ForEach(game.neighbors.offers.filter { $0.neighborID == neighborID }) { offer in
-                        if let errand = offer.errand { offerCard(offer, errand) }
-                    }
-                    ForEach(game.neighbors.offers.filter { $0.errand?.recipientID == neighborID && !$0.done && game.canRelayNeighbor($0.id) }) { offer in
-                        GroupBox("有人托你传话") {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(offer.errand?.request ?? "")
-                                Button("把话带到 · \(offer.errand?.copper ?? 0) 铜") {
-                                    perform { try await game.relayNeighbor(offer.id) }
-                                    if game.neighbors.offers.first(where: { $0.id == offer.id })?.done == true { message = (offer.errand?.reply ?? "") + "\n" + message }
-                                }
-                            }
+        GameArtPage(title: MPCNeighborCatalog.neighbor(neighborID)?.name ?? "街坊", subtitle: "街坊来往 · 今日委托", art: neighborID == "postman" ? "HomePostOfficeEmpty20260929" : "HomeCommissionOfficeEmpty20260929", closeTitle: "告辞") {
+            Text("第 \(game.pacingDay) 天 · 好感 \(game.neighbors.affinity[neighborID, default: 0])").font(.subheadline)
+            Text("今天的请求明天会作废；已开打的赶塔怪行动可完成结算。").font(.footnote).foregroundStyle(.secondary)
+            ForEach(game.neighbors.offers.filter { $0.neighborID == neighborID }) { offer in
+                if let errand = offer.errand { offerCard(offer, errand) }
+            }
+            ForEach(game.neighbors.offers.filter { $0.errand?.recipientID == neighborID && !$0.done && game.canRelayNeighbor($0.id) }) { offer in
+                GroupBox("有人托你传话") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(offer.errand?.request ?? "")
+                        Button("把话带到 · \(offer.errand?.copper ?? 0) 铜") {
+                            perform { try await game.relayNeighbor(offer.id) }
+                            if game.neighbors.offers.first(where: { $0.id == offer.id })?.done == true { message = (offer.errand?.reply ?? "") + "\n" + message }
                         }
                     }
-                    if !message.isEmpty { Text(message).foregroundStyle(.orange) }
-                    if game.neighbors.offers.allSatisfy({ $0.neighborID != neighborID && $0.errand?.recipientID != neighborID }) {
-                        Text("今天没有托你的事，沿街走走吧。")
-                    }
-                    let stories = game.neighbors.stories(neighborID)
-                    ForEach(Array(stories.enumerated()), id: \.offset) { index, story in
-                        GroupBox("街坊往事 · \(index + 1)") { Text(story).frame(maxWidth: .infinity, alignment: .leading) }
-                    }
-                    if MPCNeighborCatalog.neighbor(neighborID)?.isWritten == true && stories.count < 2 {
-                        Text("好感达到 \(MPCNeighborCatalog.storyAffinity.map(String.init).joined(separator: " 和 ")) 时，会聊起更多往事。").font(.footnote).foregroundStyle(.secondary)
-                    }
-                }.padding()
+                }
             }
-            .navigationTitle(MPCNeighborCatalog.neighbor(neighborID)?.name ?? "街坊")
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("告辞") { dismiss() } } }
+            if !message.isEmpty { Text(message).foregroundStyle(.orange) }
+            if game.neighbors.offers.allSatisfy({ $0.neighborID != neighborID && $0.errand?.recipientID != neighborID }) {
+                Text("今天没有托你的事，沿街走走吧。")
+            }
+            let stories = game.neighbors.stories(neighborID)
+            ForEach(Array(stories.enumerated()), id: \.offset) { index, story in
+                GroupBox("街坊往事 · \(index + 1)") { Text(story).frame(maxWidth: .infinity, alignment: .leading) }
+            }
+            if MPCNeighborCatalog.neighbor(neighborID)?.isWritten == true && stories.count < 2 {
+                Text("好感达到 \(MPCNeighborCatalog.storyAffinity.map(String.init).joined(separator: " 和 ")) 时，会聊起更多往事。").font(.footnote).foregroundStyle(.secondary)
+            }
+        }
             .task(id: game.pacingDay) { try? game.openNeighborDay() }
             .task {
                 #if DEBUG
@@ -64,7 +59,6 @@ struct NeighborConversationView: View {
             .fullScreenCover(item: $battle) { ticket in
                 NeighborPestBattleView(game: game, offerID: ticket.offerID, battleID: ticket.id, onClose: { battle = nil })
             }
-        }
     }
     private func offerCard(_ offer: MPCNeighborLedger.Offer, _ errand: MPCNeighborErrand) -> some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -105,7 +99,7 @@ struct NeighborConversationView: View {
                     }
                     Text("已记下口信。请到 \(MPCNeighborCatalog.neighbor(errand.recipientID ?? "")?.name ?? "收话人") 面前交谈。")
                 case .pest:
-                    Button("去赶走塔怪") { battle = .init(id: UUID().uuidString, offerID: offer.id) }.buttonStyle(.borderedProminent)
+                    Button("去赶走塔怪") { battle = .init(id: UUID().uuidString, offerID: offer.id) }.buttonStyle(GameArtButtonStyle(primary: true))
                 }
             }
         }
@@ -179,17 +173,11 @@ struct NeighborPestBattleView: View {
                             started = true
                         } catch { startError = game.housingError(error) } }
                     })
-                VStack { HStack { Button("返回街坊") { onClose() }; Spacer() }; Spacer() }.padding()
+                VStack { HStack { Button("返回街坊") { onClose() }.buttonStyle(GameArtButtonStyle(compact: true)); Spacer() }; Spacer() }.padding()
             }
             if !startError.isEmpty { Text(startError).foregroundStyle(.orange).padding().background(.black) }
             if finished {
-                Color.black.opacity(0.8).ignoresSafeArea()
-                VStack(spacing: 16) {
-                    Text(won ? "阻碍已解除" : "行动未完成").font(.title.bold()).foregroundStyle(won ? .yellow : .orange)
-                    Text(won ? "塔怪已赶走，委托报酬和好感已到账。" : "这一场不记贡献，可以重新准备。")
-                    ChurchActionButton(title: "返回街坊") { onClose() }
-                }
-                .foregroundStyle(.white).padding(24)
+                GameArtBattleResult(won: won, detail: won ? "塔怪已赶走，委托报酬和好感已到账。" : "这一场不记贡献，可以重新准备。", title: "返回街坊", action: onClose)
             }
         }
         .preferredColorScheme(.dark).buttonStyle(.plain)

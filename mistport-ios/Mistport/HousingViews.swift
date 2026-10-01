@@ -74,16 +74,9 @@ private struct HousingPage<Content: View>: View {
     @ViewBuilder let content: () -> Content
     @Environment(\.dismiss) private var dismiss
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text(title).font(.system(size: 22, weight: .bold, design: .serif))
-                Spacer(); Button(backTitle) { dismiss() }.font(.subheadline.bold())
-            }.padding(18).foregroundStyle(Color(red: 0.9, green: 0.8, blue: 0.55))
-                .background(Color(red: 0.12, green: 0.18, blue: 0.19))
-            ScrollView { VStack(alignment: .leading, spacing: 18, content: content).padding(18).frame(maxWidth: .infinity, alignment: .leading) }
-                .background(Color(red: 0.94, green: 0.87, blue: 0.70))
-        }.foregroundStyle(Color(red: 0.19, green: 0.15, blue: 0.10)).tint(Color(red: 0.14, green: 0.31, blue: 0.29))
-            .background(Color(red: 0.12, green: 0.18, blue: 0.19)).preferredColorScheme(.light)
+        GameArtPage(title: title, subtitle: "赁屋行 · 港城生活", closeTitle: backTitle) {
+            content()
+        }
     }
 }
 
@@ -173,8 +166,8 @@ struct HousingSearchView: View {
                             Text("住处 \(homes.map(\.copperPerDay).min() ?? 0) 铜／日起 · \(districtAvailability(homes))").font(.caption)
                         }
                         Spacer(); Image(systemName: "chevron.right")
-                    }.padding(14).frame(maxWidth: .infinity).background(.white.opacity(0.35), in: RoundedRectangle(cornerRadius: 8))
-                }.buttonStyle(.plain)
+                    }.frame(maxWidth: .infinity)
+                }.buttonStyle(GameArtButtonStyle())
             }
         }
     }
@@ -194,7 +187,7 @@ struct HousingSearchView: View {
                     Text("附近饮食：" + nearbyMeals(lodging).map(\.name).joined(separator: "、")).font(.footnote)
                     Text(availability(lodging)).font(.caption)
                     if game.housingRecord?.queuedLodgingIDs.contains(lodging.id) == true { Text("已登记等候").font(.caption) }
-                    Button("进屋看看") { detail = ""; step = .interior(lodging.id) }.buttonStyle(.borderedProminent).foregroundStyle(.white)
+                    Button("进屋看看") { detail = ""; step = .interior(lodging.id) }.buttonStyle(GameArtButtonStyle(primary: true))
                     if lodging.rooms != nil {
                         Button("登记等候") { Task { do { try await game.queueHousing(lodging.id); message = "伊蕾娜记下了你的名字，有空房时会留意。" } catch { message = game.housingError(error) } } }
                     }
@@ -222,7 +215,7 @@ struct HousingSearchView: View {
                     Button("选这间 · 看租约") {
                         mealID = nearbyMeals(lodging).contains { $0.id == game.housingMealID } ? game.housingMealID : MPCHousingCatalog.basicMealID
                         step = .lease(id)
-                    }.buttonStyle(.borderedProminent).foregroundStyle(.white)
+                    }.buttonStyle(GameArtButtonStyle(primary: true))
                 }
             }
         }
@@ -233,8 +226,13 @@ struct HousingSearchView: View {
                 Button("‹ 回屋看看") { step = .interior(id) }.disabled(isSigning)
                 Text("七日租约").font(.title2.bold())
                 HousingDoorplate(name: lodging.name)
-                Picker("日常饮食", selection: $mealID) { ForEach(nearbyMeals(lodging)) { meal in Text("\(meal.name) · \(meal.copperPerDay) 铜／日").tag(meal.id) } }
-                    .pickerStyle(.menu)
+                Text("选择每日饮食").font(.headline)
+                ForEach(nearbyMeals(lodging)) { meal in
+                    Button { mealID = meal.id } label: {
+                        HStack { Text("\(meal.name) · \(meal.copperPerDay) 铜／日"); Spacer(); if mealID == meal.id { Image(systemName: "checkmark.seal.fill") } }
+                    }.buttonStyle(GameArtButtonStyle(selected: mealID == meal.id))
+                        .accessibilityAddTraits(mealID == meal.id ? .isSelected : [])
+                }
                 let meal = MPCHousingCatalog.meal(mealID)
                 let perDay = lodging.copperPerDay + (meal?.copperPerDay ?? 0)
                 Text("房钱与伙食每日 \(perDay) 铜 · 七日合计 \(perDay * MPCHousingCatalog.leaseDays) 铜").font(.headline)
@@ -251,7 +249,7 @@ struct HousingSearchView: View {
                             step = .moving(id)
                         } catch { message = game.housingError(error) }
                     }
-                }.buttonStyle(.borderedProminent).foregroundStyle(.white).disabled(isSigning)
+                }.buttonStyle(GameArtButtonStyle(primary: true)).disabled(isSigning)
                 if isSigning {
                     Image(uiImage: HousingAtlas.frame("HousingSeal20260930", index: stampFrame, columns: 2, rows: 2))
                         .resizable().scaledToFit().frame(height: 120).accessibilityLabel("封蜡盖章")
@@ -265,7 +263,7 @@ struct HousingSearchView: View {
             if let home = HousingArt.home(id) { Image(home.exterior).resizable().aspectRatio(1.5, contentMode: .fit).transition(.opacity) }
             HousingDoorplate(name: game.housingPlayerName)
             Text("门牌已经挂好。\(MPCHousingCatalog.lodging(id)?.name ?? "住处")等你回来。").font(.headline)
-            Button("收好门牌 · 返回") { dismiss() }.buttonStyle(.borderedProminent).foregroundStyle(.white)
+            Button("收好门牌 · 返回") { dismiss() }.buttonStyle(GameArtButtonStyle(primary: true))
         }.animation(.easeInOut(duration: 0.6), value: game.housingHomeID)
     }
 }
@@ -328,7 +326,7 @@ struct HousingResidenceView: View {
             if !detail.isEmpty { Text(detail).font(.footnote) }
             Text(game.housingDailyNotice).font(.footnote)
             HousingMealChoices(game: game)
-            Button("去赁屋行换住处") { finding = true }.buttonStyle(.borderedProminent).foregroundStyle(.white)
+            Button("去赁屋行换住处") { finding = true }.buttonStyle(GameArtButtonStyle(primary: true))
         }.task { await game.openHousingDay() }.sheet(isPresented: $finding) { HousingSearchView(game: game) }
     }
 }
@@ -352,8 +350,8 @@ private struct HousingMealChoices: View {
                     HStack {
                         VStack(alignment: .leading) { Text(meal.name); Text("\(meal.copperPerDay) 铜／日").font(.caption) }
                         Spacer(); if game.housingMealID == meal.id { Image(systemName: "checkmark.seal.fill") }
-                    }.padding(12).background(.white.opacity(0.3), in: RoundedRectangle(cornerRadius: 8))
-                }.buttonStyle(.plain).disabled(busy)
+                    }
+                }.buttonStyle(GameArtButtonStyle(selected: game.housingMealID == meal.id)).disabled(busy)
             }
             if !message.isEmpty { Text(message).font(.footnote) }
         }

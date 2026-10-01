@@ -85,7 +85,12 @@ struct LocalWorkshopView: View {
     private static let card = Color(red: 0.149, green: 0.153, blue: 0.169)
 
     var body: some View {
-        NavigationStack {
+        VStack(spacing: 0) {
+            HStack {
+                Text("百工坊").font(.title2.bold()).fontDesign(.serif)
+                Spacer()
+                Button("返回") { dismiss() }.buttonStyle(GameArtButtonStyle(compact: true))
+            }.foregroundStyle(GameArt.gold).padding(18).background(GameArt.night)
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
                     HStack(spacing: 16) {
@@ -128,9 +133,8 @@ struct LocalWorkshopView: View {
                 }.padding(20)
             }
             .background(Color(red: 0.055, green: 0.08, blue: 0.12))
-            .navigationTitle("百工坊")
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("返回", action: { dismiss() }) } }
         }
+        .background(GameArt.night.ignoresSafeArea())
         .preferredColorScheme(.dark)
         .fullScreenCover(isPresented: $showsTower) { ChurchSanctuaryView(game: game) }
         .onAppear { game.openDailyWorkshopOrders() }
@@ -207,7 +211,7 @@ struct LocalWorkshopView: View {
                     Spacer()
                     Button("交 1 件") {
                         perform("已交货，铜币已到账。") { _ = try game.sellDailyWorkshop(itemID: recipe.output) }
-                    }.buttonStyle(.bordered)
+                    }.buttonStyle(GameArtButtonStyle(compact: true))
                         .disabled(game.chapterOneCampaign.inventory[recipe.output, default: 0] == 0 || game.workshopOrders.budget < MPCWorkshopOrderBoard.prices[recipe.output, default: 0])
                 }
             }
@@ -294,7 +298,7 @@ struct WorkshopGearCareSection: View {
                             Button("用\(GameStore.workshopItemName(kit))修理 +25") {
                                 perform { try game.repairWorkshopGear(item.id) }
                             }.disabled((game.churchServices.gear.durability(item.id) ?? 100) == 100 || game.chapterOneCampaign.inventory[kit, default: 0] == 0)
-                        }.buttonStyle(.bordered)
+                        }.buttonStyle(GameArtButtonStyle(compact: true))
                         Text("\(GameStore.workshopItemName(kit))库存 \(game.chapterOneCampaign.inventory[kit, default: 0])").font(.caption)
                     }
                 }

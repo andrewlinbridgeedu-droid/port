@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FA9300000000000000000001 /* GameArtComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9300000000000000000002; };
 		CE3001000000000000000002 /* HousingViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3002000000000000000002; };
 		CE3001000000000000000001 /* HousingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3002000000000000000001; };
 		CE2901000000000000000001 /* HomeStreetScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2901000000000000000002; };
@@ -102,6 +103,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		FA9300000000000000000002 /* GameArtComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/GameArtComponents.swift; sourceTree = SOURCE_ROOT; };
 		CE3002000000000000000002 /* HousingViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HousingViews.swift; sourceTree = "<group>"; };
 		CE3002000000000000000001 /* HousingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HousingService.swift; sourceTree = "<group>"; };
 		CE2901000000000000000002 /* HomeStreetScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeStreetScene.swift; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 		A30000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+				FA9300000000000000000002 /* GameArtComponents.swift */,
 				A30000000000000000000002 /* Mistport */,
 				A30000000000000000000003 /* Products */,
 				C20000000000000000000002 /* Unity-iPhone.xcodeproj */,
@@ -409,6 +412,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA9300000000000000000001 /* GameArtComponents.swift in Sources */,
 				A10000000000000000000001 /* MistportApp.swift in Sources */,
 				C92800000000000000000001 /* LocalWorkshopView.swift in Sources */,
 				C92900000000000000000001 /* CityEventsView.swift in Sources */,

@@ -107,7 +107,9 @@ struct MistportApp: App {
                     }
             } else if ProcessInfo.processInfo.arguments.contains("--daily-pacing-device-walk") {
                 Group {
-                    if let kind = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--daily-street-kind=") })?.dropFirst(20) {
+                    if let page = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--daily-ui-review=") })?.dropFirst(18) {
+                        GameArtReviewPage(game: game, page: String(page))
+                    } else if let kind = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--daily-street-kind=") })?.dropFirst(20) {
                         DailyStreetReviewView(game: game, kind: String(kind))
                     } else if ProcessInfo.processInfo.arguments.contains("--daily-map-walk") {
                         ContentView(game: game, storefront: storefront)

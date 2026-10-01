@@ -24,9 +24,9 @@ struct GameSettingsView: View {
     @FocusState private var editingName: Bool
 
     var body: some View {
-        NavigationStack {
-            Form {
-                Section("旅人") {
+        GameArtPage(title: "设置", subtitle: "旅人手册 · 声音与体验", closeTitle: "完成", onClose: { saveName(); GameInterfaceSound.shared.playClick() }) {
+                GroupBox("旅人") {
+                    VStack(alignment: .leading, spacing: 14) {
                     HStack {
                         Text("名字")
                         TextField("愚者", text: $nameDraft)
@@ -40,8 +40,10 @@ struct GameSettingsView: View {
                     }
                     Text("最多 12 个字，作为主界面显示名字。")
                         .font(.caption).foregroundStyle(.secondary)
+                    }
                 }
-                Section("声音") {
+                GroupBox("声音") {
+                    VStack(alignment: .leading, spacing: 14) {
                     Toggle("背景音乐", isOn: $musicEnabled)
                     volumeRow("音乐音量", value: $musicVolume)
                         .disabled(!musicEnabled)
@@ -51,8 +53,10 @@ struct GameSettingsView: View {
                     volumeRow("港城环境音", value: $ambienceVolume)
                     Text("界面按钮、战斗法术与主页的海浪、风雨、鸟叫分别调节；调至 0 即静音。")
                         .font(.caption).foregroundStyle(.secondary)
+                    }
                 }
-                Section("效果") {
+                GroupBox("效果") {
+                    VStack(alignment: .leading, spacing: 14) {
                     Toggle("减少界面动态", isOn: $reduceMotion)
                     Text("减弱界面旋转、悬浮及卡牌光效，保留战斗演出与技能提示。")
                         .font(.caption).foregroundStyle(.secondary)
@@ -64,20 +68,8 @@ struct GameSettingsView: View {
                         .disabled(!hapticsEnabled)
                 }
             }
-            .scrollContentBackground(.hidden)
-            .background(Color(red: 0.055, green: 0.043, blue: 0.10))
-            .tint(Color(red: 0.87, green: 0.68, blue: 0.30))
-            .navigationTitle("设置")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("完成") {
-                        saveName()
-                        GameInterfaceSound.shared.playClick()
-                        dismiss()
-                    }
-                }
             }
+            .tint(Color(red: 0.50, green: 0.32, blue: 0.12))
             .onAppear { nameDraft = displayName }
             .onDisappear { saveName(); CombatHaptics.shared.cancel() }
             .onChange(of: musicEnabled) { _, enabled in
@@ -89,8 +81,6 @@ struct GameSettingsView: View {
             .onChange(of: ambienceVolume) { _, volume in
                 CityAmbience.shared.setVolume(volume)
             }
-        }
-        .preferredColorScheme(.dark)
     }
 
     private func volumeRow(_ title: String, value: Binding<Double>) -> some View {

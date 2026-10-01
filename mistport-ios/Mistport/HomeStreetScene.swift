@@ -520,7 +520,7 @@ struct HomeCounterScene<Content: View>: View {
         VStack(spacing: 0) {
             HStack {
                 Text(title).font(.title2.bold()).frame(maxWidth: .infinity, alignment: .leading)
-                Button("返回港城") { dismiss() }.buttonStyle(.bordered)
+                Button("返回港城") { dismiss() }.buttonStyle(GameArtButtonStyle(compact: true))
                     .tint(Color(red: 0.96, green: 0.88, blue: 0.67))
             }.foregroundStyle(Color(red: 0.96, green: 0.88, blue: 0.67))
                 .padding(18).background(Color(red: 0.13, green: 0.17, blue: 0.20))
@@ -529,13 +529,14 @@ struct HomeCounterScene<Content: View>: View {
                     HomeSceneArtwork(room: room, actorArt: actorArt)
                     VStack(alignment: .leading, spacing: 14, content: content)
                         .frame(maxWidth: .infinity, alignment: .leading).padding(20)
-                        .background(Color(red: 0.94, green: 0.88, blue: 0.74))
+                        .background { GameArtPaper() }
+                        .environment(\.colorScheme, .light)
                 }
             }
         }.background(Color(red: 0.18, green: 0.22, blue: 0.24))
             .foregroundStyle(Color(red: 0.20, green: 0.16, blue: 0.10))
             .tint(Color(red: 0.33, green: 0.24, blue: 0.12))
-            .preferredColorScheme(.light)
+            .preferredColorScheme(.dark)
     }
 }
 
@@ -552,10 +553,8 @@ struct HomeCounterAction: View {
                     if let detail { Text(detail).font(.caption) }
                 }.frame(maxWidth: .infinity, alignment: .leading)
                 Image(systemName: "chevron.right").font(.caption.bold())
-            }.padding(14)
-                .background(Color.white.opacity(0.25), in: RoundedRectangle(cornerRadius: 6))
-                .overlay { RoundedRectangle(cornerRadius: 6).stroke(.brown.opacity(0.25)) }
-        }.buttonStyle(.plain).opacity(isEnabled ? 1 : 0.45)
+            }
+        }.buttonStyle(GameArtButtonStyle())
     }
 }
 
@@ -680,60 +679,55 @@ struct HomeBountyInteractionView: View {
     private var node: MPCChurchBountyNode? { bounty.nodes.first { $0.id == nodeID } }
     private var progress: MPCChurchBountyProgress { game.churchServices.bounties.cases[bounty.id] ?? .init() }
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
-                    if let node {
-                        Text(node.speaker).font(.headline)
-                        Text(node.dialogue)
-                        if progress.evidenceIDs.contains(node.id) { Text(node.evidence).foregroundStyle(.secondary) }
-                        else {
-                            Button(node.id == "compare" || node.id == "identity" ? "检查现场并记录" : "交谈、查验并记录") {
-                                perform { try game.investigateChurchBounty(bounty.id, nodeID: node.id) }
-                            }
-                            if let challenge = MPCChurchBountyCatalog.challenge(caseID: bounty.id, nodeID: node.id) {
-                                Text(challenge.question).font(.headline)
-                                ForEach(challenge.choices) { choice in
-                                    Button(choice.text) { perform(success: choice.explanation) { try game.answerChurchBounty(bounty.id, nodeID: node.id, choiceID: choice.id) } }
-                                        .disabled(progress.excludedChoiceIDs.contains(choice.id))
-                                }
-                            }
-                        }
-                        if (bounty.id == "b03" && node.location == "码头") || (bounty.id == "b08" && node.location == "酒馆") {
-                            Button("进入现有牌局") { pokerPresented = true }
-                        }
-                        if (bounty.id == "b03" && node.location == "沉船档案柜") || (bounty.id == "b08" && node.location == "港务登记处") {
-                            Button("查阅公开档案") { perform { try game.inspectChurchBountyAlternative(bounty.id) } }
-                        }
-                        if node.id == "identity" {
-                            ForEach(["appearance", "conduct"], id: \.self) { id in
-                                Button((progress.siteFeatureIDs.contains(id) ? "✓ " : "") + (id == "appearance" ? "核对外观特征" : "核对现场行为")) {
-                                    perform { try game.inspectChurchBountySite(bounty.id, featureID: id) }
-                                }
-                            }
-                            Picker("嫌疑人", selection: $suspect) {
-                                Text("请选择").tag("")
-                                Text(bounty.title).tag(bounty.enemyID)
-                                Text("传闻中的无辜者").tag("rumour-suspect")
-                            }
-                            ForEach(["witness", "wound"], id: \.self) { id in
-                                if let card = bounty.nodes.first(where: { $0.id == id }), progress.evidenceIDs.contains(id) {
-                                    Button((supports.contains(id) ? "✓ " : "") + card.evidence) {
-                                        if !supports.insert(id).inserted { supports.remove(id) }
-                                    }
-                                }
-                            }
-                            Button("出示通缉令") { perform { try game.presentChurchBountyWarrant(bounty.id, suspectID: suspect, supportingEvidenceIDs: supports) } }
-                            if progress.warrantPresented && progress.victoriousBattleID == nil { Button("进入战斗") { battlePresented = true } }
-                        }
-                    } else if progress.pendingTurnIn {
-                        Text("现场已收押，向教会柜台交付卷宗。")
-                        Button("交案并领取报酬") { perform { try game.claimChurchBounty(bounty.id) } }
+        GameArtPage(title: node?.location ?? "教会柜台", subtitle: bounty.title, art: HomeSceneRoom.counter(target.placeID ?? "police").backgroundArt, closeTitle: "返回港城") {
+            if let node {
+                Text(node.speaker).font(.headline)
+                Text(node.dialogue)
+                if progress.evidenceIDs.contains(node.id) { Text(node.evidence).foregroundStyle(.secondary) }
+                else {
+                    Button(node.id == "compare" || node.id == "identity" ? "检查现场并记录" : "交谈、查验并记录") {
+                        perform { try game.investigateChurchBounty(bounty.id, nodeID: node.id) }
                     }
-                    if !notice.isEmpty { Text(notice).foregroundStyle(.secondary) }
-                }.padding(22).buttonStyle(.bordered)
-            }.navigationTitle(node?.location ?? "教会柜台")
-                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("返回港城") { dismiss() } } }
+                    if let challenge = MPCChurchBountyCatalog.challenge(caseID: bounty.id, nodeID: node.id) {
+                        Text(challenge.question).font(.headline)
+                        ForEach(challenge.choices) { choice in
+                            Button(choice.text) { perform(success: choice.explanation) { try game.answerChurchBounty(bounty.id, nodeID: node.id, choiceID: choice.id) } }
+                                .disabled(progress.excludedChoiceIDs.contains(choice.id))
+                        }
+                    }
+                }
+                if (bounty.id == "b03" && node.location == "码头") || (bounty.id == "b08" && node.location == "酒馆") {
+                    Button("进入现有牌局") { pokerPresented = true }
+                }
+                if (bounty.id == "b03" && node.location == "沉船档案柜") || (bounty.id == "b08" && node.location == "港务登记处") {
+                    Button("查阅公开档案") { perform { try game.inspectChurchBountyAlternative(bounty.id) } }
+                }
+                if node.id == "identity" {
+                    ForEach(["appearance", "conduct"], id: \.self) { id in
+                        Button((progress.siteFeatureIDs.contains(id) ? "✓ " : "") + (id == "appearance" ? "核对外观特征" : "核对现场行为")) {
+                            perform { try game.inspectChurchBountySite(bounty.id, featureID: id) }
+                        }
+                    }
+                    Picker("嫌疑人", selection: $suspect) {
+                        Text("请选择").tag("")
+                        Text(bounty.title).tag(bounty.enemyID)
+                        Text("传闻中的无辜者").tag("rumour-suspect")
+                    }
+                    ForEach(["witness", "wound"], id: \.self) { id in
+                        if let card = bounty.nodes.first(where: { $0.id == id }), progress.evidenceIDs.contains(id) {
+                            Button((supports.contains(id) ? "✓ " : "") + card.evidence) {
+                                if !supports.insert(id).inserted { supports.remove(id) }
+                            }
+                        }
+                    }
+                    Button("出示通缉令") { perform { try game.presentChurchBountyWarrant(bounty.id, suspectID: suspect, supportingEvidenceIDs: supports) } }
+                    if progress.warrantPresented && progress.victoriousBattleID == nil { Button("进入战斗") { battlePresented = true } }
+                }
+            } else if progress.pendingTurnIn {
+                Text("现场已收押，向教会柜台交付卷宗。")
+                Button("交案并领取报酬") { perform { try game.claimChurchBounty(bounty.id) } }
+            }
+            if !notice.isEmpty { Text(notice).foregroundStyle(.secondary) }
         }
         .onAppear { perform { try game.visitChurchBounty(bounty.id, location: node?.location ?? "教会") } }
         .fullScreenCover(isPresented: $battlePresented) {
@@ -754,10 +748,13 @@ struct HomeTaskChoicesView: View {
     var body: some View {
         if let selected { HomeBountyInteractionView(game: game, target: selected) }
         else {
-            NavigationStack {
-                List(targets) { target in Button(target.title) { selected = target } }
-                    .navigationTitle("选择要办的事")
-                    .toolbar { ToolbarItem(placement: .confirmationAction) { Button("离开") { dismiss() } } }
+            GameArtPage(title: "选择要办的事", subtitle: "港城委托 · 来访登记", art: "HomeCommissionOfficeEmpty20260929", closeTitle: "离开") {
+                Text("把要查的事情告诉柜员。").font(.callout)
+                ForEach(targets) { target in
+                    Button { selected = target } label: {
+                        HStack { Image(systemName: "doc.text.magnifyingglass"); Text(target.title); Spacer(); Image(systemName: "chevron.right") }
+                    }
+                }
             }
         }
     }

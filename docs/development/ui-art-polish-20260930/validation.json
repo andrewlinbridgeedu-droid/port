@@ -1,0 +1,14 @@
+{
+  "base_commit": "5ba38b4",
+  "simulator": "C18184E9-B717-4256-B265-531B41218032",
+  "device": "iPhone 13, iOS 26.5 Simulator",
+  "build": "passed, Debug arm64, isolated host without Unity",
+  "screenshots": 16,
+  "interaction": "10 → 20 copper selector changes selected trait and start-button label; no round started",
+  "scope": "UI presentation only; physical device not used; no production save changed",
+  "limitations": [
+    "Historical tavern settlement fixture throws at GameStore.swift:3353; not modified or claimed passing",
+    "Legacy rotating venue shelf is gated; offers screenshot is a component fixture",
+    "Screenshots cover displayed states, not all branches or Unity battle playback"
+  ]
+}

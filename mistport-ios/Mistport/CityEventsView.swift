@@ -9,50 +9,51 @@ struct CityEventsView: View {
     private struct EventBattleTicket: Identifiable { let id: String; let eventID: String }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
-                    Text("第 \(game.pacingDay) 天 · 城市事件板").font(.title2.bold())
-                    Text(MPCCityEventCatalog.fixtureNotice).font(.footnote).foregroundStyle(.secondary)
-                    if let ticket = game.cityEvents.activeTicket {
-                        Text("有一场未结束的行动。若上次已离开战斗，可撤销票据后重新出发。")
-                        Button("撤销未结束的行动") { perform { try game.abandonCityEvent(ticket: ticket) } }
-                    }
-                    if let event = MPCCityEventCatalog.running(day: game.pacingDay) {
-                        eventCard(event)
-                    } else {
-                        Text(game.pacingDay < 4 ? "第 4 天开放第一场城市事件。" : "本章四场事件已结束，可查看结果。")
-                    }
-                    GroupBox("城市变化") {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("工坊每日订单预算：\(game.dailyCityEffects.orderBudgetBonus >= 0 ? "+" : "")\(game.dailyCityEffects.orderBudgetBonus) 铜")
-                            Text("制作底料：\(game.dailyCityEffects.craftSurcharge >= 0 ? "+" : "")\(game.dailyCityEffects.craftSurcharge) 铜／次")
-                            Text("商店止痛膏：\(game.painSalvePrice) 铜／份")
-                        }.frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    ForEach(MPCCityEventCatalog.all) { event in
-                        if !event.isRunning(day: game.pacingDay) {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text("\(event.title) · 第 \(event.firstDay)–\(event.lastDay) 天").font(.headline)
-                                Text(statusText(event))
-                            }
-                        }
-                    }
-                    if !errorText.isEmpty { Text(errorText).foregroundStyle(.orange).accessibilityAddTraits(.updatesFrequently) }
-                }.padding()
+        GameArtPage(title: "城市事件", subtitle: "第 \(game.pacingDay) 天 · 城市协作", art: eventArt) {
+            Text(MPCCityEventCatalog.fixtureNotice).font(.footnote).foregroundStyle(.secondary)
+            if let ticket = game.cityEvents.activeTicket {
+                Text("有一场未结束的行动。若上次已离开战斗，可撤销票据后重新出发。")
+                Button("撤销未结束的行动") { perform { try game.abandonCityEvent(ticket: ticket) } }
             }
-            .navigationTitle("城市事件")
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("返回") { dismiss() } } }
-            .fullScreenCover(item: $battle) { ticket in
-                CityEventBattleView(game: game, eventID: ticket.eventID, battleID: ticket.id, onClose: { battle = nil })
+            if let event = MPCCityEventCatalog.running(day: game.pacingDay) {
+                eventCard(event)
+            } else {
+                Text(game.pacingDay < 4 ? "第 4 天开放第一场城市事件。" : "本章四场事件已结束，可查看结果。")
             }
+            GroupBox("城市变化") {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("工坊每日订单预算：\(game.dailyCityEffects.orderBudgetBonus >= 0 ? "+" : "")\(game.dailyCityEffects.orderBudgetBonus) 铜")
+                    Text("制作底料：\(game.dailyCityEffects.craftSurcharge >= 0 ? "+" : "")\(game.dailyCityEffects.craftSurcharge) 铜／次")
+                    Text("商店止痛膏：\(game.painSalvePrice) 铜／份")
+                }.frame(maxWidth: .infinity, alignment: .leading)
+            }
+            ForEach(MPCCityEventCatalog.all) { event in
+                if !event.isRunning(day: game.pacingDay) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("\(event.title) · 第 \(event.firstDay)–\(event.lastDay) 天").font(.headline)
+                        Text(statusText(event))
+                    }
+                }
+            }
+            if !errorText.isEmpty { Text(errorText).foregroundStyle(.orange).accessibilityAddTraits(.updatesFrequently) }
+        }
+        .fullScreenCover(item: $battle) { ticket in
+            CityEventBattleView(game: game, eventID: ticket.eventID, battleID: ticket.id, onClose: { battle = nil })
+        }
+    }
+    private var eventArt: String {
+        switch MPCCityEventCatalog.running(day: game.pacingDay)?.id {
+        case "casualty-wave": "HomeClinicEmpty20260929"
+        case "pump-station": "HomeCityHallEmpty20260929"
+        case "harbor-blockade": "HomeHarborOfficeEmpty20260929"
+        default: "HomeOldStreetShopsEmpty20260929"
         }
     }
     private func eventCard(_ event: MPCCityEvent) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(event.title).font(.title.bold())
             Text("第 \(event.firstDay)–\(event.lastDay) 天 · \(event.partner)").font(.subheadline)
-            Text(event.briefing)
+            Text(event.briefing).lineSpacing(5)
             if game.cityEvents.status(event.id, day: game.pacingDay) == .succeeded {
                 Text(event.success).foregroundStyle(.green)
             } else {
@@ -68,13 +69,14 @@ struct CityEventsView: View {
                         if stock == 0 && left > 0 { Text("背包缺货，可去工坊制作。").font(.caption).foregroundStyle(.secondary) }
                     }
                 }
+                Divider().overlay(GameArt.gold)
                 let today = game.cityEvents.winsCounted(event.id, day: game.pacingDay)
                 let left = game.cityEvents.winsLeft(event)
                 Text("战斗还需 \(left) 场 · 今天已记 \(today)/2 场")
                 StaminaCostView(activity: .eventBattle)
                 Button("\(event.battleTitle) · 胜利 10 铜") {
                     battle = .init(id: UUID().uuidString, eventID: event.id)
-                }.buttonStyle(.borderedProminent)
+                }.buttonStyle(GameArtButtonStyle(primary: true))
                     .disabled(today >= 2 || left == 0 || game.cityEvents.activeTicket != nil)
                 if today >= 2 { Text("事件战今天已记 2 场，明天再来。") }
                 if left == 0 { Text("所需胜场已完成；交齐货物即可完成事件。") }
@@ -155,17 +157,11 @@ struct CityEventBattleView: View {
                             started = true
                         } catch { startError = game.housingError(error) } }
                     })
-                VStack { HStack { Button("返回事件板") { onClose() }; Spacer() }; Spacer() }.padding()
+                VStack { HStack { Button("返回事件板") { onClose() }.buttonStyle(GameArtButtonStyle(compact: true)); Spacer() }; Spacer() }.padding()
             }
             if !startError.isEmpty { Text(startError).foregroundStyle(.orange).padding().background(.black) }
             if finished {
-                Color.black.opacity(0.8).ignoresSafeArea()
-                VStack(spacing: 16) {
-                    Text(won ? "阻碍已解除" : "行动未完成").font(.title.bold()).foregroundStyle(won ? .yellow : .orange)
-                    Text(won ? "记 1 场事件胜利，已付 10 铜。" : "这一场不记贡献，可以重新准备。")
-                    ChurchActionButton(title: "返回事件板") { onClose() }
-                }
-                .foregroundStyle(.white).padding(24)
+                GameArtBattleResult(won: won, detail: won ? "记 1 场事件胜利，已付 10 铜。" : "这一场不记贡献，可以重新准备。", title: "返回事件板", action: onClose)
             }
         }
         .preferredColorScheme(.dark).buttonStyle(.plain)

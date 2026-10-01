@@ -16,7 +16,7 @@ struct RemnantCasesView: View {
                 if game.remnants.job(day: game.pacingDay) == nil {
                     Text(today.title).font(.headline)
                     Text(today.area)
-                    Button("接下今天的小案") { perform { try game.acceptDailyRemnant() } }.buttonStyle(.borderedProminent)
+                    Button("接下今天的小案") { perform { try game.acceptDailyRemnant() } }.buttonStyle(GameArtButtonStyle(primary: true))
                 }
             } else { Text("先完成任意一份通缉案的结案领奖，这片街区才会开放每日残余案。") }
             ForEach(game.remnants.jobs.values.sorted { $0.day > $1.day }, id: \.day) { job in
@@ -40,7 +40,7 @@ struct RemnantCasesView: View {
                     do {
                         if let payout = try game.claimRemnant(day: job.day) { message = "已收 \(payout.copper) 铜及材料 ×2。" }
                     } catch { message = "暂未领到报酬，请重试；已胜记录仍保留。" }
-                }.buttonStyle(.borderedProminent)
+                }.buttonStyle(GameArtButtonStyle(primary: true))
             } else if let ticket = job.activeTicket {
                 Text("有一场未结束的战斗；撤销后可重新准备。")
                 Button("撤销未结束的战斗") { perform { try game.abandonRemnant(day: job.day, ticket: ticket) } }
@@ -60,7 +60,7 @@ struct RemnantCasesView: View {
                     }
                 } else {
                     Text("调查完成。当前预计：\(game.repeatWorkPreview(copper: MPCRemnantCatalog.copper))，另得材料 ×2。")
-                    Button("前往清理") { battle = .init(id: UUID().uuidString, day: job.day) }.buttonStyle(.borderedProminent)
+                    Button("前往清理") { battle = .init(id: UUID().uuidString, day: job.day) }.buttonStyle(GameArtButtonStyle(primary: true))
                 }
             }
             Rectangle().fill(.primary.opacity(0.4)).frame(height: 0.6).padding(.top, 6)
@@ -130,17 +130,11 @@ struct RemnantBattleView: View {
                             started = true
                         } catch { startError = game.housingError(error) } }
                     })
-                VStack { HStack { Button("返回案卷") { onClose() }; Spacer() }; Spacer() }.padding()
+                VStack { HStack { Button("返回案卷") { onClose() }.buttonStyle(GameArtButtonStyle(compact: true)); Spacer() }; Spacer() }.padding()
             }
             if !startError.isEmpty { Text(startError).foregroundStyle(.orange).padding().background(.black) }
             if finished {
-                Color.black.opacity(0.8).ignoresSafeArea()
-                VStack(spacing: 16) {
-                    Text(won ? "阻碍已解除" : "行动未完成").font(.title.bold()).foregroundStyle(won ? .yellow : .orange)
-                    Text(won ? "残余已清理，回案卷领取报酬。" : "这一场不记贡献，可以重新准备。")
-                    ChurchActionButton(title: "返回案卷") { onClose() }
-                }
-                .foregroundStyle(.white).padding(24)
+                GameArtBattleResult(won: won, detail: won ? "残余已清理，回案卷领取报酬。" : "这一场不记贡献，可以重新准备。", title: "返回案卷", action: onClose)
             }
         }
         .preferredColorScheme(.dark).buttonStyle(.plain)
