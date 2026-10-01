@@ -577,9 +577,7 @@ struct ChurchPlaceholderView: View {
             VStack(spacing: 18) {
                 HStack {
                     Spacer()
-                    Button("关闭", action: { dismiss() })
-                        .buttonStyle(.plain)
-                        .foregroundStyle(.white.opacity(0.68))
+                    GameArtReturnButton { dismiss() }
                 }
 
                 Spacer()
@@ -803,8 +801,9 @@ struct HubFeatureView: View {
             Spacer()
             if kind == .build {
                 Button(action: { showsFoolGuide = true }) {
-                    Text("🔍 愚者攻略")
+                    Text("愚者攻略")
                         .font(.system(size: 11, weight: .bold))
+                        .lineLimit(1).fixedSize(horizontal: true, vertical: false)
                         .foregroundStyle(.white)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
@@ -812,7 +811,7 @@ struct HubFeatureView: View {
                 }
                 .buttonStyle(.plain)
             }
-            MistportPlaqueButton(title: "返回", compact: true, expands: false, action: { dismiss() })
+            GameArtReturnButton { dismiss() }
         }
         .padding(12)
         .foregroundStyle(kind == .inventory ? InventoryPalette.ink : .white)
@@ -1878,7 +1877,7 @@ private struct FoolPathGuideView: View {
                             Text("序列 9 · 街头戏法师").foregroundStyle(.cyan)
                         }
                         Spacer()
-                        MistportPlaqueButton(title: "关闭", compact: true, expands: false, action: { dismiss() })
+                        GameArtReturnButton(title: "返回构筑") { dismiss() }
                     }
 
                     GuidePlate(title: "战斗定位", text: "愚者通过叠加误认、转成错位、延迟敌人行动，再在破绽窗口完成爆发。", tint: .purple)

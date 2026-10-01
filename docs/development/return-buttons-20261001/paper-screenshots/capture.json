@@ -1,0 +1,290 @@
+[
+  {
+    "page": "police",
+    "file": "police.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=police"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856249.252239
+  },
+  {
+    "page": "cityhall",
+    "file": "cityhall.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=cityhall"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856253.4115
+  },
+  {
+    "page": "harbor",
+    "file": "harbor.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=harbor"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856257.5315359
+  },
+  {
+    "page": "board",
+    "file": "board.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=board"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856261.415776
+  },
+  {
+    "page": "post",
+    "file": "post.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=post"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856265.287987
+  },
+  {
+    "page": "clinic",
+    "file": "clinic.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=clinic"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856269.148222
+  },
+  {
+    "page": "oldstreet",
+    "file": "oldstreet.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=oldstreet"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856273.266992
+  },
+  {
+    "page": "cafe",
+    "file": "cafe.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=cafe"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856277.404544
+  },
+  {
+    "page": "agency",
+    "file": "agency.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=agency"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856281.52794
+  },
+  {
+    "page": "newspaper",
+    "file": "newspaper.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=newspaper"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856285.906761
+  },
+  {
+    "page": "supplement",
+    "file": "supplement.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=supplement"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856290.0438368
+  },
+  {
+    "page": "settings",
+    "file": "settings.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=settings"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856294.173701
+  },
+  {
+    "page": "skill",
+    "file": "skill.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=skill"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856298.2962859
+  },
+  {
+    "page": "tasks",
+    "file": "tasks.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=tasks"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856302.4301639
+  },
+  {
+    "page": "bounty",
+    "file": "bounty.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=bounty"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856306.568207
+  },
+  {
+    "page": "shop",
+    "file": "shop.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=shop"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856310.7010822
+  },
+  {
+    "page": "offers",
+    "file": "offers.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=offers"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856314.856496
+  },
+  {
+    "page": "lease",
+    "file": "lease.png",
+    "flags": [
+      "--housing-device-walk",
+      "--housing-screen=lease"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856320.0127559
+  },
+  {
+    "page": "events",
+    "file": "events.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-events-preview"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856325.201192
+  },
+  {
+    "page": "neighbors",
+    "file": "neighbors.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-neighbors-preview"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856330.376048
+  },
+  {
+    "page": "cityhall-bottom",
+    "file": "cityhall-bottom.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=cityhall",
+      "--daily-ui-review-bottom"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856334.58322
+  },
+  {
+    "page": "newspaper-bottom",
+    "file": "newspaper-bottom.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=newspaper",
+      "--daily-ui-review-bottom"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856338.7104461
+  },
+  {
+    "page": "settings-bottom",
+    "file": "settings-bottom.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=settings",
+      "--daily-ui-review-bottom"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856342.8363361
+  },
+  {
+    "page": "shop-bottom",
+    "file": "shop-bottom.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=shop",
+      "--daily-ui-review-bottom"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856346.967467
+  },
+  {
+    "page": "supplement-bottom",
+    "file": "supplement-bottom.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=supplement",
+      "--daily-ui-review-bottom"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856351.14435
+  },
+  {
+    "page": "lease-bottom",
+    "file": "lease-bottom.png",
+    "flags": [
+      "--housing-device-walk",
+      "--housing-screen=lease",
+      "--daily-ui-review-bottom"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856356.3400471
+  },
+  {
+    "page": "cafe-bottom",
+    "file": "cafe-bottom.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=cafe",
+      "--daily-ui-review-bottom"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856503.8470862
+  },
+  {
+    "page": "oldstreet-bottom",
+    "file": "oldstreet-bottom.png",
+    "flags": [
+      "--daily-pacing-device-walk",
+      "--daily-ui-review=oldstreet",
+      "--daily-ui-review-bottom"
+    ],
+    "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+    "captured_at": 1790856508.028258
+  }
+]

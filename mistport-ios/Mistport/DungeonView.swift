@@ -367,13 +367,7 @@ private struct DungeonHeader: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            Button(action: onExit) {
-                Image(systemName: "chevron.left")
-                    .font(.headline.bold())
-                    .frame(width: 34, height: 34)
-                    .background(.black.opacity(0.56), in: Circle())
-            }
-            .buttonStyle(.plain)
+            GameArtReturnButton(title: "退出", action: onExit)
             .accessibilityLabel("退出副本")
 
             VStack(alignment: .leading, spacing: 1) {

@@ -4,6 +4,9 @@
 
 ### 2026-10-01 新增
 
+- **169.24 界面版已安装**：用户“装吧”。原已装 169.22 源码 `390290c` 与 PR #42 `47db0fd` 在 `codex/return-buttons-device-20261001` 整合（`616422b`），保留设备上的战斗内容，新主角 169.23／当前精细重做没有带入。完整 Unity 导出新鲜度、设备构建与签名校验通过；安装前后 264 份 Preferences 全部逐字节一致。6 张原样真机窗口图已观察，短页与长页底部均铺米色；结束后终止隔离进程，再比较仅每日隔离 suite 改变，真实玩家与 audit 字节不变。原始 Preferences 不提交、不反写，产物均留 SSD，不动链接。[装机范围与未测项](return-buttons-20261001/device-169.24/README.md)、[真机图](return-buttons-20261001/device-review.html)。页面直接打开与滚底均用 DEBUG 参数，未手动导航，未记为用户视觉认可；下方“未装机”均为此前阶段记录。
+- **各页米色纸面铺到底**：用户指出警察厅正文下面深色留白，要求各处铺成上方米黄色。继续在 [PR #42](https://github.com/andrewlinbridgeedu-droid/port/pull/42)（可审，未合并）修改：`GameArtPaperScroll` 使柜台、通用纸面页及日刊／附刊填满正文区域，并覆盖底部安全区。保留深色标题栏、金边按钮和原画，报馆人员切换文字改为墨色。[28 张新版模拟器截图](return-buttons-20261001/paper-review.html) 已逐张观察，包含 20 张首屏和 8 张长页滚到底；最终编译通过，[验证记录](return-buttons-20261001/paper-validation.json)。滚到底由隔离 DEBUG 参数定位，不是手动手势证据。**未装机、未访问手机 Preferences、未作真机验收，未改玩家存档、规则、原画、Unity 或 SSD 链接。**下条 25 张图为铺底修正前的返回按钮历史记录。
+- **港城返回按钮统一**：用户认可警察厅的金边切角“返回港城”，要求报馆及其他页面一致。[PR #42](https://github.com/andrewlinbridgeedu-droid/port/pull/42)（可审，未合并），独立分支 `codex/unify-return-buttons-20261001` 从最新 main `758d409` 开始，`GameArtReturnButton` 复用原有柜台按钮样式；报馆改为“返回港城”，附刊、角色、行囊、构筑、街区、教会、战斗标题栏等复用，返回上一级仍显示对应文字。回调、教学退出限制和结算逻辑保持原样；构筑页攻略文字挤压已修正。[范围与验证](return-buttons-20261001/README.md)、[25 页模拟器原样截图](return-buttons-20261001/review.html)。正式 Swift 源码在隔离 iPhone 13 模拟器宿主编译通过，逐页检查默认字号；宿主不含 Unity，战斗图仅证明标题栏布局。**没有装机、没有访问手机 Preferences，未作真机验收；没有改规则、生产图片或 SSD 链接。** PR #41 的战斗／主角资源仍在原分支，本分支不包含它们。
 - **Q4 猎犬出招像在散步**：用户真机反馈。原因是出招时走路循环照播，身体动作只动脖子和下颚 5–7°。Mac 任务单：[CODEX_TASK_Q4_HOUND_ATTACK_20261001.md](CODEX_TASK_Q4_HOUND_ATTACK_20261001.md)。
 - **体力灯罩动画**：用户要求加动画，SwiftUI 实现在 [PR #38](https://github.com/andrewlinbridgeedu-droid/port/pull/38)，合入 H3 草稿分支 `codex/housing-h3-verification-20260930`。
   - 云端未编译，需要 Mac 构建并在真机上核对光晕是否对准灯罩玻璃。

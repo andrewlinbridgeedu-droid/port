@@ -520,20 +520,18 @@ struct HomeCounterScene<Content: View>: View {
         VStack(spacing: 0) {
             HStack {
                 Text(title).font(.title2.bold()).frame(maxWidth: .infinity, alignment: .leading)
-                Button("返回港城") { dismiss() }.buttonStyle(GameArtButtonStyle(compact: true))
-                    .tint(Color(red: 0.96, green: 0.88, blue: 0.67))
+                GameArtReturnButton { dismiss() }
             }.foregroundStyle(Color(red: 0.96, green: 0.88, blue: 0.67))
                 .padding(18).background(Color(red: 0.13, green: 0.17, blue: 0.20))
-            ScrollView {
+            GameArtPaperScroll {
                 VStack(spacing: 0) {
                     HomeSceneArtwork(room: room, actorArt: actorArt)
                     VStack(alignment: .leading, spacing: 14, content: content)
                         .frame(maxWidth: .infinity, alignment: .leading).padding(20)
-                        .background { GameArtPaper() }
                         .environment(\.colorScheme, .light)
                 }
             }
-        }.background(Color(red: 0.18, green: 0.22, blue: 0.24))
+        }.background(Color(red: 0.13, green: 0.17, blue: 0.20).ignoresSafeArea(edges: .top))
             .foregroundStyle(Color(red: 0.20, green: 0.16, blue: 0.10))
             .tint(Color(red: 0.33, green: 0.24, blue: 0.12))
             .preferredColorScheme(.dark)

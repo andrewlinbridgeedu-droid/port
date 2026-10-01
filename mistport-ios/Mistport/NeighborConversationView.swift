@@ -173,7 +173,7 @@ struct NeighborPestBattleView: View {
                             started = true
                         } catch { startError = game.housingError(error) } }
                     })
-                VStack { HStack { Button("返回街坊") { onClose() }.buttonStyle(GameArtButtonStyle(compact: true)); Spacer() }; Spacer() }.padding()
+                VStack { HStack { GameArtReturnButton(title: "返回街坊") { onClose() }; Spacer() }; Spacer() }.padding()
             }
             if !startError.isEmpty { Text(startError).foregroundStyle(.orange).padding().background(.black) }
             if finished {

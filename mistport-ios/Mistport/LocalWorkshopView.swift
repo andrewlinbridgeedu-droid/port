@@ -89,7 +89,7 @@ struct LocalWorkshopView: View {
             HStack {
                 Text("百工坊").font(.title2.bold()).fontDesign(.serif)
                 Spacer()
-                Button("返回") { dismiss() }.buttonStyle(GameArtButtonStyle(compact: true))
+                GameArtReturnButton(title: "返回") { dismiss() }
             }.foregroundStyle(GameArt.gold).padding(18).background(GameArt.night)
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {

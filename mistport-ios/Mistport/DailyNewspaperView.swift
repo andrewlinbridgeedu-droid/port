@@ -17,9 +17,9 @@ struct MistportNewsprintPage<Content: View>: View {
                 HStack {
                     Text("雾港日刊 · 附刊").font(.system(size: 17, weight: .bold, design: .serif))
                     Spacer()
-                    Button("收起附刊") { dismiss() }.font(.subheadline.bold())
+                    GameArtReturnButton(title: "收起附刊") { dismiss() }
                 }.foregroundStyle(Color(red: 0.93, green: 0.86, blue: 0.70)).padding(18)
-                ScrollView {
+                GameArtPaperScroll(newsprint: true) {
                     VStack(alignment: .leading, spacing: 18) {
                         HStack { Text("街区小报  ·  每日发行"); Spacer(); Text("第 \(day) 期") }
                             .font(.system(size: 11, design: .serif))
@@ -33,12 +33,7 @@ struct MistportNewsprintPage<Content: View>: View {
                         Text("雾港报馆印行").font(.system(size: 11, design: .serif)).frame(maxWidth: .infinity)
                     }.font(.system(size: 16, design: .serif)).foregroundStyle(ink).tint(ink)
                         .padding(20).frame(maxWidth: .infinity, alignment: .leading)
-                        .background {
-                            ZStack {
-                                Color(red: 0.93, green: 0.86, blue: 0.70)
-                                LinearGradient(colors: [.brown.opacity(0.14), .clear, .brown.opacity(0.10)], startPoint: .leading, endPoint: .trailing)
-                            }
-                        }.padding(.horizontal, 10).padding(.bottom, 24)
+                        .padding(.horizontal, 10).padding(.bottom, 24)
                 }
             }
         }.preferredColorScheme(.light)
@@ -54,9 +49,15 @@ struct DailyNewspaperView: View {
     private let paper = Color(red: 0.93, green: 0.86, blue: 0.70)
 
     var body: some View {
-        ZStack(alignment: .top) {
-            Color(red: 0.12, green: 0.075, blue: 0.04).ignoresSafeArea()
-            ScrollView {
+        VStack(spacing: 0) {
+            HStack {
+                Text("雾港报馆").font(.system(size: 20, weight: .bold, design: .serif))
+                Spacer()
+                GameArtReturnButton { dismiss() }
+            }
+            .foregroundStyle(paper).padding(18)
+            .background(Color(red: 0.12, green: 0.075, blue: 0.04))
+            GameArtPaperScroll(newsprint: true) {
                 VStack(spacing: 0) {
                     HomeSceneArtwork(room: .newspaper, actorArt: talkingToPrinter ? "HomePrinter20260929" : "HomeEditor20260929")
                         .overlay(alignment: .bottomLeading) {
@@ -70,33 +71,14 @@ struct DailyNewspaperView: View {
                         Button("报馆编辑") { talkingToPrinter = false }
                         Spacer()
                         Button("排字工") { talkingToPrinter = true }
-                    }.font(.subheadline.bold()).foregroundStyle(paper).padding(12)
+                    }.font(.subheadline.bold()).foregroundStyle(ink).padding(12)
                     newspaper
                         .padding(.horizontal, 15).padding(.top, 8).padding(.bottom, 30)
-                        .background {
-                            ZStack {
-                                paper
-                                LinearGradient(colors: [.brown.opacity(0.16), .clear, .brown.opacity(0.10)], startPoint: .leading, endPoint: .trailing)
-                            }
-                        }
                         .padding(.horizontal, 10)
-                        .shadow(color: .black.opacity(0.5), radius: 8, y: 3)
                 }
-                .padding(.top, 48)
             }
-            HStack {
-                Text("雾港报馆").font(.system(size: 20, weight: .bold, design: .serif))
-                Spacer()
-                Button { dismiss() } label: {
-                    HStack(spacing: 5) { Image(systemName: "xmark"); Text("收起报纸") }
-                        .font(.system(size: 13, weight: .semibold))
-                        .padding(.horizontal, 12).padding(.vertical, 9)
-                        .background(.white.opacity(0.10), in: Capsule())
-                }.buttonStyle(.plain)
-            }
-            .foregroundStyle(paper).padding(.horizontal, 18).padding(.vertical, 7)
-            .background(Color(red: 0.12, green: 0.075, blue: 0.04))
         }
+        .background(Color(red: 0.12, green: 0.075, blue: 0.04).ignoresSafeArea())
         .preferredColorScheme(.dark)
         .onAppear { game.markDailyNewspaperSeen() }
         #if DEBUG

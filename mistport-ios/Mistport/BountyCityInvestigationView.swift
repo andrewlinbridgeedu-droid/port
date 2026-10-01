@@ -346,12 +346,7 @@ struct BountyCityInvestigationView: View {
 
     private var header: some View {
         HStack(spacing: 12) {
-            Button(action: onExit) {
-                Image(systemName: "chevron.left")
-                    .font(.headline.bold())
-                    .frame(width: 44, height: 44)
-            }
-            .accessibilityLabel("收起城图")
+            GameArtReturnButton(title: "收起城图", action: onExit)
             VStack(alignment: .leading, spacing: 2) {
                 Text("雾港 · 通缉调查").font(.system(size: 18, weight: .bold, design: .serif))
                 Text(bounty.title + " · " + currentQuestion)
@@ -915,16 +910,7 @@ struct HarborCityExplorationView: View {
 
     private var header: some View {
         HStack(spacing: 12) {
-            Button(action: onBack) {
-                Text("返回主页")
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(ChurchGold)
-                    .padding(.horizontal, 12)
-                    .frame(height: 38)
-                    .background(.white.opacity(0.09), in: Capsule())
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
+            GameArtReturnButton(title: "返回主页", action: onBack)
             .accessibilityLabel("退出港城，返回主页")
             Text("雾港 · 港城")
                 .font(.system(size: 19, weight: .bold, design: .serif))

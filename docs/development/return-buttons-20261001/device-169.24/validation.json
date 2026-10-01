@@ -1,0 +1,179 @@
+{
+  "build": "169.24",
+  "bundle_identifier": "com.yourcompany.mistport",
+  "device": "iPhone 13",
+  "installed_device_version_confirmed": true,
+  "source_commit": "616422b",
+  "ui_source_commit": "47db0fda328f271a80289966d63d24415ff2fa10",
+  "device_baseline_commit": "390290c",
+  "includes_new_hero": false,
+  "device_build": "BUILD SUCCEEDED",
+  "codesign_deep_strict_passed": true,
+  "unity_export_freshness_passed": true,
+  "freshness_manifest_sha256": "3ccf58da400ee2928456656651fe2cf1a3f5dcba744eaaf32ec023d14c00addd",
+  "binaries_sha256": {
+    "Mistport": "b58eb6045fd99a6a6a91689c249d96b57e0f8a725a3cefda4948aeabd3148dc7",
+    "Mistport.debug.dylib": "513decd4242ff79bcb3af393e8c05763eb8a8587ead6ce31d3754d5b8ce4a9a3",
+    "Frameworks/UnityFramework.framework/UnityFramework": "d80632ab92286db7834a4f96ac155c16b112f539b8985939ad4d89edbdf354bd"
+  },
+  "build_log_sha256": "ea522dc695b261839e0b46f30cc98c97fc82274c61ac409646d3d1b3941c5552",
+  "derived_data": "/Volumes/andrew's SSD/Mistport-build-cache/return-buttons-device-20261001/Derived",
+  "signed_debug_app_archive": "/Volumes/andrew's SSD/Mistport-archives/releases/Build169.24/Mistport.app",
+  "xcarchive_created": false,
+  "existing_ssd_symlinks_modified": false,
+  "preferences": {
+    "private_backup_directory": "/Volumes/andrew's SSD/Mistport-device-backups/return-buttons-20261001",
+    "installed_comparison_summary": {
+      "beforeFiles": 264,
+      "afterFiles": 264,
+      "realPlayerAndAuditByteIdentical": true,
+      "allowedChangedFiles": [],
+      "newFiles": [],
+      "unexpectedChangedOrNewFiles": [],
+      "passed": true,
+      "restoredAnything": false,
+      "realPlayerExempted": false
+    },
+    "review_comparison_summary": {
+      "beforeFiles": 264,
+      "afterFiles": 264,
+      "playerByteIdentical": true,
+      "addedPlayerKeys": [],
+      "changedOrRemovedPlayerKeys": [],
+      "changedOrRemovedOtherFiles": [
+        "mistport.daily-pacing-device-walk.v1.plist"
+      ],
+      "allowedTestSuiteChanges": [
+        "mistport.daily-pacing-device-walk.v1.plist"
+      ],
+      "newFiles": [],
+      "passed": true
+    },
+    "protected_files": {
+      "mistport.player-test-01-15.plist": {
+        "byte_identical_all_phases": true,
+        "sha256": "0650b13ba9259b03523e58130483ef9f14ae60131b7d1ce632531bac7ee70c08"
+      },
+      "mistport.player-test-01-15.audit.plist": {
+        "byte_identical_all_phases": true,
+        "sha256": "2d02f89d181befe1cc6cd3cd8ac1a02cb82d8bf392c22e1c35e6bbbea7128655"
+      }
+    },
+    "full_install_report_sha256": "75df8fbe79e74b39893ff7ac064a1c92477341c23708144bf96cc99bdcf1cd4a",
+    "full_review_report_sha256": "083a404cc9097f1ff853e272f7a71027fd9aee5734c2176847518716cb08aaaf",
+    "raw_preferences_committed": false,
+    "restored_preferences": false
+  },
+  "screenshots": [
+    {
+      "page": "police",
+      "file": "police.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=police",
+        "--home-map-review"
+      ],
+      "source": "physical-iPhone-native-window-export",
+      "source_modified": "2026-10-01T18:58:00+00:00",
+      "captured_at": "2026-10-01T18:58:04.731676+00:00",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "fa9839f44e9d2fea5b6a8cae71d2b0dece101bce38d7b93dd322c0b43c5db6aa",
+      "manual_navigation": false
+    },
+    {
+      "page": "post",
+      "file": "post.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=post",
+        "--home-map-review"
+      ],
+      "source": "physical-iPhone-native-window-export",
+      "source_modified": "2026-10-01T18:58:10+00:00",
+      "captured_at": "2026-10-01T18:58:13.027682+00:00",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "4742a21f050a0510d47e26b36584b7fb03ef28d68e15d73a36470ff2673fe5dc",
+      "manual_navigation": false
+    },
+    {
+      "page": "newspaper",
+      "file": "newspaper.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=newspaper",
+        "--home-map-review"
+      ],
+      "source": "physical-iPhone-native-window-export",
+      "source_modified": "2026-10-01T18:58:17+00:00",
+      "captured_at": "2026-10-01T18:58:20.227837+00:00",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "05f53f32ec133d572cdef74b3587a6e7e3ae427087d86fe0a550d43716ab3e96",
+      "manual_navigation": false
+    },
+    {
+      "page": "cityhall-bottom",
+      "file": "cityhall-bottom.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=cityhall",
+        "--home-map-review",
+        "--daily-ui-review-bottom"
+      ],
+      "source": "physical-iPhone-native-window-export",
+      "source_modified": "2026-10-01T18:58:24+00:00",
+      "captured_at": "2026-10-01T18:58:27.158032+00:00",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "6903723aba744b4598303e94c147762ce4a96f85411b12077065c5883cfe66c7",
+      "manual_navigation": false
+    },
+    {
+      "page": "newspaper-bottom",
+      "file": "newspaper-bottom.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=newspaper",
+        "--home-map-review",
+        "--daily-ui-review-bottom"
+      ],
+      "source": "physical-iPhone-native-window-export",
+      "source_modified": "2026-10-01T18:58:31+00:00",
+      "captured_at": "2026-10-01T18:58:34.142437+00:00",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "13d9a4fba98707eb6c1ac6847bca93ac9745294061a4618254e6fc3af491916e",
+      "manual_navigation": false
+    },
+    {
+      "page": "settings-bottom",
+      "file": "settings-bottom.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=settings",
+        "--home-map-review",
+        "--daily-ui-review-bottom"
+      ],
+      "source": "physical-iPhone-native-window-export",
+      "source_modified": "2026-10-01T18:58:38+00:00",
+      "captured_at": "2026-10-01T18:58:47.487558+00:00",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "100e7d652721ca28df456e6a9bd4531ea05265e2a6461269436d51bd78c479f1",
+      "manual_navigation": false
+    }
+  ],
+  "observed_all_six_original_images": true,
+  "manual_navigation": false,
+  "isolated_test_process_terminated": true,
+  "user_visual_approval": false,
+  "not_verified": [
+    "manual return clicks",
+    "all font sizes",
+    "rubber-band scrolling",
+    "combat regression",
+    "audio ten-round-trip test"
+  ]
+}
