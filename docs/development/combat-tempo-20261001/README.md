@@ -20,7 +20,7 @@
 - 新 Unity iOS 导出已核对完整资源清单，见 [源清单](unity-export-manifest.txt)。DerivedData、临时工程和签名包在 SSD；原工作区与指向 SSD 的链接未改。
 - 每次安装前后独立备份 Preferences，逐文件核对。真实玩家和 audit 无豁免、不反写；原始 plist 仅留 SSD，仓库只存哈希和核对结果。
 
-## 真机录制尚未完成
+## 真机直接查看与未完成录像
 
 169.15／169.17 改前对照已装 iPhone 13／iOS 26.6，首次 DEBUG 直入场景曾因 Unity 键盘初始化顺序崩溃，后续改为原生窗口激活后预加载。最终启动进程存活，但169.17 复验仍收到 ReplayKit `-5833`（音频／视频捕捉失败，无法开始），没有有效 MP4。镜像捕获工具同时出现 ScreenCaptureKit `-3811/-3812`、窄条裁切和超时，不能据此完成点击或录像。
 
@@ -30,7 +30,11 @@
 
 用户随后指出不应执着录制。169.20 改成直接查看，去掉录制成功才启动战斗的前置条件和整块错误遮挡；构建、安装通过，264 份 Preferences 全部逐字节一致。但 Q4 的导出截图全黑，进程未完成战斗；再次用控制台启动，日志显示两次内存警告后以 signal 9 退出。没有新 Jetsam／崩溃日志，不能仅凭警告断言唯一原因，更不能记为有效真机预览。见 [退出摘要](device/preview-16920-exit.txt)。
 
-169.21 已构建并安装，安装前后 264 份 Preferences 全部逐字节一致。DEBUG 加载先等待 Unity 场景的真实锚点回执，再创建原生战斗页，避免两套渲染资源同时初始化；默认不做额外截图拷贝，显式 `--tempo-snapshots` 才留原样 PNG。增加阶段内存记录用于排查。系统因 `Locked` 拒绝启动 169.21，镜像先显示麦克风占用后超时；新的加载调整尚未运行验证。已请求解锁，**不再请求录制**。当前先交直接查看模式，录屏失败仍保留为未完成证据。
+169.21 已构建并安装，安装前后 264 份 Preferences 全部逐字节一致。DEBUG 加载先等待 Unity 场景的真实锚点回执，再创建原生战斗页；默认不额外抓图，增加阶段内存记录。用户解锁后，三场 ×1／×2 六次均运行至胜利，主角展示也完整运行。三场两档的结束血量分别一致；猎犬约 50.13／25.11 秒，石颚 22.90／11.64 秒，空壳 31.61／16.07 秒。镜像实际抽看了角色、战斗画面、飘字及特效，实际点过 ×2 和菜单切场。没有录制、没有逐招用户认可；完整运行的 JSON 不能当成 MP4。见 [直接查看记录](device/DIRECT-VIEW.md)。
+
+169.21 的一次额外 UIKit 战斗抓图呈全黑，镜像也黑；同构建不抓图运行能显示战斗。不把黑图当作证据，不据此证明唯一原因。169.22 停用 Unity 战斗的 UIKit 抓图，仅首页保留；修正 DEBUG 菜单切场后的自动输入样板身份，并使速度选择跨切场／重看保留。真实玩家与 audit 在完整查看轮次后仍逐字节不变，仅标准偏好新增速度键及新增隔离 suite。后续成功不代表已消除 169.20 的所有退出风险。
+
+169.22 构建、Unity 导出新鲜度、安装通过，安装前后 264 份 Preferences 全部逐字节一致。从首页菜单进入石颚后运行至胜利，原生窗口显示正常；雨云已实际在镜像中看到，保存[原生首页图](device/home-rain-16922.png)，没有录制遮挡。此图来自窗口，不含系统状态栏，不是录像。
 
 未交付：三场 ×1／×2 各一段改前／改后完整战斗录像、主角普攻／受击／招架特写录像、首页雨云录像。**未完成的真机证据不能用直接预览、Unity probe、模拟器或构建成功替代。**
 
@@ -44,5 +48,5 @@
 2. 用 `tools/combat/build_tempo_capture_plan.py` 生成探针；已有 Unity `WholeSpellRound2Review20260922.Begin` 执行 `--round2-output=<目录>`，加 `--round2-safety` 执行安全检查。打包脚本验证源哈希后才生成并排。
 3. iOS 导出必须显式设置 `MISTPORT_UNITY_IOS_OUTPUT` 到本分支工作区，再跑 `scripts/check_unity_export_freshness.sh`；宿主构建用 SSD DerivedData、`CURRENT_PROJECT_VERSION=169.x`。
 4. 装机前后复制整个 `Library/Preferences`，用 `tools/combat/verify_device_preferences.py` 核对。完整测试只允许隔离 suite 和新速度键；安装本身要求所有文件逐字节一致。
-5. 直接查看：已安装正确构建后，启动参数 `--tempo-device-review=q4 --tempo-speed=1 --tempo-preview-only`。可通过“换样板”切换，战斗页保留 ×1／×2。需要原样 PNG 时另加 `--tempo-snapshots`；预览报告始终不是录像。169.20 失败图不作为可用视觉证据，169.21 待运行。
+5. 直接查看：已安装正确构建后，启动参数 `--tempo-device-review=q4 --tempo-speed=1 --tempo-preview-only`。可通过“换样板”切换，战斗页保留 ×1／×2。169.22 起 `--tempo-snapshots` 仅对原生首页生效，战斗不用 UIKit 抓图；预览报告始终不是录像。169.20／169.21 全黑图不作为有效视觉证据。
 6. 原生录像工具仍保留，当前停止复试：`tools/combat/capture_device_tempo.py --device <设备> --build <构建> --preferences-backup <备份> --destination <交付目录> --sample q4 --speed 1`，改前另加 `--baseline`。该工具不安装、不替用户授权，只有新鲜 `completed:true` 报告和原生 MP4 才导出完成证据。

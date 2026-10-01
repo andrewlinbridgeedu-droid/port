@@ -39,6 +39,14 @@
       "unityFrameworkSHA256": "67e36bc46ae06beb9cd3c4f164a96291d44dad306420f9b3cc77e04207480236",
       "derivedDataOnSSD": true,
       "buildSucceeded": true
+    },
+    {
+      "side": "after-preview-menu-correction",
+      "version": "169.22",
+      "executableSHA256": "7d82395afe633e2649b207b1ea5f8289704decbae15ab180de8a53f4acc26c71",
+      "unityFrameworkSHA256": "5a2e2db5e2f943a0f06a921c49223a69bad030b0ac6ed4f04951bbbb0f9b4d26",
+      "derivedDataOnSSD": true,
+      "buildSucceeded": true
     }
   ],
   "phoneApproval": false

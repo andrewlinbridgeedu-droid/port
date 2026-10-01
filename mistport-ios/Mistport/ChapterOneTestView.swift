@@ -1737,7 +1737,7 @@ struct ChapterOneEncounterTestView: View {
         #endif
         #if DEBUG
         if CombatTempoReviewConfiguration.requested,
-           ["--tempo-device-review=d01", "--tempo-device-review=b01"].contains(where: ProcessInfo.processInfo.arguments.contains) {
+           ["d01", "b01"].contains(CombatTempoReviewConfiguration.activeSample ?? "") {
             if tempoReviewStartedAt == nil { tempoReviewStartedAt = now }
             // Same labelled input policy as the rule-library verification runner;
             // the actual relic method remains the only owner of its effect.
@@ -1745,7 +1745,7 @@ struct ChapterOneEncounterTestView: View {
                session.enemies.first(where: \.isAlive)?.currentIntent != "guard",
                session.activateUsurpedLifeMedal(isOwned: ownsMedal, at: now) { syncVisualHealth() }
         }
-        if ProcessInfo.processInfo.arguments.contains("--tempo-device-review=hero"),
+        if CombatTempoReviewConfiguration.requested, CombatTempoReviewConfiguration.activeSample == "hero",
            manualMaskIsReady, session.masqueradeCharges == 0 { requestEmeraldMask() }
         #endif
         if session.expireOwnedManualMasquerade(at: now) { unityBattleRuntime.send(action: "masquerade:0") }

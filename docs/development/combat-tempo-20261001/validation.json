@@ -8,8 +8,135 @@
   "userVisualApproval": false,
   "unityExportManifestSHA256": "3ccf58da400ee2928456656651fe2cf1a3f5dcba744eaaf32ec023d14c00addd",
   "serverTests": "not reached; upstream Hummingbird RequestBody.swift missing DequeModule import",
-  "latestInstalledBuild": "169.21",
+  "latestInstalledBuild": "169.22",
   "previewModeDoesNotRequestRecording": true,
-  "nativePreviewValidated": false,
-  "latestPreviewBlocker": "169.21 launch denied: Locked; 169.20 black PNG and signal 9 after memory warnings"
+  "nativePreviewValidated": true,
+  "nativePreviewValidationScope": "169.21: six complete isolated live battles, x1/x2; mirrored spot checks, no native recording and no user visual approval",
+  "directPreviewResults": [
+    {
+      "build": "169.21",
+      "sample": "b01",
+      "speed": 1,
+      "outcome": "preview-victory",
+      "wallSeconds": 31.611090898513794,
+      "playerHP": 323,
+      "round": 11,
+      "runID": "D8930F3F-DD18-46D5-8E43-7106C2BF7290",
+      "recordingStarted": false
+    },
+    {
+      "build": "169.21",
+      "sample": "b01",
+      "speed": 2,
+      "outcome": "preview-victory",
+      "wallSeconds": 16.074289083480835,
+      "playerHP": 323,
+      "round": 11,
+      "runID": "FAF2F1C0-25CB-4D8D-A227-BC3401B68EB9",
+      "recordingStarted": false
+    },
+    {
+      "build": "169.21",
+      "sample": "d01",
+      "speed": 1,
+      "outcome": "preview-victory",
+      "wallSeconds": 22.89675199985504,
+      "playerHP": 755,
+      "round": 8,
+      "runID": "D78AE5CD-16A2-447B-9B46-3958FA96E46E",
+      "recordingStarted": false
+    },
+    {
+      "build": "169.21",
+      "sample": "d01",
+      "speed": 2,
+      "outcome": "preview-victory",
+      "wallSeconds": 11.635764956474304,
+      "playerHP": 755,
+      "round": 8,
+      "runID": "0A34FBBE-6DF1-4870-A580-D0088428B71C",
+      "recordingStarted": false
+    },
+    {
+      "build": "169.21",
+      "sample": "hero",
+      "speed": 1,
+      "outcome": "preview-victory",
+      "wallSeconds": 20.825653076171875,
+      "playerHP": 865,
+      "round": 7,
+      "runID": "3050704B-CC69-47A7-A9EC-05A5164C6435",
+      "recordingStarted": false
+    },
+    {
+      "build": "169.21",
+      "sample": "q4",
+      "speed": 1,
+      "outcome": "preview-victory",
+      "wallSeconds": 50.130414962768555,
+      "playerHP": 752,
+      "round": 10,
+      "runID": "745C02C5-4E26-42B5-AA71-FBC0296185BC",
+      "recordingStarted": false
+    },
+    {
+      "build": "169.21",
+      "sample": "q4",
+      "speed": 2,
+      "outcome": "preview-victory",
+      "wallSeconds": 25.108458995819092,
+      "playerHP": 752,
+      "round": 10,
+      "runID": "6E26DB16-58F3-4733-8D91-BCA99AAE1EA2",
+      "recordingStarted": false
+    },
+    {
+      "build": "169.22",
+      "sample": "b01",
+      "speed": 2,
+      "initialSpeed": 2,
+      "outcome": "preview-victory",
+      "wallSeconds": 15.988909006118774,
+      "playerHP": 323,
+      "round": 11,
+      "runID": "D850CD04-49B1-4CF0-ACFE-2E2C6C946E5F",
+      "recordingStarted": false
+    },
+    {
+      "build": "169.22",
+      "sample": "d01",
+      "speed": 1,
+      "initialSpeed": 1,
+      "outcome": "preview-victory",
+      "wallSeconds": 22.95064902305603,
+      "playerHP": 755,
+      "round": 8,
+      "runID": "0895D165-0654-449B-8C62-73823CE1897A",
+      "recordingStarted": false
+    },
+    {
+      "build": "169.22",
+      "sample": "hero",
+      "speed": 2,
+      "initialSpeed": 2,
+      "outcome": "preview-victory",
+      "wallSeconds": 10.541208982467651,
+      "playerHP": 865,
+      "round": 7,
+      "runID": "77ACFC4F-DCF0-4266-8A6E-32020530E4E8",
+      "recordingStarted": false
+    }
+  ],
+  "battleUIKitSnapshotsSupported": false,
+  "nativePreviewMenuVerification": {
+    "build": "169.22",
+    "homeToD01Victory": true,
+    "speed2PersistedD01ToB01": true,
+    "b01MenuVictory": true,
+    "heroMenuVictory": true,
+    "nativeHomeRainPNG": "device/home-rain-16922.png",
+    "nativeHomeRainVisuallyInspected": true,
+    "recordingStarted": false,
+    "userVisualApproval": false
+  }
 }

@@ -4,6 +4,9 @@ import MistportCombatCore
 /// The production path always selects the shared rules. Old rules are available
 /// only in the explicitly isolated DEBUG comparison shell.
 enum CombatTempoReviewConfiguration {
+    #if DEBUG
+    @MainActor static var activeSample: String?
+    #endif
     static var requested: Bool {
         #if DEBUG
         ProcessInfo.processInfo.arguments.contains { $0.hasPrefix("--tempo-device-review=") }
@@ -32,12 +35,14 @@ struct CombatTempoDeviceReviewRoot: View {
     @State private var running = false
     @State private var preparing = false
     @State private var finished = false
-    @State private var message = "开始录制"
+    @State private var message = "正在准备样板"
     @State private var beganAt: Date?
     @State private var runID = UUID().uuidString
     @State private var selectedSample: String?
     @State private var recordingStarted = false
     @State private var reviewPass = 0
+    @State private var hasSetLaunchSpeed = false
+    @State private var passSpeed = 1
 
     private var sample: String {
         selectedSample ?? String(ProcessInfo.processInfo.arguments.first { $0.hasPrefix("--tempo-device-review=") }!.dropFirst(22))
@@ -47,10 +52,12 @@ struct CombatTempoDeviceReviewRoot: View {
         return arguments.contains("--tempo-record-auto") && !arguments.contains("--tempo-preview-only")
     }
     private var requestsSnapshots: Bool {
-        requestsRecording || ProcessInfo.processInfo.arguments.contains("--tempo-snapshots")
+        // UIKit drawHierarchy does not capture the embedded Unity framebuffer
+        // reliably and produced a black battle view on the review device.
+        sample == "home" && (requestsRecording || ProcessInfo.processInfo.arguments.contains("--tempo-snapshots"))
     }
     private var speed: Int {
-        ProcessInfo.processInfo.arguments.contains("--tempo-speed=2") ? 2 : 1
+        passSpeed
     }
     private var fileStem: String {
         "tempo-" + (CombatTempoReviewConfiguration.baseline ? "before" : "after") + "-" + sample + "-x\(speed)"
@@ -108,8 +115,14 @@ struct CombatTempoDeviceReviewRoot: View {
             running = false; preparing = false; finished = false
             recordingStarted = false; beganAt = nil; runID = UUID().uuidString
             message = "正在准备样板"
+            CombatTempoReviewConfiguration.activeSample = sample
             UIApplication.shared.isIdleTimerDisabled = true
-            UserDefaults.standard.set(speed, forKey: GameSettingsKeys.battleSpeed)
+            if !hasSetLaunchSpeed {
+                UserDefaults.standard.set(ProcessInfo.processInfo.arguments.contains("--tempo-speed=2") ? 2 : 1,
+                    forKey: GameSettingsKeys.battleSpeed)
+                hasSetLaunchSpeed = true
+            }
+            passSpeed = UserDefaults.standard.integer(forKey: GameSettingsKeys.battleSpeed) == 2 ? 2 : 1
             if sample == "home" {
                 // The weather fixture must begin in the city, not in the
                 // fresh-account Mara/path introduction. Only this suite changes.
@@ -212,9 +225,9 @@ struct CombatTempoDeviceReviewRoot: View {
             }
             recordingStarted = true; beganAt = Date(); running = true
             writeReport(outcome: "recording", completed: false, result: nil)
-            // Screenshots are native window pixels; the recording keeps every frame.
+            // Only the native home scene supports the UIKit screenshot helper.
             try? await Task.sleep(for: .seconds(2))
-            HomeFrameSampler.saveScreenshot(fileStem + ".png")
+            if requestsSnapshots { HomeFrameSampler.saveScreenshot(fileStem + ".png") }
             if sample == "home" {
                 try? await Task.sleep(for: .seconds(16))
                 await finish(result: nil, outcome: "home-weather")
@@ -225,7 +238,7 @@ struct CombatTempoDeviceReviewRoot: View {
         } catch {
             preparing = false; message = "录制不可用，直接查看"
             writeReport(outcome: "recording-error", completed: false, result: nil, error: error)
-            HomeFrameSampler.saveScreenshot(fileStem + "-error.png")
+            if requestsSnapshots { HomeFrameSampler.saveScreenshot(fileStem + "-error.png") }
             await preview()
         }
     }

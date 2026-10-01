@@ -1,0 +1,41 @@
+{
+  "applicationState" : 0,
+  "baseline" : false,
+  "build" : "169.21",
+  "completed" : false,
+  "fixtureInputs" : "DEBUG Q4 mask input; D01\/B01 medal input at rule time 22s and when ready thereafter",
+  "footprintMB" : 757.62681579589844,
+  "initialSpeed" : 1,
+  "isolatedFixture" : true,
+  "method" : "Live App preview; no recording",
+  "outcome" : "preview-victory",
+  "playerHP" : 755,
+  "playerMaxHP" : 1000,
+  "previewCompleted" : true,
+  "realPlayerRewardSettlement" : false,
+  "recorderAvailable" : true,
+  "recordingRequested" : false,
+  "recordingStarted" : false,
+  "round" : 8,
+  "runID" : "D78AE5CD-16A2-447B-9B46-3958FA96E46E",
+  "sample" : "d01",
+  "speed" : 1,
+  "unityAnchorCount" : 1,
+  "userVisualApproval" : false,
+  "wallSeconds" : 22.896751999855042,
+  "windows" : [
+    {
+      "controller" : "Optional<UIViewController>",
+      "hidden" : false,
+      "key" : true,
+      "level" : 0
+    },
+    {
+      "controller" : "Optional<UIViewController>",
+      "hidden" : true,
+      "key" : false,
+      "level" : -1
+    }
+  ],
+  "writtenAt" : "2026-10-01T09:08:17Z"
+}
