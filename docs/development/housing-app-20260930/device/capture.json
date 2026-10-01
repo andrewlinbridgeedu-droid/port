@@ -1,10 +1,11 @@
 {
   "source": "physical-device-native-window",
-  "build": "169.12",
-  "revision": "neighbor-cost-and-world-copy",
+  "build": "169.13",
+  "revision": "PR38-audio-and-lantern",
   "screenshots": [],
-  "status": "revised static captures pending transport reconnection",
+  "status": "169.13 native phase and stamina-state captures pending phone availability",
   "priorRevision": "prior-169.12/capture.json",
   "isolatedFixture": true,
-  "userVisualApproval": false
+  "userVisualApproval": false,
+  "historicalStagePNGBuild": "169.12"
 }

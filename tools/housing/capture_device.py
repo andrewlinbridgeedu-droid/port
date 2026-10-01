@@ -1,6 +1,6 @@
 """Capture native housing views from an already-installed DEBUG device build.
 
-Requires a successful local Preferences backup and build 169.12. Never installs
+Requires a successful local Preferences backup and the requested build. Never installs
 an app, writes player data, restores backups, or alters exported PNG pixels.
 """
 import argparse
@@ -17,6 +17,7 @@ root = Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--device', required=True)
 parser.add_argument('--preferences-backup', required=True, type=Path)
+parser.add_argument('--build', default='169.13')
 parser.add_argument('--destination', type=Path, default=root / 'docs/development/housing-app-20260930/device')
 parser.add_argument('--screens', nargs='+', default=['agency', 'districts', 'cards', 'interior', 'lease', 'moving', 'residence', 'stamina', 'highland', 'home', 'home-night'])
 args = parser.parse_args()
@@ -39,13 +40,18 @@ with tempfile.TemporaryDirectory(prefix='housing-device-capture-') as scratch:
         return json.loads(result_file.read_text())['result']
 
     app = device_call(['info', 'apps', '--device', args.device, '--bundle-id', bundle])['apps']
-    if len(app) != 1 or app[0]['bundleVersion'] != '169.12':
-        raise RuntimeError('Expected installed 169.12 before using its isolated housing fixture')
+    if not args.build.startswith('169.') or len(app) != 1 or app[0]['bundleVersion'] != args.build:
+        raise RuntimeError('Expected installed ' + args.build + ' before using its isolated housing fixture')
 
     def launch(screen):
+        state = screen.rsplit('-', 1)[-1]
+        state = state if state in ['full', 'recovering', 'empty'] else None
+        view = screen.rsplit('-', 1)[0] if state else screen
+        view = 'home' if view == 'home-night' else view
         command = ['process', 'launch', '--device', args.device, '--terminate-existing',
-                   bundle, '--', '--housing-device-walk', '--housing-screen=' + ('home' if screen == 'home-night' else screen),
-                   '-MistportCityMute', 'YES']  # Existing DEBUG review flag; argument domain only, no preferences write.
+                   bundle, '--', '--housing-device-walk', '--housing-screen=' + view]
+        if state:
+            command += ['--housing-stamina=' + state]
         if screen.startswith('home'):
             command += ['--home-map-review', '-MistportHubPanX', '0.265',
                         '-MistportCityHour', '22' if screen == 'home-night' else '12',
@@ -54,11 +60,14 @@ with tempfile.TemporaryDirectory(prefix='housing-device-capture-') as scratch:
 
     shots = []
     for screen in args.screens:
-        if screen not in ['agency', 'districts', 'cards', 'interior', 'lease', 'moving', 'residence', 'stamina', 'highland', 'home', 'home-night']:
+        if screen not in ['agency', 'districts', 'cards', 'interior', 'lease', 'moving', 'residence', 'stamina', 'highland', 'home', 'home-night', 'task-cost', 'stamina-full', 'stamina-recovering', 'stamina-empty', 'home-recovering']:
             raise ValueError('Unknown housing screen: ' + screen)
         launch(screen)
         time.sleep(6)  # The DEBUG native window exporter runs four seconds after launch.
-        source = 'housing-' + ('home' if screen == 'home-night' else screen) + '.png'
+        state = screen.rsplit('-', 1)[-1]
+        state = state if state in ['full', 'recovering', 'empty'] else None
+        view = screen.rsplit('-', 1)[0] if state else screen
+        source = 'housing-' + ('home' if view == 'home-night' else view) + '.png'
         destination = args.destination / ('housing-' + screen + '.png')
         device_call(['copy', 'from', '--device', args.device, '--domain-type', 'appDataContainer',
                      '--domain-identifier', bundle, '--source', 'Documents/' + source,
@@ -69,6 +78,14 @@ with tempfile.TemporaryDirectory(prefix='housing-device-capture-') as scratch:
         width, height = struct.unpack('>II', data[16:24])
         shots.append({'file': destination.name, 'width': width, 'height': height,
                       'sha256': hashlib.sha256(data).hexdigest()})
+        if state:
+            fixture = args.destination / ('housing-' + screen + '.json')
+            device_call(['copy', 'from', '--device', args.device, '--domain-type', 'appDataContainer',
+                         '--domain-identifier', bundle, '--source', 'Documents/housing-stamina-fixture.json',
+                         '--destination', str(fixture)])
+            report = json.loads(fixture.read_text())
+            if report['state'] != state or report['value'] != {'full': 100, 'recovering': 50, 'empty': 0}[state]:
+                raise RuntimeError('Incorrect isolated stamina fixture: ' + screen)
         print('Captured physical device', screen, width, height, flush=True)
 
     for name in ['housing-verification.json', 'local-workshop-verification.json', 'church-tower-100-verification.json']:
@@ -80,7 +97,8 @@ with tempfile.TemporaryDirectory(prefix='housing-device-capture-') as scratch:
             raise RuntimeError('Device self-check failed: ' + name)
 
     (args.destination / 'capture.json').write_text(json.dumps({
-        'source': 'physical-device-native-window', 'device': args.device, 'build': '169.12',
+        'source': 'physical-device-native-window', 'device': args.device, 'build': args.build,
+        'environmentMuteArgument': False,
         'screenshots': shots, 'isolatedFixture': True, 'userVisualApproval': False,
     }, ensure_ascii=False, indent=2) + '\n')
     launch('home')  # Leave the real home navigation available for the user's review.

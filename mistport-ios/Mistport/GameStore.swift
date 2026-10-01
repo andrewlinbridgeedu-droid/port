@@ -5213,6 +5213,27 @@ private func housingAssert(_ condition: Bool, _ message: String = "", file: Stat
 
 #if DEBUG
 extension GameStore {
+    func prepareHousingStaminaReview() throws {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard arguments.contains("--housing-device-walk"),
+              let choice = arguments.first(where: { $0.hasPrefix("--housing-stamina=") })?.dropFirst(18),
+              ["full", "recovering", "empty"].contains(String(choice)), var record = housingRecord else { return }
+        let now = housingNow.timeIntervalSince1970
+        record.stamina = MPCStaminaState(at: now, recoveryPerDay: record.stamina.recoveryPerDay)
+        let spending = choice == "full" ? 0 : choice == "empty" ? MPCStamina.maximum : MPCStamina.maximum / 2
+        for index in 0..<(spending / MPCStamina.cost(.craft)) {
+            try record.stamina.spend(.craft, receiptID: "lantern-review-\(index)", at: now)
+        }
+        try commitChurchServices(churchServices, housing: record)
+        housingDisplayTick += 1
+        let report: [String: Any] = ["isolatedFixture": true, "state": String(choice),
+            "value": record.stamina.available(at: now), "recoveryPerDay": record.stamina.recoveryPerDay,
+            "method": "Normal rule costs and clock; isolated DEBUG housing suite only"]
+        if let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first,
+           let data = try? JSONSerialization.data(withJSONObject: report, options: [.sortedKeys, .prettyPrinted]) {
+            try data.write(to: folder.appendingPathComponent("housing-stamina-fixture.json"))
+        }
+    }
     static func housingDeviceWalkDefaults() -> UserDefaults {
         let suite = "mistport.housing-device-walk.20260930"
         let defaults = UserDefaults(suiteName: suite)!

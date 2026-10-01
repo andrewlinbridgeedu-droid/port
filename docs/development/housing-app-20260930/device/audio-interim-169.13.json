@@ -1,0 +1,1016 @@
+{
+  "environmentMuted": false,
+  "events": [
+    {
+      "at": 1790821191.695993,
+      "audibleLoopGains": 0,
+      "busVolume": 1,
+      "engineRunning": false,
+      "event": "home-start",
+      "outputReady": false,
+      "playingLoops": 0,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821192.384995,
+      "audibleLoopGains": 0,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-recovered",
+      "outputReady": true,
+      "outputSampleTime": 149585660,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821192.445643,
+      "audibleLoopGains": 6,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 149588540,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821194.614057,
+      "audibleLoopGains": 6,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 149692220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821196.2357569,
+      "audibleLoopGains": 6,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-recovered",
+      "outputReady": true,
+      "outputSampleTime": 149770460,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821196.6167932,
+      "audibleLoopGains": 6,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 149788700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821198.6181989,
+      "audibleLoopGains": 6,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 149884700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821200.621482,
+      "audibleLoopGains": 8,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 149980700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821202.622919,
+      "audibleLoopGains": 8,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 150076700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821204.8634171,
+      "audibleLoopGains": 8,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 150184220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821206.863708,
+      "audibleLoopGains": 8,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 150280220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821208.864009,
+      "audibleLoopGains": 8,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 150376220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821211.11966,
+      "audibleLoopGains": 8,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 150484700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821213.1228719,
+      "audibleLoopGains": 8,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 150580700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821215.363056,
+      "audibleLoopGains": 7,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 150688220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821217.363893,
+      "audibleLoopGains": 7,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 150784220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821219.375812,
+      "audibleLoopGains": 6,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 150881180,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821221.614594,
+      "audibleLoopGains": 6,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 150988700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821223.885447,
+      "audibleLoopGains": 6,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 151097660,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821226.114963,
+      "audibleLoopGains": 6,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 151204700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821228.116288,
+      "audibleLoopGains": 6,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 151300700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821230.364056,
+      "audibleLoopGains": 6,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 151408220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821232.364352,
+      "audibleLoopGains": 8,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 151504700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821234.365057,
+      "audibleLoopGains": 8,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 151600700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821236.368812,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 151696700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821238.6137161,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 151804220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821240.61358,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 151900220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821242.867775,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 152008700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821244.8749352,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 152105180,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821246.872947,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 152200700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821249.124549,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 152309180,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821251.363682,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 152416220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821253.365,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 152512700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821255.367737,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 152608700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821257.614003,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 152716220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821259.6146889,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 152812700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821261.6144218,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 152908700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821263.864398,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 153016700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821266.1134272,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 153124220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821268.114063,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 153220220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821270.36732,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 153328700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821272.371037,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 153424700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821274.61373,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 153532700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821276.8642,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 153640220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821279.113182,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 153748220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821281.1143699,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 153844700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821283.385026,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 153953660,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821285.614097,
+      "audibleLoopGains": 9,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 154060700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821287.863267,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 154168700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821289.864013,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 154264700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821292.113492,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 154372220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821294.113956,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 154468700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821296.1139479,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 154564700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821298.3640609,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 154672700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821300.6140652,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 154780700,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821302.882421,
+      "audibleLoopGains": 9,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 154889180,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821305.113212,
+      "audibleLoopGains": 9,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 154996220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821307.3628201,
+      "audibleLoopGains": 9,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 155104220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821309.363525,
+      "audibleLoopGains": 9,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 155200220,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821311.3917232,
+      "audibleLoopGains": 9,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 155264540,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821494.491023,
+      "audibleLoopGains": 9,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-recovered",
+      "outputReady": true,
+      "outputSampleTime": 164086856,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821494.5713038,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 164090696,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821496.611395,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 164188616,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821498.611475,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 164284616,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821500.8751621,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 164393096,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821503.111165,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 164500616,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821505.111201,
+      "audibleLoopGains": 10,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 164596616,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821507.111291,
+      "audibleLoopGains": 9,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 164692616,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821509.367385,
+      "audibleLoopGains": 8,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 164800616,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821511.3717752,
+      "audibleLoopGains": 8,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 164897096,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    },
+    {
+      "at": 1790821513.6102371,
+      "audibleLoopGains": 8,
+      "busVolume": 0.6000000238418579,
+      "engineRunning": true,
+      "event": "output-snapshot",
+      "outputReady": true,
+      "outputSampleTime": 165004136,
+      "playingLoops": 12,
+      "route": [
+        "Speaker"
+      ],
+      "users": 1
+    }
+  ],
+  "isolatedFixture": true,
+  "launchArguments": [
+    "--",
+    "--housing-device-walk",
+    "--housing-screen=home",
+    "--housing-audio-review",
+    "--home-map-review",
+    "-MistportHubPanX",
+    "0.265",
+    "-MistportCityHour",
+    "12",
+    "-MistportCitySeason",
+    "autumn"
+  ],
+  "session": "6D841822-170F-4621-928F-E130BB89DC58",
+  "build": "169.13",
+  "controlledTenCyclesCompleted": false,
+  "headphoneRouteTested": false
+}

@@ -1,17 +1,17 @@
 {
   "task": "H3",
-  "status": "revised-build-installed-manual-flow-complete-export-and-preferences-pending",
+  "status": "169.13-installed-selfchecks-and-install-preferences-passed-remaining-device-review-pending",
   "baseMain": "bfdb800e8fd8e81bde830cd86f43aee3dd839355",
   "signedDeviceBuild": {
-    "version": "169.12",
+    "version": "169.13",
     "passed": true,
     "installed": true,
     "derivedDataOnExternalSSD": true,
-    "revision": "neighbor-cost-and-world-copy",
-    "executableSHA256": "c70de7033b0a17a970468a63966d66f0f8a43cf5f8604b13c800c1057dffc7f8",
-    "sourceCommit": "f93210dd53b8ce7bd5f35ae89e5f168064aa9030",
-    "debugDylibSHA256": "fac9eebdb2054d8cfdf6f95dd8234f94dee8bda8434b5c799ac769d7c3cc5274",
-    "hashNote": "Earlier executableSHA256 actually referred to Mistport.debug.dylib. Both signed Mach-O hashes are now labeled explicitly."
+    "newArchiveCreated": false,
+    "mergeCommit": "5ba38b4a91c00679af91e81c4341fb971fe4c745",
+    "additionalBuiltSource": "DEBUG-only stamina fixtures, ReplayKit recording and read-only audio diagnostics; hashes below",
+    "executableSHA256": "5795b7aef46d8468df6c66c21d2a0717df85fff97f9cf74f0dd1b063327f817a",
+    "debugDylibSHA256": "43b57dea72caf90104a0682ac88d78aef103314bceab947bfd7fb4c92b427807"
   },
   "simulator": {
     "name": "Mistport Workshop Integration",
@@ -20,12 +20,14 @@
     "architecture": "arm64",
     "bundle": "local.mistport.housing-integration",
     "bundleVersion": "78",
-    "unityPresentationIncluded": false
+    "unityPresentationIncluded": false,
+    "evidenceBuild": "historical 169.12 revision"
   },
   "housingChecks": {
     "passed": true,
     "count": 22,
-    "report": "simulator/housing-verification.json"
+    "report": "device/housing-verification.json",
+    "build": "169.13"
   },
   "existingSelfCheckGroups": 11,
   "passingMarkers": [
@@ -43,7 +45,7 @@
     "CHURCH_TOWER_100_PASS"
   ],
   "additionalProcurementCheck": true,
-  "selfCheckLog": "simulator/selfchecks.log",
+  "selfCheckLog": "device/selfchecks.log",
   "screenshots": [
     {
       "file": "simulator/housing-agency.png",
@@ -113,13 +115,14 @@
     }
   ],
   "sourceHashes": {
-    "mistport-ios/Mistport/GameStore.swift": "b9145ea5cb40e15831388521edfe1efcfdc2786505b9f15f4feb497a4258b1d3",
+    "mistport-ios/Mistport/GameStore.swift": "57e0bce6d336c46b5ad032a580355a3fdcd27703a405732c4c2c0f66095e16ac",
     "mistport-ios/Mistport/HousingService.swift": "78935096c132b82eab95627e3f1873cfb3a100b93fc06bbd9d9ca391e3eaad02",
-    "mistport-ios/Mistport/HousingViews.swift": "9f45643175609c731fd894c14709d0cc298645c8c2afe7817416fcce60c400c7",
-    "mistport-ios/Mistport/MistportApp.swift": "e3696c3d4a7a354e7ad156756d9122d3ff767bf831212f9354f4faffe663224b",
+    "mistport-ios/Mistport/HousingViews.swift": "9a0aab30cecc140274cc7a7c68bd6020f5c9a9bc1a117e1403c6d1c52d964700",
+    "mistport-ios/Mistport/MistportApp.swift": "497445e6e4d032307cc39693de1a752fb6e43b3fb7e7e0046abb6e464b96e698",
     "mistport-ios/Mistport/WisteriaMap/housing-home-anchors.json": "40a79e73afcd9f9580472dfb4e46cfb8c4a347666ffbe9c8c988f2b54a8441cc",
     "mistport-ios/Mistport/HomeStreetScene.swift": "756080c874e292f10b4c53e9a7195c7809364bff44184df6c8a7a8045f9c6e50",
-    "mistport-ios/Mistport/SceneViews.swift": "c5f4cb529538096bbf6cebaa55b03d6313238422d1576044818329a49748b4a1"
+    "mistport-ios/Mistport/SceneViews.swift": "3b5e153bad3a8c06b96b0c4d845bf03f074b290031b950b55da8dcdd6647ebf5",
+    "mistport-ios/Mistport/CityAmbience.swift": "8672087362b18573931cfad6c331b530943320230cacd0e19af955c36c2953ab"
   },
   "originalHomePaintings": [
     {
@@ -204,19 +207,22 @@
   "housingArtFinalUserApproval": false,
   "physicalDeviceScreenshots": 19,
   "deviceVisualApproval": "pending user",
-  "physicalDeviceState": "revised signed 169.12 installed; manual rental completed; transport disconnected during PNG export",
+  "physicalDeviceState": "169.13 installed via USB; actual mirroring review stopped for other phone operations",
   "physicalPreferencesAccessed": true,
-  "physicalPreferencesCompared": false,
-  "playerPreferencesSafety": "revised installation: 212 readable Preferences backed up before install; after-test comparison pending reconnection; prior comparison retained separately",
+  "physicalPreferencesCompared": true,
+  "playerPreferencesSafety": "229 files before install, 246 at intermediate checkpoint; real player and audit byte-identical; two explicit isolated suites changed, 17 new known self-check suites; final checkpoint pending",
   "sharedServerClockAndOccupancy": "not connected; rules adapter only",
   "outstanding": [
-    "revised static device captures",
-    "after-test Preferences comparison",
-    "known CityAmbience crash under mirroring with environment audio enabled",
-    "user visual review"
+    "controlled 10 actual home/mainline-map cycles with ambience enabled",
+    "controlled other-app return and audible recovery",
+    "headphones unavailable: route test not performed",
+    "169.13 full/recovering/empty stamina screenshots, home lamp and task cost",
+    "10-second ReplayKit video with manual tap; glass alignment review",
+    "final after-all-tests Preferences comparison",
+    "user visual approval"
   ],
   "deviceEvidence": "device/validation-device.json",
-  "deviceEvidenceRevision": "device JSON/log updated to 22 housing checks; static screenshots and old audit pending refresh",
+  "deviceEvidenceRevision": "169.13 native reports; current screenshot refresh and controlled mirroring review pending",
   "manualDeviceReview": {
     "completed": true,
     "automatedNavigation": false,
@@ -224,6 +230,21 @@
     "sealFrames": 4,
     "environmentAudioMuted": true,
     "userVisualApproval": false,
-    "exportComplete": true
-  }
+    "exportComplete": true,
+    "build": "historical 169.12"
+  },
+  "historical16912SignedBuild": {
+    "version": "169.12",
+    "passed": true,
+    "installed": true,
+    "derivedDataOnExternalSSD": true,
+    "revision": "neighbor-cost-and-world-copy",
+    "executableSHA256": "c70de7033b0a17a970468a63966d66f0f8a43cf5f8604b13c800c1057dffc7f8",
+    "sourceCommit": "f93210dd53b8ce7bd5f35ae89e5f168064aa9030",
+    "debugDylibSHA256": "fac9eebdb2054d8cfdf6f95dd8234f94dee8bda8434b5c799ac769d7c3cc5274",
+    "hashNote": "Earlier executableSHA256 actually referred to Mistport.debug.dylib. Both signed Mach-O hashes are now labeled explicitly."
+  },
+  "screenshotsEvidenceBuild": "historical 169.12 simulator",
+  "finalPreferencesComparisonCompleted": false,
+  "currentPhysicalDeviceScreenshots": 0
 }
