@@ -101,6 +101,8 @@ struct MistportApp: App {
                     .task {
                         UIApplication.shared.isIdleTimerDisabled = true
                         game.markDailyNewspaperSeen(); game.begin(); await game.openHousingDay()
+                        try? game.prepareHousingStaminaReview()
+                        HousingDeviceMediaRecorder.scheduleIfRequested()
                         try? await Task.sleep(for: .seconds(4))
                         let screen = ProcessInfo.processInfo.arguments.first { $0.hasPrefix("--housing-screen=") }?.dropFirst(17) ?? "agency"
                         HomeFrameSampler.saveScreenshot("housing-\(screen).png")

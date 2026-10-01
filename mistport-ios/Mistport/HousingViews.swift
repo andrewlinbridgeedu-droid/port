@@ -397,7 +397,7 @@ struct HousingStaminaView: View {
     }
 }
 
-/// The stamina lantern is alive but shows no numbers (user copy rule, H3): its light follows
+/// The stamina lantern uses the wallet's digits (PR #38): its light follows
 /// stamina continuously, the flame flickers (unsteadily when low), the lamp sways on its chain
 /// in drifting harbor mist, motes of light gather into the glass while it recovers and two
 /// moths circle it once full. A tap swings the lamp and flares the flame. Reduce Motion keeps
@@ -443,6 +443,9 @@ struct HousingLanternStage: View {
         .onTapGesture {
             guard !reduceMotion else { return }
             pushDirection = -pushDirection; pushedAt = .now
+            #if DEBUG
+            HousingDeviceMediaRecorder.lanternTapped()
+            #endif
         }
         .sensoryFeedback(.impact(weight: .light), trigger: pushedAt)
         .accessibilityElement(children: .ignore)
@@ -649,6 +652,68 @@ struct HousingMealChoicesLink: View {
 }
 
 #if DEBUG
+import ReplayKit
+
+/// Records the real app's screen. It never taps the lantern or navigates the UI.
+@MainActor
+enum HousingDeviceMediaRecorder {
+    private static var scheduled = false
+    static func scheduleIfRequested() {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard !scheduled, arguments.contains("--housing-device-walk"),
+              arguments.contains("--housing-record=lantern") else { return }
+        scheduled = true
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(6))
+            let recorder = RPScreenRecorder.shared()
+            recorder.isMicrophoneEnabled = false
+            var report: [String: Any] = ["isolatedFixture": true, "method": "Native ReplayKit recording; manual tap; no automatic navigation",
+                "microphone": false, "requestedSeconds": 10]
+            func saveReport() {
+                guard let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first,
+                      let previous = try? Data(contentsOf: folder.appendingPathComponent("housing-lantern-recording.json")),
+                      let stored = try? JSONSerialization.jsonObject(with: previous) as? [String: Any] else {
+                    writeReport()
+                    return
+                }
+                if stored["startedAt"] as? Double == report["startedAt"] as? Double, let tap = stored["manualTapAt"] {
+                    report["manualTapAt"] = tap
+                }
+                writeReport()
+            }
+            func writeReport() {
+                guard let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first,
+                      let data = try? JSONSerialization.data(withJSONObject: report, options: [.sortedKeys, .prettyPrinted]) else { return }
+                try? data.write(to: folder.appendingPathComponent("housing-lantern-recording.json"))
+            }
+            do {
+                try await recorder.startRecording()
+                report["startedAt"] = Date().timeIntervalSince1970
+                saveReport()
+                try await Task.sleep(for: .seconds(10))
+                let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                let file = "housing-lantern-" + UUID().uuidString + ".mp4"
+                try await recorder.stopRecording(withOutput: folder.appendingPathComponent(file))
+                report["file"] = file; report["finishedAt"] = Date().timeIntervalSince1970
+                report["completed"] = true
+            } catch { report["completed"] = false; report["error"] = String(describing: error) }
+            saveReport()
+        }
+    }
+    static func lanternTapped() {
+        guard ProcessInfo.processInfo.arguments.contains("--housing-device-walk"),
+              ProcessInfo.processInfo.arguments.contains("--housing-record=lantern"),
+              let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let url = folder.appendingPathComponent("housing-lantern-recording.json")
+        guard let data = try? Data(contentsOf: url),
+              var report = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
+        report["manualTapAt"] = Date().timeIntervalSince1970
+        if let updated = try? JSONSerialization.data(withJSONObject: report, options: [.sortedKeys, .prettyPrinted]) {
+            try? updated.write(to: url)
+        }
+    }
+}
+
 struct HousingDeviceReviewRoot: View {
     @Bindable var game: GameStore
     @Bindable var storefront: Storefront
@@ -658,6 +723,7 @@ struct HousingDeviceReviewRoot: View {
         case "districts", "cards", "interior", "lease", "moving": HousingSearchView(game: game)
         case "home": ContentView(game: game, storefront: storefront)
         case "stamina": HousingStaminaView(game: game)
+        case "task-cost": LocalWorkshopView(game: game)
         case "residence": HousingResidenceView(game: game)
         case "highland": HousingHighlandBoardView(game: game)
         default: HousingAgencyView(game: game)

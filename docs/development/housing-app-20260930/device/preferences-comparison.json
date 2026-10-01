@@ -1,8 +1,7 @@
 {
+  "stage": "final-after-all-tests",
   "passed": null,
-  "status": "pending after-test backup; transport disconnected",
-  "beforeFiles": 212,
-  "rawBackupsLocation": "external SSD only",
-  "priorRevisionReport": "prior-169.12/preferences-comparison.json",
-  "playerByteIdentical": null
+  "pending": true,
+  "interimPassedReport": "preferences-install-interim.json",
+  "playerSuiteNeverExempted": true
 }

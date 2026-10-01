@@ -90,6 +90,31 @@ final class CityAmbience {
     /// Bumped whenever the voices are dropped, so completions of buffers
     /// scheduled before that cannot miscount the loop queues.
     private var generation = 0
+    #if DEBUG
+    private let reviewSession = UUID().uuidString
+    private var reviewEvents: [[String: Any]] = []
+    private var reviewSnapshotAt = 0.0
+    private func reviewEvent(_ event: String, detail: Int? = nil) {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard arguments.contains("--housing-device-walk"), arguments.contains("--housing-audio-review") else { return }
+        var entry: [String: Any] = ["event": event, "at": Date().timeIntervalSince1970,
+            "users": users, "engineRunning": engine.isRunning, "outputReady": ioReady,
+            "busVolume": bus.outputVolume,
+            "route": AVAudioSession.sharedInstance().currentRoute.outputs.map { $0.portType.rawValue },
+            "playingLoops": takes.values.flatMap { $0 }.filter { $0.voice.player.isPlaying }.count,
+            "audibleLoopGains": takes.values.flatMap { $0 }.filter { $0.voice.mix.volume > 0.001 }.count]
+        if let detail { entry["notificationDetail"] = detail }
+        if let time = engine.outputNode.lastRenderTime, time.isSampleTimeValid { entry["outputSampleTime"] = time.sampleTime }
+        reviewEvents.append(entry)
+        let report: [String: Any] = ["session": reviewSession, "isolatedFixture": true,
+            "environmentMuted": UserDefaults.standard.bool(forKey: "MistportCityMute"),
+            "launchArguments": arguments, "events": reviewEvents]
+        if let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first,
+           let data = try? JSONSerialization.data(withJSONObject: report, options: [.sortedKeys, .prettyPrinted]) {
+            try? data.write(to: folder.appendingPathComponent("housing-audio-review.json"))
+        }
+    }
+    #endif
 
     private init() {
         let center = NotificationCenter.default
@@ -97,8 +122,14 @@ final class CityAmbience {
             let source = (note.object as AnyObject?).map { ObjectIdentifier($0) }
             Task { @MainActor in CityAmbience.shared.outputChanged(engine: source) }
         }
-        _ = center.addObserver(forName: AVAudioSession.routeChangeNotification, object: nil, queue: .main) { _ in
-            Task { @MainActor in CityAmbience.shared.outputChanged(engine: nil) }
+        _ = center.addObserver(forName: AVAudioSession.routeChangeNotification, object: nil, queue: .main) { note in
+            let reason = note.userInfo?[AVAudioSessionRouteChangeReasonKey] as? Int
+            Task { @MainActor in
+                #if DEBUG
+                CityAmbience.shared.reviewEvent("route-change", detail: reason)
+                #endif
+                CityAmbience.shared.outputChanged(engine: nil)
+            }
         }
         _ = center.addObserver(forName: AVAudioSession.interruptionNotification, object: nil, queue: .main) { _ in
             Task { @MainActor in CityAmbience.shared.outputChanged(engine: nil) }
@@ -120,6 +151,9 @@ final class CityAmbience {
         if UserDefaults.standard.bool(forKey: "MistportCityMute") { return }
         #endif
         users += 1
+        #if DEBUG
+        reviewEvent("home-start")
+        #endif
         guard users == 1 else { return }
         do {
             let session = AVAudioSession.sharedInstance()
@@ -133,6 +167,9 @@ final class CityAmbience {
     func stop() {
         guard users > 0 else { return }
         users -= 1
+        #if DEBUG
+        reviewEvent("home-stop")
+        #endif
         guard users == 0 else { return }
         timer?.invalidate()
         timer = nil
@@ -268,6 +305,9 @@ final class CityAmbience {
         ioReady = false; lastSample = nil; stalledTicks = 0
         guard wired else { return }
         dropVoices()
+        #if DEBUG
+        reviewEvent("output-reset")
+        #endif
     }
 
     /// Media services were reset: every node is invalid, build a new graph.
@@ -306,9 +346,15 @@ final class CityAmbience {
             if stalledTicks >= 8 { stalledTicks = 0; engine.stop() }
             return
         }
+        #if DEBUG
+        let recovered = !ioReady
+        #endif
         stalledTicks = 0
         ioReady = true
         keepLoopsPlaying()
+        #if DEBUG
+        if recovered { reviewEvent("output-recovered") }
+        #endif
         let now = Date()
         let t = now.timeIntervalSinceReferenceDate
         let g = HarborClock.gameHours(at: now)
@@ -439,6 +485,9 @@ final class CityAmbience {
             }
         }
         lastHour = whole
+        #if DEBUG
+        if t - reviewSnapshotAt >= 2 { reviewSnapshotAt = t; reviewEvent("output-snapshot") }
+        #endif
     }
 
     /// Plays a random take of a family on a free voice, at a random speed in
