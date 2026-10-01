@@ -25,7 +25,7 @@ public sealed class RefinedHeroCapture : MonoBehaviour
         output = Environment.GetEnvironmentVariable("MISTPORT_HERO_CAPTURE");
         if (string.IsNullOrEmpty(output)) { Application.Quit(2); yield break; }
         Directory.CreateDirectory(output); Application.logMessageReceived += Observe;
-        Screen.SetResolution(600, 900, false); yield return new WaitForSeconds(2);
+        Screen.SetResolution(900, 1350, false); yield return new WaitForSeconds(2);
         var battle = FindFirstObjectByType<BattlePrototype>();
         battle.SetNativeCombatEnabled(true);
         battle.RequestWaveInstances("clock-guard-primary@stonehide"); yield return new WaitForSeconds(.5f);
@@ -36,7 +36,15 @@ public sealed class RefinedHeroCapture : MonoBehaviour
         if (!appearance || !animator.runtimeAnimatorController) { Fail("Outfit/controller missing"); yield break; }
         var controller = animator.runtimeAnimatorController;
         bool v2 = body.GetComponentsInChildren<Renderer>(true).Any(r => r.name.StartsWith("Outfit-"));
-        report.Add(v2 ? "Meshy hero v2: separately tailored costume meshes, shared source body/skeleton." : "Historical v1 comparison; not the v2 model.");
+        report.Add(v2 ? "Meshy hero " + (controller.name.Contains("V3") ? "v3" : "v2") + ": separately tailored costume meshes, shared source body/skeleton." : "Historical v1 comparison; not the v2 model.");
+        if (controller.name.Contains("V3")) {
+            foreach (var r in body.GetComponentsInChildren<Renderer>(true)) foreach (var material in r.sharedMaterials) {
+                if (!material || material.shader.name != "Mistport/HeroIllustratedV3" || !material.shader.isSupported) {
+                    Fail("Illustrated material missing/unsupported"); yield break;
+                }
+            }
+            report.Add("V3 shared body and all costumes use the supported illustrated shader; no physical specular/metallic lobe.");
+        }
         var camera = Camera.main; var position = camera.transform.position; var rotation = camera.transform.rotation;
         if (!CombatTempoPresentation.CurrentPoseBounds(body.transform, out var initialBounds)) { Fail("Body skin missing"); yield break; }
         var centerView = camera.WorldToViewportPoint(initialBounds.center);
@@ -86,7 +94,7 @@ public sealed class RefinedHeroCapture : MonoBehaviour
         Time.captureFramerate = 30;
         var clips = new[] {"CastMaskFlick","CastMaskTurn","CastTwinSweep","CastTwinCross","CastFinaleLift","CastFinaleThrow","CastCardFan"};
         // Frame-for-frame runtime gallery of the real shared Animator.
-        foreach (var outfit in v2 ? new[] {"mistport-night","starlight-magician","midnight-carnival"} : new[] {"mistport-night"}) {
+        foreach (var outfit in v2 && !Environment.GetCommandLineArgs().Contains("--hero-reference-capture") ? new[] {"mistport-night","starlight-magician","midnight-carnival"} : new[] {"mistport-night"}) {
           appearance.Apply(outfit);
           foreach (var clip in clips) {
             var folder = Path.Combine(output, v2 ? outfit + "-" + clip : clip); Directory.CreateDirectory(folder);

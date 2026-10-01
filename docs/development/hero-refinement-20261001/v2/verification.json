@@ -53,5 +53,7 @@
     "tools/animation/build_meshy_hero_v2.py": "17e457537640dbfcb36279f5a162a7a331b32faa377fa8f482ba690c58270abc",
     "tools/animation/render_meshy_hero_v2.py": "93a00819f550f9c7aee9f6761f9ae9bc3f498ce898809480d1ec823b6d69532f",
     "docs/development/hero-refinement-20261001/v2/HeroMeshy-v2.blend": "75fe8fb0c0a41ffbe326c6b91f296b0e17684e0e7199eca81c03e1af4528d2c0"
-  }
+  },
+  "sourceRevision": "ff00873",
+  "historicalEvidence": "Captured before v3 source changes; the hashes describe v2 at this revision."
 }
