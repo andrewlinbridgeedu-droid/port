@@ -1,0 +1,21 @@
+{
+  "baseline": false,
+  "build": "169.20",
+  "completed": false,
+  "fixtureInputs": "DEBUG Q4 mask input; D01/B01 medal input at rule time 22s and when ready thereafter",
+  "initialSpeed": 1,
+  "isolatedFixture": true,
+  "method": "Live App preview; no recording",
+  "outcome": "previewing",
+  "previewCompleted": false,
+  "realPlayerRewardSettlement": false,
+  "recorderAvailable": true,
+  "recordingRequested": false,
+  "recordingStarted": false,
+  "runID": "13128C8E-5A97-44A3-A9CE-029B87AFB846",
+  "sample": "q4",
+  "speed": 1,
+  "userVisualApproval": false,
+  "wallSeconds": 0.0002809762954711914,
+  "writtenAt": "2026-10-01T08:32:28Z"
+}

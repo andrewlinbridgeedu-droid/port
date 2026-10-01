@@ -7,5 +7,9 @@
   "nativeDeviceRecordingCompleted": false,
   "userVisualApproval": false,
   "unityExportManifestSHA256": "3ccf58da400ee2928456656651fe2cf1a3f5dcba744eaaf32ec023d14c00addd",
-  "serverTests": "not reached; upstream Hummingbird RequestBody.swift missing DequeModule import"
+  "serverTests": "not reached; upstream Hummingbird RequestBody.swift missing DequeModule import",
+  "latestInstalledBuild": "169.21",
+  "previewModeDoesNotRequestRecording": true,
+  "nativePreviewValidated": false,
+  "latestPreviewBlocker": "169.21 launch denied: Locked; 169.20 black PNG and signal 9 after memory warnings"
 }
