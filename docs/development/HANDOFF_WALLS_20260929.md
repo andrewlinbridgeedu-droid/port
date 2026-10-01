@@ -4,7 +4,7 @@
 
 ### 2026-10-01 新增
 
-- **港城返回按钮统一**：用户认可警察厅的金边切角“返回港城”，要求报馆及其他页面一致。独立分支 `codex/unify-return-buttons-20261001` 从最新 main `758d409` 开始，`GameArtReturnButton` 复用原有柜台按钮样式；报馆改为“返回港城”，附刊、角色、行囊、构筑、街区、教会、战斗标题栏等复用，返回上一级仍显示对应文字。回调、教学退出限制和结算逻辑保持原样；构筑页攻略文字挤压已修正。[范围与验证](return-buttons-20261001/README.md)、[25 页模拟器原样截图](return-buttons-20261001/review.html)。正式 Swift 源码在隔离 iPhone 13 模拟器宿主编译通过，逐页检查默认字号；宿主不含 Unity，战斗图仅证明标题栏布局。**没有装机、没有访问手机 Preferences，未作真机验收；没有改规则、生产图片或 SSD 链接。** PR #41 的战斗／主角资源仍在原分支，本分支不包含它们。
+- **港城返回按钮统一**：用户认可警察厅的金边切角“返回港城”，要求报馆及其他页面一致。[PR #42](https://github.com/andrewlinbridgeedu-droid/port/pull/42)（可审，未合并），独立分支 `codex/unify-return-buttons-20261001` 从最新 main `758d409` 开始，`GameArtReturnButton` 复用原有柜台按钮样式；报馆改为“返回港城”，附刊、角色、行囊、构筑、街区、教会、战斗标题栏等复用，返回上一级仍显示对应文字。回调、教学退出限制和结算逻辑保持原样；构筑页攻略文字挤压已修正。[范围与验证](return-buttons-20261001/README.md)、[25 页模拟器原样截图](return-buttons-20261001/review.html)。正式 Swift 源码在隔离 iPhone 13 模拟器宿主编译通过，逐页检查默认字号；宿主不含 Unity，战斗图仅证明标题栏布局。**没有装机、没有访问手机 Preferences，未作真机验收；没有改规则、生产图片或 SSD 链接。** PR #41 的战斗／主角资源仍在原分支，本分支不包含它们。
 - **Q4 猎犬出招像在散步**：用户真机反馈。原因是出招时走路循环照播，身体动作只动脖子和下颚 5–7°。Mac 任务单：[CODEX_TASK_Q4_HOUND_ATTACK_20261001.md](CODEX_TASK_Q4_HOUND_ATTACK_20261001.md)。
 - **体力灯罩动画**：用户要求加动画，SwiftUI 实现在 [PR #38](https://github.com/andrewlinbridgeedu-droid/port/pull/38)，合入 H3 草稿分支 `codex/housing-h3-verification-20260930`。
   - 云端未编译，需要 Mac 构建并在真机上核对光晕是否对准灯罩玻璃。
