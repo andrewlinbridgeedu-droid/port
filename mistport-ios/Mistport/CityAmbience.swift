@@ -14,6 +14,15 @@ import AVFoundation
 /// stereo field; every one-shot picks one of several takes and plays it at a
 /// slightly different pitch, level and place. All sounds are synthesised
 /// (tools/city-daynight/make_ambience.py) and live in the "Ambience" folder.
+///
+/// Audio output can stall under the hub without the engine noticing: iPhone
+/// Mirroring, AirPlay, a headset or a call moves the route, and a player told
+/// to play then throws "player did not see an IO cycle" (an Objective-C
+/// exception Swift cannot catch; seen on device 2026-09-30, 169.12). So no
+/// player starts until the output clock is seen advancing between two ticks;
+/// a route or configuration change, an interruption or a stall of two seconds
+/// drops every voice and waits for the clock again, and a media-services reset
+/// rebuilds the whole graph.
 @MainActor
 final class CityAmbience {
     static let shared = CityAmbience()
@@ -57,8 +66,8 @@ final class CityAmbience {
         func wave(_ i: Int, _ t: Double) -> Double { sin(2 * .pi * t / periods[i] + phases[i]) }
     }
 
-    private let engine = AVAudioEngine()
-    private let bus = AVAudioMixerNode()
+    private var engine = AVAudioEngine()
+    private var bus = AVAudioMixerNode()
     private var takes: [String: [Take]] = [:]
     private var drifts: [String: Drift] = [:]
     private var levels: [String: Float] = [:]
@@ -74,6 +83,30 @@ final class CityAmbience {
     /// Rain, wind and sea step back while thunder rolls: target gain and
     /// until when (reference seconds), and the smoothed gain applied.
     private var duckTarget: Float = 1, duckUntil = 0.0, duck: Float = 1
+    /// True only while the output clock was seen advancing at the last tick.
+    private var ioReady = false
+    private var lastSample: AVAudioFramePosition?
+    private var stalledTicks = 0
+    /// Bumped whenever the voices are dropped, so completions of buffers
+    /// scheduled before that cannot miscount the loop queues.
+    private var generation = 0
+
+    private init() {
+        let center = NotificationCenter.default
+        _ = center.addObserver(forName: .AVAudioEngineConfigurationChange, object: nil, queue: .main) { note in
+            let source = (note.object as AnyObject?).map { ObjectIdentifier($0) }
+            Task { @MainActor in CityAmbience.shared.outputChanged(engine: source) }
+        }
+        _ = center.addObserver(forName: AVAudioSession.routeChangeNotification, object: nil, queue: .main) { _ in
+            Task { @MainActor in CityAmbience.shared.outputChanged(engine: nil) }
+        }
+        _ = center.addObserver(forName: AVAudioSession.interruptionNotification, object: nil, queue: .main) { _ in
+            Task { @MainActor in CityAmbience.shared.outputChanged(engine: nil) }
+        }
+        _ = center.addObserver(forName: AVAudioSession.mediaServicesWereResetNotification, object: nil, queue: .main) { _ in
+            Task { @MainActor in CityAmbience.shared.rebuild() }
+        }
+    }
 
     static var volume: Float {
         Float(UserDefaults.standard.object(forKey: volumeKey) as? Double ?? 0.6)
@@ -105,6 +138,7 @@ final class CityAmbience {
         timer = nil
         // Fade out, then pause the engine unless the hub came back meanwhile.
         bus.outputVolume = 0
+        ioReady = false; lastSample = nil
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
             guard let self, self.users == 0 else { return }
             self.engine.pause()
@@ -160,10 +194,11 @@ final class CityAmbience {
         // Without the sounds the engine has nothing attached and must not start.
         guard wired else { return }
         bus.outputVolume = Self.volume
+        ioReady = false; lastSample = nil; stalledTicks = 0
         if !engine.isRunning {
             do { try engine.start() } catch { return }
         }
-        keepLoopsPlaying()
+        // The loops start from tick() once the output clock is seen moving.
         timer?.invalidate()
         let timer = Timer(timeInterval: 0.25, repeats: true) { _ in
             Task { @MainActor in CityAmbience.shared.tick() }
@@ -175,6 +210,7 @@ final class CityAmbience {
 
     /// Two copies of every take stay queued; the player streams them from disk.
     private func keepLoopsPlaying() {
+        guard ioReady else { return }
         for (name, pair) in takes {
             for index in pair.indices {
                 while (takes[name]?[index].queued ?? 2) < 2 { queue(name, index) }
@@ -185,16 +221,71 @@ final class CityAmbience {
 
     private func queue(_ name: String, _ index: Int) {
         guard let take = takes[name]?[index] else { return }
+        let generation = generation
         take.voice.player.scheduleFile(take.file, at: nil, completionCallbackType: .dataConsumed) { [weak self] _ in
-            Task { @MainActor in self?.consumed(name, index) }
+            Task { @MainActor in self?.consumed(name, index, generation) }
         }
         takes[name]?[index].queued += 1
     }
 
-    private func consumed(_ name: String, _ index: Int) {
-        guard takes[name] != nil else { return }
+    private func consumed(_ name: String, _ index: Int, _ scheduledIn: Int) {
+        guard scheduledIn == generation, takes[name] != nil else { return }
         takes[name]?[index].queued -= 1
         if users > 0, (takes[name]?[index].queued ?? 2) < 2 { queue(name, index) }
+    }
+
+    // MARK: Output health
+
+    /// Whether the output node rendered since the previous tick. A stopped,
+    /// interrupted or re-routing engine has no valid or no advancing time.
+    private func outputAdvancing() -> Bool {
+        guard engine.isRunning, let time = engine.outputNode.lastRenderTime, time.isSampleTimeValid else {
+            lastSample = nil
+            return false
+        }
+        defer { lastSample = time.sampleTime }
+        guard let previous = lastSample else { return false }
+        return time.sampleTime > previous
+    }
+
+    /// Stops every voice and forgets the queued loop buffers. Stopping a
+    /// player is always safe; only starting one needs a live output.
+    private func dropVoices() {
+        generation += 1
+        for (name, pair) in takes {
+            for index in pair.indices {
+                pair[index].voice.player.stop()
+                takes[name]?[index].queued = 0
+            }
+        }
+        for voice in shots { voice.player.stop(); voice.busyUntil = 0 }
+    }
+
+    /// Route or configuration change, or an interruption. Nothing plays until
+    /// tick() sees the output clock moving again.
+    fileprivate func outputChanged(engine source: ObjectIdentifier?) {
+        if let source, source != ObjectIdentifier(engine) { return }
+        ioReady = false; lastSample = nil; stalledTicks = 0
+        guard wired else { return }
+        dropVoices()
+    }
+
+    /// Media services were reset: every node is invalid, build a new graph.
+    fileprivate func rebuild() {
+        timer?.invalidate(); timer = nil
+        ioReady = false; lastSample = nil; stalledTicks = 0
+        generation += 1
+        engine = AVAudioEngine(); bus = AVAudioMixerNode()
+        takes = [:]; drifts = [:]; levels = [:]; shots = []; urls = [:]
+        wired = false
+        guard users > 0 else { return }
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
+            try session.setActive(true)
+        } catch { return }
+        wire()
+        resume()
     }
 
     // MARK: Mixing
@@ -202,10 +293,22 @@ final class CityAmbience {
     private func tick() {
         guard users > 0 else { return }
         if !engine.isRunning {
-            // Recover after an audio interruption (call, backgrounding).
+            // Recover after an audio interruption (call, backgrounding, a new route).
+            ioReady = false; lastSample = nil
             do { try engine.start() } catch { return }
-            keepLoopsPlaying()
+            return
         }
+        guard outputAdvancing() else {
+            // Running but silent: wait, and after two seconds restart it.
+            if ioReady { dropVoices() }
+            ioReady = false
+            stalledTicks += 1
+            if stalledTicks >= 8 { stalledTicks = 0; engine.stop() }
+            return
+        }
+        stalledTicks = 0
+        ioReady = true
+        keepLoopsPlaying()
         let now = Date()
         let t = now.timeIntervalSinceReferenceDate
         let g = HarborClock.gameHours(at: now)
@@ -344,7 +447,7 @@ final class CityAmbience {
     private func play(_ family: String, volume: Float, pan: Float, rate: ClosedRange<Float>, priority: Bool = false) {
         let count = Self.shotTakes[family] ?? 0
         let name = count > 0 ? "\(family)_\(Int.random(in: 1...count))" : family
-        guard engine.isRunning, let u = urls[name], let file = try? AVAudioFile(forReading: u) else { return }
+        guard ioReady, engine.isRunning, let u = urls[name], let file = try? AVAudioFile(forReading: u) else { return }
         let now = Date().timeIntervalSinceReferenceDate
         let voice: Voice
         if let free = shots.first(where: { $0.busyUntil <= now }) {
