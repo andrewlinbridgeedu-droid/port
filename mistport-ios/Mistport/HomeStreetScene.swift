@@ -520,8 +520,7 @@ struct HomeCounterScene<Content: View>: View {
         VStack(spacing: 0) {
             HStack {
                 Text(title).font(.title2.bold()).frame(maxWidth: .infinity, alignment: .leading)
-                Button("返回港城") { dismiss() }.buttonStyle(GameArtButtonStyle(compact: true))
-                    .tint(Color(red: 0.96, green: 0.88, blue: 0.67))
+                GameArtReturnButton { dismiss() }
             }.foregroundStyle(Color(red: 0.96, green: 0.88, blue: 0.67))
                 .padding(18).background(Color(red: 0.13, green: 0.17, blue: 0.20))
             ScrollView {

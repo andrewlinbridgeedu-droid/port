@@ -1,0 +1,528 @@
+{
+  "base_main": "758d409b5394f0dc47c1fbbdef0adcb1890ba690",
+  "branch": "codex/unify-return-buttons-20261001",
+  "simulator": {
+    "name": "Mistport Return Buttons",
+    "model": "iPhone 13",
+    "runtime": "iOS 26.5",
+    "uuid": "FE6B032E-209E-48BE-A030-B7B469786220",
+    "bundle": "local.mistport.housing-integration",
+    "unity_runtime_included": false
+  },
+  "builds": [
+    {
+      "path": "/Volumes/andrew's SSD/Mistport-build-cache/return-buttons-20261001/build.log",
+      "sha256": "ee54a3d191583d36b2f6a0cc7b66df4b3c611ec345c479cad568f756b3319cb7",
+      "result": "BUILD SUCCEEDED"
+    },
+    {
+      "path": "/Volumes/andrew's SSD/Mistport-build-cache/return-buttons-20261001/build-fixed.log",
+      "sha256": "3b78fcbe3aab1ef45ef8da17013eb5855410cca664f8a131a2eb5920bce76fbc",
+      "result": "BUILD SUCCEEDED"
+    },
+    {
+      "path": "/Volumes/andrew's SSD/Mistport-build-cache/return-buttons-20261001/build-final.log",
+      "sha256": "cb0b05273afa66f44c4b903dbe5f4d306334be55200e15d893a4c188548b0637",
+      "result": "BUILD SUCCEEDED"
+    }
+  ],
+  "final_executable": {
+    "path": "/Volumes/andrew's SSD/Mistport-build-cache/return-buttons-20261001/Derived/Build/Products/Debug-iphonesimulator/Mistport.app/Mistport",
+    "sha256": "c32aa4e5e1c6e1fc025468c700c178925181cb5267cfe87c85741bd29a69e01b"
+  },
+  "harness": {
+    "file": "tools/housing/build_simulator_harness.py",
+    "sha256": "980144315c82ff30a2c6094f4db79c3e4538759c53b8687e0df4d904ddfe10bb"
+  },
+  "changed_source_hashes": [
+    {
+      "file": "mistport-ios/Mistport/BountyCityInvestigationView.swift",
+      "sha256": "d5ebb721b2cf4188274084dac793285773f6b86615853d014b82e1d382dd00f1"
+    },
+    {
+      "file": "mistport-ios/Mistport/BountyPokerRound.swift",
+      "sha256": "93fc20a0f26703f425411a9e697baf4cfd450b14ab683e3b0f46620b564a4b17"
+    },
+    {
+      "file": "mistport-ios/Mistport/ChapterOneTestView.swift",
+      "sha256": "cb4e535754f8adc26c84c754865f4f494207e2d6f9ff1ec621e208e84701a653"
+    },
+    {
+      "file": "mistport-ios/Mistport/CharacterProfileView.swift",
+      "sha256": "c1ba56f03bf769deb65b1a02b918a47ce0c8250687bf52b613c34f5da73aa2cb"
+    },
+    {
+      "file": "mistport-ios/Mistport/ChurchMaintenanceView.swift",
+      "sha256": "2b2cb31ce5c47ebbf0013d3a94113bdb8fe5aecfba7bea94b5eca20fbe7aff8c"
+    },
+    {
+      "file": "mistport-ios/Mistport/CityEventsView.swift",
+      "sha256": "642eeb03a28d56d2e22f8479ae782511db512473ab92fd6bfef06a4fbbacf17d"
+    },
+    {
+      "file": "mistport-ios/Mistport/ContentView.swift",
+      "sha256": "742ea14457d0da8599a122c906d31691f0e78d4c6d994a848f7fb0430aaedf1a"
+    },
+    {
+      "file": "mistport-ios/Mistport/DailyNewspaperView.swift",
+      "sha256": "025218062dad29b5d9e10d85466d75b71ed9864d67d9b008089dc18da600cb02"
+    },
+    {
+      "file": "mistport-ios/Mistport/DistrictMapView.swift",
+      "sha256": "78f4aa80628601dad425bc674511d0919a636877dc5b3c4138f78fae7a88d8e7"
+    },
+    {
+      "file": "mistport-ios/Mistport/DungeonView.swift",
+      "sha256": "6ba027fd0a1038268e0801a6000cae1c7eb86e787d60d9bcb38280ce1fc3da16"
+    },
+    {
+      "file": "mistport-ios/Mistport/GameArtComponents.swift",
+      "sha256": "c549f182135384fcc026b8e09e3021e91efde9e014452c383e4fbc8a70ea86ae"
+    },
+    {
+      "file": "mistport-ios/Mistport/GameViews.swift",
+      "sha256": "fe780414fced7e5c9063da6cd8b8d972b2fa82a5dbc8ad62c4e8fefb58981ed7"
+    },
+    {
+      "file": "mistport-ios/Mistport/HomeStreetScene.swift",
+      "sha256": "0315fce26f9d6c020ff314e09556304f3d5de6aaa0b640476d8a24b02e13515f"
+    },
+    {
+      "file": "mistport-ios/Mistport/HousingViews.swift",
+      "sha256": "068c476e89c03d76a7ed8d81371ca93bc4a2749c477a7138469b169665df2336"
+    },
+    {
+      "file": "mistport-ios/Mistport/LocalWorkshopView.swift",
+      "sha256": "c5d4f69a8bb3dd293668659c258375530d0fb20e4ec1dcf2d478d1e38818aba5"
+    },
+    {
+      "file": "mistport-ios/Mistport/MissionBoardView.swift",
+      "sha256": "bb955643c56570ccd26d53f4bee8531843ee1cd8588a39acd9a37bf104adfa70"
+    },
+    {
+      "file": "mistport-ios/Mistport/NeighborConversationView.swift",
+      "sha256": "fbd6aa154243c32615ede7e9b0f353ad63be21e63610185ddfc53b2bb85d07c0"
+    },
+    {
+      "file": "mistport-ios/Mistport/RemnantCasesView.swift",
+      "sha256": "dd1cf140efbc404006a3e1ef6a4cca2e097acae13285c16bb73078fdb8865082"
+    },
+    {
+      "file": "mistport-ios/Mistport/SceneViews.swift",
+      "sha256": "af5e44c33d0a9f48fea76b7baebbfeea43a8d9d91a1f152a9af98b463cc57e75"
+    },
+    {
+      "file": "mistport-ios/Mistport/TurnBasedBattleView.swift",
+      "sha256": "4d61ac082d0f4f4c8cd1f043a5a2abde75a03809cec19c8e7fc4f1cfc3c8932e"
+    },
+    {
+      "file": "mistport-ios/Mistport/VenueView.swift",
+      "sha256": "905bd756815a8498b3590f9f0b84933638120b39eb674cd9481758c37c4e4472"
+    },
+    {
+      "file": "mistport-ios/Mistport/WorldViews.swift",
+      "sha256": "66fd87936e7cc63c2f1bef20dc46b8185692327fbb2e3597fc3f7b7244a43cc6"
+    },
+    {
+      "file": "tools/ui-art/capture_simulator.py",
+      "sha256": "05d6a3d0e75e9475fa02dd1e6aaef3ee5ea274701a138f6302ccb8560bba4a91"
+    }
+  ],
+  "screenshots": [
+    {
+      "page": "newspaper",
+      "file": "newspaper.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=newspaper"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854535.80981,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "b68fe4a5b39754dd7159c2c25bcac5fc21b24f94d971f70de02144faa2a45f15",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "police",
+      "file": "police.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=police"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854541.254195,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "0c46aca93f37d2e0f297256bf2a70c0bb5f76f4e31a365b390145a41e9f95e67",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "supplement",
+      "file": "supplement.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=supplement"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854575.6630888,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "039f6ce8a5820e6616933b047e1c84c903200f237acee829f7d2f5a869eadff6",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "cityhall",
+      "file": "cityhall.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=cityhall"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854581.098634,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "25c1fdac34727d2f0e941af3425c8515d46d6d997371b83d6d0520dabff768dc",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "harbor",
+      "file": "harbor.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=harbor"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854586.5549219,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "4c92414c35b6b99209ff6516510cae45242896ff28849ff702060746bd48d5e8",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "board",
+      "file": "board.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=board"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854591.927836,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "30589b0e8e08ef3b5e1e94372140051ba7d8b5950c43072847d3a0074c1144c9",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "post",
+      "file": "post.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=post"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854597.2846231,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "61578c8edaa5a2cc22a46730cdc9bdde68740b9a7aeaa36bde8fdfe6b403f3d6",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "clinic",
+      "file": "clinic.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=clinic"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854603.076916,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "f8e2d1407bfb81fd90ea0b78ab7b01ae0dc10634715abc270cd5605bfda6e7b8",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "oldstreet",
+      "file": "oldstreet.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=oldstreet"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854608.46368,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "eb9836591f178d393464d08aa07ca1d198fcbbcb04bdb644d5582e1a6b782fb9",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "cafe",
+      "file": "cafe.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=cafe"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854614.029608,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "b7ac6b62e8329b8a73ed35e4a602c577b3a1cf05afe8143f65dd0eccfa6b270a",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "agency",
+      "file": "agency.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=agency"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854619.393041,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "71f80270b7635371231ded432d5d5f0ae3913623c8700e148b080a595379b5f7",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "profile",
+      "file": "profile.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=profile"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854546.969962,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "684c34028a1a71a5052e93139b280c83381ab48715a1cd860849fb0c304d4d4b",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "inventory",
+      "file": "inventory.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=inventory"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854553.049979,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "ef77bb2dbd8b0beedb2f93b7e845616e77c3f0c42bc242d2425cfe8c1bbac27a",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "build",
+      "file": "build.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=build"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854903.546144,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "fb44540cbe3ad263bac824e461559f176fc1a0cba3d2b7ec5d2c609503e16c2a",
+      "visual_review": "inspected at default text size",
+      "build_log": "build-fixed.log"
+    },
+    {
+      "page": "chapter-map",
+      "file": "chapter-map.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=chapter-map"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854558.948601,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "ca75b399f99161d4f7eaae45bdcbef9c011c546075dc729bf68259fee0cea94d",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "district-map",
+      "file": "district-map.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=district-map"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854629.9414132,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "c694984d137462a3f33b82a7a2062179c0248798ab8152c480b57bfd56eba04f",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "church",
+      "file": "church.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=church"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854564.49266,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "3cd814c4be68d96f4b6daffdace994aebe6917b213d82b45590450e7769b617e",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "tower",
+      "file": "tower.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=tower"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854635.5858629,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "4917168d2312fae490bfcdead8c3a72e3d142854482a79ac53f2ad1203c83a74",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "workshop",
+      "file": "workshop.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-workshop-preview"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854642.22347,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "dfe0f31f24fa2701b638c79a8004c53e464b7767833e76f78de5016961918887",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "settings",
+      "file": "settings.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=settings"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854647.630701,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "917e82eb173ca7e7850ff0b96a92b5d60859b65867013f639e827c4c90ad0765",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "skill",
+      "file": "skill.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=skill"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854652.921025,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "fff0d384b2023548e7c2367b352ff383b80effa2a65e218fdf1850ed6491bf46",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "tavern",
+      "file": "tavern.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=tavern",
+        "--preview-tavern-dialogue"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854570.20267,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "12139ff11d5660a50b300e7e529ba5a8eb694687127653f824bad9256e3f9069",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "poker",
+      "file": "poker.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=poker",
+        "--preview-tavern-poker"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854658.3057432,
+      "width": 2532,
+      "height": 1170,
+      "sha256": "888dd11e3c991a9dd7de53186c7b2270f5e8b104abe41f974bead474a7363d42",
+      "visual_review": "inspected at default text size",
+      "build_log": "build.log"
+    },
+    {
+      "page": "poker-help",
+      "file": "poker-help.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=poker-help"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790855301.611201,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "c311fada142eaa233f85362b1b9a8b49eea57045f95eab3b7b6126be6e8a0df4",
+      "visual_review": "inspected at default text size",
+      "build_log": "build-final.log"
+    },
+    {
+      "page": "battle-hud",
+      "file": "battle-hud.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=battle-hud"
+      ],
+      "source": "iOS Simulator, real SwiftUI view, isolated fixture",
+      "captured_at": 1790854907.695581,
+      "width": 1170,
+      "height": 2532,
+      "sha256": "0d21cf74b6751df779a68ca29fc57e128e2f6a12d64fe2a04dde200aca49adac",
+      "visual_review": "inspected at default text size",
+      "build_log": "build-fixed.log"
+    }
+  ],
+  "verified": [
+    "Simulator compilation of actual production SwiftUI sources and Asset Catalog",
+    "25 original simulator screenshots inspected individually",
+    "Construction guide wrapping fixed and recaptured",
+    "Navigation callbacks and tutorial-exit guard unchanged in source diff"
+  ],
+  "not_verified": [
+    "Physical-device appearance",
+    "Manual click-through of all return routes",
+    "All Dynamic Type sizes",
+    "Unity battle rendering or full battle settlement"
+  ],
+  "physical_device_installed": false,
+  "physical_device_preferences_accessed": false,
+  "user_visual_approval_of_new_pages": false,
+  "production_art_changed": false,
+  "rules_changed": false,
+  "ssd_links_changed": false
+}

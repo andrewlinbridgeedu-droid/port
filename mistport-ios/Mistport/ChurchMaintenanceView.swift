@@ -181,7 +181,7 @@ private struct ChurchMaintenanceBattleView: View {
                         do { session=try game.beginChurchMaintenance(jobID:job.id,battleID:battleID,skills:skills); started=true }
                         catch { notice="无法进入清剿，请检查工单或借物未结记录。" }
                     })
-                VStack { HStack { Button("返回工单",action:onExit).padding(16); Spacer() }; Spacer() }
+                VStack { HStack { GameArtReturnButton(title: "返回工单", action: onExit).padding(16); Spacer() }; Spacer() }
             }
             if victory {
                 Color.black.opacity(0.85).ignoresSafeArea()

@@ -176,7 +176,7 @@ struct HousingSearchView: View {
     }
     private func cards(_ district: MPCHousingCatalog.District) -> some View {
         VStack(alignment: .leading, spacing: 20) {
-            Button("‹ 返回看区") { step = .districts }
+            GameArtReturnButton(title: "返回看区") { step = .districts }
             Text("\(HousingArt.districtName(district))").font(.title2.bold())
             ForEach(MPCHousingCatalog.lodgings.filter { $0.district == district }) { lodging in
                 VStack(alignment: .leading, spacing: 10) {

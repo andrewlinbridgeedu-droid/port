@@ -28,7 +28,7 @@ for page in args.screens:
     elif page in ['events', 'neighbors', 'remnants', 'workshop']:
         flags = ['--daily-pacing-device-walk', '--daily-' + page + '-preview']
         source = 'daily-pacing-' + page + '.png'
-    elif page in ['settings', 'skill', 'tasks', 'bounty', 'victory', 'defeat', 'profile', 'shop', 'offers']:
+    elif page in ['settings', 'skill', 'tasks', 'bounty', 'victory', 'defeat', 'profile', 'shop', 'offers', 'newspaper', 'supplement', 'police', 'cityhall', 'harbor', 'board', 'post', 'clinic', 'oldstreet', 'cafe', 'agency', 'inventory', 'build', 'chapter-map', 'district-map', 'church', 'tower', 'battle-hud', 'poker-help']:
         flags = ['--daily-pacing-device-walk', '--daily-ui-review=' + page]
         source = 'ui-art-' + page + '.png'
     else:

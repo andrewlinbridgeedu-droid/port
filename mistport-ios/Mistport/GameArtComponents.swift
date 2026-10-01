@@ -57,6 +57,18 @@ struct GameArtButtonStyle: ButtonStyle {
     }
 }
 
+/// Shared page-return control, matching the approved harbor-counter button.
+/// Callers retain their navigation action and name the actual destination.
+struct GameArtReturnButton: View {
+    var title = "返回港城"
+    let action: () -> Void
+    var body: some View {
+        Button(title, action: action)
+            .buttonStyle(GameArtButtonStyle(compact: true))
+            .fixedSize(horizontal: true, vertical: false)
+    }
+}
+
 /// Fixed-height card-table controls keep their existing layout and hit actions.
 struct GameArtControlSurface: ViewModifier {
     var primary = false
@@ -110,7 +122,7 @@ struct GameArtPage<Content: View>: View {
                     Text(subtitle).font(.caption).tracking(1).foregroundStyle(GameArt.gold)
                     Text(title).font(.title2.bold()).fontDesign(.serif).foregroundStyle(.white)
                 }.frame(maxWidth: .infinity, alignment: .leading)
-                Button(closeTitle) { onClose?(); dismiss() }.buttonStyle(GameArtButtonStyle(compact: true))
+                GameArtReturnButton(title: closeTitle) { onClose?(); dismiss() }
             }.padding(18).background(GameArt.night)
             ScrollView {
                 VStack(spacing: 0) {
@@ -172,9 +184,27 @@ struct GameArtReviewPage: View {
     var body: some View {
         Group {
             switch page {
+            case "newspaper": DailyNewspaperView(game: game, onSelect: { _ in })
+            case "supplement": RemnantCasesView(game: game)
+            case "police", "cityhall", "harbor", "board", "post", "clinic", "oldstreet": HomeCounterView(game: game, buildingID: page)
+            case "cafe": HomeCafeWelcomeView(game: game)
+            case "agency": HousingAgencyView(game: game)
+            case "inventory": HubFeatureView(kind: .inventory, game: game)
+            case "build": HubFeatureView(kind: .build, game: game)
+            case "chapter-map": ChapterStageMapView(game: game, onExit: {}, onEnterVenue: { _ in })
+            case "district-map": DistrictMapView(path: nil, mission: nil, onExit: {}, onMissionBoard: {}, onBeginMission: {}, onEnterVenue: { _ in })
+            case "church": ChurchSanctuaryView(game: game)
+            case "battle-hud":
+                if let mission = game.selectedChapterDistrict.missions.first(where: { $0.number == 4 }) {
+                    ChapterOneEncounterTestView(initialSession: game.chapterOneSession(for: mission),
+                        campaign: game.chapterOneCampaign, battleIsActive: false,
+                        onVictory: { _ in }, onExit: {})
+                }
+            case "tower": ChurchTowerView(game: game)
             case "settings": GameSettingsView()
             case "skill": ChapterSkillDetailSheet(skill: MPCChapterOneCatalog.visibleSkills.first!)
             case "tavern", "poker": TavernInteriorView(game: game, onBack: {}).task { game.prepareTavernPreview() }
+            case "poker-help": BountyPokerRound(game: game, caseID: "tavern", onFinish: { _ in }).returnButtonHelpReview
             case "profile": CharacterProfileView(game: game)
             case "shop": HomeCopperShopView(game: game)
             case "offers": VenueOfferArtReview()
