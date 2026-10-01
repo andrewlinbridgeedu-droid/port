@@ -1,0 +1,22 @@
+{
+  "stage": "Blender static tailoring review, not a production rig",
+  "source_sha256": "044c3f2f687e1dcac1a6897a84bfb742b31f0dde0ef9cde5dbae1bf9a5cdd5b1",
+  "source_unchanged": true,
+  "textures_preserved": true,
+  "source_armature": false,
+  "animation_retargeted": false,
+  "unity_connected": false,
+  "installed": false,
+  "user_visual_approval": false,
+  "geometry_vertices": 90058,
+  "source_original_triangles": 9653,
+  "details": [
+    "smooth source tailoring",
+    "cloth/skin/hair/leather response separation",
+    "curved long tails and violet lining",
+    "raised gold leaf stitches",
+    "waist jewels and interlinked chains",
+    "swept locks with fine strand ridges",
+    "cloth teal ribbons"
+  ]
+}

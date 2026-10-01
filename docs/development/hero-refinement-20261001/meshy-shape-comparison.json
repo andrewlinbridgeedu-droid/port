@@ -1,0 +1,8 @@
+{
+  "method": "Normalize both imported geometries to 175 cm high, compare new vertices to nearest old triangles",
+  "median_cm": 2.144722020602785e-05,
+  "p95_cm": 5.003837577532977e-05,
+  "maximum_cm": 7.156530045904219e-05,
+  "within_0_5_cm_fraction": 1.0,
+  "exact_mesh_identity_claimed": false
+}

@@ -1,0 +1,27 @@
+{
+  "source": "/Users/andrewlin/Downloads/Meshy_AI_battle_magician_chara_1001192429_generate.glb",
+  "sha256": "cd1a8564d06d98894ffea4337885adbbd26a33c2a75e6ea7da91a1ffcc28c7ad",
+  "bounds_min": [
+    -0.1982421875,
+    -0.1240234375,
+    -0.5
+  ],
+  "bounds_max": [
+    0.1962890625,
+    0.12255859375,
+    0.498046875
+  ],
+  "meshes": [
+    {
+      "name": "mesh_node",
+      "vertices": 5646,
+      "triangles": 9658,
+      "uv_layers": [],
+      "vertex_groups": 0,
+      "modifiers": []
+    }
+  ],
+  "images": [],
+  "armatures": 0,
+  "animations": 0
+}
