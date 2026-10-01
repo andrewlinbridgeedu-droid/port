@@ -35,9 +35,9 @@ public struct MPCBattleInput: Codable, Equatable, Sendable {
 /// What a client sends to have a battle settled: the rule version it played under and
 /// its inputs. Never the outcome, the loadout or the inventory; the server holds those.
 public struct MPCBattleInputLog: Codable, Equatable, Sendable {
-    public static let currentVersion = "church-battle-v2"
+    public static let currentVersion = "church-battle-v3"
     /// Chapter-one story battles (`MPCStoryBattleStepper`).
-    public static let storyVersion = "story-battle-v1"
+    public static let storyVersion = "story-battle-v2"
     public var version: String
     public var encounterID: String
     public var inputs: [MPCBattleInput]
@@ -201,8 +201,10 @@ public struct MPCChurchBattleStepper: Sendable {
         public var jitter: Double
         public var seed: UInt64
         public var actionDelay: Double
-        public init(jitter: Double = 0, seed: UInt64 = 1, actionDelay: Double = 0) {
-            self.jitter = jitter; self.seed = seed; self.actionDelay = actionDelay
+        /// Model-only: compare tempo rules (the App and the server always use `.automatic`).
+        public var tempo: MPCTempoChoice
+        public init(jitter: Double = 0, seed: UInt64 = 1, actionDelay: Double = 0, tempo: MPCTempoChoice = .automatic) {
+            self.jitter = jitter; self.seed = seed; self.actionDelay = actionDelay; self.tempo = tempo
         }
         public static let live = Tuning()
     }
@@ -236,6 +238,14 @@ public struct MPCChurchBattleStepper: Sendable {
         public var newWave: Int?
         /// Story battles: Q1 Mara intervention happened this step; show it, then keep stepping.
         public var intervention = false
+        /// Combat tempo (CombatTempo.swift): light attacks started, landed and cancelled.
+        public struct LightAttack: Sendable, Equatable {
+            public let enemyID: String
+            public let landsAtTick: Int
+        }
+        public var lightAttacks: [LightAttack] = []
+        public var lightResolved: [MPCLightAttackResolution] = []
+        public var lightCancelled: [String] = []
     }
 
     public let encounterID: String
@@ -256,6 +266,7 @@ public struct MPCChurchBattleStepper: Sendable {
     private var pending: [String: TimeInterval] = [:]
     private var ultimateRequested = false, ultimateCast = false
     private var random: UInt64
+    private var light: MPCLightAttackClock?
 
     public init(encounterID: String, loadout: MPCChapterOneLoadout, consumables: [String: Int] = [:], tuning: Tuning = .live) throws {
         guard encounterID.hasPrefix("church_") else { throw Failure.unsupportedEncounter }
@@ -265,12 +276,16 @@ public struct MPCChurchBattleStepper: Sendable {
         random = tuning.seed
         session = try MPCChapterOneEncounterSession.start(encounterID: encounterID, consumables: consumables,
                                                           companionIDs: [], loadout: loadout)
+        let tempo = tuning.tempo.resolve(encounterID: encounterID)
+        session.adoptTempo(tempo)
+        light = tempo.map(MPCLightAttackClock.init)
         sequence = loadout.normalSkillIDs
     }
 
     public var isFinished: Bool { session.outcome != .inProgress || tick >= MPCChurchBattleDriver.maxTicks }
     public var now: TimeInterval { Double(tick) * MPCChurchBattleDriver.step }
     public var log: MPCBattleInputLog { MPCBattleInputLog(encounterID: encounterID, inputs: inputs) }
+    private var skillRecovery: TimeInterval { light?.tempo.skillRecovery ?? 1.75 }
 
     /// What a policy sees before this step's inputs are applied. If its session is already
     /// over, the step ends the battle before reading inputs: send none.
@@ -316,6 +331,7 @@ public struct MPCChurchBattleStepper: Sendable {
     private mutating func beginWave(_ index: Int, into events: inout Events) {
         pending.removeAll()
         ready.removeAll()
+        light?.reset()
         events.newWave = index
     }
 
@@ -435,6 +451,12 @@ public struct MPCChurchBattleStepper: Sendable {
                 events.enemyAttacks.append(.init(enemyID: enemy.id, intent: enemy.currentIntent, landsAtTick: Int((lands / step).rounded(.up))))
             }
         }
+        if s.outcome == .inProgress, var clock = light {
+            // A delayed enemy skips its turn.
+            clock.advance(&s, now: now, step: step, authoredPending: pending, authoredReady: ready,
+                          blocked: { $0.delayedRounds > 0 }, into: &events)
+            light = clock
+        }
         session = s
         self.target = target
         tick += 1
@@ -442,15 +464,15 @@ public struct MPCChurchBattleStepper: Sendable {
               now >= playerAt, hit == nil else { return events }
         let chosen: FoolSkillID?
         if ultimateRequested && !ultimateCast && s.canUseFoolSkill(.namelessStage) {
-            ultimateCast = true; chosen = .namelessStage; playerAt = now + 1.75 + tuning.actionDelay
+            ultimateCast = true; chosen = .namelessStage; playerAt = now + skillRecovery + tuning.actionDelay
             hitAt = now + MPCChurchBattleDriver.playerContact(chosen)
         } else if let skill = scheduler.next(in: sequence, at: now) {
             scheduler.didCast(skill, at: now); chosen = skill
-            playerAt = now + 1.75 + tuning.actionDelay + max(0, variation())
+            playerAt = now + skillRecovery + tuning.actionDelay + max(0, variation())
             hitAt = now + max(0.15, MPCChurchBattleDriver.playerContact(chosen) + variation())
         } else if now >= basicAt {
-            basicAt = now + 2.4; chosen = nil
-            playerAt = now + 1.65 + tuning.actionDelay + max(0, variation())
+            basicAt = now + (light?.tempo.basicInterval ?? 2.4); chosen = nil
+            playerAt = now + (light?.tempo.basicRecovery ?? 1.65) + tuning.actionDelay + max(0, variation())
             hitAt = now + max(0.15, MPCChurchBattleDriver.playerContact(nil) + variation())
         } else {
             return events

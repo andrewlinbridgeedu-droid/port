@@ -4,6 +4,19 @@
 
 ### 2026-10-01 新增
 
+- **战斗节奏重做**：用户给了参考录屏，要求敌人出手更快、每下伤害更小。用户认可了[规划](../../mistport-ios/docs/game-design/chapter-one-30/COMBAT_TEMPO_PLAN_20261001.md)，并且要求所有战斗都有 ×2 速度按钮。
+  - 云端已完成规则，只对 Q4、塔第 1 层、B01 三场样板生效：
+    - 敌人在原有动作之间加轻击；
+    - 假面幻影在场时，轻击被招架，伤害减半、不耗次数；
+    - 原有攻击伤害降为 70%；
+    - 普攻 1.2 秒一下，伤害减半；
+    - 版本号升为 `church-battle-v3` 和 `story-battle-v2`。
+  - 顺手修了一个旧 bug：敌人在蓄力中途死亡时，主线战斗永远不结束。
+  - 验证：规则库 564 项、服务器 22 项测试全过；墙关不变。
+  - 用户追加要求：用 Blender 等让敌人和主角的动作更自然。
+  - Mac 下一步：[样板任务单](CODEX_TASKS_COMBAT_TEMPO_SAMPLES_20261001.md)。样板认可前不铺到其他战斗。
+- **首页雨云加厚、边缘会变**：在 PR #40，云端没编译，待真机录像认可。
+
 - **Q4 猎犬出招像在散步**：用户真机反馈。原因是出招时走路循环照播，身体动作只动脖子和下颚 5–7°。Mac 任务单：[CODEX_TASK_Q4_HOUND_ATTACK_20261001.md](CODEX_TASK_Q4_HOUND_ATTACK_20261001.md)。
 - **体力灯罩动画**：用户要求加动画，SwiftUI 实现在 [PR #38](https://github.com/andrewlinbridgeedu-droid/port/pull/38)，合入 H3 草稿分支 `codex/housing-h3-verification-20260930`。
   - 云端未编译，需要 Mac 构建并在真机上核对光晕是否对准灯罩玻璃。
