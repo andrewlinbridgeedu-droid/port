@@ -47,10 +47,12 @@ enum HousingAtlas {
         if fraction < 0.9 { return "灯火明亮" }
         return "灯火充盈"
     }
-    static func stamina(_ value: Int) -> UIImage {
+    static func staminaFrame(_ value: Int) -> Int {
         let fraction = Double(value) / Double(MPCStamina.maximum)
-        let frame = fraction <= 0 ? 0 : fraction < 0.25 ? 1 : fraction < 0.6 ? 2 : fraction < 0.9 ? 3 : 4
-        return self.frame("HousingStamina20260930", index: frame, columns: 3, rows: 2)
+        return fraction <= 0 ? 0 : fraction < 0.25 ? 1 : fraction < 0.6 ? 2 : fraction < 0.9 ? 3 : 4
+    }
+    static func stamina(_ value: Int) -> UIImage {
+        frame("HousingStamina20260930", index: staminaFrame(value), columns: 3, rows: 2)
     }
 }
 
@@ -367,12 +369,171 @@ struct HousingStaminaView: View {
                 let stamina = game.housingRecord?.stamina ?? .init(at: now.timeIntervalSince1970)
                 let value = stamina.available(at: now.timeIntervalSince1970)
                 VStack(alignment: .leading, spacing: 14) {
-                    Image(uiImage: HousingAtlas.stamina(value)).resizable().scaledToFit().frame(height: 170).frame(maxWidth: .infinity)
+                    HousingLanternStage(value: value,
+                        fraction: stamina.current(at: now.timeIntervalSince1970) / Double(MPCStamina.maximum))
                     Text(HousingAtlas.staminaCaption(value)).font(.title2.bold())
+                        .contentTransition(.opacity).animation(.easeInOut(duration: 0.6), value: HousingAtlas.staminaCaption(value))
                     Text("照顾好起居，灯火会随着歇息慢慢恢复。").font(.body)
                 }
             }
         }.task { await game.openHousingDay() }
+    }
+}
+
+/// The stamina lantern is alive but shows no numbers (user copy rule, H3): its light follows
+/// stamina continuously, the flame flickers (unsteadily when low), the lamp sways on its chain
+/// in drifting harbor mist, motes of light gather into the glass while it recovers and two
+/// moths circle it once full. A tap swings the lamp and flares the flame. Reduce Motion keeps
+/// a still, lit lamp that refreshes every 30 seconds.
+struct HousingLanternStage: View {
+    let value: Int
+    /// Stamina / maximum, with fractions, so the light grows between the five art frames.
+    let fraction: Double
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var pushedAt = Date.distantPast
+    @State private var pushDirection = 1.0
+
+    private static let lampHeight: CGFloat = 170
+    /// Center of the glass in the atlas cell, as a share of the lamp height (from the H3 device shot).
+    private static let glassY: CGFloat = 0.60
+    private static let amber = Color(red: 1.0, green: 0.72, blue: 0.36)
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: reduceMotion ? 30 : 1.0 / 30)) { context in
+            let t = context.date.timeIntervalSinceReferenceDate
+            let sincePush = context.date.timeIntervalSince(pushedAt)
+            let flame = flameLevel(t: t, sincePush: sincePush)
+            ZStack(alignment: .top) {
+                LinearGradient(colors: [Color(red: 0.05, green: 0.08, blue: 0.10), Color(red: 0.12, green: 0.17, blue: 0.18)],
+                               startPoint: .top, endPoint: .bottom)
+                Ellipse().fill(RadialGradient(colors: [Self.amber.opacity(0.35 * flame), .clear], center: .center, startRadius: 0, endRadius: 120))
+                    .frame(width: 260, height: 46).frame(maxHeight: .infinity, alignment: .bottom).padding(.bottom, 6)
+                mist(t: t, layer: 0)
+                lamp(flame: flame)
+                    .rotationEffect(.degrees(sway(t: t, sincePush: sincePush)), anchor: .top)
+                motes(t: t, flame: flame)
+                mist(t: t, layer: 1)
+            }
+            .frame(height: 290).frame(maxWidth: .infinity)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            guard !reduceMotion else { return }
+            pushDirection = -pushDirection; pushedAt = .now
+        }
+        .sensoryFeedback(.impact(weight: .light), trigger: pushedAt)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("体力灯罩，" + HousingAtlas.staminaCaption(value))
+    }
+
+    private func lamp(flame: Double) -> some View {
+        let h = Self.lampHeight
+        return VStack(spacing: 0) {
+            Rectangle().fill(LinearGradient(colors: [Color(red: 0.35, green: 0.30, blue: 0.24), Color(red: 0.55, green: 0.45, blue: 0.30)],
+                                            startPoint: .top, endPoint: .bottom))
+                .frame(width: 3, height: 44)
+            ZStack {
+                Image(uiImage: HousingAtlas.stamina(value)).resizable().scaledToFit()
+                    .id(HousingAtlas.staminaFrame(value)).transition(.opacity)
+            }.frame(height: h).animation(.easeInOut(duration: 0.9), value: HousingAtlas.staminaFrame(value))
+                .brightness(0.10 * (flame - 0.6))
+                .background {
+                    Circle().fill(RadialGradient(colors: [Self.amber.opacity(0.55 * flame), Self.amber.opacity(0.12 * flame), .clear],
+                                                 center: .center, startRadius: 4, endRadius: 50 + 110 * flame))
+                        .frame(width: 340, height: 340).offset(y: h * (Self.glassY - 0.5))
+                }
+                .overlay {
+                    Ellipse().fill(RadialGradient(colors: [Color(red: 1, green: 0.93, blue: 0.75).opacity(0.5 * flame), .clear],
+                                                  center: .center, startRadius: 0, endRadius: h * 0.2))
+                        .frame(width: h * 0.40, height: h * 0.32).offset(y: h * (Self.glassY - 0.5))
+                        .blendMode(.plusLighter).allowsHitTesting(false)
+                }
+        }
+    }
+
+    /// 0...~1.3: stamina sets the level; the flicker is steadier when full and sputters when low.
+    private func flameLevel(t: Double, sincePush: TimeInterval) -> Double {
+        let level = 0.18 + 0.82 * min(1, max(0, fraction))
+        guard !reduceMotion else { return level }
+        let noise = 0.5 * sin(t * 7.3) + 0.3 * sin(t * 13.1 + 1.7) + 0.2 * sin(t * 23.7 + 0.4)
+        let unsteady = 1 - min(1, max(0, fraction))
+        var flame = level * (1 + (0.05 + 0.13 * unsteady) * noise)
+        if fraction < 0.25, sin(t * 0.9) > 0.96 { flame *= 0.55 }
+        if sincePush >= 0 { flame += 0.35 * exp(-sincePush / 0.5) }
+        return max(0.08, flame)
+    }
+
+    private func sway(t: Double, sincePush: TimeInterval) -> Double {
+        guard !reduceMotion else { return 0 }
+        var angle = 1.2 * sin(2 * .pi * t / 4.2)
+        if sincePush >= 0, sincePush < 6 { angle += pushDirection * 9 * exp(-sincePush / 1.6) * sin(2 * .pi * sincePush / 1.3) }
+        return angle
+    }
+
+    /// Two soft mist bands, one behind and one in front of the lamp, drifting at different speeds.
+    private func mist(t: Double, layer: Int) -> some View {
+        Canvas { context, size in
+            context.addFilter(.blur(radius: layer == 0 ? 18 : 24))
+            let speed = layer == 0 ? 9.0 : 14.0
+            for i in 0..<3 {
+                let span = size.width + 260
+                let x = (Double(i) * span / 3 + (reduceMotion ? 0 : t * speed)).truncatingRemainder(dividingBy: span) - 130
+                let y = size.height * (layer == 0 ? 0.30 + 0.18 * Double(i) : 0.72 + 0.08 * Double(i % 2))
+                let rect = CGRect(x: x, y: y, width: 220, height: layer == 0 ? 56 : 44)
+                context.fill(Ellipse().path(in: rect), with: .color(.white.opacity(layer == 0 ? 0.10 : 0.07)))
+            }
+        }.allowsHitTesting(false)
+    }
+
+    /// Recovering: six motes drift in from the mist and fade into the glass. Full: two moths circle.
+    private func motes(t: Double, flame: Double) -> some View {
+        Canvas { context, size in
+            guard !reduceMotion else { return }
+            let glass = CGPoint(x: size.width / 2, y: 44 + Self.lampHeight * Self.glassY)
+            if fraction < 1 {
+                for i in 0..<6 {
+                    let phase = (t / 3.2 + Double(i) / 6).truncatingRemainder(dividingBy: 1)
+                    let angle = Double(i) * 1.047 + 0.4
+                    let distance = 150 * (1 - phase)
+                    let p = CGPoint(x: glass.x + cos(angle) * distance, y: glass.y + sin(angle) * distance * 0.55)
+                    let r = 1.5 + 1.5 * (1 - phase)
+                    let alpha = min(phase * 3, 1) * (1 - phase) * 0.9
+                    context.fill(Circle().path(in: CGRect(x: p.x - r, y: p.y - r, width: 2 * r, height: 2 * r)),
+                                 with: .color(Self.amber.opacity(alpha)))
+                }
+            } else {
+                for i in 0..<2 {
+                    let a = t * (i == 0 ? 1.3 : -1.0) + Double(i) * 2.1
+                    let p = CGPoint(x: glass.x + cos(a) * 74, y: glass.y - 10 + sin(a * 1.7) * 30)
+                    let wing = 2.2 + 1.4 * abs(sin(t * 18 + Double(i)))
+                    context.fill(Ellipse().path(in: CGRect(x: p.x - wing, y: p.y - 1.6, width: 2 * wing, height: 3.2)),
+                                 with: .color(Color(red: 0.95, green: 0.88, blue: 0.70).opacity(0.75 * min(1, flame))))
+                }
+            }
+        }.allowsHitTesting(false)
+    }
+}
+
+/// The small lantern on the home task strip: the same art, with a faint breathing glow.
+struct HousingLanternIcon: View {
+    let value: Int
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    var body: some View {
+        TimelineView(.animation(minimumInterval: reduceMotion ? 30 : 1.0 / 15)) { context in
+            let t = context.date.timeIntervalSinceReferenceDate
+            let level = 0.2 + 0.8 * Double(value) / Double(MPCStamina.maximum)
+            let breath = reduceMotion ? 1 : 1 + 0.12 * sin(t * 2.1) + 0.05 * sin(t * 9.3)
+            ZStack {
+                Image(uiImage: HousingAtlas.stamina(value)).resizable().scaledToFit()
+                    .id(HousingAtlas.staminaFrame(value)).transition(.opacity)
+            }.animation(.easeInOut(duration: 0.9), value: HousingAtlas.staminaFrame(value))
+                .background {
+                    Circle().fill(RadialGradient(colors: [Color(red: 1, green: 0.72, blue: 0.36).opacity(0.45 * level * breath), .clear],
+                                                 center: .center, startRadius: 0, endRadius: 22))
+                        .frame(width: 44, height: 44).offset(y: 3)
+                }
+        }
     }
 }
 
