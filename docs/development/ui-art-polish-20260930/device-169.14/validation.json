@@ -1,0 +1,45 @@
+{
+  "build": "169.14",
+  "sourceCommit": "67136b3beed460608e18604e2bc1b54c19a780ab",
+  "includedCommits": {
+    "ui": "06bdaab",
+    "housing169.13": "34048f4",
+    "main": "97ec59d"
+  },
+  "installedVersionVerified": true,
+  "unityExportFresh": true,
+  "deviceBuildSucceeded": true,
+  "signatureVerified": true,
+  "coreTestsPassed": 69,
+  "coreTestSuites": 3,
+  "devicePassMarkers": [
+    "CHURCH_SERVICES_VERIFY_PASS: borrow equip reserve restore settle return, ownership isolation, bounty evidence and idempotent reward, atomic recovery",
+    "DAILY_PACING_VERIFY_PASS: new save day 1, Q4 tomorrow, replay open, next day, reopen, church after Q7, tower 4/day, migration once, restart",
+    "ADVANCEMENT_PROCUREMENT_VERIFY_PASS: no old drops, milestones, old ownership, one debit, restore, journal",
+    "DAILY_WORK_VERIFY_PASS: empty migration once, shared J0/J1/J2/story counter, full base pay with stamina, two merit jobs, duplicate callbacks, reopen, journal recovery, next day, restart",
+    "NEWSPAPER_VERIFY_PASS: migrate once, days 4/11/18/25, first opening only, repeat read, relaunch, clock rollback, summaries do not mutate gameplay ledgers, restart",
+    "REMNANTS_VERIFY_PASS: empty migration once, closed-bounty gate, one case/day, wrong answer free, band, abandon, real runtime win, cross-week pending/earned reward, full base pay, duplicate claim, atomic recovery, no relic/merit grants, cleanup, reset",
+    "NEIGHBORS_VERIFY_PASS: migration once, daily 2-3 offers, proximity conversation required, actual recipient, wrong answers free, four kinds, no double rewards, pest abandon/retry, all 23 in turn, stories at 2/3, expiry, reopen, reset",
+    "CITY_EVENTS_VERIFY_PASS: migrate once, delivery receipts, finite escrow, real runtime victories, daily cap, persisted start day, cross-day victory payout, duplicate settlement, success/failure prices, retreat, reset",
+    "DAILY_WORKSHOP_VERIFY_PASS: migration once, Q5/day3, five daily crafts, duplicate craft/order, finite orders, first/repeat species drops, retired tickets, fourteen recipes, wear gate, tower depth, wear once, repair once, reopen",
+    "EARLY_RELIC_SHOP_VERIFY_PASS: locked, debit, duplicate, manual equip, restore, journal, postal verification",
+    "HOUSING_VERIFY_PASS: 22 checks",
+    "LOCAL_WORKSHOP_VERIFY_PASS: 17 checks",
+    "CHURCH_TOWER_100_PASS: 100/100 report=/var/mobile/Containers/Data/Application/F8AFF613-34C3-4AAC-8921-4B622355C513/Documents/church-tower-100-verification.json"
+  ],
+  "preferencesComparisonPassed": true,
+  "playerByteIdentical": true,
+  "existingAuditFilesByteIdentical": true,
+  "beforePreferencesFiles": 246,
+  "afterPreferencesFiles": 263,
+  "screenshots": [
+    "settings.png",
+    "skill.png",
+    "victory.png",
+    "housing/housing-lease.png"
+  ],
+  "screenshotsUseIsolatedFixtures": true,
+  "userVisualApproval": false,
+  "appExecutableSHA256": "86c069304eec15c469b82ce86df82f75da1d77e71a15fd36b648979bbfae3db1",
+  "deviceTestProcessTerminated": true
+}

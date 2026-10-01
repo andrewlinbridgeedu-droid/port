@@ -1,0 +1,23 @@
+[
+  {
+    "page": "settings",
+    "build": "169.14",
+    "source": "physical iPhone 13 / real SwiftUI / isolated fixture",
+    "sha256": "32c988540b47d7b20de4545311495655dafda40f524e45e4601b982006d4f053",
+    "capturedAt": 1790823036.367198
+  },
+  {
+    "page": "skill",
+    "build": "169.14",
+    "source": "physical iPhone 13 / real SwiftUI / isolated fixture",
+    "sha256": "08283c587a9fe526a605de23c5882f92b031a8127a829cfd9c7686e21521cced",
+    "capturedAt": 1790823043.080271
+  },
+  {
+    "page": "victory",
+    "build": "169.14",
+    "source": "physical iPhone 13 / real SwiftUI / isolated fixture",
+    "sha256": "9c800d72fb966b3dc8fe18ad40da56a37a427fdc80e23786b80f2a03f9e0dd48",
+    "capturedAt": 1790823049.779992
+  }
+]
