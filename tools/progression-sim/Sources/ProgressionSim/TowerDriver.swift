@@ -16,6 +16,7 @@ public enum TowerDriver {
         public let rosterDescriptors: [[String]]
         public let skillCasts: [String: Int]
         public let medalUses: Int
+        public var tempoStats = MPCTempoStats()
     }
     public static func mission(for floor: MPCChurchTowerCatalog.Floor) -> Int { max(7, floor.requiredMission) }
     public static func recommendedLoadout(for floor: MPCChurchTowerCatalog.Floor, route: Route = .medal) -> MPCChapterOneLoadout {
@@ -47,15 +48,16 @@ public enum TowerDriver {
     /// Since church-battle-v2 every church battle runs through the rules library's
     /// stepper (the App's rules) via the tower verification runner; this keeps the
     /// simulator's call sites and report type.
-    public static func run(number: Int, route: Route = .medal, medalOffset: Double = 22, jitter: Double = 0, seed: UInt64 = 1, passive: String? = nil, suppliedLoadout: MPCChapterOneLoadout? = nil, actionDelay: Double = 0, encounterID: String? = nil) throws -> Report {
+    public static func run(number: Int, route: Route = .medal, medalOffset: Double = 22, jitter: Double = 0, seed: UInt64 = 1, passive: String? = nil, suppliedLoadout: MPCChapterOneLoadout? = nil, actionDelay: Double = 0, encounterID: String? = nil, tempo: MPCTempoChoice = .automatic) throws -> Report {
         let floor = MPCChurchTowerCatalog.floor(number: number)!
         var loadout = recommendedLoadout(for: floor, route: route)
         if let passive { loadout.relicIDs = [passive] }
         if let suppliedLoadout { loadout = suppliedLoadout }
         let r = try MPCChurchTowerVerificationRunner.run(number: number, route: MPCChurchTowerVerificationRunner.Route(rawValue: route.rawValue)!,
                                                           medalOffset: medalOffset, jitter: jitter, seed: seed,
-                                                          suppliedLoadout: loadout, actionDelay: actionDelay, encounterID: encounterID)
+                                                          suppliedLoadout: loadout, actionDelay: actionDelay, encounterID: encounterID, tempo: tempo)
         return .init(floor: number, mission: mission(for: floor), route: route, session: r.session, seconds: r.seconds,
-                     waveEntryHP: r.waveEntryHP, rosterDescriptors: r.rosterDescriptors, skillCasts: r.skillCasts, medalUses: r.medalUses)
+                     waveEntryHP: r.waveEntryHP, rosterDescriptors: r.rosterDescriptors, skillCasts: r.skillCasts, medalUses: r.medalUses,
+                     tempoStats: r.tempoStats)
     }
 }

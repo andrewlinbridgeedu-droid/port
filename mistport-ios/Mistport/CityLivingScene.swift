@@ -826,8 +826,26 @@ private struct HarborOvercast {
         sky.opacity = min(1, cover * 1.3)
         sky.addFilter(.colorMultiply(tint.color()))
         sky.addFilter(.blur(radius: unit * 0.0018))
-        HarborPainter.drawDeck(sky, clouds: context.resolve(Image("CityStormClouds")), rect: rect,
-                               drift: t * (0.004 + 0.010 * abs(wind)))
+        let deck = context.resolve(Image("CityStormClouds"))
+        let pace = 0.004 + 0.010 * abs(wind)
+        HarborPainter.drawDeck(sky, clouds: deck, rect: rect, drift: t * pace)
+        // Thickness: a second, lower deck of the same clouds, mirrored and
+        // moving faster (nearer), then a dark belly where storm cloud is
+        // thickest. The two decks slide past each other, so the mass keeps
+        // reshaping instead of sliding as one sheet.
+        var lower = sky
+        lower.opacity = min(1, cover * 1.3) * (0.55 + 0.35 * storm)
+        lower.translateBy(x: rect.midX, y: 0)
+        lower.scaleBy(x: -1, y: 1)
+        lower.translateBy(x: -rect.midX, y: unit * 0.035)
+        HarborPainter.drawDeck(lower, clouds: deck, rect: rect, drift: t * pace * 1.7 + 0.37)
+        let belly = RGB(0.30, 0.32, 0.38).mix(RGB(0.16, 0.17, 0.22), storm) * tint
+        sky.fill(Path(band), with: .linearGradient(
+            Gradient(stops: [.init(color: belly.color(0), location: 0),
+                             .init(color: belly.color(0.10 + 0.20 * storm), location: 0.35),
+                             .init(color: belly.color(0.30 + 0.35 * storm), location: 0.75),
+                             .init(color: belly.color(0.20 + 0.25 * storm), location: 1)]),
+            startPoint: CGPoint(x: 0, y: band.minY), endPoint: CGPoint(x: 0, y: band.maxY)))
         var land = context
         let landClip = context.resolve(Image(landMask))
         land.clipToLayer { $0.draw(landClip, in: band) }
@@ -835,6 +853,54 @@ private struct HarborOvercast {
         HarborPainter.drawPuffs(land, puffs: context.resolve(Image("CityCloudPuffs")), rect: rect, t: t, wind: wind,
                                 tint: RGB(0.95, 0.96, 1.0).mix(RGB(0.62, 0.64, 0.70), storm) * tint,
                                 strength: min(1, cover * 1.1) * (1 - 0.3 * storm))
+        drawScud(land, rect: rect, tint: tint)
+    }
+
+    /// Ragged low cloud under the deck. Each fragment is a cluster of soft
+    /// lobes that swell and shrink on their own slow clocks while the wind
+    /// carries it, so its outline is never the same twice: a dark base and a
+    /// paler top give it body. Drawn over the distant view only (land mask).
+    private func drawScud(_ context: GraphicsContext, rect: CGRect, tint: RGB) {
+        let strength = min(1, cover * 1.2) * (0.55 + 0.45 * storm)
+        guard strength > 0.02 else { return }
+        let unit = Double(rect.height)
+        let aspect = Double(rect.width) / unit
+        let base = (RGB(0.40, 0.42, 0.48).mix(RGB(0.20, 0.21, 0.27), storm)) * tint
+        let crest = (RGB(0.74, 0.76, 0.82).mix(RGB(0.52, 0.54, 0.60), storm)) * tint
+        var dark = Path(), pale = Path()
+        let fragments = 9
+        for k in 0..<fragments {
+            let speed = (0.006 + 0.004 * hash01(k, 501)) * (0.6 + abs(wind))
+            let span = aspect + 0.6
+            // Right to left, with the sea wind; each fragment re-enters at a new height.
+            let travel = fract(hash01(k, 502) - t * speed / span)
+            let lap = Int(floor(hash01(k, 502) - t * speed / span))
+            let cx = travel * span - 0.3
+            let cy = 0.135 + 0.085 * hash01(k, lap, 503)
+            let width = 0.10 + 0.12 * hash01(k, lap, 504)
+            let lobes = 6
+            for j in 0..<lobes {
+                let along = (Double(j) + 0.5) / Double(lobes) - 0.5
+                let period = 18 + 30 * hash01(k, j, 505)
+                let breathe = 0.72 + 0.28 * sin(t * 2 * .pi / period + 6.28 * hash01(k, j, 506))
+                let r = width * (0.30 + 0.22 * hash01(k, j, 507)) * (1 - 0.9 * along * along) * breathe
+                let x = cx + along * width * 1.6 + 0.012 * sin(t / (11 + 7 * hash01(k, j, 508)) + Double(j))
+                let y = cy - r * 0.35 * (1 - abs(along))
+                let box = CGRect(x: Double(rect.minX) + (x - r) * unit, y: Double(rect.minY) + (y - r * 0.55) * unit,
+                                 width: 2 * r * unit, height: 1.1 * r * unit)
+                dark.addEllipse(in: box)
+                let top = box.insetBy(dx: box.width * 0.18, dy: box.height * 0.22).offsetBy(dx: 0, dy: -box.height * 0.22)
+                pale.addEllipse(in: top)
+            }
+        }
+        var body = context
+        body.opacity = strength * 0.85
+        body.addFilter(.blur(radius: rect.height * 0.010))
+        body.fill(dark, with: .color(base.color()))
+        var lit = context
+        lit.opacity = strength * (0.45 - 0.25 * storm) * (1 - light.dark)
+        lit.addFilter(.blur(radius: rect.height * 0.014))
+        lit.fill(pale, with: .color(crest.color()))
     }
 }
 

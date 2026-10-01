@@ -71,6 +71,7 @@ public struct MPCStoryBattleStepper: Sendable {
     private var preludeRevealAt: TimeInterval?
     private var preludeActive: Bool
     private var random: UInt64
+    private var light: MPCLightAttackClock?
 
     public init(encounterID: String, loadout: MPCChapterOneLoadout, consumables: [String: Int] = [:],
                 party: MPCPartyPersistentState = .init(), companionIDs: [String] = [], mask: Mask? = nil,
@@ -86,6 +87,9 @@ public struct MPCStoryBattleStepper: Sendable {
         var session = try MPCChapterOneEncounterSession.start(encounterID: encounterID, party: party, consumables: consumables,
                                                               companionIDs: companionIDs, loadout: loadout)
         configure?(&session)
+        let tempo = tuning.tempo.resolve(encounterID: encounterID)
+        session.adoptTempo(tempo)
+        light = tempo.map(MPCLightAttackClock.init)
         self.session = session
         loop = session.loadout.normalSkillIDs
         preludeActive = mission == 1
@@ -158,6 +162,7 @@ public struct MPCStoryBattleStepper: Sendable {
 
     private mutating func beginWave(_ index: Int, into events: inout Events) {
         pending.removeAll(); ready.removeAll(); reveals.removeAll(); revealed.removeAll()
+        light?.reset()
         q4CycleStart = nil
         session.clearQ4HoundState()
         events.newWave = index
@@ -278,6 +283,8 @@ public struct MPCStoryBattleStepper: Sendable {
         if usesBellTiming, let id = self.bell.pendingEnemyID, !s.enemies.contains(where: { $0.id == id && $0.isAlive }) {
             _ = self.bell.enemyDied(id)
             self.pending[id] = nil
+            s.releaseDeadCharger(enemyID: id)
+            if s.outcome != .inProgress { session = s; tick += 1; return events }
         }
 
         // Q1: after three basic attacks Mara intervenes; the battle then goes on
@@ -391,6 +398,18 @@ public struct MPCStoryBattleStepper: Sendable {
             self.pending[enemy.id] = lands
             events.enemyAttacks.append(.init(enemyID: enemy.id, intent: enemy.currentIntent, landsAtTick: Int((lands / step).rounded(.up))))
         }
+        if s.outcome == .inProgress, var clock = light {
+            // No light bites while the hound stands open after its twin flames (the mask's
+            // payoff), nor from a delayed or unrevealed enemy.
+            let q4Open = (s.q4OpeningUntil ?? -1) > now
+            let revealed = self.revealed
+            clock.advance(&s, now: now, step: step, authoredPending: pending, authoredReady: ready,
+                          blocked: { enemy in
+                              q4Open || enemy.delayedRounds > 0
+                                  || (enemy.contentID == "enemy_resonant_clock_guard_q2_split" && !revealed.contains(enemy.id))
+                          }, into: &events)
+            light = clock
+        }
         session = s
         tick += 1
 
@@ -405,11 +424,11 @@ public struct MPCStoryBattleStepper: Sendable {
             if skill == .namelessStage { self.ultimateRequested = false }
             session.setContinuousSkillSequence(self.loop)
             self.scheduler.didCast(skill, at: now)
-            playerAt = now + 1.75 + tuning.actionDelay + (skill == .namelessStage ? 0 : max(0, variation()))
+            playerAt = now + (light?.tempo.skillRecovery ?? 1.75) + tuning.actionDelay + (skill == .namelessStage ? 0 : max(0, variation()))
             chosen = skill
-        } else if now >= basicAt + 2.4 {
+        } else if now >= basicAt + (light?.tempo.basicInterval ?? 2.4) {
             basicAt = now
-            playerAt = now + 1.65 + tuning.actionDelay + max(0, variation())
+            playerAt = now + (light?.tempo.basicRecovery ?? 1.65) + tuning.actionDelay + max(0, variation())
             chosen = nil
         } else {
             return events

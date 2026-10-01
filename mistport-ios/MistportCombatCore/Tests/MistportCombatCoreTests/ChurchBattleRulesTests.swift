@@ -41,9 +41,9 @@ private func aggressive(_ view: MPCChurchBattleDriver.View) -> [MPCBattleInput] 
 struct ChurchBattleRulesTests {
     @Test("the log carries the new rule version and old logs are refused")
     func version() throws {
-        #expect(MPCBattleInputLog.currentVersion == "church-battle-v2")
-        let old = MPCBattleInputLog(version: "church-battle-v1", encounterID: MPCChurchTowerCatalog.floor(number: 5)!.id, inputs: [])
-        #expect(throws: MPCChurchBattleDriver.Failure.version("church-battle-v1")) { try MPCChurchBattleDriver.replay(old, loadout: floorLoadout(5)) }
+        #expect(MPCBattleInputLog.currentVersion == "church-battle-v3")
+        let old = MPCBattleInputLog(version: "church-battle-v2", encounterID: MPCChurchTowerCatalog.floor(number: 5)!.id, inputs: [])
+        #expect(throws: MPCChurchBattleDriver.Failure.version("church-battle-v2")) { try MPCChurchBattleDriver.replay(old, loadout: floorLoadout(5)) }
     }
 
     @Test("rule 1: a dead enemy's attack never resolves; it is cancelled", arguments: [12, 30, 55, 80])
