@@ -23,6 +23,50 @@ if arguments.count > 5 && arguments[1] == "fight" {
     }
     exit(0)
 }
+if arguments.count > 1 && arguments[1] == "tempo" {
+    // tempo: the combat tempo samples (Q4, D01, B01) under the former rules and the shipped tempo.
+    // TEMPO="key=value,..." tries other numbers for all three instead
+    // (keys: light lightPct auth parry basic basicRec skillRec basicPct).
+    var custom = MPCCombatTempo.standard
+    if let spec = ProcessInfo.processInfo.environment["TEMPO"] {
+        var v: [String: Double] = [:]
+        for pair in spec.split(separator: ",") { let kv = pair.split(separator: "="); if kv.count == 2 { v[String(kv[0])] = Double(kv[1]) } }
+        let t = MPCCombatTempo.standard
+        custom = MPCCombatTempo(lightInterval: v["light"] ?? t.lightInterval, lightWindup: t.lightWindup, lightOpening: t.lightOpening,
+                                lightOpeningPerSlot: t.lightOpeningPerSlot, lightAttackPercent: v["lightPct"].map(Int.init) ?? t.lightAttackPercent,
+                                authoredDamagePercent: v["auth"].map(Int.init) ?? t.authoredDamagePercent, parryPercent: v["parry"].map(Int.init) ?? t.parryPercent,
+                                authoredClearance: t.authoredClearance, basicInterval: v["basic"] ?? t.basicInterval,
+                                basicRecovery: v["basicRec"] ?? t.basicRecovery, skillRecovery: v["skillRec"] ?? t.skillRecovery,
+                                basicDamagePercent: v["basicPct"].map(Int.init) ?? t.basicDamagePercent)
+    }
+    let forced = ProcessInfo.processInfo.environment["TEMPO"] != nil
+    func choices(_ encounterID: String) -> [(String, MPCTempoChoice)] {
+        [("before", .off), ("tempo", forced ? .custom(custom) : .automatic)]
+    }
+    func line(_ name: String, _ profile: Profile, _ choice: String, _ s: MPCChapterOneEncounterSession, _ seconds: Double, _ t: MPCTempoStats) -> String {
+        let hp = s.playerHP * 100 / max(1, s.playerMaxHP)
+        let rate = seconds > 0 ? Double(t.visibleEvents) / seconds : 0
+        return [name, profile.name, choice, s.outcome == .victory ? "WIN " : "lose", "hp \(hp)%", "\(Int(seconds.rounded()))s",
+                "light \(t.lightHits) parry \(t.parries) authored \(t.authoredHits)",
+                "max light \(Double(t.largestLightBP) / 100)% authored \(Double(t.largestAuthoredBP) / 100)%",
+                String(format: "events/s %.2f", rate)].joined(separator: "  ")
+    }
+    let floor10 = TowerDriver.recommendedLoadout(for: MPCChurchTowerCatalog.floor(number: 10)!)
+    for profile in Profile.all {
+        for (choice, tempo) in choices("") {
+            let q4 = try ChapterDriver.run(q: 4, sequence: [.sidestepStrike], mask: true, actionDelay: profile.actionDelay, tempo: tempo)
+            print(line("Q4 ", profile, choice, q4.session, q4.seconds, q4.tempoStats))
+            let d01 = try TowerDriver.run(number: 1, actionDelay: profile.actionDelay, tempo: tempo)
+            print(line("D01", profile, choice, d01.session, d01.seconds, d01.tempoStats))
+            for offset in [6.0, 14.0] {
+                let b01 = try TowerDriver.run(number: 1, medalOffset: offset, suppliedLoadout: floor10, actionDelay: profile.actionDelay,
+                                              encounterID: "church_bounty_b01", tempo: tempo)
+                print(line("B01 medal@\(Int(offset))", profile, choice, b01.session, b01.seconds, b01.tempoStats))
+            }
+        }
+    }
+    exit(0)
+}
 if arguments.count > 1 && arguments[1] == "human" {
     // human <output-dir> [start offsets]: modelled human timing table and human-pace campaign runs.
     let destination = URL(fileURLWithPath: arguments.count > 2 ? arguments[2] : FileManager.default.currentDirectoryPath)

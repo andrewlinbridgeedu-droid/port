@@ -911,6 +911,16 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         return true
     }
 
+    /// A charger killed mid-charge never releases its charge (the story stepper drops it):
+    /// clear its commitment, main missions included, since a charge carries no projectile,
+    /// and finish the wave if it was the last enemy. Without this the battle never ended.
+    public mutating func releaseDeadCharger(enemyID: String) {
+        guard outcome == .inProgress,
+              let enemy = enemies.first(where: { $0.id == enemyID && !$0.isAlive }), enemy.currentIntent == "charge",
+              committedEnemyImpacts.remove(enemyID) != nil else { return }
+        if enemies.allSatisfy({ !$0.isAlive }) { advanceWaveOrWin() }
+    }
+
     /// A live support actor whose already-frozen recipient disappeared may
     /// cancel only that support action. Never retarget, heal, or repeat it.
     @discardableResult
@@ -1027,6 +1037,9 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     private var talentEvidenceReady = false
 
     public private(set) var campaignPrototype: MPCCampaignBattleState? = nil
+    /// The combat tempo this battle runs at (CombatTempo.swift); nil keeps the former rules.
+    public private(set) var tempo: MPCCombatTempo? = nil
+    public mutating func adoptTempo(_ tempo: MPCCombatTempo?) { self.tempo = tempo }
     public let encounter: MPCEncounterContent
     public private(set) var waveIndex: Int
     public private(set) var enemies: [MPCRuntimeEnemy]
@@ -1993,6 +2006,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 damage = 0
             } else {
                 damage = isUsurpedLifeMedalActive ? 78 : 60
+                if let tempo { damage = damage * tempo.basicDamagePercent / 100 }
                 if loadout.relicIDs.contains("relic_reflecting_ink_mirror"), let idx = enemies.firstIndex(where: { $0.id == id }) {
                     let gift = sequenceNineRelics.offerMirrorGift(basicDamage: damage, targetID: id,
                         targetMissingHP: enemies[idx].maxHP - enemies[idx].hp,
@@ -2072,6 +2086,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             let protectionApplies = response == .protection
                 && !enemyIntentIgnoresProtection(intent)
             var resolvedDamage = protectionApplies ? result.damage * 5_000 / 10_000 : result.damage
+            if let tempo, resolvedDamage > 0 { resolvedDamage = max(1, resolvedDamage * tempo.authoredDamagePercent / 100) }
             clearDefeatedTowerEffects()
             if resolvedDamage > 0, var buff = towerEmpowers[enemies[index].id] {
                 let cycle = enemies[index].intentIndex / max(1, enemies[index].intentPattern.count)
@@ -2251,21 +2266,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             bossMechanicMissed: missedBossMechanic
         ))
 
-        if playerHP <= 0 {
-            if sharedReviveCharges > 0, allyHP.values.contains(where: { $0 > 0 }) {
-                sharedReviveCharges -= 1
-                playerHP = max(1, playerMaxHP * 3 / 10)
-                if loadout.relicIDs.contains("relic_mist_anchor_shard") {
-                    grantPlayerShield(playerMaxHP / 10)
-                    mistAnchorWasConsumed = true
-                    triggeredEffects.append("雾锚碎片：复活后获得护盾")
-                }
-                log.append(.init(round: round, message: "AI队友使用界锚复原", damageTaken: 0, bossMechanicMissed: false))
-            } else if allyHP.isEmpty || allyHP.values.allSatisfy({ $0 <= 0 }) {
-                outcome = .defeat
-                settleUsurpedLifeMedal()
-            }
-        }
+        settlePlayerDownIfNeeded()
 
         resolvingEnemyAction = false
         if outcome != .inProgress { clearEmeraldPoison(); finiteDamageTicks.removeAll() }
@@ -3080,7 +3081,49 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         return base * (100 + bonus) / 100
     }
 
-    private mutating func absorbPlayerDamage(_ damage: Int, isDamageOverTime: Bool = false) {
+    /// A shared revive if an ally still stands, otherwise defeat.
+    private mutating func settlePlayerDownIfNeeded() {
+        if playerHP <= 0 {
+            if sharedReviveCharges > 0, allyHP.values.contains(where: { $0 > 0 }) {
+                sharedReviveCharges -= 1
+                playerHP = max(1, playerMaxHP * 3 / 10)
+                if loadout.relicIDs.contains("relic_mist_anchor_shard") {
+                    grantPlayerShield(playerMaxHP / 10)
+                    mistAnchorWasConsumed = true
+                    triggeredEffects.append("雾锚碎片：复活后获得护盾")
+                }
+                log.append(.init(round: round, message: "AI队友使用界锚复原", damageTaken: 0, bossMechanicMissed: false))
+            } else if allyHP.isEmpty || allyHP.values.allSatisfy({ $0 <= 0 }) {
+                outcome = .defeat
+                settleUsurpedLifeMedal()
+            }
+        }
+    }
+
+    /// A light attack (CombatTempo.swift) lands. Count-based defences are never used up:
+    /// the mask's phantom parries it for `parryPercent`, the paper double and the free
+    /// evasion ignore it. Damage reduction, shields and the blank card's window apply.
+    /// Returns nil when the attacker can no longer hit (dead, departed, no tempo).
+    @discardableResult
+    public mutating func resolveLightAttack(enemyID: String, at now: TimeInterval) -> MPCLightAttackResolution? {
+        guard let tempo, outcome == .inProgress else { return nil }
+        _ = advanceRelicClock(at: now)
+        guard outcome == .inProgress,
+              let enemy = enemies.first(where: { $0.id == enemyID && $0.isAlive && !$0.hasDeparted }) else { return nil }
+        _ = expireOwnedManualMasquerade(at: now)
+        var damage = max(1, enemy.attack * tempo.lightAttackPercent / 100)
+        if sequenceNineRelics.blankCardBlocks(enemyID, at: now) { damage = 0 }
+        let parried = damage > 0 && masqueradeCharges > 0
+        if parried { damage = max(1, damage * tempo.parryPercent / 100) }
+        damage = damage * (10_000 - loadout.churchGear.damageReductionBP - loadout.outfitBonus.damageReductionBP) / 10_000
+        if parried { triggeredEffects.append("招架：幻影挡开轻击，承受\(damage)") }
+        absorbPlayerDamage(damage, isLightHit: true)
+        settlePlayerDownIfNeeded()
+        if outcome != .inProgress { clearEmeraldPoison(); finiteDamageTicks.removeAll() }
+        return .init(enemyID: enemyID, damage: damage, parried: parried)
+    }
+
+    private mutating func absorbPlayerDamage(_ damage: Int, isDamageOverTime: Bool = false, isLightHit: Bool = false) {
         var adjustedDamage = max(0, !isDamageOverTime && unreliableNarratorTriggeredRound == round ? damage * 105 / 100 : damage)
         if isDamageOverTime, adjustedDamage > 0, loadout.relicIDs.contains("relic_salt_sealed_breathing_bag") {
             let captured = min(adjustedDamage * relicBalance.poisonCapturePercent / 100, max(0, playerBaseMaxHP * relicBalance.poisonCapacityPercent / 100 - saltBreathingBagStored))
@@ -3088,7 +3131,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             playerHP = min(playerHP, playerMaxHP)
             adjustedDamage -= captured
         }
-        if !isDamageOverTime, freeEvasionCharges > 0, adjustedDamage > 0 {
+        if !isDamageOverTime, !isLightHit, freeEvasionCharges > 0, adjustedDamage > 0 {
             freeEvasionCharges -= 1
             triggeredEffects.append("未写结局：闪避本次伤害")
             return
