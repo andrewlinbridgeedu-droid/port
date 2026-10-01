@@ -211,6 +211,9 @@ public struct MPCChurchBattleStepper: Sendable {
 
     /// What happened in one step, for presentation.
     public struct Events: Sendable, Equatable {
+        /// Native presentation loops can pass an empty event sink to the
+        /// shared light clock without implementing their own attack scheduler.
+        public init() {}
         public struct Cast: Sendable, Equatable {
             /// nil is a basic attack.
             public let skill: FoolSkillID?

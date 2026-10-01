@@ -1,0 +1,1 @@
+Probe and two heavy fireballs each contact once; 0.65s stagger captured; charge/flight cancellation clean. Visual-only mask updates; actual block/opening contracts covered in Swift core tests.

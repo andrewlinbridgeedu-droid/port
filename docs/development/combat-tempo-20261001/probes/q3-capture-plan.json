@@ -1,0 +1,26 @@
+{
+  "rows": [
+    {
+      "id": "M05",
+      "key": "M05",
+      "setup": "wave-instances:hell-hound-primary@early-hell-hound",
+      "frames": 138,
+      "expected": 1,
+      "actor": "hell-hound-primary",
+      "focus": "enemy",
+      "warm": [
+        "early-presence:3",
+        "tempo-sample:chapter01_q03_encounter"
+      ],
+      "cues": [
+        {
+          "frame": 6,
+          "command": "enemy:hell-hound-primary"
+        }
+      ],
+      "attack": "enemy:hell-hound-primary",
+      "safety": true,
+      "trial": ""
+    }
+  ]
+}

@@ -1078,7 +1078,7 @@ public sealed class BattlePrototype : MonoBehaviour
         && !playerDefeatPresentationActive && !playerHiddenByPaper;
     public PlayerImpactFeedback20260925 PlayerImpactFeedback => playerImpactFeedback;
     public void BeginPlayerImpactContext(string token) => playerImpactFeedback?.BeginContext(token);
-    public void PresentPlayerImpact(string payload) => playerImpactFeedback?.Present(payload);
+    public void PresentPlayerImpact(string payload) { if (playerImpactFeedback?.Present(payload) == true) GetComponent<CombatTempoPresentation>()?.PlayerHit(); }
     public void ClearPlayerImpact(bool invalidateContext = false) => playerImpactFeedback?.Clear(invalidateContext);
 
     public void PresentEnemyImpact(string payload)
@@ -1093,12 +1093,17 @@ public sealed class BattlePrototype : MonoBehaviour
             EnemyHandle victim = null;
             foreach (var candidate in encounterRoster)
                 if (candidate && candidate.BattleEnemyId == id && candidate.gameObject.activeInHierarchy) { victim = candidate; break; }
-            if (victim) EnemyImpactFeedback.Install(victim).Play(parts[0]);
+            if (victim && !(GetComponent<CombatTempoPresentation>()?.EnemyHit(victim, parts[0]) ?? false)) EnemyImpactFeedback.Install(victim).Play(parts[0]);
         }
     }
 
-    public void PresentPlayerBasic() => StartPresentation(PlayerAction.Basic);
-    public void PresentPlayerBasic(string targetID) { if(NativeCombatEnabled)StartCoroutine(PresentPlayerAction(PlayerAction.Basic,targetID)); }
+    public IEnumerable<EnemyHandle> TempoSampleEnemies => encounterRoster;
+    public Transform TempoSamplePlayer => player ? player.transform : null;
+    public void SetCombatSpeed(string value) { Time.timeScale = value == "2" ? 2 : 1; }
+    public bool CanTempoEnemyAct(EnemyHandle value) => CanPresentEnemy(value);
+    public void SetTempoSample(string value) => CombatTempoPresentation.Get(this).Configure(value);
+    public void PresentPlayerBasic() { if (!(GetComponent<CombatTempoPresentation>()?.PlayerAction("basic", true) ?? false)) StartPresentation(PlayerAction.Basic); }
+    public void PresentPlayerBasic(string targetID) { if(NativeCombatEnabled && !(GetComponent<CombatTempoPresentation>()?.PlayerAction("basic:" + targetID, true) ?? false))StartCoroutine(PresentPlayerAction(PlayerAction.Basic,targetID)); }
     public void PresentPlayerSkill() => StartPresentation(PlayerAction.Skill);
     string pendingSidestepSecondary;
     string[] pendingSkillTargets;
@@ -1106,6 +1111,7 @@ public sealed class BattlePrototype : MonoBehaviour
     public void SetSidestepSecondary(string id) { pendingSidestepSecondary = id; }
     public void PresentPlayerSkill(string skillID)
     {
+        if (GetComponent<CombatTempoPresentation>()?.PlayerAction(skillID, false) ?? false) return;
         if (!NativeCombatEnabled || enemy == null || player == null) return;
         var separator = skillID.IndexOf(':');
         var resolvedSkillID = separator >= 0
@@ -1133,9 +1139,10 @@ public sealed class BattlePrototype : MonoBehaviour
 
     public void SetQ4HoundPhase(string phase)
     {
+        GetComponent<CombatTempoPresentation>()?.Q4Phase(phase);
         var idle = hellHoundHandle ? hellHoundHandle.GetComponent<EarlyEnemyIdlePresence>() : null;
         if (idle) {
-            if (phase == "charge" || phase == "first" || phase == "second" || phase == "opening") idle.SuspendForAction();
+            if (phase == "probe" || phase == "charge" || phase == "first" || phase == "second" || phase == "opening" || (GetComponent<CombatTempoPresentation>()?.Enabled ?? false)) idle.SuspendForAction();
             else idle.ResumeIdle();
         }
         if (!q4Hound) q4Hound = gameObject.AddComponent<Q4HoundPresentation>();
@@ -1176,6 +1183,7 @@ public sealed class BattlePrototype : MonoBehaviour
     public void PresentEnemyAttack(string battleEnemyId)
     {
         if (!NativeCombatEnabled || player == null) return;
+        if (GetComponent<CombatTempoPresentation>()?.EnemyAction(battleEnemyId) ?? false) return;
         var intentParts = battleEnemyId.Split(':');
         bool nameDevour = intentParts.Length == 2 && intentParts[1] == "name_devour";
         var actingHandle = FindInstalledEnemyHandle(intentParts[0]);
@@ -2281,6 +2289,7 @@ public sealed class BattlePrototype : MonoBehaviour
             var idle = handle.GetComponent<EarlyEnemyIdlePresence>();
             if (encounterRoster.Contains(handle))
             {
+                if (handle.GetComponentInChildren<CombatTempoAnimatedBody>()) continue;
                 if (idle == null || !idle.IsConfigured) idle = EarlyEnemyIdlePresence.Install(handle);
                 idle.SetMission(earlyPresenceMission);
                 CharacterSurfaceRefinement20260916.Install(handle);
@@ -2297,6 +2306,8 @@ public sealed class BattlePrototype : MonoBehaviour
         ClearPlayerImpact(true);
         NativeCombatEnabled = enabled;
         if (!enabled) {
+            GetComponent<CombatTempoPresentation>()?.Cancel();
+            Time.timeScale = 1;
             SpellAudioDirector20260924.StopAll();
             SpellSpectacle20260926.StopAll();
             archivePresentation?.Clear(); ClearRepairPresentations();
@@ -2413,6 +2424,7 @@ public sealed class BattlePrototype : MonoBehaviour
 
     void BeginDistinctPlayerCast(string skillID)
     {
+        if (GetComponent<CombatTempoPresentation>()?.Enabled ?? false) { GetComponent<CombatTempoPresentation>().HeroCast(); return; }
         if (!player || !playerAnimator) return;
         // Every official skill uses its own authored pose, including the quick wrist cast.
         playerChoreography = FoolSkillChoreography.Install(player.transform);
@@ -2466,6 +2478,7 @@ public sealed class BattlePrototype : MonoBehaviour
     public void CancelDepartingEnemy(EnemyHandle handle)
     {
         if(!handle)return;
+        GetComponent<CombatTempoPresentation>()?.CancelActor(handle);
         handle.GetComponent<MainlineBodyRound2>()?.Stop();
         handle.GetComponent<MainlineGhostRound2>()?.Cancel();
         if(handle==hellHoundHandle){hellHoundFireball?.Clear();q4Hound?.Clear();}

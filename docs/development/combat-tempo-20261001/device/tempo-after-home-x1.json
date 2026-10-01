@@ -1,0 +1,22 @@
+{
+  "baseline" : false,
+  "build" : "169.18",
+  "completed" : false,
+  "file" : "tempo-after-home-x1.mp4",
+  "isolatedFixture" : true,
+  "method" : "Native ReplayKit; live App battle; DEBUG Q4 mask input; D01\/B01 medal input at rule time 22s and when ready thereafter",
+  "outcome" : "recording-error",
+  "realPlayerRewardSettlement" : false,
+  "recorderAvailable" : true,
+  "recordingError" : {
+    "code" : -5833,
+    "description" : "音频\/视频捕捉失败，无法开始",
+    "domain" : "com.apple.ReplayKit.RPRecordingErrorDomain"
+  },
+  "runID" : "2EFEA30A-AEF1-488F-B3D7-8A62BAC5BF27",
+  "sample" : "home",
+  "speed" : 1,
+  "userVisualApproval" : false,
+  "wallSeconds" : 0,
+  "writtenAt" : "2026-10-01T07:57:53Z"
+}

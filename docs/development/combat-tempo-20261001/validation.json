@@ -1,0 +1,11 @@
+{
+  "coreTests": 564,
+  "coreSuites": 100,
+  "corePassed": true,
+  "unityRecordProbeCount": 11,
+  "q3AdditionalProbe": true,
+  "nativeDeviceRecordingCompleted": false,
+  "userVisualApproval": false,
+  "unityExportManifestSHA256": "3ccf58da400ee2928456656651fe2cf1a3f5dcba744eaaf32ec023d14c00addd",
+  "serverTests": "not reached; upstream Hummingbird RequestBody.swift missing DequeModule import"
+}

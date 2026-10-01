@@ -1,0 +1,150 @@
+{
+  "kind": "Unity presentation probes, not native iPhone battles",
+  "userVisualApproval": false,
+  "clips": [
+    {
+      "key": "Q4-light",
+      "beforeSHA256": "209623695b694c1eb15cbfd188e5866a3f53f9e62ed932bd4270dbb9c5889c1b",
+      "afterSHA256": "32c8bf0046f8128f070ede00f59b1e4653b82296681ed23ad9692a2ab25e3f2b",
+      "comparisonSHA256": "b312e62972db93bbbd33f6664ca496479ad4237f82396308ea2d91eb98e3225f"
+    },
+    {
+      "key": "Q4-light-close",
+      "beforeSHA256": "d7e970734a38b2c801b473802a28767976e82d401a7b97516310d06b60ef5a08",
+      "afterSHA256": "f8f6eb4cb7cc16b188a7f65eade8a72ef9262035a46c948153643ad2ad93924f",
+      "comparisonSHA256": "e9d4b88df231ecdeef25bb54c05c1f6c88ecd94a88d1d0cc4545ae3920941f11"
+    },
+    {
+      "key": "Q4-heavy",
+      "beforeSHA256": "0598a7c614d5cb6634c58f61170b8e593094f47b27f5f9894e108d93b981f3f2",
+      "afterSHA256": "dba3941bfea7f1305108004be5470926a9ed65390dee692ffda1f7566439de27",
+      "comparisonSHA256": "9e91dc8be9b01a5b9df8e5ceb7041827a3d7bacc1793098577fb7bce33e20bf0"
+    },
+    {
+      "key": "Q4-heavy-close",
+      "beforeSHA256": "66246cac374e0f765bd0788a576e7566e9aa194f59ced9f40c32fc476712e833",
+      "afterSHA256": "6bfe24ff7815c9a9828123efc2d3cbbd4c0c37927af7921c8e8bd46618b8fd70",
+      "comparisonSHA256": "952887f7ad175d4c3c81c68f7417be1fafddab9b45530bbedfb944532b296584"
+    },
+    {
+      "key": "D01-light",
+      "beforeSHA256": "513032bc2987acbe16fe67fdc2008a75ec7c0f5fa0522d23af98df52eefd225f",
+      "afterSHA256": "411251a4238e33d922b3f59d30f614332c34262bf06401495a81b9a82827f005",
+      "comparisonSHA256": "df5baf17615663bdf6cb0bb7b3d87e2ddd561a4638348dadb665bbabc6882384"
+    },
+    {
+      "key": "D01-light-close",
+      "beforeSHA256": "97fb7b285d3b77f289978d225bc2f191e1607efa4c1999ea292a1e915eee2f5d",
+      "afterSHA256": "3d02da41585c78aeb8163057e421ca28b801dfa27f8e10e7c17cff899aabe31a",
+      "comparisonSHA256": "0f4c56a36da3efc1ec0b6ad4a8e89db3693bf79f8ad91533a4c3edbc04de0c2c"
+    },
+    {
+      "key": "D01-heavy",
+      "beforeSHA256": "aad0539363e3063946c28863f39877d90fecbbfe702726108174b5a355d2ab03",
+      "afterSHA256": "052f33bfe96d4847b8074ce29f93072ecd0cefac60f0b5c43ee1e6189398ecb5",
+      "comparisonSHA256": "5a0a01a46024e8badddde3aa1525e6d6add8708f5fc0f5c05dbf57873bf08e55"
+    },
+    {
+      "key": "D01-heavy-close",
+      "beforeSHA256": "9c7002bcfc7201a3965ca0016e82316b964d7d9040869057e06cedd5ca5c9a05",
+      "afterSHA256": "49a22cf91436b5fab6910dd19186a2621f45dd6a4bda0a72056752693914a492",
+      "comparisonSHA256": "5d26f57a3415b459c852a90466cd07cdb4d91e9ce1909c0c1fbc531ed4e20039"
+    },
+    {
+      "key": "B01-light",
+      "beforeSHA256": "3b37b644326921e921138b710f261a0048c8e7f02006b1e8de18781153260bb6",
+      "afterSHA256": "1fd58ecd405c270c4404d3b7cfd6022893dd5ed928d2e85ce27e7c35a4267ba3",
+      "comparisonSHA256": "b1cffa58cff6ce33f30dd49cb929d6374899c002c6aa6fdbdf165b80cbc2dc38"
+    },
+    {
+      "key": "B01-light-close",
+      "beforeSHA256": "14b7c3f11cc2e634634555542b17523b8d8b1aeda41574a4960bc928fbf4239e",
+      "afterSHA256": "15954e815a3824cd5844b49db7c616e5e4c6e8652a5fbd4f0ffe2db629c57ed3",
+      "comparisonSHA256": "f36e47cef5ebe1fc985756ee2ad1a38bfac12f9c2cba42e2d7b4cff07460197d"
+    },
+    {
+      "key": "B01-heavy",
+      "beforeSHA256": "6dccd597be2e085b11b15df23d392152ab799846a1c0ac26155d744c0117b8bd",
+      "afterSHA256": "b8887e81ffa3bd7d7db60def4f30be744ded472d369d7389c5bd439cba9fa051",
+      "comparisonSHA256": "d35ea395912d2dcae26d7d348dec409ed5dca04749ae7111c0d540dbb61387f0"
+    },
+    {
+      "key": "B01-heavy-close",
+      "beforeSHA256": "e18912270c70139ba79c58fd8b55b7620d5d1bc99834f734638013fbdb5bd58a",
+      "afterSHA256": "2c0fd892c0a84ab4e5e04275147dcbfd0c65d66d6b82093a886719020bd5d652",
+      "comparisonSHA256": "dd8042bdfa42d6bb4b0b4d4dbae78f03d7966786b5a1534ca1c5739904e1cef9"
+    },
+    {
+      "key": "Hero-02",
+      "beforeSHA256": "5840a561d44b28e80f7372135605e5f7cb4a1f6087770ef9a2dab680e418cad6",
+      "afterSHA256": "ed1a18be442648e2bccad3ad43cdf46bc0018789340e0296f736b291226f1be5",
+      "comparisonSHA256": "dd8982b70c3f75145ec4fe62719c63f01e120330f6854a1116f86cb6bf3e3809"
+    },
+    {
+      "key": "Hero-02-close",
+      "beforeSHA256": "c37c3d3d70b9f2cfc69663f836cc866c33fcc182b5ac16390ad3e7ba07aff059",
+      "afterSHA256": "0b0f771e59e684d36f877bd6ba7bac196d9a11bddfe796eea50ae0a973dd8d39",
+      "comparisonSHA256": "5d2d85851969242761d9a0116b4b330a057268ac2430debb077017a842c138ea"
+    },
+    {
+      "key": "Hero-06",
+      "beforeSHA256": "a2930f146c6545328525e8d693a0cd6f31f14548d2bf723a931a7c62ec65dcd7",
+      "afterSHA256": "132bcb9a446dec6aaf968e906f72450471b553457226fc991594b7eb193d69f8",
+      "comparisonSHA256": "d367237e237c1de69a945f813761cb9f4bb41bf0d36bad2da9f8d283e6c3cf14"
+    },
+    {
+      "key": "Hero-06-close",
+      "beforeSHA256": "6bb1bfa6009b1b25fc0ecc6546923962a5f7fa15d249fb2e22e8b191139c5616",
+      "afterSHA256": "210f05969f4ab00896db9f0d766d998beb0a7990b7945bc25fc0daf5594b5b32",
+      "comparisonSHA256": "cf55fae82c4f77866e77484c87fb854251528cf26c484c93a17f6d9794603682"
+    },
+    {
+      "key": "Hero-07",
+      "beforeSHA256": "b9e84c866ac582956af855159f1c5836b697685c7ec72b3ff29fef0616665a56",
+      "afterSHA256": "ccd622c38052c9846e9ce5ff8d6c4898bc4bea7f0a9d61c089d79260349a4537",
+      "comparisonSHA256": "3525c6a9b0baa2de155f279f7bb0153b1d0c63f444ed057033907176b9fa265a"
+    },
+    {
+      "key": "Hero-07-close",
+      "beforeSHA256": "b03c43101d4266bd0bf04ac48ad8710ccd1b47b0a048c23790429c4a857b9bb8",
+      "afterSHA256": "cb562fecedf6057b8ecc948941141f59bd853da1685e53508fa6d2ea6c953c98",
+      "comparisonSHA256": "6ded01a6db93b286c5e9259ff1a3541e47dac940f468b24e802a1e054f645706"
+    },
+    {
+      "key": "Hero-basics",
+      "beforeSHA256": "7c9b17466e04364dec563075897e3961ab71068e07891b6c5070ec524c71480b",
+      "afterSHA256": "86fb9024371686cdd92f37b42164f8053293065fc0340d67702df905cb6fc19a",
+      "comparisonSHA256": "730337251cfc66483147010fcca9f28e2c6b68907d58a78bbb7fa524717d08b2"
+    },
+    {
+      "key": "Hero-basics-close",
+      "beforeSHA256": "3ba0fd5267fc3a512b0ce5969e3a0fee14aeae6227280afbe5f3d5f0b86349fe",
+      "afterSHA256": "7c5d4255f083b5ac73b93280591a7f9b1a927cdabfc4b46e25fd61c35ca6fd9c",
+      "comparisonSHA256": "c12b9bd0e04dc1903650c7d5fcb6188ce9383199528bbba3c607774d3542a514"
+    },
+    {
+      "key": "Hero-parry",
+      "beforeSHA256": "5be9601b50188843730525eea4446ece5ce9efaf9348a5b8fdd1a75c3c21e5d1",
+      "afterSHA256": "063d009af486caf1639ae1df948cd9fc746b001c48a216150dbe7446dc5c6cab",
+      "comparisonSHA256": "6b169c7f0592e6b79c60c52db15c52b9ffe30ddbdaedf621e7c2d8af17dfc866"
+    },
+    {
+      "key": "Hero-parry-close",
+      "beforeSHA256": "432158954e977c770dacf33d9506b309b7766e945ce96590e5fd237621195a55",
+      "afterSHA256": "94c2a551c757dd93191a2bbe23f6936c3636fab1abfa99290ccb058e267568f5",
+      "comparisonSHA256": "47989132173d906569be62b9bce05d222fd8a7a07f0e1979cc08df89ff0930ba"
+    },
+    {
+      "key": "M05",
+      "beforeSHA256": "807c148298f23720d815fd27694b744a7311b6842952b1b81537b74685668d8c",
+      "afterSHA256": "9ce3c63332d70f6ba776c8143066bddfc946acd179466595cb8ce456f79e903b",
+      "comparisonSHA256": "661cbf084594865c6e610f7890c7621a8ec693524e510c1c52a25c3733257d8b"
+    },
+    {
+      "key": "M05-close",
+      "beforeSHA256": "2e35c654b9131732aee4df9801c0444199fc6d5f7762b80bb6e260080b3b8ed2",
+      "afterSHA256": "d94a35df8dcf57d021c0c318d3f7238bcf31c77c18961fd520d6aa84d837f71c",
+      "comparisonSHA256": "6365afe328b90b36cffa612b9e1506f3790410f7afb3b61c24d9070ee272ed50"
+    }
+  ]
+}

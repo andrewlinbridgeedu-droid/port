@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE1001000000000000000001 /* CombatTempoDeviceReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1002000000000000000001; };
 		FA9300000000000000000001 /* GameArtComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9300000000000000000002; };
 		CE3001000000000000000002 /* HousingViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3002000000000000000002; };
 		CE3001000000000000000001 /* HousingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3002000000000000000001; };
@@ -103,6 +104,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CE1002000000000000000001 /* CombatTempoDeviceReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombatTempoDeviceReview.swift; sourceTree = "<group>"; };
 		FA9300000000000000000002 /* GameArtComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mistport/GameArtComponents.swift; sourceTree = SOURCE_ROOT; };
 		CE3002000000000000000002 /* HousingViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HousingViews.swift; sourceTree = "<group>"; };
 		CE3002000000000000000001 /* HousingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HousingService.swift; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 				A20000000000000000000015 /* VenueModels.swift */,
 				A20000000000000000000008 /* WorldModels.swift */,
 				A20000000000000000000003 /* GameStore.swift */,
+				CE1002000000000000000001 /* CombatTempoDeviceReview.swift */,
 				CE3002000000000000000002 /* HousingViews.swift */,
 				CE3002000000000000000001 /* HousingService.swift */,
 				A20000000000000000000004 /* Storefront.swift */,
@@ -441,6 +444,7 @@
 				A10000000000000000000015 /* VenueModels.swift in Sources */,
 				A10000000000000000000008 /* WorldModels.swift in Sources */,
 				A10000000000000000000003 /* GameStore.swift in Sources */,
+				CE1001000000000000000001 /* CombatTempoDeviceReview.swift in Sources */,
 				CE3001000000000000000002 /* HousingViews.swift in Sources */,
 				CE3001000000000000000001 /* HousingService.swift in Sources */,
 				A10000000000000000000004 /* Storefront.swift in Sources */,

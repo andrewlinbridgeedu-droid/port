@@ -1,0 +1,22 @@
+{
+  "baseline" : true,
+  "build" : "169.17",
+  "completed" : false,
+  "file" : "tempo-before-q4-x1.mp4",
+  "isolatedFixture" : true,
+  "method" : "Native ReplayKit; live App battle; DEBUG Q4 mask input; D01\/B01 medal input at rule time 22s and when ready thereafter",
+  "outcome" : "recording-error",
+  "realPlayerRewardSettlement" : false,
+  "recorderAvailable" : true,
+  "recordingError" : {
+    "code" : -5833,
+    "description" : "音频\/视频捕捉失败，无法开始",
+    "domain" : "com.apple.ReplayKit.RPRecordingErrorDomain"
+  },
+  "runID" : "0F805DAF-7597-4F50-839B-A632B8551A53",
+  "sample" : "q4",
+  "speed" : 1,
+  "userVisualApproval" : false,
+  "wallSeconds" : 0,
+  "writtenAt" : "2026-10-01T07:45:23Z"
+}

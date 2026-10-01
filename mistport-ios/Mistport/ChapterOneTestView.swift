@@ -560,12 +560,14 @@ private enum CombatFloatingNumberKind {
     case healing
     case damage
     case defenseUp
+    case playerDamage, parried, critical, bonus, status
 
     func text(for amount: Int) -> String {
         switch self {
         case .healing: "+\(amount)"
-        case .damage: "−\(amount)"
+        case .damage, .playerDamage, .parried, .critical, .bonus: "−\(amount)"
         case .defenseUp: "防御提高 \(amount)%"
+        case .status: ""
         }
     }
 
@@ -573,8 +575,12 @@ private enum CombatFloatingNumberKind {
         switch self {
         case .healing:
             Color(red: 0.28, green: 0.95, blue: 0.56)
-        case .damage:
+        case .playerDamage:
             Color(red: 1.0, green: 0.32, blue: 0.27)
+        case .damage: .white
+        case .critical: Color(red: 1, green: 0.83, blue: 0.3)
+        case .parried: Color(white: 0.75)
+        case .bonus, .status: Color(red: 0.8, green: 0.57, blue: 1)
         case .defenseUp:
             Color(red: 0.74, green: 0.56, blue: 1.0)
         }
@@ -583,15 +589,18 @@ private enum CombatFloatingNumberKind {
     var verticalOffset: CGFloat {
         switch self {
         case .healing: -30
-        case .damage: 26
+        case .damage, .playerDamage, .parried, .critical, .bonus: 26
         case .defenseUp: -56
+        case .status: -40
         }
     }
 
     var fontSize: CGFloat {
         switch self {
         case .healing: 36
-        case .damage: 26
+        case .damage, .playerDamage, .parried, .bonus: 26
+        case .critical: 34
+        case .status: 19
         case .defenseUp: 18
         }
     }
@@ -919,6 +928,17 @@ private struct ChapterOneEnemyIntentStrip: View {
 }
 
 struct ChapterOneEncounterTestView: View {
+    @AppStorage(GameSettingsKeys.battleSpeed, store: .standard) private var savedBattleSpeed = 1
+    @State private var battleTime = ProcessInfo.processInfo.systemUptime
+    @State private var lastBattleWallTime: TimeInterval?
+    @State private var battleTickRemainder: TimeInterval = 0
+    @State private var lightAttackClock: MPCLightAttackClock?
+    @State private var playerHitFlashUntil: TimeInterval = 0
+    #if DEBUG
+    @State private var tempoReviewStartedAt: TimeInterval?
+    #endif
+    @Environment(\.accessibilityReduceMotion) private var reduceCombatMotion
+    private var battleSpeed: Int { savedBattleSpeed == 2 ? 2 : 1 }
     @AppStorage(GameSettingsKeys.hapticsEnabled, store: .standard) private var hapticsEnabled = true
     @AppStorage(GameSettingsKeys.combatSoundVolume, store: .standard) private var combatSoundVolume = 0.6
     private static let q1PreludeAttackCount = 3
@@ -1075,6 +1095,8 @@ struct ChapterOneEncounterTestView: View {
         }?.id
         self.encorePrototypeEnabled = encorePrototypeEnabled || arguments.contains("--preview-chapter-one-encore-bell")
         var initialSession = initialSession
+        initialSession.adoptTempo(CombatTempoReviewConfiguration.profile(initialSession.encounter.id))
+        _lightAttackClock = State(initialValue: initialSession.tempo.map(MPCLightAttackClock.init(tempo:)))
         if self.encorePrototypeEnabled {
             initialSession.prepareEncoreBellPrototype()
             initialSession.setContinuousSkillSequence([])
@@ -1176,6 +1198,14 @@ struct ChapterOneEncounterTestView: View {
 
                     ZStack(alignment: .bottom) {
                         battlefield
+                            .offset(x: reduceCombatMotion || battleTime >= playerHitFlashUntil ? 0 : sin(battleTime * 135) * 2.2)
+                            .overlay {
+                                if battleTime < playerHitFlashUntil {
+                                    RoundedRectangle(cornerRadius: 18)
+                                        .stroke(Color.red.opacity(0.38), lineWidth: 12)
+                                        .blur(radius: 8).allowsHitTesting(false)
+                                }
+                            }
                             // Render the arena behind the floating card dock,
                             // all the way to the bottom edge, without a blank band.
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -1335,6 +1365,7 @@ struct ChapterOneEncounterTestView: View {
             UnityBattleRuntime.shared.send(action: usesEncoreRevenant ? "encore-model-on" : "encore-model-off")
             UnityBattleRuntime.shared.send(action: "early-presence:\(MPCChapterOneCatalog.mission(forEncounterID: session.encounter.id)?.number ?? 0)")
                 UnityBattleRuntime.shared.setPlayerPlacement(playerPlacement)
+                synchronizeBattlePresentationSettings()
             }
             syncVisualHealth()
             // The SpriteKit scene may finish spawning its actors one run loop
@@ -1367,9 +1398,13 @@ struct ChapterOneEncounterTestView: View {
         }
         .task(id: "\(combatIsActive)-\(showsTutorial)-\(showsQ1GoddessIntervention)-\(showsQ5MaraIntervention)-\(waitsForPostInterventionStart)") {
             guard automatesSkillSequence, combatIsActive else { return }
+            lastBattleWallTime = nil
             while !Task.isCancelled && combatIsActive {
                 if !showsTutorial && !showsQ1GoddessIntervention && !showsQ5MaraIntervention && !waitsForPostInterventionStart {
                     tickContinuousCombat()
+                } else {
+                    lastBattleWallTime = nil
+                    battleTickRemainder = 0
                 }
                 try? await Task.sleep(for: .milliseconds(33))
             }
@@ -1387,6 +1422,7 @@ struct ChapterOneEncounterTestView: View {
                 UnityBattleRuntime.shared.send(action: usesEncoreRevenant ? "encore-model-on" : "encore-model-off")
                 UnityBattleRuntime.shared.send(action: "early-presence:\(MPCChapterOneCatalog.mission(forEncounterID: session.encounter.id)?.number ?? 0)")
             UnityBattleRuntime.shared.setPlayerPlacement(playerPlacement)
+                synchronizeBattlePresentationSettings()
             syncVisualHealth()
         }
         .onChange(of: session.chapterDepartedEnemyIDs) { _, _ in
@@ -1400,6 +1436,7 @@ struct ChapterOneEncounterTestView: View {
                 pendingPlayerImpact = nil
                 pendingEnemyImpacts.removeAll()
                 enemyReadyAt.removeAll()
+                lightAttackClock?.reset()
                 q4CycleStart = nil
                 session.clearQ4HoundState()
                 unityBattleRuntime.send(action: "q4-hound:clear")
@@ -1409,8 +1446,10 @@ struct ChapterOneEncounterTestView: View {
             }
             if usesUnityBattlefield {
                 UnityBattleRuntime.shared.send(action: isActive ? "combat-start" : "combat-stop")
+                if isActive { synchronizeBattlePresentationSettings() }
             }
         }
+        .onChange(of: savedBattleSpeed) { _, _ in synchronizeBattlePresentationSettings() }
         .onChange(of: combatSoundVolume) { _, volume in
             if usesUnityBattlefield { UnityBattleRuntime.shared.send(action: "audio-volume:\(volume)") }
         }
@@ -1627,7 +1666,21 @@ struct ChapterOneEncounterTestView: View {
     /// One main-actor clock owns all rule mutations. Each actor has its own
     /// cast/impact deadlines; no suspended task can overwrite a newer session.
     private func tickContinuousCombat() {
-        let now = ProcessInfo.processInfo.systemUptime
+        let wall = ProcessInfo.processInfo.systemUptime
+        defer { lastBattleWallTime = wall }
+        guard let previous = lastBattleWallTime,
+              !usesUnityBattlefield || unityBattleRuntime.isReady else { return }
+        // Wall time selects how many fixed rule ticks run. No rule duration is
+        // divided by two, and background/paused time never becomes a catch-up hit.
+        battleTickRemainder += min(0.1, max(0, wall - previous)) * Double(battleSpeed)
+        while battleTickRemainder + 0.000001 >= 0.05 {
+            battleTickRemainder -= 0.05
+            battleTime += 0.05
+            advanceContinuousCombat(at: battleTime)
+        }
+    }
+
+    private func advanceContinuousCombat(at now: TimeInterval) {
         let relicTarget = selectedTargetID.flatMap { id in session.enemies.first { $0.id == id && $0.isAlive }?.id }
             ?? session.enemies.first(where: \.isAlive)?.id
         session.updateRelicTarget(relicTarget, at: now)
@@ -1675,6 +1728,26 @@ struct ChapterOneEncounterTestView: View {
         // Do not commit attacks that have no model yet to produce a contact.
         guard session.outcome != .inProgress || !usesUnityBattlefield || (session.isChurchCombat && !session.enemies.contains(where: \.isAlive))
             || (unityBattleRuntime.isReady && !unityBattleRuntime.enemyHealthAnchorViewports.isEmpty) else { return }
+        #if DEBUG
+        // Labelled review input through the real manual-mask path; no HP or
+        // charges are injected. Production battles always require the tap.
+        if CombatTempoReviewConfiguration.requested, isQ4Hound,
+           let cycle = q4CycleStart, now >= cycle + 7.8, now < cycle + 8.4,
+           manualMaskIsReady { requestEmeraldMask() }
+        #endif
+        #if DEBUG
+        if CombatTempoReviewConfiguration.requested,
+           ["--tempo-device-review=d01", "--tempo-device-review=b01"].contains(where: ProcessInfo.processInfo.arguments.contains) {
+            if tempoReviewStartedAt == nil { tempoReviewStartedAt = now }
+            // Same labelled input policy as the rule-library verification runner;
+            // the actual relic method remains the only owner of its effect.
+            if now - (tempoReviewStartedAt ?? now) >= 22,
+               session.enemies.first(where: \.isAlive)?.currentIntent != "guard",
+               session.activateUsurpedLifeMedal(isOwned: ownsMedal, at: now) { syncVisualHealth() }
+        }
+        if ProcessInfo.processInfo.arguments.contains("--tempo-device-review=hero"),
+           manualMaskIsReady, session.masqueradeCharges == 0 { requestEmeraldMask() }
+        #endif
         if session.expireOwnedManualMasquerade(at: now) { unityBattleRuntime.send(action: "masquerade:0") }
         let openingBefore = session.isQ4OpeningActive
         session.advanceQ4Clock(at: now)
@@ -1733,6 +1806,7 @@ struct ChapterOneEncounterTestView: View {
                 preludeRevealAt = nil
                 pendingEnemyImpacts.removeAll()
                 enemyReadyAt.removeAll()
+                lightAttackClock?.reset()
                 q4CycleStart = nil
                 session.clearQ4HoundState()
                 unityBattleRuntime.send(action: "q4-hound:clear")
@@ -1756,6 +1830,8 @@ struct ChapterOneEncounterTestView: View {
                         value.setContinuousSkillSequence([skill] + selectedSequence)
                     }
                     let sealed = value.controlSealActive
+                    let statesBefore = value.foolStates
+                    let shieldBefore = value.playerShield
                     let result = try value.useFoolSkill(skill, targetID: impact.target, usesRealtimeCooldown: true, sealedByPaperweight: impact.sealed)
                     value.setContinuousSkillSequence(selectedSequence)
                     if skill == .namelessStage { recordUltimateContact(value) }
@@ -1767,14 +1843,23 @@ struct ChapterOneEncounterTestView: View {
                     }
                     presentEnemyImpacts(skill: skill, hits: result.targets.map { ($0.targetID, $0.damage) }, hapticID: "player-\(impact.time)")
                     for hit in result.targets {
+                        let prior = statesBefore[hit.targetID]
+                        let bonus = (prior?.illusionStacks ?? 0) > 0 || (prior?.misalignmentStacks ?? 0) > 0
                         if skill == .sidestepStrike, hit.damage > 0 {
                             enqueueCombatFloatingNumber(CombatFloatingNumber(
-                                enemyID: hit.targetID, amount: hit.damage, kind: .damage, sourceLabel: "错步"
+                                enemyID: hit.targetID, amount: hit.damage, kind: bonus ? .bonus : .damage, sourceLabel: bonus ? ((prior?.misalignmentStacks ?? 0) > 0 ? "错位" : "误认") : nil
                             ))
                         } else {
-                            showCombatFloatingNumber(hit.damage, for: hit.targetID, kind: .damage)
+                            showCombatFloatingNumber(hit.damage, for: hit.targetID, kind: bonus ? .bonus : .damage)
+                        }
+                        if let after = value.foolStates[hit.targetID] {
+                            let gained = after.illusionStacks - (prior?.illusionStacks ?? 0)
+                            if gained > 0 { showCombatStatus("误认＋\(gained)", at: hit.targetID) }
+                            if after.misalignmentStacks > (prior?.misalignmentStacks ?? 0) { showCombatStatus("错位", at: hit.targetID) }
                         }
                     }
+                    if value.playerShield > shieldBefore { showCombatStatus("护盾", at: nil) }
+                    if skill == .backstageChange, (value.triggeredEffects.last?.contains("无可净化") == false) { showCombatStatus("净化", at: nil) }
                     if isFirstCardTutorial { isFirstCardTutorial = false; onTutorialDismiss() }
                 } else {
                     let damage = try value.useBasicAction(.damage, targetID: impact.target)
@@ -1896,6 +1981,10 @@ struct ChapterOneEncounterTestView: View {
                 if usesBellTiming { print("[Encore] enemy-contact at=\(now) damage=\(max(0, hpBefore - value.playerHP))") }
                 if value.houndOpeningReady { actionMessage = "猎犬扑错名字 · 下一次命中伤害提高50%" }
                 showPlayerDamageFloatingNumber(max(0, hpBefore - value.playerHP))
+                if hpBefore > value.playerHP,
+                   value.lastEnemyActionResolutions.contains(where: { $0.playerDamage > 0 && $0.intent != "q4_probe" }) {
+                    playerHitFlashUntil = now + 0.2
+                }
                 for action in value.lastEnemyActionResolutions {
                     if let healed = action.healedTargetID, action.healing > 0 {
                         showCombatFloatingNumber(action.healing, for: healed, kind: .healing)
@@ -2035,7 +2124,9 @@ struct ChapterOneEncounterTestView: View {
             }
         }
 
-        guard pendingGhostReveals.isEmpty, now >= playerCastReadyAt, pendingPlayerImpact == nil,
+        advanceLightAttacks(at: now)
+        guard session.outcome == .inProgress,
+              pendingGhostReveals.isEmpty, now >= playerCastReadyAt, pendingPlayerImpact == nil,
               let target = selectedTargetID.flatMap({ id in session.enemies.first { $0.id == id && $0.isAlive } })
                 ?? session.enemies.first(where: \.isAlive) else { return }
         let sequence = chosenLoopSkills ?? visibleBattleSkills.map(\.id)
@@ -2051,7 +2142,7 @@ struct ChapterOneEncounterTestView: View {
             if skill == .maskedWhisper { requestedEmeraldMask = false }
             session.setContinuousSkillSequence(sequence)
             skillScheduler.didCast(skill, at: now)
-            playerCastReadyAt = now + 1.75
+            playerCastReadyAt = now + (session.tempo?.skillRecovery ?? 1.75)
             let sealsSkill = session.willSealPreparedSkill(skill, at: now)
             pendingPlayerImpact = (skill, target.id, now + (sealsSkill ? sealedSkillContactDuration(skill) : 0.78), sealsSkill)
             if sealsSkill {
@@ -2075,9 +2166,9 @@ struct ChapterOneEncounterTestView: View {
             } else {
                 visualScene.presentFoolSkill(FoolSpellVFXSkill.authored(skill), extendedPresentation: true)
             }
-        } else if now >= (basicCooldownStarted ?? -100) + 2.4 {
+        } else if now >= (basicCooldownStarted ?? -100) + (session.tempo?.basicInterval ?? 2.4) {
             basicCooldownStarted = now
-            playerCastReadyAt = now + 1.65
+            playerCastReadyAt = now + (session.tempo?.basicRecovery ?? 1.65)
             pendingPlayerImpact = (nil, target.id, now + 0.58, false)
             if usesUnityBattlefield {
                 let suffix = unityBattleEnemyID(for: target).map { ":\($0)" } ?? ""
@@ -2085,6 +2176,38 @@ struct ChapterOneEncounterTestView: View {
             }
             else { visualScene.presentFoolBasicAttack() }
         }
+    }
+
+    private func advanceLightAttacks(at now: TimeInterval) {
+        guard var clock = lightAttackClock else { return }
+        var value = session
+        var events = MPCChurchBattleStepper.Events()
+        let hpBefore = value.playerHP
+        let opening = (value.q4OpeningUntil ?? -1) > now
+        clock.advance(&value, now: now, step: 0.05,
+                      authoredPending: pendingEnemyImpacts, authoredReady: enemyReadyAt,
+                      blocked: { opening || $0.delayedRounds > 0 }, into: &events)
+        lightAttackClock = clock
+        session = value
+        for attack in events.lightAttacks {
+            if let enemy = value.enemies.first(where: { $0.id == attack.enemyID }),
+               let nativeID = unityBattleEnemyID(for: enemy) {
+                let duration = max(0.05, Double(attack.landsAtTick) * 0.05 - now)
+                unityBattleRuntime.send(action: "enemy-light:\(nativeID):\(duration)")
+            }
+        }
+        for hit in events.lightResolved {
+            let nativeID = value.enemies.first(where: { $0.id == hit.enemyID }).flatMap { unityBattleEnemyID(for: $0) } ?? ""
+            unityBattleRuntime.send(action: "light-contact:\(nativeID):\(hit.parried ? 1 : 0)")
+            enqueueCombatFloatingNumber(CombatFloatingNumber(enemyID: nil, amount: hit.damage,
+                kind: hit.parried ? .parried : .playerDamage, sourceLabel: hit.parried ? "招架" : nil))
+        }
+        for id in events.lightCancelled {
+            if let enemy = value.enemies.first(where: { $0.id == id }), let nativeID = unityBattleEnemyID(for: enemy) {
+                unityBattleRuntime.send(action: "light-cancel:\(nativeID)")
+            }
+        }
+        if !events.lightResolved.isEmpty || value.playerHP != hpBefore { syncVisualHealth() }
     }
 
     private func presentNewRelicEvents() {
@@ -2133,7 +2256,7 @@ struct ChapterOneEncounterTestView: View {
             ["enemy": $0.enemyID, "intent": $0.intent, "damage": $0.playerDamage]
         }
         records.append(["encounter": value.encounter.id, "session": value.settlementID.uuidString,
-                        "uptime": ProcessInfo.processInfo.systemUptime,
+                        "uptime": battleTime,
                         "hpBefore": beforeHP, "hpAfter": value.playerHP,
                         "shieldBefore": beforeShield, "shieldAfter": value.playerShield,
                         "actions": actions, "ringExposurePending": value.ringExposurePending,
@@ -2211,7 +2334,7 @@ struct ChapterOneEncounterTestView: View {
     private func nextAutomaticSkill(in sequence: [FoolSkillID]) -> FoolSkillID? {
         skillScheduler.next(in: sequence.filter {
             $0 != .namelessStage || session.canUseFoolSkill($0)
-        }, at: ProcessInfo.processInfo.systemUptime)
+        }, at: battleTime)
     }
 
     /// Automatic fallback attacks must be fully resolved without opening the
@@ -2258,7 +2381,7 @@ struct ChapterOneEncounterTestView: View {
         if campaign.depletedRelicIDs.contains(relic.id) {
             return ("失效0% · 修复后生效", .orange)
         }
-        let now = ProcessInfo.processInfo.systemUptime
+        let now = battleTime
         let state = session.sequenceNineRelics
         switch relic.id {
         case EarlyRelicShop.stamp:
@@ -2283,7 +2406,7 @@ struct ChapterOneEncounterTestView: View {
         }
         if relic.id == EarlyRelicShop.clasp {
             if session.returnGiftClaspIsReady { return ("就绪", .yellow) }
-            let remaining = max(0, Int(ceil(session.returnGiftClaspReadyAt - ProcessInfo.processInfo.systemUptime)))
+            let remaining = max(0, Int(ceil(session.returnGiftClaspReadyAt - battleTime)))
             return (remaining > 0 ? "\(remaining)秒 · 礼盾" : "等待礼盾破除", .orange)
         }
         if relic.id == "relic_unified_gear" {
@@ -2414,32 +2537,32 @@ struct ChapterOneEncounterTestView: View {
         Button {
             guard combatIsActive, session.outcome == .inProgress,
                   let target = selectedTargetID.flatMap({ id in session.enemies.first { $0.id == id && $0.isAlive } }) ?? session.enemies.first(where: \.isAlive) else { return }
-            _ = session.activateBlankNameCard(isOwned: campaign.ownedRelicIDs.contains(EarlyRelicShop.blankCard), targetID: target.id, at: ProcessInfo.processInfo.systemUptime)
+            _ = session.activateBlankNameCard(isOwned: campaign.ownedRelicIDs.contains(EarlyRelicShop.blankCard), targetID: target.id, at: battleTime)
         } label: {
             HStack(spacing: 4) {
                 Image(EarlyRelicShop.art(EarlyRelicShop.blankCard)).resizable().scaledToFit().frame(width: 46, height: 46)
                 VStack(alignment: .leading) {
                     Text("空栏名片").font(.system(size: 10, weight: .bold))
-                    let now = ProcessInfo.processInfo.systemUptime
+                    let now = battleTime
                     let state = session.sequenceNineRelics
                     Text(now < state.blankCardExpiresAt ? "契约中" : now < state.blankCardReadyAt ? "\(Int(ceil(state.blankCardReadyAt - now)))秒" : "就绪")
                         .font(.system(size: 9)).foregroundStyle(.yellow)
                 }.foregroundStyle(.white)
             }
         }.buttonStyle(.plain)
-            .disabled(!combatIsActive || session.outcome != .inProgress || ProcessInfo.processInfo.systemUptime < session.sequenceNineRelics.blankCardReadyAt)
+            .disabled(!combatIsActive || session.outcome != .inProgress || battleTime < session.sequenceNineRelics.blankCardReadyAt)
             .accessibilityLabel("使用空栏名片，与当前敌人缔结三秒契约")
     }
 
     private var medalRelicButton: some View {
         TimelineView(.animation(minimumInterval: 0.05)) { _ in
-            let now = ProcessInfo.processInfo.systemUptime
+            let now = battleTime
             let remaining = max(0, (session.usurpedLifeMedalExpiresAt ?? now) - now)
             let cooldown = max(0, session.usurpedLifeMedalReadyAt - now)
             let active = session.isUsurpedLifeMedalActive
             Button {
                 guard combatIsActive, session.outcome == .inProgress else { return }
-                if session.activateUsurpedLifeMedal(isOwned: ownsMedal, at: ProcessInfo.processInfo.systemUptime) {
+                if session.activateUsurpedLifeMedal(isOwned: ownsMedal, at: battleTime) {
                     syncVisualHealth()
                 }
             } label: {
@@ -2452,7 +2575,7 @@ struct ChapterOneEncounterTestView: View {
                                 UsurpedMedalCrownEffect(remaining: remaining, time: now).allowsHitTesting(false)
                                 Circle().trim(from: 0, to: min(1, remaining / 8)).stroke(Color.yellow.opacity(min(1, remaining / 2)), lineWidth: 2).rotationEffect(.degrees(-90))
                             } else if cooldown > 0 {
-                                ClockwiseCardCooldown(startedAt: session.usurpedLifeMedalReadyAt - 24, duration: 24)
+                                ClockwiseCardCooldown(now: battleTime, startedAt: session.usurpedLifeMedalReadyAt - 24, duration: 24)
                             }
                         }
                     VStack(spacing: 3) {
@@ -2470,13 +2593,13 @@ struct ChapterOneEncounterTestView: View {
 
     private var manualMaskIsReady: Bool {
         usesManualEmeraldMask && ownsManualMask && (maskIsTeachingLoan || maskCrackCount < 10)
-            && ProcessInfo.processInfo.systemUptime >= max(session.ownedManualMaskReadyAt, skillScheduler.readyAt[.maskedWhisper, default: 0])
+            && battleTime >= max(session.ownedManualMaskReadyAt, skillScheduler.readyAt[.maskedWhisper, default: 0])
     }
 
     private func requestEmeraldMask() {
         guard combatIsActive, session.outcome == .inProgress, manualMaskIsReady else { return }
         do {
-            let now = ProcessInfo.processInfo.systemUptime
+            let now = battleTime
             let target = selectedTargetID.flatMap { id in session.enemies.first { $0.id == id && $0.isAlive } }
                 ?? session.enemies.first(where: \.isAlive)
             let victimFormation = session.enemies
@@ -2490,6 +2613,7 @@ struct ChapterOneEncounterTestView: View {
             }
             skillScheduler.didCast(.maskedWhisper, at: now)
             unityBattleRuntime.send(action: "masquerade:\(session.masqueradeCharges)")
+            unityBattleRuntime.send(action: "tempo-mask")
             requestedEmeraldMask = false
             syncVisualHealth()
         } catch { actionMessage = errorMessage(error) }
@@ -2505,12 +2629,12 @@ struct ChapterOneEncounterTestView: View {
                     .overlay {
                         if session.masqueradeCharges > 0, let expiry = session.ownedManualMaskExpiresAt {
                             TimelineView(.animation(minimumInterval: 0.05)) { _ in
-                                Circle().trim(from: 0, to: min(1, max(0, (expiry - ProcessInfo.processInfo.systemUptime) / 4)))
+                                Circle().trim(from: 0, to: min(1, max(0, (expiry - battleTime) / 4)))
                                     .stroke(Color.purple.opacity(0.85), lineWidth: 2).rotationEffect(.degrees(-90))
                             }.allowsHitTesting(false)
                         }
                     }
-                    .overlay { ClockwiseCardCooldown(startedAt: skillScheduler.startedAt[.maskedWhisper], duration: 18) }
+                    .overlay { ClockwiseCardCooldown(now: battleTime, startedAt: skillScheduler.startedAt[.maskedWhisper], duration: 18) }
                     .overlay { RoundedRectangle(cornerRadius: 9).stroke(.yellow.opacity(manualMaskIsReady ? 0.9 : 0.2), lineWidth: 1.5).allowsHitTesting(false) }
                 VStack(spacing: 3) {
                     Text(maskCrackCount >= 10 && !maskIsTeachingLoan ? "已失效" : "假面").font(.system(size: 10, weight: .bold))
@@ -2540,7 +2664,7 @@ struct ChapterOneEncounterTestView: View {
 
     private func summonTimedMasquerade() {
         guard usesEncoreBellPrototype, combatIsActive, !showsTutorial else { return }
-        let now = ProcessInfo.processInfo.systemUptime
+        let now = battleTime
         guard session.activateTimedMasquerade(at: now) else { return }
         unityBattleRuntime.send(action: "masquerade:1")
         CombatHaptics.shared.emit(.maskActivate)
@@ -2567,7 +2691,7 @@ struct ChapterOneEncounterTestView: View {
     }
 
     private func ringEncoreBell() {
-        let now = ProcessInfo.processInfo.systemUptime
+        let now = battleTime
         guard session.canUseEncoreBell, combatIsActive, session.outcome == .inProgress,
               let id = encoreBell.pendingEnemyID,
               session.enemies.contains(where: { $0.id == id && $0.isAlive }),
@@ -2724,7 +2848,7 @@ struct ChapterOneEncounterTestView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(!combatIsActive || session.outcome != .inProgress
-                    || (!isShield && ProcessInfo.processInfo.systemUptime < session.sequenceNineRelics.healingBlockedUntil)
+                    || (!isShield && battleTime < session.sequenceNineRelics.healingBlockedUntil)
                     || (isShield ? session.playerShield >= session.playerMaxHP * 4 / 10 : session.playerHP >= session.playerMaxHP))
                 .accessibilityLabel("使用\(name)，持有\(session.consumables[id, default: 0])")
             }
@@ -2889,6 +3013,12 @@ struct ChapterOneEncounterTestView: View {
 
             Spacer()
 
+            Button { savedBattleSpeed = battleSpeed == 1 ? 2 : 1 } label: {
+                Text("×\(battleSpeed)").font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white).frame(width: 44, height: 34)
+                    .background(.white.opacity(0.12), in: RoundedRectangle(cornerRadius: 8))
+            }.buttonStyle(.plain).accessibilityIdentifier("combat-speed")
+                .accessibilityLabel("战斗速度 \(battleSpeed) 倍")
             battleProgressChip
         }
     }
@@ -3152,7 +3282,7 @@ struct ChapterOneEncounterTestView: View {
             }
 
             if session.sequenceNineRelics.paperweightCapacity > 0,
-               ProcessInfo.processInfo.systemUptime < session.sequenceNineRelics.paperweightExpiresAt {
+               battleTime < session.sequenceNineRelics.paperweightExpiresAt {
                 Ellipse()
                     .fill(RadialGradient(colors: [.clear, .yellow.opacity(0.06), .yellow.opacity(0.35)], center: .center, startRadius: 22, endRadius: 72))
                     .overlay { Ellipse().stroke(.yellow.opacity(0.72), lineWidth: 1.5) }
@@ -3170,8 +3300,8 @@ struct ChapterOneEncounterTestView: View {
             // This is the protagonist's bar. Anchor it to the protagonist's
             // configured screen placement, never to the enemy row.
             .overlay(alignment: .bottom) {
-                if ProcessInfo.processInfo.systemUptime < session.sequenceNineRelics.healingBlockedUntil {
-                    Text("封疗 \(Int(ceil(session.sequenceNineRelics.healingBlockedUntil - ProcessInfo.processInfo.systemUptime)))")
+                if battleTime < session.sequenceNineRelics.healingBlockedUntil {
+                    Text("封疗 \(Int(ceil(session.sequenceNineRelics.healingBlockedUntil - battleTime)))")
                         .font(.system(size: 9, weight: .bold)).foregroundStyle(.orange)
                         .offset(y: 14)
                 }
@@ -3196,7 +3326,9 @@ struct ChapterOneEncounterTestView: View {
                         .shadow(color: .black.opacity(0.9), radius: 3, y: 2)
                         .shadow(color: number.kind.color.opacity(0.38), radius: 8)
                         .position(position)
-                        .offset(y: number.isFloating ? -22 : 0)
+                        .offset(x: CGFloat(combatFloatingNumbers.filter { $0.enemyID == number.enemyID }.firstIndex(where: { $0.id == number.id }) ?? 0) * 12 - 18,
+                                y: number.isFloating ? -42 : 0)
+                        .opacity(number.isFloating ? 0.25 : 1)
                         .transition(.opacity.combined(with: .scale(scale: 0.82)))
                 }
             }
@@ -3337,12 +3469,24 @@ struct ChapterOneEncounterTestView: View {
     private func showPlayerDamageFloatingNumber(_ amount: Int) {
         guard amount > 0 else { return }
         enqueueCombatFloatingNumber(
-            CombatFloatingNumber(enemyID: nil, amount: amount, kind: .damage)
+            CombatFloatingNumber(enemyID: nil, amount: amount, kind: .playerDamage)
         )
+    }
+
+    private func showCombatStatus(_ text: String, at enemyID: String?) {
+        enqueueCombatFloatingNumber(CombatFloatingNumber(enemyID: enemyID, amount: 0, kind: .status, sourceLabel: text))
     }
 
     @MainActor
     private func enqueueCombatFloatingNumber(_ number: CombatFloatingNumber) {
+        let siblings = combatFloatingNumbers.filter { $0.enemyID == number.enemyID }
+        // Fade the oldest through the existing removal transition before a
+        // fifth label is added. Slots offset the labels so simultaneous hits read.
+        if siblings.count >= 4, let oldest = siblings.first {
+            withAnimation(.easeOut(duration: 0.10)) {
+                combatFloatingNumbers.removeAll { $0.id == oldest.id }
+            }
+        }
         withAnimation(.easeOut(duration: 0.12)) {
             combatFloatingNumbers.append(number)
         }
@@ -3359,6 +3503,11 @@ struct ChapterOneEncounterTestView: View {
                 combatFloatingNumbers.removeAll { $0.id == numberID }
             }
         }
+    }
+
+    private func synchronizeBattlePresentationSettings() {
+        unityBattleRuntime.send(action: "combat-speed:\(battleSpeed)")
+        unityBattleRuntime.send(action: "tempo-sample:\(CombatTempoReviewConfiguration.baseline ? "off" : session.encounter.id)")
     }
 
     private func compactHealthBar(
@@ -3594,7 +3743,7 @@ struct ChapterOneEncounterTestView: View {
                 basicActionCard("普攻", subtitle: "自动出招", systemImage: "sparkles",
                                 artName: "IconBasicAttackFool", tint: .orange,
                                 isLocked: false, queuePositions: []) { }
-                    .overlay { ClockwiseCardCooldown(startedAt: basicCooldownStarted, duration: 2.4) }
+                    .overlay { ClockwiseCardCooldown(now: battleTime, startedAt: basicCooldownStarted, duration: session.tempo?.basicInterval ?? 2.4) }
             }
             .frame(minHeight: 85, alignment: .bottom)
             .padding(.horizontal, 8)
@@ -3603,7 +3752,7 @@ struct ChapterOneEncounterTestView: View {
     }
 
     private func cooldownOverlay(for skill: FoolSkillID) -> some View {
-        ClockwiseCardCooldown(startedAt: skillScheduler.startedAt[skill],
+        ClockwiseCardCooldown(now: battleTime, startedAt: skillScheduler.startedAt[skill],
                               duration: ContinuousSkillScheduler.duration(for: skill))
     }
 
@@ -3740,7 +3889,7 @@ struct ChapterOneEncounterTestView: View {
                                     if session.loadout.relicIDs.contains(EarlyRelicShop.paperweight), queueIndex == 2 {
                                         Text("封")
                                             .font(.system(size: 22, weight: .black, design: .serif))
-                                            .foregroundStyle(.yellow.opacity(ProcessInfo.processInfo.systemUptime >= session.sequenceNineRelics.paperweightReadyAt ? 0.95 : 0.30))
+                                            .foregroundStyle(.yellow.opacity(battleTime >= session.sequenceNineRelics.paperweightReadyAt ? 0.95 : 0.30))
                                             .padding(5)
                                             .background(.purple.opacity(0.72), in: Circle())
                                             .frame(maxHeight: .infinity, alignment: .center)
@@ -3951,6 +4100,11 @@ struct ChapterOneEncounterTestView: View {
         _ = session.finishRelicBattle()
         CombatHaptics.shared.cancel()
         var configuredSession = configuredSession
+        configuredSession.adoptTempo(CombatTempoReviewConfiguration.profile(configuredSession.encounter.id))
+        lightAttackClock = configuredSession.tempo.map(MPCLightAttackClock.init(tempo:))
+        lastBattleWallTime = nil
+        battleTickRemainder = 0
+        battleTime = ProcessInfo.processInfo.systemUptime
         if usesEncoreBellPrototype { configuredSession.prepareEncoreBellPrototype() }
         encoreRingAt = nil
         encoreBell.reset()
@@ -4198,7 +4352,7 @@ struct ChapterOneEncounterTestView: View {
         } else {
             if usesUnityBattlefield, !skipsCombatAnimations { UnityBattleRuntime.shared.send(action: "basic") }
             if !skipsCombatAnimations { visualScene.presentFoolBasicAttack() }
-            basicCooldownStarted = ProcessInfo.processInfo.systemUptime
+            basicCooldownStarted = battleTime
             actionMessage = "普攻出手"
         }
 
@@ -4588,7 +4742,7 @@ struct ChapterOneEncounterTestView: View {
                                 : nil
                         } ?? Self.defaultTargetID(in: value.enemies)
                         guard let targetID else { continue actionLoop }
-                        basicCooldownStarted = ProcessInfo.processInfo.systemUptime
+                        basicCooldownStarted = battleTime
                         actionMessage = "正在执行 \(orderText)：普攻"
                         if usesUnityBattlefield, !skipsCombatAnimations { UnityBattleRuntime.shared.send(action: "basic") }
                         if !skipsCombatAnimations {
@@ -4650,7 +4804,7 @@ struct ChapterOneEncounterTestView: View {
                         let bossPhaseBeforeAction = value.bossPhase
                         let preResolutionRecipients = value.enemies.filter(\.isAlive)
                         let result = try value.useFoolSkill(skill, targetID: targetID, usesRealtimeCooldown: automatesSkillSequence)
-                        skillScheduler.didCast(skill, at: ProcessInfo.processInfo.systemUptime)
+                        skillScheduler.didCast(skill, at: battleTime)
                         // A multi-target skill can kill the planned anchor as
                         // part of this very resolution. Choose one surviving
                         // enemy for the authored spell impact before Unity is
@@ -5069,7 +5223,7 @@ struct ChapterOneEncounterTestView: View {
         syncChurchStatusPresentation()
         for enemy in session.enemies where enemy.isAlive && enemy.contentID == "enemy_resonant_clock_guard_q2_split" {
             if !revealedGhostIDs.contains(enemy.id) && pendingGhostReveals[enemy.id] == nil {
-                pendingGhostReveals[enemy.id] = ProcessInfo.processInfo.systemUptime + 1.0
+                pendingGhostReveals[enemy.id] = battleTime + 1.0
             }
         }
         visualScene.syncChapterOnePresentation(
@@ -7290,11 +7444,12 @@ private struct IrregularCardEdgeGlow: View {
 
 /// A clockwise sweep from twelve o'clock; the timer reflects real elapsed seconds.
 private struct ClockwiseCardCooldown: View {
+    var now: TimeInterval? = nil
     let startedAt: TimeInterval?
     let duration: TimeInterval
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30, paused: startedAt == nil)) { _ in
-            let elapsed = startedAt.map { ProcessInfo.processInfo.systemUptime - $0 } ?? duration
+            let elapsed = startedAt.map { (now ?? ProcessInfo.processInfo.systemUptime) - $0 } ?? duration
             let progress = min(1, max(0, elapsed / duration))
             if progress < 1 {
                 GeometryReader { geometry in

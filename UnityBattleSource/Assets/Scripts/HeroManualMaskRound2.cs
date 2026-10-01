@@ -35,7 +35,7 @@ public sealed class HeroManualMaskRound2 : MonoBehaviour
         root.transform.SetParent(transform,false);
         choreography=FoolSkillChoreography.Install(source);
         // A manual defence must not replace a currently striking arm action.
-        if(choreography&&!choreography.IsPlaying)choreography.Begin(FoolSkillChoreography.ManualMaskID);
+        if(!source.GetComponentInChildren<CombatTempoAnimatedBody>()&&choreography&&!choreography.IsPlaying)choreography.Begin(FoolSkillChoreography.ManualMaskID);
         mask=new HeroPorcelainRound2(root.transform,.68f,new Color(1,.72f,.34f));
         foreach(var renderer in source.GetComponentsInChildren<SkinnedMeshRenderer>())
         {
@@ -57,6 +57,8 @@ public sealed class HeroManualMaskRound2 : MonoBehaviour
             parts.Add(new Part{source=renderer,copy=go.transform,mesh=mesh});
         }
     }
+
+    public void Parry() { if (root && !fading) hitAt = Time.time; }
 
     public void Hit(int remaining)
     {
