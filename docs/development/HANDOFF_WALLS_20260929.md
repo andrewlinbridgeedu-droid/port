@@ -4,6 +4,9 @@
 
 ### 2026-10-01 新增
 
+- **各页米色纸面铺到底**：用户指出警察厅正文下面深色留白，要求各处铺成上方米黄色。继续在 [PR #42](https://github.com/andrewlinbridgeedu-droid/port/pull/42)（可审，未合并）修改：`GameArtPaperScroll` 使柜台、通用纸面页及日刊／附刊填满正文区域，并覆盖底部安全区。保留深色标题栏、金边按钮和原画，报馆人员切换文字改为墨色。[28 张新版模拟器截图](return-buttons-20261001/paper-review.html) 已逐张观察，包含 20 张首屏和 8 张长页滚到底；最终编译通过，[验证记录](return-buttons-20261001/paper-validation.json)。滚到底由隔离 DEBUG 参数定位，不是手动手势证据。**未装机、未访问手机 Preferences、未作真机验收，未改玩家存档、规则、原画、Unity 或 SSD 链接。**下条 25 张图为铺底修正前的返回按钮历史记录。
+- **港城返回按钮统一**：用户认可警察厅的金边切角“返回港城”，要求报馆及其他页面一致。[PR #42](https://github.com/andrewlinbridgeedu-droid/port/pull/42)（可审，未合并），独立分支 `codex/unify-return-buttons-20261001` 从最新 main `758d409` 开始，`GameArtReturnButton` 复用原有柜台按钮样式；报馆改为“返回港城”，附刊、角色、行囊、构筑、街区、教会、战斗标题栏等复用，返回上一级仍显示对应文字。回调、教学退出限制和结算逻辑保持原样；构筑页攻略文字挤压已修正。[范围与验证](return-buttons-20261001/README.md)、[25 页模拟器原样截图](return-buttons-20261001/review.html)。正式 Swift 源码在隔离 iPhone 13 模拟器宿主编译通过，逐页检查默认字号；宿主不含 Unity，战斗图仅证明标题栏布局。**没有装机、没有访问手机 Preferences，未作真机验收；没有改规则、生产图片或 SSD 链接。** PR #41 的战斗／主角资源仍在原分支，本分支不包含它们。
+
 - **Mac 战斗节奏样板进行中，真机录像尚未完成**：[草稿 PR #41](https://github.com/andrewlinbridgeedu-droid/port/pull/41)，`codex/combat-tempo-samples-20261001` 从 `main` `758d409` 开始，已合入 PR #40 分支。App 三场采用共用 tempo／轻击时钟，所有共用战斗页增加 ×2、新偏好键、飘字及受击反馈；Blender 制作四个动作库，Unity 只接 Q4、D01、B01 样板，Q3 仅换猎犬扑咬身体。首页雨云带入，15 张原画未改，城市委托贴片继续禁用。
   - 规则库 564 项／100 个 suite 通过；11 段 Unity 样板探针、Q3 扑咬、生命周期检查及 Q4 双焰 7 帧检查通过。已提交 12 组全景／特写并排，明确标为 Unity probe，不能当作手机完整战斗。
   - 新 Unity iOS 导出逐项哈希核对通过；SSD 上签名 Debug 改前对照 169.17、改后 169.18 构建通过。当前三场规则与动作仍待用户真机认可，未铺其他战斗；会心只有样式，规则暂无事件，未伪造会心证据。

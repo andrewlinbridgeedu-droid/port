@@ -36,9 +36,7 @@ struct WorldRouteView: View {
                                 .foregroundStyle(.white.opacity(0.62))
                         }
                         Spacer()
-                        Button("完成", systemImage: "xmark", action: { dismiss() })
-                            .labelStyle(.iconOnly)
-                            .buttonStyle(.bordered)
+                        GameArtReturnButton(title: "完成") { dismiss() }
                     }
                     .foregroundStyle(.white)
                     .padding(12)
@@ -254,9 +252,7 @@ struct ExpeditionBoardView: View {
                                 .foregroundStyle(.yellow)
                         }
                         Spacer()
-                        Button("完成", systemImage: "xmark", action: { dismiss() })
-                            .labelStyle(.iconOnly)
-                            .buttonStyle(.bordered)
+                        GameArtReturnButton(title: "完成") { dismiss() }
                     }
                     .foregroundStyle(.white)
                     .padding(12)
@@ -590,15 +586,7 @@ struct BlackSaltShoreView: View {
 
     private var blackSaltHeader: some View {
         HStack(alignment: .center, spacing: 14) {
-            Button { dismiss() } label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 17, weight: .semibold))
-                    .frame(width: 44, height: 44)
-                    .background(.black.opacity(0.55), in: Circle())
-                    .overlay(Circle().stroke(ChurchGold.opacity(0.7), lineWidth: 1))
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("返回")
+            GameArtReturnButton(title: "返回") { dismiss() }
             VStack(alignment: .leading, spacing: 3) {
                 Text(atStation ? "盐岸外港转运站" : "黑盐岸 · 检疫码头")
                     .font(.system(size: 24, weight: .bold, design: .serif))
@@ -791,14 +779,7 @@ struct LightsEventPreviewView: View {
 
     private var header: some View {
         HStack(spacing: 14) {
-            Button { dismiss() } label: {
-                Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
-                    .frame(width: 44, height: 44)
-                    .background(.black.opacity(0.55), in: Circle())
-                    .overlay(Circle().stroke(ChurchGold.opacity(0.7), lineWidth: 1))
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("返回")
+            GameArtReturnButton(title: "返回") { dismiss() }
             VStack(alignment: .leading, spacing: 3) {
                 Text("谁让雾港重新亮灯").font(.system(size: 24, weight: .bold, design: .serif)).foregroundStyle(ChurchGold)
                     .lineLimit(1).minimumScaleFactor(0.75)
@@ -1041,11 +1022,7 @@ struct LightsLocalEventView: View {
 
     private var header: some View {
         HStack(spacing: 14) {
-            Button { dismiss() } label: {
-                Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
-                    .frame(width: 44, height: 44).background(.black.opacity(0.55), in: Circle())
-                    .overlay(Circle().stroke(ChurchGold.opacity(0.7), lineWidth: 1))
-            }.buttonStyle(.plain).accessibilityLabel("返回")
+            GameArtReturnButton(title: "返回") { dismiss() }
             VStack(alignment: .leading, spacing: 3) {
                 Text("转运站检修单").font(.system(size: 24, weight: .bold, design: .serif)).foregroundStyle(ChurchGold)
                 Text("谁让雾港重新亮灯").font(.caption).foregroundStyle(muted)

@@ -246,15 +246,7 @@ struct CharacterProfileView: View {
 
     private var characterHeader: some View {
         HStack(alignment: .center) {
-            Button(action: { dismiss() }) {
-                Image(systemName: "chevron.left")
-                    .font(.title3.bold())
-                    .foregroundStyle(.white)
-                    .frame(width: 42, height: 42)
-                    .background(.black.opacity(0.38), in: Circle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("返回主城")
+            GameArtReturnButton { dismiss() }
 
             VStack(alignment: .leading, spacing: 1) {
                 Text("角色")
@@ -1160,7 +1152,7 @@ struct LegacyHermitTalentTreeView: View {
             ScrollView {
                 VStack(spacing: 18) {
                     HStack {
-                        Button { dismiss() } label: { Image(systemName: "chevron.left").frame(width: 44, height: 44) }.accessibilityLabel("返回角色")
+                        GameArtReturnButton(title: "返回角色") { dismiss() }
                         VStack(alignment: .leading, spacing: 4) {
                             Text("愚者 · 天赋星图").font(.system(size: 23, weight: .bold, design: .serif))
                             Text("以不同的选择，成为不同的自己").font(.caption).foregroundStyle(.white.opacity(0.5))
@@ -1426,9 +1418,7 @@ struct HermitTalentTreeView: View {
             }.ignoresSafeArea()
             VStack(spacing: 8) {
                 HStack {
-                    Button { dismiss() } label: {
-                        Image(systemName: "chevron.left").frame(width: 48, height: 48)
-                    }.accessibilityLabel("返回角色")
+                    GameArtReturnButton(title: "返回角色") { dismiss() }
                     VStack(alignment: .leading, spacing: 3) {
                         Text("愚者 · 序列9").font(.system(size: 22, weight: .bold, design: .serif))
                         Text("开发预览 · 战斗效果未接入").font(.caption).foregroundStyle(gold)
@@ -1489,7 +1479,7 @@ struct HermitTalentTreeView: View {
                     if rank > 0 {
                         Button("退还一级") { perform { removal = try draft?.removal(node.id) }; details = false }.frame(minHeight: 48)
                     }
-                    Button("返回星图") { details = false }.buttonStyle(FantasyTalentButton(tint: tint))
+                    GameArtReturnButton(title: "返回星图") { details = false }
                 }
             }
         }.foregroundStyle(Color(red: 0.18, green: 0.25, blue: 0.34))

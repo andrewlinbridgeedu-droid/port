@@ -514,7 +514,7 @@ struct ContentView: View {
             } else {
                 VStack(spacing: 20) {
                     Text("场所尚未开放 · 随主线推进解锁")
-                    Button("返回") { isVenuePresented = false }
+                    GameArtReturnButton { isVenuePresented = false }
                 }
             }
         }

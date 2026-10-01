@@ -174,20 +174,7 @@ private struct MapAreaHUD: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            Button(action: onExit) {
-                ZStack {
-                    CutCornerShape(cut: 10)
-                        .fill(.black.opacity(0.72))
-                    CutCornerShape(cut: 10)
-                        .stroke(.white.opacity(0.22), lineWidth: 1)
-                    Image(systemName: "chevron.left")
-                        .font(.headline.bold())
-                        .foregroundStyle(.white)
-                }
-                .frame(width: 43, height: 43)
-            }
-            .buttonStyle(RunePressStyle())
-            .accessibilityLabel("返回城区")
+            GameArtReturnButton(title: "返回城区", action: onExit)
 
             VStack(alignment: .leading, spacing: 1) {
                 Text(areaName)

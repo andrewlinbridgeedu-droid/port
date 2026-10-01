@@ -2937,46 +2937,18 @@ struct ChapterOneEncounterTestView: View {
 
     private var battleHeader: some View {
         HStack(spacing: 10) {
-            Button {
+            GameArtReturnButton(title: "退出") {
                 guard !locksExitForTutorial else { return }
                 exitBattleSettlingMedal()
-            } label: {
-                ZStack {
-                    Image(systemName: "chevron.left")
-                        .font(.caption.bold())
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.white, Color(red: 0.96, green: 0.80, blue: 0.43)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-
-                    if locksExitForTutorial {
-                        Image(systemName: "lock.fill")
-                            .font(.system(size: 7, weight: .black))
-                            .foregroundStyle(Color(red: 1.0, green: 0.82, blue: 0.36))
-                            .padding(3)
-                            .background(.black.opacity(0.9), in: Circle())
-                            .offset(x: 9, y: 9)
-                    }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                if locksExitForTutorial {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 9, weight: .black))
+                        .foregroundStyle(GameArt.gold)
+                        .padding(3).background(GameArt.night, in: Circle())
+                        .allowsHitTesting(false)
                 }
-                    .frame(width: 24, height: 24)
-                    .background(.black.opacity(0.58), in: Circle())
-                    .overlay {
-                        Circle()
-                            .stroke(
-                                LinearGradient(
-                                    colors: [
-                                        Color(red: 0.96, green: 0.77, blue: 0.30).opacity(0.52),
-                                        Color(red: 0.45, green: 0.29, blue: 0.08).opacity(0.24)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1
-                            )
-                    }
             }
             .opacity(locksExitForTutorial ? 0.72 : 1)
             .accessibilityLabel(locksExitForTutorial ? "教学期间无法退出战斗" : "退出战斗")
@@ -7864,7 +7836,7 @@ struct ChurchSceneHeader: View {
     let onBack: () -> Void
     var body: some View {
         HStack(spacing: 12) {
-            Button(action: onBack) { Image(systemName: "chevron.left").font(.title3).frame(width: 44, height: 44).background(.black.opacity(0.6), in: Circle()).overlay(Circle().stroke(ChurchGold.opacity(0.7))) }.buttonStyle(.plain).accessibilityLabel("返回")
+            GameArtReturnButton(title: "返回", action: onBack)
             VStack(alignment: .leading, spacing: 4) {
                 Text(title).font(.system(size: 25, weight: .bold, design: .serif)).foregroundStyle(ChurchGold)
                 if !subtitle.isEmpty {
@@ -8980,7 +8952,7 @@ private struct ChurchBountyDossier: View {
                         HStack {
                             Text(node.speaker).font(.system(size: 23, weight: .bold, design: .serif)).foregroundStyle(ChurchGold)
                             Spacer()
-                            Button { self.nodeID = nil; notice = "" } label: { Image(systemName: "xmark").frame(width: 44, height: 44) }
+                            GameArtReturnButton(title: "收起证词") { self.nodeID = nil; notice = "" }
                         }
                         Text(node.dialogue).font(.system(size: 18, design: .serif)).lineSpacing(8)
                         if let challenge = MPCChurchBountyCatalog.challenge(caseID: bounty.id, nodeID: nodeID), !progress.evidenceIDs.contains(nodeID) {

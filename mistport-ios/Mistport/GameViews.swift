@@ -429,9 +429,7 @@ struct PathSelectionView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Button("返回", systemImage: "chevron.left", action: onBack)
-                .buttonStyle(.plain)
-                .foregroundStyle(.white.opacity(0.75))
+            GameArtReturnButton(title: "返回", action: onBack)
             Text("第一张牌决定\n最初的道路")
                 .font(.largeTitle.bold())
                 .foregroundStyle(.white)
@@ -624,10 +622,7 @@ private struct SceneAdventureHUD: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack(spacing: 10) {
-                Button("返回雾岬港", systemImage: "chevron.left", action: onExit)
-                    .labelStyle(.iconOnly)
-                    .buttonStyle(.bordered)
-                    .tint(.white)
+                GameArtReturnButton(action: onExit)
                 ArcanaSeal(symbol: path.symbol, tint: path.tint, size: 34)
                 VStack(alignment: .leading, spacing: 0) {
                     Text(path.name)
@@ -1095,8 +1090,7 @@ struct StoreView: View {
             ScrollView {
                 VStack(spacing: 18) {
                     HStack {
-                        Button("返回") { dismiss() }
-                            .buttonStyle(ChapterTextButtonStyle())
+                        GameArtReturnButton { dismiss() }
                         Spacer()
                         Text("篇章典藏")
                             .font(.caption.weight(.bold))
