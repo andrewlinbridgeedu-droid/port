@@ -1,0 +1,107 @@
+{
+  "build": "169.24",
+  "device": "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+  "isolated_fixture": true,
+  "user_visual_approval": false,
+  "screenshots": [
+    {
+      "page": "police",
+      "file": "police.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=police",
+        "--home-map-review"
+      ],
+      "source": "physical-iPhone-native-window-export",
+      "source_modified": "2026-10-01T18:58:00+00:00",
+      "captured_at": "2026-10-01T18:58:04.731676+00:00",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "fa9839f44e9d2fea5b6a8cae71d2b0dece101bce38d7b93dd322c0b43c5db6aa",
+      "manual_navigation": false
+    },
+    {
+      "page": "post",
+      "file": "post.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=post",
+        "--home-map-review"
+      ],
+      "source": "physical-iPhone-native-window-export",
+      "source_modified": "2026-10-01T18:58:10+00:00",
+      "captured_at": "2026-10-01T18:58:13.027682+00:00",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "4742a21f050a0510d47e26b36584b7fb03ef28d68e15d73a36470ff2673fe5dc",
+      "manual_navigation": false
+    },
+    {
+      "page": "newspaper",
+      "file": "newspaper.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=newspaper",
+        "--home-map-review"
+      ],
+      "source": "physical-iPhone-native-window-export",
+      "source_modified": "2026-10-01T18:58:17+00:00",
+      "captured_at": "2026-10-01T18:58:20.227837+00:00",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "05f53f32ec133d572cdef74b3587a6e7e3ae427087d86fe0a550d43716ab3e96",
+      "manual_navigation": false
+    },
+    {
+      "page": "cityhall-bottom",
+      "file": "cityhall-bottom.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=cityhall",
+        "--home-map-review",
+        "--daily-ui-review-bottom"
+      ],
+      "source": "physical-iPhone-native-window-export",
+      "source_modified": "2026-10-01T18:58:24+00:00",
+      "captured_at": "2026-10-01T18:58:27.158032+00:00",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "6903723aba744b4598303e94c147762ce4a96f85411b12077065c5883cfe66c7",
+      "manual_navigation": false
+    },
+    {
+      "page": "newspaper-bottom",
+      "file": "newspaper-bottom.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=newspaper",
+        "--home-map-review",
+        "--daily-ui-review-bottom"
+      ],
+      "source": "physical-iPhone-native-window-export",
+      "source_modified": "2026-10-01T18:58:31+00:00",
+      "captured_at": "2026-10-01T18:58:34.142437+00:00",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "13d9a4fba98707eb6c1ac6847bca93ac9745294061a4618254e6fc3af491916e",
+      "manual_navigation": false
+    },
+    {
+      "page": "settings-bottom",
+      "file": "settings-bottom.png",
+      "flags": [
+        "--daily-pacing-device-walk",
+        "--daily-ui-review=settings",
+        "--home-map-review",
+        "--daily-ui-review-bottom"
+      ],
+      "source": "physical-iPhone-native-window-export",
+      "source_modified": "2026-10-01T18:58:38+00:00",
+      "captured_at": "2026-10-01T18:58:47.487558+00:00",
+      "width": 1170,
+      "height": 2532,
+      "sha256": "100e7d652721ca28df456e6a9bd4531ea05265e2a6461269436d51bd78c479f1",
+      "manual_navigation": false
+    }
+  ]
+}
