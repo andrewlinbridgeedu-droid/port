@@ -1,0 +1,86 @@
+{
+  "source": "existing licensed Meshy hero + original Blender tailoring",
+  "bones": 30,
+  "vertices": 56674,
+  "removedOldCoatVertices": 36,
+  "clips": [
+    {
+      "name": "BattleIdle",
+      "seconds": 2.4,
+      "contactNormalized": null
+    },
+    {
+      "name": "BasicSlash",
+      "seconds": 0.7,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "Thrust",
+      "seconds": 0.7,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "Card",
+      "seconds": 0.7,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "Parry",
+      "seconds": 0.6,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "Hit",
+      "seconds": 0.42,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastPrepare",
+      "seconds": 0.7,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastMaskFlick",
+      "seconds": 0.68,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastMaskTurn",
+      "seconds": 0.68,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastTwinSweep",
+      "seconds": 0.9,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastTwinCross",
+      "seconds": 0.9,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastFinaleLift",
+      "seconds": 1.12,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastFinaleThrow",
+      "seconds": 1.12,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastCardFan",
+      "seconds": 0.68,
+      "contactNormalized": 0.58
+    }
+  ],
+  "outfits": [
+    "mistport-night",
+    "starlight-magician",
+    "midnight-carnival"
+  ],
+  "sharedRig": true,
+  "sharedAnimation": true,
+  "userVisualApproval": false
+}

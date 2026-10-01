@@ -28,12 +28,12 @@ public sealed class CombatTempoAnimatedBody : MonoBehaviour
     Transform externalTarget;
     sealed class Spring { public Transform bone; public Quaternion before, applied; public bool changed; public Vector3 displacement, velocity; public float phase; }
 
-    public static CombatTempoAnimatedBody Install(GameObject model, string kind, Transform target)
+    public static CombatTempoAnimatedBody Install(GameObject model, string kind, Transform target, string controllerPath = null)
     {
         var body = model.GetComponent<CombatTempoAnimatedBody>() ?? model.AddComponent<CombatTempoAnimatedBody>();
         body.Kind = kind; body.externalTarget = target;
         body.animator = model.GetComponent<Animator>() ?? model.AddComponent<Animator>();
-        body.animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("CombatTempo/Animation/" + kind);
+        body.animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>(controllerPath ?? "CombatTempo/Animation/" + kind);
         body.animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
         body.animator.applyRootMotion = true;
         body.homePosition = body.transform.localPosition; body.homeRotation = body.transform.localRotation;
@@ -72,7 +72,7 @@ public sealed class CombatTempoAnimatedBody : MonoBehaviour
             data.limits = new Vector2(-12, 12); headAim.data = data; headAim.weight = .24f;
         }
         builder.Build();
-        foreach (var name in Kind == "Hound" ? new[] { "tail1", "tail2", "tail3", "earend", "R_earend" } : Kind == "Hero" ? new[] { "Coat.L", "Coat.R" } : Array.Empty<string>()) {
+        foreach (var name in Kind == "Hound" ? new[] { "tail1", "tail2", "tail3", "earend", "R_earend" } : Kind == "Hero" ? new[] { "Coat.L", "Coat.R", "CoatTip.L", "CoatTip.R", "Ribbon.L", "Ribbon.R" } : Array.Empty<string>()) {
             var bone = Bone(name); if (bone) springs.Add(new Spring { bone = bone, phase = springs.Count * .7f });
         }
     }
@@ -99,7 +99,10 @@ public sealed class CombatTempoAnimatedBody : MonoBehaviour
         if (hold) speed = length / Mathf.Max(.1f, contactAfter);
         animator.SetFloat("ActionSpeed", speed);
         animator.CrossFadeInFixedTime(clip, .06f, 0, 0);
-        actionEnds = Time.time + (hold ? contactAfter : Mathf.Min(length / Mathf.Max(.01f, speed), contactAfter > 0 ? contactAfter + .22f : length)) + tail;
+        var playback = length / Mathf.Max(.01f, speed);
+        // Let the new hero complete the authored wrist/cloth follow-through.
+        // Contact time stays fixed; recovery cannot advance the rules clock.
+        actionEnds = Time.time + (hold ? contactAfter : Kind == "Hero" ? playback : Mathf.Min(playback, contactAfter > 0 ? contactAfter + .22f : length)) + tail;
         if (headAim) headAim.weight = clip == "Opening" ? 0 : .15f;
     }
     float ClipLength(string clip) {

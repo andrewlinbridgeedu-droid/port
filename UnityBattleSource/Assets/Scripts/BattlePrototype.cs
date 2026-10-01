@@ -322,6 +322,7 @@ public sealed class BattlePrototype : MonoBehaviour
         return !string.IsNullOrEmpty(GetBuiltInVFXBoardPreviewEffect())
             || System.Array.Exists(arguments, value =>
             value == "--verify-hero-anatomy" || value == "--verify-hero-quality" || value == "--capture-character-closeups" || value == "--verify-story-models" || value == "--verify-character-polish" || value == "--verify-progression-rosters" || value == "--verify-q678-redesign" || value == "--verify-hero-choreography" || value == "--verify-enemy-impact" || value == "--verify-enemy-idle" || value == "--verify-hero-back-art" || value == "--verify-q4-two-flame" || value == "--verify-sidestep-cinematic" || value == "--verify-q2-split" || value == "--verify-enemy-death-fade" || value == "--verify-emerald-escalation" || value == "--verify-early-battle" || value == "--verify-sidestep-hounds" || value == "--preview-hero-spells" || value == "--preview-signatures" || value == "--preview-hound-fire" || value == "--preview-clock-core"
+            || value == "--verify-refined-hero"
             || value == "--preview-dual-clock-guard"
             || value == "--preview-reverse-tide"
             || value == "--preview-defense"

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>主角背影与施法动作</title>
+<style>
+body{margin:0;background:#161b22;color:#eee5d2;font:16px/1.7 system-ui;max-width:1300px;padding:30px;margin:auto}h1{font-size:28px}
+button{background:#263345;border:1px solid #998365;border-radius:8px;padding:10px 18px;color:#eee5d2;cursor:pointer;margin:4px}button[aria-pressed=true]{background:#5a3d68}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:20px}figure{margin:0}figcaption{padding:8px;color:#c7b695}img,video{width:100%;border-radius:12px}
+.choices{margin:20px 0}.note{color:#bbb6ac}details{margin:24px 0}a{color:#e0c793}@media(max-width:640px){.pair{grid-template-columns:1fr}body{padding:16px}}
+</style>
+<h1>主角背影与施法动作</h1>
+<p>三套服装换背影，共用骨架和动作。战斗场景保持原样。</p>
+<p class="note">以下为实际模型在 Unity 中的运行预览；近景使用查看模型的镜头，未改 App 战斗镜头。新版尚未装到 iPhone，等待视觉复看。</p>
+<div class="choices" id="outfits">
+<button data-id="mistport-night" aria-pressed="true">雾港夜行</button>
+<button data-id="starlight-magician" aria-pressed="false">星辉魔术师</button>
+<button data-id="midnight-carnival" aria-pressed="false">午夜嘉年华</button></div>
+<div class="pair">
+<figure><img src="previous-model-close.png" alt="原模型"><figcaption>原模型 · 同一查看机位</figcaption></figure>
+<figure><img id="hero" src="mistport-night-close.png" alt="新版背影"><figcaption id="caption">新版 · 雾港夜行</figcaption></figure></div>
+<h2>七种施法手势</h2>
+<p class="note">肩、肘、腕依次出手，衣尾跟随并回位。视频展示身体动作；样板技能的命中时间保持原规则。</p>
+<div id="motions">
+<button data-clip="CastMaskFlick">翻出假面</button><button data-clip="CastMaskTurn">转身递面</button>
+<button data-clip="CastTwinSweep">双影展开</button><button data-clip="CastTwinCross">双影交错</button>
+<button data-clip="CastFinaleLift">抬幕收场</button><button data-clip="CastFinaleThrow">掷幕谢场</button>
+<button data-clip="CastCardFan">展牌</button><button data-clip="seven-casts-unity">连续查看</button></div>
+<video id="video" src="seven-casts-unity.mp4" controls loop muted playsinline preload="metadata"></video>
+<details><summary>完整战斗机位</summary><img id="battle" src="mistport-night-battle.png" alt="原战斗机位"></details>
+<details><summary>ImageGen 背影参考稿</summary><img src="hero-back-concept-v1.png" alt="ImageGen设计参考"></details>
+<p><a href="HeroRefined-v1.blend">Blender 源文件</a> · <a href="imagegen-prompt.txt">ImageGen 提示词</a> · <a href="unity-verification.txt">运行检查记录</a></p>
+<script>
+document.querySelectorAll('#outfits button').forEach(b=>b.onclick=()=>{
+document.querySelectorAll('#outfits button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+document.getElementById('hero').src=b.dataset.id+'-close.png';
+document.getElementById('battle').src=b.dataset.id+'-battle.png';
+document.getElementById('caption').textContent='新版 · '+b.textContent;
+});
+document.querySelectorAll('#motions button').forEach(b=>b.onclick=()=>{
+const v=document.getElementById('video');v.src=b.dataset.clip+'.mp4';v.play();
+});
+</script></html>

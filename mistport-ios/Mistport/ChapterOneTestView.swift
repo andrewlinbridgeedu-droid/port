@@ -3507,6 +3507,7 @@ struct ChapterOneEncounterTestView: View {
 
     private func synchronizeBattlePresentationSettings() {
         unityBattleRuntime.send(action: "combat-speed:\(battleSpeed)")
+        unityBattleRuntime.send(action: "hero-outfit:\((session.loadout.outfit ?? .mistportNight).rawValue)")
         unityBattleRuntime.send(action: "tempo-sample:\(CombatTempoReviewConfiguration.baseline ? "off" : session.encounter.id)")
     }
 
