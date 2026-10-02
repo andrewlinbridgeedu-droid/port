@@ -61,8 +61,8 @@ def build_hand(sign, material):
     verts, uvs = [], []
     for j in range(rows):
         t = j / (rows - 1)
-        width = lerp(2.5, 3.6, smoothstep(0, 0.8, t))
-        thick = lerp(1.45, 1.1, t)
+        width = lerp(2.4, 3.45, smoothstep(0, 0.8, t))
+        thick = lerp(1.35, 1.0, t)
         c = wrist + L * (t * 8.4) - P * 0.15
         for i in range(cols):
             th = i / cols * math.tau
@@ -77,12 +77,12 @@ def build_hand(sign, material):
     obs.append(build_mesh('Glove palm', verts, faces, uvs, material))
     # Fingers: index (thumb side) to little finger.
     knuckle = wrist + L * 8.2
-    fingers = [(2.45, 7.2, 0.80, 7), (0.82, 7.9, 0.82, 9), (-0.82, 7.4, 0.78, 12), (-2.35, 5.9, 0.70, 16)]
+    fingers = [(2.55, 7.1, 0.70, 8), (0.86, 7.8, 0.72, 10), (-0.86, 7.3, 0.69, 13), (-2.45, 5.8, 0.62, 17)]
     for off, length, rad, curl in fingers:
         base = knuckle + W * off - P * 0.1
         segs = [0.46, 0.30, 0.24]
         bends = [curl, curl + 9, curl + 4]
-        spread = W * off * 0.035
+        spread = W * off * 0.055
         pts = [base]
         p = base
         theta = 0.0
@@ -93,7 +93,8 @@ def build_hand(sign, material):
             for k in range(1, 4):
                 pts.append(p + d * length * seg * k / 3)
             p = pts[-1]
-        obs.append(capsule('Glove finger', pts, lambda t, r=rad: r * (1 - 0.22 * t), material, sides=10))
+        obs.append(capsule('Glove finger', pts, lambda t, r=rad: r * (1 - 0.3 * t) * (1 + 0.08 * math.sin(t * 9.4)),
+                           material, sides=10))
     # Thumb from the base of the palm, toward the palm side.
     base = wrist + L * 2.4 + W * 2.9 + P * 0.35
     d = (L * 0.55 + W * 0.62 + P * 0.55).normalized()
@@ -104,7 +105,7 @@ def build_hand(sign, material):
         for k in range(1, 4):
             pts.append(p + d * seg * k / 3)
         p = pts[-1]
-    obs.append(capsule('Glove thumb', pts, lambda t: 1.0 * (1 - 0.25 * t), material, sides=10))
+    obs.append(capsule('Glove thumb', pts, lambda t: 0.9 * (1 - 0.28 * t), material, sides=10))
     return obs, (wrist, L, P, W)
 
 

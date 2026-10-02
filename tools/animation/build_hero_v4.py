@@ -28,6 +28,7 @@ def arg(name, default=None):
 
 DOC = ROOT / 'docs/development/hero-refinement-20261001/v4'
 PREVIEW = arg('--preview')
+DETAIL = '--detail' in argv
 TEX = Path(arg('--textures', str(DOC / 'textures')))
 TEX.mkdir(parents=True, exist_ok=True)
 
@@ -58,15 +59,15 @@ P = looks.painted
 common_mat = {
     'skin': P('V4 Skin', (0.97, 0.84, 0.76), shade=(0.88, 0.66, 0.66), kind='skin'),
     'trousers': P('V4 Trousers', (0.13, 0.12, 0.15), shade=(0.48, 0.44, 0.64), kind='cloth'),
-    'leather': P('V4 Leather', (0.12, 0.09, 0.10), shade=(0.50, 0.44, 0.60), kind='leather'),
+    'leather': P('V4 Leather', (0.07, 0.06, 0.075), shade=(0.48, 0.44, 0.62), kind='leather'),
     'sole': P('V4 Sole', (0.22, 0.15, 0.12), shade=(0.56, 0.46, 0.56), kind='leather', gloss=0.2),
     'glove': P('V4 Glove', (0.14, 0.12, 0.15), shade=(0.50, 0.45, 0.62), kind='leather', gloss=0.35),
     'lace': P('V4 Lace', (0.96, 0.94, 0.91), shade=(0.74, 0.72, 0.86), kind='cloth'),
     'gold': P('V4 Gold', (0.80, 0.60, 0.26), shade=(0.58, 0.42, 0.36), kind='metal'),
 }
 hair_img = textures.paint_hair(TEX / 'hair.png')
-common_mat['hair'] = P('V4 Hair', (1, 1, 1), shade=(0.52, 0.46, 0.78), image=hair_img, kind='hair')
-common_mat['hair_cap'] = P('V4 HairCap', (0.09, 0.08, 0.15), shade=(0.52, 0.46, 0.78), kind='hair')
+common_mat['hair'] = P('V4 Hair', (1, 1, 1), shade=(0.50, 0.50, 0.72), image=hair_img, kind='hair')
+common_mat['hair_cap'] = P('V4 HairCap', (0.07, 0.07, 0.11), shade=(0.50, 0.50, 0.72), kind='hair')
 
 MATERIAL_SPECS = {}
 
@@ -105,7 +106,7 @@ for sign in (1, -1):
     shaft, shaft_pts = lower.build_boot_shaft(sign, common_mat['leather'])
     common.append(shaft)
     common.extend(details.boot_hardware(sign, common_mat, shaft_pts))
-    common.append(lower.build_sole(sign, common_mat['sole']))
+    common.extend(lower.build_sole(sign, common_mat['sole']))
 common.extend(details.thigh_strap(1, common_mat))
 for ob in common:
     ob.name = 'Common ' + ob.name
@@ -152,10 +153,11 @@ for key in OUTFITS:
         geom.solidify(facing, 0.45, offset=-1.0)
         parts.append(facing)
         parts.append(geom.tube('Facing piping', f_outer, 0.26, mat['gold'], sides=6))
-    holes, cuff_points = {}, {}
+    holes, cuff_points, sleeves = {}, {}, {}
     for sign in (1, -1):
         sl, path, end_ring, hole_ring = coat.build_sleeve(sign, mat['coat'])
         holes[sign] = hole_ring
+        sleeves[sign] = sl
         parts.append(sl)
         cuff, rim, root = coat.build_cuff(sign, mat['coat'])
         cuff_points[sign] = root[len(root) // 2]
@@ -181,6 +183,11 @@ for key in OUTFITS:
             parts.append(geom.tube('Cape piping', edge, 0.22, mat['gold'], sides=6))
     if style.get('epaulettes'):
         parts.extend(details.epaulettes(mat, holes))
+    else:
+        strap_mat = remember(P(f'V4 {key} Strap', style['coat'], shade=style['coat_shade'], kind='cloth'))
+        parts.extend(details.shoulder_straps(mat, torso, sleeves, strap_mat))
+    if key in ('carnival', 'starlight'):
+        parts.extend(details.trouser_lines(mat, key))
     # Painted atlases replace the flat coat and lining colours.
     coat_png, lining_png = f'{key}-coat.png', f'{key}-lining.png'
     tail_uv = {k: [tuple(p) for p in tails['L'][0][k + '_uv']] for k in ('hem', 'end', 'start')}
@@ -247,11 +254,24 @@ def preview(out_dir):
     scene.collection.objects.link(cam)
     scene.camera = cam
     cam_d.lens = 85
-    target = Vector((0, 4, 92))
-    views = {'rear': Vector((0, 560, 150)), 'quarter': Vector((330, 460, 140)), 'side': Vector((560, 30, 120))}
+    full = Vector((0, 4, 92))
+    views = {'rear': (Vector((0, 560, 150)), full), 'quarter': (Vector((330, 460, 140)), full),
+             'side': (Vector((560, 30, 120)), full)}
+    if DETAIL:
+        # Close-ups (target, camera offset) for detail review.
+        views = {
+            'd-head-rear': (Vector((0, 175, 175)), Vector((0, 8, 160))),
+            'd-head-quarter': (Vector((120, 125, 172)), Vector((0, 8, 160))),
+            'd-head-side': (Vector((175, 0, 165)), Vector((0, 6, 160))),
+            'd-shoulders': (Vector((60, 220, 160)), Vector((0, 8, 132))),
+            'd-hand': (Vector((95, 120, 105)), Vector((24, 0, 95))),
+            'd-waist': (Vector((0, 230, 115)), Vector((0, 10, 96))),
+            'd-hem': (Vector((60, 250, 60)), Vector((14, 14, 32))),
+            'd-boots': (Vector((110, 150, 40)), Vector((0, 0, 12))),
+        }
     for key in outfit_parts:
         show_only(key)
-        for name, loc in views.items():
+        for name, (loc, target) in views.items():
             cam.location = loc
             cam.rotation_euler = (target - loc).to_track_quat('-Z', 'Y').to_euler()
             scene.render.filepath = str(out / f'{key}-{name}.png')

@@ -117,12 +117,12 @@ def collar(material, cols=56):
             u = i / (cols - 1)
             # theta runs from front-left around the back to front-right.
             th = -math.pi / 2 + gap / 2 + u * (math.tau - gap)
-            flare = 1.0 + 0.30 * h ** 1.6
-            x = (na + 0.25) * flare * math.cos(th)
-            y = ncy + (nb + 0.35) * flare * math.sin(th)
+            flare = 1.0 + 0.10 * h ** 1.4
+            x = (na - 0.2) * flare * math.cos(th)
+            y = ncy + (nb - 0.1) * flare * math.sin(th) + 0.7 * h * max(0.0, math.sin(th))
             back = max(0.0, math.sin(th))
             sidept = math.exp(-((abs(math.cos(th)) - 0.82) / 0.16) ** 2) * (1 - back)
-            height = 5.0 + 1.1 * back + 1.8 * sidept
+            height = 5.4 + 1.6 * back + 1.8 * sidept
             z = nz - 1.4 + height * h
             verts.append(Vector((x, y, z)))
     for j in range(rows):

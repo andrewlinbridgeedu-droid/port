@@ -69,7 +69,8 @@ def clump(spec, rng):
         half = w * shape
         for i in range(cols):
             x = -1 + 2 * i / (cols - 1)
-            q = p + acr * x * half + n * ridge * (1 - x * x) ** 0.7 * (1 - 0.35 * s)
+            # Thick at the root, thinning to a flat blade at the tip.
+            q = p + acr * x * half + n * ridge * (1 - x * x) ** 0.7 * (1 - 0.8 * s ** 1.3)
             verts.append(q)
             uvs.append((i / (cols - 1), s))
     faces = grid_faces(len(spine), cols)
@@ -77,44 +78,45 @@ def clump(spec, rng):
 
 
 def layout(seed=7):
-    """Messy, voluminous short hair as in the character art: locks fan out from the
-    crown, the nape and sides flick outward in points, a few strands lift on top."""
+    """Messy short hair as in the character art. Every layer runs from the crown to
+    the nape, so no ring of tips forms around the skull; lengths vary from lock to
+    lock so the lower edge is irregular, and tips settle inward instead of poking out."""
     rng = random.Random(seed)
     specs = []
 
     def j(a, b):
         return rng.uniform(a, b)
 
-    # A: broad back layer, crown to nape, falling past the skull to the collar.
+    # A: broad under-layer reaching the collar; lengths vary a lot.
     for az in [90, 72, 108, 54, 126, 36, 144, 18, 162]:
         specs.append(dict(az=az + j(-3, 3), pol0=20 + j(-4, 4), pol1=118, w=3.9 + j(-0.3, 0.4),
-                          lift=(0.4, 1.1), hang=7.2 + j(-1.0, 1.2), hang_pol=104 + j(-3, 3),
-                          flick=0.6 + j(-0.2, 0.4), side=j(-0.8, 0.8), ridge=1.05, curl=j(-6, 6)))
-    # B: second layer with more lift and livelier, spikier tips.
+                          lift=(0.4, 1.1), hang=j(4.5, 9.5), hang_pol=104 + j(-3, 3),
+                          flick=0.4 + j(-0.2, 0.3), side=j(-0.7, 0.7), ridge=1.05, curl=j(-6, 6), split=False))
+    # B: middle layer, shorter on average, with occasional split tips.
     for az in [84, 96, 72, 108, 60, 120, 48, 132, 36, 144, 22, 158, 8, 172]:
-        specs.append(dict(az=az + j(-4, 4), pol0=13 + j(-3, 4), pol1=112, w=2.7 + j(-0.3, 0.4),
-                          lift=(1.1, 2.0), hang=4.8 + j(-0.6, 1.4), hang_pol=98 + j(-4, 4),
-                          flick=0.9 + j(-0.3, 0.5), side=j(-1.0, 1.0), ridge=0.95, curl=j(-10, 10)))
-    # C: crown tufts fanning from the whorl, tips lifting off the back of the head.
+        specs.append(dict(az=az + j(-4, 4), pol0=13 + j(-3, 4), pol1=112, w=2.8 + j(-0.3, 0.4),
+                          lift=(1.1, 2.0), hang=j(2.5, 7.0), hang_pol=98 + j(-4, 6),
+                          flick=0.6 + j(-0.2, 0.4), side=j(-1.0, 1.0), ridge=0.95, curl=j(-10, 10)))
+    # C: top layer from the whorl, long enough to blend into the nape.
     for az in [90, 74, 106, 58, 122, 42, 138, 26, 154, 10, 170]:
-        specs.append(dict(az=az + j(-6, 6), pol0=10 + j(0, 6), pol1=78 + j(-6, 8), w=2.4 + j(-0.3, 0.4),
-                          lift=(2.2, 3.1), hang=2.4 + j(0, 1.4), hang_pol=72 + j(-5, 6), follow=0.75,
-                          flick=1.0 + j(0, 0.5), side=j(-1.0, 1.0), ridge=0.9, curl=j(-14, 14)))
-    # E: sides over the ears, flaring out at the tips.
+        specs.append(dict(az=az + j(-6, 6), pol0=10 + j(0, 6), pol1=106 + j(-6, 6), w=2.5 + j(-0.3, 0.4),
+                          lift=(2.2, 3.0), hang=j(2.0, 5.5), hang_pol=94 + j(-6, 6), follow=0.5,
+                          flick=0.5 + j(0, 0.4), side=j(-1.0, 1.0), ridge=0.9, curl=j(-14, 14)))
+    # E: sides over the ears.
     for az in [6, -14, 26, -34, 174, 194, 154, 214]:
         specs.append(dict(az=az + j(-4, 4), pol0=20 + j(-3, 3), pol1=112, w=3.5 + j(-0.3, 0.4),
-                          lift=(1.0, 1.8), hang=5.6 + j(-0.6, 1.2), hang_pol=100,
-                          flick=0.8 + j(0, 0.4), side=j(-0.8, 0.8), ridge=1.0, curl=j(-8, 8)))
+                          lift=(1.0, 1.8), hang=j(4.0, 7.0), hang_pol=100,
+                          flick=0.5 + j(0, 0.3), side=j(-0.7, 0.7), ridge=1.0, curl=j(-8, 8)))
     # F: fringe for the quarter view.
     for az in [212, 234, 256, 278, 300, 322]:
         specs.append(dict(az=az + j(-4, 4), pol0=14 + j(-3, 3), pol1=94, w=3.0 + j(-0.3, 0.4),
-                          lift=(1.3, 1.8), hang=2.6 + j(0, 1.2), hang_pol=86,
-                          flick=0.8 + j(0, 0.6), side=j(-1.4, 1.4), ridge=0.5, curl=j(-10, 10)))
-    # G: fine nape wisps under the first layer.
-    for az in [80, 100, 62, 118]:
-        specs.append(dict(az=az + j(-5, 5), pol0=94 + j(-4, 2), pol1=118, w=2.9 + j(-0.2, 0.3),
-                          lift=(0.3, 0.6), hang=7.6 + j(-0.4, 1.0), hang_pol=108,
-                          flick=0.4 + j(-0.2, 0.3), side=j(-0.8, 0.8), ridge=0.4, rows=14))
+                          lift=(1.3, 1.8), hang=2.6 + j(0, 1.6), hang_pol=86,
+                          flick=0.6 + j(0, 0.4), side=j(-1.2, 1.2), ridge=0.5, curl=j(-10, 10)))
+    # G: nape under-layer so no skin shows above the collar.
+    for az in [80, 100, 62, 118, 90]:
+        specs.append(dict(az=az + j(-5, 5), pol0=94 + j(-4, 2), pol1=118, w=3.2 + j(-0.2, 0.3),
+                          lift=(0.3, 0.6), hang=7.8 + j(-0.4, 1.0), hang_pol=108,
+                          flick=0.3 + j(-0.1, 0.2), side=j(-0.6, 0.6), ridge=0.45, rows=14, split=False))
     return specs, rng
 
 
@@ -127,7 +129,7 @@ def build_hair(material, seed=7):
         obs.append(ob)
         # Split tips: thinner strands along the lock's edges part from it near the end,
         # so the lock ends in two or three points instead of one.
-        if spec.get('hang', 0) > 2.0 and spec['w'] > 2.6:
+        if spec.get('split', True) and spec.get('hang', 0) > 3.0 and spec['w'] > 2.6 and rng.random() < 0.5:
             for edge in (-1, 1):
                 if rng.random() < 0.5:
                     continue

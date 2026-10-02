@@ -128,19 +128,19 @@ def build_pelvis(material, cols=48):
 
 
 # ------------------------------------------------------------- boots
-FOOT = [  # y, half width, sole top z, top z
-    (7.0, 0.8, 4.4, 9.5),
-    (6.2, 3.0, 4.2, 12.0),
-    (4.6, 3.9, 4.0, 13.0),
-    (1.8, 4.1, 3.4, 12.6),
-    (-1.5, 4.15, 2.5, 10.9),
-    (-5.0, 4.3, 1.4, 8.6),
-    (-8.5, 4.4, 0.95, 6.8),
-    (-11.5, 4.2, 0.9, 5.9),
-    (-14.0, 3.6, 0.95, 5.2),
-    (-16.0, 2.6, 1.15, 4.5),
-    (-17.2, 1.4, 1.4, 3.8),
-    (-17.8, 0.35, 1.8, 3.1),
+FOOT = [  # y, half width, sole top z, top z: a slim boot with a pointed, slightly sprung toe
+    (7.0, 0.8, 3.5, 9.0),
+    (6.2, 2.9, 3.4, 11.5),
+    (4.6, 3.55, 3.3, 12.6),
+    (2.0, 3.65, 3.1, 12.4),
+    (-1.5, 3.55, 2.3, 10.8),
+    (-5.0, 3.75, 1.3, 8.4),
+    (-8.5, 3.95, 0.85, 6.6),
+    (-11.5, 3.75, 0.75, 5.6),
+    (-14.0, 3.15, 0.8, 4.9),
+    (-16.2, 2.2, 1.0, 4.2),
+    (-17.8, 1.1, 1.3, 3.5),
+    (-18.8, 0.3, 1.75, 2.8),
 ]
 
 
@@ -201,37 +201,41 @@ def build_boot_shaft(sign, material, sides=30):
 
 
 def build_sole(sign, material):
-    """Separate sole and stacked heel give the boot a crisp, manufactured edge."""
+    """Thin outsole under the forefoot and a separate stacked block heel."""
     s = sk.side_name(sign)
     ankle = sk.tail(s + 'Leg')
-    outline = []
-    for y, w, zb, zt in FOOT:
-        outline.append((y, w + 0.35, zb))
+    cx = ankle.x
+    obs = []
+    # Outsole: the foot outline, 0.55 cm thick, from the toe to the front of the heel.
+    rows = [(y, w + 0.22, zb) for y, w, zb, zt in FOOT if y < 2.5]
     verts, faces = [], []
-    cols = len(outline)
-    # Two rails (outer, inner) x two levels; a simple closed slab.
-    top_outer, top_inner, bot_outer, bot_inner = [], [], [], []
-    for y, w, zb in outline:
-        cy = y
-        heel = y > 1.6
-        bottom = 0.0
-        top = zb if not heel else zb
-        zbot = bottom if heel else max(0.0, zb - 0.95)
-        top_outer.append(Vector((ankle.x + sign * w, cy, top)))
-        top_inner.append(Vector((ankle.x - sign * w, cy, top)))
-        bot_outer.append(Vector((ankle.x + sign * w, cy, zbot)))
-        bot_inner.append(Vector((ankle.x - sign * w, cy, zbot)))
-    verts = top_outer + top_inner + bot_outer + bot_inner
-    n = cols
-    TO, TI, BO, BI = 0, n, 2 * n, 3 * n
+    n = len(rows)
+    for y, w, zb in rows:
+        for x, z in ((-w, zb), (w, zb), (w, zb - 0.55), (-w, zb - 0.55)):
+            verts.append(Vector((cx + sign * x, y, z)))
     for i in range(n - 1):
-        faces.append((TO + i, TO + i + 1, TI + i + 1, TI + i))
-        faces.append((BI + i, BI + i + 1, BO + i + 1, BO + i))
-        faces.append((BO + i, BO + i + 1, TO + i + 1, TO + i))
-        faces.append((TI + i, TI + i + 1, BI + i + 1, BI + i))
-    faces.append((TO, TI, BI, BO))
-    faces.append((TO + n - 1, BO + n - 1, BI + n - 1, TI + n - 1))
+        a, b = i * 4, (i + 1) * 4
+        for k in range(4):
+            faces.append((a + k, a + (k + 1) % 4, b + (k + 1) % 4, b + k))
+    faces.append((0, 1, 2, 3))
+    faces.append(((n - 1) * 4 + 3, (n - 1) * 4 + 2, (n - 1) * 4 + 1, (n - 1) * 4))
     if sign < 0:
         faces = [tuple(reversed(f)) for f in faces]
-    uvs = [(0.5, 0.5)] * len(verts)
-    return build_mesh('Boot sole ' + s, verts, faces, uvs, material, smooth=False)
+    ob = build_mesh('Boot sole ' + s, verts, faces, [(0.5, 0.5)] * len(verts), material, smooth=False)
+    obs.append(ob)
+    # Block heel: rounded at the back, slightly tapered toward the ground.
+    verts, faces = [], []
+    cols = 16
+    for j, (z, k) in enumerate(((3.25, 1.0), (0.0, 0.86))):
+        for i in range(cols):
+            a = i / cols * math.tau
+            x = 3.15 * k * math.cos(a)
+            y = 4.4 + 2.75 * k * math.sin(a) if math.sin(a) > 0 else 4.4 + 2.4 * k * math.sin(a)
+            verts.append(Vector((cx + x, y, z)))
+    for i in range(cols):
+        faces.append((i, (i + 1) % cols, cols + (i + 1) % cols, cols + i))
+    faces.append(tuple(range(cols - 1, -1, -1)))
+    faces.append(tuple(range(cols, 2 * cols)))
+    ob = build_mesh('Boot heel ' + s, verts, faces, [(0.5, 0.5)] * len(verts), material, smooth=False)
+    obs.append(ob)
+    return obs

@@ -123,6 +123,12 @@ def weights_for(ob, p):
             s = 'Left' if bind.endswith('L') else 'Right'
             k = smoothstep(14.0, 21.0, abs(x))
             return _mix(spine_w(z), {s + 'Arm': 1.0}, k)
+        if bind.startswith('strap'):
+            s = 'Left' if bind.endswith('L') else 'Right'
+            return _mix(spine_w(z), {s + 'Shoulder': 0.5, s + 'Arm': 0.5}, smoothstep(11.0, 18.0, abs(x)))
+        if bind.startswith('legline'):
+            s = 'Left' if bind.endswith('L') else 'Right'
+            return _mix(chain_w(p, [s + 'UpLeg', s + 'Leg']), {'Hips': 1.0}, 0.5 * smoothstep(88.0, 96.0, z))
         if bind.startswith('forearm'):
             return {('Left' if bind.endswith('L') else 'Right') + 'ForeArm': 1.0}
     for key in ('Head', 'Hair', 'Ear'):

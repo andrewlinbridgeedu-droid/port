@@ -13,13 +13,13 @@ from . import paint, filigree, atlas
 
 PALETTES = {
     'night': dict(coat=(0.085, 0.075, 0.105), damask=1.55, lining=(0.47, 0.30, 0.72),
-                  lining_tone=(0.60, 0.44, 0.84), cuff=(0.42, 0.25, 0.68), band=None,
+                  lining_tone=(0.66, 0.50, 0.90), cuff=(0.42, 0.25, 0.68), band=None,
                   gold=(0.93, 0.72, 0.36)),
     'starlight': dict(coat=(0.93, 0.90, 0.84), damask=1.04, lining=(0.47, 0.32, 0.74),
-                      lining_tone=(0.58, 0.44, 0.84), cuff=(0.12, 0.15, 0.38), band=(0.08, 0.10, 0.30),
+                      lining_tone=(0.64, 0.50, 0.90), cuff=(0.12, 0.15, 0.38), band=(0.08, 0.10, 0.30),
                       gold=(0.92, 0.75, 0.42)),
     'carnival': dict(coat=(0.085, 0.06, 0.07), damask=1.6, lining=(0.88, 0.82, 0.70),
-                     lining_tone=(0.80, 0.72, 0.58), cuff=(0.60, 0.08, 0.11), band=(0.58, 0.07, 0.10),
+                     lining_tone=(0.76, 0.66, 0.52), cuff=(0.60, 0.08, 0.11), band=(0.58, 0.07, 0.10),
                      gold=(0.95, 0.75, 0.36)),
 }
 BAND_W = {'night': 8.5, 'starlight': 9.5, 'carnival': 9.0}
@@ -101,22 +101,25 @@ def gothic_cartouche(cx, cy, w, h):
     for s in (1, -1):
         outer = [(cx + s * (w / 2) * (1 - t ** 1.7) * (1 + 0.28 * math.sin(math.pi * t)), cy + h * t)
                  for t in [i / 60 for i in range(61)]]
-        strokes.append((outer, [0.24] * len(outer)))
+        strokes.append((outer, [0.36] * len(outer)))
         inner = [(cx + s * (w / 2 - 1.0) * (1 - t ** 1.7) * (1 + 0.22 * math.sin(math.pi * t)), cy + 0.9 + (h - 2.6) * t)
                  for t in [i / 60 for i in range(61)]]
-        strokes.append((inner, [0.1] * len(inner)))
-        v, vw, _ = filigree.volute((cx + s * w * 0.30, cy + 1.4), math.pi / 2, h * 0.12, w * 0.14, 1.6, -s, 0.2, 0.07)
+        strokes.append((inner, [0.16] * len(inner)))
+        v, vw, _ = filigree.volute((cx + s * w * 0.30, cy + 1.4), math.pi / 2, h * 0.12, w * 0.15, 1.7, -s, 0.3, 0.09)
         strokes.append((v, vw))
-        v, vw, _ = filigree.volute((cx + s * w * 0.12, cy + h * 0.42), math.pi / 2 - s * 0.3, h * 0.10, w * 0.11, 1.5,
-                                   s, 0.15, 0.06)
+        v, vw, _ = filigree.volute((cx + s * w * 0.12, cy + h * 0.42), math.pi / 2 - s * 0.3, h * 0.10, w * 0.12, 1.6,
+                                   s, 0.22, 0.07)
+        strokes.append((v, vw))
+        v, vw, _ = filigree.volute((cx + s * w * 0.06, cy + h * 0.66), math.pi / 2 + s * 0.2, h * 0.07, w * 0.09, 1.5,
+                                   -s, 0.16, 0.06)
         strokes.append((v, vw))
         strokes.extend(filigree.acanthus((cx + s * w * 0.18, cy + h * 0.30), math.pi / 2 + s * 0.6, h * 0.12,
                                          w * 0.05 + 0.06, -s))
     stem = [(cx, cy + 1.0 + k * 0.1) for k in range(int(h * 0.62 / 0.1))]
-    strokes.append((stem, [0.13] * len(stem)))
+    strokes.append((stem, [0.18] * len(stem)))
     strokes.append(filigree.leaf((cx, cy + h * 0.98), math.pi / 2, h * 0.16, w * 0.09))
     base = [(cx - w / 2, cy), (cx + w / 2, cy)]
-    strokes.append((base, [0.2, 0.2]))
+    strokes.append((base, [0.3, 0.3]))
     return strokes
 
 
@@ -172,11 +175,11 @@ def _band(c, outfit, start_uv, end_uv, gold, rng):
     elif outfit == 'carnival':
         c.fill_poly(poly, _brocade(7, pal['band']))
     outline = left + [tip] + right[::-1]
-    c.stroke(outline, [0.2] * len(outline), gold)
+    c.stroke(outline, [0.3] * len(outline), gold)
     inner_l = [(a[0] * 0.86 + b[0] * 0.14, a[1] * 0.86 + b[1] * 0.14) for a, b in zip(left, right)]
     inner_r = [(a[0] * 0.14 + b[0] * 0.86, a[1] * 0.14 + b[1] * 0.86) for a, b in zip(left, right)]
-    c.stroke(inner_l, [0.08] * len(inner_l), gold)
-    c.stroke(inner_r, [0.08] * len(inner_r), gold)
+    c.stroke(inner_l, [0.12] * len(inner_l), gold)
+    c.stroke(inner_r, [0.12] * len(inner_r), gold)
     k = max(1, len(centre) - 1 - int(len(centre) * 0.18))
     cx, cy = centre[k]
     up = (centre[k - 1][0] - centre[k + 1][0], centre[k - 1][1] - centre[k + 1][1])
@@ -202,7 +205,7 @@ def _band(c, outfit, start_uv, end_uv, gold, rng):
             c.stroke(pts, ws, gold)
 
 
-def paint_hair(path, base=(0.10, 0.09, 0.17), tip=(0.20, 0.17, 0.34), shine=(0.56, 0.54, 0.80)):
+def paint_hair(path, base=(0.08, 0.08, 0.13), tip=(0.21, 0.21, 0.32), shine=(0.60, 0.62, 0.80)):
     """Hair strip texture: u across a clump, v root (0) to tip (1). Root-to-tip
     gradient, fine strand lines and a jagged highlight band."""
     W, H = 256, 1024
@@ -213,7 +216,10 @@ def paint_hair(path, base=(0.10, 0.09, 0.17), tip=(0.20, 0.17, 0.34), shine=(0.5
     strands = 0.88 + 0.12 * np.sin(u * 64 + np.sin(u * 9) * 2.0) ** 2
     col = col * strands[..., None]
     edge = 0.26 + 0.035 * np.sin(u * 37.0) + 0.02 * np.sin(u * 91.0 + 1.0)
-    band = np.clip(1 - np.abs(v - edge) / 0.045, 0, 1) ** 1.6 * (0.55 + 0.45 * np.sin(u * 23.0) ** 2)
+    band = np.clip(1 - np.abs(v - edge) / 0.06, 0, 1) ** 1.4 * (0.6 + 0.4 * np.sin(u * 23.0) ** 2)
+    # A second, fainter sheen lower down each lock.
+    band = np.maximum(band, 0.45 * np.clip(1 - np.abs(v - (edge + 0.3)) / 0.05, 0, 1) ** 1.6
+                      * (0.5 + 0.5 * np.sin(u * 17.0 + 1.3) ** 2))
     col = col * (1 - band[..., None]) + np.array(shine, np.float32) * band[..., None]
     # Darker sides of each clump read as separation between locks.
     side = np.clip(1 - np.abs(u - 0.5) * 2, 0, 1) ** 0.35
@@ -317,6 +323,12 @@ def paint_lining(outfit, path, seed=23, turnback=None):
     c.fill(pal['lining'])
     c.pattern(0, 0, atlas.SIZE_CM, atlas.SIZE_CM, _grain(seed, 0.8))
     _damask(c, (0, 0, atlas.SIZE_CM, atlas.SIZE_CM), pal['lining_tone'], rng, step=9.0, size=2.6)
+
+    def sheen(xs, ys, rgb):
+        # Silk catches the light in broad soft streaks, as painted in the art.
+        n = paint.value_noise(xs * 0.6, ys * 0.15, 4.0, seed + 7)
+        return np.clip(rgb * (0.86 + 0.32 * n)[..., None], 0, 1)
+    c.pattern(0, 0, atlas.SIZE_CM, atlas.SIZE_CM, sheen)
     gold = pal['gold']
     fx0, fy0, fw, fh = atlas.REGIONS['facing']
     fold = [(fx0 + 1.6, fy0 + 93.0 - k * 0.5) for k in range(int(91 / 0.5))]

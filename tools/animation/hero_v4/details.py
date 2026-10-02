@@ -210,10 +210,6 @@ def build_details(parts, mats, style, torso, tails, sleeves_hole, outfit):
         obs.append(star)
         obs.append(tag(tube('Star setting', outline + [outline[0]], 0.2, gold, sides=5), b))
         u, v = frame(lateral, -axis)
-        # Three gold beads crowning the setting.
-        for k in (-1, 0, 1):
-            p = spot + lateral * 0.35 + v * 2.9 + u * k * 0.9
-            obs.append(tag(tube('Star bead', [p - u * 0.05, p + u * 0.05], 0.28, gold, sides=6), b))
         ring = sleeves_hole[sign]
         seam = sorted([p for p in ring if p.z > 136.0], key=lambda p: p.y)
         if len(seam) > 3:
@@ -242,9 +238,9 @@ def build_details(parts, mats, style, torso, tails, sleeves_hole, outfit):
     obs.append(tag(tube('Sash knot', [knot + Vector((-0.9, 0, 0.3)), knot + Vector((0, 0.5, 0)),
                                       knot + Vector((0.9, 0, -0.3))], 1.35, sash, sides=12, flat=0.7), 'ribbonL'))
     for sgn, (dx, dz) in ((1, (5.2, 2.6)), (-1, (-4.4, 3.2))):
-        loop = [knot, knot + Vector((dx * 0.45, 1.6, dz * 1.1)), knot + Vector((dx, 2.0, dz * 0.6)),
-                knot + Vector((dx * 0.95, 1.7, -dz * 0.2)), knot + Vector((dx * 0.4, 1.0, -0.6)), knot]
-        obs.append(ribbon('Sash loop', loop, 1.35, sash, 'ribbonL', twist=0.4 * sgn))
+        loop = [knot, knot + Vector((dx * 0.45, 0.9, dz * 1.15)), knot + Vector((dx * 1.05, 1.1, dz * 0.55)),
+                knot + Vector((dx * 0.95, 0.9, -dz * 0.35)), knot + Vector((dx * 0.4, 0.6, -0.9)), knot]
+        obs.append(ribbon('Sash loop', loop, 1.95, sash, 'ribbonL', twist=0.25 * sgn))
     obs.append(ribbon('Sash tail', [knot, knot + Vector((2.2, 3.4, -9)), knot + Vector((5.0, 5.0, -20)),
                                     knot + Vector((6.8, 6.2, -34))], 2.1, sash, 'ribbonL', twist=1.3))
     obs.append(ribbon('Sash tail', [knot, knot + Vector((0.4, 2.8, -7)), knot + Vector((1.4, 4.2, -15)),
@@ -396,7 +392,65 @@ def boot_pendants(sign, mats):
                     0.1, mats['gold'], sides=4), b)]
     obs.append(diamond_gem('Boot pendant', c + Vector((sign * 0.2, 0, -2.0)), (0, 0, 1), (sign, 0.3, 0), 0.7,
                            mats['gem'], b))
-    heel = [Vector((ankle.x + sign * 3.9 * math.cos(a), 4.6 + 2.4 * math.sin(a), 3.0)) for a in
-            [lerp(-math.pi / 2, math.pi / 2, k / 16) for k in range(17)]]
+    heel = [Vector((ankle.x + 3.2 * math.cos(a), 4.4 + 2.8 * math.sin(a), 3.25)) for a in
+            [lerp(0.0, math.pi, k / 16) for k in range(17)]]
     obs.append(tag(tube('Heel edge', heel, 0.16, mats['gold'], sides=5), b))
+    return obs
+
+
+def shoulder_straps(mats, torso, sleeves, strap_mat):
+    """Shoulder straps along the seam from the collar to the sleeve head, piped in
+    gold with a button at the collar end (the art's gold shoulder seams); they also
+    cover the join between the sleeve head and the body."""
+    obs = []
+    for sign, sleeve in sleeves.items():
+        b = 'strap' + ('L' if sign > 0 else 'R')
+        p0, p1 = Vector((sign * 7.4, 8.4, 147.9)), Vector((sign * 18.6, 8.2, 142.4))
+        rows = []
+        for k in range(18):
+            t = k / 17
+            guess = p0.lerp(p1, t) + Vector((0, 0, 2.0))
+            a_pt, a_n = closest_on(torso, guess, 0)
+            b_pt, b_n = closest_on(sleeve, guess, 0)
+            pt, n = (a_pt, a_n) if a_pt.z >= b_pt.z else (b_pt, b_n)
+            rows.append((pt + n * 0.4, n))
+        verts, uvs = [], []
+        for k, (pt, n) in enumerate(rows):
+            nxt = rows[min(k + 1, len(rows) - 1)][0] - rows[max(k - 1, 0)][0]
+            across = n.cross(nxt).normalized()
+            w = 1.35 * (1 - 0.25 * k / (len(rows) - 1))
+            verts += [pt - across * w, pt + across * w]
+            uvs += [(0, k / 17), (1, k / 17)]
+        faces = [(2 * k, 2 * k + 1, 2 * k + 3, 2 * k + 2) for k in range(len(rows) - 1)]
+        strap = tag(build_mesh('Shoulder strap', verts, faces, uvs, strap_mat), b)
+        recalc_normals(strap)
+        obs.append(strap)
+        for e in (0, 1):
+            edge = [verts[2 * k + e] for k in range(len(rows))]
+            obs.append(tag(tube('Strap piping', edge, 0.17, mats['gold'], sides=5), b))
+        pt, n = rows[1]
+        obs.append(tag(tube('Strap button', [pt + n * 0.1, pt + n * 0.55], 0.62, mats['gold'], sides=10), b))
+    return obs
+
+
+def trouser_lines(mats, kind):
+    """Gold line down the outside of each trouser leg (carnival), or a gold line
+    strung with small stars (starlight), as in the character art."""
+    from .lower import leg_points, leg_radius
+    obs = []
+    for sign in (1, -1):
+        b = 'legline' + ('L' if sign > 0 else 'R')
+        pts = [p for p in leg_points(sign) if 31.0 < p.z < 93.0]
+        line = []
+        for i, p in enumerate(pts):
+            d = (pts[min(i + 1, len(pts) - 1)] - pts[max(i - 1, 0)]).normalized()
+            out = Vector((sign, 0.15, 0))
+            out = (out - d * out.dot(d)).normalized()
+            line.append(p + out * (leg_radius(p.z) * 1.04 + 0.15))
+        obs.append(tag(tube('Trouser line', resample(line, 60), 0.16, mats['gold'], sides=5), b))
+        if kind == 'starlight':
+            for k in range(2, len(line) - 1, 3):
+                g, outline = star_gem('Trouser star', line[k] + Vector((sign * 0.25, 0, 0)), Vector((sign, 0.2, 0)),
+                                      Vector((0, 0, 1)), 0.75, mats['gold'], b)
+                obs.append(g)
     return obs
