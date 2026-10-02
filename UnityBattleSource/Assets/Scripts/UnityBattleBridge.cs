@@ -487,6 +487,7 @@ public sealed class UnityBattleBridge : MonoBehaviour
         if (action == "tempo-mask") { CombatTempoPresentation.Get(battle).MaskCast(); return; }
         if (action.StartsWith("combat-speed:")) { battle.SetCombatSpeed(action.Substring("combat-speed:".Length)); return; }
         if (action.StartsWith("tempo-sample:")) { battle.SetTempoSample(action.Substring("tempo-sample:".Length)); return; }
+        if (action.StartsWith("hero-outfit:")) { CombatTempoPresentation.Get(battle).SetOutfit(action.Substring("hero-outfit:".Length)); return; }
         if (action.StartsWith("enemy-light:")) { CombatTempoPresentation.Get(battle).Light(action.Substring("enemy-light:".Length)); return; }
         if (action.StartsWith("light-contact:")) { CombatTempoPresentation.Get(battle).LightContact(action.Substring("light-contact:".Length)); return; }
         if (action.StartsWith("light-cancel:")) { CombatTempoPresentation.Get(battle).CancelLight(action.Substring("light-cancel:".Length)); return; }

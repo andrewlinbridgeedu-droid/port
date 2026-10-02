@@ -1,0 +1,13 @@
+{
+  "platform": "StandaloneOSX",
+  "notIOS": true,
+  "applicationPath": "/Volumes/andrew's SSD/Mistport-hero-v2/preview/MistportHeroV2-reviewable.app",
+  "executableSHA256": "22be28d087ddd7f0e0ac3bdfedbc0277ac01ac78fee577a7c54e33e00af36207",
+  "logPath": "/Volumes/andrew's SSD/Mistport-hero-v2/unity-build-reviewable.log",
+  "logSHA256": "53bebed33aa604b4df9b807151f38f20eb38b80a6625fe1baceef3415465b099",
+  "v2CaptureDirectory": "/Volumes/andrew's SSD/Mistport-hero-v2/runtime-v2-reviewed",
+  "v1CaptureDirectory": "/Volumes/andrew's SSD/Mistport-hero-v2/runtime-v1-reviewed",
+  "v1OriginalMetadataRestored": true,
+  "userVisualApproval": false,
+  "installed": false
+}

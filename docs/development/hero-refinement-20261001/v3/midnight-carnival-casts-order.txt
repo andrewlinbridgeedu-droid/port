@@ -1,0 +1,7 @@
+file 'midnight-carnival-CastMaskFlick.mp4'
+file 'midnight-carnival-CastMaskTurn.mp4'
+file 'midnight-carnival-CastTwinSweep.mp4'
+file 'midnight-carnival-CastTwinCross.mp4'
+file 'midnight-carnival-CastFinaleLift.mp4'
+file 'midnight-carnival-CastFinaleThrow.mp4'
+file 'midnight-carnival-CastCardFan.mp4'

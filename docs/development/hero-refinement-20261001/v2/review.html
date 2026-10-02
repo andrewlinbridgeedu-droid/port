@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>主角重做 v2 · 三套服装与共享动作</title>
+<style>
+:root{color-scheme:dark}body{margin:0 auto;max-width:1320px;padding:24px;background:#151a22;color:#eee3cc;font:16px/1.65 system-ui}h1{font-size:27px}h2{font-size:21px;margin-top:32px}p{max-width:1000px}.note{color:#bdb7aa}a{color:#e2c585}button{padding:10px 15px;border:1px solid #85715a;border-radius:7px;background:#26313d;color:#eee3cc;margin:4px;cursor:pointer}button[aria-pressed=true]{background:#584664;border-color:#e2c585}.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px}figure{margin:0}img,video{width:100%;border-radius:9px;background:#242932}video{max-height:78vh;object-fit:contain}figcaption{padding:8px;color:#cabb9e}.alert{border:1px solid #876843;padding:12px 18px}.choices{margin:18px 0}details{margin:20px 0}summary{cursor:pointer}@media(max-width:650px){body{padding:14px}.pair{grid-template-columns:1fr}}
+</style>
+<h1>主角重做 v2：三套衣装，共用施法动作</h1>
+<p class="alert">此页保留你刚看的 v2；按“更精细、动作略大、弱化 3D 感”制作的 <a href="../v3/review.html">v3 新版在这里</a>。</p>
+<p>以你给的带贴图 Meshy 模型为底子，重做发束、长衣摆、内衬、刺绣、袖口、宝石和链饰。服装剪裁与配饰分别制作，场景保持原样。</p>
+<p class="alert">这里展示真实 3D 模型。Blender 图是模型检查渲染，Unity 图与视频来自实际动画播放；尚未装到 iPhone，等你复看。</p>
+<div class="choices" id="outfits"><button data-id="mistport-night" data-key="night" aria-pressed="true">雾港夜行</button><button data-id="starlight-magician" data-key="starlight" aria-pressed="false">星辉魔术师</button><button data-id="midnight-carnival" data-key="carnival" aria-pressed="false">午夜嘉年华</button></div>
+<h2>Blender 中的实际模型</h2>
+<div class="pair"><figure><img id="studio" src="night-blender-rear.png" alt="实际模型背面"><figcaption id="studio-title">雾港夜行 · 后背</figcaption></figure><figure><img id="quarter" src="night-blender-quarter.png" alt="实际模型侧后方"><figcaption>侧后方：衣摆厚度、褶皱和层次</figcaption></figure></div>
+<h2>Unity 中的实际背影</h2>
+<div class="pair"><figure><img src="rejected-v1-close.png" alt="已被指出粗糙的 v1"><figcaption>此前 v1 · 已被指出精细度不足</figcaption></figure><figure><img id="hero" src="mistport-night-close.png" alt="Meshy v2 背影"><figcaption id="hero-title">Meshy v2 · 雾港夜行</figcaption></figure></div>
+<h2>七种施法动作</h2>
+<p class="note">每套衣装均实际播放同一组七动作。翻面／递面、展开／交错、抬幕／掷幕、展牌；快速释放后带回手腕与衣摆。</p>
+<div id="motions"><button data-clip="seven-casts">连续查看</button><button data-clip="CastMaskFlick">翻出假面</button><button data-clip="CastMaskTurn">转身递面</button><button data-clip="CastTwinSweep">双影展开</button><button data-clip="CastTwinCross">双影交错</button><button data-clip="CastFinaleLift">抬幕收场</button><button data-clip="CastFinaleThrow">掷幕谢场</button><button data-clip="CastCardFan">展牌</button></div>
+<video id="motion" src="mistport-night-seven-casts.mp4" controls loop muted playsinline preload="metadata"></video>
+<details><summary>动作前后对比：左 v1，右 Meshy v2</summary><p class="note">同一个 Unity 场景、相同全身取景规则（45° 视角，按各模型当前高度取景），保留每段全部 48 帧，没有抽帧或快放。</p><select id="comparison-choice"><option value="CastMaskFlick">翻出假面</option><option value="CastMaskTurn">转身递面</option><option value="CastTwinSweep">双影展开</option><option value="CastTwinCross">双影交错</option><option value="CastFinaleLift">抬幕收场</option><option value="CastFinaleThrow">掷幕谢场</option><option value="CastCardFan">展牌</option></select><video id="comparison" src="CastMaskFlick-comparison.mp4" controls loop muted playsinline preload="metadata"></video></details>
+<details><summary>正式战斗机位：场景保持原样</summary><img id="battle" src="mistport-night-battle.png" alt="正式战斗机位"></details>
+<details><summary>你指定的精细度参考</summary><img src="../hero-detail-target-v2.png" alt="用户参考图"></details>
+<p><a href="HeroMeshy-v2.blend">可编辑 Blender 原件</a> · <a href="texture-prompts.json">ImageGen 完整提示词</a> · <a href="unity-verification.txt">Unity 运行检查</a> · <a href="README.md">本版制作与范围</a></p>
+<script>
+let outfit='mistport-night',clip='seven-casts';
+document.querySelectorAll('#outfits button').forEach(b=>b.onclick=()=>{outfit=b.dataset.id;document.querySelectorAll('#outfits button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));document.getElementById('studio').src=b.dataset.key+'-blender-rear.png';document.getElementById('quarter').src=b.dataset.key+'-blender-quarter.png';document.getElementById('studio-title').textContent=b.textContent+' · 后背';document.getElementById('hero').src=outfit+'-close.png';document.getElementById('battle').src=outfit+'-battle.png';document.getElementById('hero-title').textContent='Meshy v2 · '+b.textContent;document.getElementById('motion').src=outfit+'-'+clip+'.mp4';});
+document.querySelectorAll('#motions button').forEach(b=>b.onclick=()=>{clip=b.dataset.clip;let v=document.getElementById('motion');v.src=outfit+'-'+clip+'.mp4';v.play();});
+document.getElementById('comparison-choice').onchange=e=>{let v=document.getElementById('comparison');v.src=e.target.value+'-comparison.mp4';v.play();};
+</script></html>

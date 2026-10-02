@@ -1,0 +1,58 @@
+{
+  "source": "/Users/andrewlin/Downloads/Meshy_AI__1001190101_texture.glb",
+  "sha256": "044c3f2f687e1dcac1a6897a84bfb742b31f0dde0ef9cde5dbae1bf9a5cdd5b1",
+  "bounds_min": [
+    -0.39530301094055176,
+    -0.2470649927854538,
+    -1.0
+  ],
+  "bounds_max": [
+    0.39530301094055176,
+    0.2470649927854538,
+    1.0
+  ],
+  "meshes": [
+    {
+      "name": "mesh_node",
+      "vertices": 7504,
+      "triangles": 9653,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "vertex_groups": 0,
+      "modifiers": []
+    }
+  ],
+  "images": [
+    {
+      "name": "base_color",
+      "size": [
+        4096,
+        4096
+      ]
+    },
+    {
+      "name": "emissive",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "name": "metallic_roughness",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "name": "normal",
+      "size": [
+        4096,
+        4096
+      ]
+    }
+  ],
+  "armatures": 0,
+  "animations": 0
+}

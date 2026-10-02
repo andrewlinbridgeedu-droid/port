@@ -1,0 +1,20 @@
+{
+  "platform": "StandaloneOSX",
+  "notIOS": true,
+  "applicationPath": "/Volumes/andrew's SSD/Mistport-hero-v2/preview/MistportHeroV3-palette.app",
+  "executableSHA256": "47cfb05e7b095ef8b554fe38560f09ad0d8090891ded538f28a0191d1b4c6c19",
+  "playerDataSHA256": {
+    "Contents/Resources/Data/globalgamemanagers": "98ef0b02289aaa61d0a9679f472a1d582b43640d8078f8adc7c5e7e6e09bf121",
+    "Contents/Resources/Data/resources.assets": "08b3e395b7ddf10ee263be2a3294df6f5f3599a04702262e87cc02d3caa54013",
+    "Contents/Resources/Data/resources.assets.resS": "d8626fbc660e57860493d3e6bced56a05ba8db87cc4f32ea85497cf6572a67b5",
+    "Contents/Resources/Data/Managed/Assembly-CSharp.dll": "5ccb412f33022fbee12c979e31bcacd0a670ed18df46e6b8576a6cf4326ed3b2"
+  },
+  "logPath": "/Volumes/andrew's SSD/Mistport-hero-v2/unity-build-v3-palette.log",
+  "logSHA256": "6db7a99491a27f1cedf408d1eb9a4f9d1f8ea899dddaef2b3174083568d93f1c",
+  "v3CaptureDirectory": "/Volumes/andrew's SSD/Mistport-hero-v2/runtime-v3-palette-delivery",
+  "v2CaptureDirectory": "/Volumes/andrew's SSD/Mistport-hero-v2/runtime-v2-palette-reference",
+  "v2ComparisonUsesSameBuiltPlayer": true,
+  "originalDownloadsUnchanged": true,
+  "userVisualApproval": false,
+  "installed": false
+}

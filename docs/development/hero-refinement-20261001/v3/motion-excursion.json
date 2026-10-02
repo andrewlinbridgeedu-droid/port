@@ -1,0 +1,48 @@
+{
+  "method": "Actual RightHand maximum world displacement from sequence start; no visual approval. IK and pose alignment can limit/change the exact ratio.",
+  "targetMultiplier": 1.1,
+  "gestures": [
+    {
+      "gesture": "CastMaskFlick",
+      "v2MaxHandExcursionM": 0.184,
+      "v3MaxHandExcursionM": 0.205,
+      "observedChangePercent": 11.4
+    },
+    {
+      "gesture": "CastMaskTurn",
+      "v2MaxHandExcursionM": 0.373,
+      "v3MaxHandExcursionM": 0.412,
+      "observedChangePercent": 10.5
+    },
+    {
+      "gesture": "CastTwinSweep",
+      "v2MaxHandExcursionM": 0.318,
+      "v3MaxHandExcursionM": 0.351,
+      "observedChangePercent": 10.4
+    },
+    {
+      "gesture": "CastTwinCross",
+      "v2MaxHandExcursionM": 0.364,
+      "v3MaxHandExcursionM": 0.401,
+      "observedChangePercent": 10.2
+    },
+    {
+      "gesture": "CastFinaleLift",
+      "v2MaxHandExcursionM": 0.368,
+      "v3MaxHandExcursionM": 0.408,
+      "observedChangePercent": 10.9
+    },
+    {
+      "gesture": "CastFinaleThrow",
+      "v2MaxHandExcursionM": 0.294,
+      "v3MaxHandExcursionM": 0.324,
+      "observedChangePercent": 10.2
+    },
+    {
+      "gesture": "CastCardFan",
+      "v2MaxHandExcursionM": 0.185,
+      "v3MaxHandExcursionM": 0.203,
+      "observedChangePercent": 9.7
+    }
+  ]
+}
