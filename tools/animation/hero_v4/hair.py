@@ -4,8 +4,8 @@ import math, random
 from mathutils import Vector, Matrix
 from .geom import build_mesh, grid_faces, smoothstep, lerp, solidify
 
-C = Vector((0, 8.4, 161.8))
-R = Vector((10.1, 11.1, 12.4))
+C = Vector((0, 8.3, 162.8))
+R = Vector((8.75, 9.7, 10.9))
 
 
 def shell(pol, az, lift=0.0):
@@ -65,7 +65,7 @@ def clump(spec, rng):
         s = k / (len(spine) - 1)
         # Full lock: wide from the root, keeping its width down past the skull,
         # then narrowing into a long sharp point.
-        shape = (0.62 + 0.38 * math.sin(math.pi * min(1.0, s / 0.35) * 0.5)) * (1 - smoothstep(0.58, 1.0, s) ** 0.9)
+        shape = (0.62 + 0.38 * math.sin(math.pi * min(1.0, s / 0.35) * 0.5)) * (1 - smoothstep(0.66, 1.0, s) ** 0.85)
         half = w * shape
         for i in range(cols):
             x = -1 + 2 * i / (cols - 1)
@@ -87,34 +87,34 @@ def layout(seed=7):
 
     # A: broad back layer, crown to nape, falling past the skull to the collar.
     for az in [90, 72, 108, 54, 126, 36, 144, 18, 162]:
-        specs.append(dict(az=az + j(-3, 3), pol0=20 + j(-4, 4), pol1=118, w=4.4 + j(-0.3, 0.5),
-                          lift=(0.5, 1.3), hang=5.2 + j(-1.0, 1.6), hang_pol=104 + j(-3, 3),
-                          flick=1.8 + j(-0.4, 1.0), side=j(-1.8, 1.8), ridge=1.25, curl=j(-6, 6)))
+        specs.append(dict(az=az + j(-3, 3), pol0=20 + j(-4, 4), pol1=118, w=3.9 + j(-0.3, 0.4),
+                          lift=(0.4, 1.1), hang=7.2 + j(-1.0, 1.2), hang_pol=104 + j(-3, 3),
+                          flick=0.6 + j(-0.2, 0.4), side=j(-0.8, 0.8), ridge=1.05, curl=j(-6, 6)))
     # B: second layer with more lift and livelier, spikier tips.
-    for az in [81, 99, 63, 117, 45, 135, 27, 153, 9, 171]:
-        specs.append(dict(az=az + j(-4, 4), pol0=13 + j(-3, 4), pol1=112, w=3.9 + j(-0.3, 0.5),
-                          lift=(1.3, 2.4), hang=3.6 + j(-0.6, 1.6), hang_pol=98 + j(-4, 4),
-                          flick=2.4 + j(-0.5, 1.2), side=j(-2.2, 2.2), ridge=1.15, curl=j(-10, 10)))
+    for az in [84, 96, 72, 108, 60, 120, 48, 132, 36, 144, 22, 158, 8, 172]:
+        specs.append(dict(az=az + j(-4, 4), pol0=13 + j(-3, 4), pol1=112, w=2.7 + j(-0.3, 0.4),
+                          lift=(1.1, 2.0), hang=4.8 + j(-0.6, 1.4), hang_pol=98 + j(-4, 4),
+                          flick=0.9 + j(-0.3, 0.5), side=j(-1.0, 1.0), ridge=0.95, curl=j(-10, 10)))
     # C: crown tufts fanning from the whorl, tips lifting off the back of the head.
-    for az in [90, 66, 114, 42, 138, 18, 162]:
-        specs.append(dict(az=az + j(-6, 6), pol0=10 + j(0, 6), pol1=78 + j(-6, 8), w=4.0 + j(-0.3, 0.5),
-                          lift=(2.3, 3.2), hang=2.4 + j(0, 1.4), hang_pol=72 + j(-5, 6), follow=0.75,
-                          flick=2.0 + j(0, 1.0), side=j(-1.6, 1.6), ridge=1.1, curl=j(-14, 14)))
+    for az in [90, 74, 106, 58, 122, 42, 138, 26, 154, 10, 170]:
+        specs.append(dict(az=az + j(-6, 6), pol0=10 + j(0, 6), pol1=78 + j(-6, 8), w=2.4 + j(-0.3, 0.4),
+                          lift=(2.2, 3.1), hang=2.4 + j(0, 1.4), hang_pol=72 + j(-5, 6), follow=0.75,
+                          flick=1.0 + j(0, 0.5), side=j(-1.0, 1.0), ridge=0.9, curl=j(-14, 14)))
     # E: sides over the ears, flaring out at the tips.
     for az in [6, -14, 26, -34, 174, 194, 154, 214]:
-        specs.append(dict(az=az + j(-4, 4), pol0=20 + j(-3, 3), pol1=112, w=4.0 + j(-0.3, 0.4),
-                          lift=(1.2, 2.2), hang=4.6 + j(-0.6, 1.4), hang_pol=100,
-                          flick=2.2 + j(0, 1.0), side=j(-1.4, 1.4), ridge=1.0, curl=j(-8, 8)))
+        specs.append(dict(az=az + j(-4, 4), pol0=20 + j(-3, 3), pol1=112, w=3.5 + j(-0.3, 0.4),
+                          lift=(1.0, 1.8), hang=5.6 + j(-0.6, 1.2), hang_pol=100,
+                          flick=0.8 + j(0, 0.4), side=j(-0.8, 0.8), ridge=1.0, curl=j(-8, 8)))
     # F: fringe for the quarter view.
     for az in [212, 234, 256, 278, 300, 322]:
-        specs.append(dict(az=az + j(-4, 4), pol0=14 + j(-3, 3), pol1=94, w=3.4 + j(-0.3, 0.4),
+        specs.append(dict(az=az + j(-4, 4), pol0=14 + j(-3, 3), pol1=94, w=3.0 + j(-0.3, 0.4),
                           lift=(1.3, 1.8), hang=2.6 + j(0, 1.2), hang_pol=86,
                           flick=0.8 + j(0, 0.6), side=j(-1.4, 1.4), ridge=0.5, curl=j(-10, 10)))
     # G: fine nape wisps under the first layer.
     for az in [80, 100, 62, 118]:
-        specs.append(dict(az=az + j(-5, 5), pol0=94 + j(-4, 2), pol1=118, w=2.4 + j(-0.2, 0.3),
-                          lift=(0.3, 0.6), hang=4.6 + j(-0.4, 1.2), hang_pol=108,
-                          flick=1.4 + j(-0.3, 0.8), side=j(-1.6, 1.6), ridge=0.35, rows=14))
+        specs.append(dict(az=az + j(-5, 5), pol0=94 + j(-4, 2), pol1=118, w=2.9 + j(-0.2, 0.3),
+                          lift=(0.3, 0.6), hang=7.6 + j(-0.4, 1.0), hang_pol=108,
+                          flick=0.4 + j(-0.2, 0.3), side=j(-0.8, 0.8), ridge=0.4, rows=14))
     return specs, rng
 
 
@@ -125,6 +125,23 @@ def build_hair(material, seed=7):
         ob = clump(spec, rng)
         ob.data.materials.append(material)
         obs.append(ob)
+        # Split tips: thinner strands along the lock's edges part from it near the end,
+        # so the lock ends in two or three points instead of one.
+        if spec.get('hang', 0) > 2.0 and spec['w'] > 2.6:
+            for edge in (-1, 1):
+                if rng.random() < 0.5:
+                    continue
+                child = dict(spec)
+                child['az'] = spec['az'] + edge * spec['w'] * 2.0
+                child['w'] = spec['w'] * 0.5
+                child['lift'] = (spec['lift'][0] + 0.12, spec['lift'][1] + 0.2)
+                child['hang'] = spec['hang'] * rng.uniform(0.88, 1.02)
+                child['side'] = spec.get('side', 0.0) + edge * rng.uniform(0.2, 0.6)
+                child['flick'] = spec.get('flick', 0.0) + rng.uniform(0.0, 0.3)
+                child['ridge'] = spec.get('ridge', 0.5) * 0.7
+                ob = clump(child, rng)
+                ob.data.materials.append(material)
+                obs.append(ob)
     # Closed scalp under the clumps so no skin shows between them.
     verts, uvs = [], []
     rows, cols = 18, 40

@@ -5,8 +5,8 @@ from .geom import (superellipse, smoothstep, lerp, grid_faces, build_mesh, frame
                    catmull, resample)
 from . import skeleton as sk
 
-HEAD_C = Vector((0, 8.4, 161.6))
-HEAD_R = Vector((8.3, 9.3, 10.9))
+HEAD_C = Vector((0, 8.3, 162.6))
+HEAD_R = Vector((7.3, 8.2, 9.6))
 
 
 def build_head(material, cols=40, rows=28):
@@ -38,15 +38,15 @@ def build_head(material, cols=40, rows=28):
 
 
 def build_neck(material):
-    pts = [Vector((0, 8.7, 139.0)), Vector((0, 8.6, 146.0)), Vector((0, 8.3, 153.0)), Vector((0, 8.0, 157.5))]
-    return tube('Neck', catmull(pts, 4), lambda t: lerp(4.35, 3.75, t), material, sides=20,
+    pts = [Vector((0, 8.7, 139.0)), Vector((0, 8.6, 146.0)), Vector((0, 8.3, 153.5)), Vector((0, 8.0, 158.5))]
+    return tube('Neck', catmull(pts, 4), lambda t: lerp(3.95, 3.35, t), material, sides=20,
                 hint=Vector((0, 1, 0)), caps=False, flat=1.04)
 
 
 def build_ears(material):
     obs = []
     for sign in (1, -1):
-        c = Vector((sign * 8.05, 8.3, 160.2))
+        c = Vector((sign * 7.1, 8.3, 161.3))
         verts, uvs = [], []
         rows, cols = 8, 12
         for j in range(rows + 1):
@@ -77,7 +77,7 @@ def leg_points(sign, samples=36):
 
 
 def leg_radius(z):
-    keys = [(96, 8.6), (86, 8.1), (75, 7.3), (64, 6.5), (54, 5.7), (49, 5.4), (44, 5.3), (38, 4.95), (30, 4.4)]
+    keys = [(96, 8.0), (86, 7.5), (75, 6.7), (64, 5.9), (54, 5.2), (49, 4.95), (44, 4.85), (38, 4.5), (30, 4.0)]
     for (z0, r0), (z1, r1) in zip(keys, keys[1:]):
         if z >= z1:
             t = (z0 - z) / (z0 - z1)
@@ -129,18 +129,18 @@ def build_pelvis(material, cols=48):
 
 # ------------------------------------------------------------- boots
 FOOT = [  # y, half width, sole top z, top z
-    (7.4, 0.9, 3.9, 9.5),
-    (6.6, 3.3, 3.7, 12.3),
-    (5.0, 4.3, 3.5, 13.4),
-    (2.0, 4.55, 3.0, 13.0),
-    (-1.5, 4.6, 2.2, 11.3),
-    (-5.0, 4.8, 1.35, 9.0),
-    (-8.5, 4.95, 0.95, 7.1),
-    (-11.5, 4.75, 0.9, 6.2),
-    (-14.0, 4.1, 0.95, 5.5),
-    (-16.0, 3.0, 1.15, 4.8),
-    (-17.3, 1.6, 1.4, 4.0),
-    (-17.9, 0.4, 1.8, 3.2),
+    (7.0, 0.8, 4.4, 9.5),
+    (6.2, 3.0, 4.2, 12.0),
+    (4.6, 3.9, 4.0, 13.0),
+    (1.8, 4.1, 3.4, 12.6),
+    (-1.5, 4.15, 2.5, 10.9),
+    (-5.0, 4.3, 1.4, 8.6),
+    (-8.5, 4.4, 0.95, 6.8),
+    (-11.5, 4.2, 0.9, 5.9),
+    (-14.0, 3.6, 0.95, 5.2),
+    (-16.0, 2.6, 1.15, 4.5),
+    (-17.2, 1.4, 1.4, 3.8),
+    (-17.8, 0.35, 1.8, 3.1),
 ]
 
 
@@ -186,7 +186,7 @@ def build_boot_shaft(sign, material, sides=30):
         u, v = frame(d, Vector((0, 1, 0)) if prev is None else prev)
         prev = u
         # Calf curve under the leather, slimming to the ankle; a rolled top edge.
-        r = lerp(5.15, 4.35, smoothstep(0.0, 1.0, t)) + 0.25 * math.sin(math.pi * min(1, t / 0.55)) * (1 - t)
+        r = lerp(4.75, 3.95, smoothstep(0.0, 1.0, t)) + 0.22 * math.sin(math.pi * min(1, t / 0.55)) * (1 - t)
         r += 0.3 * math.exp(-(t / 0.04) ** 2)
         for k in range(sides):
             ang = k / sides * math.tau

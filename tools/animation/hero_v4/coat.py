@@ -11,11 +11,11 @@ from . import atlas
 TORSO = [
     (95.0, 16.2, 10.0, 5.6, 2.25),
     (100.0, 14.9, 9.3, 5.6, 2.25),
-    (104.0, 13.6, 8.7, 5.7, 2.25),
-    (112.0, 14.4, 9.3, 6.0, 2.25),
-    (120.0, 15.8, 10.0, 6.4, 2.3),
-    (128.0, 17.0, 10.5, 6.8, 2.3),
-    (134.0, 17.0, 10.3, 7.2, 2.3),
+    (104.0, 13.0, 8.5, 5.7, 2.25),
+    (112.0, 14.0, 9.2, 6.0, 2.25),
+    (120.0, 16.1, 10.0, 6.4, 2.3),
+    (128.0, 17.6, 10.5, 6.8, 2.3),
+    (134.0, 17.5, 10.3, 7.2, 2.3),
     (139.0, 15.6, 9.6, 7.6, 2.2),
 ]
 NECK_RING = (6.7, 6.3, 8.2, 147.6)  # half width, half depth, centre y, z
@@ -30,11 +30,18 @@ def torso_section(z):
 
 
 def back_relief(x, z):
-    """Shoulder blades and a soft spine channel, applied on the back half."""
+    """Shoulder blades, a soft spine channel and the cloth's own folds on the back:
+    diagonal drag folds from the armpits toward the blades and fine pull lines
+    above the waist seam."""
     blades = 0.9 * math.exp(-((abs(x) - 8.0) / 5.0) ** 2 - ((z - 127.0) / 7.5) ** 2)
     spine = -0.45 * math.exp(-(x / 2.2) ** 2) * smoothstep(104, 112, z) * (1 - smoothstep(134, 140, z))
     waist = -0.35 * math.exp(-((z - 104.0) / 5.0) ** 2)
-    return blades + spine + waist
+    ax = abs(x)
+    armpit = 0.32 * math.sin((ax * 0.55 + z * 0.45) * 1.25) * math.exp(-((ax - 13.5) / 3.2) ** 2
+                                                                        - ((z - 125.0) / 6.0) ** 2)
+    pull = 0.14 * math.sin(z * 2.1 + ax * 0.35) * smoothstep(101.0, 104.0, z) * (1 - smoothstep(108.0, 113.0, z)) \
+        * smoothstep(1.5, 4.0, ax)
+    return blades + spine + waist + armpit + pull
 
 
 def torso_rings(cols=64):
@@ -319,7 +326,7 @@ def sleeve_path(sign, samples=40):
 
 def sleeve_radius(t):
     # Puffed cap, slim upper arm, ease at the elbow, tapering to the cuff.
-    r = 6.1 - 1.2 * smoothstep(0.0, 0.25, t) - 0.35 * smoothstep(0.45, 0.95, t)
+    r = 5.6 - 0.9 * smoothstep(0.0, 0.25, t) - 0.35 * smoothstep(0.45, 0.95, t)
     r += 0.25 * math.exp(-((t - 0.5) / 0.06) ** 2)
     return r
 
@@ -332,7 +339,7 @@ def build_sleeve(sign, material, sides=28):
     a, e, w = arm_chain(sign)
     hole_c = Vector((sign * 15.4, 7.9, 134.6))
     hole_n = Vector((sign * 1.0, 0.0, 0.42)).normalized()
-    hole_ry, hole_rz = 6.0, 7.3
+    hole_ry, hole_rz = 5.7, 6.6
     blend_end = 0.2
     verts, uvs, periods = [], [], []
     acc = 0.0
@@ -357,6 +364,9 @@ def build_sleeve(sign, material, sides=28):
             ang = math.pi + kk / sides * math.tau  # column 0 at the front of the arm
             fold = 0.18 * math.sin(ang * 3 + t * 9.0) * smoothstep(0.35, 0.9, t)
             crease = -0.35 * math.exp(-((t - 0.52) / 0.05) ** 2) * max(0, math.cos(ang - math.pi)) ** 2
+            # Elbow folds and soft stacking above the cuff.
+            crease += 0.22 * math.sin(t * 46.0 + math.cos(ang * 2) * 1.4) * math.exp(-((t - 0.5) / 0.07) ** 2)
+            crease += 0.2 * math.sin(t * 58.0 + ang * 1.3) * smoothstep(0.72, 0.8, t) * (1 - smoothstep(0.9, 0.97, t))
             q = centre + (ry * (1 + fold * 0.12) + crease) * math.cos(ang) * u + (rz * (1 + fold * 0.12) + crease) * math.sin(ang) * v
             verts.append(q)
             uvs.append(atlas.uv('sleeve', 24.0 + (kk / sides - 0.5) * circ, 64.0 - acc))

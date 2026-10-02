@@ -189,21 +189,42 @@ def build_details(parts, mats, style, torso, tails, sleeves_hole, outfit):
                  q + Vector((-sign * 1.3, 0, 0)), q + Vector((0, 0, 1.6))]
         obs.append(tag(tube('Waist clasp', plate, 0.3, gold, sides=6), 'hips'))
         obs.append(diamond_gem('Waist gem', q + n * 0.3, (0, 0, 1), n, 0.7, gem, 'hips'))
-        # Shoulder star medallions on the sleeve heads.
-        ring = sleeves_hole[sign]
-        top = max(ring, key=lambda p: p.z + 0.35 * p.y)
-        nrm = (top - Vector((sign * 15.4, 7.9, 134.6))).normalized()
-        star, outline = star_gem('Shoulder star', top + nrm * 0.45, nrm, Vector((sign * 0.4, 0.3, 1)), 1.55, gem,
-                                 'shoulder' + ('L' if sign > 0 else 'R'))
+        # Upper-arm medallion (as in the art): a star stone in a gold setting on the
+        # outside of the sleeve, gold scrollwork along the shoulder seam above it,
+        # and a short chain swag back toward the yoke.
+        b = 'upperarm' + ('L' if sign > 0 else 'R')
+        side = 'Left' if sign > 0 else 'Right'
+        a0, a1 = sk.head(side + 'Arm'), sk.tail(side + 'Arm')
+        axis = (a1 - a0).normalized()
+        centre = a0.lerp(a1, 0.3)
+        # Outside of the upper arm, turned a little toward the back (the camera side).
+        lateral = Vector((sign * abs(axis.z), 0.55, abs(axis.x))).normalized()
+        sleeve = next((o for o in parts if o.name == 'Sleeve ' + side), None)
+        guess = centre + lateral * 5.0
+        if sleeve is not None:
+            surf, nrm = closest_on(sleeve, guess, 0.0)
+            spot, lateral = surf, nrm.normalized()
+        else:
+            spot = guess
+        star, outline = star_gem('Arm star', spot + lateral * 0.45, lateral, -axis, 1.9, gem, b)
         obs.append(star)
-        obs.append(tag(tube('Star setting', outline + [outline[0]], 0.18, gold, sides=5),
-                       'shoulder' + ('L' if sign > 0 else 'R')))
-        for k, (a0, a1) in enumerate([(0.0, 2.6), (3.2, 5.8)]):
-            u, v = frame(nrm, Vector((0, 0, 1)))
-            arc = [top + nrm * 0.3 + (u * math.cos(a) + v * math.sin(a)) * (2.3 + 0.35 * (a - a0))
-                   for a in [lerp(a0, a1, i / 14) for i in range(15)]]
-            obs.append(tag(tube('Shoulder scroll', arc, lambda t: 0.2 * (1 - 0.5 * t) + 0.04, gold, sides=5),
-                           'shoulder' + ('L' if sign > 0 else 'R')))
+        obs.append(tag(tube('Star setting', outline + [outline[0]], 0.2, gold, sides=5), b))
+        u, v = frame(lateral, -axis)
+        # Three gold beads crowning the setting.
+        for k in (-1, 0, 1):
+            p = spot + lateral * 0.35 + v * 2.9 + u * k * 0.9
+            obs.append(tag(tube('Star bead', [p - u * 0.05, p + u * 0.05], 0.28, gold, sides=6), b))
+        ring = sleeves_hole[sign]
+        seam = sorted([p for p in ring if p.z > 136.0], key=lambda p: p.y)
+        if len(seam) > 3:
+            pts = [p + (p - Vector((sign * 15.4, 7.9, 134.6))).normalized() * 0.35 for p in seam]
+            obs.append(tag(tube('Shoulder seam piping', pts, 0.2, gold, sides=6), 'shoulder' + ('L' if sign > 0 else 'R')))
+        yoke_end, _ = on_back(torso, sign * 12.8, 136.2, 0.4)
+        swag = catmull([spot + lateral * 0.3, (spot + yoke_end) * 0.5 + Vector((0, 1.0, -4.0)), yoke_end], 8)
+        swag_bind = 'swag' + ('L' if sign > 0 else 'R')
+        obs.extend(chain('Arm chain', swag, 0.42, gold, swag_bind))
+        drop = (spot + yoke_end) * 0.5 + Vector((0, 1.2, -4.6))
+        obs.append(diamond_gem('Chain stone', drop, (0, 0, 1), (0, 1, 0), 0.6, gem, swag_bind))
     # ---- Pendants on every point of the hem (one per tail, two on the carnival cut).
     for side, (tail, edges) in tails.items():
         hem = edges['hem']
@@ -252,7 +273,7 @@ def boot_hardware(sign, mats, shaft_pts):
         c = knee.lerp(ankle, t)
         d = (ankle - knee).normalized()
         u, v = frame(d, Vector((0, 1, 0)))
-        rr = 4.95 if z > 20 else 4.75
+        rr = 4.5 if z > 20 else 4.25
         rows = []
         verts, uvs = [], []
         for j in range(3):
@@ -273,7 +294,7 @@ def boot_hardware(sign, mats, shaft_pts):
     top = shaft_pts[0]
     d = (shaft_pts[1] - shaft_pts[0]).normalized()
     u, v = frame(d, Vector((0, 1, 0)))
-    ring = [top + d * 0.3 + 5.55 * (math.cos(a) * u + math.sin(a) * v) for a in [k / 36 * math.tau for k in range(37)]]
+    ring = [top + d * 0.3 + 5.1 * (math.cos(a) * u + math.sin(a) * v) for a in [k / 36 * math.tau for k in range(37)]]
     obs.append(tag(tube('Boot rim', ring, 0.55, leather, sides=8, caps=False), 'leg' + ('L' if sign > 0 else 'R')))
     return obs
 
@@ -297,12 +318,14 @@ def thigh_strap(sign, mats):
 
 
 def earrings(mats):
+    """Long drop earrings: a hook, a fine chain and a stone, as in the art."""
     obs = []
     for sign in (1, -1):
-        c = Vector((sign * 8.7, 8.0, 156.2))
-        obs.append(tag(tube('Ear hoop', [c + Vector((0, 0, 1.2)), c + Vector((sign * 0.3, 0, 0.4)), c], 0.12,
+        c = Vector((sign * 7.35, 8.2, 158.6))
+        obs.append(tag(tube('Ear hoop', [c + Vector((0, 0.3, 1.0)), c + Vector((sign * 0.35, 0, 0.3)), c], 0.11,
                             mats['gold'], sides=5), 'head'))
-        obs.append(diamond_gem('Ear drop', c + Vector((0, 0, -1.3)), (0, 0, 1), (sign, 0.4, 0), 0.55, mats['gem'], 'head'))
+        obs.append(tag(tube('Ear chain', [c, c + Vector((0, 0, -2.4))], 0.07, mats['gold'], sides=4), 'head'))
+        obs.append(diamond_gem('Ear drop', c + Vector((0, 0, -3.6)), (0, 0, 1), (sign, 0.4, 0), 0.7, mats['gem'], 'head'))
     return obs
 
 
@@ -343,4 +366,37 @@ def epaulettes(mats, holes):
             obs.append(tag(tube('Epaulette fringe', catmull(pts, 3), lambda t: 0.2 * (1 - 0.35 * t), gold, sides=5), b))
         star, outline = star_gem('Epaulette gem', c + n * 1.1, n, across, 1.1, gem, b)
         obs.append(star)
+    return obs
+
+
+def cuff_pendants(mats, cuff_points):
+    """A short chain and a hollow gold diamond from each cuff's rear point."""
+    obs = []
+    for sign, p in cuff_points.items():
+        b = 'forearm' + ('L' if sign > 0 else 'R')
+        top = p + Vector((0, 0.4, 0))
+        obs.extend(chain('Cuff chain', [top, top + Vector((0, 0.3, -1.6)), top + Vector((0, 0.3, -2.8))], 0.32,
+                         mats['gold'], b))
+        c = top + Vector((0, 0.3, -5.0))
+        frame_pts = [c + Vector((0, 0, 1.8)), c + Vector((0.85, 0, 0)), c + Vector((0, 0, -1.8)), c + Vector((-0.85, 0, 0)),
+                     c + Vector((0, 0, 1.8))]
+        obs.append(tag(tube('Cuff pendant frame', frame_pts, 0.15, mats['gold'], sides=5), b))
+        obs.append(diamond_gem('Cuff pendant stone', c, (0, 0, 1), (0, 1, 0), 0.55, mats['gem'], b))
+    return obs
+
+
+def boot_pendants(sign, mats):
+    """An amethyst drop on the outside of each boot and a gold heel edge."""
+    s = sk.side_name(sign)
+    knee, ankle = sk.tail(s + 'UpLeg'), sk.tail(s + 'Leg')
+    t = (knee.z - 22.5) / (knee.z - ankle.z)
+    c = knee.lerp(ankle, t) + Vector((sign * 4.9, 0.4, 0))
+    b = 'leg' + ('L' if sign > 0 else 'R')
+    obs = [tag(tube('Boot pendant ring', [c + Vector((0, 0, 0.4)), c + Vector((sign * 0.3, 0, 0)), c + Vector((0, 0, -0.5))],
+                    0.1, mats['gold'], sides=4), b)]
+    obs.append(diamond_gem('Boot pendant', c + Vector((sign * 0.2, 0, -2.0)), (0, 0, 1), (sign, 0.3, 0), 0.7,
+                           mats['gem'], b))
+    heel = [Vector((ankle.x + sign * 3.9 * math.cos(a), 4.6 + 2.4 * math.sin(a), 3.0)) for a in
+            [lerp(-math.pi / 2, math.pi / 2, k / 16) for k in range(17)]]
+    obs.append(tag(tube('Heel edge', heel, 0.16, mats['gold'], sides=5), b))
     return obs

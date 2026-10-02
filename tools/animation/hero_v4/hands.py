@@ -61,8 +61,8 @@ def build_hand(sign, material):
     verts, uvs = [], []
     for j in range(rows):
         t = j / (rows - 1)
-        width = lerp(2.9, 4.1, smoothstep(0, 0.8, t))
-        thick = lerp(1.75, 1.35, t)
+        width = lerp(2.5, 3.6, smoothstep(0, 0.8, t))
+        thick = lerp(1.45, 1.1, t)
         c = wrist + L * (t * 8.4) - P * 0.15
         for i in range(cols):
             th = i / cols * math.tau
@@ -77,7 +77,7 @@ def build_hand(sign, material):
     obs.append(build_mesh('Glove palm', verts, faces, uvs, material))
     # Fingers: index (thumb side) to little finger.
     knuckle = wrist + L * 8.2
-    fingers = [(2.75, 7.4, 0.95, 7), (0.92, 8.1, 0.98, 9), (-0.92, 7.6, 0.93, 12), (-2.65, 6.1, 0.83, 16)]
+    fingers = [(2.45, 7.2, 0.80, 7), (0.82, 7.9, 0.82, 9), (-0.82, 7.4, 0.78, 12), (-2.35, 5.9, 0.70, 16)]
     for off, length, rad, curl in fingers:
         base = knuckle + W * off - P * 0.1
         segs = [0.46, 0.30, 0.24]
@@ -104,7 +104,7 @@ def build_hand(sign, material):
         for k in range(1, 4):
             pts.append(p + d * seg * k / 3)
         p = pts[-1]
-    obs.append(capsule('Glove thumb', pts, lambda t: 1.18 * (1 - 0.25 * t), material, sides=10))
+    obs.append(capsule('Glove thumb', pts, lambda t: 1.0 * (1 - 0.25 * t), material, sides=10))
     return obs, (wrist, L, P, W)
 
 

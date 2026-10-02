@@ -17,8 +17,8 @@ ROOT = Path(argv[0]).resolve()
 sys.path.insert(0, str(ROOT / 'tools/animation'))
 import hero_v4
 from hero_v4 import (geom, skeleton, coat, lower, looks, hair, hands, details, paint, filigree, atlas,
-                     textures)
-for m in (geom, skeleton, coat, lower, looks, hair, hands, details, paint, filigree, atlas, textures):
+                     textures, rig as rigmod)
+for m in (geom, skeleton, coat, lower, looks, hair, hands, details, paint, filigree, atlas, textures, rigmod):
     importlib.reload(m)
 
 
@@ -34,8 +34,8 @@ TEX.mkdir(parents=True, exist_ok=True)
 # Back tails end in a point at their outer edge (as in the character art); the hem
 # rises toward the vent, where the lining is turned back.
 BASE_TAIL = dict(tip_z=15.0, hem_rise=20.0, vent_open=math.radians(42), out_deg=101.0, side_hem=23.0,
-                 flare_x=41.0, flare_back=31.0, flare_front=22.0, fold=3.6, tip_swing=6.0, hang=4.0,
-                 turnback=18.0, hem_vent=(12.0, 21.0), hem_outer=(41.0, 9.0), hem_bulge=4.5, side_flare=35.0)
+                 flare_x=41.0, flare_back=31.0, flare_front=22.0, fold=3.4, tip_swing=4.0, hang=3.6,
+                 turnback=16.0, hem_vent=(10.0, 20.0), hem_outer=(36.0, 9.0), hem_bulge=4.0, side_flare=32.0)
 STYLES = {
     'night': dict(BASE_TAIL, id='mistport-night', coat=(0.11, 0.10, 0.135), lining=(0.47, 0.30, 0.72),
                   gem=(0.62, 0.24, 0.86), sash=(0.20, 0.58, 0.58), coat_shade=(0.50, 0.45, 0.66)),
@@ -95,6 +95,8 @@ common.append(lower.build_neck(common_mat['skin']))
 common.extend(lower.build_ears(common_mat['skin']))
 common.append(lower.build_pelvis(common_mat['trousers']))
 for sign in (1, -1):
+    hand_obs, _ = hands.build_hand(sign, common_mat['skin'])
+    common.extend(hand_obs)
     ruffle = hands.build_ruffle(sign, common_mat['lace'])
     geom.solidify(ruffle, 0.12, offset=0.0)
     common.append(ruffle)
@@ -119,13 +121,6 @@ for key in OUTFITS:
     mat['gem'] = remember(P(f'V4 {key} Gem', style['gem'], shade=(0.50, 0.42, 0.72), kind='gem'))
     mat['sash'] = remember(P(f'V4 {key} Sash', style['sash'], shade=(0.56, 0.60, 0.80), kind='satin'))
     parts = []
-    if 'glove' in style:
-        glove = remember(P(f'V4 {key} Glove', style['glove'], shade=(0.74, 0.74, 0.88), kind='cloth'))
-    else:
-        glove = common_mat['glove']
-    for sign in (1, -1):
-        hand_obs, _ = hands.build_hand(sign, glove)
-        parts.extend(hand_obs)
     torso, rings = coat.build_torso(mat['coat'])
     parts.append(torso)
     col, col_top, col_fl, col_fr = coat.collar(mat['coat'])
@@ -157,12 +152,13 @@ for key in OUTFITS:
         geom.solidify(facing, 0.45, offset=-1.0)
         parts.append(facing)
         parts.append(geom.tube('Facing piping', f_outer, 0.26, mat['gold'], sides=6))
-    holes = {}
+    holes, cuff_points = {}, {}
     for sign in (1, -1):
         sl, path, end_ring, hole_ring = coat.build_sleeve(sign, mat['coat'])
         holes[sign] = hole_ring
         parts.append(sl)
         cuff, rim, root = coat.build_cuff(sign, mat['coat'])
+        cuff_points[sign] = root[len(root) // 2]
         cuff.data.materials.append(mat['coat'])
         geom.solidify(cuff, 0.35, offset=-1.0, material_offset=1)
         parts.append(cuff)
@@ -170,6 +166,9 @@ for key in OUTFITS:
         parts.append(geom.tube('Cuff piping', root, 0.22, mat['gold'], sides=6))
     parts.extend(details.build_details(parts, mat, style, torso, tails, holes, key))
     parts.extend(details.earrings(mat))
+    parts.extend(details.cuff_pendants(mat, cuff_points))
+    for sign in (1, -1):
+        parts.extend(details.boot_pendants(sign, mat))
     cape_hem_uv = None
     if style.get('capelet'):
         cape, cape_hem, cape_sides = coat.build_capelet(mat['coat'])
@@ -204,6 +203,12 @@ for key in OUTFITS:
     outfit_parts[key] = parts
 
 
+# ------------------------------------------------------------------ rig
+rig = rigmod.build_armature('HeroV4')
+rigmod.skin(rig, [o for o in scene.objects if o.type == 'MESH'])
+rigmod.pose(rig, 'BattleIdle', 0.0)
+
+
 def show_only(key):
     for k, obs in outfit_parts.items():
         for ob in obs:
@@ -216,7 +221,8 @@ def preview(out_dir):
     out.mkdir(parents=True, exist_ok=True)
     meshes = [o for o in scene.objects if o.type == 'MESH']
     thin = ('piping', 'fringe', 'seam', 'chain', 'ring', 'frame', 'setting', 'scroll', 'bezel')
-    mods = [(o, looks.add_outline(o, 0.05 if any(k in o.name.lower() for k in thin) else 0.12)) for o in meshes]
+    mods = [(o, looks.add_outline(o, 0.05 if any(k in o.name.lower() for k in thin)
+                                  else 0.06 if 'Hair' in o.name else 0.12)) for o in meshes]
     scene.render.engine = 'BLENDER_EEVEE'
     scene.render.resolution_x = 900
     scene.render.resolution_y = 1350

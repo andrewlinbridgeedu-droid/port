@@ -12,13 +12,13 @@ import numpy as np
 from . import paint, filigree, atlas
 
 PALETTES = {
-    'night': dict(coat=(0.085, 0.075, 0.105), damask=1.32, lining=(0.47, 0.30, 0.72),
+    'night': dict(coat=(0.085, 0.075, 0.105), damask=1.55, lining=(0.47, 0.30, 0.72),
                   lining_tone=(0.60, 0.44, 0.84), cuff=(0.42, 0.25, 0.68), band=None,
                   gold=(0.93, 0.72, 0.36)),
     'starlight': dict(coat=(0.93, 0.90, 0.84), damask=1.04, lining=(0.47, 0.32, 0.74),
                       lining_tone=(0.58, 0.44, 0.84), cuff=(0.12, 0.15, 0.38), band=(0.08, 0.10, 0.30),
                       gold=(0.92, 0.75, 0.42)),
-    'carnival': dict(coat=(0.085, 0.06, 0.07), damask=1.35, lining=(0.88, 0.82, 0.70),
+    'carnival': dict(coat=(0.085, 0.06, 0.07), damask=1.6, lining=(0.88, 0.82, 0.70),
                      lining_tone=(0.80, 0.72, 0.58), cuff=(0.60, 0.08, 0.11), band=(0.58, 0.07, 0.10),
                      gold=(0.95, 0.75, 0.36)),
 }
