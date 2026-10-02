@@ -5,7 +5,7 @@ from mathutils import Vector, Matrix
 from .geom import build_mesh, grid_faces, smoothstep, lerp, solidify
 
 C = Vector((0, 8.4, 161.8))
-R = Vector((9.7, 10.7, 12.1))
+R = Vector((10.1, 11.1, 12.4))
 
 
 def shell(pol, az, lift=0.0):
@@ -63,12 +63,13 @@ def clump(spec, rng):
     w = spec['w']
     for k, (p, acr, n) in enumerate(zip(spine, across, normal)):
         s = k / (len(spine) - 1)
-        # Leaf blade: narrow root, widest before the middle, long sharp point.
-        shape = (0.38 + 0.62 * math.sin(math.pi * min(1.0, s / 0.45) * 0.5)) * (1 - smoothstep(0.45, 1.0, s) ** 1.15)
+        # Full lock: wide from the root, keeping its width down past the skull,
+        # then narrowing into a long sharp point.
+        shape = (0.62 + 0.38 * math.sin(math.pi * min(1.0, s / 0.35) * 0.5)) * (1 - smoothstep(0.58, 1.0, s) ** 0.9)
         half = w * shape
         for i in range(cols):
             x = -1 + 2 * i / (cols - 1)
-            q = p + acr * x * half + n * ridge * (1 - x * x) * (1 - 0.5 * s)
+            q = p + acr * x * half + n * ridge * (1 - x * x) ** 0.7 * (1 - 0.35 * s)
             verts.append(q)
             uvs.append((i / (cols - 1), s))
     faces = grid_faces(len(spine), cols)
@@ -76,47 +77,44 @@ def clump(spec, rng):
 
 
 def layout(seed=7):
+    """Messy, voluminous short hair as in the character art: locks fan out from the
+    crown, the nape and sides flick outward in points, a few strands lift on top."""
     rng = random.Random(seed)
     specs = []
 
     def j(a, b):
         return rng.uniform(a, b)
 
-    # A: broad back layer, crown to nape, falling a little past the skull.
-    for az in [90, 71, 109, 52, 128, 34, 146, 16, 164]:
-        specs.append(dict(az=az + j(-3, 3), pol0=22 + j(-4, 4), pol1=118, w=4.1 + j(-0.3, 0.5),
-                          lift=(0.4, 1.0), hang=3.6 + j(-0.6, 1.4), hang_pol=103 + j(-3, 3),
-                          flick=1.0 + j(-0.3, 0.8), side=j(-1.4, 1.4), ridge=0.6, curl=j(-6, 6)))
-    # B: overlapping second layer, more lift, shorter, livelier tips.
-    for az in [80, 100, 61, 119, 43, 137, 25, 155]:
-        specs.append(dict(az=az + j(-4, 4), pol0=15 + j(-3, 4), pol1=112, w=3.6 + j(-0.3, 0.5),
-                          lift=(1.0, 1.9), hang=2.4 + j(-0.4, 1.4), hang_pol=98 + j(-4, 4),
-                          flick=1.6 + j(-0.4, 0.8), side=j(-1.6, 1.6), ridge=0.6, curl=j(-9, 9)))
-    # C: crown tufts lying on the back of the head, tips lifting off.
-    for az in [90, 68, 112, 46, 134]:
-        specs.append(dict(az=az + j(-5, 5), pol0=4 + j(0, 5), pol1=80 + j(-6, 8), w=3.8 + j(-0.3, 0.4),
-                          lift=(1.9, 2.7), hang=2.0 + j(0, 1.0), hang_pol=74 + j(-5, 5), follow=0.75,
-                          flick=1.4 + j(0, 0.8), side=j(-1.2, 1.2), ridge=0.55, curl=j(-12, 12)))
-    # D: crown cowlicks pointing up and back.
-    for az in [80, 100, 120]:
-        specs.append(dict(az=az + j(-6, 6), pol0=36 + j(-3, 3), pol1=14, w=2.4 + j(-0.2, 0.4),
-                          lift=(2.2, 3.4), hang=2.6 + j(0, 1.0), hang_pol=10, follow=1.0,
-                          flick=1.6 + j(0, 0.8), side=j(-0.8, 0.8), ridge=0.45, rows=14))
-    # E: sides, falling over the ears.
-    for az in [6, -14, 26, -32, 174, 194, 154, 212]:
-        specs.append(dict(az=az + j(-4, 4), pol0=22 + j(-3, 3), pol1=112, w=3.8 + j(-0.3, 0.4),
-                          lift=(1.0, 1.9), hang=4.2 + j(-0.5, 1.2), hang_pol=100,
-                          flick=0.8 + j(0, 0.6), side=j(-1.0, 1.0), ridge=0.5, curl=j(-8, 8)))
+    # A: broad back layer, crown to nape, falling past the skull to the collar.
+    for az in [90, 72, 108, 54, 126, 36, 144, 18, 162]:
+        specs.append(dict(az=az + j(-3, 3), pol0=20 + j(-4, 4), pol1=118, w=4.4 + j(-0.3, 0.5),
+                          lift=(0.5, 1.3), hang=5.2 + j(-1.0, 1.6), hang_pol=104 + j(-3, 3),
+                          flick=1.8 + j(-0.4, 1.0), side=j(-1.8, 1.8), ridge=1.25, curl=j(-6, 6)))
+    # B: second layer with more lift and livelier, spikier tips.
+    for az in [81, 99, 63, 117, 45, 135, 27, 153, 9, 171]:
+        specs.append(dict(az=az + j(-4, 4), pol0=13 + j(-3, 4), pol1=112, w=3.9 + j(-0.3, 0.5),
+                          lift=(1.3, 2.4), hang=3.6 + j(-0.6, 1.6), hang_pol=98 + j(-4, 4),
+                          flick=2.4 + j(-0.5, 1.2), side=j(-2.2, 2.2), ridge=1.15, curl=j(-10, 10)))
+    # C: crown tufts fanning from the whorl, tips lifting off the back of the head.
+    for az in [90, 66, 114, 42, 138, 18, 162]:
+        specs.append(dict(az=az + j(-6, 6), pol0=10 + j(0, 6), pol1=78 + j(-6, 8), w=4.0 + j(-0.3, 0.5),
+                          lift=(2.3, 3.2), hang=2.4 + j(0, 1.4), hang_pol=72 + j(-5, 6), follow=0.75,
+                          flick=2.0 + j(0, 1.0), side=j(-1.6, 1.6), ridge=1.1, curl=j(-14, 14)))
+    # E: sides over the ears, flaring out at the tips.
+    for az in [6, -14, 26, -34, 174, 194, 154, 214]:
+        specs.append(dict(az=az + j(-4, 4), pol0=20 + j(-3, 3), pol1=112, w=4.0 + j(-0.3, 0.4),
+                          lift=(1.2, 2.2), hang=4.6 + j(-0.6, 1.4), hang_pol=100,
+                          flick=2.2 + j(0, 1.0), side=j(-1.4, 1.4), ridge=1.0, curl=j(-8, 8)))
     # F: fringe for the quarter view.
     for az in [212, 234, 256, 278, 300, 322]:
-        specs.append(dict(az=az + j(-4, 4), pol0=16 + j(-3, 3), pol1=92, w=3.2 + j(-0.3, 0.4),
-                          lift=(1.0, 1.3), hang=1.8 + j(0, 1.0), hang_pol=86,
-                          flick=0.5 + j(0, 0.5), side=j(-1.2, 1.2), ridge=0.45, curl=j(-10, 10)))
+        specs.append(dict(az=az + j(-4, 4), pol0=14 + j(-3, 3), pol1=94, w=3.4 + j(-0.3, 0.4),
+                          lift=(1.3, 1.8), hang=2.6 + j(0, 1.2), hang_pol=86,
+                          flick=0.8 + j(0, 0.6), side=j(-1.4, 1.4), ridge=0.5, curl=j(-10, 10)))
     # G: fine nape wisps under the first layer.
     for az in [80, 100, 62, 118]:
         specs.append(dict(az=az + j(-5, 5), pol0=94 + j(-4, 2), pol1=118, w=2.4 + j(-0.2, 0.3),
-                          lift=(0.25, 0.5), hang=3.4 + j(-0.4, 1.0), hang_pol=108,
-                          flick=1.0 + j(-0.3, 0.6), side=j(-1.4, 1.4), ridge=0.3, rows=14))
+                          lift=(0.3, 0.6), hang=4.6 + j(-0.4, 1.2), hang_pol=108,
+                          flick=1.4 + j(-0.3, 0.8), side=j(-1.6, 1.6), ridge=0.35, rows=14))
     return specs, rng
 
 

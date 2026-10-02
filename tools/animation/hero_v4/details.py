@@ -133,6 +133,27 @@ def on_back(torso, x, z, push):
     return q + nn * push, nn
 
 
+def pendant(tip, gold, gem, bind, star=False):
+    """Hollow gold diamond with a small stone (as in the character art), or a
+    four-point star for the starlight coat; hung from a short ring."""
+    obs = []
+    top = tip + Vector((0, 0.35, -0.2))
+    obs.append(tag(tube('Pendant ring', [top + Vector((0, 0, 0.5)), top + Vector((0.35, 0, 0)),
+                                          top + Vector((0, 0, -0.5)), top + Vector((-0.35, 0, 0)),
+                                          top + Vector((0, 0, 0.5))], 0.12, gold, sides=5), bind))
+    c = top + Vector((0, 0, -3.0))
+    if star:
+        g, outline = star_gem('Pendant star', c, (0, 1, 0), (0, 0, 1), 1.9, gem, bind)
+        obs.append(g)
+        obs.append(tag(tube('Pendant setting', outline + [outline[0]], 0.14, gold, sides=5), bind))
+        return obs
+    frame = [c + Vector((0, 0, 2.4)), c + Vector((1.15, 0, 0)), c + Vector((0, 0, -2.4)), c + Vector((-1.15, 0, 0)),
+             c + Vector((0, 0, 2.4))]
+    obs.append(tag(tube('Pendant frame', frame, 0.2, gold, sides=6), bind))
+    obs.append(diamond_gem('Pendant stone', c, (0, 0, 1), (0, 1, 0), 0.75, gem, bind))
+    return obs
+
+
 def build_details(parts, mats, style, torso, tails, sleeves_hole, outfit):
     gold, gem = mats['gold'], mats['gem']
     obs = []
@@ -189,10 +210,11 @@ def build_details(parts, mats, style, torso, tails, sleeves_hole, outfit):
         tips = [hem[i] for i in range(1, len(hem) - 1) if hem[i].z < hem[i - 1].z and hem[i].z <= hem[i + 1].z]
         if hem[0].z < hem[1].z:
             tips.append(hem[0])
+        if hem[-1].z < hem[-2].z:
+            tips.append(hem[-1])
         bind = 'tip' + side
         for tip in tips:
-            obs.append(tassel('Tip cap', tip + Vector((0, 0.3, 0.6)), 1.6, 0.55, gold, bind))
-            obs.append(diamond_gem('Tip gem', tip + Vector((0, 0.3, -2.4)), (0, 0, 1), (0, 1, 0), 1.05, gem, bind))
+            obs.extend(pendant(tip, gold, gem, bind, star=outfit == 'starlight'))
     # ---- Sash on the left hip: a bow with two loops and two long, twisting tails.
     sash = mats['sash']
     knot, n = on_back(torso, 11.8, 101.2, 1.2)

@@ -31,20 +31,22 @@ PREVIEW = arg('--preview')
 TEX = Path(arg('--textures', str(DOC / 'textures')))
 TEX.mkdir(parents=True, exist_ok=True)
 
-BASE_TAIL = dict(tip_z=17.0, side_rise=24.0, vent_rise=6.0, vent_open=math.radians(44), flare_x=41.0,
-                 flare_back=31.0, flare_front=18.0, fold=3.0, tip_swing=8.0, hang=4.5)
+# Back tails end in a point at their outer edge (as in the character art); the hem
+# rises toward the vent, where the lining is turned back.
+BASE_TAIL = dict(tip_z=15.0, hem_rise=20.0, vent_open=math.radians(42), out_deg=101.0, side_hem=23.0,
+                 flare_x=41.0, flare_back=31.0, flare_front=22.0, fold=3.6, tip_swing=6.0, hang=4.0,
+                 turnback=18.0, hem_vent=(12.0, 21.0), hem_outer=(41.0, 9.0), hem_bulge=4.5, side_flare=35.0)
 STYLES = {
-    'night': dict(BASE_TAIL, id='mistport-night', coat=(0.11, 0.10, 0.135), lining=(0.43, 0.24, 0.70),
-                  gem=(0.62, 0.24, 0.86), sash=(0.20, 0.58, 0.58), coat_shade=(0.52, 0.47, 0.68)),
-    'starlight': dict(BASE_TAIL, id='starlight-magician', coat=(0.92, 0.89, 0.83), lining=(0.15, 0.21, 0.47),
-                      gem=(0.22, 0.47, 0.92), sash=(0.42, 0.68, 0.90), coat_shade=(0.78, 0.79, 0.90),
-                      glove=(0.93, 0.92, 0.90),
-                      tip_z=13.0, side_rise=26.0, flare_x=38.0, flare_back=29.0, fold=2.6, tip_swing=6.5,
-                      capelet=True),
-    'carnival': dict(BASE_TAIL, id='midnight-carnival', coat=(0.12, 0.07, 0.08), lining=(0.66, 0.10, 0.14),
-                     gem=(0.86, 0.14, 0.18), sash=(0.70, 0.12, 0.14), coat_shade=(0.55, 0.45, 0.62),
-                     tip_z=22.0, side_rise=19.0, flare_x=43.0, flare_back=33.0, fold=3.2, tip_swing=9.0,
-                     second_phi=92.0, second_z=30.0, second_slope=0.55, epaulettes=True),
+    'night': dict(BASE_TAIL, id='mistport-night', coat=(0.11, 0.10, 0.135), lining=(0.47, 0.30, 0.72),
+                  gem=(0.62, 0.24, 0.86), sash=(0.20, 0.58, 0.58), coat_shade=(0.50, 0.45, 0.66)),
+    'starlight': dict(BASE_TAIL, id='starlight-magician', coat=(0.93, 0.90, 0.84), lining=(0.47, 0.32, 0.74),
+                      gem=(0.22, 0.47, 0.92), sash=(0.22, 0.62, 0.62), coat_shade=(0.74, 0.74, 0.88),
+                      glove=(0.93, 0.92, 0.90), tip_z=10.0, hem_rise=24.0, flare_x=39.0, flare_back=30.0,
+                      fold=3.8, tip_swing=8.0, capelet=True),
+    'carnival': dict(BASE_TAIL, id='midnight-carnival', coat=(0.12, 0.08, 0.09), lining=(0.88, 0.82, 0.70),
+                     gem=(0.86, 0.14, 0.18), sash=(0.66, 0.09, 0.12), coat_shade=(0.52, 0.44, 0.60),
+                     tip_z=18.0, hem_rise=17.0, flare_x=43.0, flare_back=33.0, fold=4.4, tip_swing=10.0,
+                     second_u=0.55, second_z=26.0, second_slope=0.5, epaulettes=True),
 }
 ONLY = arg('--outfits')
 OUTFITS = ONLY.split(',') if ONLY else list(STYLES)
@@ -52,18 +54,19 @@ OUTFITS = ONLY.split(',') if ONLY else list(STYLES)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
 
+P = looks.painted
 common_mat = {
-    'skin': looks.toon('V4 Skin', (0.96, 0.82, 0.74), shade=(0.86, 0.68, 0.70), rim=0.1),
-    'trousers': looks.toon('V4 Trousers', (0.12, 0.11, 0.14), shade=(0.52, 0.47, 0.68)),
-    'leather': looks.toon('V4 Leather', (0.10, 0.08, 0.09), shade=(0.55, 0.50, 0.65), gloss=0.35),
-    'sole': looks.toon('V4 Sole', (0.20, 0.14, 0.11), shade=(0.6, 0.5, 0.6)),
-    'glove': looks.toon('V4 Glove', (0.13, 0.11, 0.14), shade=(0.55, 0.50, 0.65), gloss=0.12, rim=0.12),
-    'lace': looks.toon('V4 Lace', (0.95, 0.93, 0.90), shade=(0.72, 0.70, 0.82)),
-    'gold': looks.toon('V4 Gold', (0.86, 0.66, 0.30), shade=(0.62, 0.48, 0.42), gloss=0.55),
+    'skin': P('V4 Skin', (0.97, 0.84, 0.76), shade=(0.88, 0.66, 0.66), kind='skin'),
+    'trousers': P('V4 Trousers', (0.13, 0.12, 0.15), shade=(0.48, 0.44, 0.64), kind='cloth'),
+    'leather': P('V4 Leather', (0.12, 0.09, 0.10), shade=(0.50, 0.44, 0.60), kind='leather'),
+    'sole': P('V4 Sole', (0.22, 0.15, 0.12), shade=(0.56, 0.46, 0.56), kind='leather', gloss=0.2),
+    'glove': P('V4 Glove', (0.14, 0.12, 0.15), shade=(0.50, 0.45, 0.62), kind='leather', gloss=0.35),
+    'lace': P('V4 Lace', (0.96, 0.94, 0.91), shade=(0.74, 0.72, 0.86), kind='cloth'),
+    'gold': P('V4 Gold', (0.80, 0.60, 0.26), shade=(0.58, 0.42, 0.36), kind='metal'),
 }
 hair_img = textures.paint_hair(TEX / 'hair.png')
-common_mat['hair'] = looks.toon('V4 Hair', (1, 1, 1), shade=(0.55, 0.48, 0.78), rim=0.3, image=hair_img)
-common_mat['hair_cap'] = looks.toon('V4 HairCap', (0.09, 0.08, 0.15), shade=(0.55, 0.48, 0.78), rim=0.2)
+common_mat['hair'] = P('V4 Hair', (1, 1, 1), shade=(0.52, 0.46, 0.78), image=hair_img, kind='hair')
+common_mat['hair_cap'] = P('V4 HairCap', (0.09, 0.08, 0.15), shade=(0.52, 0.46, 0.78), kind='hair')
 
 MATERIAL_SPECS = {}
 
@@ -111,14 +114,13 @@ for key in OUTFITS:
     style = STYLES[key]
     pre = f'Outfit-{key}-'
     mat = dict(common_mat)
-    mat['coat'] = looks.toon(f'V4 {key} Coat', style['coat'], shade=style['coat_shade'], rim=0.22)
-    mat['lining'] = looks.toon(f'V4 {key} Lining', style['lining'], shade=(0.62, 0.55, 0.80))
-    mat['gem'] = remember(looks.toon(f'V4 {key} Gem', style['gem'], shade=(0.55, 0.45, 0.75), gloss=0.8,
-                                     gloss_color=(1, 0.92, 1)))
-    mat['sash'] = remember(looks.toon(f'V4 {key} Sash', style['sash'], shade=(0.60, 0.62, 0.80)))
+    mat['coat'] = P(f'V4 {key} Coat', style['coat'], shade=style['coat_shade'])
+    mat['lining'] = P(f'V4 {key} Lining', style['lining'], shade=(0.62, 0.55, 0.80), kind='satin')
+    mat['gem'] = remember(P(f'V4 {key} Gem', style['gem'], shade=(0.50, 0.42, 0.72), kind='gem'))
+    mat['sash'] = remember(P(f'V4 {key} Sash', style['sash'], shade=(0.56, 0.60, 0.80), kind='satin'))
     parts = []
     if 'glove' in style:
-        glove = remember(looks.toon(f'V4 {key} Glove', style['glove'], shade=(0.74, 0.74, 0.86), rim=0.1))
+        glove = remember(P(f'V4 {key} Glove', style['glove'], shade=(0.74, 0.74, 0.88), kind='cloth'))
     else:
         glove = common_mat['glove']
     for sign in (1, -1):
@@ -132,19 +134,29 @@ for key in OUTFITS:
     parts.append(col)
     parts.append(geom.tube('Collar piping', col_top, 0.22, mat['gold'], sides=6))
     tails = {}
+    turnback_uv = None
     for side in ('L', 'R'):
         tail, edges, shape = coat.build_tail(side, style, mat['coat'])
         tails[side] = (tail, edges)
         tail.data.materials.append(mat['lining'])
-        geom.solidify(tail, 0.38, offset=-1.0, material_offset=1)
+        # Heavy cloth: a visible edge thickness instead of a paper-thin sheet.
+        geom.solidify(tail, 0.75, offset=-1.0, material_offset=1)
         parts.append(tail)
-        for k in ('vent', 'hem', 'front'):
-            parts.append(geom.tube('Tail piping', edges[k], 0.26, mat['gold'], sides=6))
-        parts.append(geom.tube('Waist seam', edges['waist'], 0.22, mat['gold'], sides=6))
-        facing, f_outer, f_fold = coat.build_facing(side, style, mat['lining'])
-        geom.solidify(facing, 0.25, offset=-1.0)
+        for k in ('vent', 'hem', 'outer'):
+            parts.append(geom.tube('Tail piping', edges[k], 0.3, mat['gold'], sides=7))
+        parts.append(geom.tube('Waist seam', edges['waist'], 0.24, mat['gold'], sides=6))
+        skirt, s_edges = coat.build_side_skirt(side, style, mat['coat'])
+        skirt.data.materials.append(mat['lining'])
+        geom.solidify(skirt, 0.6, offset=-1.0, material_offset=1)
+        parts.append(skirt)
+        for k in ('hem', 'front'):
+            parts.append(geom.tube('Skirt piping', s_edges[k], 0.26, mat['gold'], sides=6))
+        facing, f_outer, f_fold, f_bottom = coat.build_facing(side, style, mat['lining'])
+        if side == 'L':
+            turnback_uv = facing['lower_uv']
+        geom.solidify(facing, 0.45, offset=-1.0)
         parts.append(facing)
-        parts.append(geom.tube('Facing piping', f_outer, 0.22, mat['gold'], sides=6))
+        parts.append(geom.tube('Facing piping', f_outer, 0.26, mat['gold'], sides=6))
     holes = {}
     for sign in (1, -1):
         sl, path, end_ring, hole_ring = coat.build_sleeve(sign, mat['coat'])
@@ -172,12 +184,13 @@ for key in OUTFITS:
         parts.extend(details.epaulettes(mat, holes))
     # Painted atlases replace the flat coat and lining colours.
     coat_png, lining_png = f'{key}-coat.png', f'{key}-lining.png'
-    coat_img = textures.paint_coat(key, tails['L'][0]['hem_uv'], TEX / coat_png, cape_hem_uv=cape_hem_uv)
-    lining_img = textures.paint_lining(key, TEX / lining_png)
-    coat_tex = remember(looks.toon(f'V4 {key} CoatAtlas', (1, 1, 1), shade=style['coat_shade'], rim=0.22,
-                                   image=coat_img), coat_png)
-    lining_tex = remember(looks.toon(f'V4 {key} LiningAtlas', (1, 1, 1), shade=(0.62, 0.55, 0.80),
-                                     image=lining_img), lining_png)
+    tail_uv = {k: [tuple(p) for p in tails['L'][0][k + '_uv']] for k in ('hem', 'end', 'start')}
+    coat_img = textures.paint_coat(key, tail_uv, TEX / coat_png, cape_hem_uv=cape_hem_uv)
+    lining_img = textures.paint_lining(key, TEX / lining_png, turnback=turnback_uv)
+    coat_tex = remember(P(f'V4 {key} CoatAtlas', (1, 1, 1), shade=style['coat_shade'], image=coat_img,
+                          kind='cloth'), coat_png)
+    lining_tex = remember(P(f'V4 {key} LiningAtlas', (1, 1, 1), shade=(0.62, 0.55, 0.80), image=lining_img,
+                            kind='satin'), lining_png)
     for ob in parts:
         for i, m in enumerate(ob.data.materials):
             if m == mat['coat']:
@@ -202,8 +215,8 @@ def preview(out_dir):
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     meshes = [o for o in scene.objects if o.type == 'MESH']
-    mods = [(o, looks.add_outline(o, 0.20 if 'piping' not in o.name.lower() and 'fringe' not in o.name.lower()
-                                  else 0.07)) for o in meshes]
+    thin = ('piping', 'fringe', 'seam', 'chain', 'ring', 'frame', 'setting', 'scroll', 'bezel')
+    mods = [(o, looks.add_outline(o, 0.05 if any(k in o.name.lower() for k in thin) else 0.12)) for o in meshes]
     scene.render.engine = 'BLENDER_EEVEE'
     scene.render.resolution_x = 900
     scene.render.resolution_y = 1350
@@ -217,6 +230,12 @@ def preview(out_dir):
     so = bpy.data.objects.new('Key', sun)
     scene.collection.objects.link(so)
     so.rotation_euler = (math.radians(50), math.radians(-25), math.radians(200))
+    fill = bpy.data.lights.new('Fill', 'SUN')
+    fill.energy = 0.7
+    fill.color = (0.78, 0.84, 1.0)
+    fo = bpy.data.objects.new('Fill', fill)
+    scene.collection.objects.link(fo)
+    fo.rotation_euler = (math.radians(70), math.radians(30), math.radians(-30))
     cam_d = bpy.data.cameras.new('Preview')
     cam = bpy.data.objects.new('Preview', cam_d)
     scene.collection.objects.link(cam)
@@ -233,7 +252,7 @@ def preview(out_dir):
             bpy.ops.render.render(write_still=True)
     for o, m in mods:
         o.modifiers.remove(m)
-    for o in [so, cam]:
+    for o in [so, fo, cam]:
         bpy.data.objects.remove(o)
     print('HERO_V4_PREVIEW', out)
 

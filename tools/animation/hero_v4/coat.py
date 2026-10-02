@@ -137,67 +137,123 @@ def collar(material, cols=56):
 VENT_TOP = math.radians(1.5)
 FRONT = math.radians(168)
 TIP_PHI = math.radians(47)
+SIDE_START = math.radians(86)
+TOP_Z = 100.5
 
 
-def hem_z(phi, style):
-    """Hem height around one side; phi from the back centre (0) toward the front."""
-    d = math.degrees(phi)
-    tip, tz = math.degrees(TIP_PHI), style['tip_z']
-    if d >= tip:
-        k = (d - tip) / (168 - tip)
-        z = tz + style['side_rise'] * k ** 0.72
-    else:
-        z = tz + style['vent_rise'] * ((tip - d) / tip) ** 0.9
-    if 'second_phi' in style:
-        # A second, shorter point (carnival): the hem dips to another V.
-        z = min(z, style['second_z'] + style['second_slope'] * abs(d - style['second_phi']))
-    return z
+def out_phi(t, style):
+    """Free outer edge of a back tail; it swings out a little as it falls."""
+    return math.radians(style.get('out_deg', 101.0) + 9.0 * t)
 
 
 def vent_phi(t, style):
     return VENT_TOP + (style['vent_open'] - VENT_TOP) * t ** 1.35
 
 
-def skirt_point(side, u, t, style):
-    """u: 0 vent edge .. 1 front edge; t: 0 waist .. 1 hem."""
-    sign = 1 if side == 'L' else -1
-    phi = lerp(vent_phi(t, style), FRONT, u)
-    top_z = 100.5
-    z_end = hem_z(phi, style)
-    z = top_z - (top_z - z_end) * t
+def hem_z(phi, style, outer=None):
+    """Back-tail hem: the point sits at the outer edge (as in the character art)
+    and the hem rises toward the vent."""
+    outer = out_phi(1.0, style) if outer is None else outer
+    k = (outer - phi) / max(1e-4, outer - style['vent_open'])
+    z = style['tip_z'] + style['hem_rise'] * max(0.0, k) ** 0.8
+    if 'second_phi' in style:
+        # A second, shorter point (carnival): the hem dips to another V.
+        d = math.degrees(phi)
+        z = min(z, style['second_z'] + style['second_slope'] * abs(d - style['second_phi']))
+    return z
+
+
+def _radii(phi, t, style):
     tt = t ** 1.05
     ax = lerp(15.3, style['flare_x'], tt)
     by = lerp(9.6, style['flare_back'], tt)
     bf = lerp(9.6, style['flare_front'], tt)
-    cy = 5.7 + 1.2 * t
     b = by if phi < math.pi / 2 else lerp(by, bf, smoothstep(math.pi / 2, FRONT, phi))
-    # Folds: a few broad godets that deepen toward the hem, more on the back.
-    f = style['fold'] * t ** 1.25
-    fold = (0.62 * math.sin(4.3 * phi + 0.9 + 0.4 * sign) + 0.28 * math.sin(8.1 * phi + 2.1)
-            + 0.10 * math.sin(12.6 * phi + 0.4 * sign))
-    r_extra = f * fold
-    # The pointed tail swings out a little further than the rest of the hem.
-    r_extra += style['tip_swing'] * t ** 2.2 * math.exp(-((phi - TIP_PHI) / math.radians(30)) ** 2)
+    return ax, b, 5.7 + 1.2 * t
+
+
+def _bezier(p0, c, p1, q):
+    return p0 * (1 - q) ** 2 + c * (2 * (1 - q) * q) + p1 * q * q
+
+
+def back_section(u, t, style):
+    """Horizontal section of a back tail (x >= 0, y back): at the waist it follows the
+    waist ellipse from the back centre to the side seam; toward the hem it opens into a
+    gentle arc behind the legs, facing back, like a hanging flag."""
+    ph = lerp(VENT_TOP, math.radians(style.get('waist_out_deg', 96.0)), u)
+    waist = Vector((15.3 * math.sin(ph), 5.7 + 9.6 * math.cos(ph)))
+    vx, vy = style['hem_vent']
+    ox, oy = style['hem_outer']
+    v, o = Vector((vx * t ** 0.3 if t > 0 else 0.0, vy)), Vector((ox, oy))
+    ctrl = Vector(((vx + ox) / 2 + 3.0, max(vy, oy) + style['hem_bulge']))
+    hem = _bezier(v, ctrl, o, u)
+    return waist.lerp(hem, t ** 0.8)
+
+
+def back_point(side, u, t, style):
+    """Back tail panel. u: 0 vent edge .. 1 outer free edge; t: 0 waist .. 1 hem."""
+    sign = 1 if side == 'L' else -1
+    p = back_section(u, t, style)
+    # Outward normal of the section (away from the legs, mostly +y).
+    a = back_section(max(0.0, u - 0.01), t, style)
+    b = back_section(min(1.0, u + 0.01), t, style)
+    tang = (b - a).normalized()
+    nrm = Vector((tang.y, -tang.x))
+    if nrm.y < 0:
+        nrm = -nrm
+    # Deep godets: about two and a half folds across the panel, round crests,
+    # tighter valleys, deepening toward the hem.
+    ph = 0.6 if sign > 0 else 1.9
+    fold = 0.72 * math.cos(math.tau * 2.4 * u + ph) + 0.28 * math.cos(math.tau * 4.8 * u + 2 * ph)
+    # The turned-back corner near the vent lies flatter than the free cloth.
+    fold *= 0.3 + 0.7 * smoothstep(0.18, 0.55, u)
+    p = p + nrm * style['fold'] * t ** 1.2 * fold
+    # Cloth weight swings the hem back; the point flares outward.
+    p.y += style['hang'] * t ** 1.6 * (1 - 0.5 * u)
+    p.x += style['tip_swing'] * t ** 2.2 * u ** 3
+    z = TOP_Z - (TOP_Z - hem_height(u, style)) * t
+    phi = math.atan2(p.x, p.y - 5.7)
+    return Vector((sign * p.x, p.y, z)), phi
+
+
+def hem_height(u, style):
+    """Point at the outer edge (u = 1), rising toward the vent."""
+    z = style['tip_z'] + style['hem_rise'] * (1 - u) ** 0.8
+    if 'second_u' in style:
+        z = min(z, style['second_z'] + style['second_slope'] * abs(u - style['second_u']) * 60)
+    return z
+
+
+def side_z(phi, style):
+    """Side/front skirt hem: shorter than the back tails, rising toward the front."""
+    k = (phi - SIDE_START) / (FRONT - SIDE_START)
+    return style['side_hem'] + 9.0 * max(0.0, k) ** 0.8
+
+
+def side_point(side, u, t, style):
+    """Side and front skirt, tucked 1.4 cm inside the back tail's outer edge."""
+    sign = 1 if side == 'L' else -1
+    phi = lerp(SIDE_START, FRONT, u)
+    z = TOP_Z - (TOP_Z - side_z(phi, style)) * t
+    ax, b, cy = _radii(phi, t, style)
+    ax = lerp(15.0, style.get('side_flare', 34.0), t ** 1.05)
+    fold = 0.6 * math.cos(9.0 * phi + 0.4 * sign) + 0.4 * math.cos(15.0 * phi + 1.1)
+    inset = 1.4 * smoothstep(0.0, 0.25, 1 - u)
+    r_extra = style['fold'] * 0.45 * t ** 1.2 * fold - inset
     x = sign * (ax + r_extra) * math.sin(phi)
     y = cy + (b + r_extra) * math.cos(phi)
-    # Cloth weight: the back tails hang slightly away from the calves.
-    y += style['hang'] * t ** 1.6 * max(0.0, math.cos(phi))
     return Vector((x, y, z)), phi
 
 
-def build_tail(side, style, material, cols=34, rows=46):
-    verts, uvs, params = [], [], []
+def _panel(name, side, fn, style, material, region, rows, cols):
+    verts = []
     for j in range(rows):
         t = j / (rows - 1)
-        row = []
         for i in range(cols):
-            u = i / (cols - 1)
-            p, phi = skirt_point(side, u, t, style)
-            row.append(p)
-            params.append((u, t, phi))
-        verts.extend(row)
-    # Physical UVs: arc length along each row from the vent edge, length down the column.
-    uvs = [None] * len(verts)
+            p, phi = fn(side, i / (cols - 1), t, style)
+            verts.append(p)
+    # Centimetre UVs: arc along each row from the first column, length down each column.
+    raw = [None] * len(verts)
     col_len = [0.0] * cols
     for j in range(rows):
         acc = 0.0
@@ -207,25 +263,42 @@ def build_tail(side, style, material, cols=34, rows=46):
                 acc += (verts[k] - verts[k - 1]).length
             if j:
                 col_len[i] += (verts[k] - verts[k - cols]).length
-            uvs[k] = (acc, col_len[i])
-    hem_uv = [atlas.to_canvas('tail', 1.0 + uvs[(rows - 1) * cols + i][0], 99.0 - uvs[(rows - 1) * cols + i][1])
-              for i in range(cols)]
-    tip_uv = None
-    uvs = [atlas.uv('tail', 1.0 + a, 99.0 - b) for a, b in uvs]
+            raw[k] = (acc, col_len[i])
+    top = atlas.REGIONS[region][3] - 1.0
+    uvs = [atlas.uv(region, 1.0 + a, top - b) for a, b in raw]
+    canvas = [atlas.to_canvas(region, 1.0 + a, top - b) for a, b in raw]
+    faces = grid_faces(rows, cols)
     if side == 'R':
-        faces = [tuple(reversed(f)) for f in grid_faces(rows, cols)]
-    else:
-        faces = grid_faces(rows, cols)
-    ob = build_mesh('Coat tail ' + side, verts, faces, uvs, material)
-    ob['params'] = [list(p) for p in params]
-    ob['hem_uv'] = [list(p) for p in hem_uv]
+        faces = [tuple(reversed(f)) for f in faces]
+    ob = build_mesh(name + ' ' + side, verts, faces, uvs, material)
     edges = {
-        'vent': [verts[j * cols] for j in range(rows)],
-        'front': [verts[j * cols + cols - 1] for j in range(rows)],
+        'start': [verts[j * cols] for j in range(rows)],
+        'end': [verts[j * cols + cols - 1] for j in range(rows)],
         'hem': [verts[(rows - 1) * cols + i] for i in range(cols)],
         'waist': [verts[i] for i in range(cols)],
     }
+    edges_uv = {
+        'end': [canvas[j * cols + cols - 1] for j in range(rows)],
+        'hem': [canvas[(rows - 1) * cols + i] for i in range(cols)],
+        'start': [canvas[j * cols] for j in range(rows)],
+    }
+    ob['hem_uv'] = [list(p) for p in edges_uv['hem']]
+    ob['end_uv'] = [list(p) for p in edges_uv['end']]
+    ob['start_uv'] = [list(p) for p in edges_uv['start']]
+    return ob, edges
+
+
+def build_tail(side, style, material, cols=30, rows=48):
+    """Back tail panel: vent edge, free outer edge and pointed hem."""
+    ob, e = _panel('Coat tail', side, back_point, style, material, 'tail', rows, cols)
+    edges = {'vent': e['start'], 'outer': e['end'], 'hem': e['hem'], 'waist': e['waist']}
     return ob, edges, (rows, cols)
+
+
+def build_side_skirt(side, style, material, cols=26, rows=34):
+    ob, e = _panel('Coat skirt', side, side_point, style, material, 'side', rows, cols)
+    edges = {'front': e['end'], 'hem': e['hem'], 'waist': e['waist']}
+    return ob, edges
 
 
 # ---------------------------------------------------------------- sleeves
@@ -328,37 +401,36 @@ def build_cuff(sign, material, sides=40):
     return ob, rim, root
 
 
-def build_facing(side, style, material, rows=40, cols=7):
-    """Lining turned back along the vent edge: a purple revers that widens toward
-    the hem, raised just off the tail so it reads as folded cloth."""
-    sign = 1 if side == 'L' else -1
+def build_facing(side, style, material, rows=40, cols=8):
+    """Turned-back corner along the vent edge: the lining folds out in a widening
+    triangle toward the point, raised just off the tail so it reads as cloth."""
     verts, uvs, outer = [], [], []
     run, t_prev = 0.0, 0.0
     for j in range(rows):
         t = 0.04 + 0.96 * j / (rows - 1)
-        width = 1.0 + 7.5 * t ** 1.5
-        # March along u until the arc length from the vent edge reaches `width`.
-        us = [0.0]
-        prev, _ = skirt_point(side, 0.0, t, style)
+        width = 1.2 + style.get('turnback', 15.0) * t ** 2.2
+        prev, _ = back_point(side, 0.0, t, style)
         acc, u = 0.0, 0.0
-        while acc < width and u < 0.6:
-            u += 0.004
-            p, _ = skirt_point(side, u, t, style)
+        while acc < width and u < 0.75:
+            u += 0.003
+            p, _ = back_point(side, u, t, style)
             acc += (p - prev).length
             prev = p
         umax = u
         if j:
-            run += (skirt_point(side, 0.0, t, style)[0] - skirt_point(side, 0.0, t_prev, style)[0]).length
+            run += (back_point(side, 0.0, t, style)[0] - back_point(side, 0.0, t_prev, style)[0]).length
         t_prev = t
         for i in range(cols):
             uu = umax * i / (cols - 1)
-            p, phi = skirt_point(side, uu, t, style)
-            centre = Vector((0, 5.7 + 1.2 * t, p.z))
-            out = (p - centre)
-            out.z = 0
-            out.normalize()
-            # Roll: highest at the fold line (vent edge), settling onto the tail.
-            lift = 0.55 + 0.35 * (1 - i / (cols - 1))
+            p, phi = back_point(side, uu, t, style)
+            # Lift along the tail's own surface normal (outside of the cloth).
+            du = back_point(side, min(1.0, uu + 0.01), t, style)[0] - back_point(side, max(0.0, uu - 0.01), t, style)[0]
+            dt = back_point(side, uu, min(1.0, t + 0.01), style)[0] - back_point(side, uu, max(0.0, t - 0.01), style)[0]
+            out = du.cross(dt).normalized()
+            if out.dot(Vector((p.x, p.y - 5.7, 0))) < 0:
+                out = -out
+            # Rolled fold at the vent edge, settling onto the tail toward the free edge.
+            lift = 1.2 + 0.7 * (1 - i / (cols - 1)) ** 2
             verts.append(p + out * lift)
             uvs.append(atlas.uv('facing', 1.0 + width * i / (cols - 1), 93.0 - run))
         outer.append(verts[-1])
@@ -366,8 +438,15 @@ def build_facing(side, style, material, rows=40, cols=7):
     if side == 'R':
         faces = [tuple(reversed(f)) for f in faces]
     ob = build_mesh('Facing ' + side, verts, faces, uvs, material)
+    # Lower third of the turnback in canvas coordinates (carnival harlequin panel).
+    canvas = [(u * atlas.SIZE_CM, v * atlas.SIZE_CM) for u, v in uvs]
+    lo = int(rows * 0.62)
+    fold_side = [canvas[j * cols] for j in range(lo, rows)]
+    outer_side = [canvas[j * cols + cols - 1] for j in range(lo, rows)]
+    ob['lower_uv'] = [list(p) for p in fold_side + outer_side[::-1]]
     fold_line = [verts[j * cols] for j in range(rows)]
-    return ob, outer, fold_line
+    bottom = verts[(rows - 1) * cols:]
+    return ob, outer, fold_line, bottom
 
 
 def build_capelet(material, rows=16, cols=44):

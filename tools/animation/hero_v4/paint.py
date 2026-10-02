@@ -52,6 +52,30 @@ class Canvas:
         (i0, i1, j0, j1), xs, ys = g
         self.rgb[i0:i1, j0:j1] = fn(xs, ys, self.rgb[i0:i1, j0:j1])
 
+    def fill_poly(self, poly, fn):
+        """Even-odd fill of a closed polygon (cm); fn(xs, ys, rgb) -> rgb, or a colour."""
+        poly = np.asarray(poly, np.float32)
+        g = self.grid(poly[:, 0].min(), poly[:, 1].min(), poly[:, 0].max(), poly[:, 1].max())
+        if g is None:
+            return
+        (i0, i1, j0, j1), xs, ys = g
+        inside = np.zeros(xs.shape, bool)
+        n = len(poly)
+        for k in range(n):
+            x0, y0 = poly[k]
+            x1, y1 = poly[(k + 1) % n]
+            if y0 == y1:
+                continue
+            cond = (ys >= min(y0, y1)) & (ys < max(y0, y1))
+            xc = x0 + (ys - y0) * (x1 - x0) / (y1 - y0)
+            inside ^= cond & (xs < xc)
+        region = self.rgb[i0:i1, j0:j1]
+        if callable(fn):
+            painted = fn(xs, ys, region.copy())
+        else:
+            painted = np.broadcast_to(np.array(fn, np.float32), region.shape)
+        region[inside] = painted[inside]
+
     # --- strokes
     def stroke(self, pts, widths, gold, outline=(0.06, 0.035, 0.02), outline_w=0.09, stitch=0.16,
                light=(-0.55, 0.65, 0.52), shine=0.55, flat=False):
