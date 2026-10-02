@@ -130,8 +130,9 @@ public sealed class CombatTempoPresentation : MonoBehaviour
     Entry Replace(Transform original, string kind, Transform target, EnemyHandle handle)
     {
         bool refinedHero = kind == "Hero";
-        string heroAsset = "CombatTempo/RefinedHeroV3/HeroMeshyV3";
+        string heroAsset = "CombatTempo/RefinedHeroV4/HeroV4";
 #if UNITY_EDITOR || UNITY_STANDALONE
+        if (Array.IndexOf(Environment.GetCommandLineArgs(), "--hero-v3") >= 0) heroAsset = "CombatTempo/RefinedHeroV3/HeroMeshyV3";
         if (Array.IndexOf(Environment.GetCommandLineArgs(), "--hero-v2") >= 0) heroAsset = "CombatTempo/RefinedHeroV2/HeroMeshyV2";
         if (Array.IndexOf(Environment.GetCommandLineArgs(), "--hero-v1") >= 0) heroAsset = "CombatTempo/RefinedHero/HeroRefined";
 #endif

@@ -8,7 +8,7 @@ Blender -b --python tools/animation/build_hero_v4.py -- <repository>
     [--textures <dir>]     where painted atlases go (default: the v4 doc folder)
     [--export]             rig, animate and write the Unity FBX + material manifest
 """
-import bpy, sys, math, json, importlib, hashlib
+import bpy, sys, math, json, importlib, hashlib, shutil
 from pathlib import Path
 from mathutils import Vector
 
@@ -28,6 +28,8 @@ def arg(name, default=None):
 
 DOC = ROOT / 'docs/development/hero-refinement-20261001/v4'
 PREVIEW = arg('--preview')
+EXPORT = '--export' in argv
+UNITY_OUT = Path(arg('--unity-out', str(ROOT / 'UnityBattleSource/Assets/Resources/CombatTempo/RefinedHeroV4')))
 DETAIL = '--detail' in argv
 TEX = Path(arg('--textures', str(DOC / 'textures')))
 TEX.mkdir(parents=True, exist_ok=True)
@@ -283,7 +285,53 @@ def preview(out_dir):
     print('HERO_V4_PREVIEW', out)
 
 
+def export(out_dir):
+    """One skinned mesh per group (shared body and each outfit), 14 baked clips,
+    the painted atlases and the material manifest Unity's importer reads."""
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    groups = {'Common Body': [o for o in scene.objects if o.type == 'MESH' and o.name.startswith('Common ')]}
+    for key in outfit_parts:
+        groups[f'Outfit-{key}-Body'] = [o for o in scene.objects if o.type == 'MESH' and o.name.startswith(f'Outfit-{key}-')]
+    for name, obs in groups.items():
+        for o in obs:
+            o.hide_viewport = o.hide_render = False
+        body = geom.join(obs, name)
+        # Crease shading baked into vertex colour (Unity has no real-time AO here).
+        body.data.color_attributes.new('AO', 'BYTE_COLOR', 'POINT')
+        body.data.color_attributes.active_color = body.data.color_attributes['AO']
+        with bpy.context.temp_override(active_object=body, object=body, selected_objects=[body],
+                                       selected_editable_objects=[body]):
+            bpy.context.view_layer.objects.active = body
+            try:
+                bpy.ops.paint.vertex_color_dirt(blur_strength=1.0, blur_iterations=2, clean_angle=3.14,
+                                                dirt_angle=0.0, dirt_only=True, normalize=True)
+            except Exception as error:
+                print('HERO_V4_AO_SKIPPED', name, error)
+    rigmod.bake_clips(rig)
+    for png in TEX.glob('*.png'):
+        shutil.copy2(png, out / png.name)
+    items = [dict(spec, name=name) for name, spec in sorted(MATERIAL_SPECS.items())]
+    (out / 'materials.json').write_text(json.dumps({'items': items}, indent=2) + '\n')
+    fbx = out / 'HeroV4.fbx'
+    bpy.ops.export_scene.fbx(filepath=str(fbx), object_types={'MESH', 'ARMATURE'}, add_leaf_bones=False,
+                             bake_anim=True, bake_anim_use_all_actions=True, bake_anim_use_nla_strips=False,
+                             bake_anim_simplify_factor=0, bake_anim_step=1, axis_forward='-Z', axis_up='Y',
+                             global_scale=0.01, apply_unit_scale=True, mesh_smooth_type='FACE', path_mode='STRIP',
+                             colors_type='LINEAR')
+    meshes = [o for o in scene.objects if o.type == 'MESH']
+    stats = {'fbx': fbx.name, 'bones': len(rig.data.bones), 'clips': [n for n, _ in rigmod.CLIPS],
+             'renderers': [o.name for o in meshes],
+             'triangles': {o.name: sum(len(p.vertices) - 2 for p in o.data.polygons) for o in meshes},
+             'materials': sorted(MATERIAL_SPECS), 'outfits': [STYLES[k]['id'] for k in outfit_parts],
+             'userVisualApproval': False}
+    (DOC / 'manifest.json').write_text(json.dumps(stats, indent=2, ensure_ascii=False) + '\n')
+    print('HERO_V4_EXPORTED', json.dumps({k: stats[k] for k in ('bones', 'renderers')}), sum(stats['triangles'].values()))
+
+
 if PREVIEW:
     preview(PREVIEW)
 
 (TEX / 'materials.json').write_text(json.dumps(MATERIAL_SPECS, indent=2, sort_keys=True) + '\n')
+if EXPORT:
+    export(UNITY_OUT)

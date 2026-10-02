@@ -43,6 +43,11 @@ struct CombatTempoDeviceReviewRoot: View {
     @State private var reviewPass = 0
     @State private var hasSetLaunchSpeed = false
     @State private var passSpeed = 1
+    // The hero showcase can switch between the three outfits from the menu.
+    @State private var heroOutfit: MPCOutfit = {
+        let raw = ProcessInfo.processInfo.arguments.first { $0.hasPrefix("--tempo-outfit=") }?.dropFirst(15)
+        return raw.flatMap { MPCOutfit(rawValue: String($0)) } ?? .mistportNight
+    }()
 
     private var sample: String {
         selectedSample ?? String(ProcessInfo.processInfo.arguments.first { $0.hasPrefix("--tempo-device-review=") }!.dropFirst(22))
@@ -100,7 +105,9 @@ struct CombatTempoDeviceReviewRoot: View {
                     Button("发条猎犬") { selectedSample = "q4" }
                     Button("石颚") { selectedSample = "d01" }
                     Button("第七号空壳") { selectedSample = "b01" }
-                    Button("主角动作") { selectedSample = "hero" }
+                    Button("主角·雾港夜行") { heroOutfit = .mistportNight; selectedSample = "hero" }
+                    Button("主角·星辉魔术师") { heroOutfit = .starlightMagician; selectedSample = "hero" }
+                    Button("主角·午夜嘉年华") { heroOutfit = .midnightCarnival; selectedSample = "hero" }
                 } label: {
                     Label("换样板", systemImage: "arrow.triangle.2.circlepath")
                         .font(.caption).padding(10)
@@ -110,7 +117,7 @@ struct CombatTempoDeviceReviewRoot: View {
                 .accessibilityIdentifier("tempo-review-samples")
             }
         }
-        .task(id: sample + "-\(reviewPass)") {
+        .task(id: sample + "-\(reviewPass)-\(heroOutfit.rawValue)") {
             session = nil; campaign = .chapterStartState
             running = false; preparing = false; finished = false
             recordingStarted = false; beganAt = nil; runID = UUID().uuidString
@@ -169,6 +176,7 @@ struct CombatTempoDeviceReviewRoot: View {
                         if sample == "hero" {
                             var hand = MPCChapterOneLoadout(normalSkillIDs: [.mirrorPursuit, .absurdFinale], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
                             hand.selectedActiveRelicID = MPCChapterOneCatalog.ownerlessMaskRelicID
+                            hand.outfit = heroOutfit
                             loadout = hand
                         } else { loadout = MPCChurchTowerVerificationRunner.recommendedLoadout(for: floor) }
                         id = (sample == "d01" || sample == "hero") ? "church_tower_001" : "church_bounty_b01"

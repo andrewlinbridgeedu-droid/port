@@ -1,0 +1,561 @@
+{
+  "V4 Glove": {
+    "ao": 0.75,
+    "color": [
+      0.14,
+      0.12,
+      0.15
+    ],
+    "kind": "leather",
+    "rim": 0.16,
+    "rough": 0.14,
+    "shade": [
+      0.5,
+      0.45,
+      0.62
+    ],
+    "spec": 0.35,
+    "spec_hi": 0.76,
+    "spec_lo": 0.58,
+    "spec_tint": [
+      1.0,
+      0.98,
+      0.96
+    ]
+  },
+  "V4 Gold": {
+    "ao": 0.75,
+    "color": [
+      0.8,
+      0.6,
+      0.26
+    ],
+    "kind": "metal",
+    "rim": 0.1,
+    "rough": 0.2,
+    "shade": [
+      0.58,
+      0.42,
+      0.36
+    ],
+    "spec": 0.9,
+    "spec_hi": 0.75,
+    "spec_lo": 0.45,
+    "spec_tint": [
+      0.9500000000000001,
+      0.8500000000000001,
+      0.68
+    ]
+  },
+  "V4 Hair": {
+    "ao": 0.75,
+    "color": [
+      1,
+      1,
+      1
+    ],
+    "kind": "hair",
+    "rim": 0.2,
+    "rough": 0.34,
+    "shade": [
+      0.5,
+      0.5,
+      0.72
+    ],
+    "spec": 0.07,
+    "spec_hi": 0.95,
+    "spec_lo": 0.66,
+    "spec_tint": [
+      0.58,
+      0.55,
+      0.86
+    ],
+    "texture": "hair.png"
+  },
+  "V4 HairCap": {
+    "ao": 0.75,
+    "color": [
+      0.07,
+      0.07,
+      0.11
+    ],
+    "kind": "hair",
+    "rim": 0.2,
+    "rough": 0.34,
+    "shade": [
+      0.5,
+      0.5,
+      0.72
+    ],
+    "spec": 0.07,
+    "spec_hi": 0.95,
+    "spec_lo": 0.66,
+    "spec_tint": [
+      0.58,
+      0.55,
+      0.86
+    ]
+  },
+  "V4 Lace": {
+    "ao": 0.75,
+    "color": [
+      0.96,
+      0.94,
+      0.91
+    ],
+    "kind": "cloth",
+    "rim": 0.16,
+    "rough": 0.55,
+    "shade": [
+      0.74,
+      0.72,
+      0.86
+    ],
+    "spec": 0.1,
+    "spec_hi": 1.0,
+    "spec_lo": 0.6,
+    "spec_tint": [
+      0.46,
+      0.43,
+      0.58
+    ]
+  },
+  "V4 Leather": {
+    "ao": 0.75,
+    "color": [
+      0.07,
+      0.06,
+      0.075
+    ],
+    "kind": "leather",
+    "rim": 0.16,
+    "rough": 0.14,
+    "shade": [
+      0.48,
+      0.44,
+      0.62
+    ],
+    "spec": 0.75,
+    "spec_hi": 0.76,
+    "spec_lo": 0.58,
+    "spec_tint": [
+      1.0,
+      0.98,
+      0.96
+    ]
+  },
+  "V4 Skin": {
+    "ao": 0.75,
+    "color": [
+      0.97,
+      0.84,
+      0.76
+    ],
+    "kind": "skin",
+    "rim": 0.12,
+    "rough": 0.5,
+    "shade": [
+      0.88,
+      0.66,
+      0.66
+    ],
+    "spec": 0.04,
+    "spec_hi": 1.0,
+    "spec_lo": 0.8,
+    "spec_tint": [
+      1.0,
+      0.92,
+      0.88
+    ]
+  },
+  "V4 Sole": {
+    "ao": 0.75,
+    "color": [
+      0.22,
+      0.15,
+      0.12
+    ],
+    "kind": "leather",
+    "rim": 0.16,
+    "rough": 0.14,
+    "shade": [
+      0.56,
+      0.46,
+      0.56
+    ],
+    "spec": 0.2,
+    "spec_hi": 0.76,
+    "spec_lo": 0.58,
+    "spec_tint": [
+      1.0,
+      0.98,
+      0.96
+    ]
+  },
+  "V4 Trousers": {
+    "ao": 0.75,
+    "color": [
+      0.13,
+      0.12,
+      0.15
+    ],
+    "kind": "cloth",
+    "rim": 0.16,
+    "rough": 0.55,
+    "shade": [
+      0.48,
+      0.44,
+      0.64
+    ],
+    "spec": 0.1,
+    "spec_hi": 1.0,
+    "spec_lo": 0.6,
+    "spec_tint": [
+      0.46,
+      0.43,
+      0.58
+    ]
+  },
+  "V4 carnival CoatAtlas": {
+    "ao": 0.75,
+    "color": [
+      1,
+      1,
+      1
+    ],
+    "kind": "cloth",
+    "rim": 0.16,
+    "rough": 0.55,
+    "shade": [
+      0.52,
+      0.44,
+      0.6
+    ],
+    "spec": 0.1,
+    "spec_hi": 1.0,
+    "spec_lo": 0.6,
+    "spec_tint": [
+      0.46,
+      0.43,
+      0.58
+    ],
+    "texture": "carnival-coat.png"
+  },
+  "V4 carnival Gem": {
+    "ao": 0.75,
+    "color": [
+      0.86,
+      0.14,
+      0.18
+    ],
+    "kind": "gem",
+    "rim": 0.1,
+    "rough": 0.08,
+    "shade": [
+      0.5,
+      0.42,
+      0.72
+    ],
+    "spec": 1.0,
+    "spec_hi": 0.7,
+    "spec_lo": 0.5,
+    "spec_tint": [
+      1.0,
+      0.95,
+      1.0
+    ]
+  },
+  "V4 carnival LiningAtlas": {
+    "ao": 0.75,
+    "color": [
+      1,
+      1,
+      1
+    ],
+    "kind": "satin",
+    "rim": 0.18,
+    "rough": 0.32,
+    "shade": [
+      0.62,
+      0.55,
+      0.8
+    ],
+    "spec": 0.2,
+    "spec_hi": 0.92,
+    "spec_lo": 0.55,
+    "spec_tint": [
+      0.86,
+      0.78,
+      1.0
+    ],
+    "texture": "carnival-lining.png"
+  },
+  "V4 carnival Sash": {
+    "ao": 0.75,
+    "color": [
+      0.66,
+      0.09,
+      0.12
+    ],
+    "kind": "satin",
+    "rim": 0.18,
+    "rough": 0.32,
+    "shade": [
+      0.56,
+      0.6,
+      0.8
+    ],
+    "spec": 0.2,
+    "spec_hi": 0.92,
+    "spec_lo": 0.55,
+    "spec_tint": [
+      0.86,
+      0.78,
+      1.0
+    ]
+  },
+  "V4 night CoatAtlas": {
+    "ao": 0.75,
+    "color": [
+      1,
+      1,
+      1
+    ],
+    "kind": "cloth",
+    "rim": 0.16,
+    "rough": 0.55,
+    "shade": [
+      0.5,
+      0.45,
+      0.66
+    ],
+    "spec": 0.1,
+    "spec_hi": 1.0,
+    "spec_lo": 0.6,
+    "spec_tint": [
+      0.46,
+      0.43,
+      0.58
+    ],
+    "texture": "night-coat.png"
+  },
+  "V4 night Gem": {
+    "ao": 0.75,
+    "color": [
+      0.62,
+      0.24,
+      0.86
+    ],
+    "kind": "gem",
+    "rim": 0.1,
+    "rough": 0.08,
+    "shade": [
+      0.5,
+      0.42,
+      0.72
+    ],
+    "spec": 1.0,
+    "spec_hi": 0.7,
+    "spec_lo": 0.5,
+    "spec_tint": [
+      1.0,
+      0.95,
+      1.0
+    ]
+  },
+  "V4 night LiningAtlas": {
+    "ao": 0.75,
+    "color": [
+      1,
+      1,
+      1
+    ],
+    "kind": "satin",
+    "rim": 0.18,
+    "rough": 0.32,
+    "shade": [
+      0.62,
+      0.55,
+      0.8
+    ],
+    "spec": 0.2,
+    "spec_hi": 0.92,
+    "spec_lo": 0.55,
+    "spec_tint": [
+      0.86,
+      0.78,
+      1.0
+    ],
+    "texture": "night-lining.png"
+  },
+  "V4 night Sash": {
+    "ao": 0.75,
+    "color": [
+      0.2,
+      0.58,
+      0.58
+    ],
+    "kind": "satin",
+    "rim": 0.18,
+    "rough": 0.32,
+    "shade": [
+      0.56,
+      0.6,
+      0.8
+    ],
+    "spec": 0.2,
+    "spec_hi": 0.92,
+    "spec_lo": 0.55,
+    "spec_tint": [
+      0.86,
+      0.78,
+      1.0
+    ]
+  },
+  "V4 night Strap": {
+    "ao": 0.75,
+    "color": [
+      0.11,
+      0.1,
+      0.135
+    ],
+    "kind": "cloth",
+    "rim": 0.16,
+    "rough": 0.55,
+    "shade": [
+      0.5,
+      0.45,
+      0.66
+    ],
+    "spec": 0.1,
+    "spec_hi": 1.0,
+    "spec_lo": 0.6,
+    "spec_tint": [
+      0.46,
+      0.43,
+      0.58
+    ]
+  },
+  "V4 starlight CoatAtlas": {
+    "ao": 0.75,
+    "color": [
+      1,
+      1,
+      1
+    ],
+    "kind": "cloth",
+    "rim": 0.16,
+    "rough": 0.55,
+    "shade": [
+      0.74,
+      0.74,
+      0.88
+    ],
+    "spec": 0.1,
+    "spec_hi": 1.0,
+    "spec_lo": 0.6,
+    "spec_tint": [
+      0.46,
+      0.43,
+      0.58
+    ],
+    "texture": "starlight-coat.png"
+  },
+  "V4 starlight Gem": {
+    "ao": 0.75,
+    "color": [
+      0.22,
+      0.47,
+      0.92
+    ],
+    "kind": "gem",
+    "rim": 0.1,
+    "rough": 0.08,
+    "shade": [
+      0.5,
+      0.42,
+      0.72
+    ],
+    "spec": 1.0,
+    "spec_hi": 0.7,
+    "spec_lo": 0.5,
+    "spec_tint": [
+      1.0,
+      0.95,
+      1.0
+    ]
+  },
+  "V4 starlight LiningAtlas": {
+    "ao": 0.75,
+    "color": [
+      1,
+      1,
+      1
+    ],
+    "kind": "satin",
+    "rim": 0.18,
+    "rough": 0.32,
+    "shade": [
+      0.62,
+      0.55,
+      0.8
+    ],
+    "spec": 0.2,
+    "spec_hi": 0.92,
+    "spec_lo": 0.55,
+    "spec_tint": [
+      0.86,
+      0.78,
+      1.0
+    ],
+    "texture": "starlight-lining.png"
+  },
+  "V4 starlight Sash": {
+    "ao": 0.75,
+    "color": [
+      0.22,
+      0.62,
+      0.62
+    ],
+    "kind": "satin",
+    "rim": 0.18,
+    "rough": 0.32,
+    "shade": [
+      0.56,
+      0.6,
+      0.8
+    ],
+    "spec": 0.2,
+    "spec_hi": 0.92,
+    "spec_lo": 0.55,
+    "spec_tint": [
+      0.86,
+      0.78,
+      1.0
+    ]
+  },
+  "V4 starlight Strap": {
+    "ao": 0.75,
+    "color": [
+      0.93,
+      0.9,
+      0.84
+    ],
+    "kind": "cloth",
+    "rim": 0.16,
+    "rough": 0.55,
+    "shade": [
+      0.74,
+      0.74,
+      0.88
+    ],
+    "spec": 0.1,
+    "spec_hi": 1.0,
+    "spec_lo": 0.6,
+    "spec_tint": [
+      0.46,
+      0.43,
+      0.58
+    ]
+  }
+}

@@ -134,8 +134,9 @@ def painted(name, color, shade=(0.60, 0.52, 0.76), image=None, kind='cloth', spe
     em = n.new('ShaderNodeEmission')
     l.new(col, em.inputs['Color'])
     l.new(em.outputs[0], out.inputs['Surface'])
+    tint = spec_color if kind != 'metal' else tuple(min(1.0, 0.55 + c * 0.5) for c in color)
     m['toon'] = dict(color=list(color), shade=list(shade), kind=kind, ao=ao, rough=rough, spec_lo=lo, spec_hi=hi,
-                     spec=strength, rim=rim_k)
+                     spec=strength, rim=rim_k, spec_tint=list(tint))
     return m
 
 

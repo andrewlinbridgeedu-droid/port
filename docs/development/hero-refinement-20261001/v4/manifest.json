@@ -1,0 +1,63 @@
+{
+  "fbx": "HeroV4.fbx",
+  "bones": 28,
+  "clips": [
+    "BattleIdle",
+    "BasicSlash",
+    "Thrust",
+    "Card",
+    "Parry",
+    "Hit",
+    "CastPrepare",
+    "CastMaskFlick",
+    "CastMaskTurn",
+    "CastTwinSweep",
+    "CastTwinCross",
+    "CastFinaleLift",
+    "CastFinaleThrow",
+    "CastCardFan"
+  ],
+  "renderers": [
+    "Common Body",
+    "Outfit-night-Body",
+    "Outfit-starlight-Body",
+    "Outfit-carnival-Body"
+  ],
+  "triangles": {
+    "Common Body": 56604,
+    "Outfit-night-Body": 61428,
+    "Outfit-starlight-Body": 66720,
+    "Outfit-carnival-Body": 65588
+  },
+  "materials": [
+    "V4 Glove",
+    "V4 Gold",
+    "V4 Hair",
+    "V4 HairCap",
+    "V4 Lace",
+    "V4 Leather",
+    "V4 Skin",
+    "V4 Sole",
+    "V4 Trousers",
+    "V4 carnival CoatAtlas",
+    "V4 carnival Gem",
+    "V4 carnival LiningAtlas",
+    "V4 carnival Sash",
+    "V4 night CoatAtlas",
+    "V4 night Gem",
+    "V4 night LiningAtlas",
+    "V4 night Sash",
+    "V4 night Strap",
+    "V4 starlight CoatAtlas",
+    "V4 starlight Gem",
+    "V4 starlight LiningAtlas",
+    "V4 starlight Sash",
+    "V4 starlight Strap"
+  ],
+  "outfits": [
+    "mistport-night",
+    "starlight-magician",
+    "midnight-carnival"
+  ],
+  "userVisualApproval": false
+}
