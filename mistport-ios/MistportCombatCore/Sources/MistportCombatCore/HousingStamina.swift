@@ -88,7 +88,7 @@ public struct MPCStaminaState: Codable, Equatable, Sendable {
 }
 
 public enum MPCHousingCatalog {
-    public enum District: String, Codable, Sendable { case harbor, oldArcade, canal, church, highland }
+    public enum District: String, Codable, Sendable { case harbor, oldArcade, canal, church, highland, noble }
 
     public struct Lodging: Equatable, Sendable, Identifiable {
         public let id: String
@@ -100,6 +100,8 @@ public enum MPCHousingCatalog {
         public let rooms: Int?
         /// The church shelter: only while the player holds less than their recovery line.
         public let belowRecoveryLineOnly: Bool
+        /// City contribution tier needed to sign; nil is open to everyone.
+        public var requiredContributionTier: Int? = nil
     }
 
     public struct Meal: Equatable, Sendable, Identifiable {
@@ -118,6 +120,10 @@ public enum MPCHousingCatalog {
         .init(id: "canal_house", name: "运河联排屋", district: .canal, copperPerDay: 12, staminaBonus: 6, rooms: 600, belowRecoveryLineOnly: false),
         .init(id: "bell_loft", name: "钟楼阁楼", district: .church, copperPerDay: 16, staminaBonus: 10, rooms: 200, belowRecoveryLineOnly: false),
         .init(id: "highland_house", name: "高地石宅", district: .highland, copperPerDay: 30, staminaBonus: 12, rooms: 80, belowRecoveryLineOnly: false),
+        // The noble quarter lets in only a 雾港的帮手 (user decision 2026-10-01). Status housing:
+        // the same recovery as the highland house, no highland-board errands.
+        .init(id: "noble_suite", name: "公馆客房", district: .noble, copperPerDay: 40, staminaBonus: 12, rooms: 20, belowRecoveryLineOnly: false,
+              requiredContributionTier: 4),
     ]
 
     public static let meals: [Meal] = [
@@ -126,16 +132,24 @@ public enum MPCHousingCatalog {
         .init(id: "bakery", name: "面包坊", copperPerDay: 12, staminaBonus: 3, requiresLodgingID: nil),
         .init(id: "cafe", name: "咖啡馆", copperPerDay: 14, staminaBonus: 5, requiresLodgingID: nil),
         .init(id: "house_kitchen", name: "宅内厨房", copperPerDay: 20, staminaBonus: 8, requiresLodgingID: "highland_house"),
+        .init(id: "noble_dining", name: "公馆膳房", copperPerDay: 20, staminaBonus: 8, requiresLodgingID: "noble_suite"),
     ]
 
     public static let basicLodgingID = "dock_bunk", basicMealID = "soup_shed"
     public static let shelterID = "shelter", shelterMealID = "church_soup"
     /// Only a highland resident can take highland-board errands (user decision 2026-09-30).
     public static let highlandLodgingID = "highland_house"
+    public static let nobleLodgingID = "noble_suite"
     public static let leaseDays = 7
 
     public static func lodging(_ id: String) -> Lodging? { lodgings.first { $0.id == id } }
     public static func meal(_ id: String) -> Meal? { meals.first { $0.id == id } }
+
+    /// Whether the player's city contribution lets them sign this lodging.
+    public static func isOpen(_ lodging: Lodging, contributionPoints: Int) -> Bool {
+        guard let level = lodging.requiredContributionTier else { return true }
+        return MPCCityContribution.tier(points: contributionPoints).level >= level
+    }
 
     public static func recoveryPerDay(lodgingID: String, mealID: String) -> Int {
         let bonus = (lodging(lodgingID)?.staminaBonus ?? 0) + (meal(mealID)?.staminaBonus ?? 0)
@@ -180,9 +194,11 @@ public struct MPCHousingLedger: Codable, Equatable, Sendable {
 
     /// Signs a lease of `leaseDays` from `day`. `roomsLeft` is the server's count for that
     /// lodging (nil for unlimited). Paying is daily; signing costs nothing by itself.
-    public mutating func sign(lodgingID: String, mealID: String, day: Int, roomsLeft: Int?) throws {
+    /// `contributionPoints` is the player's city contribution; without it the noble quarter stays shut.
+    public mutating func sign(lodgingID: String, mealID: String, day: Int, roomsLeft: Int?, contributionPoints: Int = 0) throws {
         guard let lodging = MPCHousingCatalog.lodging(lodgingID), let meal = MPCHousingCatalog.meal(mealID) else { throw Failure.unknown }
-        guard !lodging.belowRecoveryLineOnly, meal.requiresLodgingID == nil || meal.requiresLodgingID == lodgingID else { throw Failure.notAllowed }
+        guard !lodging.belowRecoveryLineOnly, meal.requiresLodgingID == nil || meal.requiresLodgingID == lodgingID,
+              MPCHousingCatalog.isOpen(lodging, contributionPoints: contributionPoints) else { throw Failure.notAllowed }
         if lodging.rooms != nil, lodgingID != self.lodgingID || day > leaseEndsDay { guard (roomsLeft ?? 0) > 0 else { throw Failure.noRoom } }
         self.lodgingID = lodgingID; self.mealID = mealID
         leaseEndsDay = day + MPCHousingCatalog.leaseDays - 1

@@ -2914,7 +2914,7 @@ struct ChapterOneEncounterTestView: View {
         case [.maskedWhisper, .sidestepStrike]:
             return ("假面谕令 → 错步穿行", "误认让错步穿行获得额外伤害")
         case [.maskedWhisper, .fabricatedEvidence]:
-            return ("组合预览 · K02", "双重铺垫：为身份错置创造转换窗口")
+            return ("组合预览 · K02", "双重铺垫：为张冠李戴创造转换窗口")
         default:
             return nil
         }
@@ -6954,7 +6954,7 @@ struct ChapterOneMissionBridgeView: View {
 
     private static func prebattleObjective(_ number: Int) -> String? {
         switch number {
-        case 8: "身份错置未满4层先造成伤害并加1层；满4层再释放才延迟行动。技能按编排顺序自动出牌。"
+        case 8: "张冠李戴未满4层先造成伤害并加1层；满4层再释放才延迟行动。技能按编排顺序自动出牌。"
         case 20: "目标：趁锤卫恢复或校准，解除1600点拘束；救出活档案即可胜利。"
         case 25: "目标：趁维娅恢复或校准，拆除1800点根结；她不会被击杀。"
         case 26: "目标：先打断900点车链供能，再击败锤卫。"

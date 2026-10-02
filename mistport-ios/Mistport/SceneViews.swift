@@ -1881,7 +1881,7 @@ private struct FoolPathGuideView: View {
                     }
 
                     GuidePlate(title: "战斗定位", text: "愚者通过叠加误认、转成错位、延迟敌人行动，再在破绽窗口完成爆发。", tint: .purple)
-                    GuidePlate(title: "战前编排", text: "普通技能按战前排列顺序自动循环。遗落物假面由你手动使用，不占技能槽；用它与伪证烙印铺垫误认，再用身份错置转成错位，最后用双影追猎或荒谬归结兑现。", tint: .cyan)
+                    GuidePlate(title: "战前编排", text: "普通技能按战前排列顺序自动循环。遗落物假面由你手动使用，不占技能槽；用它与伪证烙印铺垫误认，再用张冠李戴转成错位，最后用双影追猎或荒谬归结兑现。", tint: .cyan)
                     GuidePlate(title: "自动战斗如何选择", text: "系统从左到右扫描技能序列；当前不可用的技能跳过，继续寻找下一张可用技能。技能都不可用时才进行普攻。", tint: .yellow)
                     GuidePlate(title: "推荐入门配置", text: "偏差透镜强化4层误认目标的终结，纸月筹码保留控制方向；优先把铺垫、转化和终结技能排成稳定循环。", tint: .mint)
                     GuidePlate(title: "第一章首领要点", text: "先处理寄忆核心，再观察空壳守卫的蓄力意图。归名执事·赫恩代表归一系统的唯一身份逻辑，保留错位给荒谬归结完成终结。", tint: .orange)

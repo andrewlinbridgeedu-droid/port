@@ -716,7 +716,7 @@ public sealed class FoolEffekseerSkillVFX : MonoBehaviour
         "fool_skill_01" => "错步穿行",
         "fool_skill_02" => "假面谕令",
         "fool_skill_03" => "纸人代身（遗落物）",
-        "fool_skill_04" => "身份错置",
+        "fool_skill_04" => "张冠李戴",
         "fool_skill_05" => "伪证烙印",
         "fool_skill_06" => "错影追猎",
         "fool_skill_07" => "荒谬归结",
