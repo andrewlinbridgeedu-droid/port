@@ -941,6 +941,14 @@ struct ChapterOneEncounterTestView: View {
     private var battleSpeed: Int { savedBattleSpeed == 2 ? 2 : 1 }
     @AppStorage(GameSettingsKeys.hapticsEnabled, store: .standard) private var hapticsEnabled = true
     @AppStorage(GameSettingsKeys.combatSoundVolume, store: .standard) private var combatSoundVolume = 0.6
+    /// Volume sent to Unity. Review launches (-MistportCityMute YES, DEBUG) keep
+    /// battle sounds silent as well as the harbour.
+    private var unityCombatVolume: Double {
+        #if DEBUG
+        if UserDefaults.standard.bool(forKey: "MistportCityMute") { return 0 }
+        #endif
+        return combatSoundVolume
+    }
     private static let q1PreludeAttackCount = 3
 
     @AppStorage("mistport.skipCombatAnimations") private var skipsCombatAnimations = false
@@ -1359,7 +1367,7 @@ struct ChapterOneEncounterTestView: View {
                 handleEnemyTap(targetID)
             }
             if usesUnityBattlefield {
-                UnityBattleRuntime.shared.send(action: "audio-volume:\(combatSoundVolume)")
+                UnityBattleRuntime.shared.send(action: "audio-volume:\(unityCombatVolume)")
                 UnityBattleRuntime.shared.send(action: combatIsActive ? "combat-start" : "combat-stop")
                 UnityBattleRuntime.shared.configureEncounter(unityBattlePresentation)
             UnityBattleRuntime.shared.send(action: usesEncoreRevenant ? "encore-model-on" : "encore-model-off")
@@ -1416,7 +1424,7 @@ struct ChapterOneEncounterTestView: View {
         }
         .onChange(of: unityBattleRuntime.isReady) { _, isReady in
             guard isReady, usesUnityBattlefield else { return }
-            UnityBattleRuntime.shared.send(action: "audio-volume:\(combatSoundVolume)")
+            UnityBattleRuntime.shared.send(action: "audio-volume:\(unityCombatVolume)")
             UnityBattleRuntime.shared.send(action: combatIsActive ? "combat-start" : "combat-stop")
             UnityBattleRuntime.shared.configureEncounter(unityBattlePresentation)
                 UnityBattleRuntime.shared.send(action: usesEncoreRevenant ? "encore-model-on" : "encore-model-off")
@@ -1450,8 +1458,8 @@ struct ChapterOneEncounterTestView: View {
             }
         }
         .onChange(of: savedBattleSpeed) { _, _ in synchronizeBattlePresentationSettings() }
-        .onChange(of: combatSoundVolume) { _, volume in
-            if usesUnityBattlefield { UnityBattleRuntime.shared.send(action: "audio-volume:\(volume)") }
+        .onChange(of: combatSoundVolume) { _, _ in
+            if usesUnityBattlefield { UnityBattleRuntime.shared.send(action: "audio-volume:\(unityCombatVolume)") }
         }
         .onChange(of: session.emeraldPoisonIntensity) { _, intensity in
             unityBattleRuntime.send(action: "emerald-poison:\(intensity)")

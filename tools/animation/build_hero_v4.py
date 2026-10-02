@@ -329,8 +329,8 @@ def export(out_dir):
     print('HERO_V4_EXPORTED', json.dumps({k: stats[k] for k in ('bones', 'renderers')}), sum(stats['triangles'].values()))
 
 
-def pose_frames(out_dir, clip):
-    """Review a clip: rear and side views at its key phases."""
+def pose_frames(out_dir, clips):
+    """Review clips (comma separated): rear, side, in-game and front views at key phases."""
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     show_only(OUTFITS[0])
@@ -352,13 +352,16 @@ def pose_frames(out_dir, clip):
     scene.collection.objects.link(cam)
     scene.camera = cam
     cam.data.lens = 70
-    for p in (0.0, 0.2, 0.34, 0.46, 0.58, 0.72, 0.86):
-        rigmod.pose(rig, clip, p)
-        for name, loc in (('rear', Vector((140, 520, 150))), ('side', Vector((560, -60, 120)))):
-            cam.location = loc
-            cam.rotation_euler = (Vector((0, 0, 95)) - loc).to_track_quat('-Z', 'Y').to_euler()
-            scene.render.filepath = str(out / f'{clip}-{name}-{int(p * 100):03d}.png')
-            bpy.ops.render.render(write_still=True)
+    views = (('rear', Vector((140, 520, 150))), ('side', Vector((560, -60, 120))),
+             ('game', Vector((0, 600, 330))), ('front', Vector((-260, -480, 150))))
+    for clip in clips.split(','):
+        for p in (0.0, 0.2, 0.34, 0.46, 0.58, 0.72, 0.86):
+            rigmod.pose(rig, clip, p)
+            for name, loc in views:
+                cam.location = loc
+                cam.rotation_euler = (Vector((0, 0, 92)) - loc).to_track_quat('-Z', 'Y').to_euler()
+                scene.render.filepath = str(out / f'{clip}-{name}-{round(p * 100):03d}.png')
+                bpy.ops.render.render(write_still=True)
     print('HERO_V4_POSE_FRAMES', out)
 
 

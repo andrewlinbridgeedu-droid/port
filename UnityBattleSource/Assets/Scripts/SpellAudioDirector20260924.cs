@@ -17,7 +17,10 @@ public sealed class SpellAudioDirector20260924 : MonoBehaviour
     }
 
     static SpellAudioDirector20260924 instance;
-    static float masterVolume = .60f;
+    const float DefaultVolume = .60f;
+    static float masterVolume = DefaultVolume;
+    /// Other battle sounds were mixed at the default combat volume; they follow the player's setting.
+    public static float Scaled(float volumeAtDefault) => Mathf.Clamp01(volumeAtDefault * masterVolume / DefaultVolume);
     readonly Dictionary<string, Pending> pending = new Dictionary<string, Pending>();
     readonly Dictionary<string, AudioClip> clips = new Dictionary<string, AudioClip>();
     AudioSource source;

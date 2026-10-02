@@ -55,7 +55,8 @@ public sealed class CombatTempoAnimatedBody : MonoBehaviour
             foreach (var leg in new[] { "frontleg", "R_frontleg", "backleg", "R_backleg" })
                 Foot(rigRoot.transform, leg + "0", leg + "1", leg + "2");
         } else if (Kind == "Hero") {
-            foreach (var side in new[] { "Left", "Right" }) Foot(rigRoot.transform, side + "UpLeg", side + "Leg", side + "Foot");
+            // The hero's Blender clips plant both feet in the combat stance and author
+            // their own steps; pins captured from the bind pose would drag the feet back.
         } else {
             foreach (var side in new[] { "L", "R" }) Foot(rigRoot.transform, "Thigh." + side, "Shin." + side, "Foot." + side);
         }

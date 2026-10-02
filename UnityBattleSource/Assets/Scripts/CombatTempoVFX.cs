@@ -25,7 +25,7 @@ public sealed class CombatTempoVFX : MonoBehaviour
         fx.Sparks(parried ? new Color(.82f, .86f, .9f) : Tone(kind), kind == "Stonejaw" ? 13 : 19, kind == "Stonejaw" ? .085f : .045f);
         if (parried) {
             var source = new GameObject("Metal parry click").AddComponent<AudioSource>(); source.transform.SetParent(fx.transform, false);
-            source.clip = Resources.Load<AudioClip>("Audio/Spell/mask_impact"); source.volume = .35f; source.pitch = 1.5f; source.Play();
+            source.clip = Resources.Load<AudioClip>("Audio/Spell/mask_impact"); source.volume = SpellAudioDirector20260924.Scaled(.35f); source.pitch = 1.5f; source.Play();
         }
     }
     public static void HeavyContact(Vector3 target, string kind) {
