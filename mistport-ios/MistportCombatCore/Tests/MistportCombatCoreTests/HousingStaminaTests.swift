@@ -84,6 +84,27 @@ struct HousingStaminaTests {
         #expect(!h.canTakeHighlandErrands(day: 31), "a day that could not pay the house loses highland access")
     }
 
+    @Test("the noble quarter opens only at the fourth city contribution tier")
+    func nobleQuarterNeedsContribution() throws {
+        var h = MPCHousingLedger()
+        #expect(throws: MPCHousingLedger.Failure.notAllowed) {
+            try h.sign(lodgingID: "noble_suite", mealID: "noble_dining", day: 20, roomsLeft: 5)
+        }
+        #expect(throws: MPCHousingLedger.Failure.notAllowed) {
+            try h.sign(lodgingID: "noble_suite", mealID: "noble_dining", day: 20, roomsLeft: 5, contributionPoints: 299)
+        }
+        #expect(throws: MPCHousingLedger.Failure.notAllowed, "the noble kitchen goes with the noble suite") {
+            try h.sign(lodgingID: "highland_house", mealID: "noble_dining", day: 20, roomsLeft: 5, contributionPoints: 300)
+        }
+        try h.sign(lodgingID: "noble_suite", mealID: "noble_dining", day: 20, roomsLeft: 5, contributionPoints: 300)
+        var cash = 2_000
+        let paid = h.payDay(20, cash: &cash, completedMissions: 20)
+        #expect(paid.lodgingID == "noble_suite" && paid.copper == 60 && cash == 1_940)
+        #expect(paid.recoveryPerDay == MPCHousingCatalog.recoveryPerDay(lodgingID: "highland_house", mealID: "house_kitchen"))
+        #expect(!h.canTakeHighlandErrands(day: 20), "highland-board errands stay with the highland house")
+        #expect(MPCHousingCatalog.lodgings.allSatisfy { $0.district != .noble || $0.requiredContributionTier == 4 })
+    }
+
     @Test("changing meals preserves lease dates and today's paid receipt")
     func mealChangePreservesLease() throws {
         var ledger = MPCHousingLedger()

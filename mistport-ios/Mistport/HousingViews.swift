@@ -87,7 +87,7 @@ struct HousingAgencyView: View {
     var body: some View {
         HomeCounterScene(title: "赁屋行", room: .rentalAgency, actorArt: "HousingAgencyClerk20260930") {
             Text("柜员 · 伊蕾娜").font(.headline)
-            Text("先挑一条喜欢的街，再进屋看看。港区有船工的铺位，旧港那头也有安静的石宅；贵族的门牌不在这本租屋册里。")
+            Text("先挑一条喜欢的街，再进屋看看。港区有船工的铺位，旧港那头也有安静的石宅。贵族区只给“雾港的帮手”开门。")
             Text(game.housingDailyNotice).font(.footnote)
             HomeCounterAction(title: "翻开住处册 · 看区选房") { choosing = true }
             HomeCounterAction(title: "我的住处与饮食") { showingHome = true }
@@ -169,6 +169,16 @@ struct HousingSearchView: View {
                     }.frame(maxWidth: .infinity)
                 }.buttonStyle(GameArtButtonStyle())
             }
+            // City contribution is not wired into the App yet, so the noble quarter stays locked here.
+            Button {} label: {
+                HStack {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("贵族区").font(.headline)
+                        Text("城市贡献度到 300，成了“雾港的帮手”才递得进门牌").font(.caption)
+                    }
+                    Spacer(); Image(systemName: "lock.fill")
+                }.frame(maxWidth: .infinity)
+            }.buttonStyle(GameArtButtonStyle()).disabled(true)
         }
     }
     private func districtAvailability(_ homes: [MPCHousingCatalog.Lodging]) -> String {
@@ -284,7 +294,7 @@ private struct HousingDistrictMap: View {
                     }
                 }
                 ForEach(HousingArt.geography?.restrictedAreas ?? []) { area in
-                    Text("贵族区 · 谢绝访客").font(.system(size: 9, weight: .semibold)).foregroundStyle(.white)
+                    Text("贵族区 · 城市贡献度 300 开放").font(.system(size: 9, weight: .semibold)).foregroundStyle(.white)
                         .padding(4).background(.black.opacity(0.65), in: Capsule())
                         .position(x: area.labelAt[0] * h, y: area.labelAt[1] * h)
                 }

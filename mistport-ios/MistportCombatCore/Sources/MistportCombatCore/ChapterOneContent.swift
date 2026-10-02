@@ -296,12 +296,12 @@ public enum MPCChapterOneCatalog {
     public static let missions: [MPCChapterOneMissionDefinition] = [
         .init(id: "chapter01_q01", number: 1, name: "雨夜醒来", location: "旧城区·紫藤街口", encounterID: "chapter01_q01_encounter", storyText: "你记得自己的名字，却在雨中的街口被空壳守卫拦下：“已认领人员，不得离开保管区域。”玛拉示意先观察它的出招；她递来的通行证，背面留着一栏旧签收。", trialSkillID: .sidestepStrike, permanentSkillIDs: [.sidestepStrike], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 1)!.itemIDs),
         .init(id: "chapter01_q02", number: 2, name: "雾都幽灵", location: "旧城区·紫藤街口", encounterID: "chapter01_q02_encounter", storyText: "两道幽灵围住一批退回的寻人信，反复说着“别送我回家”。被击散后，它们各裂成两只赤红子体。不同收件人的退信上，却盖着同一个理由：家属已领回。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 2)!.itemIDs),
-        .init(id: "chapter01_q03", number: 3, name: "循名而来的猎犬", location: "旧城区·失名档案街", encounterID: "chapter01_q03_encounter", storyText: "旧地狱犬循着你的名字追来。玛拉在战前交付假面谕令。击退后，项圈露出你的名字、旧邮务追索号与一道格式不同的外部委托编号；迟秒怀表只是核对邮路的物证。", permanentSkillIDs: [], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 3)!.itemIDs),
+        .init(id: "chapter01_q03", number: 3, name: "循名而来的猎犬", location: "旧城区·失名档案街", encounterID: "chapter01_q03_encounter", storyText: "旧地狱犬循着你的名字追来。玛拉在战前交付无主假面。击退后，项圈露出你的名字、旧邮务追索号与一道格式不同的外部委托编号；迟秒怀表只是核对邮路的物证。", permanentSkillIDs: [], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 3)!.itemIDs),
         .init(id: "chapter01_q04", number: 4, name: "猎犬试探", location: "旧城区·雾灯街", encounterID: "chapter01_q04_encounter", storyText: "同一只猎犬再次追来，喉间双焰引出两颗追索火球。让假面承接双焰，抓住三秒破绽。战后召回声带走猎犬，奥黛尔的诊所里，却仍留着失踪抄方员伊恩的一杯冷茶。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 4)!.itemIDs, requiredBehaviorTags: []),
         .init(id: "chapter01_q05", number: 5, name: "不肯落幕", location: "旧城区·雾灯街", encounterID: "chapter01_q05_encounter", storyText: "旧邮务间的翠焰执役者不停将退信盖成“已送达”。只要还有退件，它就不能结束执役。毒雾不断加浓，绿焰预示重击；你要终止这条把求救当成已送达邮件的流程。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 5)!.itemIDs, requiredBehaviorTags: []),
         .init(id: "chapter01_q06", number: 6, name: "档案街入口", location: "旧城区·失名档案街", encounterID: "chapter01_q06_encounter", storyText: "注销底联没有家属签名，只有档案系统的接收章。白门卫承认通行证有效，却要求领回你的监护人提出查阅申请。它的真盾与出击后的校准破绽，挡在原始记录之前。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 6)!.itemIDs),
         .init(id: "chapter01_q07", number: 7, name: "空白身份牌", location: "旧城区·失名档案街", encounterID: "chapter01_q07_encounter", storyText: "两具空壳守卫看守的空白身份牌并非废品，而是等待填写归属的成品。寄忆核心持续修复守卫；其中一张牌背面的领药编号，属于本来就有姓名和工作的伊恩。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 7)!.itemIDs),
-        .init(id: "chapter01_q08", number: 8, name: "不属于我的名字", location: "旧城区·失名档案街", encounterID: "chapter01_q08_encounter", storyText: "补录台下的记忆蛭试着给你安上别人的名字。它抽出的记忆里，竟有刚在诊所见过的缺角茶杯。战前习得身份错置，以四层误认转为错位，打断它的吞名。", permanentSkillIDs: [.identityDisplacement], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 8)!.itemIDs),
+        .init(id: "chapter01_q08", number: 8, name: "不属于我的名字", location: "旧城区·失名档案街", encounterID: "chapter01_q08_encounter", storyText: "补录台下的记忆蛭试着给你安上别人的名字。它抽出的记忆里，竟有刚在诊所见过的缺角茶杯。战前习得张冠李戴，以四层误认转为错位，打断它的吞名。", permanentSkillIDs: [.identityDisplacement], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 8)!.itemIDs),
         .init(id: "chapter01_q09", number: 9, name: "被改写的证词", location: "旧城区·齿轮工坊", encounterID: "chapter01_q09_encounter", storyText: "书记员正将奥黛尔的“伊恩没有回来”改为“因误会重复报案”，核心持续维护覆盖后的版本。保住前后两份证词，才能让这次失踪不再被一句手续完成抹掉。三教会存证页上留着伊莱娅的批注，错乱灯流在她经过后重新归正。", permanentSkillIDs: [.fabricatedEvidence], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 9)!.itemIDs),
         .init(id: "chapter01_q10", number: 10, name: "失踪者名单", location: "旧城区·齿轮工坊", encounterID: "chapter01_q10_encounter", storyText: "名单上的伊恩和其他失踪者，都被标记为“已领回”。你的名字也在其中，地址指向一个所谓的家。铠甲执行犬与白门卫守住原件；它们不是早先被召回的旧犬。赫斯认出名单上的旧地址：这是一条投递路线，不是找到家人的证明。", permanentSkillIDs: [.mirrorPursuit], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 10)!.itemIDs),
         .init(id: "chapter01_q11", number: 11, name: "不属于我的家人", location: "旧城区·齿轮工坊", encounterID: "chapter01_q11_encounter", storyText: "门后的声音说，桌上的缺角茶杯是你从小用惯的。杯底却印着奥黛尔诊所的药柜编号。两只记忆蛭正用真实片段拼出假的亲情，空壳守卫等待完成接收。", permanentSkillIDs: [.absurdFinale], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 11)!.itemIDs),
@@ -329,31 +329,31 @@ public enum MPCChapterOneCatalog {
     public static let skills: [MPCSkillContent] = [
         .init(id: .sidestepStrike, name: "错步穿行", summary: "基础攻击110%；目标有「误认」或「错位」时伤害提高25%，若存在第二个敌人，第二目标承受50%伤害。", unlockStage: .prologue, isUltimate: false, tags: ["双目标攻击", "利用错误"]),
         .init(id: .maskedWhisper, name: "假面谕令", summary: "造成60%伤害并施加2层误认；召出幻影承接两次敌方攻击。CD 12秒，重复施放刷新次数，不叠加。", unlockStage: .investigationOne, isUltimate: false, tags: ["铺垫", "误认×2", "幻影承伤×2"]),
-        .init(id: .identityDisplacement, name: "身份错置", summary: "误认未满4层时造成80%伤害并追加1层；达到4层时消耗误认，施加2回合「错位」并延迟目标下一次行动。", unlockStage: .investigationTwo, isUltimate: false, tags: ["误认转换", "错位", "行动延迟"]),
+        .init(id: .identityDisplacement, name: "张冠李戴", summary: "误认未满4层时造成80%伤害并追加1层；达到4层时消耗误认，施加2回合「错位」并延迟目标下一次行动。", unlockStage: .investigationTwo, isUltimate: false, tags: ["误认转换", "错位", "行动延迟"]),
         .init(id: .fabricatedEvidence, name: "伪证烙印", summary: "造成70%伤害，施加1层误认；后续2个伤害技能各获得15%增伤。", unlockStage: .investigationTwo, isUltimate: false, tags: ["铺垫", "后续增伤"]),
         .init(id: .mirrorPursuit, name: "双影追猎", summary: "造成两段65%伤害；目标处于错位时，第二段伤害提高50%。", unlockStage: .investigationThree, isUltimate: false, tags: ["两段伤害", "错位兑现"]),
         .init(id: .absurdFinale, name: "荒谬归结", summary: "造成150%伤害；若目标处于错位，消耗错位并追加80%伤害，同时获得30%穿甲。", unlockStage: .investigationThree, isUltimate: false, tags: ["终结", "错位兑现", "30%穿甲"]),
         .init(id: .turnTheTables, name: "反客为主", summary: "驱散一个敌方增益；成功时施加1回合错位，若没有可驱散增益则施加2层误认。", unlockStage: .investigationFour, isUltimate: false, tags: ["反制", "驱散", "错位"]),
         .init(id: .backstageChange, name: "后手改写", summary: "划去一项敌人施加的持续伤害（毒雾先降回初始浓度），并使下一张铺垫技能额外施加1层误认。", unlockStage: .investigationFour, isUltimate: false, tags: ["净化", "强化铺垫"]),
-        .init(id: .namelessStage, name: "无名宣告", summary: "每场一次：所有敌人获得4层误认，并获得「归结准备」；下一次伤害提高25%，下一次身份错置只需消耗2层误认。", unlockStage: .investigationFour, isUltimate: true, tags: ["终极", "全体误认", "快速启动"])
+        .init(id: .namelessStage, name: "无名宣告", summary: "每场一次：所有敌人获得4层误认，并获得「归结准备」；下一次伤害提高25%，下一次张冠李戴只需消耗2层误认。", unlockStage: .investigationFour, isUltimate: true, tags: ["终极", "全体误认", "快速启动"])
     ]
 
     public static let combos: [MPCComboContent] = [
         .init(id: "K01", name: "假面试探", sequence: "假面谕令 → 错步穿行", purpose: "让第二张牌利用第一张牌制造的误认"),
         .init(id: "K02", name: "双面伪局", sequence: "假面谕令 → 伪证烙印", purpose: "稳定叠加误认并强化下一轮伤害"),
-        .init(id: "K03", name: "身份翻面", sequence: "假面谕令 → 身份错置", purpose: "把误认转换成错位并延迟敌人"),
-        .init(id: "K04", name: "双影兑现", sequence: "身份错置 → 双影追猎", purpose: "用两段攻击兑现错位"),
-        .init(id: "K05", name: "错位归结", sequence: "身份错置 → 荒谬归结", purpose: "消费错位完成高穿甲终结"),
-        .init(id: "K06", name: "误认终结", sequence: "假面谕令 → 伪证烙印 → 身份错置 → 双影追猎 → 荒谬归结", purpose: "愚者的标准完整爆发"),
+        .init(id: "K03", name: "身份翻面", sequence: "假面谕令 → 张冠李戴", purpose: "把误认转换成错位并延迟敌人"),
+        .init(id: "K04", name: "双影兑现", sequence: "张冠李戴 → 双影追猎", purpose: "用两段攻击兑现错位"),
+        .init(id: "K05", name: "错位归结", sequence: "张冠李戴 → 荒谬归结", purpose: "消费错位完成高穿甲终结"),
+        .init(id: "K06", name: "误认终结", sequence: "假面谕令 → 伪证烙印 → 张冠李戴 → 双影追猎 → 荒谬归结", purpose: "愚者的标准完整爆发"),
         .init(id: "K08", name: "夺席终演", sequence: "反客为主 → 错步穿行 → 荒谬归结", purpose: "敌人有增益时跳过常规铺垫"),
-        .init(id: "K09", name: "后手重写", sequence: "后手改写 → 假面谕令 → 身份错置", purpose: "被施加负面后重建循环"),
-        .init(id: "K10", name: "无名开幕", sequence: "无名宣告 → 身份错置 → 双影追猎 → 荒谬归结", purpose: "每场一次快速启动")
+        .init(id: "K09", name: "后手重写", sequence: "后手改写 → 假面谕令 → 张冠李戴", purpose: "被施加负面后重建循环"),
+        .init(id: "K10", name: "无名开幕", sequence: "无名宣告 → 张冠李戴 → 双影追猎 → 荒谬归结", purpose: "每场一次快速启动")
     ]
 
     public static let passives: [MPCPassiveContent] = [
         .init(id: "fool_passive_01", name: "幕间观察", summary: "首次揭示敌方意图时获得50护盾。", unlockStage: .investigationOne, tags: ["intent", "shield"]),
         .init(id: "fool_passive_02", name: "不可靠叙述者", summary: "每回合首次施加误认时额外施加1层，随后本回合受到伤害增加5%。", unlockStage: .investigationTwo, tags: ["misrecognition", "risk"]),
-        .init(id: "fool_passive_03", name: "借来的名字", summary: "身份错置成功后恢复80生命。", unlockStage: .investigationTwo, tags: ["conversion", "heal"]),
+        .init(id: "fool_passive_03", name: "借来的名字", summary: "张冠李戴成功后恢复80生命。", unlockStage: .investigationTwo, tags: ["conversion", "heal"]),
         .init(id: "fool_passive_04", name: "迟到的掌声", summary: "多段技能完整命中后下一次单段技能伤害提高10%。", unlockStage: .investigationThree, tags: ["multi_hit", "damage"]),
         .init(id: "fool_passive_05", name: "纸幕后路", summary: "纸偶成功承受攻击后，获得1点幕势。", unlockStage: .investigationThree, tags: ["paper_double", "momentum"]),
         .init(id: "fool_passive_06", name: "未写结局", summary: "每场战斗第一次低于30%生命时获得一次闪避。", unlockStage: .investigationFour, tags: ["survival", "evasion"])
@@ -369,7 +369,7 @@ public enum MPCChapterOneCatalog {
         relic(saltSealedBreathingBagRelicID, "盐封呼吸囊", .uncommon, "被动吸收部分持续伤害，容量有限；不吸收直接攻击或遗落物自身代价。", "每吸收10点伤害，正常生命上限暂时封存1点；战后解封不补血。第4关后商店120铜币。", "以呼吸空间换取耐毒", "被封在盐囊里的毒气，逐渐挤走持有者能容纳的生命。", .investigationOne),
         relic(returnGiftClaspRelicID, "返礼银扣", .uncommon, "就绪时吸收下一次直接攻击，最多为入场生命上限的30%。", "攻击者立即获得吸收量一半的普通护盾；8秒冷却与赠盾破除均满足才再就绪。第4关后160铜币。", "挡伤并偿还敌人护盾", "每次拒绝收到的礼物，它都会给送礼者一份新的保护。", .investigationOne),
         relic(usurpedLifeMedalRelicID, "僭命勋章", .story, "手动发动8秒：当前生命与生命上限提高50%，攻击力提高30%。24秒冷却，与假面互斥。", "结束时交出剩余生命的一半，再恢复正常上限；胜利和撤退同样清算。绑定不可出售。", "借取强盛", "猎犬试探结束后，奥黛尔交付一枚没有授予对象的旧铜勋章。", .investigationOne),
-        relic(ownerlessMaskRelicID, "假面谕令", .story, "手动使用，4秒内承接最多两次直接攻击；所有持续伤害均无效且不消耗次数。18秒冷却，不占卡牌编排。", "每次使用永久增加一道暗紫裂纹，十道后彻底失效；第十次正常生效。第3、4关教学不增加裂纹。失败或退出不返还。", "手动幻影承伤", "迎战循名猎犬前，玛拉交付的无主假面。它让追猎者将幻影认成持有者。", .investigationOne),
+        relic(ownerlessMaskRelicID, "无主假面", .story, "手动使用，4秒内承接最多两次直接攻击；所有持续伤害均无效且不消耗次数。18秒冷却，不占卡牌编排。", "每次使用永久增加一道暗紫裂纹，十道后彻底失效；第十次正常生效。第3、4关教学不增加裂纹。失败或退出不返还。", "手动幻影承伤", "迎战循名猎犬前，玛拉交付的无主假面。它让追猎者将幻影认成持有者。", .investigationOne),
         relic("relic_encore_bell", "不肯落幕的铃", .story, "手动打断翠焰亡灵蓄力，使本次攻击延后3秒；返场时该次攻击伤害提高50%。", "延后的攻击不会消失，返场时会以更高伤害归还。", "返场延后", "旧邮务间按取回条交出的异常物。铃声不能免除欠下的攻击，只能让它晚三秒落下。", .investigationOne),
         relic("relic_cracked_monocle", "偏差透镜", .common, "攻击4层误认目标时获得20%穿甲。攻击0层误认目标时伤害降低8%。", "必须在目标状态之间做取舍。", "误认兑现", "镜片里总有一个稍晚眨眼的人。", .investigationOne),
         relic("relic_late_second_watch", "迟滞铜片", .common, "成功应对已公布的强攻或避开攻击后，下回合额外执行1张普通技能；每场最多2次。", "只奖励对敌方意图的准确判断。", "意图应对", "它永远比归一系统慢半拍。", .investigationOne),
@@ -380,20 +380,20 @@ public enum MPCChapterOneCatalog {
         relic("relic_mirror_thread", "镜潮银线", .rare, "双影追猎第二击命中错位目标后，敌方下一次攻击提高20%。", "风险会被转移，但不会消失。", "多段协同", "银线连接的两端从不属于同一倒影。", .investigationThree),
         relic("relic_trimmed_nameplate", "裁去的名牌", .rare, "敌方驱散玩家增益时，给该敌人施加2层误认。", "每次触发使玩家下一次治疗减少30%。", "反驱散", "名字被削掉后，职责仍留在背面。", .investigationFour),
         relic("relic_unified_gear", "三证环", .story, "一轮内完成铺垫、攻击、反制或净化三种不同类别行动时，获得10%最大生命护盾，并强化下一次有伤害的攻击20%。", "触发后，下一次实际结算到自身生命或护盾的敌方直接攻击提高25%；幻影承伤不消耗此负面，重复触发只刷新、不叠加。", "类别轮换与承伤风险", "三种互相矛盾的证明暂时保护持有者，也使归一系统更清楚地锁定其身体。", .investigationFour),
-        relic("relic_blank_ticket", "空白戏票", .rare, "荒谬归结未消耗错位时，下一轮第一张身份错置额外施加1层误认；每场最多2次。", "需要主动保留一次错误。", "终结容错", "票面没有剧名，却写着你的座位。", .investigationFour),
+        relic("relic_blank_ticket", "空白戏票", .rare, "荒谬归结未消耗错位时，下一轮第一张张冠李戴额外施加1层误认；每场最多2次。", "需要主动保留一次错误。", "终结容错", "票面没有剧名，却写着你的座位。", .investigationFour),
         relic("relic_mist_anchor_shard", "雾锚碎片", .rare, "返场或其他复起效果触发后，获得15%最大生命护盾，下一次伤害降低20%。", "每场战斗只承认第一次归来。", "副本生存", "它记住了某次本不该发生的归来。", .investigationFour),
         relic("relic_blank_nameplate", "空白名牌", .common, "首次攻击新目标时，额外施加1层误认。", "换目标本身就是一种叙述。", "换目标", "没有名字的牌最容易被贴错。", .investigationOne),
         relic("relic_contradictory_testimony", "矛盾证词", .rare, "同时拥有误认和错位的目标，额外承受10%玩家伤害。", "必须先完成转换再兑现。", "双状态", "两份互相冲突的证词都盖着真的印章。", .investigationTwo),
-        relic("relic_recovery_seal", "回收封签", .common, "身份错置消耗误认时恢复4%最大生命，每回合一次。", "把错误回收，才有下一次犯错的余地。", "转换续航", "封签背面写着一个已经被删除的住址。", .investigationTwo),
+        relic("relic_recovery_seal", "回收封签", .common, "张冠李戴消耗误认时恢复4%最大生命，每回合一次。", "把错误回收，才有下一次犯错的余地。", "转换续航", "封签背面写着一个已经被删除的住址。", .investigationTwo),
         relic("relic_reposition_knot", "借位绳结", .common, "目标死亡或切换目标后，下一次攻击提高15%，新目标额外获得1层误认。", "鼓励主动切换攻击对象。", "换位追击", "绳结系住的不是人，而是位置。", .investigationThree),
         relic("relic_red_wax_seal", "红蜡证印", .common, "伪证烙印额外施加1层误认，但该技能基础伤害降低10%。", "更强铺垫换来更慢的当下。", "铺垫强化", "红蜡封住证词，却没有封住怀疑。", .investigationThree),
-        relic("relic_salt_crystal_record", "盐晶存片", .story, "身份错置将4层误认转换为错位时，保留2层误认。", "让转换后的循环更快回到上限。", "持续转换", "盐晶里保存着一个不愿被归档的下午。", .investigationThree),
+        relic("relic_salt_crystal_record", "盐晶存片", .story, "张冠李戴将4层误认转换为错位时，保留2层误认。", "让转换后的循环更快回到上限。", "持续转换", "盐晶里保存着一个不愿被归档的下午。", .investigationThree),
         relic("relic_refusal_deed", "拒认契据", .rare, "敌方成功驱散玩家增益时，该敌人获得1回合错位；每场最多2次。", "把对方的校正变成破绽。", "反制校正", "契据最后一行拒绝承认签名。", .investigationFour),
         relic("relic_returning_route", "折返路签", .story, "每4张普通技能执行后，以60%效果重复本轮第一张技能；重复不会再次触发自身。", "固定循环可以被一次折返打乱。", "循环重演", "路签指向已经走过，却没有人记得。", .investigationFour),
         relic("relic_additional_testimony", "追加证词", .story, "每个循环第一次使用铺垫技能后，下一张攻击技能额外重复一次，重复效果为50%。", "只在铺垫确实转入攻击时生效。", "循环追加", "被删掉的证词从页边重新长了回来。", .investigationFour),
         relic("relic_errata_clip", "错页夹", .rare, "第1格与第2格属于不同技能类别时，第2格技能效果提高15%。", "战前顺序必须有意制造类别差异。", "首二格编排", "夹住的不是错页，而是两种互相矛盾的答案。", .investigationFour),
         relic("relic_returning_salt", "归航盐片", .common, "生命首次低于40%时恢复6%最大生命；下一次行动延迟无效。", "每场只承认第一次濒危。", "潮门续航", "盐片里仍有一条船没有驶回港口。", .investigationFour),
-        relic("relic_nameless_seal", "无主印章", .story, "装备后，无名宣告对全体敌人施加2层误认；无名宣告后，下一次满足原有4层条件的成功身份错置不消耗误认，成功使用后恢复正常。", "用较少的初始误认换取一次不消耗误认的转换；条件不足时不消耗这次机会。", "终极分支", "没有主人承认的印章无法制造完整身份，却能留下不被转换抹去的残余证明。", .investigationFour)
+        relic("relic_nameless_seal", "无主印章", .story, "装备后，无名宣告对全体敌人施加2层误认；无名宣告后，下一次满足原有4层条件的成功张冠李戴不消耗误认，成功使用后恢复正常。", "用较少的初始误认换取一次不消耗误认的转换；条件不足时不消耗这次机会。", "终极分支", "没有主人承认的印章无法制造完整身份，却能留下不被转换抹去的残余证明。", .investigationFour)
     ]
 
     public static let items: [MPCItemContent] = [
@@ -830,7 +830,7 @@ public enum MPCChapterOneCatalog {
     public static let investigations: [MPCInvestigationContent] = [
         investigation("chapter01_q01", "雨夜醒来", "旧城区·紫藤街口", ["chapter01_q01_encounter"], [.sidestepStrike], [], ["item_old_clock_pass", "consumable_pain_salve"], [], "完成错步穿行的契约，第一张技能牌正式归属玩家。"),
         investigation("chapter01_q02", "雾都幽灵", "旧城区·紫藤街口", ["chapter01_q02_encounter"], [], [], ["item_memory_filament", "item_sealed_transfer"], [], "以单牌完成一次完整战斗，确认多目标技能仍按目标状态分别结算，并取回旧邮务间的移交条。"),
-        investigation("chapter01_q03", "循名而来的猎犬", "旧城区·失名档案街", ["chapter01_q03_encounter"], [], [], ["item_late_second_watch"], [ownerlessMaskRelicID], "守钟人的记忆引来了循名猎犬。玛拉先交给你「假面谕令」，再迎战猎犬，揭开项圈上的名字。"),
+        investigation("chapter01_q03", "循名而来的猎犬", "旧城区·失名档案街", ["chapter01_q03_encounter"], [], [], ["item_late_second_watch"], [ownerlessMaskRelicID], "守钟人的记忆引来了循名猎犬。玛拉先交给你「无主假面」，再迎战猎犬，揭开项圈上的名字。"),
         investigation("chapter01_q04", "猎犬试探", "旧城区·雾灯街", ["chapter01_q04_encounter"], [], [], ["item_hound_trace"], [], "同一只猎犬留在远处蓄力，随后喷出冥火球；通过实战理解假面承接与误认反击。"),
         investigation("chapter01_q05", "不肯落幕", "旧城区·雾灯街", ["chapter01_q05_encounter"], [], [], [], [], "毒雾持续加浓直到战斗结束；绿焰预告强力返场。根据持续毒雾与直接重击选择遗落物，终止邮务执役。"),
         investigation("chapter01_old_district", "旧城区·失名者", "旧城区", (6...30).map { String(format: "chapter01_q%02d_encounter", $0) }, [], ["fool_passive_01", "fool_passive_02", "fool_passive_03", "fool_passive_04"], ["material_memory_filament", "key_old_clock_attestation", "key_authority_echo"], [], "从失踪者证词追到上游私印，终止认领并保存居民自由；更早的外部追索迫使主角离港。"),

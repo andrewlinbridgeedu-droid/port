@@ -1622,7 +1622,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                let index = enemies.firstIndex(where: { $0.id == id }) {
                 enemies[index].delayedRounds = max(1, enemies[index].delayedRounds)
                 behaviorTags.formUnion([.convertToMisalignment, .reachFourIllusion])
-                triggeredEffects.append("身份错置：转换4层误认，目标下次起手延迟一拍；在途攻击不取消")
+                triggeredEffects.append("张冠李戴：转换4层误认，目标下次起手延迟一拍；在途攻击不取消")
             }
             if skillID == .maskedWhisper {
                 masqueradeCharges = 2
@@ -2108,7 +2108,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 if loadout.talents.has("phantom.2") { talentEchoReady = true }
                 if loadout.talents.has("phantom.3") { receivePlayerHealing(20) }
                 if loadout.talents.has("phantom.5"), masqueradeCharges == 0 { talentFinalEchoReady = true }
-                triggeredEffects.append("假面谕令：幻影承接\(resolvedDamage)伤害，剩余\(masqueradeCharges)次")
+                triggeredEffects.append("幻影：承接\(resolvedDamage)伤害，剩余\(masqueradeCharges)次")
             } else if redirectedByPaperDouble {
                 var state = foolStates[enemies[index].id] ?? .init(targetDefense: enemies[index].defense)
                 state.illusionStacks = min(4, state.illusionStacks + 2)
