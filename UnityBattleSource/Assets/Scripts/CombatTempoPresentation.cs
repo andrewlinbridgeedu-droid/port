@@ -266,12 +266,14 @@ public sealed class CombatTempoPresentation : MonoBehaviour
             : new[] { "CastFinaleLift", "CastFinaleThrow" }[finaleVariation++ % 2];
         hero.body.Play(clip, contact, false, 0);
         SpellAudioDirector20260924.BeginPlayer(battle, skill);
-        StartCoroutine(PlayerStrike(skill, target, contact, generation)); return true;
+        // Skills keep their full authored effects; only basic attacks use the light card.
+        if (!basic) battle.PlayTempoSkillVisuals(skill, parts.Length > 1 ? parts[1] : null);
+        StartCoroutine(PlayerStrike(skill, target, contact, generation, basic)); return true;
     }
-    IEnumerator PlayerStrike(string skill, Transform target, float contact, int token)
+    IEnumerator PlayerStrike(string skill, Transform target, float contact, int token, bool placeholder = true)
     {
         var start = battle.TempoSamplePlayer.position + Vector3.up * 1.1f;
-        CombatTempoVFX.PlayerSpell(start, target.position, skill, contact, hero?.original);
+        if (placeholder) CombatTempoVFX.PlayerSpell(start, target.position, skill, contact, hero?.original);
         for (float t = 0; t < contact; t += Time.deltaTime) { if (token != generation || !battle.NativeCombatEnabled) yield break; yield return null; }
         if (token != generation || !battle.NativeCombatEnabled) yield break;
         UnityBattleBridge.ReportCombatContact("player");

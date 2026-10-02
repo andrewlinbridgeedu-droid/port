@@ -2438,6 +2438,28 @@ public sealed class BattlePrototype : MonoBehaviour
         playerChoreography.Begin(skillID);
     }
 
+    // Tempo samples drive the hero body themselves and report the single
+    // contact receipt (CombatTempoPresentation.PlayerStrike). Play the authored
+    // spell effects and the contact spectacle alongside, without a second receipt.
+    public void PlayTempoSkillVisuals(string skillID, string targetBattleEnemyID)
+    {
+        if (!NativeCombatEnabled || !player) return;
+        var targetHandle = ResolvePlayerSkillTarget(targetBattleEnemyID);
+        var targets = new List<EnemyHandle>();
+        if (IsActiveEnemyHandle(targetHandle)) targets.Add(targetHandle);
+        BeginPlayerSpectacle(skillID, targets, null);
+        System.Func<Vector3> caster = () => player ? player.transform.position + Vector3.up * 1.15f : Vector3.zero;
+        System.Func<Vector3> target = () => PlayerSkillTargetPoint(targetHandle);
+        if (spellV1Bridge != null && spellV1Bridge.CanPlay(skillID))
+        {
+            StartCoroutine(spellV1Bridge.Play(skillID, caster, target, weapon: caster, impact: target, ground: target));
+            return;
+        }
+        if (foolSkillVFX == null) return;
+        foolSkillVFX.HeroActor = player.transform;
+        StartCoroutine(foolSkillVFX.Play(skillID, caster, target));
+    }
+
     // Registers the contact spectacle for the hero cast. Each recipient keeps
     // its own last-known point so a target that exits before contact never
     // redirects the burst onto another enemy or the hero.

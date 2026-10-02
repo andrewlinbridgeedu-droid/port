@@ -329,8 +329,43 @@ def export(out_dir):
     print('HERO_V4_EXPORTED', json.dumps({k: stats[k] for k in ('bones', 'renderers')}), sum(stats['triangles'].values()))
 
 
+def pose_frames(out_dir, clip):
+    """Review a clip: rear and side views at its key phases."""
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    show_only(OUTFITS[0])
+    meshes = [o for o in scene.objects if o.type == 'MESH' and not o.hide_render]
+    for o in meshes:
+        looks.add_outline(o, 0.1)
+    scene.render.engine = 'BLENDER_EEVEE'
+    scene.render.resolution_x, scene.render.resolution_y = 600, 900
+    scene.view_settings.view_transform = 'Standard'
+    world = bpy.data.worlds.new('Pose review')
+    world.use_nodes = True
+    world.node_tree.nodes['Background'].inputs[0].default_value = (0.42, 0.44, 0.48, 1)
+    scene.world = world
+    sun = bpy.data.objects.new('Key', bpy.data.lights.new('Key', 'SUN'))
+    sun.data.energy = 3.0
+    scene.collection.objects.link(sun)
+    sun.rotation_euler = (math.radians(50), math.radians(-25), math.radians(200))
+    cam = bpy.data.objects.new('Pose cam', bpy.data.cameras.new('Pose cam'))
+    scene.collection.objects.link(cam)
+    scene.camera = cam
+    cam.data.lens = 70
+    for p in (0.0, 0.2, 0.34, 0.46, 0.58, 0.72, 0.86):
+        rigmod.pose(rig, clip, p)
+        for name, loc in (('rear', Vector((140, 520, 150))), ('side', Vector((560, -60, 120)))):
+            cam.location = loc
+            cam.rotation_euler = (Vector((0, 0, 95)) - loc).to_track_quat('-Z', 'Y').to_euler()
+            scene.render.filepath = str(out / f'{clip}-{name}-{int(p * 100):03d}.png')
+            bpy.ops.render.render(write_still=True)
+    print('HERO_V4_POSE_FRAMES', out)
+
+
 if PREVIEW:
     preview(PREVIEW)
+if arg('--pose-frames'):
+    pose_frames(arg('--pose-dir', '/tmp/hero-pose'), arg('--pose-frames'))
 
 (TEX / 'materials.json').write_text(json.dumps(MATERIAL_SPECS, indent=2, sort_keys=True) + '\n')
 if EXPORT:

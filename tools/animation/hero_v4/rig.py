@@ -261,38 +261,130 @@ CLIPS = [('BattleIdle', 2.4), ('BasicSlash', .70), ('Thrust', .70), ('Card', .70
                                    for n in list(GESTURES)[:7]]
 
 
+# Whole-body casting. Each clip coils the body away during the wind-up, drives it
+# through the release (contact at 0.58), overshoots and settles; hips sink, the
+# torso leans in, some casts step, the head keeps the enemy, the feet stay planted.
+# coil/drive: torso yaw (deg, + brings the right shoulder forward); lean: forward
+# pitch at release; crouch: hip drop (cm); step: (foot, forward cm) or None.
+BODY = {
+    'CastMaskFlick': dict(coil=-18, drive=24, lean=7, crouch=3.0, step=None),
+    'CastMaskTurn': dict(coil=-26, drive=36, lean=5, crouch=2.5, step=None),
+    'CastTwinSweep': dict(coil=22, drive=-30, lean=9, crouch=4.5, step=('L', -8.0)),
+    'CastTwinCross': dict(coil=-16, drive=28, lean=11, crouch=5.0, step=('L', 13.0)),
+    'CastFinaleLift': dict(coil=10, drive=-8, lean=-9, crouch=6.0, step=None, rise=True),
+    'CastFinaleThrow': dict(coil=-32, drive=42, lean=13, crouch=5.5, step=('R', 17.0)),
+    'CastCardFan': dict(coil=-12, drive=20, lean=6, crouch=2.5, step=None),
+    'CastPrepare': dict(coil=-10, drive=12, lean=4, crouch=2.0, step=None),
+    'BasicSlash': dict(coil=-22, drive=32, lean=9, crouch=3.5, step=('L', 10.0)),
+    'Thrust': dict(coil=-10, drive=14, lean=13, crouch=4.5, step=('R', 16.0)),
+    'Card': dict(coil=-15, drive=22, lean=7, crouch=2.5, step=None),
+    'Parry': dict(coil=12, drive=-6, lean=-5, crouch=5.0, step=None),
+    'Hit': dict(coil=0, drive=-6, lean=-11, crouch=3.0, step=None),
+}
+PHASE = [0.0, 0.34, 0.58, 0.72, 1.0]
+
+
+def phased(values, p, keys=PHASE):
+    """Ease between key values (smoothstep per segment)."""
+    for i in range(len(keys) - 1):
+        if p <= keys[i + 1]:
+            u = (p - keys[i]) / (keys[i + 1] - keys[i])
+            u = u * u * (3 - 2 * u)
+            return values[i] + (values[i + 1] - values[i]) * u
+    return values[-1]
+
+
+def leg(rig, side, ankle, toe):
+    """Two-bone leg IK: hip -> knee -> ankle, knee bending forward; the foot
+    then aims at its toe target so it stays flat on the ground."""
+    s = 'Left' if side == 'L' else 'Right'
+    a, b = rig.pose.bones[s + 'UpLeg'], rig.pose.bones[s + 'Leg']
+    start = a.head.copy()
+    d = Vector(ankle) - start
+    dist = max(1.0, min(d.length, a.bone.length + b.bone.length - 0.05))
+    axis = d.normalized()
+    along = (a.bone.length ** 2 - b.bone.length ** 2 + dist ** 2) / (2 * dist)
+    h = math.sqrt(max(0.0, a.bone.length ** 2 - along ** 2))
+    hint = Vector((0.12 if side == 'L' else -0.12, -1.0, 0.0))
+    hint = hint - axis * hint.dot(axis)
+    aim(rig, s + 'UpLeg', start + axis * along + hint.normalized() * h)
+    aim(rig, s + 'Leg', start + axis * dist)
+    aim(rig, s + 'Foot', Vector(toe))
+
+
 def pose(rig, clip, p):
     for b in rig.pose.bones:
         b.matrix_basis.identity()
         b.rotation_mode = 'QUATERNION'
+    bpy.context.view_layer.update()
+    rest_ankle = {k: rig.pose.bones[n + 'Foot'].head.copy() for k, n in (('L', 'Left'), ('R', 'Right'))}
+    rest_toe = {k: rig.pose.bones[n + 'Toe'].head.copy() for k, n in (('L', 'Left'), ('R', 'Right'))}
     idle = clip == 'BattleIdle'
     wave = math.sin(p * math.tau)
-    energy = math.sin(p * math.pi) ** 2 if not idle else 0
-    twist = (17.5 if clip in ['BasicSlash', 'CastTwinSweep', 'CastMaskTurn'] else -12) * math.sin(p * math.tau) * energy
-    rig.pose.bones['Hips'].location = Vector((.9 * energy * math.sin(p * math.tau), 0, -.38 * energy))
-    turn(rig, 'Spine02', -1 + 2 * energy, twist * .22)
-    turn(rig, 'Spine01', -1.6 * energy, twist * .32)
-    turn(rig, 'Spine', (-2.5 if 'Finale' in clip else 3) * energy + (wave * .6 if idle else 0), twist * .46)
-    turn(rig, 'Head', -1 + energy * 1.5, -twist * .35)
+    body = BODY.get(clip)
+    if idle or body is None:
+        # Breathing, a slow weight shift and a little sway in the coat.
+        yaw, lean, crouch, side_shift = 2.0 * wave, 0.8 * math.sin(p * math.tau * 2), 0.6 + 0.4 * wave, 0.8 * wave
+        step = None
+        energy = 0.0
+    else:
+        yaw = phased([0, body['coil'], body['drive'], body['drive'] * 1.08, 0], p)
+        lean = phased([0, -0.35 * abs(body['lean']), body['lean'], body['lean'] * 0.8, 0], p)
+        dip = phased([0, 0.7, 1.0, 0.85, 0], p)
+        crouch = body['crouch'] * dip
+        if body.get('rise'):
+            crouch = phased([0, body['crouch'], -1.5, 0.5, 0], p)
+        side_shift = phased([0, 1.2, -1.6, -1.0, 0], p) * (1 if yaw >= 0 else -1)
+        step = body['step']
+        energy = math.sin(p * math.pi) ** 2
+    # Hips carry part of the turn, shift the weight and drop; the spine winds up the rest.
+    turn(rig, 'Hips', -lean * 0.25, yaw * 0.25)
+    rig.pose.bones['Hips'].location = Vector((side_shift, 0.0, 0.0))
     bpy.context.view_layer.update()
+    hb = rig.pose.bones['Hips']
+    m = hb.matrix.copy()
+    m.translation = m.translation + Vector((0, -0.12 * max(0.0, lean), -crouch))
+    hb.matrix = m
+    bpy.context.view_layer.update()
+    turn(rig, 'Spine02', -lean * 0.25, yaw * 0.2)
+    turn(rig, 'Spine01', -lean * 0.3, yaw * 0.25)
+    turn(rig, 'Spine', -lean * 0.3 + (wave * 0.6 if idle else 0), yaw * 0.3)
+    # The head keeps the enemy in view.
+    turn(rig, 'neck', lean * 0.2, -yaw * 0.25)
+    turn(rig, 'Head', lean * 0.25 - 1 + energy * 1.5, -yaw * 0.35)
+    bpy.context.view_layer.update()
+    # Feet stay planted unless the clip steps.
+    for k in ('L', 'R'):
+        ankle, toe = rest_ankle[k].copy(), rest_toe[k].copy()
+        if step and step[0] == k:
+            fwd = phased([0, -0.15, 1.0, 1.0, 0], p) * step[1]
+            lift = 3.0 * max(0.0, math.sin(min(1.0, p / 0.58) * math.pi)) if p < 0.58 else \
+                2.0 * max(0.0, math.sin(min(1.0, (p - 0.72) / 0.28) * math.pi)) if p > 0.72 else 0.0
+            ankle += Vector((0, -fwd, lift))
+            toe += Vector((0, -fwd, lift))
+        leg(rig, k, ankle, toe)
     pair = GESTURES.get(clip, GESTURES['CastCardFan'] if clip == 'CastPrepare' else None)
     if pair:
         amplitude = 1.10 if clip.startswith('Cast') else 1
-        arm(rig, 'R', Vector(R) + (curve(pair[0], p) - Vector(R)) * amplitude)
-        arm(rig, 'L', Vector(L) + (curve(pair[1], p) - Vector(L)) * amplitude)
+        arm(rig, 'R', Vector(R) + (curve(pair[0], p) - Vector(R)) * amplitude + Vector((0, 0, -crouch * 0.7)))
+        arm(rig, 'L', Vector(L) + (curve(pair[1], p) - Vector(L)) * amplitude + Vector((0, 0, -crouch * 0.7)))
     else:
-        arm(rig, 'R', Vector(R) + Vector((0, .3 * wave, .45 * wave)))
-        arm(rig, 'L', Vector(L) + Vector((0, .2 * wave, .4 * wave)))
+        arm(rig, 'R', Vector(R) + Vector((0, .3 * wave, .45 * wave - crouch * 0.7)))
+        arm(rig, 'L', Vector(L) + Vector((0, .2 * wave, .4 * wave - crouch * 0.7)))
     turn(rig, 'RightHand', 7.7 * energy, -8.8 * wave * energy, 13.2 * wave * energy)
     turn(rig, 'LeftHand', -6.6 * energy, 8.8 * wave * energy, -7.7 * wave * energy)
-    if clip == 'Hit':
-        turn(rig, 'Spine', -8 * math.sin(p * math.pi), 0, 3 * math.sin(p * math.pi))
+    # Coat tails trail the turn and flare at the release, then swing back.
     for side, sign in [('L', 1), ('R', -1)]:
-        follow = math.sin(max(0, p - .075) * math.tau) * energy
-        turn(rig, 'Coat.' + side, wave * .65 if idle else -8 * follow, 0, sign * (.6 * wave if idle else 3 * follow))
-        turn(rig, 'CoatTip.' + side, wave * 1.2 if idle else -12 * math.sin(max(0, p - .12) * math.tau) * energy, 0,
-             sign * 1.4 * wave)
-        turn(rig, 'Ribbon.' + side, 1.5 * wave if idle else -11 * follow, sign * 1.7 * wave)
+        if idle or body is None:
+            turn(rig, 'Coat.' + side, wave * .8, 0, sign * .7 * wave)
+            turn(rig, 'CoatTip.' + side, wave * 1.4, 0, sign * 1.6 * wave)
+            turn(rig, 'Ribbon.' + side, 1.6 * wave, sign * 1.8 * wave)
+            continue
+        lag = phased([0, 0.2, -1.0, 0.6, 0], max(0.0, p - 0.06))
+        flare = phased([0, 0.3, 1.0, 0.7, 0], max(0.0, p - 0.04))
+        turn(rig, 'Coat.' + side, -10 * flare, -sign * 0.35 * yaw * 0.3, sign * (4 + 4 * flare) * flare)
+        turn(rig, 'CoatTip.' + side, -14 * flare + 6 * lag, -sign * 0.3 * yaw * 0.3, sign * 5 * flare)
+        turn(rig, 'Ribbon.' + side, -12 * flare + 8 * lag, sign * 2.5 * lag)
     bpy.context.view_layer.update()
 
 
