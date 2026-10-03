@@ -32,17 +32,21 @@ public sealed class HeroArcanaTheatreVFX : MonoBehaviour
     static readonly float[] RewriteTurn={-.72f,.52f,-.21f,1.07f,-1.32f,.18f,.81f};
     static readonly float[] RewriteDelay={0,.14f,.055f,.25f,.09f,.21f,.31f};
     Vector3 right, up, forward;
-    bool ghostsOnly;
+    bool ghostsOnly, dash;
     /// <param name="ghostsOnly">Only the two hero-shaped hunting shadows (2026-10-03 spell
     /// forms): no screen-wide volume and no smoke trail, so the shadows read as aimed bodies.</param>
     /// <param name="contactOverride">Contact time reported by the caller, when known.</param>
-    public IEnumerator Play(string id, Transform actor, Func<Vector3> caster, Func<Vector3> target, Action onContact, bool ghostsOnly = false, float contactOverride = -1f)
+    /// <param name="dash">错步穿行's afterimage (2026-10-03): one shadow leaves at once on a
+    /// nearly straight lane with a small sidestep, cuts past the target on the contact and
+    /// runs on beyond it. Implies ghostsOnly.</param>
+    public IEnumerator Play(string id, Transform actor, Func<Vector3> caster, Func<Vector3> target, Action onContact, bool ghostsOnly = false, float contactOverride = -1f, bool dash = false)
     {
         Clear();
         int run = generation;
         int skill = Parse(id);
         if (skill < 6 || skill > 9 || caster == null || target == null) yield break;
-        this.ghostsOnly = ghostsOnly && skill == 6;
+        this.dash = dash && skill == 6;
+        this.ghostsOnly = (ghostsOnly || this.dash) && skill == 6;
         float contactTime = contactOverride > 0 ? contactOverride : skill == 7 ? .885f : skill == 8 ? .63f : .705f;
         Shader sprite = Shader.Find("Sprites/Default");
         Shader mistShader = Resources.Load<Shader>("EnemySignature/SignatureSprite");
@@ -96,7 +100,7 @@ public sealed class HeroArcanaTheatreVFX : MonoBehaviour
     }
     void CaptureGhosts(Transform actor, Vector3 origin)
     {
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < (dash ? 1 : 2); i++)
         {
             var go = new GameObject("True hero hunting shadow " + i);
             go.transform.SetParent(root.transform, false); go.transform.position = origin;
@@ -147,7 +151,7 @@ public sealed class HeroArcanaTheatreVFX : MonoBehaviour
                 mesh.RecalculateBounds(); mesh.RecalculateTangents();
                 if (!baked) snapshots.Add(mesh);
                 var capture=new EchoSkin{source=renderer};
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < (dash ? 1 : 2); i++)
                 {
                     var go = new GameObject(renderer.name + " echo"); go.transform.SetParent(ghosts[i], false);
                     var echoMesh=Instantiate(mesh);snapshots.Add(echoMesh);capture.meshes[i]=echoMesh;
@@ -223,11 +227,13 @@ public sealed class HeroArcanaTheatreVFX : MonoBehaviour
         {
             for (int i = 0; i < 2; i++)
             {
-                float p = Mathf.Clamp01((time - .14f-i * .10f) / (contact-.14f-i * .10f));
+                // The dash leaves at once and cuts straight in; the twin hunt swings wide and accelerates.
+                float depart = dash ? .05f : .14f + i * .10f;
+                float p = Mathf.Clamp01((time - depart) / (contact - depart));
                 if (ghosts[i])
                 {
-                    ghosts[i].position = Vector3.Lerp(s, t, Mathf.Pow(p,2.4f))
-                        + right * (i == 0 ? -.64f : .53f) * Mathf.Sin(p * Mathf.PI)
+                    ghosts[i].position = Vector3.Lerp(s, t, Mathf.Pow(p, dash ? 1.5f : 2.4f))
+                        + right * (dash ? -.22f : i == 0 ? -.64f : .53f) * Mathf.Sin(p * Mathf.PI)
                         + up * Mathf.Sin(p * Mathf.PI) * (i==0?.07f:.24f)
                         + (t-s).normalized*(1-Mathf.Exp(-release*13f))*(i==0?1.7f:1.35f)
                         + right*(i==0?-.24f:.24f)*Mathf.Clamp01((time-contact)*4);

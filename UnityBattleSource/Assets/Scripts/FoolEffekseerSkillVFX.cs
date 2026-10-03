@@ -149,8 +149,22 @@ public sealed class FoolEffekseerSkillVFX : MonoBehaviour
     {
         StopActiveEffects();
         int run = targetGeneration;
+        // 错步穿行 with a travelling form (2026-10-03): the hero's afterimage dashes at the
+        // first target, while SpellSpectacle draws the footprints and the cut through the
+        // others. The screen-wide offset rift is not played. Contact timing below is unchanged.
+        bool dashForm = skillID == "fool_skill_01" && SpellSpectacle20260926.HasForm(skillID);
+        if (dashForm && heroArcana && HeroActor)
+            foreach (var first in targets)
+            {
+                if (first == null || first.EnemyRoot == null || !first.gameObject.activeInHierarchy) continue;
+                var lead = first;
+                Func<Vector3> leadPoint = () => lead && lead.EffectAnchor ? lead.EffectAnchor.position : lead ? lead.EnemyRoot.position + Vector3.up * 1.05f : caster();
+                StartCoroutine(heroArcana.Play("fool_skill_06", HeroActor, caster, leadPoint, null, true, FoolTarotStrikeVFX.ContactTime, dash: true));
+                break;
+            }
         foreach (var target in targets)
         {
+            if (dashForm) break;
             if (target == null || target.EnemyRoot == null || !target.gameObject.activeInHierarchy) continue;
             var bound = target;
             Func<bool> valid = () => bound != null && bound.EnemyRoot != null && bound.gameObject.activeInHierarchy;

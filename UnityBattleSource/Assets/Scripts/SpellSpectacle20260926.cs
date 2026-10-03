@@ -26,7 +26,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
     /// burst; the others leave the hero during the cast, travel the corridor to
     /// the target and land on the contact receipt (2026-10-03: attacks must read
     /// as aimed at the enemy, each card with its own form, not a screen-wide bloom).
-    public enum Form { Bloom, Throw, Hunt, Rain }
+    public enum Form { Bloom, Throw, Hunt, Rain, Dash }
+    /// 错步穿行 cuts each further target this long after the previous one (visual only).
+    const float DashChainStep = .12f;
 
     sealed class Profile
     {
@@ -361,15 +363,18 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             Vector3 target = SafeEval(cue.targets[i]);
             var rng = new System.Random(cue.seeds[i] * 17 + cue.cast * 5 + 3);
             float half = Vector3.Distance(cam.transform.position, target) * Mathf.Tan(cam.fieldOfView * .5f * Mathf.Deg2Rad);
-            var frame = new Frame(cam, caster, target, half / 4.5f * p.scale, rng);
+            // A dash cuts its further targets on the way through: each leg starts at the
+            // previous target, after the contact.
+            bool chained = p.form == Form.Dash && i > 0;
+            var frame = new Frame(cam, chained ? SafeEval(cue.targets[i - 1]) : caster, target, half / 4.5f * p.scale, rng);
             if (Diagnostics) Debug.Log($"SPELLFORM frame {p.id} s={frame.s:F2} dir={frame.dir:F2} right={frame.right:F2}");
-            var shots = LaunchShots(p.form, frame, travel, contact, rng);
+            var shots = LaunchShots(p.form, frame, travel, contact, rng, chained ? i : 0);
             for (int n = 0; n < shots.Count; n++)
             {
                 // A bystander of a group card gets half the volley, so three never swamp the screen.
                 if (i > 0 && p.form == Form.Rain && n % 2 == 1) continue;
                 var shot = shots[n];
-                float at = (shot.at >= 0 ? shot.at : start + shot.delay) + i * .03f;
+                float at = (shot.at >= 0 ? shot.at : start + shot.delay) + (shot.chained ? 0f : i * .03f);
                 var path = shot.path;
                 path.rigid = true;
                 path.revealScale = shot.time / BaseReveal(cue.style);
@@ -378,7 +383,8 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 if (Diagnostics) Debug.Log($"SPELLFORM shot {p.id} at={at:F3} time={shot.time:F3} from={shot.from:F2} end={path.points[path.points.Length - 1]:F2}");
                 var body = Body.Create(root, sweepMaterial, this);
                 body.Setup(path, path.pivot ?? frame.target, ramp, p, cue.style, at, (float)rng.NextDouble() * 10f, 20 + cue.launch.Count);
-                cue.launch.Add(body);
+                // A chained leg runs after the contact; hastening it would cut the whole chain at once.
+                if (!shot.chained) cue.launch.Add(body);
                 foreach (var strand in shot.strands)
                 {
                     strand.rigid = true;
@@ -394,6 +400,8 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 if (shot.headSize > 0) heads.Projectile(shot.from, shot.vel, shot.gravity, at, shot.time, shot.headSize, shot.head, headColor, shot.stretch, shot.spin);
                 if (shot.course != null && shot.sparks > 0)
                     heads.Wake(p, shot.course, at, shot.time, frame.s, shot.sparks, shot.spark, rng);
+                foreach (var footprint in shot.prints)
+                    heads.Footprint(p, footprint.at, at + footprint.when, footprint.heading, frame.s, rng);
             }
         }
     }
@@ -415,6 +423,10 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         public bool star = true;
         /// Seconds after the cast when this element leaves; negative: timed to land on the contact.
         public float at = -1f;
+        /// A leg that runs after the contact (a dash cutting a further target).
+        public bool chained;
+        /// Ground marks that light up as the runner passes: position, seconds after leaving, heading.
+        public readonly List<(Vector3 at, float when, float heading)> prints = new List<(Vector3, float, float)>();
     }
 
     /// Two strands winding round a course in opposite phase, closing in on the target,
@@ -450,7 +462,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
 
     static Vector3 BallisticAt(Vector3 from, Vector3 vel, float g, float t) => from + vel * t + Vector3.down * (.5f * g * t * t);
 
-    List<Shot> LaunchShots(Form form, Frame f, float travel, float contact, System.Random rng)
+    List<Shot> LaunchShots(Form form, Frame f, float travel, float contact, System.Random rng, int chainIndex = 0)
     {
         var list = new List<Shot>();
         float s = f.s;
@@ -494,6 +506,41 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 }
                 break;
             }
+            case Form.Dash:
+            {
+                // 错步穿行: the hero's afterimage dashes in (HeroArcanaTheatreVFX, lead target
+                // only). Here staggered mirror footprints light up under its course as it
+                // passes, a low mirror glint skims the floor and shards are shed. A further
+                // target is cut on the way through: the leg turns from the previous target.
+                bool chained = chainIndex > 0;
+                var from = new Vector3(f.caster.x, .03f * s, f.caster.z);
+                var to = new Vector3(f.target.x, .03f * s, f.target.z);
+                var along = to - from; along.y = 0;
+                var flat = along.sqrMagnitude > 1e-4f ? along.normalized : f.dir;
+                var side = Vector3.Cross(Vector3.up, flat);
+                // The lead leg keeps the afterimage's small sidestep; a turn bends either way.
+                float bend = chained ? R(rng, -.3f, .3f) * s : -.16f * s;
+                Func<float, Vector3> pos = u => Vector3.Lerp(from, to, u) + side * bend * Mathf.Sin(Mathf.PI * u);
+                float leave = chained ? contact + (chainIndex - 1) * DashChainStep : .05f;
+                float time = chained ? DashChainStep : Mathf.Max(.15f, contact - .05f);
+                // The afterimage covers distance as (t/T)^1.5; the glint and prints keep its pace.
+                float ease = chained ? 1f : 1.5f;
+                var glint = Make(40, pos, FacingAcross(pos, Vector3.up), u => s * (.035f + .03f * u), Vector3.up);
+                glint.pivot = to; glint.coreAmt = 2f; glint.tile = 2.4f; glint.holdScale = .25f; glint.opacity = .9f; glint.revealEase = ease;
+                var shot = new Shot { path = glint, from = from, time = time, at = leave, headSize = 0f, star = false,
+                    course = u => pos(Mathf.Pow(u, ease)) + Vector3.up * .25f * s, sparks = chained ? 8 : 16, spark = Mote.Shard, chained = chained };
+                int prints = chained ? 3 : 8;
+                float heading = Mathf.Atan2(flat.z, flat.x) * Mathf.Rad2Deg;
+                for (int k = 0; k < prints; k++)
+                {
+                    float u = (k + .6f) / (prints + .4f);
+                    // Left, right, left: a mirror-step gait, a little uneven.
+                    var at = pos(u) + side * (k % 2 == 0 ? 1f : -1f) * R(rng, .07f, .11f) * s;
+                    shot.prints.Add((at, time * Mathf.Pow(u, 1f / ease), heading + R(rng, -14f, 14f)));
+                }
+                list.Add(shot);
+                break;
+            }
             case Form.Rain:
             {
                 // Stage props leave from beside the hero at chest height in a volley and come
@@ -530,7 +577,8 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             var rng = new System.Random(cue.seeds[i] * 31 + cue.cast * 7 + 11);
             float half = Vector3.Distance(cam.transform.position, points[i]) * Mathf.Tan(cam.fieldOfView * .5f * Mathf.Deg2Rad);
             var frame = new Frame(cam, caster, points[i], half / 4.5f * p.scale * .55f, rng);
-            float delay = i * .035f;
+            // A dash cuts its targets one after another; other forms land together.
+            float delay = i * (p.form == Form.Dash ? DashChainStep : .035f);
             if (Diagnostics) Debug.Log($"SPELLFORM impact {p.id} t={Time.unscaledTime:F3} at={points[i]:F2} s={frame.s:F2}");
             // One layer of the identity's own form keeps the old layered brilliance around
             // the main target. A thrown seal has none: its family falls from over the top.
@@ -621,6 +669,18 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                     bite.pivot = c; bite.delay = .09f + k * .035f; bite.rigid = true; bite.revealScale = .65f; bite.holdScale = .7f; bite.coreAmt = 1.4f; bite.rampShift = .15f;
                     list.Add(bite);
                 }
+                break;
+            }
+            case Form.Dash:
+            {
+                // The runner cuts past and out the far side: a mirror scuff on the floor
+                // continuing beyond the target, bending a little as it slows.
+                var a = foot - f.dir * .2f * s;
+                var b = foot + f.dir * 1.25f * s + lateral * R(rng, -.25f, .25f) * s;
+                Func<float, Vector3> pos = t => Vector3.Lerp(a, b, t) + Vector3.up * .02f;
+                var scuff = Make(28, pos, FacingAcross(pos, Vector3.up), t => s * .09f * Swell(t, .5f) * (1 - .5f * t), Vector3.up);
+                scuff.pivot = foot; scuff.rigid = true; scuff.revealScale = .7f; scuff.holdScale = 2.2f; scuff.coreAmt = 1.6f; scuff.tile = 2f;
+                list.Add(scuff);
                 break;
             }
             case Form.Rain:
@@ -1903,6 +1963,14 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             }
         }
 
+        /// A mirror footprint flat on the floor that flashes as the runner passes and fades.
+        public void Footprint(Profile p, Vector3 at, float delay, float heading, float s, System.Random rng)
+        {
+            float size = R(rng, .2f, .26f) * s;
+            Add(new Mark { pos = at, cell = MoteCell(Mote.Shard), color = Pick(p, rng, .55f, 1f), size = size * 1.25f, sizeEnd = size,
+                rot = heading, life = R(rng, .6f, .8f), delay = delay, peak = .08f, flat = true, opacity = .95f, hot = .7f });
+        }
+
         /// A bright head flying the same ballistic course as a launch trail (no drag).
         public void Projectile(Vector3 from, Vector3 velocity, float gravity, float delay, float time, float size, Mote mote, Color color, float stretch, float spin)
         {
@@ -2092,7 +2160,8 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
     {
         // Hero: the Fool's tarot light is prismatic; each card keeps its own form.
         ["paper"] = P("paper", Family.Surge, Family.Surge, Style.Light, new[] { "#5a1bd6", "#b04cff", "#ff5fd0", "#ffc94a", "#7fe8ff" }, "#ffd76a", "#fff4d8", "#7a2cff", "#ffe2a8", Mote.Card, Mote.Spark, Matter.Filigree, Accent.Orbit),
-        ["sidestep"] = P("sidestep", Family.Twin, Family.Twin, Style.Strike, new[] { "#3a0f8f", "#8a3dff", "#ff58c8", "#ffb22e", "#fff0b0" }, "#ffd35a", "#fff6e0", "#8c2bff", "#ffd9a0", Mote.Shard, Mote.Card, Matter.Crystal, Accent.Shards),
+        // Sidestep strike: the hero's afterimage dashes through on mirror footprints and leaves a crossed mirror cut.
+        ["sidestep"] = P("sidestep", Family.Twin, Family.Twin, Style.Strike, new[] { "#3a0f8f", "#8a3dff", "#ff58c8", "#ffb22e", "#fff0b0" }, "#ffd35a", "#fff6e0", "#8c2bff", "#ffd9a0", Mote.Shard, Mote.Card, Matter.Crystal, Accent.None, false, 1f, 0f, Form.Dash),
         ["mask"] = P("mask", Family.Fan, Family.Fan, Style.Control, new[] { "#0a3a66", "#1f8ad6", "#3ad6e8", "#a57bff", "#f0f4ff" }, "#dff8ff", "#ffffff", "#2aa6c8", "#e8fbff", Mote.Shard, Mote.Wisp, Matter.Crystal, Accent.Shards),
         ["identity"] = P("identity", Family.Fan, Family.Fan, Style.Control, new[] { "#1a4dff", "#46b8ff", "#f4f1ff", "#ffb04a", "#ff6a1f" }, "#ffe0a0", "#ffffff", "#3b6cff", "#ffe6c2", Mote.Card, Mote.Wisp, Matter.Smoke, Accent.Vortex),
         // Forged evidence: a red wax seal thrown on a low arc, slammed onto the target, splashing forward.

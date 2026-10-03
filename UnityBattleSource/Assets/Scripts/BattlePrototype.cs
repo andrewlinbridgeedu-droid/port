@@ -2655,6 +2655,9 @@ public sealed class BattlePrototype : MonoBehaviour
         var targetHandle = ResolvePlayerSkillTarget(targetBattleEnemyID);
         var secondaryHandle = !string.IsNullOrEmpty(secondaryID) ? FindInstalledEnemyHandle(secondaryID) : null;
         if (!IsActiveEnemyHandle(secondaryHandle) || secondaryHandle == targetHandle) secondaryHandle = null;
+        // 错步 and the ultimate register their recipients below; registering twice would
+        // launch a travelling form twice.
+        if (skillID is not ("fool_skill_01" or "fool_skill_10"))
         {
             var spectacleTargets = new List<EnemyHandle>();
             if (IsActiveEnemyHandle(targetHandle)) spectacleTargets.Add(targetHandle);
@@ -2687,7 +2690,7 @@ public sealed class BattlePrototype : MonoBehaviour
             // 错步穿行 cuts through three in the tower's minion packs, two elsewhere.
             int sidestepReach = churchTowerFormation ? 3 : 2;
             if (skillID == "fool_skill_01" && recipients.Count > sidestepReach) recipients.RemoveRange(sidestepReach, recipients.Count - sidestepReach);
-            BeginPlayerSpectacle(skillID, recipients, null);
+            BeginPlayerSpectacle(skillID, recipients, null, skillID == "fool_skill_01" ? FoolTarotStrikeVFX.ContactTime : -1f);
             BeginDistinctPlayerCast(skillID);
             foolSkillVFX.HeroActor = player.transform;
             yield return foolSkillVFX.PlayTargetInstances(skillID,
