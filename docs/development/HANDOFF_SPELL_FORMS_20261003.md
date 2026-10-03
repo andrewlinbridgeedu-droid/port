@@ -52,6 +52,8 @@
 - 只证明装上了、能启动；没有在手机上看画面，也没有用户认可。
 
 **工作树指针**：03:27 左右 `/Users/andrewlin/Downloads/DEV_Projects/mindstone-game` 被删，所有工作树的 `.git` 都指向这个旧路径，git 因此失效。已经从 SSD 主仓运行 `git worktree repair`，七个工作树改为指向 `/Volumes/andrew's SSD/Downloads/mindstone-game/.git/worktrees/…`。只改了指针，没碰文件内容。被删的那个路径没有恢复。
+  - 那个路径是另一份独立仓库，不是指向 SSD 的链接：在它被删之前，本会话在 `skill-relic-design` 里做的评审提交（`219b9e1`）写进了那份仓库，随它一起丢了。内容还在工作区，已在 SSD 仓库重新提交为 `72d6159` 并推送。
+  - 其余五个工作树（daily-work、claude-decisions、hero-v4、return-buttons、return-buttons-device）修复后都干净，并且和远端一致，没有丢东西。
 
 ## 提交
 
@@ -60,7 +62,7 @@
 | `claude/hero-v4-device-20261001` | `a510507` | 第二轮法术形式样板（未完成） |
 | `claude/hero-v4-device-20261001` | 本交接所在提交 | 第三轮：根因修正、静音修正、证据图、本交接 |
 | `claude/skill-relic-design-20261002` | `d8615be` | `SKILL_RELIC_SEALED_ARTIFACTS_20261003.md` 和 README 索引 |
-| `claude/skill-relic-design-20261002` | `219b9e1` | 对照源码的评审（第 14 节）：系数核对无误，指出四个问题 |
+| `claude/skill-relic-design-20261002` | `72d6159` | 对照源码的评审（第 14 节）：系数核对无误，指出四个问题 |
 
 **主仓工作区里还有几样东西没提交，不是本会话写的，没有动：**
 
