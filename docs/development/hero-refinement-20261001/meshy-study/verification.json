@@ -1,0 +1,38 @@
+{
+  "stage": "read-only source GLB review and static Blender WIP",
+  "image_count": 10,
+  "quality_target_met": false,
+  "user_visual_approval": false,
+  "production_rig_or_animation": false,
+  "unity_or_app_connected": false,
+  "installed": false,
+  "source_preserved": true,
+  "renders_observed": true,
+  "known_remaining_issues": [
+    "hair layering and silhouette",
+    "sleeve/shoulder shaping",
+    "coat tailoring and cloth drape",
+    "brocade/material refinement",
+    "three distinct outfits",
+    "rigging, skin weights and animation verification"
+  ],
+  "files": {
+    "meshy-source/rear.png": "9da86f019778b29e7c9f1c984714b571b23200998740cdbd7b69cec02d3a76e5",
+    "meshy-source/rear-three-quarter.png": "0e5d797e22d98d4f64b613a499acb46edc74279de035cb01f35847ab7a00e114",
+    "meshy-source/front.png": "11ec3bdae6733a36fb68a5357d7fd88f55e232c5d7640b4938f0feef3786204e",
+    "meshy-untextured-source/rear.png": "a3927d78a9f4053c4ae16545be589fa3be8e334e04eb787974919183950f07b5",
+    "meshy-untextured-source/rear-three-quarter.png": "18a8833c795ed90c5c0b3102f3bc11400523eac5e08e92ba4cb2e8526da6f92f",
+    "meshy-untextured-source/front.png": "e81f464dee548959523dcc73dbaf7ce35e93c92c0e8ff29b48783b7f5900d9a6",
+    "meshy-study/hair-and-tailoring.png": "890fd0eb6a7dcd588682e7c6963fd7e6033e338e00a2d26136a155d56e8e025a",
+    "meshy-study/rear.png": "c1acd0b923213cabffea15b30be0e9f62386738099c9b56c02db26373ac646cd",
+    "meshy-study/rear-three-quarter.png": "c0992da2c1665dac55800a06b0856f1ffc9a9088242592cbafd56201b88ff6a7",
+    "meshy-study/cloth-and-jewels.png": "05b718f337a2c2490cfbfa41b9be75bd699ea7447d90d020976f9e46e7d0838b"
+  },
+  "generator_sha256": {
+    "tools/animation/render_meshy_hero_study.py": "506d5d54ef31734378b4f68fd8f7af981244352aa1c5e91bc9c76a8f46570388",
+    "tools/animation/inspect_meshy_hero.py": "2aba7f78fcda8200f73694e70744de2f017592e3f70fad500401497689b1e6be",
+    "tools/animation/build_meshy_hero_study.py": "de8236671fa30b2aa23ba772d3d6ce61fb24fdd65ce9f24ed0c9397161845713",
+    "tools/animation/compare_meshy_hero_shapes.py": "0f7650e7ba64f2ec58e9ce4f85042ef79c41db8749b621595d7f3e4589b4cba7"
+  },
+  "blender_sha256": "b6dad3b4d41f09dba370fdf5f02fdef3692e2bb2e796b1432e216e8bc9bf2dbf"
+}

@@ -67,6 +67,7 @@ public sealed class Q4HoundPresentation : MonoBehaviour
     {
         // Modify only the head bone, after the authored animation, never the formation root.
         UndoHead();
+        if (actor && actor.GetComponentInChildren<CombatTempoAnimatedBody>(false)) return;
         if(!head || !head.gameObject.activeInHierarchy)return;
         if(Phase=="charge") lastHeadDelta=Quaternion.Euler(Mathf.SmoothStep(0,9,Mathf.Clamp01(chargeTime/2)),0,0);
         else if(Phase=="opening" && openingTime<3) lastHeadDelta=Quaternion.Euler(0,Mathf.Sin(openingTime*5)*13*Mathf.Sin(Mathf.Clamp01(openingTime/3)*Mathf.PI),0);

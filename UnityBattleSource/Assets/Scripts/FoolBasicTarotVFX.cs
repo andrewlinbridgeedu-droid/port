@@ -30,8 +30,12 @@ public sealed class FoolBasicTarotVFX : MonoBehaviour
         var shader = Resources.Load<Shader>("Effects/Fool/TarotNova");
         if (!shader) { Debug.LogError("Fool basic attack shader missing."); return; }
         view = camera; source = caster; target = victim;
-        choreography=FoolSkillChoreography.Install(caster);
-        choreography.Begin(FoolSkillChoreography.BasicID);
+        // The sample owns its illustrated body action; this component keeps
+        // the original flying tarot and its sole .58 s contact callback.
+        if (!caster.GetComponentInChildren<AIHeroAnimatedBody>()) {
+            choreography=FoolSkillChoreography.Install(caster);
+            choreography.Begin(FoolSkillChoreography.BasicID);
+        }
         var paperShader=Shader.Find("Sprites/Default");
         if(paperShader)
         {

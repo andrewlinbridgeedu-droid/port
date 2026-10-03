@@ -1,0 +1,3791 @@
+{
+  "bones": 50,
+  "maxWeights": 4,
+  "poses": [
+    {
+      "outfit": "night",
+      "clip": "BattleIdle",
+      "phase": 0,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.215661108301588
+    },
+    {
+      "outfit": "night",
+      "clip": "BattleIdle",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.304352280946019,
+      "p99EdgeStretch": 1.3639952871895251,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.304352280946019,
+      "maxHandEdgeStretch": 1.2156425764722738
+    },
+    {
+      "outfit": "night",
+      "clip": "BattleIdle",
+      "phase": 0.34,
+      "maxEdgeStretch": 2.304171952609963,
+      "p99EdgeStretch": 1.3635986511230318,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.304171952609963,
+      "maxHandEdgeStretch": 1.215665804832834
+    },
+    {
+      "outfit": "night",
+      "clip": "BattleIdle",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.3059300772558546,
+      "p99EdgeStretch": 1.3642578510237238,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.3059300772558546,
+      "maxHandEdgeStretch": 1.2156756281616827
+    },
+    {
+      "outfit": "night",
+      "clip": "BattleIdle",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.3068907181609295,
+      "p99EdgeStretch": 1.3639643400561472,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.3068907181609295,
+      "maxHandEdgeStretch": 1.2156469900446074
+    },
+    {
+      "outfit": "night",
+      "clip": "BattleIdle",
+      "phase": 1,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.215661108301588
+    },
+    {
+      "outfit": "night",
+      "clip": "BasicSlash",
+      "phase": 0,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2562709184757035
+    },
+    {
+      "outfit": "night",
+      "clip": "BasicSlash",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.447599000701533,
+      "p99EdgeStretch": 1.3860041151950442,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.447599000701533,
+      "maxHandEdgeStretch": 1.6241060697335727
+    },
+    {
+      "outfit": "night",
+      "clip": "BasicSlash",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.04210355182838,
+      "p99EdgeStretch": 1.354811885895788,
+      "worstSourcePositionCM": [
+        11.249663352966309,
+        -12.926129341125488,
+        86.91175842285156
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.211575469112712,
+      "maxHandEdgeStretch": 1.5712961910917802
+    },
+    {
+      "outfit": "night",
+      "clip": "BasicSlash",
+      "phase": 0.58,
+      "maxEdgeStretch": 4.219130603438679,
+      "p99EdgeStretch": 1.3951095682183954,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 30,
+      "maxUpperBodyEdgeStretch": 4.219130603438679,
+      "maxHandEdgeStretch": 1.10074875417653
+    },
+    {
+      "outfit": "night",
+      "clip": "BasicSlash",
+      "phase": 0.72,
+      "maxEdgeStretch": 3.47123760989855,
+      "p99EdgeStretch": 1.4313674473976974,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 2,
+      "maxUpperBodyEdgeStretch": 3.47123760989855,
+      "maxHandEdgeStretch": 1.1803354342793437
+    },
+    {
+      "outfit": "night",
+      "clip": "BasicSlash",
+      "phase": 1,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2156612914179528
+    },
+    {
+      "outfit": "night",
+      "clip": "Thrust",
+      "phase": 0,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2562709184757035
+    },
+    {
+      "outfit": "night",
+      "clip": "Thrust",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.3034480054516884,
+      "p99EdgeStretch": 1.3557972496874453,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.3034480054516884,
+      "maxHandEdgeStretch": 1.6240934255147241
+    },
+    {
+      "outfit": "night",
+      "clip": "Thrust",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.04210355182838,
+      "p99EdgeStretch": 1.3499281587191816,
+      "worstSourcePositionCM": [
+        11.249663352966309,
+        -12.926129341125488,
+        86.91175842285156
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.59196527384468,
+      "maxHandEdgeStretch": 1.5713067776738405
+    },
+    {
+      "outfit": "night",
+      "clip": "Thrust",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.642294303733677,
+      "p99EdgeStretch": 1.2917692904968123,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.642294303733677,
+      "maxHandEdgeStretch": 1.1007650871717414
+    },
+    {
+      "outfit": "night",
+      "clip": "Thrust",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.4464531593021457,
+      "p99EdgeStretch": 1.3360513643418006,
+      "worstSourcePositionCM": [
+        -4.093104839324951,
+        10.066291809082031,
+        77.8568115234375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.2322435117789055,
+      "maxHandEdgeStretch": 1.1803232256305267
+    },
+    {
+      "outfit": "night",
+      "clip": "Thrust",
+      "phase": 1,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2156612914179528
+    },
+    {
+      "outfit": "night",
+      "clip": "Card",
+      "phase": 0,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2562709184757035
+    },
+    {
+      "outfit": "night",
+      "clip": "Card",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.285086228225847,
+      "p99EdgeStretch": 1.3562398394839557,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.285086228225847,
+      "maxHandEdgeStretch": 1.624069598809076
+    },
+    {
+      "outfit": "night",
+      "clip": "Card",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.04210355182838,
+      "p99EdgeStretch": 1.3607518310614797,
+      "worstSourcePositionCM": [
+        11.249663352966309,
+        -12.926129341125488,
+        86.91175842285156
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.648171784213989,
+      "maxHandEdgeStretch": 1.5713167294853654
+    },
+    {
+      "outfit": "night",
+      "clip": "Card",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.181090506953449,
+      "p99EdgeStretch": 1.2910196447395004,
+      "worstSourcePositionCM": [
+        23.645480155944824,
+        -4.7049055099487305,
+        143.67636108398438
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.181090506953449,
+      "maxHandEdgeStretch": 1.1007588354695719
+    },
+    {
+      "outfit": "night",
+      "clip": "Card",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.4464531593021457,
+      "p99EdgeStretch": 1.3760571132691823,
+      "worstSourcePositionCM": [
+        -4.093104839324951,
+        10.066291809082031,
+        77.8568115234375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.3706167146788375,
+      "maxHandEdgeStretch": 1.1802935631539762
+    },
+    {
+      "outfit": "night",
+      "clip": "Card",
+      "phase": 1,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2156612914179528
+    },
+    {
+      "outfit": "night",
+      "clip": "Parry",
+      "phase": 0,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2562709184757035
+    },
+    {
+      "outfit": "night",
+      "clip": "Parry",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.421702504560833,
+      "p99EdgeStretch": 1.3410246615036465,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.421702504560833,
+      "maxHandEdgeStretch": 1.631472171132423
+    },
+    {
+      "outfit": "night",
+      "clip": "Parry",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.04210355182838,
+      "p99EdgeStretch": 1.3770519158165477,
+      "worstSourcePositionCM": [
+        11.249663352966309,
+        -12.926129341125488,
+        86.91175842285156
+      ],
+      "edgesOver3x": 2,
+      "maxUpperBodyEdgeStretch": 3.026491696936297,
+      "maxHandEdgeStretch": 1.5713006425407414
+    },
+    {
+      "outfit": "night",
+      "clip": "Parry",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.868970770495006,
+      "p99EdgeStretch": 1.3125443947826458,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.868970770495006,
+      "maxHandEdgeStretch": 1.0980671746547297
+    },
+    {
+      "outfit": "night",
+      "clip": "Parry",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.4446631678431627,
+      "p99EdgeStretch": 1.347985814549456,
+      "worstSourcePositionCM": [
+        -4.093104839324951,
+        10.066291809082031,
+        77.8568115234375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.261632187435602,
+      "maxHandEdgeStretch": 1.185297508437571
+    },
+    {
+      "outfit": "night",
+      "clip": "Parry",
+      "phase": 1,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2156612914179528
+    },
+    {
+      "outfit": "night",
+      "clip": "Hit",
+      "phase": 0,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2562709184757035
+    },
+    {
+      "outfit": "night",
+      "clip": "Hit",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.2916686395983916,
+      "p99EdgeStretch": 1.3654489775685439,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.2916686395983916,
+      "maxHandEdgeStretch": 1.6411417313710945
+    },
+    {
+      "outfit": "night",
+      "clip": "Hit",
+      "phase": 0.34,
+      "maxEdgeStretch": 2.9417326426678128,
+      "p99EdgeStretch": 1.3843264294511382,
+      "worstSourcePositionCM": [
+        11.249663352966309,
+        -12.926129341125488,
+        86.91175842285156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.2946592723827663,
+      "maxHandEdgeStretch": 1.6017946898680115
+    },
+    {
+      "outfit": "night",
+      "clip": "Hit",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.3652058548691315,
+      "p99EdgeStretch": 1.3686811472335587,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.3652058548691315,
+      "maxHandEdgeStretch": 1.1061764731064458
+    },
+    {
+      "outfit": "night",
+      "clip": "Hit",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.4460703155349988,
+      "p99EdgeStretch": 1.382914358677757,
+      "worstSourcePositionCM": [
+        -4.093104839324951,
+        10.066291809082031,
+        77.8568115234375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.406243913212596,
+      "maxHandEdgeStretch": 1.1839271380257834
+    },
+    {
+      "outfit": "night",
+      "clip": "Hit",
+      "phase": 1,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2156612914179528
+    },
+    {
+      "outfit": "night",
+      "clip": "CastPrepare",
+      "phase": 0,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2562709184757035
+    },
+    {
+      "outfit": "night",
+      "clip": "CastPrepare",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.39896633069856,
+      "p99EdgeStretch": 1.2771896137882064,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.39896633069856,
+      "maxHandEdgeStretch": 1.624110525644411
+    },
+    {
+      "outfit": "night",
+      "clip": "CastPrepare",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.04210355182838,
+      "p99EdgeStretch": 1.3733638675151476,
+      "worstSourcePositionCM": [
+        11.249663352966309,
+        -12.926129341125488,
+        86.91175842285156
+      ],
+      "edgesOver3x": 2,
+      "maxUpperBodyEdgeStretch": 3.010851976959983,
+      "maxHandEdgeStretch": 1.5713054156661361
+    },
+    {
+      "outfit": "night",
+      "clip": "CastPrepare",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.065785425399186,
+      "p99EdgeStretch": 1.2425252877337511,
+      "worstSourcePositionCM": [
+        38.420053482055664,
+        4.818767547607422,
+        123.89376068115234
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.065785425399186,
+      "maxHandEdgeStretch": 1.1007438385171435
+    },
+    {
+      "outfit": "night",
+      "clip": "CastPrepare",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.67703616486206,
+      "p99EdgeStretch": 1.4322357303804882,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.67703616486206,
+      "maxHandEdgeStretch": 1.1803049577786477
+    },
+    {
+      "outfit": "night",
+      "clip": "CastPrepare",
+      "phase": 1,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2156612914179528
+    },
+    {
+      "outfit": "night",
+      "clip": "CastMaskFlick",
+      "phase": 0,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2562709184757035
+    },
+    {
+      "outfit": "night",
+      "clip": "CastMaskFlick",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.2836640018525016,
+      "p99EdgeStretch": 1.3277209181608327,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.2836640018525016,
+      "maxHandEdgeStretch": 1.63269671982382
+    },
+    {
+      "outfit": "night",
+      "clip": "CastMaskFlick",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.0935923647796137,
+      "p99EdgeStretch": 1.3808803513339156,
+      "worstSourcePositionCM": [
+        11.249663352966309,
+        -12.926129341125488,
+        86.91175842285156
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.9242198288474164,
+      "maxHandEdgeStretch": 1.5513446802948738
+    },
+    {
+      "outfit": "night",
+      "clip": "CastMaskFlick",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.246627150871128,
+      "p99EdgeStretch": 1.2515473466456728,
+      "worstSourcePositionCM": [
+        38.420053482055664,
+        4.818767547607422,
+        123.89376068115234
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.246627150871128,
+      "maxHandEdgeStretch": 1.097900267403514
+    },
+    {
+      "outfit": "night",
+      "clip": "CastMaskFlick",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.4310197977176036,
+      "p99EdgeStretch": 1.3460806586071228,
+      "worstSourcePositionCM": [
+        -4.093104839324951,
+        10.066291809082031,
+        77.8568115234375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.2438927250934446,
+      "maxHandEdgeStretch": 1.1906166322189768
+    },
+    {
+      "outfit": "night",
+      "clip": "CastMaskFlick",
+      "phase": 1,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2156612914179528
+    },
+    {
+      "outfit": "night",
+      "clip": "CastMaskTurn",
+      "phase": 0,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2562709184757035
+    },
+    {
+      "outfit": "night",
+      "clip": "CastMaskTurn",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.7725223475076186,
+      "p99EdgeStretch": 1.3400621605642347,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.7725223475076186,
+      "maxHandEdgeStretch": 1.6327097924277114
+    },
+    {
+      "outfit": "night",
+      "clip": "CastMaskTurn",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.1197181564738794,
+      "p99EdgeStretch": 1.3715038331860911,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 2,
+      "maxUpperBodyEdgeStretch": 3.1197181564738794,
+      "maxHandEdgeStretch": 1.5513237431237263
+    },
+    {
+      "outfit": "night",
+      "clip": "CastMaskTurn",
+      "phase": 0.58,
+      "maxEdgeStretch": 3.974077321531092,
+      "p99EdgeStretch": 1.3445944576351057,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 12,
+      "maxUpperBodyEdgeStretch": 3.974077321531092,
+      "maxHandEdgeStretch": 1.0978972103529228
+    },
+    {
+      "outfit": "night",
+      "clip": "CastMaskTurn",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.632842138577675,
+      "p99EdgeStretch": 1.3946139232641903,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.632842138577675,
+      "maxHandEdgeStretch": 1.1906534930178592
+    },
+    {
+      "outfit": "night",
+      "clip": "CastMaskTurn",
+      "phase": 1,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2156612914179528
+    },
+    {
+      "outfit": "night",
+      "clip": "CastTwinSweep",
+      "phase": 0,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2562709184757035
+    },
+    {
+      "outfit": "night",
+      "clip": "CastTwinSweep",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.5853253776149328,
+      "p99EdgeStretch": 1.358975645896638,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.5853253776149328,
+      "maxHandEdgeStretch": 1.6471185600651332
+    },
+    {
+      "outfit": "night",
+      "clip": "CastTwinSweep",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.757260121428015,
+      "p99EdgeStretch": 1.4811944697218773,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 17,
+      "maxUpperBodyEdgeStretch": 3.757260121428015,
+      "maxHandEdgeStretch": 1.571284684410313
+    },
+    {
+      "outfit": "night",
+      "clip": "CastTwinSweep",
+      "phase": 0.58,
+      "maxEdgeStretch": 1.787664412803444,
+      "p99EdgeStretch": 1.1800452512076915,
+      "worstSourcePositionCM": [
+        35.29994010925293,
+        4.822967052459717,
+        128.19979095458984
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 1.787664412803444,
+      "maxHandEdgeStretch": 1.0998950871590472
+    },
+    {
+      "outfit": "night",
+      "clip": "CastTwinSweep",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.8473472752352955,
+      "p99EdgeStretch": 1.4410084616645573,
+      "worstSourcePositionCM": [
+        37.565996170043945,
+        4.720188856124878,
+        126.27117538452148
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.8473472752352955,
+      "maxHandEdgeStretch": 1.1853242131275148
+    },
+    {
+      "outfit": "night",
+      "clip": "CastTwinSweep",
+      "phase": 1,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2156612914179528
+    },
+    {
+      "outfit": "night",
+      "clip": "CastTwinCross",
+      "phase": 0,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2562709184757035
+    },
+    {
+      "outfit": "night",
+      "clip": "CastTwinCross",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.4618867549754335,
+      "p99EdgeStretch": 1.4152381298694292,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4618867549754335,
+      "maxHandEdgeStretch": 1.647148235380005
+    },
+    {
+      "outfit": "night",
+      "clip": "CastTwinCross",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.04210355182838,
+      "p99EdgeStretch": 1.2348911605098245,
+      "worstSourcePositionCM": [
+        11.249663352966309,
+        -12.926129341125488,
+        86.91175842285156
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.0764621727250736,
+      "maxHandEdgeStretch": 1.5712810693638368
+    },
+    {
+      "outfit": "night",
+      "clip": "CastTwinCross",
+      "phase": 0.58,
+      "maxEdgeStretch": 3.888784533686079,
+      "p99EdgeStretch": 1.4565029045540243,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 20,
+      "maxUpperBodyEdgeStretch": 3.888784533686079,
+      "maxHandEdgeStretch": 1.0999244991404062
+    },
+    {
+      "outfit": "night",
+      "clip": "CastTwinCross",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.797019793017618,
+      "p99EdgeStretch": 1.378120234912003,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.797019793017618,
+      "maxHandEdgeStretch": 1.1852823225611486
+    },
+    {
+      "outfit": "night",
+      "clip": "CastTwinCross",
+      "phase": 1,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2156612914179528
+    },
+    {
+      "outfit": "night",
+      "clip": "CastFinaleLift",
+      "phase": 0,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2562709184757035
+    },
+    {
+      "outfit": "night",
+      "clip": "CastFinaleLift",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.3372872780252454,
+      "p99EdgeStretch": 1.3430220734525224,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.3372872780252454,
+      "maxHandEdgeStretch": 1.6307224566248397
+    },
+    {
+      "outfit": "night",
+      "clip": "CastFinaleLift",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.570563120387153,
+      "p99EdgeStretch": 1.3285606154495404,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 5,
+      "maxUpperBodyEdgeStretch": 3.570563120387153,
+      "maxHandEdgeStretch": 1.5467898871561119
+    },
+    {
+      "outfit": "night",
+      "clip": "CastFinaleLift",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.8442931228201154,
+      "p99EdgeStretch": 1.1784842742136696,
+      "worstSourcePositionCM": [
+        -38.14613151550293,
+        4.918720245361328,
+        123.85941314697266
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.8442931228201154,
+      "maxHandEdgeStretch": 1.0982575612436092
+    },
+    {
+      "outfit": "night",
+      "clip": "CastFinaleLift",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.4468582150188687,
+      "p99EdgeStretch": 1.199215390364583,
+      "worstSourcePositionCM": [
+        -4.093104839324951,
+        10.066291809082031,
+        77.8568115234375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 1.9011638644355089,
+      "maxHandEdgeStretch": 1.1816846514723538
+    },
+    {
+      "outfit": "night",
+      "clip": "CastFinaleLift",
+      "phase": 1,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2156612914179528
+    },
+    {
+      "outfit": "night",
+      "clip": "CastFinaleThrow",
+      "phase": 0,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2562709184757035
+    },
+    {
+      "outfit": "night",
+      "clip": "CastFinaleThrow",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.294449224695737,
+      "p99EdgeStretch": 1.2956727090857736,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.294449224695737,
+      "maxHandEdgeStretch": 1.630723991923705
+    },
+    {
+      "outfit": "night",
+      "clip": "CastFinaleThrow",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.1040320464862505,
+      "p99EdgeStretch": 1.2677701113898139,
+      "worstSourcePositionCM": [
+        11.249663352966309,
+        -12.926129341125488,
+        86.91175842285156
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.02560006681939,
+      "maxHandEdgeStretch": 1.5467570307001168
+    },
+    {
+      "outfit": "night",
+      "clip": "CastFinaleThrow",
+      "phase": 0.58,
+      "maxEdgeStretch": 3.518542187136298,
+      "p99EdgeStretch": 1.2460630195806992,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 2,
+      "maxUpperBodyEdgeStretch": 3.518542187136298,
+      "maxHandEdgeStretch": 1.098210326931359
+    },
+    {
+      "outfit": "night",
+      "clip": "CastFinaleThrow",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.4468582150188687,
+      "p99EdgeStretch": 1.3378741800788052,
+      "worstSourcePositionCM": [
+        -4.093104839324951,
+        10.066291809082031,
+        77.8568115234375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.2366280608182296,
+      "maxHandEdgeStretch": 1.1817011039663292
+    },
+    {
+      "outfit": "night",
+      "clip": "CastFinaleThrow",
+      "phase": 1,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2156612914179528
+    },
+    {
+      "outfit": "night",
+      "clip": "CastCardFan",
+      "phase": 0,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2562709184757035
+    },
+    {
+      "outfit": "night",
+      "clip": "CastCardFan",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.4074487570559135,
+      "p99EdgeStretch": 1.2779952623154405,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4074487570559135,
+      "maxHandEdgeStretch": 1.6326946370900053
+    },
+    {
+      "outfit": "night",
+      "clip": "CastCardFan",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.0935923647796137,
+      "p99EdgeStretch": 1.3747199169216657,
+      "worstSourcePositionCM": [
+        11.249663352966309,
+        -12.926129341125488,
+        86.91175842285156
+      ],
+      "edgesOver3x": 2,
+      "maxUpperBodyEdgeStretch": 3.0148048180062177,
+      "maxHandEdgeStretch": 1.5513558847699223
+    },
+    {
+      "outfit": "night",
+      "clip": "CastCardFan",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.054091572550009,
+      "p99EdgeStretch": 1.244222189746128,
+      "worstSourcePositionCM": [
+        38.420053482055664,
+        4.818767547607422,
+        123.89376068115234
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.054091572550009,
+      "maxHandEdgeStretch": 1.0978764628142046
+    },
+    {
+      "outfit": "night",
+      "clip": "CastCardFan",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.6908560912278587,
+      "p99EdgeStretch": 1.4265877966783027,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6908560912278587,
+      "maxHandEdgeStretch": 1.1906230888658211
+    },
+    {
+      "outfit": "night",
+      "clip": "CastCardFan",
+      "phase": 1,
+      "maxEdgeStretch": 2.305338512339606,
+      "p99EdgeStretch": 1.3640949119444719,
+      "worstSourcePositionCM": [
+        -37.533531188964844,
+        4.951636791229248,
+        125.372802734375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.305338512339606,
+      "maxHandEdgeStretch": 1.2156612914179528
+    },
+    {
+      "outfit": "starlight",
+      "clip": "BattleIdle",
+      "phase": 0,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670281132867542
+    },
+    {
+      "outfit": "starlight",
+      "clip": "BattleIdle",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.470827036862724,
+      "p99EdgeStretch": 1.3358430968544226,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.470827036862724,
+      "maxHandEdgeStretch": 1.1670265801611392
+    },
+    {
+      "outfit": "starlight",
+      "clip": "BattleIdle",
+      "phase": 0.34,
+      "maxEdgeStretch": 2.4719031693642806,
+      "p99EdgeStretch": 1.3358450630921872,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4719031693642806,
+      "maxHandEdgeStretch": 1.1670284898826464
+    },
+    {
+      "outfit": "starlight",
+      "clip": "BattleIdle",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.484836978986151,
+      "p99EdgeStretch": 1.3364228843046024,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.484836978986151,
+      "maxHandEdgeStretch": 1.1670262767616382
+    },
+    {
+      "outfit": "starlight",
+      "clip": "BattleIdle",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.48956990408719,
+      "p99EdgeStretch": 1.3366905272541763,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.48956990408719,
+      "maxHandEdgeStretch": 1.1670143525196224
+    },
+    {
+      "outfit": "starlight",
+      "clip": "BattleIdle",
+      "phase": 1,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670281132867542
+    },
+    {
+      "outfit": "starlight",
+      "clip": "BasicSlash",
+      "phase": 0,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.205093230887426
+    },
+    {
+      "outfit": "starlight",
+      "clip": "BasicSlash",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.4295791232833843,
+      "p99EdgeStretch": 1.3601069741253158,
+      "worstSourcePositionCM": [
+        24.065762519836426,
+        -3.99398136138916,
+        144.44189453125
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4295791232833843,
+      "maxHandEdgeStretch": 1.6075573884783485
+    },
+    {
+      "outfit": "starlight",
+      "clip": "BasicSlash",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.0803981451933202,
+      "p99EdgeStretch": 1.3301998523280165,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.302253331773303,
+      "maxHandEdgeStretch": 1.545307290460016
+    },
+    {
+      "outfit": "starlight",
+      "clip": "BasicSlash",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.593832010356403,
+      "p99EdgeStretch": 1.319033023412222,
+      "worstSourcePositionCM": [
+        -24.709294319152832,
+        -3.9499937295913696,
+        143.6281509399414
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.593832010356403,
+      "maxHandEdgeStretch": 1.0686972213230377
+    },
+    {
+      "outfit": "starlight",
+      "clip": "BasicSlash",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.5459896087270457,
+      "p99EdgeStretch": 1.3635494719019357,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.5459896087270457,
+      "maxHandEdgeStretch": 1.1344007015607995
+    },
+    {
+      "outfit": "starlight",
+      "clip": "BasicSlash",
+      "phase": 1,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670228290725135
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Thrust",
+      "phase": 0,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.205093230887426
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Thrust",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.505445353145538,
+      "p99EdgeStretch": 1.3203603318327881,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.505445353145538,
+      "maxHandEdgeStretch": 1.6075631566046868
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Thrust",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.0803981451933202,
+      "p99EdgeStretch": 1.3145856671598262,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.559023973568602,
+      "maxHandEdgeStretch": 1.5453097864484906
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Thrust",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.4459110124668184,
+      "p99EdgeStretch": 1.2337598407335033,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4459110124668184,
+      "maxHandEdgeStretch": 1.068690019983292
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Thrust",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.409525374670236,
+      "p99EdgeStretch": 1.3150218604291959,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.399504122462388,
+      "maxHandEdgeStretch": 1.134388609174335
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Thrust",
+      "phase": 1,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670228290725135
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Card",
+      "phase": 0,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.205093230887426
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Card",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.504376872830063,
+      "p99EdgeStretch": 1.3252679347593692,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.504376872830063,
+      "maxHandEdgeStretch": 1.6075553935418354
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Card",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.0803981451933202,
+      "p99EdgeStretch": 1.3203951885739353,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.4412085348762833,
+      "maxHandEdgeStretch": 1.5452878370734797
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Card",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.554369242154414,
+      "p99EdgeStretch": 1.2548997610725448,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.554369242154414,
+      "maxHandEdgeStretch": 1.0687045113012892
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Card",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.409525374670236,
+      "p99EdgeStretch": 1.3621872248976579,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.3987676348490883,
+      "maxHandEdgeStretch": 1.134402359693771
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Card",
+      "phase": 1,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670228290725135
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Parry",
+      "phase": 0,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.205093230887426
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Parry",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.4492568850012404,
+      "p99EdgeStretch": 1.3037020545968672,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4492568850012404,
+      "maxHandEdgeStretch": 1.616364945932091
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Parry",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.0803981451933202,
+      "p99EdgeStretch": 1.2985403666660855,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.265645816883645,
+      "maxHandEdgeStretch": 1.5453065239271155
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Parry",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.1709674404433468,
+      "p99EdgeStretch": 1.213614958805071,
+      "worstSourcePositionCM": [
+        24.065762519836426,
+        -3.99398136138916,
+        144.44189453125
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.1709674404433468,
+      "maxHandEdgeStretch": 1.0666065911486051
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Parry",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.4073310678575055,
+      "p99EdgeStretch": 1.3424398954752734,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.389432186068296,
+      "maxHandEdgeStretch": 1.1388104142662567
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Parry",
+      "phase": 1,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670228290725135
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Hit",
+      "phase": 0,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.205093230887426
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Hit",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.5101858183759136,
+      "p99EdgeStretch": 1.3323907484779052,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.5101858183759136,
+      "maxHandEdgeStretch": 1.6279577746249065
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Hit",
+      "phase": 0.34,
+      "maxEdgeStretch": 2.934799718211751,
+      "p99EdgeStretch": 1.3495480857421143,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.5371953715473747,
+      "maxHandEdgeStretch": 1.581255277754295
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Hit",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.4076081760869448,
+      "p99EdgeStretch": 1.3346654360760664,
+      "worstSourcePositionCM": [
+        24.065762519836426,
+        -3.99398136138916,
+        144.44189453125
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4076081760869448,
+      "maxHandEdgeStretch": 1.0729216287483128
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Hit",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.409051116975137,
+      "p99EdgeStretch": 1.3674625207065654,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.402348880997011,
+      "maxHandEdgeStretch": 1.1376147011613877
+    },
+    {
+      "outfit": "starlight",
+      "clip": "Hit",
+      "phase": 1,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670228290725135
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastPrepare",
+      "phase": 0,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.205093230887426
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastPrepare",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.1088739848708538,
+      "p99EdgeStretch": 1.2389320498637546,
+      "worstSourcePositionCM": [
+        -24.24512004852295,
+        -4.141045331954956,
+        144.32366943359375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.1088739848708538,
+      "maxHandEdgeStretch": 1.6075592791256088
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastPrepare",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.0803981451933202,
+      "p99EdgeStretch": 1.2992530406118874,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.3235177762528245,
+      "maxHandEdgeStretch": 1.5453038054969648
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastPrepare",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.0969187146298056,
+      "p99EdgeStretch": 1.1931854859991444,
+      "worstSourcePositionCM": [
+        24.065762519836426,
+        -3.99398136138916,
+        144.44189453125
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.0969187146298056,
+      "maxHandEdgeStretch": 1.0687007393721142
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastPrepare",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.8752788191866445,
+      "p99EdgeStretch": 1.4345112286551092,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.8752788191866445,
+      "maxHandEdgeStretch": 1.1344025805606648
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastPrepare",
+      "phase": 1,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670228290725135
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastMaskFlick",
+      "phase": 0,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.205093230887426
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastMaskFlick",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.4813669439019264,
+      "p99EdgeStretch": 1.3101376208505315,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4813669439019264,
+      "maxHandEdgeStretch": 1.6178229939943973
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastMaskFlick",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.155371180742277,
+      "p99EdgeStretch": 1.3121263302035453,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.334166964655175,
+      "maxHandEdgeStretch": 1.5220165689944385
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastMaskFlick",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.0862908138972487,
+      "p99EdgeStretch": 1.1699463580192484,
+      "worstSourcePositionCM": [
+        24.065762519836426,
+        -3.99398136138916,
+        144.44189453125
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.0862908138972487,
+      "maxHandEdgeStretch": 1.0664774911456947
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastMaskFlick",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.647321145846981,
+      "p99EdgeStretch": 1.3396794975499466,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.647321145846981,
+      "maxHandEdgeStretch": 1.1435747204050548
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastMaskFlick",
+      "phase": 1,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670228290725135
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastMaskTurn",
+      "phase": 0,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.205093230887426
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastMaskTurn",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.5566508475528797,
+      "p99EdgeStretch": 1.2982567271485828,
+      "worstSourcePositionCM": [
+        -24.24512004852295,
+        -4.141045331954956,
+        144.32366943359375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.5566508475528797,
+      "maxHandEdgeStretch": 1.617818852295822
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastMaskTurn",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.155371180742277,
+      "p99EdgeStretch": 1.3090707366606158,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.3140326489088103,
+      "maxHandEdgeStretch": 1.5220189804471038
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastMaskTurn",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.430218077122827,
+      "p99EdgeStretch": 1.2255696485869956,
+      "worstSourcePositionCM": [
+        -24.709294319152832,
+        -3.9499937295913696,
+        143.6281509399414
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.430218077122827,
+      "maxHandEdgeStretch": 1.0664868448209819
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastMaskTurn",
+      "phase": 0.72,
+      "maxEdgeStretch": 3.056802582251402,
+      "p99EdgeStretch": 1.3694978334461876,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 3.056802582251402,
+      "maxHandEdgeStretch": 1.1435718296302106
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastMaskTurn",
+      "phase": 1,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670228290725135
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastTwinSweep",
+      "phase": 0,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.205093230887426
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastTwinSweep",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.3402766341263246,
+      "p99EdgeStretch": 1.277960211992689,
+      "worstSourcePositionCM": [
+        24.065762519836426,
+        -3.99398136138916,
+        144.44189453125
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.3402766341263246,
+      "maxHandEdgeStretch": 1.635160982120259
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastTwinSweep",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.0803981451933202,
+      "p99EdgeStretch": 1.308446495079603,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.6483539595262697,
+      "maxHandEdgeStretch": 1.545305182440511
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastTwinSweep",
+      "phase": 0.58,
+      "maxEdgeStretch": 1.7133288937882898,
+      "p99EdgeStretch": 1.131712060887593,
+      "worstSourcePositionCM": [
+        24.065762519836426,
+        -3.99398136138916,
+        144.44189453125
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 1.7133288937882898,
+      "maxHandEdgeStretch": 1.0680146678542122
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastTwinSweep",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.6146916847074655,
+      "p99EdgeStretch": 1.4091829464090546,
+      "worstSourcePositionCM": [
+        24.065762519836426,
+        -3.99398136138916,
+        144.44189453125
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6146916847074655,
+      "maxHandEdgeStretch": 1.1388072305954302
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastTwinSweep",
+      "phase": 1,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670228290725135
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastTwinCross",
+      "phase": 0,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.205093230887426
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastTwinCross",
+      "phase": 0.2,
+      "maxEdgeStretch": 3.0016299081897175,
+      "p99EdgeStretch": 1.4073085808154056,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 3.0016299081897175,
+      "maxHandEdgeStretch": 1.6351580559185164
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastTwinCross",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.0803981451933202,
+      "p99EdgeStretch": 1.1956787603202907,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 1.7240189378716932,
+      "maxHandEdgeStretch": 1.5453179551666114
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastTwinCross",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.5347853102127043,
+      "p99EdgeStretch": 1.2522950348116788,
+      "worstSourcePositionCM": [
+        24.065762519836426,
+        -3.99398136138916,
+        144.44189453125
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.5347853102127043,
+      "maxHandEdgeStretch": 1.0680281346985632
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastTwinCross",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.415444036152265,
+      "p99EdgeStretch": 1.3104419123370097,
+      "worstSourcePositionCM": [
+        24.065762519836426,
+        -3.99398136138916,
+        144.44189453125
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.415444036152265,
+      "maxHandEdgeStretch": 1.1388006987345929
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastTwinCross",
+      "phase": 1,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670228290725135
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastFinaleLift",
+      "phase": 0,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.205093230887426
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastFinaleLift",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.4188005334485343,
+      "p99EdgeStretch": 1.3076488567485138,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4188005334485343,
+      "maxHandEdgeStretch": 1.615470255055403
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastFinaleLift",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.1705978154851997,
+      "p99EdgeStretch": 1.223707124773186,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.0076411556328995,
+      "maxHandEdgeStretch": 1.5166903957033524
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastFinaleLift",
+      "phase": 0.58,
+      "maxEdgeStretch": 1.9298592882277052,
+      "p99EdgeStretch": 1.1151354223578736,
+      "worstSourcePositionCM": [
+        -37.047061920166016,
+        -7.853945970535278,
+        132.81021881103516
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 1.9298592882277052,
+      "maxHandEdgeStretch": 1.0667202740613002
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastFinaleLift",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.410023206310168,
+      "p99EdgeStretch": 1.1748086879578592,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 1.878896295778267,
+      "maxHandEdgeStretch": 1.1356340386069403
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastFinaleLift",
+      "phase": 1,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670228290725135
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastFinaleThrow",
+      "phase": 0,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.205093230887426
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastFinaleThrow",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.14470135949999,
+      "p99EdgeStretch": 1.2786546872261217,
+      "worstSourcePositionCM": [
+        -24.24512004852295,
+        -4.141045331954956,
+        144.32366943359375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.14470135949999,
+      "maxHandEdgeStretch": 1.6154664507748218
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastFinaleThrow",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.1705978154851997,
+      "p99EdgeStretch": 1.2429075053377316,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.217652485997557,
+      "maxHandEdgeStretch": 1.516688575415472
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastFinaleThrow",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.0004445157313926,
+      "p99EdgeStretch": 1.1325925154300396,
+      "worstSourcePositionCM": [
+        -26.971373558044434,
+        -1.5715945959091187,
+        134.83013153076172
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.0004445157313926,
+      "maxHandEdgeStretch": 1.0667285935461739
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastFinaleThrow",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.5574566643252714,
+      "p99EdgeStretch": 1.3262723588479555,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.5574566643252714,
+      "maxHandEdgeStretch": 1.1356109385129665
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastFinaleThrow",
+      "phase": 1,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670228290725135
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastCardFan",
+      "phase": 0,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.205093230887426
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastCardFan",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.1083701273667637,
+      "p99EdgeStretch": 1.2389896492942971,
+      "worstSourcePositionCM": [
+        -24.24512004852295,
+        -4.141045331954956,
+        144.32366943359375
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.1083701273667637,
+      "maxHandEdgeStretch": 1.6178402784114472
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastCardFan",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.155371180742277,
+      "p99EdgeStretch": 1.3000107842895812,
+      "worstSourcePositionCM": [
+        -15.427164554595947,
+        9.468952655792236,
+        73.96973419189453
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.3175114782836044,
+      "maxHandEdgeStretch": 1.5220127223638524
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastCardFan",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.107281206671173,
+      "p99EdgeStretch": 1.1972930862752753,
+      "worstSourcePositionCM": [
+        24.065762519836426,
+        -3.99398136138916,
+        144.44189453125
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.107281206671173,
+      "maxHandEdgeStretch": 1.0664769868343902
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastCardFan",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.8292489492212414,
+      "p99EdgeStretch": 1.4294800563017933,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.8292489492212414,
+      "maxHandEdgeStretch": 1.143561290019506
+    },
+    {
+      "outfit": "starlight",
+      "clip": "CastCardFan",
+      "phase": 1,
+      "maxEdgeStretch": 2.4800055358533624,
+      "p99EdgeStretch": 1.3361656383617322,
+      "worstSourcePositionCM": [
+        23.33285617828369,
+        -7.264875650405884,
+        144.27748107910156
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4800055358533624,
+      "maxHandEdgeStretch": 1.1670228290725135
+    },
+    {
+      "outfit": "carnival",
+      "clip": "BattleIdle",
+      "phase": 0,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.139012808744348
+    },
+    {
+      "outfit": "carnival",
+      "clip": "BattleIdle",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.660085633232485,
+      "p99EdgeStretch": 1.332924172531201,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.660085633232485,
+      "maxHandEdgeStretch": 1.1390077089838342
+    },
+    {
+      "outfit": "carnival",
+      "clip": "BattleIdle",
+      "phase": 0.34,
+      "maxEdgeStretch": 2.6594984612678014,
+      "p99EdgeStretch": 1.3332170348702177,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6594984612678014,
+      "maxHandEdgeStretch": 1.1389892330211913
+    },
+    {
+      "outfit": "carnival",
+      "clip": "BattleIdle",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.6501271175158387,
+      "p99EdgeStretch": 1.3343537298824268,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6501271175158387,
+      "maxHandEdgeStretch": 1.1390110773430213
+    },
+    {
+      "outfit": "carnival",
+      "clip": "BattleIdle",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.6457285969373237,
+      "p99EdgeStretch": 1.3345004976059047,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6457285969373237,
+      "maxHandEdgeStretch": 1.1390187530225218
+    },
+    {
+      "outfit": "carnival",
+      "clip": "BattleIdle",
+      "phase": 1,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.139012808744348
+    },
+    {
+      "outfit": "carnival",
+      "clip": "BasicSlash",
+      "phase": 0,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1649971317865215
+    },
+    {
+      "outfit": "carnival",
+      "clip": "BasicSlash",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.7282617340067894,
+      "p99EdgeStretch": 1.3604162713774055,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.7282617340067894,
+      "maxHandEdgeStretch": 1.3990300069606445
+    },
+    {
+      "outfit": "carnival",
+      "clip": "BasicSlash",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.042760157513079,
+      "p99EdgeStretch": 1.340560209131705,
+      "worstSourcePositionCM": [
+        -15.705180168151855,
+        -8.28742504119873,
+        34.0844783782959
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.3509294501466966,
+      "maxHandEdgeStretch": 1.3655788992540738
+    },
+    {
+      "outfit": "carnival",
+      "clip": "BasicSlash",
+      "phase": 0.58,
+      "maxEdgeStretch": 3.1992385780044024,
+      "p99EdgeStretch": 1.3534470169967185,
+      "worstSourcePositionCM": [
+        -18.45890522003174,
+        -14.201868057250977,
+        125.84015274047852
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 3.1992385780044024,
+      "maxHandEdgeStretch": 1.065143316230906
+    },
+    {
+      "outfit": "carnival",
+      "clip": "BasicSlash",
+      "phase": 0.72,
+      "maxEdgeStretch": 3.0110420319405,
+      "p99EdgeStretch": 1.3361114994011105,
+      "worstSourcePositionCM": [
+        -18.45890522003174,
+        -14.201868057250977,
+        125.84015274047852
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 3.0110420319405,
+      "maxHandEdgeStretch": 1.1163359017473444
+    },
+    {
+      "outfit": "carnival",
+      "clip": "BasicSlash",
+      "phase": 1,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1389894533899705
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Thrust",
+      "phase": 0,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1649971317865215
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Thrust",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.3971069228545625,
+      "p99EdgeStretch": 1.2972528271606805,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.3971069228545625,
+      "maxHandEdgeStretch": 1.3990393962308891
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Thrust",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.042760157513079,
+      "p99EdgeStretch": 1.341661277745624,
+      "worstSourcePositionCM": [
+        -15.705180168151855,
+        -8.28742504119873,
+        34.0844783782959
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.6486526540797866,
+      "maxHandEdgeStretch": 1.365573252308792
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Thrust",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.823816680292851,
+      "p99EdgeStretch": 1.2410169863868667,
+      "worstSourcePositionCM": [
+        -18.45890522003174,
+        -14.201868057250977,
+        125.84015274047852
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.823816680292851,
+      "maxHandEdgeStretch": 1.0651357166510789
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Thrust",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.723755729239621,
+      "p99EdgeStretch": 1.2957508432383478,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.723755729239621,
+      "maxHandEdgeStretch": 1.1163299711175225
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Thrust",
+      "phase": 1,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1389894533899705
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Card",
+      "phase": 0,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1649971317865215
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Card",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.3346885267781485,
+      "p99EdgeStretch": 1.3022180644741603,
+      "worstSourcePositionCM": [
+        23.446337699890137,
+        -9.337780952453613,
+        144.65826416015625
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.3346885267781485,
+      "maxHandEdgeStretch": 1.399043478140067
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Card",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.042760157513079,
+      "p99EdgeStretch": 1.3223681565488559,
+      "worstSourcePositionCM": [
+        -15.705180168151855,
+        -8.28742504119873,
+        34.0844783782959
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.51058289983584,
+      "maxHandEdgeStretch": 1.3655694583918667
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Card",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.4101120904246045,
+      "p99EdgeStretch": 1.2656162481544229,
+      "worstSourcePositionCM": [
+        23.446337699890137,
+        -9.337780952453613,
+        144.65826416015625
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4101120904246045,
+      "maxHandEdgeStretch": 1.0651520055456551
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Card",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.633843355672429,
+      "p99EdgeStretch": 1.3526932169115773,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.633843355672429,
+      "maxHandEdgeStretch": 1.1163208408248504
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Card",
+      "phase": 1,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1389894533899705
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Parry",
+      "phase": 0,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1649971317865215
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Parry",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.389659589015753,
+      "p99EdgeStretch": 1.288536991097038,
+      "worstSourcePositionCM": [
+        -36.59454536437988,
+        -9.991512298583984,
+        136.22652435302734
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.389659589015753,
+      "maxHandEdgeStretch": 1.4036960420684552
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Parry",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.042760157513079,
+      "p99EdgeStretch": 1.3015259164806385,
+      "worstSourcePositionCM": [
+        -15.705180168151855,
+        -8.28742504119873,
+        34.0844783782959
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.920446685597871,
+      "maxHandEdgeStretch": 1.365587764691824
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Parry",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.955521322950028,
+      "p99EdgeStretch": 1.2064561662248792,
+      "worstSourcePositionCM": [
+        -18.45890522003174,
+        -14.201868057250977,
+        125.84015274047852
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.955521322950028,
+      "maxHandEdgeStretch": 1.0634173763503367
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Parry",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.8484905114566694,
+      "p99EdgeStretch": 1.3357986073572703,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.8484905114566694,
+      "maxHandEdgeStretch": 1.1195216692381387
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Parry",
+      "phase": 1,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1389894533899705
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Hit",
+      "phase": 0,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1649971317865215
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Hit",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.6641446376875026,
+      "p99EdgeStretch": 1.327502903358212,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6641446376875026,
+      "maxHandEdgeStretch": 1.409808349965093
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Hit",
+      "phase": 0.34,
+      "maxEdgeStretch": 2.89175651998192,
+      "p99EdgeStretch": 1.3666146329167077,
+      "worstSourcePositionCM": [
+        -15.705180168151855,
+        -8.28742504119873,
+        34.0844783782959
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6526348132702706,
+      "maxHandEdgeStretch": 1.384913296169458
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Hit",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.615295243501741,
+      "p99EdgeStretch": 1.3389489921787348,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.615295243501741,
+      "maxHandEdgeStretch": 1.0686308843910655
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Hit",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.5868249495393845,
+      "p99EdgeStretch": 1.3639151560083065,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.5868249495393845,
+      "maxHandEdgeStretch": 1.1186530656813243
+    },
+    {
+      "outfit": "carnival",
+      "clip": "Hit",
+      "phase": 1,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1389894533899705
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastPrepare",
+      "phase": 0,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1649971317865215
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastPrepare",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.207650366712202,
+      "p99EdgeStretch": 1.2253393847137124,
+      "worstSourcePositionCM": [
+        -25.54527759552002,
+        -3.583579421043396,
+        144.12073516845703
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.207650366712202,
+      "maxHandEdgeStretch": 1.399040232093604
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastPrepare",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.042760157513079,
+      "p99EdgeStretch": 1.3058691978335941,
+      "worstSourcePositionCM": [
+        -15.705180168151855,
+        -8.28742504119873,
+        34.0844783782959
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.9408065995602217,
+      "maxHandEdgeStretch": 1.3656043196409082
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastPrepare",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.462389791051633,
+      "p99EdgeStretch": 1.2040498245281654,
+      "worstSourcePositionCM": [
+        36.51970672607422,
+        -10.483981609344482,
+        140.77186584472656
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.462389791051633,
+      "maxHandEdgeStretch": 1.0651452362803884
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastPrepare",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.7253759643948285,
+      "p99EdgeStretch": 1.4795265478647301,
+      "worstSourcePositionCM": [
+        23.446337699890137,
+        -9.337780952453613,
+        144.65826416015625
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.7253759643948285,
+      "maxHandEdgeStretch": 1.1163097299226405
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastPrepare",
+      "phase": 1,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1389894533899705
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastMaskFlick",
+      "phase": 0,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1649971317865215
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastMaskFlick",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.343815693716122,
+      "p99EdgeStretch": 1.2990228312071774,
+      "worstSourcePositionCM": [
+        23.446337699890137,
+        -9.337780952453613,
+        144.65826416015625
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.343815693716122,
+      "maxHandEdgeStretch": 1.40447648570216
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastMaskFlick",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.1237400864373814,
+      "p99EdgeStretch": 1.3176379428020832,
+      "worstSourcePositionCM": [
+        -15.705180168151855,
+        -8.28742504119873,
+        34.0844783782959
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.7938495452618137,
+      "maxHandEdgeStretch": 1.3529333770126823
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastMaskFlick",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.5429145306525824,
+      "p99EdgeStretch": 1.18398864810162,
+      "worstSourcePositionCM": [
+        -18.45890522003174,
+        -14.201868057250977,
+        125.84015274047852
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.5429145306525824,
+      "maxHandEdgeStretch": 1.063307097320075
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastMaskFlick",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.6892973040388926,
+      "p99EdgeStretch": 1.3568248602565203,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6892973040388926,
+      "maxHandEdgeStretch": 1.122946810157937
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastMaskFlick",
+      "phase": 1,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1389894533899705
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastMaskTurn",
+      "phase": 0,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1649971317865215
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastMaskTurn",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.880578213585909,
+      "p99EdgeStretch": 1.3412000232901498,
+      "worstSourcePositionCM": [
+        -23.471999168395996,
+        -9.51226282119751,
+        144.55658721923828
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.880578213585909,
+      "maxHandEdgeStretch": 1.404483643732444
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastMaskTurn",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.1237400864373814,
+      "p99EdgeStretch": 1.3140236077203413,
+      "worstSourcePositionCM": [
+        -15.705180168151855,
+        -8.28742504119873,
+        34.0844783782959
+      ],
+      "edgesOver3x": 2,
+      "maxUpperBodyEdgeStretch": 3.054994521134017,
+      "maxHandEdgeStretch": 1.3529285353612772
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastMaskTurn",
+      "phase": 0.58,
+      "maxEdgeStretch": 3.277652544689974,
+      "p99EdgeStretch": 1.2553478087303847,
+      "worstSourcePositionCM": [
+        -18.45890522003174,
+        -14.201868057250977,
+        125.84015274047852
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 3.277652544689974,
+      "maxHandEdgeStretch": 1.0633371991927523
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastMaskTurn",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.908962925305519,
+      "p99EdgeStretch": 1.3868120578909076,
+      "worstSourcePositionCM": [
+        23.446337699890137,
+        -9.337780952453613,
+        144.65826416015625
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.908962925305519,
+      "maxHandEdgeStretch": 1.1229528390128063
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastMaskTurn",
+      "phase": 1,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1389894533899705
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastTwinSweep",
+      "phase": 0,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1649971317865215
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastTwinSweep",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.4846942476447365,
+      "p99EdgeStretch": 1.2591356927135315,
+      "worstSourcePositionCM": [
+        -18.45890522003174,
+        -14.201868057250977,
+        125.84015274047852
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.4846942476447365,
+      "maxHandEdgeStretch": 1.4136041553206196
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastTwinSweep",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.42451414210456,
+      "p99EdgeStretch": 1.3414941896235815,
+      "worstSourcePositionCM": [
+        -18.45890522003174,
+        -14.201868057250977,
+        125.84015274047852
+      ],
+      "edgesOver3x": 2,
+      "maxUpperBodyEdgeStretch": 3.42451414210456,
+      "maxHandEdgeStretch": 1.3656030057614608
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastTwinSweep",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.357600081118808,
+      "p99EdgeStretch": 1.1623446573397107,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.357600081118808,
+      "maxHandEdgeStretch": 1.0645867379527894
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastTwinSweep",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.559479579022089,
+      "p99EdgeStretch": 1.401762160878071,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.559479579022089,
+      "maxHandEdgeStretch": 1.1195159493189408
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastTwinSweep",
+      "phase": 1,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1389894533899705
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastTwinCross",
+      "phase": 0,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1649971317865215
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastTwinCross",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.846708998838429,
+      "p99EdgeStretch": 1.4556390049356829,
+      "worstSourcePositionCM": [
+        23.446337699890137,
+        -9.337780952453613,
+        144.65826416015625
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.846708998838429,
+      "maxHandEdgeStretch": 1.4136074774813034
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastTwinCross",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.042760157513079,
+      "p99EdgeStretch": 1.2311006689044324,
+      "worstSourcePositionCM": [
+        -15.705180168151855,
+        -8.28742504119873,
+        34.0844783782959
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.5293996799381078,
+      "maxHandEdgeStretch": 1.3655849348073306
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastTwinCross",
+      "phase": 0.58,
+      "maxEdgeStretch": 3.382817430191195,
+      "p99EdgeStretch": 1.253049815216438,
+      "worstSourcePositionCM": [
+        -18.45890522003174,
+        -14.201868057250977,
+        125.84015274047852
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 3.382817430191195,
+      "maxHandEdgeStretch": 1.0646040932139096
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastTwinCross",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.723602118731717,
+      "p99EdgeStretch": 1.2831347756112692,
+      "worstSourcePositionCM": [
+        -18.45890522003174,
+        -14.201868057250977,
+        125.84015274047852
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.723602118731717,
+      "maxHandEdgeStretch": 1.1195145566876703
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastTwinCross",
+      "phase": 1,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1389894533899705
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastFinaleLift",
+      "phase": 0,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1649971317865215
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastFinaleLift",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.281582584034694,
+      "p99EdgeStretch": 1.289447614032715,
+      "worstSourcePositionCM": [
+        -36.59454536437988,
+        -9.991512298583984,
+        136.22652435302734
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.281582584034694,
+      "maxHandEdgeStretch": 1.4032253671890493
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastFinaleLift",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.630204851461302,
+      "p99EdgeStretch": 1.270030558673101,
+      "worstSourcePositionCM": [
+        -18.45890522003174,
+        -14.201868057250977,
+        125.84015274047852
+      ],
+      "edgesOver3x": 2,
+      "maxUpperBodyEdgeStretch": 3.630204851461302,
+      "maxHandEdgeStretch": 1.3500407447949534
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastFinaleLift",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.09266787800312,
+      "p99EdgeStretch": 1.1764404423275456,
+      "worstSourcePositionCM": [
+        -42.23977851867676,
+        1.2730518579483032,
+        131.31544494628906
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.09266787800312,
+      "maxHandEdgeStretch": 1.0635113247376162
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastFinaleLift",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.5551674314364003,
+      "p99EdgeStretch": 1.2092195781055248,
+      "worstSourcePositionCM": [
+        36.51970672607422,
+        -10.483981609344482,
+        140.77186584472656
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.5551674314364003,
+      "maxHandEdgeStretch": 1.1172062549071624
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastFinaleLift",
+      "phase": 1,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1389894533899705
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastFinaleThrow",
+      "phase": 0,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1649971317865215
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastFinaleThrow",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.3623036440090868,
+      "p99EdgeStretch": 1.2665977508974187,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.3623036440090868,
+      "maxHandEdgeStretch": 1.4032322352557294
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastFinaleThrow",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.1406015406323124,
+      "p99EdgeStretch": 1.2793761975105107,
+      "worstSourcePositionCM": [
+        -15.705180168151855,
+        -8.28742504119873,
+        34.0844783782959
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.91340865987804,
+      "maxHandEdgeStretch": 1.3500304409657236
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastFinaleThrow",
+      "phase": 0.58,
+      "maxEdgeStretch": 3.6095740351806325,
+      "p99EdgeStretch": 1.1679923076617091,
+      "worstSourcePositionCM": [
+        -18.45890522003174,
+        -14.201868057250977,
+        125.84015274047852
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 3.6095740351806325,
+      "maxHandEdgeStretch": 1.0635232913163004
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastFinaleThrow",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.6146719431369596,
+      "p99EdgeStretch": 1.329506248960862,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6146719431369596,
+      "maxHandEdgeStretch": 1.1171941242272228
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastFinaleThrow",
+      "phase": 1,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1389894533899705
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastCardFan",
+      "phase": 0,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1649971317865215
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastCardFan",
+      "phase": 0.2,
+      "maxEdgeStretch": 2.208434714689746,
+      "p99EdgeStretch": 1.2268715535208417,
+      "worstSourcePositionCM": [
+        -25.54527759552002,
+        -3.583579421043396,
+        144.12073516845703
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.208434714689746,
+      "maxHandEdgeStretch": 1.404486693645141
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastCardFan",
+      "phase": 0.34,
+      "maxEdgeStretch": 3.1237400864373814,
+      "p99EdgeStretch": 1.3064173859304977,
+      "worstSourcePositionCM": [
+        -15.705180168151855,
+        -8.28742504119873,
+        34.0844783782959
+      ],
+      "edgesOver3x": 1,
+      "maxUpperBodyEdgeStretch": 2.9520262897124647,
+      "maxHandEdgeStretch": 1.352923441713838
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastCardFan",
+      "phase": 0.58,
+      "maxEdgeStretch": 2.455479217924637,
+      "p99EdgeStretch": 1.206486118358395,
+      "worstSourcePositionCM": [
+        36.51970672607422,
+        -10.483981609344482,
+        140.77186584472656
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.455479217924637,
+      "maxHandEdgeStretch": 1.0633143074688938
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastCardFan",
+      "phase": 0.72,
+      "maxEdgeStretch": 2.6902686939279663,
+      "p99EdgeStretch": 1.4751107258643121,
+      "worstSourcePositionCM": [
+        -23.471999168395996,
+        -9.51226282119751,
+        144.55658721923828
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6902686939279663,
+      "maxHandEdgeStretch": 1.1229193010541767
+    },
+    {
+      "outfit": "carnival",
+      "clip": "CastCardFan",
+      "phase": 1,
+      "maxEdgeStretch": 2.6541220901402403,
+      "p99EdgeStretch": 1.3340804492152778,
+      "worstSourcePositionCM": [
+        -36.25577735900879,
+        -10.77311897277832,
+        139.46942138671875
+      ],
+      "edgesOver3x": 0,
+      "maxUpperBodyEdgeStretch": 2.6541220901402403,
+      "maxHandEdgeStretch": 1.1389894533899705
+    }
+  ],
+  "userVisualApproval": false,
+  "totalPoses": 252,
+  "maxEdgeStretch": 4.219130603438679,
+  "noNonFiniteVertices": true,
+  "allWeightsNormalized": true
+}

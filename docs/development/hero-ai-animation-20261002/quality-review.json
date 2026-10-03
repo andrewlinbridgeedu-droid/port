@@ -1,0 +1,29 @@
+{
+  "status": "User approved initial trial and allowed outfit motion differences. New selection pending review.",
+  "outputPerOutfit": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 24,
+    "frames": 141,
+    "seconds": 5.875
+  },
+  "authorObservations": [
+    "Compared with the current GLB render, the 2D line work, embroidery and colors are closer to the original drawings.",
+    "All three clips retain a rear-view composition and settle toward a lowered-arm stance.",
+    "The intended brisk single forward cast was not followed precisely: night uses a largely symmetric two-hand lift; starlight and carnival use longer alternating gestures.",
+    "The three independently generated motions differ in handedness, timing and amplitude.",
+    "Small hand and costume-detail changes remain; this is not a verified clean sprite animation or seamless loop."
+  ],
+  "viewedEvidence": [
+    "12 sampled full-body frames per outfit",
+    "Upper-body crops during casting",
+    "All three MP4 files fully decoded"
+  ],
+  "notDone": [
+    "No transparent frame extraction",
+    "No shared motion-control input",
+    "No App integration",
+    "No phone installation"
+  ],
+  "userApprovedInitialTrial": true
+}

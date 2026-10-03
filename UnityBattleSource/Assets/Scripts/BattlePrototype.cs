@@ -322,6 +322,7 @@ public sealed class BattlePrototype : MonoBehaviour
         return !string.IsNullOrEmpty(GetBuiltInVFXBoardPreviewEffect())
             || System.Array.Exists(arguments, value =>
             value == "--verify-hero-anatomy" || value == "--verify-hero-quality" || value == "--capture-character-closeups" || value == "--verify-story-models" || value == "--verify-character-polish" || value == "--verify-progression-rosters" || value == "--verify-q678-redesign" || value == "--verify-hero-choreography" || value == "--verify-enemy-impact" || value == "--verify-enemy-idle" || value == "--verify-hero-back-art" || value == "--verify-q4-two-flame" || value == "--verify-sidestep-cinematic" || value == "--verify-q2-split" || value == "--verify-enemy-death-fade" || value == "--verify-emerald-escalation" || value == "--verify-early-battle" || value == "--verify-sidestep-hounds" || value == "--preview-hero-spells" || value == "--preview-signatures" || value == "--preview-hound-fire" || value == "--preview-clock-core"
+            || value == "--verify-refined-hero" || value == "--verify-ai-hero"
             || value == "--preview-dual-clock-guard"
             || value == "--preview-reverse-tide"
             || value == "--preview-defense"
@@ -1078,7 +1079,7 @@ public sealed class BattlePrototype : MonoBehaviour
         && !playerDefeatPresentationActive && !playerHiddenByPaper;
     public PlayerImpactFeedback20260925 PlayerImpactFeedback => playerImpactFeedback;
     public void BeginPlayerImpactContext(string token) => playerImpactFeedback?.BeginContext(token);
-    public void PresentPlayerImpact(string payload) => playerImpactFeedback?.Present(payload);
+    public void PresentPlayerImpact(string payload) { if (playerImpactFeedback?.Present(payload) == true) GetComponent<CombatTempoPresentation>()?.PlayerHit(); }
     public void ClearPlayerImpact(bool invalidateContext = false) => playerImpactFeedback?.Clear(invalidateContext);
 
     public void PresentEnemyImpact(string payload)
@@ -1093,12 +1094,17 @@ public sealed class BattlePrototype : MonoBehaviour
             EnemyHandle victim = null;
             foreach (var candidate in encounterRoster)
                 if (candidate && candidate.BattleEnemyId == id && candidate.gameObject.activeInHierarchy) { victim = candidate; break; }
-            if (victim) EnemyImpactFeedback.Install(victim).Play(parts[0]);
+            if (victim && !(GetComponent<CombatTempoPresentation>()?.EnemyHit(victim, parts[0]) ?? false)) EnemyImpactFeedback.Install(victim).Play(parts[0]);
         }
     }
 
+    public IEnumerable<EnemyHandle> TempoSampleEnemies => encounterRoster;
+    public Transform TempoSamplePlayer => player ? player.transform : null;
+    public void SetCombatSpeed(string value) { Time.timeScale = value == "2" ? 2 : 1; }
+    public bool CanTempoEnemyAct(EnemyHandle value) => CanPresentEnemy(value);
+    public void SetTempoSample(string value) => CombatTempoPresentation.Get(this).Configure(value);
     public void PresentPlayerBasic() => StartPresentation(PlayerAction.Basic);
-    public void PresentPlayerBasic(string targetID) { if(NativeCombatEnabled)StartCoroutine(PresentPlayerAction(PlayerAction.Basic,targetID)); }
+    public void PresentPlayerBasic(string targetID) { if(NativeCombatEnabled) StartCoroutine(PresentPlayerAction(PlayerAction.Basic,targetID)); }
     public void PresentPlayerSkill() => StartPresentation(PlayerAction.Skill);
     string pendingSidestepSecondary;
     string[] pendingSkillTargets;
@@ -1133,9 +1139,10 @@ public sealed class BattlePrototype : MonoBehaviour
 
     public void SetQ4HoundPhase(string phase)
     {
+        GetComponent<CombatTempoPresentation>()?.Q4Phase(phase);
         var idle = hellHoundHandle ? hellHoundHandle.GetComponent<EarlyEnemyIdlePresence>() : null;
         if (idle) {
-            if (phase == "charge" || phase == "first" || phase == "second" || phase == "opening") idle.SuspendForAction();
+            if (phase == "probe" || phase == "charge" || phase == "first" || phase == "second" || phase == "opening" || (GetComponent<CombatTempoPresentation>()?.Enabled ?? false)) idle.SuspendForAction();
             else idle.ResumeIdle();
         }
         if (!q4Hound) q4Hound = gameObject.AddComponent<Q4HoundPresentation>();
@@ -1176,6 +1183,7 @@ public sealed class BattlePrototype : MonoBehaviour
     public void PresentEnemyAttack(string battleEnemyId)
     {
         if (!NativeCombatEnabled || player == null) return;
+        if (GetComponent<CombatTempoPresentation>()?.EnemyAction(battleEnemyId) ?? false) return;
         var intentParts = battleEnemyId.Split(':');
         bool nameDevour = intentParts.Length == 2 && intentParts[1] == "name_devour";
         var actingHandle = FindInstalledEnemyHandle(intentParts[0]);
@@ -2281,6 +2289,7 @@ public sealed class BattlePrototype : MonoBehaviour
             var idle = handle.GetComponent<EarlyEnemyIdlePresence>();
             if (encounterRoster.Contains(handle))
             {
+                if (handle.GetComponentInChildren<CombatTempoAnimatedBody>()) continue;
                 if (idle == null || !idle.IsConfigured) idle = EarlyEnemyIdlePresence.Install(handle);
                 idle.SetMission(earlyPresenceMission);
                 CharacterSurfaceRefinement20260916.Install(handle);
@@ -2297,6 +2306,8 @@ public sealed class BattlePrototype : MonoBehaviour
         ClearPlayerImpact(true);
         NativeCombatEnabled = enabled;
         if (!enabled) {
+            GetComponent<CombatTempoPresentation>()?.Cancel();
+            Time.timeScale = 1;
             SpellAudioDirector20260924.StopAll();
             SpellSpectacle20260926.StopAll();
             archivePresentation?.Clear(); ClearRepairPresentations();
@@ -2356,10 +2367,13 @@ public sealed class BattlePrototype : MonoBehaviour
                 SetStatus("愚者 · 秘仪飞牌");
                 SpellAudioDirector20260924.BeginPlayer(this, "basic");
                 BeginPlayerSpectacle("basic", basicHandle != null ? new List<EnemyHandle> { basicHandle } : null, basicTarget);
-                PrepareCompactPlayerBasic();
+                var tempo = GetComponent<CombatTempoPresentation>();
+                if (tempo && tempo.Enabled) tempo.HeroCast("basic");
+                else PrepareCompactPlayerBasic();
                 foolBasicTarotVFX.Play(Camera.main, player.transform, basicTarget);
                 basicTarget.GetComponentInChildren<Mindstone.VFXV1.GuardianWard>()?.ImpactAfter(.58f);
                 yield return new WaitForSeconds(0.58f);
+                if (tempo && tempo.Enabled) UnityBattleBridge.ReportPresentationComplete("basic");
                 break;
             case PlayerAction.Skill:
                 SetStatus("愚者 · 错步穿行");
@@ -2413,6 +2427,7 @@ public sealed class BattlePrototype : MonoBehaviour
 
     void BeginDistinctPlayerCast(string skillID)
     {
+        if (GetComponent<CombatTempoPresentation>()?.Enabled ?? false) { GetComponent<CombatTempoPresentation>().HeroCast(skillID); return; }
         if (!player || !playerAnimator) return;
         // Every official skill uses its own authored pose, including the quick wrist cast.
         playerChoreography = FoolSkillChoreography.Install(player.transform);
@@ -2466,6 +2481,7 @@ public sealed class BattlePrototype : MonoBehaviour
     public void CancelDepartingEnemy(EnemyHandle handle)
     {
         if(!handle)return;
+        GetComponent<CombatTempoPresentation>()?.CancelActor(handle);
         handle.GetComponent<MainlineBodyRound2>()?.Stop();
         handle.GetComponent<MainlineGhostRound2>()?.Cancel();
         if(handle==hellHoundHandle){hellHoundFireball?.Clear();q4Hound?.Clear();}

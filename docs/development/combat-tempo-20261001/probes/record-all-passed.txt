@@ -1,0 +1,46 @@
+Q4-light current actor hell-hound-primary
+Q4-light contact acknowledgments 0 expected 0
+Q4-light no runtime errors
+Q4-light full and close automatic projection restored 0.000000
+Q4-heavy current actor hell-hound-primary
+Q4-heavy contact acknowledgments 2 expected 2
+Q4-heavy no runtime errors
+Q4-heavy full and close automatic projection restored 0.000000
+D01-light current actor clock-guard-primary
+D01-light contact acknowledgments 0 expected 0
+D01-light no runtime errors
+D01-light full and close automatic projection restored 0.000000
+D01-heavy current actor clock-guard-primary
+D01-heavy contact acknowledgments 1 expected 1
+D01-heavy no runtime errors
+D01-heavy full and close automatic projection restored 0.000000
+B01-light current actor clock-guard-primary
+B01-light contact acknowledgments 0 expected 0
+B01-light no runtime errors
+B01-light full and close automatic projection restored 0.000000
+B01-heavy current actor clock-guard-primary
+B01-heavy contact acknowledgments 1 expected 1
+B01-heavy no runtime errors
+B01-heavy full and close automatic projection restored 0.000000
+Hero-02 current actor clock-guard-primary
+Hero-02 contact acknowledgments 1 expected 1
+Hero-02 no runtime errors
+Hero-02 full and close automatic projection restored 0.000000
+Hero-06 current actor clock-guard-primary
+Hero-06 contact acknowledgments 1 expected 1
+Hero-06 no runtime errors
+Hero-06 full and close automatic projection restored 0.000000
+Hero-07 current actor clock-guard-primary
+Hero-07 contact acknowledgments 1 expected 1
+Hero-07 no runtime errors
+Hero-07 full and close automatic projection restored 0.000000
+Hero-basics current actor clock-guard-primary
+Hero-basics contact acknowledgments 3 expected 3
+Hero-basics no runtime errors
+Hero-basics full and close automatic projection restored 0.000000
+Hero-parry current actor clock-guard-primary
+Hero-parry contact acknowledgments 0 expected 0
+Hero-parry no runtime errors
+Hero-parry full and close automatic projection restored 0.000000
+no runtime errors at end
+global combat time scale untouched

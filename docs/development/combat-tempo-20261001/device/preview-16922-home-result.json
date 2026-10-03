@@ -1,0 +1,33 @@
+{
+  "applicationState" : 0,
+  "baseline" : false,
+  "build" : "169.22",
+  "completed" : false,
+  "fixtureInputs" : "DEBUG Q4 mask input; D01\/B01 medal input at rule time 22s and when ready thereafter",
+  "footprintMB" : 352.73591613769531,
+  "homeInCityHub" : true,
+  "initialSpeed" : 1,
+  "isolatedFixture" : true,
+  "method" : "Live App preview; no recording",
+  "outcome" : "previewing",
+  "previewCompleted" : false,
+  "realPlayerRewardSettlement" : false,
+  "recorderAvailable" : true,
+  "recordingRequested" : false,
+  "recordingStarted" : false,
+  "runID" : "7E2FFB70-1F41-42B9-AE65-29337AE78E90",
+  "sample" : "home",
+  "speed" : 1,
+  "unityAnchorCount" : 0,
+  "userVisualApproval" : false,
+  "wallSeconds" : 6.3774639368057251,
+  "windows" : [
+    {
+      "controller" : "Optional<UIViewController>",
+      "hidden" : false,
+      "key" : true,
+      "level" : 0
+    }
+  ],
+  "writtenAt" : "2026-10-01T09:22:22Z"
+}

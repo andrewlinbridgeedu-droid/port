@@ -1,0 +1,32 @@
+Meshy hero v3: separately tailored costume meshes, shared source body/skeleton.
+V3 shared body and all costumes use the supported illustrated shader; no physical specular/metallic lobe.
+Hero center remains inside the production camera: (0.49, 0.37, 14.07)
+mistport-night: 6 selected costume renderers; other costume renderers disabled.
+starlight-magician: 6 selected costume renderers; other costume renderers disabled.
+midnight-carnival: 7 selected costume renderers; other costume renderers disabled.
+Three native outfit IDs: selected appearance applied; same Animator controller and arena camera.
+Current skin full-height inspection fits viewport; world-space skin bounds align replacement feet with the original.
+mistport-night/CastMaskFlick: hand excursion=0.205m; full recovery returned to idle.
+mistport-night/CastMaskTurn: hand excursion=0.412m; full recovery returned to idle.
+mistport-night/CastTwinSweep: hand excursion=0.351m; full recovery returned to idle.
+mistport-night/CastTwinCross: hand excursion=0.401m; full recovery returned to idle.
+mistport-night/CastFinaleLift: hand excursion=0.408m; full recovery returned to idle.
+mistport-night/CastFinaleThrow: hand excursion=0.324m; full recovery returned to idle.
+mistport-night/CastCardFan: hand excursion=0.203m; full recovery returned to idle.
+starlight-magician/CastMaskFlick: hand excursion=0.206m; full recovery returned to idle.
+starlight-magician/CastMaskTurn: hand excursion=0.412m; full recovery returned to idle.
+starlight-magician/CastTwinSweep: hand excursion=0.351m; full recovery returned to idle.
+starlight-magician/CastTwinCross: hand excursion=0.401m; full recovery returned to idle.
+starlight-magician/CastFinaleLift: hand excursion=0.408m; full recovery returned to idle.
+starlight-magician/CastFinaleThrow: hand excursion=0.324m; full recovery returned to idle.
+starlight-magician/CastCardFan: hand excursion=0.203m; full recovery returned to idle.
+midnight-carnival/CastMaskFlick: hand excursion=0.206m; full recovery returned to idle.
+midnight-carnival/CastMaskTurn: hand excursion=0.412m; full recovery returned to idle.
+midnight-carnival/CastTwinSweep: hand excursion=0.351m; full recovery returned to idle.
+midnight-carnival/CastTwinCross: hand excursion=0.401m; full recovery returned to idle.
+midnight-carnival/CastFinaleLift: hand excursion=0.408m; full recovery returned to idle.
+midnight-carnival/CastFinaleThrow: hand excursion=0.324m; full recovery returned to idle.
+midnight-carnival/CastCardFan: hand excursion=0.203m; full recovery returned to idle.
+12 production casts: two gestures per skill, x1 and x2; exactly one player contact each.
+Outfit change during cast preserves state time; leaving sample cancels pending contact and restores original art.
+Standalone Unity probe, not native iPhone video or user visual approval.

@@ -1,0 +1,35 @@
+{
+  "kind": "Standalone Unity model probes, not iPhone recordings",
+  "outfits": 3,
+  "sharedController": true,
+  "spellBodyGestures": 7,
+  "framesPerGesture": 48,
+  "fps": 30,
+  "realSkillCasts": 12,
+  "speeds": [
+    1,
+    2
+  ],
+  "outfitSwitchPreservesActionTime": true,
+  "sampleExitCancelsLateContact": true,
+  "userVisualApproval": false,
+  "sourceSHA256": {
+    "UnityBattleSource/Assets/Resources/CombatTempo/RefinedHero/Hero-Carnival-Motifs.mat": "339b5f9d3d3f6140c4e780ea3d9549882e0b794211288447a368fc018fba5167",
+    "UnityBattleSource/Assets/Resources/CombatTempo/RefinedHero/Hero-Coat-Charcoal.mat": "783608acf2ee5fbe89835878b47d8c22bb2e736dc8e90a447b108ef0186e3e19",
+    "UnityBattleSource/Assets/Resources/CombatTempo/RefinedHero/Hero-Embroidered-Gold.mat": "92caf21d702b3ef88f9e529f669a79eb96302a0221783aa341244ae5f3c46d8f",
+    "UnityBattleSource/Assets/Resources/CombatTempo/RefinedHero/Hero-Hair-Strands.mat": "198e04312ab6cd6c048b6631f42206159b0eee05062b6469143615d0aa87eb3a",
+    "UnityBattleSource/Assets/Resources/CombatTempo/RefinedHero/Hero-Leather.mat": "442c815e4a842264531b93fb6eb95fafa50fcb771ebfd652f2bf569c6ab4f65e",
+    "UnityBattleSource/Assets/Resources/CombatTempo/RefinedHero/Hero-Original-Skin-Atlas.mat": "ca76dcb501fc6ae9204fee30018a7cab71f162c2e4d7cd252f07fcfbe175f397",
+    "UnityBattleSource/Assets/Resources/CombatTempo/RefinedHero/Hero-Starlight-Motifs.mat": "9d61acac1481ea8b95637c1769ccb7fb048295f96cc6446a9251180f41e56058",
+    "UnityBattleSource/Assets/Resources/CombatTempo/RefinedHero/Hero-Teal-Sash.mat": "93c2e485c8a7330bc3288ba67cc77641639db33533d23a7518338ebe88aee9e2",
+    "UnityBattleSource/Assets/Resources/CombatTempo/RefinedHero/Hero-Violet-Gem.mat": "e59239e7fd767445bd585eca249b2fb53899b026d63b5d95874e3aab7f89699f",
+    "UnityBattleSource/Assets/Resources/CombatTempo/RefinedHero/Hero-Violet-Silk.mat": "ac0bb9ab94cad51485b40fc2b32afba052cb35b84b5a972447e6f9962bcc964f",
+    "UnityBattleSource/Assets/Resources/CombatTempo/RefinedHero/HeroRefined.controller": "4971acf59c6115ab53b3f81fd7760cc35b90f594745b56d5e042730fcd801f9b",
+    "UnityBattleSource/Assets/Resources/CombatTempo/RefinedHero/HeroRefined.fbx": "5224b95669d6b21d49ad325f55b3140cf4842721e4ebb7e2aa2ad61a64da6cd8",
+    "UnityBattleSource/Assets/Scripts/CombatTempoAnimatedBody.cs": "f032993642d942b7bab4e1ba1991dd1e04bafb40f9ba203b230c71e1e2b606eb",
+    "UnityBattleSource/Assets/Scripts/CombatTempoPresentation.cs": "017747efb82e4662839d61569349a2e513aab794bdbb42a34fbea4f70aa170c0",
+    "UnityBattleSource/Assets/Scripts/RefinedHeroAppearance.cs": "09b6ad9b9e7eedf92d0d42484b3e80edde3fb99853a0a382ace0a9bd8d964663",
+    "UnityBattleSource/Assets/Scripts/RefinedHeroCapture.cs": "9888a48a5fb15ea8e800944be4a712d42bc8a1129f93d9220518e47dab4dc0b0",
+    "UnityBattleSource/Assets/Scripts/UnityBattleBridge.cs": "dc696edb21eba48c40c807d7fbb3e458ccd7abbe594722775ba22f424a5640ed"
+  }
+}

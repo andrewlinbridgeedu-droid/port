@@ -23,6 +23,11 @@ public sealed class MainlineBodyRound2 : MonoBehaviour
     }
     public void Begin(Pose value,bool second,float releaseTime,float contactTime,float endTime) {
         Stop();bones.Clear();
+        var sample = GetComponentInChildren<CombatTempoAnimatedBody>(false);
+        if (sample) {
+            if (value == Pose.EarlyHound && contactTime > .8f) sample.Play("Pounce", contactTime);
+            return;
+        }
         foreach(var t in GetComponentsInChildren<Transform>(true)){
             if(!bones.ContainsKey(t.name))bones.Add(t.name,new Bone{t=t});
             int colon=t.name.LastIndexOf(':');

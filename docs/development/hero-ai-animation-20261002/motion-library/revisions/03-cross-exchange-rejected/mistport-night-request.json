@@ -1,0 +1,12 @@
+{
+  "model": "MiniMax-Hailuo-2.3",
+  "duration": 6,
+  "resolution": "1080P",
+  "prompt_optimizer": false,
+  "prompt": "[Static shot] Animate exactly the supplied full-body rear-view 2D fantasy character illustration. Preserve the original hairstyle, body proportions, costume colors, embroidery, gold trim, jewels and fine painted line work. Keep an elegant hand-painted anime style, no glossy CGI or plastic 3D. The warm light-gray background, rear camera, framing and scale remain completely fixed. Show the entire character from hair to boots throughout. He faces away throughout; never reveal his face or spin. Perform only ONE complete coherent action sequence, then settle back to the initial relaxed arms-down pose before the clip ends. Natural shoulder-elbow-wrist coordination, no reversed joints or extra limbs. Coat tails, ribbons and hair follow with restrained delayed motion. No camera movement, cuts, zoom, scenery, text, light effects, particles or newly materialized objects. ACTION: One deliberate exchange gesture: both forearms rise in front of his chest, cross once at wrist level in front of the torso, then exchange sides and sweep apart horizontally to shoulder width with palms turning outward. The torso subtly counter-rotates while the head keeps facing away. The crossing followed by a clear horizontal separation must be readable from behind. Lower both arms and return to the exact relaxed starting stance. No overhead arm raise. Preserve costume details through the entire motion. A short beginning and ending hold; keep the principal gesture clear rather than adding extra flourishes.",
+  "input": "../mistport-night-input.png",
+  "inputSHA256": "09ea5c402646330ccf96422c0821a37e55356ed34d9d08944c18d09930527515",
+  "suggestedSpell": "身份错置",
+  "runtimeSkillID": "identityDisplacement",
+  "submittedAt": "2026-10-02T23:31:53Z"
+}

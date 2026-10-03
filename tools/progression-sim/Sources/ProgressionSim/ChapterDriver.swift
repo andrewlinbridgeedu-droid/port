@@ -13,6 +13,7 @@ enum ChapterDriver {
         let seconds: Double
         let medicinesUsed: Int
         let maskUses: Int
+        var tempoStats = MPCTempoStats()
     }
     static func playerContact(_ skill: FoolSkillID) -> Double { MPCChurchBattleDriver.playerContact(skill) }
     /// Since story-battle-v1 the battle is `MPCStoryBattleStepper` (the App's rules); this
@@ -24,7 +25,7 @@ enum ChapterDriver {
                     talents: HermitTalentAllocation = .init(), consumables: [String:Int] = [:],
                     priorityCore: Bool = true, maskOffset: Double = 2,
                     ultimate: Bool = false, loadout suppliedLoadout: MPCChapterOneLoadout? = nil,
-                    party: MPCPartyPersistentState = .init(), medalOffset: Double? = nil, skipQ4Cycle: Int? = nil, precise: Bool = false, relicBalance: MPCSequenceNineRelicBalance = .init(), actionDelay: Double = 0) throws -> Report {
+                    party: MPCPartyPersistentState = .init(), medalOffset: Double? = nil, skipQ4Cycle: Int? = nil, precise: Bool = false, relicBalance: MPCSequenceNineRelicBalance = .init(), actionDelay: Double = 0, tempo: MPCTempoChoice = .automatic) throws -> Report {
         var loadout = MPCChapterOneLoadout(normalSkillIDs: sequence, isUltimateUnlocked: ultimate, passiveIDs: [], relicIDs: [])
         loadout.talents = talents
         if let suppliedLoadout { loadout = suppliedLoadout }
@@ -32,7 +33,8 @@ enum ChapterDriver {
         let encounterID = String(format: "chapter01_q%02d_encounter", q)
         var stepper = try MPCStoryBattleStepper(encounterID: encounterID, loadout: loadout, consumables: consumables, party: party,
                                                 mask: mask ? .init(owned: true, teachingLoan: q == 3 || q == 4) : nil,
-                                                tuning: .init(actionDelay: actionDelay)) { $0.relicBalance = relicBalance }
+                                                tuning: .init(actionDelay: actionDelay, tempo: tempo)) { $0.relicBalance = relicBalance }
+        var stats = MPCTempoStats()
         var used = 0, ultimateAsked = false
         let quiet: Set<String> = ["guard", "fortify", "calibrate", "recover", "repair_guard", "charge"]
         while !stepper.isFinished {
@@ -72,15 +74,15 @@ enum ChapterDriver {
                 ultimateAsked = true
                 out.append(.init(tick: view.tick, kind: .ultimate))
             }
-            do { _ = try stepper.step(out) }
+            do { stats.record(try stepper.step(out), session: stepper.session) }
             catch MPCChurchBattleDriver.Failure.refused {
                 // A choice the rules refuse at this step (for example the mask after the
                 // medal): drop it and step without inputs, as a client would.
                 if out.contains(where: { $0.kind == .consumable }) { used -= out.filter { $0.kind == .consumable }.count }
-                _ = try stepper.step([])
+                stats.record(try stepper.step([]), session: stepper.session)
             }
         }
         return .init(session: stepper.session, seconds: max(0, stepper.now - MPCChurchBattleDriver.step),
-                     medicinesUsed: used, maskUses: stepper.maskUses)
+                     medicinesUsed: used, maskUses: stepper.maskUses, tempoStats: stats)
     }
 }

@@ -1,0 +1,124 @@
+Q4-light current actor hell-hound-primary
+Q4-light state stop no late contact
+Q4-light contact spectacle transients released
+Q4-light authored needle child released
+Q4-light minion owned components cleared
+Q4-light bounty effects and acting cleared
+Q4-light tower transient acting released
+Q4-light hero acting released
+Q4-light mainline transient surfaces released
+Q4-heavy current actor hell-hound-primary
+Q4-heavy state stop no late contact
+Q4-heavy contact spectacle transients released
+Q4-heavy authored needle child released
+Q4-heavy minion owned components cleared
+Q4-heavy bounty effects and acting cleared
+Q4-heavy tower transient acting released
+Q4-heavy hero acting released
+Q4-heavy mainline transient surfaces released
+D01-light current actor clock-guard-primary
+D01-light state stop no late contact
+D01-light contact spectacle transients released
+D01-light authored needle child released
+D01-light minion owned components cleared
+D01-light bounty effects and acting cleared
+D01-light tower transient acting released
+D01-light hero acting released
+D01-light mainline transient surfaces released
+D01-heavy current actor clock-guard-primary
+D01-heavy cancellation zero late acknowledgments
+D01-heavy contact spectacle transients released
+D01-heavy authored needle child released
+D01-heavy minion owned components cleared
+D01-heavy bounty effects and acting cleared
+D01-heavy tower transient acting released
+D01-heavy hero acting released
+D01-heavy mainline transient surfaces released
+D01-heavy retry exactly once
+D01-heavy death before contact has no late hit
+D01-heavy wave replacement no stale hit
+D01-heavy contact spectacle transients released
+D01-heavy authored needle child released
+D01-heavy minion owned components cleared
+D01-heavy bounty effects and acting cleared
+D01-heavy tower transient acting released
+D01-heavy hero acting released
+D01-heavy mainline transient surfaces released
+B01-light current actor clock-guard-primary
+B01-light state stop no late contact
+B01-light contact spectacle transients released
+B01-light authored needle child released
+B01-light minion owned components cleared
+B01-light bounty effects and acting cleared
+B01-light tower transient acting released
+B01-light hero acting released
+B01-light mainline transient surfaces released
+B01-heavy current actor clock-guard-primary
+B01-heavy cancellation zero late acknowledgments
+B01-heavy contact spectacle transients released
+B01-heavy authored needle child released
+B01-heavy minion owned components cleared
+B01-heavy bounty effects and acting cleared
+B01-heavy tower transient acting released
+B01-heavy hero acting released
+B01-heavy mainline transient surfaces released
+B01-heavy retry exactly once
+B01-heavy death before contact has no late hit
+B01-heavy wave replacement no stale hit
+B01-heavy contact spectacle transients released
+B01-heavy authored needle child released
+B01-heavy minion owned components cleared
+B01-heavy bounty effects and acting cleared
+B01-heavy tower transient acting released
+B01-heavy hero acting released
+B01-heavy mainline transient surfaces released
+Hero-02 current actor clock-guard-primary
+Hero-02 cancellation zero late acknowledgments
+Hero-02 contact spectacle transients released
+Hero-02 authored needle child released
+Hero-02 minion owned components cleared
+Hero-02 bounty effects and acting cleared
+Hero-02 tower transient acting released
+Hero-02 hero acting released
+Hero-02 mainline transient surfaces released
+Hero-02 retry exactly once
+Hero-06 current actor clock-guard-primary
+Hero-06 cancellation zero late acknowledgments
+Hero-06 contact spectacle transients released
+Hero-06 authored needle child released
+Hero-06 minion owned components cleared
+Hero-06 bounty effects and acting cleared
+Hero-06 tower transient acting released
+Hero-06 hero acting released
+Hero-06 mainline transient surfaces released
+Hero-06 retry exactly once
+Hero-07 current actor clock-guard-primary
+Hero-07 cancellation zero late acknowledgments
+Hero-07 contact spectacle transients released
+Hero-07 authored needle child released
+Hero-07 minion owned components cleared
+Hero-07 bounty effects and acting cleared
+Hero-07 tower transient acting released
+Hero-07 hero acting released
+Hero-07 mainline transient surfaces released
+Hero-07 retry exactly once
+Hero-basics current actor clock-guard-primary
+Hero-basics state stop no late contact
+Hero-basics contact spectacle transients released
+Hero-basics authored needle child released
+Hero-basics minion owned components cleared
+Hero-basics bounty effects and acting cleared
+Hero-basics tower transient acting released
+Hero-basics hero acting released
+Hero-basics mainline transient surfaces released
+Hero-parry current actor clock-guard-primary
+Hero-parry state stop no late contact
+Hero-parry contact spectacle transients released
+Hero-parry authored needle child released
+Hero-parry minion owned components cleared
+Hero-parry bounty effects and acting cleared
+Hero-parry tower transient acting released
+Hero-parry hero acting released
+Hero-parry mainline transient surfaces released
+no runtime errors at end
+global combat time scale untouched

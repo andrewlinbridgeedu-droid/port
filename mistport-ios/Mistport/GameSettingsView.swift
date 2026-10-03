@@ -8,6 +8,8 @@ enum GameSettingsKeys {
     static let combatSoundVolume = "mistport.combat-sound.volume"
     static let reduceMotion = "mistport.interface.reduce-motion"
     static let hapticsEnabled = "mistport.haptics.enabled"
+    // Independent setting; never touches campaign, rewards or the player's ledger.
+    static let battleSpeed = "mistport.combat.presentation-speed.v1"
 }
 
 struct GameSettingsView: View {

@@ -1,0 +1,17 @@
+{
+  "browser": "Codex in-app browser",
+  "actionsChecked": [
+    "03-overarm-throw",
+    "05-sidearm-cast"
+  ],
+  "videosPerAction": 3,
+  "allVideosPlaying": true,
+  "playbackRate": 3,
+  "observedSize": [
+    1080,
+    1484
+  ],
+  "observedDuration": 5.875,
+  "checkedVia": "UI clicked action buttons and play; DOM video state confirmed for all six",
+  "userAcceptance": false
+}

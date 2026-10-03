@@ -1,0 +1,5 @@
+169.20 Q4 direct preview. No ReplayKit start. Image was black, process did not complete the battle.
+WARNING -> applicationDidReceiveMemoryWarning()
+WARNING -> applicationDidReceiveMemoryWarning()
+App terminated due to signal 9.
+Not visual approval or a valid battle recording.

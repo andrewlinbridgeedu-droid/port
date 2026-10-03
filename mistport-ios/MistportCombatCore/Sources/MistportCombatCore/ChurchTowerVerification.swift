@@ -14,6 +14,7 @@ public enum MPCChurchTowerVerificationRunner {
         public let rosterDescriptors: [[String]]
         public let skillCasts: [String: Int]
         public let medalUses: Int
+        public var tempoStats = MPCTempoStats()
     }
     public static func mission(for floor: MPCChurchTowerCatalog.Floor) -> Int { max(7, floor.requiredMission) }
     public static func recommendedLoadout(for floor: MPCChurchTowerCatalog.Floor, route: Route = .medal) -> MPCChapterOneLoadout {
@@ -51,7 +52,7 @@ public enum MPCChurchTowerVerificationRunner {
     /// loadout unless `suppliedLoadout` is given. `jitter` and `actionDelay` are model-only timing.
     public static func run(number: Int, route: Route = .medal, medalOffset: Double = 22, jitter: Double = 0, seed: UInt64 = 1,
                            passive: String? = nil, suppliedLoadout: MPCChapterOneLoadout? = nil, actionDelay: Double = 0,
-                           encounterID: String? = nil) throws -> Report {
+                           encounterID: String? = nil, tempo: MPCTempoChoice = .automatic) throws -> Report {
         let floor = MPCChurchTowerCatalog.floor(number: number)!
         var loadout = recommendedLoadout(for: floor, route: route)
         if let passive { loadout.relicIDs = [passive] }
@@ -95,9 +96,10 @@ public enum MPCChurchTowerVerificationRunner {
             return out
         }
         var stepper = try MPCChurchBattleStepper(encounterID: encounterID ?? floor.id, loadout: loadout,
-                                                 tuning: .init(jitter: jitter, seed: seed, actionDelay: actionDelay))
+                                                 tuning: .init(jitter: jitter, seed: seed, actionDelay: actionDelay, tempo: tempo))
         var wave = -1, waveHP: [Int] = [], rosters: [[String]] = []
         var casts: [String: Int] = [:]
+        var stats = MPCTempoStats()
         while !stepper.isFinished {
             let view = stepper.view
             if view.session.outcome == .inProgress, wave != view.session.waveIndex {
@@ -107,10 +109,11 @@ public enum MPCChurchTowerVerificationRunner {
             }
             let events = try stepper.step(view.session.outcome == .inProgress ? policy(view) : [])
             if let cast = events.cast { casts[cast.skill?.rawValue ?? "basic", default: 0] += 1 }
+            stats.record(events, session: stepper.session)
         }
         let medals = stepper.inputs.filter { $0.kind == .medal }.count
         return .init(floor: number, mission: mission(for: floor), route: route, session: stepper.session,
                      seconds: max(0, stepper.now - MPCChurchBattleDriver.step), waveEntryHP: waveHP,
-                     rosterDescriptors: rosters, skillCasts: casts, medalUses: medals)
+                     rosterDescriptors: rosters, skillCasts: casts, medalUses: medals, tempoStats: stats)
     }
 }

@@ -44,6 +44,7 @@ struct MistportApp: App {
     #endif
     private static var playerDefaults: UserDefaults {
         #if DEBUG
+        if CombatTempoReviewConfiguration.requested { return UserDefaults(suiteName: "mistport.combat-tempo-review.20261001")! }
         if ProcessInfo.processInfo.arguments.contains("--housing-device-walk") { return GameStore.housingDeviceWalkDefaults() }
         if ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--verify-") }) { return UserDefaults(suiteName: "mistport.housing-verification-shell.20260930")! }
         if ProcessInfo.processInfo.arguments.contains("--daily-pacing-device-walk") {
@@ -95,7 +96,10 @@ struct MistportApp: App {
     var body: some Scene {
         WindowGroup {
             #if DEBUG
-            if ProcessInfo.processInfo.arguments.contains("--housing-device-walk") {
+            if CombatTempoReviewConfiguration.requested {
+                CombatTempoDeviceReviewRoot(game: game, storefront: storefront)
+                    .defaultAppStorage(Self.playerDefaults)
+            } else if ProcessInfo.processInfo.arguments.contains("--housing-device-walk") {
                 HousingDeviceReviewRoot(game: game, storefront: storefront)
                     .defaultAppStorage(Self.playerDefaults)
                     .task {

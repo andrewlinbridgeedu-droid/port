@@ -1,0 +1,7 @@
+file 'starlight-magician-CastMaskFlick.mp4'
+file 'starlight-magician-CastMaskTurn.mp4'
+file 'starlight-magician-CastTwinSweep.mp4'
+file 'starlight-magician-CastTwinCross.mp4'
+file 'starlight-magician-CastFinaleLift.mp4'
+file 'starlight-magician-CastFinaleThrow.mp4'
+file 'starlight-magician-CastCardFan.mp4'

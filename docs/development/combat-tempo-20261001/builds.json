@@ -1,0 +1,53 @@
+{
+  "builds": [
+    {
+      "side": "before",
+      "version": "169.17",
+      "executableSHA256": "30bbb6611837762dc7efe596940732f76112061dd5c6965a483a2234992afc0d",
+      "unityFrameworkSHA256": "83e9ac02c37c61a16b1fb9efa89829cb805d4baef9e5e31b535bca5f0e640779",
+      "derivedDataOnSSD": true,
+      "buildSucceeded": true
+    },
+    {
+      "side": "after",
+      "version": "169.18",
+      "executableSHA256": "35834a8d060552d3a07976739de7644417f6f93728bd4d22fbd9ffbb9ad4984b",
+      "unityFrameworkSHA256": "bd10e9f2f138dd804a8276d4cdca0bc016d5359a53406b2144e29ad8235b82b2",
+      "derivedDataOnSSD": true,
+      "buildSucceeded": true
+    },
+    {
+      "side": "after-home-fixture-correction",
+      "version": "169.19",
+      "executableSHA256": "dea5d145506ae8330986459b42ed65b4787b008384c8c79350b76d4296e35b62",
+      "unityFrameworkSHA256": "e6b18d4a20ec0773c998d260aabbc05bfc2ce2d9750fad320acceecff7865857",
+      "derivedDataOnSSD": true,
+      "buildSucceeded": true
+    },
+    {
+      "side": "after-direct-preview",
+      "version": "169.20",
+      "executableSHA256": "a50466463f9eeee9b02d635f220f1eb485ce83722acde61995fae55fb9c6c9db",
+      "unityFrameworkSHA256": "cfd30ba1209ce88799b5801064fbfd8f09b04fb81e45969c1a17ce491dddb374",
+      "derivedDataOnSSD": true,
+      "buildSucceeded": true
+    },
+    {
+      "side": "after-serialized-preview-loading",
+      "version": "169.21",
+      "executableSHA256": "bbc001f20915e2fda0c2eaee46dd01eb73504327e6f278148aed27227abfae95",
+      "unityFrameworkSHA256": "67e36bc46ae06beb9cd3c4f164a96291d44dad306420f9b3cc77e04207480236",
+      "derivedDataOnSSD": true,
+      "buildSucceeded": true
+    },
+    {
+      "side": "after-preview-menu-correction",
+      "version": "169.22",
+      "executableSHA256": "7d82395afe633e2649b207b1ea5f8289704decbae15ab180de8a53f4acc26c71",
+      "unityFrameworkSHA256": "5a2e2db5e2f943a0f06a921c49223a69bad030b0ac6ed4f04951bbbb0f9b4d26",
+      "derivedDataOnSSD": true,
+      "buildSucceeded": true
+    }
+  ],
+  "phoneApproval": false
+}

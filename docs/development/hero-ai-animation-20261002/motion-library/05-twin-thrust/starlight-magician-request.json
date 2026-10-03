@@ -1,0 +1,12 @@
+{
+  "model": "MiniMax-Hailuo-2.3",
+  "duration": 6,
+  "resolution": "1080P",
+  "prompt_optimizer": false,
+  "prompt": "[Static shot] Animate exactly the supplied full-body rear-view 2D fantasy character illustration. Preserve the original hairstyle, body proportions, costume colors, embroidery, gold trim, jewels and fine painted line work. Keep an elegant hand-painted anime style, no glossy CGI or plastic 3D. The warm light-gray background, rear camera, framing and scale remain completely fixed. Show the entire character from hair to boots throughout. He faces away throughout; never reveal his face or spin. Perform only ONE complete coherent action sequence, then settle back to the initial relaxed arms-down pose before the clip ends. Natural shoulder-elbow-wrist coordination, no reversed joints or extra limbs. Coat tails, ribbons and hair follow with restrained delayed motion. No camera movement, cuts, zoom, scenery, text, light effects, particles or newly materialized objects. ACTION: Two distinct alternating forward spell thrusts in one sequence. First the right hand draws back beside the waist and thrusts forward away from camera at chest level with a small right shoulder rotation. It retracts while the left hand thrusts forward more strongly a short beat later. The two separate right-then-left releases must be clearly visible, with coordinated elbows and a slight torso recoil after each. Both feet stay planted. Lower both arms and return to the starting stance. Do not raise both arms together. Preserve costume details through the entire motion. A short beginning and ending hold; keep the principal gesture clear rather than adding extra flourishes.",
+  "input": "../../starlight-magician-input.png",
+  "inputSHA256": "3c7a4069f98e14d539ef37fe39438a8a675e4bc59d14acd6de2d51c29f2f00a1",
+  "suggestedSpell": "双影追猎",
+  "runtimeSkillID": "mirrorPursuit",
+  "submittedAt": "2026-10-02T23:35:13Z"
+}

@@ -1,0 +1,12 @@
+{
+  "model": "MiniMax-Hailuo-2.3",
+  "duration": 6,
+  "resolution": "1080P",
+  "prompt_optimizer": false,
+  "prompt": "[Static shot] Animate exactly the supplied full-body rear-view 2D fantasy character illustration. Preserve the original hairstyle, body proportions, costume colors, embroidery, gold trim, jewels and fine painted line work. Keep an elegant hand-painted anime style, no glossy CGI or plastic 3D. The warm light-gray background, rear camera, framing and scale remain completely fixed. Show the entire character from hair to boots throughout. He faces away throughout; never reveal his face or spin. Perform only ONE complete coherent action sequence, then settle back to the initial relaxed arms-down pose before the clip ends. Natural shoulder-elbow-wrist coordination, no reversed joints or extra limbs. Coat tails, ribbons and hair follow with restrained delayed motion. No camera movement, cuts, zoom, scenery, text, light effects, particles or newly materialized objects. ACTION: Two distinct alternating forward spell thrusts in one sequence. First the right hand draws back beside the waist and thrusts forward away from camera at chest level with a small right shoulder rotation. It retracts while the left hand thrusts forward more strongly a short beat later. The two separate right-then-left releases must be clearly visible, with coordinated elbows and a slight torso recoil after each. Both feet stay planted. Lower both arms and return to the starting stance. Do not raise both arms together. Preserve costume details through the entire motion. A short beginning and ending hold; keep the principal gesture clear rather than adding extra flourishes. Keep the generous side margins of the supplied frame. Both hands, fingertips and sleeves must stay entirely within the frame at all times. Perform the gesture with softly bent elbows and compact reach. Do not reach beyond either side border.",
+  "input": "input.png",
+  "inputSHA256": "7459e5c0209513fcc36ba394c837b26bb3185f0c54f683d196e21c75708ec895",
+  "source": "docs/development/hero-refinement-20261001/v4/reference/mistport-night-back-4k.png",
+  "sourceSHA256": "e31174c437519e18e659ed6764ea7168fad1bdea6bb1a19ab26a828d26ffcb21",
+  "reason": "Replace take whose extended hand leaves the image. Wider canvas keeps character scale unchanged relative to image height."
+}

@@ -20,6 +20,7 @@ public sealed class HeroArcanaTheatreVFX : MonoBehaviour
     sealed class EchoSkin { public SkinnedMeshRenderer source; public readonly Mesh[] meshes=new Mesh[2]; }
     readonly List<EchoSkin> echoSkins=new List<EchoSkin>();
     readonly bool[] echoCaptured=new bool[2];
+    readonly AIHeroAnimatedBody.VisualEcho[] illustratedEchoes=new AIHeroAnimatedBody.VisualEcho[2];
     Func<Vector3> echoOrigin;
     float echoPoseAge;
     Transform heavyCard;
@@ -97,6 +98,12 @@ public sealed class HeroArcanaTheatreVFX : MonoBehaviour
             go.transform.SetParent(root.transform, false); go.transform.position = origin;
             ghosts[i] = go.transform;
         }
+        var illustrated=actor.GetComponentInChildren<AIHeroAnimatedBody>();
+        if(illustrated) {
+            for(int i=0;i<2;i++) illustratedEchoes[i]=illustrated.CreateEcho(ghosts[i],origin,
+                i==0?new Color(.44f,.16f,.67f):new Color(.14f,.64f,.70f));
+            return;
+        }
         foreach (var renderer in actor.GetComponentsInChildren<SkinnedMeshRenderer>())
         {
             if (!renderer.enabled || !renderer.sharedMesh) continue;
@@ -168,6 +175,7 @@ public sealed class HeroArcanaTheatreVFX : MonoBehaviour
     void CaptureHuntingPose(int copy,Vector3 origin)
     {
         echoCaptured[copy]=true;
+        illustratedEchoes[copy]?.Capture(origin);
         foreach(var skin in echoSkins)
         {
             if(!skin.source||!skin.meshes[copy])continue;
@@ -236,6 +244,7 @@ public sealed class HeroArcanaTheatreVFX : MonoBehaviour
                     Puff(c, .39f + N(j) * .27f, new Color(.12f, .075f, .24f, alpha * .11f), j, time);
                 }
             }
+            foreach(var echo in illustratedEchoes) echo?.SetOpacity(alpha*.78f*Mathf.SmoothStep(0,1,Mathf.Clamp01((time-.10f)/.09f)));
             for (int i = 0; i < materials.Count; i++)
             { Color color = materialColors[i]; color.a = alpha * .78f * Mathf.SmoothStep(0,1,Mathf.Clamp01((time-.10f)/.09f)); if (materials[i].HasProperty("_Color")) materials[i].color = color; }
         }
@@ -382,6 +391,7 @@ public sealed class HeroArcanaTheatreVFX : MonoBehaviour
         foreach (var mesh in snapshots) if (mesh) Destroy(mesh);
         foreach (var material in materials) if (material) Destroy(material);
         snapshots.Clear(); materials.Clear(); materialColors.Clear();
+        for(int i=0;i<illustratedEchoes.Length;i++) {illustratedEchoes[i]?.Dispose();illustratedEchoes[i]=null;}
         echoSkins.Clear();echoCaptured[0]=echoCaptured[1]=false;echoOrigin=null;heavyCard=null;heavyFace=heavyEdge=null;
         ghosts[0] = null; ghosts[1] = null;
     }

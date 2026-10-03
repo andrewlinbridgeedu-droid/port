@@ -1,0 +1,6 @@
+M05 current actor hell-hound-primary
+M05 contact acknowledgments 1 expected 1
+M05 no runtime errors
+M05 full and close automatic projection restored 0.000000
+no runtime errors at end
+global combat time scale untouched

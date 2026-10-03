@@ -1,0 +1,190 @@
+[
+  {
+    "kind": "Hound",
+    "source": "Models/HellHound/Meshy_AI_Emberwolf_quadruped/Meshy_AI_Emberwolf_quadruped_Animation_Walking_frame_rate_60.fbx",
+    "jawWeightedVertices": 398,
+    "bones": 28,
+    "clips": [
+      {
+        "clip": "BattleIdle",
+        "frames": 145,
+        "seconds": 2.4,
+        "contactNormalized": null
+      },
+      {
+        "clip": "Light",
+        "frames": 37,
+        "seconds": 0.6,
+        "contactNormalized": 0.58
+      },
+      {
+        "clip": "HeavyPrepare",
+        "frames": 121,
+        "seconds": 2,
+        "contactNormalized": null
+      },
+      {
+        "clip": "HeavyRelease",
+        "frames": 48,
+        "seconds": 0.78,
+        "contactNormalized": 0.58
+      },
+      {
+        "clip": "HitAdditive",
+        "frames": 26,
+        "seconds": 0.42,
+        "contactNormalized": 0.58
+      },
+      {
+        "clip": "Pounce",
+        "frames": 55,
+        "seconds": 0.9,
+        "contactNormalized": 0.58
+      },
+      {
+        "clip": "Probe",
+        "frames": 40,
+        "seconds": 0.65,
+        "contactNormalized": 0.58
+      },
+      {
+        "clip": "Opening",
+        "frames": 181,
+        "seconds": 3,
+        "contactNormalized": null
+      },
+      {
+        "clip": "HeavyReleaseSecond",
+        "frames": 48,
+        "seconds": 0.78,
+        "contactNormalized": 0.58
+      }
+    ]
+  },
+  {
+    "kind": "Stonejaw",
+    "source": "Resources/Enemies/Signature/Stonehide/Stonehide_Combat.fbx",
+    "jawWeightedVertices": 0,
+    "bones": 16,
+    "clips": [
+      {
+        "clip": "BattleIdle",
+        "frames": 145,
+        "seconds": 2.4,
+        "contactNormalized": null
+      },
+      {
+        "clip": "Light",
+        "frames": 37,
+        "seconds": 0.6,
+        "contactNormalized": 0.58
+      },
+      {
+        "clip": "HeavyPrepare",
+        "frames": 121,
+        "seconds": 2,
+        "contactNormalized": null
+      },
+      {
+        "clip": "HeavyRelease",
+        "frames": 48,
+        "seconds": 0.78,
+        "contactNormalized": 0.58
+      },
+      {
+        "clip": "HitAdditive",
+        "frames": 26,
+        "seconds": 0.42,
+        "contactNormalized": 0.58
+      }
+    ]
+  },
+  {
+    "kind": "Hollow",
+    "source": "Resources/Enemies/Signature/BountyB01/B01_Combat.fbx",
+    "jawWeightedVertices": 0,
+    "bones": 16,
+    "clips": [
+      {
+        "clip": "BattleIdle",
+        "frames": 145,
+        "seconds": 2.4,
+        "contactNormalized": null
+      },
+      {
+        "clip": "Light",
+        "frames": 37,
+        "seconds": 0.6,
+        "contactNormalized": 0.58
+      },
+      {
+        "clip": "HeavyPrepare",
+        "frames": 121,
+        "seconds": 2,
+        "contactNormalized": null
+      },
+      {
+        "clip": "HeavyRelease",
+        "frames": 48,
+        "seconds": 0.78,
+        "contactNormalized": 0.58
+      },
+      {
+        "clip": "HitAdditive",
+        "frames": 26,
+        "seconds": 0.42,
+        "contactNormalized": 0.58
+      }
+    ]
+  },
+  {
+    "kind": "Hero",
+    "source": "Models/Fool/Meshy_AI_battle_magician_rig_biped_Animation_Combat_Stance_frame_rate_60.fbx",
+    "jawWeightedVertices": 0,
+    "bones": 26,
+    "clips": [
+      {
+        "clip": "BattleIdle",
+        "frames": 145,
+        "seconds": 2.4,
+        "contactNormalized": null
+      },
+      {
+        "clip": "BasicSlash",
+        "frames": 43,
+        "seconds": 0.7,
+        "contactNormalized": 0.58
+      },
+      {
+        "clip": "Thrust",
+        "frames": 43,
+        "seconds": 0.7,
+        "contactNormalized": 0.58
+      },
+      {
+        "clip": "Card",
+        "frames": 43,
+        "seconds": 0.7,
+        "contactNormalized": 0.58
+      },
+      {
+        "clip": "Hit",
+        "frames": 26,
+        "seconds": 0.42,
+        "contactNormalized": 0.58
+      },
+      {
+        "clip": "Parry",
+        "frames": 28,
+        "seconds": 0.45,
+        "contactNormalized": 0.58
+      },
+      {
+        "clip": "CastPrepare",
+        "frames": 49,
+        "seconds": 0.8,
+        "contactNormalized": 0.58
+      }
+    ]
+  }
+]

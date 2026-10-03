@@ -1,0 +1,164 @@
+{
+  "videos": [
+    {
+      "name": "CastCardFan-comparison.mp4",
+      "decodedFrames": 48,
+      "sha256": "1368ae8997755bb4e134d750772fbbecb7defbfcecdcf89fa1197ec8ce9bd779"
+    },
+    {
+      "name": "CastFinaleLift-comparison.mp4",
+      "decodedFrames": 48,
+      "sha256": "eeb4ab4ca8f58a308648bfcef33c7043f25a06924d4b33e429619c993d11f869"
+    },
+    {
+      "name": "CastFinaleThrow-comparison.mp4",
+      "decodedFrames": 48,
+      "sha256": "aab19664d6d03c6fdd7711ac2b16c63ee667eccd4283cdeb8d51472f6d17299a"
+    },
+    {
+      "name": "CastMaskFlick-comparison.mp4",
+      "decodedFrames": 48,
+      "sha256": "42ec5cd36fb9b8558e761a66c386e452d7c4c4b5fb62ba9badf95da4ec6caf05"
+    },
+    {
+      "name": "CastMaskTurn-comparison.mp4",
+      "decodedFrames": 48,
+      "sha256": "56870133ba8a5e7b694c9af7c8d907db9ce0b8f9d90b1001746b91fccb5cabcc"
+    },
+    {
+      "name": "CastTwinCross-comparison.mp4",
+      "decodedFrames": 48,
+      "sha256": "db38988fcc752b510d6c6de35acab6ede9546d17fa8e38ffb6cad8e8283d0bd7"
+    },
+    {
+      "name": "CastTwinSweep-comparison.mp4",
+      "decodedFrames": 48,
+      "sha256": "f6ab7357651702915475cb89e65c9a266bdae097e01667836a081f53dd7fd35f"
+    },
+    {
+      "name": "midnight-carnival-CastCardFan.mp4",
+      "decodedFrames": 48,
+      "sha256": "1bef651dfc9cc3fb94e4e037347ad957476a4f4f77db72cea22972f62b0ba9d3"
+    },
+    {
+      "name": "midnight-carnival-CastFinaleLift.mp4",
+      "decodedFrames": 48,
+      "sha256": "9c77105872931b2f19b7259d775286860348e2103ad9248f0a84ce5a078e57db"
+    },
+    {
+      "name": "midnight-carnival-CastFinaleThrow.mp4",
+      "decodedFrames": 48,
+      "sha256": "bec058c9720834efbfdafe5f848ea3ba97c431987b703ff5694c6385a825ec60"
+    },
+    {
+      "name": "midnight-carnival-CastMaskFlick.mp4",
+      "decodedFrames": 48,
+      "sha256": "7dfb5dc25905ba5be484aad9d7f4a79bd840acaaaf1a215c77cd9a5df8f1b35f"
+    },
+    {
+      "name": "midnight-carnival-CastMaskTurn.mp4",
+      "decodedFrames": 48,
+      "sha256": "caa5b89130a1a3da0ba33f63eab3c2e2ba10be77b056bb35e9288b1cd1b883e5"
+    },
+    {
+      "name": "midnight-carnival-CastTwinCross.mp4",
+      "decodedFrames": 48,
+      "sha256": "252425ef3b7ca8fedf8734aa712677c6f7e546f9db9e46e88aeeb7052ed8261f"
+    },
+    {
+      "name": "midnight-carnival-CastTwinSweep.mp4",
+      "decodedFrames": 48,
+      "sha256": "77db3cbb95d68f06753fae3407f1dfe6e17883a0550bcd549b843f64a161c906"
+    },
+    {
+      "name": "midnight-carnival-seven-casts.mp4",
+      "decodedFrames": 336,
+      "sha256": "7114664f9301834e18fafbb4be57a93b6dbbff0603399c7f5e49e5d6a62cf581"
+    },
+    {
+      "name": "mistport-night-CastCardFan.mp4",
+      "decodedFrames": 48,
+      "sha256": "6dbec7414a6960af3ed5066ba6e5899ed555e3c2546d8771f29b0d60f2a8c98d"
+    },
+    {
+      "name": "mistport-night-CastFinaleLift.mp4",
+      "decodedFrames": 48,
+      "sha256": "9d666b50c3604275ca0ac30997f38fc4d113cf75d8b5c64f5a7d0168c53f242a"
+    },
+    {
+      "name": "mistport-night-CastFinaleThrow.mp4",
+      "decodedFrames": 48,
+      "sha256": "8bfb966799b9ccd3d9747bd2b4cac65f2b5cbce2c5f51e513e065838f9e138cc"
+    },
+    {
+      "name": "mistport-night-CastMaskFlick.mp4",
+      "decodedFrames": 48,
+      "sha256": "20fda210ed5c0065f6bd4f15b3ec3bf6f8c98865446287d632a854888134b73c"
+    },
+    {
+      "name": "mistport-night-CastMaskTurn.mp4",
+      "decodedFrames": 48,
+      "sha256": "dcaf46b8ec73af50ba0225f2b0e0c3515ff96fd78a32bcfcb6b99ab84cc5bca8"
+    },
+    {
+      "name": "mistport-night-CastTwinCross.mp4",
+      "decodedFrames": 48,
+      "sha256": "8ebe619722e31db84e3326a229caca1568014be4756d16e0212c61167ca976af"
+    },
+    {
+      "name": "mistport-night-CastTwinSweep.mp4",
+      "decodedFrames": 48,
+      "sha256": "2a2d9d93eb73d5d9ad1fbc61b39dd0491c13eeb00568218496d60e4c3c2f9f47"
+    },
+    {
+      "name": "mistport-night-seven-casts.mp4",
+      "decodedFrames": 336,
+      "sha256": "7c590dc08174753596f2a7850df4dc87c89f83642d0d035422e02a0f6305308e"
+    },
+    {
+      "name": "starlight-magician-CastCardFan.mp4",
+      "decodedFrames": 48,
+      "sha256": "d301a01a815fed607c06105ddf9225be181a3af08ee24d915bbe82ab412f3448"
+    },
+    {
+      "name": "starlight-magician-CastFinaleLift.mp4",
+      "decodedFrames": 48,
+      "sha256": "e5323b947b795aa7e64926ff06fdd77ad3d7d5fa4794f62d836c14d19ba4c284"
+    },
+    {
+      "name": "starlight-magician-CastFinaleThrow.mp4",
+      "decodedFrames": 48,
+      "sha256": "5eddfb5b8f38b3cf606ee499e0eef6215e3c813d0de06da47f64cbdfaa045ed8"
+    },
+    {
+      "name": "starlight-magician-CastMaskFlick.mp4",
+      "decodedFrames": 48,
+      "sha256": "8d56465aaf20bc669f54663de35a095089ce50c6e835b365c3e5e96a0d99da7b"
+    },
+    {
+      "name": "starlight-magician-CastMaskTurn.mp4",
+      "decodedFrames": 48,
+      "sha256": "33a54c688fad4d08f3ed8b69f4e0b46325bc4803fc8aca5ca9bc2e39a916f4e9"
+    },
+    {
+      "name": "starlight-magician-CastTwinCross.mp4",
+      "decodedFrames": 48,
+      "sha256": "d3a7a73c8b3dc4af7747820128ed88ed2836bcd88f779d080eb46d7a050a562d"
+    },
+    {
+      "name": "starlight-magician-CastTwinSweep.mp4",
+      "decodedFrames": 48,
+      "sha256": "4e450e704d6c6c6139566f1aa53201986588b94adba3caa4b8b5a35b373a2e0d"
+    },
+    {
+      "name": "starlight-magician-seven-casts.mp4",
+      "decodedFrames": 336,
+      "sha256": "0daa7c0a82bab92451f1744a72f1e619de889053137256c61124166c37a19861"
+    }
+  ],
+  "totalVideos": 31,
+  "decodedAllFrames": true,
+  "sourceHashesMatch": true,
+  "previewFilesPresent": true,
+  "notDeviceEvidence": true
+}

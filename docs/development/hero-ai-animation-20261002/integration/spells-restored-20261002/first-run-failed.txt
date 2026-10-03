@@ -1,0 +1,1 @@
+mistport-night fool_skill_02 x1 receipts=1/1 bursts=1 contact=0.6833334 expected=0.38 error=

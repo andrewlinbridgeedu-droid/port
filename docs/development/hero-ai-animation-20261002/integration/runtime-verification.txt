@@ -1,0 +1,61 @@
+Three native outfit IDs, five atlases each; production camera unchanged.
+mistport-night/01-diagonal-cut: rendered 48 runtime frames; returned to rest.
+mistport-night/02-command-flick: rendered 48 runtime frames; returned to rest.
+mistport-night/03-overarm-throw: rendered 48 runtime frames; returned to rest.
+mistport-night/04-seal-press: rendered 48 runtime frames; returned to rest.
+mistport-night/05-sidearm-cast: rendered 48 runtime frames; returned to rest.
+starlight-magician/01-diagonal-cut: rendered 48 runtime frames; returned to rest.
+starlight-magician/02-command-flick: rendered 48 runtime frames; returned to rest.
+starlight-magician/03-overarm-throw: rendered 48 runtime frames; returned to rest.
+starlight-magician/04-seal-press: rendered 48 runtime frames; returned to rest.
+starlight-magician/05-sidearm-cast: rendered 48 runtime frames; returned to rest.
+midnight-carnival/01-diagonal-cut: rendered 48 runtime frames; returned to rest.
+midnight-carnival/02-command-flick: rendered 48 runtime frames; returned to rest.
+midnight-carnival/03-overarm-throw: rendered 48 runtime frames; returned to rest.
+midnight-carnival/04-seal-press: rendered 48 runtime frames; returned to rest.
+midnight-carnival/05-sidearm-cast: rendered 48 runtime frames; returned to rest.
+mistport-night basic x1: one contact, one completion.
+mistport-night fool_skill_01 x1: one contact, one completion.
+mistport-night fool_skill_02 x1: one contact, one completion.
+mistport-night fool_skill_04 x1: one contact, one completion.
+mistport-night fool_skill_05 x1: one contact, one completion.
+mistport-night fool_skill_06 x1: one contact, one completion.
+mistport-night fool_skill_07 x1: one contact, one completion.
+mistport-night basic x2: one contact, one completion.
+mistport-night fool_skill_01 x2: one contact, one completion.
+mistport-night fool_skill_02 x2: one contact, one completion.
+mistport-night fool_skill_04 x2: one contact, one completion.
+mistport-night fool_skill_05 x2: one contact, one completion.
+mistport-night fool_skill_06 x2: one contact, one completion.
+mistport-night fool_skill_07 x2: one contact, one completion.
+starlight-magician basic x1: one contact, one completion.
+starlight-magician fool_skill_01 x1: one contact, one completion.
+starlight-magician fool_skill_02 x1: one contact, one completion.
+starlight-magician fool_skill_04 x1: one contact, one completion.
+starlight-magician fool_skill_05 x1: one contact, one completion.
+starlight-magician fool_skill_06 x1: one contact, one completion.
+starlight-magician fool_skill_07 x1: one contact, one completion.
+starlight-magician basic x2: one contact, one completion.
+starlight-magician fool_skill_01 x2: one contact, one completion.
+starlight-magician fool_skill_02 x2: one contact, one completion.
+starlight-magician fool_skill_04 x2: one contact, one completion.
+starlight-magician fool_skill_05 x2: one contact, one completion.
+starlight-magician fool_skill_06 x2: one contact, one completion.
+starlight-magician fool_skill_07 x2: one contact, one completion.
+midnight-carnival basic x1: one contact, one completion.
+midnight-carnival fool_skill_01 x1: one contact, one completion.
+midnight-carnival fool_skill_02 x1: one contact, one completion.
+midnight-carnival fool_skill_04 x1: one contact, one completion.
+midnight-carnival fool_skill_05 x1: one contact, one completion.
+midnight-carnival fool_skill_06 x1: one contact, one completion.
+midnight-carnival fool_skill_07 x1: one contact, one completion.
+midnight-carnival basic x2: one contact, one completion.
+midnight-carnival fool_skill_01 x2: one contact, one completion.
+midnight-carnival fool_skill_02 x2: one contact, one completion.
+midnight-carnival fool_skill_04 x2: one contact, one completion.
+midnight-carnival fool_skill_05 x2: one contact, one completion.
+midnight-carnival fool_skill_06 x2: one contact, one completion.
+midnight-carnival fool_skill_07 x2: one contact, one completion.
+Mid-cast outfit switch preserves clock; exiting before impact cancels receipt and removes plane.
+Same-frame encounter replacement retains live textures; paused battle freezes animation clock.
+AI enabled only in Q4/D01/B01; Q3 retains original hero. No phone or saved game touched.

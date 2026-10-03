@@ -1,0 +1,11 @@
+Three native outfit IDs: selected appearance applied; same Animator controller and arena camera.
+CastMaskFlick: hand excursion=0.335m; full recovery returned to idle.
+CastMaskTurn: hand excursion=0.423m; full recovery returned to idle.
+CastTwinSweep: hand excursion=0.363m; full recovery returned to idle.
+CastTwinCross: hand excursion=0.402m; full recovery returned to idle.
+CastFinaleLift: hand excursion=0.487m; full recovery returned to idle.
+CastFinaleThrow: hand excursion=0.420m; full recovery returned to idle.
+CastCardFan: hand excursion=0.285m; full recovery returned to idle.
+12 production casts: two gestures per skill, x1 and x2; exactly one player contact each.
+Outfit change during cast preserves state time; leaving sample cancels pending contact and restores original art.
+Standalone Unity probe, not native iPhone video or user visual approval.

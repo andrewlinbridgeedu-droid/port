@@ -1,0 +1,15 @@
+{
+  "build": "169.23",
+  "bundle": "com.yourcompany.mistport",
+  "buildSucceeded": true,
+  "signedBundleVerified": true,
+  "installed": false,
+  "deviceBuildRemains": "169.22",
+  "preferencesAccessed": false,
+  "builtAtUTC": "2026-10-01T11:15:49.584297+00:00",
+  "appExecutableSHA256": "4173e4a6d530265e3e3f4ba3f6145fc86abe68386064eaa8f353700374c11776",
+  "unityExportManifestSHA256": "acb682ebd43b98cdbb4ecce6d3723129a82c86ba70127acfb5f64d9a9642b24b",
+  "unityExportFreshnessVerified": true,
+  "userVisualApproval": false,
+  "initialBuildFailure": "Optional MPCOutfit access; corrected with mistportNight fallback, rebuilt successfully"
+}

@@ -1,0 +1,64 @@
+{
+  "model": "MiniMax-Hailuo-2.3",
+  "duration": 6,
+  "resolution": "1080P",
+  "prompt_optimizer": false,
+  "outfits": [
+    "mistport-night",
+    "starlight-magician",
+    "midnight-carnival"
+  ],
+  "count": 15,
+  "actionTypes": 5,
+  "userApprovedInitialTrial": true,
+  "outfitMotionDifferencesAllowedByUser": true,
+  "mappingStatus": "art-selection proposal, not runtime binding",
+  "actions": [
+    {
+      "id": "01-diagonal-cut",
+      "title": "斜步切出",
+      "suggestedSpell": "错步穿行",
+      "runtimeSkillID": "sidestepStrike",
+      "suggestedPreviewRate": 3,
+      "motionPrompt": "A single diagonal cutting gesture. He briefly shifts his weight toward his left boot without leaving his spot, draws his right hand toward the left hip, then sweeps the right arm in one broad decisive diagonal from low left to high right. His shoulders turn slightly with the cut but his back remains toward camera. The left arm counterbalances low. A small heel pivot and knee bend give the cut weight. Return to the original upright relaxed stance. Do not lift both hands symmetrically.",
+      "prompt": "[Static shot] Animate exactly the supplied full-body rear-view 2D fantasy character illustration. Preserve the original hairstyle, body proportions, costume colors, embroidery, gold trim, jewels and fine painted line work. Keep an elegant hand-painted anime style, no glossy CGI or plastic 3D. The warm light-gray background, rear camera, framing and scale remain completely fixed. Show the entire character from hair to boots throughout. He faces away throughout; never reveal his face or spin. Perform only ONE complete coherent action sequence, then settle back to the initial relaxed arms-down pose before the clip ends. Natural shoulder-elbow-wrist coordination, no reversed joints or extra limbs. Coat tails, ribbons and hair follow with restrained delayed motion. No camera movement, cuts, zoom, scenery, text, light effects, particles or newly materialized objects. ACTION: A single diagonal cutting gesture. He briefly shifts his weight toward his left boot without leaving his spot, draws his right hand toward the left hip, then sweeps the right arm in one broad decisive diagonal from low left to high right. His shoulders turn slightly with the cut but his back remains toward camera. The left arm counterbalances low. A small heel pivot and knee bend give the cut weight. Return to the original upright relaxed stance. Do not lift both hands symmetrically. Preserve costume details through the entire motion. A short beginning and ending hold; keep the principal gesture clear rather than adding extra flourishes."
+    },
+    {
+      "id": "02-command-flick",
+      "title": "抬手敕令",
+      "suggestedSpell": "假面谕令",
+      "runtimeSkillID": "maskedWhisper",
+      "suggestedPreviewRate": 3,
+      "motionPrompt": "A restrained one-handed commanding flick. His left arm stays relaxed beside his hip for the entire gesture. He raises the right elbow slightly, brings the right hand beside the right shoulder, holds for a short beat, then flicks the wrist and two fingers decisively forward away from camera as if sending a silent command. Follow through at shoulder height, then lower the right arm to the original stance. The single right-hand flick is the clear focus, not a two-handed wave.",
+      "prompt": "[Static shot] Animate exactly the supplied full-body rear-view 2D fantasy character illustration. Preserve the original hairstyle, body proportions, costume colors, embroidery, gold trim, jewels and fine painted line work. Keep an elegant hand-painted anime style, no glossy CGI or plastic 3D. The warm light-gray background, rear camera, framing and scale remain completely fixed. Show the entire character from hair to boots throughout. He faces away throughout; never reveal his face or spin. Perform only ONE complete coherent action sequence, then settle back to the initial relaxed arms-down pose before the clip ends. Natural shoulder-elbow-wrist coordination, no reversed joints or extra limbs. Coat tails, ribbons and hair follow with restrained delayed motion. No camera movement, cuts, zoom, scenery, text, light effects, particles or newly materialized objects. ACTION: A restrained one-handed commanding flick. His left arm stays relaxed beside his hip for the entire gesture. He raises the right elbow slightly, brings the right hand beside the right shoulder, holds for a short beat, then flicks the wrist and two fingers decisively forward away from camera as if sending a silent command. Follow through at shoulder height, then lower the right arm to the original stance. The single right-hand flick is the clear focus, not a two-handed wave. Preserve costume details through the entire motion. A short beginning and ending hold; keep the principal gesture clear rather than adding extra flourishes."
+    },
+    {
+      "id": "03-gathering-gesture",
+      "title": "扬袖聚势",
+      "suggestedSpell": "身份错置",
+      "runtimeSkillID": "identityDisplacement",
+      "suggestedPreviewRate": 3,
+      "motionPrompt": "Selected from the first three trial clips that the user approved. Two-arm rising/supporting gestures vary by outfit.",
+      "selectionOrigin": "User-approved initial trial; reused without changing source video bytes."
+    },
+    {
+      "id": "04-seal-press",
+      "title": "落掌盖印",
+      "suggestedSpell": "伪证烙印",
+      "runtimeSkillID": "fabricatedEvidence",
+      "suggestedPreviewRate": 3,
+      "motionPrompt": "One forceful downward stamping gesture. His right arm rises well above the right shoulder with elbow naturally bent, while the left hand remains near the waist. He makes one decisive downward palm press toward the space in front of his waist, bending both knees slightly at the impact and dropping the right shoulder. Briefly hold the low pressed pose, then straighten and return the right arm to his side. Strong high-to-low motion, not horizontal waving. No props are visible.",
+      "prompt": "[Static shot] Animate exactly the supplied full-body rear-view 2D fantasy character illustration. Preserve the original hairstyle, body proportions, costume colors, embroidery, gold trim, jewels and fine painted line work. Keep an elegant hand-painted anime style, no glossy CGI or plastic 3D. The warm light-gray background, rear camera, framing and scale remain completely fixed. Show the entire character from hair to boots throughout. He faces away throughout; never reveal his face or spin. Perform only ONE complete coherent action sequence, then settle back to the initial relaxed arms-down pose before the clip ends. Natural shoulder-elbow-wrist coordination, no reversed joints or extra limbs. Coat tails, ribbons and hair follow with restrained delayed motion. No camera movement, cuts, zoom, scenery, text, light effects, particles or newly materialized objects. ACTION: One forceful downward stamping gesture. His right arm rises well above the right shoulder with elbow naturally bent, while the left hand remains near the waist. He makes one decisive downward palm press toward the space in front of his waist, bending both knees slightly at the impact and dropping the right shoulder. Briefly hold the low pressed pose, then straighten and return the right arm to his side. Strong high-to-low motion, not horizontal waving. No props are visible. Preserve costume details through the entire motion. A short beginning and ending hold; keep the principal gesture clear rather than adding extra flourishes."
+    },
+    {
+      "id": "05-twin-thrust",
+      "title": "双手连发",
+      "suggestedSpell": "双影追猎",
+      "runtimeSkillID": "mirrorPursuit",
+      "suggestedPreviewRate": 3,
+      "motionPrompt": "Two distinct alternating forward spell thrusts in one sequence. First the right hand draws back beside the waist and thrusts forward away from camera at chest level with a small right shoulder rotation. It retracts while the left hand thrusts forward more strongly a short beat later. The two separate right-then-left releases must be clearly visible, with coordinated elbows and a slight torso recoil after each. Both feet stay planted. Lower both arms and return to the starting stance. Do not raise both arms together.",
+      "prompt": "[Static shot] Animate exactly the supplied full-body rear-view 2D fantasy character illustration. Preserve the original hairstyle, body proportions, costume colors, embroidery, gold trim, jewels and fine painted line work. Keep an elegant hand-painted anime style, no glossy CGI or plastic 3D. The warm light-gray background, rear camera, framing and scale remain completely fixed. Show the entire character from hair to boots throughout. He faces away throughout; never reveal his face or spin. Perform only ONE complete coherent action sequence, then settle back to the initial relaxed arms-down pose before the clip ends. Natural shoulder-elbow-wrist coordination, no reversed joints or extra limbs. Coat tails, ribbons and hair follow with restrained delayed motion. No camera movement, cuts, zoom, scenery, text, light effects, particles or newly materialized objects. ACTION: Two distinct alternating forward spell thrusts in one sequence. First the right hand draws back beside the waist and thrusts forward away from camera at chest level with a small right shoulder rotation. It retracts while the left hand thrusts forward more strongly a short beat later. The two separate right-then-left releases must be clearly visible, with coordinated elbows and a slight torso recoil after each. Both feet stay planted. Lower both arms and return to the starting stance. Do not raise both arms together. Preserve costume details through the entire motion. A short beginning and ending hold; keep the principal gesture clear rather than adding extra flourishes."
+    }
+  ],
+  "scope": "Five selected clips per outfit, fifteen total, including the three user-approved initial trial clips. Rejected takes are archived separately."
+}

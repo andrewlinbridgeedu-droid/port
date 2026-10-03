@@ -1,0 +1,5 @@
+file '01-diagonal-cut/comparison-3x.mp4'
+file '02-command-flick/comparison-3x.mp4'
+file '03-overarm-throw/comparison-3x.mp4'
+file '04-seal-press/comparison-3x.mp4'
+file '05-sidearm-cast/comparison-3x.mp4'
