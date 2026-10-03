@@ -78,6 +78,13 @@ public sealed class FoolEffekseerSkillVFX : MonoBehaviour
         tktkDarkRift = Resources.Load<EffekseerEffectAsset>(TktkDarkRiftResource);
     }
 
+    /// The two hero-shaped hunting shadows of 双影追猎 alone, for the travelling spell form.
+    public IEnumerator PlayHuntingShadows(System.Func<Vector3> caster, System.Func<Vector3> target, float contact)
+    {
+        if (!heroArcana) yield break;
+        yield return heroArcana.Play("fool_skill_06", HeroActor, caster, target, null, true, contact);
+    }
+
     public IEnumerator Play(string skillID, System.Func<Vector3> caster, System.Func<Vector3> target, System.Action onContact = null, System.Func<Vector3> secondary = null)
     {
         // No card VFX may survive into target selection or the next combat action.

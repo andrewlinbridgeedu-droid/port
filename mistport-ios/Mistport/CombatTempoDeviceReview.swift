@@ -162,6 +162,10 @@ struct CombatTempoDeviceReviewRoot: View {
                     }
                     guard !Task.isCancelled else { return }
                     logFootprint("scene-ready")
+                    // Review launches with -MistportCityMute YES stay silent in Unity too.
+                    if UserDefaults.standard.bool(forKey: "MistportCityMute") {
+                        UnityBattleRuntime.shared.send(action: "audio-volume:0")
+                    }
                     let mission = sample == "q4" ? 4 : sample == "hero" ? 13 : 7
                     for n in 1...mission { _ = campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: n) }
                     campaign.grantHoundTutorialCard()

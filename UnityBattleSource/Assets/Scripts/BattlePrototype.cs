@@ -2448,11 +2448,20 @@ public sealed class BattlePrototype : MonoBehaviour
         var targets = new List<EnemyHandle>();
         if (IsActiveEnemyHandle(targetHandle)) targets.Add(targetHandle);
         BeginPlayerSpectacle(skillID, targets, null, expectedContact);
-        // Cards with a travelling form are aimed from the hero at the target; the older
-        // stage-wide theatre (ghost volume, rising great tarot) would cover them.
-        if (SpellSpectacle20260926.HasForm(skillID)) return;
         System.Func<Vector3> caster = () => player ? player.transform.position + Vector3.up * 1.15f : Vector3.zero;
         System.Func<Vector3> target = () => PlayerSkillTargetPoint(targetHandle);
+        // Cards with a travelling form are aimed from the hero at the target; the older
+        // stage-wide theatre (ghost volume, rising great tarot) would cover them.
+        // 双影 keeps only its two hero-shaped shadows, which run the corridor with the form.
+        if (SpellSpectacle20260926.HasForm(skillID))
+        {
+            if (skillID == "fool_skill_06" && foolSkillVFX != null)
+            {
+                foolSkillVFX.HeroActor = player.transform;
+                StartCoroutine(foolSkillVFX.PlayHuntingShadows(caster, target, expectedContact));
+            }
+            return;
+        }
         if (spellV1Bridge != null && spellV1Bridge.CanPlay(skillID))
         {
             StartCoroutine(spellV1Bridge.Play(skillID, caster, target, weapon: caster, impact: target, ground: target));
@@ -2484,7 +2493,38 @@ public sealed class BattlePrototype : MonoBehaviour
             points.Add(() => { if (t) last = t.position + Vector3.up * 1.05f; return last; });
             seeds.Add(SpellSpectacle20260926.StableHash(t.name));
         }
-        SpellSpectacle20260926.BeginPlayer(this, skillID, () => player ? player.transform.position + Vector3.up * 1.15f : Vector3.zero, points, seeds, expectedContact);
+        if (SpellSpectacle20260926.Diagnostics && player && SpellSpectacle20260926.HasForm(skillID))
+        {
+            // Where the hero is drawn versus the root the spells leave from (Simulator review).
+            var drawn = new Bounds(); bool any = false;
+            foreach (var skin in player.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+            {
+                if (!skin.enabled) continue;
+                if (!any) { drawn = skin.bounds; any = true; } else drawn.Encapsulate(skin.bounds);
+            }
+            Debug.Log($"SPELLFORM hero {skillID} root={player.transform.position:F2} drawn={(any ? drawn.center.ToString("F2") : "none")} size={(any ? drawn.size.ToString("F2") : "-")} target={(points.Count > 0 ? points[0]().ToString("F2") : "none")}");
+        }
+        // Travelling forms leave from the chest of the hero as drawn: the tempo hero is
+        // about 1 m tall, so root + 1.15 m sits above its head, and with the low camera
+        // far behind, anything that high projects onto the enemy instead of the hero.
+        System.Func<Vector3> caster = SpellSpectacle20260926.HasForm(skillID)
+            ? HeroChestPoint
+            : () => player ? player.transform.position + Vector3.up * 1.15f : Vector3.zero;
+        SpellSpectacle20260926.BeginPlayer(this, skillID, caster, points, seeds, expectedContact);
+    }
+
+    /// Chest of the hero as currently drawn (skinned body bounds), or root + 1.15 m.
+    Vector3 HeroChestPoint()
+    {
+        if (!player) return Vector3.zero;
+        var drawn = new Bounds(); bool any = false;
+        foreach (var skin in player.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+        {
+            if (!skin.enabled) continue;
+            if (!any) { drawn = skin.bounds; any = true; } else drawn.Encapsulate(skin.bounds);
+        }
+        if (!any || drawn.size.y < .2f) return player.transform.position + Vector3.up * 1.15f;
+        return new Vector3(drawn.center.x, drawn.min.y + drawn.size.y * .62f, drawn.center.z);
     }
 
     static bool IsActiveEnemyHandle(EnemyHandle handle) =>

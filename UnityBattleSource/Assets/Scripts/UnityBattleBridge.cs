@@ -456,7 +456,12 @@ public sealed class UnityBattleBridge : MonoBehaviour
         if (action.StartsWith("player-impact:", StringComparison.Ordinal)) { battle.PresentPlayerImpact(action.Substring("player-impact:".Length)); return; }
         if (action.StartsWith("audio-volume:", StringComparison.Ordinal)) {
             if (float.TryParse(action.Substring("audio-volume:".Length), NumberStyles.Float, CultureInfo.InvariantCulture, out var volume))
+            {
                 SpellAudioDirector20260924.SetVolume(volume);
+                // Zero means silent everywhere: enemy, hit and Effekseer sounds do not
+                // go through the spell director (a muted review still played them).
+                AudioListener.volume = volume <= 0f ? 0f : 1f;
+            }
             return;
         }
         if(action.StartsWith("church-status:")){ChurchStatusPresentation20260917.Get(battle).Apply(action.Substring("church-status:".Length));return;}

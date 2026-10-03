@@ -32,19 +32,24 @@ public sealed class HeroArcanaTheatreVFX : MonoBehaviour
     static readonly float[] RewriteTurn={-.72f,.52f,-.21f,1.07f,-1.32f,.18f,.81f};
     static readonly float[] RewriteDelay={0,.14f,.055f,.25f,.09f,.21f,.31f};
     Vector3 right, up, forward;
-    public IEnumerator Play(string id, Transform actor, Func<Vector3> caster, Func<Vector3> target, Action onContact)
+    bool ghostsOnly;
+    /// <param name="ghostsOnly">Only the two hero-shaped hunting shadows (2026-10-03 spell
+    /// forms): no screen-wide volume and no smoke trail, so the shadows read as aimed bodies.</param>
+    /// <param name="contactOverride">Contact time reported by the caller, when known.</param>
+    public IEnumerator Play(string id, Transform actor, Func<Vector3> caster, Func<Vector3> target, Action onContact, bool ghostsOnly = false, float contactOverride = -1f)
     {
         Clear();
         int run = generation;
         int skill = Parse(id);
         if (skill < 6 || skill > 9 || caster == null || target == null) yield break;
-        float contactTime = skill == 7 ? .885f : skill == 8 ? .63f : .705f;
+        this.ghostsOnly = ghostsOnly && skill == 6;
+        float contactTime = contactOverride > 0 ? contactOverride : skill == 7 ? .885f : skill == 8 ? .63f : .705f;
         Shader sprite = Shader.Find("Sprites/Default");
         Shader mistShader = Resources.Load<Shader>("EnemySignature/SignatureSprite");
         Texture2D atlas = Resources.Load<Texture2D>("Effects/Fool/FoolTarotVFXAtlas");
         if (!sprite || !mistShader || !atlas) { Debug.LogError("HeroArcanaTheatreVFX: missing tarot atlas or shaders."); yield return new WaitForSeconds(contactTime); if (run == generation) onContact?.Invoke(); yield break; }
         root = new GameObject("Hero arcana theatre " + skill);
-        volume=new HeroSpellVolume(root.transform,skill,contactTime);
+        if (!this.ghostsOnly) volume=new HeroSpellVolume(root.transform,skill,contactTime);
         pages = new Batch(root.transform, sprite, atlas, false, "Tarot original art");
         fabric = new Batch(root.transform, sprite, Texture2D.whiteTexture, false, "Folded stage fabric");
         smoke = new Batch(root.transform, mistShader, Resources.Load<Texture2D>("Effects/HellHound/Texture/Smoke"), true, "Organic aftermath");
@@ -69,7 +74,7 @@ public sealed class HeroArcanaTheatreVFX : MonoBehaviour
                 if(skill==6)echoPoseAge=time;
                 float visualTime = skill == 9 ? time : HeroVisualBeat.Sample(time, contactTime, skill == 7 ? .14f : .10f);
                 Draw(skill, visualTime, contactTime, caster(), target());
-                volume.Sample(visualTime,caster(),target());
+                volume?.Sample(visualTime,caster(),target());
                 if (!contacted && time >= contactTime)
                 {
                     contacted = true; onContact?.Invoke();
@@ -228,7 +233,7 @@ public sealed class HeroArcanaTheatreVFX : MonoBehaviour
                         + right*(i==0?-.24f:.24f)*Mathf.Clamp01((time-contact)*4);
                     ghosts[i].rotation = Quaternion.AngleAxis(Mathf.Sin(p * Mathf.PI) * (i == 0 ? -8 : 11), Vector3.up);
                 }
-                for (int j = 0; j < 12; j++)
+                for (int j = 0; j < (ghostsOnly ? 0 : 12); j++)
                 {
                     float u = Mathf.Clamp01(p - j * .025f);
                     Vector3 c = Vector3.Lerp(s, t, u) - up * .43f

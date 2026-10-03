@@ -19,6 +19,13 @@ final class HomeMusicController {
 
     func update(for phase: GamePhase) {
         lastPhase = phase
+        #if DEBUG
+        // Review launches (-MistportCityMute YES) stay silent: no title, hub or battle music.
+        if UserDefaults.standard.bool(forKey: "MistportCityMute") {
+            stop()
+            return
+        }
+        #endif
         guard isEnabled else {
             stop()
             return
