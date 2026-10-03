@@ -60,6 +60,45 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
         body.initialized = true; body.Cancel(); return body;
     }
 
+    // Spell echoes copy the visible illustrated frame, not the hidden old rig.
+    // Retain the sampled outfit bank so a wardrobe switch cannot unload a frozen pose.
+    public VisualEcho CreateEcho(Transform parent, Vector3 origin, Color tint) => new VisualEcho(this,parent,origin,tint);
+    public sealed class VisualEcho : IDisposable {
+        readonly AIHeroAnimatedBody source;
+        readonly Mesh mesh;
+        readonly Color tint;
+        string heldOutfit;
+        public readonly GameObject Root;
+        public readonly Material Material;
+        public VisualEcho(AIHeroAnimatedBody source,Transform parent,Vector3 origin,Color tint) {
+            this.source=source;this.tint=tint;
+            Root=new GameObject("Illustrated costume echo");Root.transform.SetParent(parent,false);
+            mesh=Instantiate(source.mesh);mesh.name="Illustrated posed silhouette";
+            Material=new Material(source.material);
+            Root.AddComponent<MeshFilter>().sharedMesh=mesh;
+            var renderer=Root.AddComponent<MeshRenderer>();renderer.sharedMaterial=Material;
+            renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;renderer.receiveShadows=false;
+            Capture(origin);
+        }
+        public bool Capture(Vector3 origin) {
+            if(!source || !source.material || !Root) return false;
+            if(heldOutfit!=source.Outfit) {
+                Acquire(source.Outfit);ReleaseBank(heldOutfit);heldOutfit=source.Outfit;
+            }
+            Material.CopyPropertiesFromMaterial(source.material);
+            Material.SetColor("_EchoTint",tint);Material.SetFloat("_EchoMix",.48f);
+            var vertices=source.mesh.vertices;
+            for(int i=0;i<vertices.Length;i++) vertices[i]=source.transform.TransformPoint(vertices[i])-origin;
+            mesh.vertices=vertices;mesh.RecalculateBounds();return true;
+        }
+        public void SetOpacity(float alpha) { if(Material) Material.SetColor("_Color",new Color(1,1,1,Mathf.Clamp01(alpha))); }
+        public void Dispose() {
+            if(Root) {Root.SetActive(false);Destroy(Root);}
+            if(mesh)Destroy(mesh);if(Material)Destroy(Material);
+            ReleaseBank(heldOutfit);heldOutfit=null;
+        }
+    }
+
     public bool Apply(string outfit) {
         if (outfit != "mistport-night" && outfit != "starlight-magician" && outfit != "midnight-carnival") return false;
         if (Outfit == outfit) return true;

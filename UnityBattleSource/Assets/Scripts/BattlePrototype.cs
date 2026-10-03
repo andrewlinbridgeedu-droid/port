@@ -1103,8 +1103,8 @@ public sealed class BattlePrototype : MonoBehaviour
     public void SetCombatSpeed(string value) { Time.timeScale = value == "2" ? 2 : 1; }
     public bool CanTempoEnemyAct(EnemyHandle value) => CanPresentEnemy(value);
     public void SetTempoSample(string value) => CombatTempoPresentation.Get(this).Configure(value);
-    public void PresentPlayerBasic() { if (!(GetComponent<CombatTempoPresentation>()?.PlayerAction("basic", true) ?? false)) StartPresentation(PlayerAction.Basic); }
-    public void PresentPlayerBasic(string targetID) { if(NativeCombatEnabled && !(GetComponent<CombatTempoPresentation>()?.PlayerAction("basic:" + targetID, true) ?? false))StartCoroutine(PresentPlayerAction(PlayerAction.Basic,targetID)); }
+    public void PresentPlayerBasic() => StartPresentation(PlayerAction.Basic);
+    public void PresentPlayerBasic(string targetID) { if(NativeCombatEnabled) StartCoroutine(PresentPlayerAction(PlayerAction.Basic,targetID)); }
     public void PresentPlayerSkill() => StartPresentation(PlayerAction.Skill);
     string pendingSidestepSecondary;
     string[] pendingSkillTargets;
@@ -1112,7 +1112,6 @@ public sealed class BattlePrototype : MonoBehaviour
     public void SetSidestepSecondary(string id) { pendingSidestepSecondary = id; }
     public void PresentPlayerSkill(string skillID)
     {
-        if (GetComponent<CombatTempoPresentation>()?.PlayerAction(skillID, false) ?? false) return;
         if (!NativeCombatEnabled || enemy == null || player == null) return;
         var separator = skillID.IndexOf(':');
         var resolvedSkillID = separator >= 0
@@ -2368,10 +2367,13 @@ public sealed class BattlePrototype : MonoBehaviour
                 SetStatus("愚者 · 秘仪飞牌");
                 SpellAudioDirector20260924.BeginPlayer(this, "basic");
                 BeginPlayerSpectacle("basic", basicHandle != null ? new List<EnemyHandle> { basicHandle } : null, basicTarget);
-                PrepareCompactPlayerBasic();
+                var tempo = GetComponent<CombatTempoPresentation>();
+                if (tempo && tempo.Enabled) tempo.HeroCast("basic");
+                else PrepareCompactPlayerBasic();
                 foolBasicTarotVFX.Play(Camera.main, player.transform, basicTarget);
                 basicTarget.GetComponentInChildren<Mindstone.VFXV1.GuardianWard>()?.ImpactAfter(.58f);
                 yield return new WaitForSeconds(0.58f);
+                if (tempo && tempo.Enabled) UnityBattleBridge.ReportPresentationComplete("basic");
                 break;
             case PlayerAction.Skill:
                 SetStatus("愚者 · 错步穿行");

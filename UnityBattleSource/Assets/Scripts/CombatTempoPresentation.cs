@@ -11,7 +11,7 @@ public sealed class CombatTempoPresentation : MonoBehaviour
     public bool Enabled { get; private set; }
     public bool HoundBodyOnly { get; private set; }
     BattlePrototype battle;
-    int generation, basicVariation, maskVariation, twinVariation, finaleVariation;
+    int generation, maskVariation;
     string outfit = "mistport-night";
     public void SetOutfit(string id) {
         if (id != "mistport-night" && id != "starlight-magician" && id != "midnight-carnival") return;
@@ -285,40 +285,12 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         CombatTempoVFX.HeavyContact(battle.PlayerFireBreathImpactAnchor, e.body.Kind);
         UnityBattleBridge.ReportCombatContact("enemy:" + id);
     }
-    public bool PlayerAction(string payload, bool basic)
-    {
-        if (!Enabled || !battle.NativeCombatEnabled || hero == null) return false;
-        var parts = payload.Split(':'); var skill = basic ? "basic" : parts[0];
-        if (!basic && skill != "fool_skill_02" && skill != "fool_skill_06" && skill != "fool_skill_07") return false;
-        Transform target = parts.Length > 1 && enemies.TryGetValue(parts[1], out var e) ? e.handle.EffectAnchor : FirstEnemy();
-        if (!target) return true;
-        float contact = basic ? .58f : skill == "fool_skill_02" ? .38f : skill == "fool_skill_06" ? .705f : .885f;
-        string clip = basic ? new[] { "BasicSlash", "Thrust", "Card" }[basicVariation++ % 3]
-            : skill == "fool_skill_02" ? new[] { "CastMaskFlick", "CastMaskTurn" }[maskVariation++ % 2]
-            : skill == "fool_skill_06" ? new[] { "CastTwinSweep", "CastTwinCross" }[twinVariation++ % 2]
-            : new[] { "CastFinaleLift", "CastFinaleThrow" }[finaleVariation++ % 2];
-        PlayHero(skill,clip,contact);
-        SpellAudioDirector20260924.BeginPlayer(battle, skill);
-        StartCoroutine(PlayerStrike(skill, target, contact, generation)); return true;
-    }
-    IEnumerator PlayerStrike(string skill, Transform target, float contact, int token)
-    {
-        var start = battle.TempoSamplePlayer.position + Vector3.up * 1.1f;
-        CombatTempoVFX.PlayerSpell(start, target.position, skill, contact, hero?.original);
-        for (float t = 0; t < contact; t += Time.deltaTime) { if (token != generation || !battle.NativeCombatEnabled) yield break; yield return null; }
-        if (token != generation || !battle.NativeCombatEnabled) yield break;
-        UnityBattleBridge.ReportCombatContact("player");
-        UnityBattleBridge.ReportPresentationComplete(skill);
-    }
     public void MaskCast() {
         if (!Enabled || !battle.NativeCombatEnabled || hero == null || !hero.Valid) return;
         if (hero.ai ? !hero.ai.IsActing : !hero.body.IsActing) PlayHero("fool_skill_02",new[] { "CastMaskFlick", "CastMaskTurn" }[maskVariation++ % 2],.38f);
-        var target = FirstEnemy(); if (!target) return;
-        CombatTempoVFX.PlayerSpell(battle.TempoSamplePlayer.position + Vector3.up * 1.1f,
-            target.position + Vector3.up * 1.1f, "fool_skill_02", .38f, hero.replacement);
         // The native manual defence already settled. No player contact receipt.
     }
-    public void HeroCast(string skill) { if (Enabled && hero != null) PlayHero(skill,"CastCardFan",FoolSkillChoreography.ExpectedContact(skill)); }
+    public void HeroCast(string skill) { if (Enabled && hero != null) PlayHero(skill,skill == "basic" ? "Card" : "CastCardFan",skill == "basic" ? .58f : FoolSkillChoreography.ExpectedContact(skill)); }
     public bool EnemyHit(EnemyHandle h, string skill) {
         if (!Enabled || !enemies.TryGetValue(h.BattleEnemyId, out var e)) return false;
         e.body.ConfirmedHit(skill == "fool_skill_07" || skill == "fool_skill_10"); return true;

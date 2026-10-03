@@ -76,12 +76,12 @@ public sealed class AIHeroCapture : MonoBehaviour {
         float age=body.ActionAge;string active=body.CurrentAction;
         presentation.SetOutfit("starlight-magician");
         if(body.ActionAge!=age || body.CurrentAction!=active) {Fail("Wardrobe restarted action");yield break;}
-        battle.SetTempoSample("off");yield return new WaitForSeconds(1.2f);
+        battle.SetNativeCombatEnabled(false);battle.SetTempoSample("off");yield return new WaitForSeconds(1.2f);
         if(contacts!=0 || battle.TempoSamplePlayer.GetComponentInChildren<AIHeroAnimatedBody>()) {Fail("Exit left delayed callback or AI plane");yield break;}
         report.Add("Mid-cast outfit switch preserves clock; exiting before impact cancels receipt and removes plane.");
         // Unity destroys the previous actor at end of frame. Its texture bank
         // must not unload the textures acquired by the immediately following actor.
-        battle.SetTempoSample("chapter01_q04_encounter");
+        battle.SetNativeCombatEnabled(true);battle.SetTempoSample("chapter01_q04_encounter");
         battle.SetTempoSample("church_bounty_b01");yield return null;
         var switched=battle.TempoSamplePlayer.GetComponentInChildren<AIHeroAnimatedBody>();
         if(!switched || !switched.Surface.sharedMaterial.GetTexture("_MainTex")) {Fail("Same-frame sample transition unloaded active atlas");yield break;}
