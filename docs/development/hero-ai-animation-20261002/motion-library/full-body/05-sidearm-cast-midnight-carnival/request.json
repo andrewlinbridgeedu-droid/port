@@ -1,0 +1,14 @@
+{
+  "model": "MiniMax-Hailuo-2.3",
+  "duration": 6,
+  "resolution": "1080P",
+  "prompt_optimizer": false,
+  "prompt": "[Static shot] Animate the supplied detailed hand-painted 2D fantasy character. Preserve his hairstyle, slender proportions, original costume colors, gold embroidery, jewels, fabric folds and fine ink lines. No glossy CGI, no plastic 3D look. A locked full-body camera sees him from behind, with the broad empty margins in this image. He may turn naturally to a rear three-quarter angle during the gesture, but never turns all the way toward the viewer. Keep the entire moving body, fingers, coat tails and boots inside the frame. The camera and plain warm-gray background never move. One coherent athletic action with a short wind-up, a very decisive release and natural follow-through, then return to a balanced relaxed standing pose. Legs, pelvis, ribcage, shoulders and arms move together as one anatomical chain. The feet must visibly step and transfer weight; this must not be an arm-only wave. Boots make clear contact with the floor, no floating. Hair, coat and ribbons lag behind the body then settle. No camera movement, cuts, zoom, text, scenery, particles or glow.  ACTION: A sweeping SIDEARM CARD THROW powered by a lateral step and waist rotation. He first lowers his center of gravity, bending both knees and gathering his right hand beside his right hip while holding one small dark tarot card. He makes a clear step to the LEFT, plants the left boot, rotates his pelvis and chest toward the target ahead, and whips the right forearm forward at waist height to release the card. The right elbow stays softly bent, not hyperextended. The left arm opens at low height for balance; the right heel pivots naturally. The sweeping follow-through turns the upper body to a rear three-quarter angle and fans the coat tails. He then draws the rear foot inward, straightens and settles into a relaxed stable stance. It is a quick athletic casting step, not a dance, not a spin and not a standing symmetrical arm wave. Keep both hands in frame.",
+  "input": "input.png",
+  "inputSHA256": "f5a7a148fad4d1394f1d6bc5f7a91fb525ddfd2333a1e7e17cd00eab92a33258",
+  "source": "docs/development/hero-refinement-20261001/v4/reference/midnight-carnival-back-4k.png",
+  "sourceSHA256": "ae0ddfaf91402604dce188cd3ebf3441023727419119bb6276f0a49cec0cf512",
+  "inputPreparation": "Original character pixels unchanged; wider and taller gray canvas for complete step/throw framing.",
+  "suggestedSpell": "双影追猎",
+  "runtimeSkillID": "mirrorPursuit"
+}

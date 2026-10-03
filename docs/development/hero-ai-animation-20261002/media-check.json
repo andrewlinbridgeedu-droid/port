@@ -1,0 +1,29 @@
+[
+  {
+    "file": "mistport-night-cast.mp4",
+    "width": 1080,
+    "height": 1920,
+    "fps": 24.0,
+    "durationSeconds": 5.88,
+    "decodedFrames": 141,
+    "fullDecodePassed": true
+  },
+  {
+    "file": "starlight-magician-cast.mp4",
+    "width": 1080,
+    "height": 1920,
+    "fps": 24.0,
+    "durationSeconds": 5.88,
+    "decodedFrames": 141,
+    "fullDecodePassed": true
+  },
+  {
+    "file": "midnight-carnival-cast.mp4",
+    "width": 1080,
+    "height": 1920,
+    "fps": 24.0,
+    "durationSeconds": 5.88,
+    "decodedFrames": 141,
+    "fullDecodePassed": true
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "model": "MiniMax-Hailuo-2.3",
+  "prompt": "[Static shot] Animate this exact full-body rear-view hand-painted fantasy game character. Preserve his identity, proportions, hairstyle, every embroidered costume panel, gold trim, jewels and colors from the supplied illustration. High-quality detailed 2D anime illustration animation, crisp ink lines and painted fabric shading, never glossy CGI or plastic 3D. Locked rear camera, constant framing and scale, head to boots fully in frame. Flat warm light-gray background remains completely still. He stays facing away throughout, feet planted. One clear quick spell-casting gesture: brief relaxed ready stance; right upper arm lifts naturally from the shoulder, elbow bends normally, right hand rises beside his shoulder, left hand makes a small supporting sweep near his waist; then a brisk forward casting flick away from camera, fingers open naturally; both arms lower and return to the exact starting stance before the end. Shoulder, elbow and wrist move as a coordinated anatomical chain, no backward joints, axial arm reversal, rubber bending, extra fingers or extra limbs. Moderate expressive range, fluid anticipation, rapid release, gentle follow-through. Coat tails, ribbons and hair follow with light delayed secondary motion and settle. No body spin, no turning to camera, no camera motion, no cuts, no zoom, no new objects, no text, no particles, no glow or magic effects hiding the hands. Keep the original fine embroidery stable across frames.",
+  "prompt_optimizer": false,
+  "duration": 6,
+  "resolution": "1080P",
+  "source": "docs/development/hero-refinement-20261001/v4/reference/mistport-night-back-4k.png",
+  "sourceSHA256": "e31174c437519e18e659ed6764ea7168fad1bdea6bb1a19ab26a828d26ffcb21",
+  "input": "../../mistport-night-input.png",
+  "inputSHA256": "09ea5c402646330ccf96422c0821a37e55356ed34d9d08944c18d09930527515",
+  "endpoint": "https://api.minimax.io",
+  "submittedAt": "2026-10-02T23:17:34Z",
+  "inputPreparation": "Original RGBA composited onto solid warm-gray background; character pixels/scale unchanged.",
+  "selectionOrigin": "Approved initial trial"
+}

@@ -16,6 +16,7 @@ public sealed class CombatTempoPresentation : MonoBehaviour
     public void SetOutfit(string id) {
         if (id != "mistport-night" && id != "starlight-magician" && id != "midnight-carnival") return;
         outfit = id;
+        if (hero != null && hero.ai) hero.ai.Apply(id);
         if (hero != null && hero.replacement) hero.replacement.GetComponent<RefinedHeroAppearance>()?.Apply(id);
     }
     string encounter;
@@ -26,6 +27,8 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         public EnemyHandle handle;
         public Transform previousModel, replacement;
         public CombatTempoAnimatedBody body;
+        public AIHeroAnimatedBody ai;
+        public bool Valid => body || ai;
         public Animator oldAnimator;
         public bool animatorEnabled;
         public EarlyEnemyIdlePresence oldIdle;
@@ -53,19 +56,19 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         if (!(Enabled || HoundBodyOnly)) return;
         InstallBodies();
         // Legacy reset paths can restore cached Renderer flags mid-fight.
-        // The refined Blender hero is the visible skin; keep originals for exit/retry.
+        // The sample replacement is visible; keep originals for exit/retry.
         foreach (var e in enemies.Values) HideOriginal(e);
         HideOriginal(hero);
     }
     static void HideOriginal(Entry e) {
-        if (e == null || !e.body) return;
+        if (e == null || !e.Valid) return;
         foreach (var item in e.renderers) if (item.renderer) item.renderer.enabled = false;
         if (e.oldAnimator) e.oldAnimator.enabled = false;
     }
     void InstallBodies()
     {
         if (!battle || !(Enabled || HoundBodyOnly)) return;
-        if (hero != null && !hero.body) { Restore(hero); hero = null; }
+        if (hero != null && !hero.Valid) { Restore(hero); hero = null; }
         foreach (var key in new List<string>(enemies.Keys)) {
             var e = enemies[key]; if (!e.body || !e.handle || !e.handle.gameObject.activeInHierarchy || e.handle.Model != e.replacement) { Restore(e); enemies.Remove(key); }
         }
@@ -130,8 +133,15 @@ public sealed class CombatTempoPresentation : MonoBehaviour
     Entry Replace(Transform original, string kind, Transform target, EnemyHandle handle)
     {
         bool refinedHero = kind == "Hero";
-        string heroAsset = "CombatTempo/RefinedHeroV3/HeroMeshyV3";
+        bool aiHero = refinedHero;
 #if UNITY_EDITOR || UNITY_STANDALONE
+        var flags = Environment.GetCommandLineArgs();
+        if (Array.IndexOf(flags,"--hero-v1") >= 0 || Array.IndexOf(flags,"--hero-v2") >= 0 || Array.IndexOf(flags,"--hero-v3") >= 0 || Array.IndexOf(flags,"--hero-v4") >= 0) aiHero = false;
+#endif
+        if (aiHero) return ReplaceAIHero(original);
+        string heroAsset = "CombatTempo/RefinedHeroV4/HeroSovereignV4";
+#if UNITY_EDITOR || UNITY_STANDALONE
+        if (Array.IndexOf(Environment.GetCommandLineArgs(), "--hero-v3") >= 0) heroAsset = "CombatTempo/RefinedHeroV3/HeroMeshyV3";
         if (Array.IndexOf(Environment.GetCommandLineArgs(), "--hero-v2") >= 0) heroAsset = "CombatTempo/RefinedHeroV2/HeroMeshyV2";
         if (Array.IndexOf(Environment.GetCommandLineArgs(), "--hero-v1") >= 0) heroAsset = "CombatTempo/RefinedHero/HeroRefined";
 #endif
@@ -171,6 +181,27 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         if (handle) handle.SetTempoPresentationModel(model.transform);
         return e;
     }
+    Entry ReplaceAIHero(Transform original) {
+        if (!original || !CurrentPoseBounds(original,out var bounds)) return null;
+        // Collect originals before installing the plane; never hide our own renderer.
+        var entry = new Entry { original=original };
+        foreach (var r in original.GetComponentsInChildren<Renderer>(false)) {
+            if (!(r is ParticleSystemRenderer) && !(r is LineRenderer)) entry.renderers.Add((r,r.enabled));
+        }
+        var ai = AIHeroAnimatedBody.Install(original,bounds,outfit);
+        if (!ai) return null;
+        entry.ai=ai;entry.replacement=ai.transform;
+        entry.oldAnimator=original.GetComponentInChildren<Animator>(true);
+        if(entry.oldAnimator) {entry.animatorEnabled=entry.oldAnimator.enabled;entry.oldAnimator.enabled=false;}
+        entry.oldHeroIdle=original.GetComponentInChildren<HeroLivingIdle20260916>();
+        if(entry.oldHeroIdle) {entry.heroIdleEnabled=entry.oldHeroIdle.enabled;entry.oldHeroIdle.enabled=false;}
+        HideOriginal(entry); return entry;
+    }
+    void PlayHero(string skill, string legacyClip, float contact) {
+        if (hero == null) return;
+        if (hero.ai) hero.ai.PlaySkill(skill,contact);
+        else if (hero.body) hero.body.Play(legacyClip,contact,false,0);
+    }
     static void CloneAccessories(List<(Renderer renderer, bool enabled)> source, Transform model, float bodyHeight)
     {
         var bones = model.GetComponentsInChildren<Transform>(true);
@@ -195,7 +226,10 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         if (!float.TryParse(parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var contact) || contact <= 0 || contact > 1) return;
         e.body.Play("Light", contact);
         var echo = battle.GetComponent<HeroManualMaskRound2>();
-        if (echo && echo.IsActive && hero != null && hero.body) hero.body.Play("Parry", contact);
+        if (echo && echo.IsActive && hero != null) {
+            if(hero.ai && !hero.ai.IsActing) hero.ai.PlaySkill("fool_skill_02",contact);
+            else if(hero.body) hero.body.Play("Parry",contact);
+        }
     }
     public void LightContact(string payload)
     {
@@ -204,7 +238,7 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         bool parried = parts[1] == "1";
         CombatTempoVFX.LightContact(battle.PlayerFireBreathImpactAnchor, e.body.Kind, parried);
         if (parried) { battle.GetComponent<HeroManualMaskRound2>()?.Parry(); }
-        else if (hero != null && hero.body) hero.body.ConfirmedHit(false);
+        else PlayerHit();
     }
     public void CancelActor(EnemyHandle h) {
         foreach (var e in enemies.Values) if (e.handle == h) {
@@ -263,7 +297,7 @@ public sealed class CombatTempoPresentation : MonoBehaviour
             : skill == "fool_skill_02" ? new[] { "CastMaskFlick", "CastMaskTurn" }[maskVariation++ % 2]
             : skill == "fool_skill_06" ? new[] { "CastTwinSweep", "CastTwinCross" }[twinVariation++ % 2]
             : new[] { "CastFinaleLift", "CastFinaleThrow" }[finaleVariation++ % 2];
-        hero.body.Play(clip, contact, false, 0);
+        PlayHero(skill,clip,contact);
         SpellAudioDirector20260924.BeginPlayer(battle, skill);
         StartCoroutine(PlayerStrike(skill, target, contact, generation)); return true;
     }
@@ -277,21 +311,22 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         UnityBattleBridge.ReportPresentationComplete(skill);
     }
     public void MaskCast() {
-        if (!Enabled || !battle.NativeCombatEnabled || hero == null || !hero.body) return;
-        if (!hero.body.IsActing) hero.body.Play(new[] { "CastMaskFlick", "CastMaskTurn" }[maskVariation++ % 2], .38f, false, 0);
+        if (!Enabled || !battle.NativeCombatEnabled || hero == null || !hero.Valid) return;
+        if (hero.ai ? !hero.ai.IsActing : !hero.body.IsActing) PlayHero("fool_skill_02",new[] { "CastMaskFlick", "CastMaskTurn" }[maskVariation++ % 2],.38f);
         var target = FirstEnemy(); if (!target) return;
         CombatTempoVFX.PlayerSpell(battle.TempoSamplePlayer.position + Vector3.up * 1.1f,
-            target.position + Vector3.up * 1.1f, "fool_skill_02", .38f, hero.body.transform);
+            target.position + Vector3.up * 1.1f, "fool_skill_02", .38f, hero.replacement);
         // The native manual defence already settled. No player contact receipt.
     }
-    public void HeroCast() { if (Enabled && hero != null) hero.body.Play("CastCardFan", .5f); }
+    public void HeroCast(string skill) { if (Enabled && hero != null) PlayHero(skill,"CastCardFan",FoolSkillChoreography.ExpectedContact(skill)); }
     public bool EnemyHit(EnemyHandle h, string skill) {
         if (!Enabled || !enemies.TryGetValue(h.BattleEnemyId, out var e)) return false;
         e.body.ConfirmedHit(skill == "fool_skill_07" || skill == "fool_skill_10"); return true;
     }
-    public void PlayerHit() { if (Enabled) hero?.body.ConfirmedHit(false); }
+    public void PlayerHit() { if (!Enabled || hero == null) return; if(hero.ai) hero.ai.ConfirmedHit(false); else if(hero.body) hero.body.ConfirmedHit(false); }
     static void Restore(Entry e) {
         if (e == null) return;
+        if (e.ai) { e.ai.Cancel(); e.ai.gameObject.SetActive(false); Destroy(e.ai.gameObject); }
         if (e.body) { e.body.Cancel(); e.body.gameObject.SetActive(false); Destroy(e.body.gameObject); }
         foreach (var item in e.renderers) if (item.renderer) item.renderer.enabled = item.enabled;
         if (e.oldAnimator) e.oldAnimator.enabled = e.animatorEnabled;
@@ -302,6 +337,7 @@ public sealed class CombatTempoPresentation : MonoBehaviour
     {
         generation++; StopAllCoroutines(); foreach (var e in enemies.Values) if (e.body) e.body.Cancel();
         if (hero != null && hero.body) hero.body.Cancel(); CombatTempoVFX.Clear();
+        if (hero != null && hero.ai) hero.ai.Cancel();
     }
     public void Clear() { Cancel(); foreach (var e in enemies.Values) Restore(e); enemies.Clear(); Restore(hero); hero = null; Enabled = false; HoundBodyOnly = false; encounter = null; }
     void OnDisable() => Clear();

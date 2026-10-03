@@ -1,0 +1,152 @@
+[
+  {
+    "outfit": "mistport-night",
+    "action": "01-diagonal-cut",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  },
+  {
+    "outfit": "mistport-night",
+    "action": "02-command-flick",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  },
+  {
+    "outfit": "mistport-night",
+    "action": "03-overarm-throw",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  },
+  {
+    "outfit": "mistport-night",
+    "action": "04-seal-press",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  },
+  {
+    "outfit": "mistport-night",
+    "action": "05-sidearm-cast",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  },
+  {
+    "outfit": "starlight-magician",
+    "action": "01-diagonal-cut",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  },
+  {
+    "outfit": "starlight-magician",
+    "action": "02-command-flick",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  },
+  {
+    "outfit": "starlight-magician",
+    "action": "03-overarm-throw",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  },
+  {
+    "outfit": "starlight-magician",
+    "action": "04-seal-press",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  },
+  {
+    "outfit": "starlight-magician",
+    "action": "05-sidearm-cast",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  },
+  {
+    "outfit": "midnight-carnival",
+    "action": "01-diagonal-cut",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  },
+  {
+    "outfit": "midnight-carnival",
+    "action": "02-command-flick",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  },
+  {
+    "outfit": "midnight-carnival",
+    "action": "03-overarm-throw",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  },
+  {
+    "outfit": "midnight-carnival",
+    "action": "04-seal-press",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  },
+  {
+    "outfit": "midnight-carnival",
+    "action": "05-sidearm-cast",
+    "frames": 48,
+    "fps": 30,
+    "width": 720,
+    "height": 1080,
+    "decoded": true,
+    "source": "Unity Mac runtime capture"
+  }
+]
