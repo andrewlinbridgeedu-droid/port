@@ -407,7 +407,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             tongue.revealScale = Mathf.Max(.15f, release * .85f - tongue.delay) / .12f; tongue.holdScale = .2f / .12f;
             tongue.coreAmt = 1.5f; tongue.tile = 1.6f; tongue.opacity = .9f;
             tongue.rampShift = p.ramp.Length > 5 ? R(rng, -.45f, .45f) : R(rng, -.05f, .3f);
-            Body.Create(root, sweepUnderMaterial, this).Setup(tongue, foot, ramp, p, Style.Strike, tongue.delay, (float)rng.NextDouble() * 10f, 45 + k);
+            Body.Create(root, sweepUnderMaterial, this).Setup(Dispersing(tongue, h * .3f, .4f, .25f), foot, ramp, p, Style.Strike, tongue.delay, (float)rng.NextDouble() * 10f, 45 + k);
         }
         // The sigil: an inner band of long arcs and an outer band of short ones, turning
         // opposite ways, each band left open (it never closes into a ring). Seen from the
@@ -429,7 +429,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 arc.revealScale = 1.2f; arc.holdScale = hold / .16f; arc.coreAmt = 2.2f; arc.opacity = .95f; arc.tile = 1.4f; arc.bulgeAmount = 0f;
                 // A rainbow identity gives every arc its own hue.
                 arc.rampShift = p.ramp.Length > 5 ? R(rng, -.45f, .45f) : R(rng, .05f, .35f);
-                Body.Create(root, sweepUnderMaterial, this).Setup(arc, floor, ramp, p, Style.Heavy, arc.delay, (float)rng.NextDouble() * 10f, 40 + band);
+                Body.Create(root, sweepUnderMaterial, this).Setup(Dispersing(arc, h * .25f, .4f, .25f), floor, ramp, p, Style.Heavy, arc.delay, (float)rng.NextDouble() * 10f, 40 + band);
                 a += span + (band == 0 ? R(rng, .3f, .7f) : R(rng, .18f, .42f));
             }
         }
@@ -724,18 +724,18 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             for (int k = 0; k < family.Count; k++)
             {
                 var body = Body.Create(root, sweepMaterial, this);
-                body.Setup(family[k], frame.target, ramp, p, cue.style, delay + .03f + family[k].delay, (float)rng.NextDouble() * 10f, k);
+                body.Setup(Dispersing(family[k], frame.s), frame.target, ramp, p, cue.style, delay + .03f + family[k].delay, (float)rng.NextDouble() * 10f, k);
             }
             var accents = AccentPaths(p.accent, frame, cue.style, rng);
             for (int k = 0; k < accents.Count; k++)
             {
                 var body = Body.Create(root, sweepMaterial, this);
-                body.Setup(accents[k], accents[k].pivot ?? frame.target, ramp, p, cue.style, delay + accents[k].delay, (float)rng.NextDouble() * 10f, 10 + k);
+                body.Setup(Dispersing(accents[k], frame.s), accents[k].pivot ?? frame.target, ramp, p, cue.style, delay + accents[k].delay, (float)rng.NextDouble() * 10f, 10 + k);
             }
             foreach (var path in ImpactPaths(p.form, frame, rng))
             {
                 var body = Body.Create(root, sweepMaterial, this);
-                body.Setup(path, path.pivot ?? frame.target, ramp, p, cue.style, delay + path.delay, (float)rng.NextDouble() * 10f, 30);
+                body.Setup(Dispersing(path, frame.s), path.pivot ?? frame.target, ramp, p, cue.style, delay + path.delay, (float)rng.NextDouble() * 10f, 30);
                 if (path.impactAt is Vector3 at)
                 {
                     var landing = Flares.Create(root, flareMaterial, this);
@@ -755,7 +755,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             // In the tower a group card's three bursts at .7/.45 still spanned the screen (169.49).
             float reach = halfWidth * (p.form == Form.Flick ? .5f : p.form == Form.Rain ? .55f : .62f) * (points.Count > 1 ? (i == 0 ? .6f : .4f) : 1f);
             foreach (var spike in BurstSpikes(p, frame, reach, i == 0, rng))
-                Body.Create(root, sweepMaterial, this).Setup(spike, spike.pivot ?? frame.target, ramp, p, cue.style, delay + spike.delay, (float)rng.NextDouble() * 10f, 50);
+                Body.Create(root, sweepMaterial, this).Setup(Dispersing(spike, frame.s), spike.pivot ?? frame.target, ramp, p, cue.style, delay + spike.delay, (float)rng.NextDouble() * 10f, 50);
             Flares.Create(root, flareMaterial, this).Explode(p, frame, reach, delay, i == 0, rng);
         }
     }
@@ -1013,6 +1013,21 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         public Vector3? impactAt;            // flare + debris when it arrives (landing blade, meteor)
         public bool solidStart;              // no fade-in at the first 12%: a launch must be seen leaving the hero
         public float revealEase;             // 0: fast ease-out; otherwise grow^revealEase (1 keeps pace with a flying head)
+        public bool disperse;                // spreads out, lifts and breaks into drifting motes as it fades
+        public float disperseSize;           // world size of the effect (s), for the spread and the motes
+        public float disperseDensity;        // share of the full mote count
+        public float disperseGrowth;         // how much larger it grows while fading
+    }
+
+    /// Landing and cast-light bodies spread out and break into drifting motes as they fade,
+    /// instead of standing whole and vanishing in place (2026-10-03, user on the phone,
+    /// pointing at a basic attack's landing: 我要的是这类效果散开，消散，才够自然).
+    /// The hero's cast light disperses smaller, sparser and closer: at full strength its
+    /// motes filled the Q4 corridor between the hero and the hound (169.53).
+    static Path Dispersing(Path path, float size, float density = 1f, float growth = .55f)
+    {
+        path.disperse = true; path.disperseSize = size; path.disperseDensity = density; path.disperseGrowth = growth;
+        return path;
     }
 
     static float R(System.Random rng, float a, float b) => a + (float)rng.NextDouble() * (b - a);
@@ -1580,8 +1595,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         Mesh mesh;
         MaterialPropertyBlock block;
         Vector3 pivot, offset, spinAxis, swingAxis, drift;
-        float age, delay, reveal, hold, fade, intensity, seed, dir, spin, swing, flow, revealEase;
-        bool shrink, rigid;
+        float age, delay, reveal, hold, fade, intensity, seed, dir, spin, swing, flow, revealEase, disperseSize, disperseDensity, disperseGrowth;
+        bool shrink, rigid, disperse, dispersed;
+        Profile profile;
         Style style;
 
         public static Body Create(Transform parent, Material material, SpellSpectacle20260926 owner)
@@ -1605,6 +1621,8 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             dir = layer % 2 == 0 ? 1 : -1;
             offset = path.offset; spin = path.spin; spinAxis = path.spinAxis; swing = path.swing; swingAxis = path.swingAxis; shrink = path.shrink;
             rigid = path.rigid; drift = path.drift; revealEase = path.revealEase;
+            disperse = path.disperse; disperseSize = path.disperseSize; disperseDensity = path.disperseDensity; disperseGrowth = path.disperseGrowth;
+            profile = p; dispersed = false;
             (reveal, hold, fade, intensity) = style switch
             {
                 Style.Heavy => (.15f, .16f, .50f, 1.16f),
@@ -1614,6 +1632,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 _ => (.16f, .14f, .44f, 1.06f),
             };
             reveal *= path.revealScale; hold *= path.holdScale;
+            // A dispersing body takes longer to go: it spreads and thins rather than snapping off
+            // (169.52: at 1.5x a basic's landing was gone .3 s after its peak).
+            if (disperse) fade *= 1.9f;
             var look = MatterLook(p.matter);
             flow = look.flow;
             transform.position = pivot;
@@ -1688,6 +1709,14 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             return mesh;
         }
 
+        /// Breaks the body into motes drifting out from its own surface as it starts to fade.
+        void Disperse()
+        {
+            if (!owner || !owner.root || !owner.flareMaterial || !mesh || profile == null) return;
+            var rng = new System.Random(Mathf.RoundToInt(seed * 1000f) + 17);
+            Flares.Create(owner.root, owner.flareMaterial, owner).Scatter(profile, transform, mesh.vertices, pivot, Mathf.Max(.05f, disperseSize), disperseDensity, rng);
+        }
+
         void Update()
         {
             age += Time.deltaTime;
@@ -1717,8 +1746,10 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             float scale = Mathf.Lerp(.5f, 1.07f, eased);
             if (t > reveal) scale = Mathf.Lerp(1.07f, 1f, Mathf.Clamp01((t - reveal) / .1f));
             float out01 = Mathf.Clamp01((t - reveal - hold) / fade);
-            scale += out01 * .10f;
-            if (rigid) scale = 1f;
+            // As it fades a dispersing body spreads out (rigid ones a little less) and lifts.
+            float spread = out01 * (2f - out01);
+            scale += disperse ? spread * disperseGrowth : out01 * .10f;
+            if (rigid) scale = disperse ? 1f + spread * disperseGrowth * .64f : 1f;
             if (shrink) scale *= Mathf.Lerp(1.12f, .5f, Mathf.Clamp01(t / (reveal + hold + fade)));
             transform.localScale = Vector3.one * scale;
             var rot = Quaternion.identity;
@@ -1729,7 +1760,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 float sw = Mathf.Clamp01(t / (reveal * 1.4f)), e = 1 - Mathf.Pow(1 - sw, 3);
                 rot = rot * Quaternion.AngleAxis(swing * (1 - e) - swing * .12f * Mathf.Sin(Mathf.PI * e), swingAxis);
             }
-            transform.SetPositionAndRotation(pivot + offset * (1 - eased) + drift * t, rot);
+            var lift = disperse ? Vector3.up * (disperseSize * .3f * spread) : Vector3.zero;
+            transform.SetPositionAndRotation(pivot + offset * (1 - eased) + drift * t + lift, rot);
+            if (disperse && !dispersed && out01 > 0f) { dispersed = true; Disperse(); }
             float flash = 1 + 1.3f * Mathf.Exp(-t / .07f);
             block.SetFloat("_Reveal", Mathf.Lerp(-.05f, 1.12f, eased));
             block.SetFloat("_Dissolve", Mathf.Lerp(-.25f, 1.05f, out01 * out01 * (3 - 2 * out01)));
@@ -2158,6 +2191,29 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 float size = R(rng, .1f, .24f) * s;
                 Add(new Mark { pos = at, vel = vel, gravity = .6f * s, drag = 2.5f, cell = MoteCell(mote), color = Pick(p, rng, .3f, 1f), size = size, sizeEnd = size * .3f,
                     rot = R(rng, 0, 360), spin = R(rng, -220, 220), life = R(rng, .28f, .55f), delay = delay + u * time, peak = .12f, opacity = 1f, hot = R(rng, .4f, .9f) });
+            }
+        }
+
+        /// Motes thrown off a fading body's surface: soft puffs that swell and thin as they
+        /// drift out and up, and a few bright sparks, so the body dissipates into the air.
+        public void Scatter(Profile p, Transform body, Vector3[] vertices, Vector3 centre, float s, float density, System.Random rng)
+        {
+            if (vertices == null || vertices.Length == 0) return;
+            int n = Mathf.Max(3, Mathf.RoundToInt(Mathf.Clamp(vertices.Length / 10, 10, 22) * density));
+            if (ReducedMotion) n = Mathf.Max(3, n / 2);
+            for (int i = 0; i < n; i++)
+            {
+                var at = body.TransformPoint(vertices[rng.Next(vertices.Length)]);
+                var outward = at - centre;
+                outward = outward.sqrMagnitude > 1e-4f ? outward.normalized : Random3(rng);
+                bool soft = i % 3 != 0;
+                var vel = (outward * R(rng, .5f, 1.3f) + Vector3.up * R(rng, .15f, .5f) + Random3(rng) * .25f) * s;
+                float size = (soft ? R(rng, .2f, .34f) : R(rng, .07f, .14f)) * s;
+                // Drift slowly and linger: the body is seen to thin into the air, not blink out.
+                Add(new Mark { pos = at, vel = vel, drag = soft ? 1.2f : .9f, gravity = soft ? -.35f * s : .3f * s,
+                    cell = MoteCell(soft ? Mote.Puff : Mote.Spark), color = Pick(p, rng, .35f, 1f), size = size, sizeEnd = soft ? size * 2.6f : size * .3f,
+                    rot = R(rng, 0, 360), spin = R(rng, -120, 120), life = R(rng, .8f, 1.3f), delay = R(rng, 0f, .12f), peak = .12f,
+                    opacity = soft ? .6f : 1f, hot = soft ? .2f : .8f });
             }
         }
 
