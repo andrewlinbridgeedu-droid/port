@@ -506,6 +506,21 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 }
                 break;
             }
+            case Form.Flick:
+            {
+                // The basic attack's flying tarot (FoolBasicTarotVFX) leaves the hand at .16 s and
+                // lands at the .58 s contact on a slight bow; a gold-violet streak and sparks
+                // follow it so the beat reads from the low camera.
+                var from = f.caster + f.right * .12f * s;
+                var to = f.target;
+                var bow = -f.right * .24f + Vector3.up * .16f;
+                float leave = .16f, time = Mathf.Max(.15f, contact - leave);
+                Func<float, Vector3> pos = u => Vector3.Lerp(from, to, u) + bow * Mathf.Sin(Mathf.PI * u);
+                var streak = Make(32, pos, FacingAcross(pos, f.toCam), u => s * (.05f + .05f * u), f.toCam);
+                streak.pivot = to; streak.coreAmt = 2f; streak.tile = 2f; streak.holdScale = .15f; streak.rampShift = .3f;
+                list.Add(new Shot { path = streak, from = from, time = time, at = leave, headSize = 0f, star = false, course = pos, sparks = 12, spark = Mote.Spark });
+                break;
+            }
             case Form.Dash:
             {
                 // 错步穿行: the hero's afterimage dashes in (HeroArcanaTheatreVFX, lead target
@@ -577,7 +592,8 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             var rng = new System.Random(cue.seeds[i] * 31 + cue.cast * 7 + 11);
             float half = Vector3.Distance(cam.transform.position, points[i]) * Mathf.Tan(cam.fieldOfView * .5f * Mathf.Deg2Rad);
             // A flicked basic card lands small: it is the steady beat between cards, not a spell.
-            var frame = new Frame(cam, caster, points[i], half / 4.5f * p.scale * (p.form == Form.Flick ? .3f : .55f), rng);
+            // On the phone .55 read too small (2026-10-03): landings open to .8, a basic to .55.
+            var frame = new Frame(cam, caster, points[i], half / 4.5f * p.scale * (p.form == Form.Flick ? .55f : .8f), rng);
             // A dash cuts its targets one after another; other forms land together.
             float delay = i * (p.form == Form.Dash ? DashChainStep : .035f);
             if (Diagnostics) Debug.Log($"SPELLFORM impact {p.id} t={Time.unscaledTime:F3} at={points[i]:F2} s={frame.s:F2}");
@@ -585,8 +601,8 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             // the main target. A thrown seal has none: its family falls from over the top.
             // Bystanders of a group card get only the landing itself.
             // The dash's crossed cut is kept small so the afterimage, not the blades, carries it.
-            var familyFrame = p.form == Form.Dash ? new Frame(cam, caster, points[i], frame.s * .6f, rng) : frame;
-            var family = p.form == Form.Throw || p.form == Form.Flick || i > 0 ? new List<Path>() : Paths(p.family, familyFrame, 1, rng);
+            var familyFrame = p.form == Form.Dash ? new Frame(cam, caster, points[i], frame.s * .75f, rng) : frame;
+            var family = p.form == Form.Throw || i > 0 ? new List<Path>() : Paths(p.family, familyFrame, 1, rng);
             for (int k = 0; k < family.Count; k++)
             {
                 var body = Body.Create(root, sweepMaterial, this);
