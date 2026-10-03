@@ -2441,13 +2441,16 @@ public sealed class BattlePrototype : MonoBehaviour
     // Tempo samples drive the hero body themselves and report the single
     // contact receipt (CombatTempoPresentation.PlayerStrike). Play the authored
     // spell effects and the contact spectacle alongside, without a second receipt.
-    public void PlayTempoSkillVisuals(string skillID, string targetBattleEnemyID)
+    public void PlayTempoSkillVisuals(string skillID, string targetBattleEnemyID, float expectedContact = -1f)
     {
         if (!NativeCombatEnabled || !player) return;
         var targetHandle = ResolvePlayerSkillTarget(targetBattleEnemyID);
         var targets = new List<EnemyHandle>();
         if (IsActiveEnemyHandle(targetHandle)) targets.Add(targetHandle);
-        BeginPlayerSpectacle(skillID, targets, null);
+        BeginPlayerSpectacle(skillID, targets, null, expectedContact);
+        // Cards with a travelling form are aimed from the hero at the target; the older
+        // stage-wide theatre (ghost volume, rising great tarot) would cover them.
+        if (SpellSpectacle20260926.HasForm(skillID)) return;
         System.Func<Vector3> caster = () => player ? player.transform.position + Vector3.up * 1.15f : Vector3.zero;
         System.Func<Vector3> target = () => PlayerSkillTargetPoint(targetHandle);
         if (spellV1Bridge != null && spellV1Bridge.CanPlay(skillID))
@@ -2463,7 +2466,7 @@ public sealed class BattlePrototype : MonoBehaviour
     // Registers the contact spectacle for the hero cast. Each recipient keeps
     // its own last-known point so a target that exits before contact never
     // redirects the burst onto another enemy or the hero.
-    void BeginPlayerSpectacle(string skillID, List<EnemyHandle> handles, Transform legacyTarget)
+    void BeginPlayerSpectacle(string skillID, List<EnemyHandle> handles, Transform legacyTarget, float expectedContact = -1f)
     {
         var points = new List<System.Func<Vector3>>();
         var seeds = new List<int>();
@@ -2481,7 +2484,7 @@ public sealed class BattlePrototype : MonoBehaviour
             points.Add(() => { if (t) last = t.position + Vector3.up * 1.05f; return last; });
             seeds.Add(SpellSpectacle20260926.StableHash(t.name));
         }
-        SpellSpectacle20260926.BeginPlayer(this, skillID, () => player ? player.transform.position + Vector3.up * 1.15f : Vector3.zero, points, seeds);
+        SpellSpectacle20260926.BeginPlayer(this, skillID, () => player ? player.transform.position + Vector3.up * 1.15f : Vector3.zero, points, seeds, expectedContact);
     }
 
     static bool IsActiveEnemyHandle(EnemyHandle handle) =>

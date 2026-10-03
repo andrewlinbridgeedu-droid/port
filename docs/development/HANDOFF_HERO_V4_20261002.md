@@ -1,5 +1,7 @@
 # 交接：主角 v4、模拟器复看、技能牌与遗落物衔接 · 2026-10-02
 
+> **2026-10-03 更新**：后续进展见 [法术“往前打”样板与封印物版设计交接](HANDOFF_SPELL_FORMS_20261003.md)。模拟器已换成 iPhone 17 Pro Max（`E64100C9…`），本文里的 `B4897FBE…` 设备数据已被清理。
+
 ## 现在在哪（先读这一节）
 
 - **模拟器**：iPhone 17 Pro（iOS 26.5，UDID `B4897FBE-4AB9-40B7-8DE7-9F1AE31FA9FE`）装着 **169.29**，主角样板静音运行（`-MistportCityMute YES --tempo-device-review=hero`）。左下角“换样板”可以重看，或切换三套服装。另一台已经启动的 iPhone 16 Pro Max（iOS 18.6）不是本会话开的，不要动。

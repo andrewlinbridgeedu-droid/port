@@ -174,7 +174,7 @@ struct CombatTempoDeviceReviewRoot: View {
                     } else {
                         guard let floor = MPCChurchTowerCatalog.floor(number: 1) else { return }
                         if sample == "hero" {
-                            var hand = MPCChapterOneLoadout(normalSkillIDs: [.mirrorPursuit, .absurdFinale], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
+                            var hand = MPCChapterOneLoadout(normalSkillIDs: [.fabricatedEvidence, .mirrorPursuit, .absurdFinale], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
                             hand.selectedActiveRelicID = MPCChapterOneCatalog.ownerlessMaskRelicID
                             hand.outfit = heroOutfit
                             loadout = hand

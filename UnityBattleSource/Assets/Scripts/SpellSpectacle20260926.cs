@@ -22,6 +22,11 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         // Signature moves: whirlwind, sword qi, sword rain, meteor shower, ground spikes, coiling dragon, lotus bloom.
         Tornado, SwordQi, SwordRain, Meteor, Spikes, Dragon, Lotus }
     enum Mote { Spark = 0, Ember = 1, Shard = 2, Ink = 3, Petal = 4, Card = 5, Wisp = 6, Puff = 7 }
+    /// How a hero card reaches its target. Bloom is the original contact-only
+    /// burst; the others leave the hero during the cast, travel the corridor to
+    /// the target and land on the contact receipt (2026-10-03: attacks must read
+    /// as aimed at the enemy, each card with its own form, not a screen-wide bloom).
+    public enum Form { Bloom, Throw, Hunt, Rain }
 
     sealed class Profile
     {
@@ -35,6 +40,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         public Accent accent;
         public bool column;
         public float scale = 1f, rampSpan = 1f, wobble;
+        public Form form = Form.Bloom;
     }
 
     sealed class Cue
@@ -46,6 +52,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         public readonly List<int> seeds = new List<int>();
         public float expiresAt, lastContact = float.NegativeInfinity;
         public int cast;
+        public bool player;
+        /// Travelling bodies of a hero form, finished early if the contact comes first.
+        public readonly List<Body> launch = new List<Body>();
     }
 
     static SpellSpectacle20260926 instance;
@@ -76,13 +85,22 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         return instance;
     }
 
-    public static void BeginPlayer(Component battle, string skillID, Func<Vector3> caster, IList<Func<Vector3>> targets, IList<int> targetSeeds)
+    /// <param name="expectedContact">Seconds from now to the contact receipt when the
+    /// caller knows it (tempo samples); hero forms time their travel to land on it.</param>
+    public static void BeginPlayer(Component battle, string skillID, Func<Vector3> caster, IList<Func<Vector3>> targets, IList<int> targetSeeds, float expectedContact = -1f)
     {
         var director = Ensure(battle);
         if (!director || targets == null || targets.Count == 0) return;
         var profile = PlayerProfile(skillID);
-        director.Register("player", profile, profile.style, caster, targets, targetSeeds);
+        var cue = director.Register("player", profile, profile.style, caster, targets, targetSeeds);
+        if (cue == null) return;
+        cue.player = true;
+        if (profile.form != Form.Bloom && !Suppressed) director.Launch(cue, expectedContact);
     }
+
+    /// True when the hero card has its own travelling form; the tempo samples then
+    /// show only this layer for it, without the older full-stage theatre bodies.
+    public static bool HasForm(string skillID) => PlayerProfile(skillID).form != Form.Bloom;
 
     public static void BeginEnemy(Component battle, EnemyHandle actor, string intent, Func<Vector3> playerTarget, EnemyHandle supportRecipient)
     {
@@ -163,6 +181,10 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         // of a multi-projectile attack still gets its own burst.
         if (Time.unscaledTime - cue.lastContact < .085f) return;
         cue.lastContact = Time.unscaledTime;
+        // A contact that arrives before the thrown body finishes its flight
+        // completes the flight at once, so the impact never lands ahead of it.
+        foreach (var body in cue.launch) if (body) body.Hasten(.06f);
+        cue.launch.Clear();
         instance.Burst(cue);
     }
 
@@ -187,7 +209,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
 
     // ------------------------------------------------------------ setup
 
-    void Register(string key, Profile profile, Style style, Func<Vector3> caster, IList<Func<Vector3>> targets, IList<int> seeds)
+    Cue Register(string key, Profile profile, Style style, Func<Vector3> caster, IList<Func<Vector3>> targets, IList<int> seeds)
     {
         castCount.TryGetValue(key + profile.id, out int n);
         castCount[key + profile.id] = n + 1;
@@ -198,7 +220,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             cue.targets.Add(targets[i]);
             cue.seeds.Add(seeds != null && i < seeds.Count ? seeds[i] : i * 7919);
         }
-        if (cue.targets.Count > 0) pending[key] = cue;
+        if (cue.targets.Count == 0) return null;
+        pending[key] = cue;
+        return cue;
     }
 
     bool Load()
@@ -268,6 +292,11 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         // environment body spans the group, and every recipient still gets its
         // own heart, splash and matter so no hit is hidden inside another.
         bool group = points.Count > 1;
+        if (p.form != Form.Bloom && cue.player)
+        {
+            FormImpact(cue, cam, caster, points);
+            return;
+        }
         if (group)
         {
             float spread = 0;
@@ -293,8 +322,237 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         };
         if (group) amount *= .7f;
         if (ReducedMotion) amount *= .35f;
+        // Only the ultimate may tint the whole screen; hero cards stay on their target.
+        if (cue.player && p.id != "declaration") return;
         if (!wash) wash = Wash.Create(root, washMaterial, this);
         wash.Trigger(mean, p.wash, p.hot, amount, style == Style.Support ? .2f : style == Style.Light ? .18f : style == Style.Heavy ? .34f : .26f, style == Style.Support ? .6f : .46f);
+    }
+
+    // ------------------------------------------------------------ hero forms
+
+    /// A hero form leaves the caster during the cast's drive and travels the
+    /// corridor to its target, timed to land on the contact receipt. The travel
+    /// is presentation only: the contact time, damage and target never move.
+    void Launch(Cue cue, float expectedContact)
+    {
+        var cam = Camera.main;
+        if (!cam || !Load() || cue.targets.Count == 0) return;
+        var p = cue.profile;
+        float contact = expectedContact > 0 ? expectedContact : .55f;
+        float travel = Mathf.Clamp(contact * .45f, .22f, .42f);
+        // A volley spreads its landings around the contact instead of after it.
+        float spread = p.form == Form.Rain ? .12f : 0f;
+        float start = Mathf.Max(0f, contact - travel - spread);
+        Vector3 caster = SafeEval(cue.caster);
+        var ramp = Ramp(p);
+        var heads = Flares.Create(root, flareMaterial, this);
+        for (int i = 0; i < cue.targets.Count; i++)
+        {
+            Vector3 target = SafeEval(cue.targets[i]);
+            var rng = new System.Random(cue.seeds[i] * 17 + cue.cast * 5 + 3);
+            float half = Vector3.Distance(cam.transform.position, target) * Mathf.Tan(cam.fieldOfView * .5f * Mathf.Deg2Rad);
+            var frame = new Frame(cam, caster, target, half / 4.5f * p.scale, rng);
+            foreach (var shot in LaunchShots(p.form, frame, travel, rng))
+            {
+                float at = start + shot.delay + i * .03f;
+                var path = shot.path;
+                path.rigid = true;
+                path.revealScale = shot.time / BaseReveal(cue.style);
+                var body = Body.Create(root, sweepMaterial, this);
+                body.Setup(path, path.pivot ?? frame.target, ramp, p, cue.style, at, (float)rng.NextDouble() * 10f, 20 + cue.launch.Count);
+                cue.launch.Add(body);
+                heads.Projectile(shot.from, shot.vel, shot.gravity, at, shot.time, shot.headSize, shot.head, Color.Lerp(p.core, p.hot, .5f), shot.stretch, shot.spin);
+            }
+        }
+    }
+
+    /// One travelling element: a trail along a ballistic or straight course and the
+    /// bright head that flies the same course, so the eye can follow it to the target.
+    sealed class Shot
+    {
+        public Path path;
+        public Vector3 from, vel;
+        public float gravity, time, delay, headSize, stretch, spin;
+        public Mote head;
+    }
+
+    /// Arc from 'from' that lands on 'to' after 'time' seconds and rises 'height' above the chord.
+    static (Vector3 vel, float g) Ballistic(Vector3 from, Vector3 to, float time, float height)
+    {
+        float g = 8f * height / (time * time);
+        return ((to - from) / time + Vector3.up * (.5f * g * time), g);
+    }
+
+    static Vector3 BallisticAt(Vector3 from, Vector3 vel, float g, float t) => from + vel * t + Vector3.down * (.5f * g * t * t);
+
+    List<Shot> LaunchShots(Form form, Frame f, float travel, System.Random rng)
+    {
+        var list = new List<Shot>();
+        float s = f.s;
+        var lateral = Vector3.Cross(Vector3.up, f.dir).normalized;
+        switch (form)
+        {
+            case Form.Throw:
+            {
+                // The wax seal leaves the raised card hand on a low arc, dragging a red streak.
+                var from = f.caster + f.right * .3f * s + f.up * .35f * s;
+                var to = f.target + f.up * .15f * s;
+                var (vel, g) = Ballistic(from, to, travel, .9f * s);
+                Func<float, Vector3> pos = u => BallisticAt(from, vel, g, u * travel);
+                var trail = Make(44, pos, FacingAcross(pos, f.toCam), u => s * (.07f + .12f * u), f.toCam);
+                trail.pivot = to; trail.coreAmt = 1.5f; trail.tile = 2.2f; trail.holdScale = .3f;
+                list.Add(new Shot { path = trail, from = from, vel = vel, gravity = g, time = travel, headSize = .5f * s, head = Mote.Ember, stretch = .03f });
+                break;
+            }
+            case Form.Hunt:
+            {
+                // Two shadows peel off the hero and run low at the target, the second a beat behind.
+                var from = new Vector3(f.caster.x, .25f * s, f.caster.z);
+                var to = f.Foot + Vector3.up * .35f * s;
+                for (int k = 0; k < 2; k++)
+                {
+                    float sway = (k == 0 ? -1 : 1) * R(rng, .18f, .3f) * s, time = travel * (k == 0 ? 1f : .92f);
+                    Func<float, Vector3> pos = u => Vector3.Lerp(from, to, u) + lateral * sway * Mathf.Sin(Mathf.PI * u);
+                    // A standing wedge (mostly vertical) so the shadow reads from the camera behind the hero.
+                    var across = (lateral * .35f + Vector3.up).normalized;
+                    var shadow = Make(40, pos, _ => across, u => s * (.06f + .36f * Mathf.Pow(u, 1.4f)) * (1 - .3f * Mathf.Pow(u, 8f)), f.toCam);
+                    shadow.pivot = to; shadow.coreAmt = .55f; shadow.tile = 1.6f; shadow.holdScale = .25f; shadow.rampShift = .12f * k;
+                    list.Add(new Shot { path = shadow, from = from, vel = (to - from) / time, gravity = 0f, time = time, delay = k * .09f, headSize = .55f * s, head = Mote.Puff, stretch = .02f });
+                }
+                break;
+            }
+            case Form.Rain:
+            {
+                // Stage props fly off the hero's shoulders in a volley and come down on the target.
+                for (int i = 0; i < 6; i++)
+                {
+                    var from = f.caster + f.up * .6f * s - f.dir * .25f * s + lateral * R(rng, -.45f, .45f) * s;
+                    var to = f.Foot + Vector3.up * R(rng, .2f, .9f) * s + lateral * R(rng, -.55f, .55f) * s + f.Depth * R(rng, -.3f, .3f) * s;
+                    float time = travel * R(rng, .9f, 1.05f);
+                    var (vel, g) = Ballistic(from, to, time, R(rng, .9f, 1.3f) * s);
+                    Func<float, Vector3> pos = u => BallisticAt(from, vel, g, u * time);
+                    var prop = Make(36, pos, FacingAcross(pos, f.toCam), u => s * (.045f + .085f * u), f.toCam);
+                    prop.pivot = to; prop.coreAmt = 1.4f; prop.tile = 1.4f; prop.holdScale = .25f; prop.rampShift = R(rng, -.25f, .25f);
+                    list.Add(new Shot { path = prop, from = from, vel = vel, gravity = g, time = time, delay = i * .04f, headSize = .36f * s, head = Mote.Card, stretch = 0f, spin = R(rng, 400f, 720f) * (i % 2 == 0 ? 1 : -1) });
+                }
+                break;
+            }
+        }
+        return list;
+    }
+
+    /// The landing of a hero form: compact, around the target, opening forward
+    /// (away from the hero) instead of a screen-wide bloom.
+    void FormImpact(Cue cue, Camera cam, Vector3 caster, List<Vector3> points)
+    {
+        var p = cue.profile;
+        var ramp = Ramp(p);
+        for (int i = 0; i < points.Count; i++)
+        {
+            var rng = new System.Random(cue.seeds[i] * 31 + cue.cast * 7 + 11);
+            float half = Vector3.Distance(cam.transform.position, points[i]) * Mathf.Tan(cam.fieldOfView * .5f * Mathf.Deg2Rad);
+            var frame = new Frame(cam, caster, points[i], half / 4.5f * p.scale * .62f, rng);
+            float delay = i * .035f;
+            foreach (var path in ImpactPaths(p.form, frame, rng))
+            {
+                var body = Body.Create(root, sweepMaterial, this);
+                body.Setup(path, path.pivot ?? frame.target, ramp, p, cue.style, delay + path.delay, (float)rng.NextDouble() * 10f, 30);
+                if (path.impactAt is Vector3 at)
+                {
+                    var landing = Flares.Create(root, flareMaterial, this);
+                    landing.Impact(p, at, frame, delay + path.delay + BaseReveal(cue.style) * path.revealScale, rng, false);
+                }
+            }
+            var flares = Flares.Create(root, flareMaterial, this);
+            flares.Build(p, cue.style, frame, rng, delay, true, true);
+        }
+    }
+
+    List<Path> ImpactPaths(Form form, Frame f, System.Random rng)
+    {
+        var list = new List<Path>();
+        float s = f.s;
+        var foot = f.Foot;
+        var lateral = Vector3.Cross(Vector3.up, f.dir).normalized;
+        switch (form)
+        {
+            case Form.Throw:
+            {
+                // The seal slams down on the target from above.
+                var top = f.target + f.up * 1.6f * s - f.dir * .15f * s;
+                var bottom = f.target - f.up * .25f * s;
+                var slam = Make(24, t => Vector3.Lerp(top, bottom, t), _ => f.right, t => s * (.18f + .3f * Mathf.Pow(t, 1.8f)), f.toCam);
+                slam.pivot = bottom; slam.offset = f.up * 1.2f * s; slam.rigid = true; slam.revealScale = .7f; slam.holdScale = .6f; slam.coreAmt = 1.6f; slam.impactAt = foot;
+                list.Add(slam);
+                // Wax splashes forward, away from the hero, in an uneven fan.
+                for (int i = 0; i < 5; i++)
+                {
+                    float ang = Mathf.Lerp(-38f, 38f, (i + R(rng, -.3f, .3f)) / 4f) * Mathf.Deg2Rad;
+                    var d = (Mathf.Cos(ang) * f.dir + Mathf.Sin(ang) * lateral).normalized;
+                    float len = R(rng, .7f, 1.25f) * s, w = R(rng, .14f, .22f) * s;
+                    var a = foot + d * .15f * s; var b = foot + d * len;
+                    var across = Vector3.Cross(Vector3.up, d);
+                    var splash = Make(20, t => Vector3.Lerp(a, b, t) + Vector3.up * .06f * s * Swell(t, 1f), _ => across, t => w * Swell(t, .5f) * (1 - .4f * t), Vector3.up);
+                    splash.pivot = a; splash.delay = .04f + i * .012f; splash.rigid = true; splash.revealScale = .9f; splash.holdScale = 2.5f; splash.coreAmt = .4f; splash.tile = 1.2f;
+                    list.Add(splash);
+                }
+                // The imprint stays on the ground in broken arcs, never a full ring.
+                var gz = f.Depth;
+                for (int k = 0; k < 3; k++)
+                {
+                    float r = R(rng, .5f, .72f) * s, a0 = (k * 120 + R(rng, 0, 30)) * Mathf.Deg2Rad, span = R(rng, 70, 100) * Mathf.Deg2Rad;
+                    Func<float, Vector3> pos = t => { float a = a0 + span * t; return foot + (Mathf.Cos(a) * f.right + Mathf.Sin(a) * gz) * r + Vector3.up * .02f; };
+                    var mark = Make(30, pos, t => { float a = a0 + span * t; return Mathf.Cos(a) * f.right + Mathf.Sin(a) * gz; }, t => s * .06f * Swell(t, .4f), Vector3.up);
+                    mark.pivot = foot; mark.delay = .08f; mark.rigid = true; mark.revealScale = 1.4f; mark.holdScale = 6f; mark.coreAmt = .9f; mark.opacity = .9f;
+                    list.Add(mark);
+                }
+                break;
+            }
+            case Form.Hunt:
+            {
+                // The first shadow grazes across the target; the second bites in a cross.
+                var c = f.target;
+                var g0 = c - lateral * .9f * s + f.up * .5f * s; var g1 = c + lateral * .9f * s - f.up * .35f * s;
+                var gacross = Vector3.Cross(g1 - g0, f.toCam);
+                var graze = Make(26, t => Vector3.Lerp(g0, g1, t) + f.toCam * .2f * s * Swell(t, 1f), _ => gacross, t => s * .1f * Swell(t, .6f), f.toCam);
+                graze.pivot = c; graze.rigid = true; graze.revealScale = .7f; graze.holdScale = .5f; graze.coreAmt = 1.2f;
+                list.Add(graze);
+                for (int k = 0; k < 2; k++)
+                {
+                    float sx = k == 0 ? 1 : -1;
+                    var a = c + lateral * sx * .75f * s + f.up * .7f * s; var b = c - lateral * sx * .55f * s - f.up * .45f * s;
+                    var bend = f.toCam * .35f * s;
+                    Func<float, Vector3> pos = t => Vector3.Lerp(a, b, t) + bend * Swell(t, 1f);
+                    var bite = Make(28, pos, FacingAcross(pos, f.toCam), t => s * .2f * Swell(t, .55f), f.toCam);
+                    bite.pivot = c; bite.delay = .09f + k * .035f; bite.rigid = true; bite.revealScale = .65f; bite.holdScale = .7f; bite.coreAmt = 1.4f; bite.rampShift = .15f;
+                    list.Add(bite);
+                }
+                break;
+            }
+            case Form.Rain:
+            {
+                // A spotlight rises from the target's feet: a narrow column, not a dome.
+                var top = foot + Vector3.up * 3.4f * s;
+                var beam = Make(30, t => Vector3.Lerp(foot, top, t), _ => f.right, t => s * (.42f - .16f * t) * Swell(Mathf.Min(1f, t * 1.1f), .3f), f.toCam);
+                beam.pivot = foot; beam.rigid = true; beam.revealScale = 1.2f; beam.holdScale = 1.4f; beam.coreAmt = 1.1f; beam.opacity = .8f; beam.tile = 1.5f;
+                list.Add(beam);
+                // Two curtains swing shut at the target's sides.
+                for (int k = 0; k < 2; k++)
+                {
+                    float sx = k == 0 ? -1 : 1;
+                    var hang = foot + lateral * sx * .95f * s + Vector3.up * 2.4f * s;
+                    var hem = foot + lateral * sx * .75f * s + Vector3.up * .05f * s;
+                    float wave = R(rng, 0f, 3f);
+                    Func<float, Vector3> pos = t => Vector3.Lerp(hang, hem, t) + lateral * sx * .18f * s * Mathf.Sin(t * 7f + wave);
+                    var drape = Make(26, pos, _ => lateral * -sx, t => s * (.34f + .12f * t), f.toCam);
+                    drape.anchored = true; drape.pivot = hang; drape.swing = sx * 35f; drape.swingAxis = Vector3.up; drape.delay = .05f;
+                    drape.revealScale = 1.3f; drape.holdScale = 1.2f; drape.coreAmt = .5f; drape.rampShift = .3f * k; drape.tile = 1.3f;
+                    list.Add(drape);
+                }
+                break;
+            }
+        }
+        return list;
     }
 
     static Vector3 SafeEval(Func<Vector3> f)
@@ -1087,6 +1345,17 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             if (age - delay > reveal + hold + fade + .02f) Destroy(gameObject);
         }
 
+        /// Finish the reveal within <paramref name="window"/> seconds from now while
+        /// keeping its current progress (the contact arrived before the travel ended).
+        public void Hasten(float window)
+        {
+            float t = age - delay;
+            if (t >= reveal) return;
+            float grow = t <= 0 ? 0 : Mathf.Clamp01(t / reveal);
+            reveal = Mathf.Max(.02f, window);
+            delay = age - grow * reveal;
+        }
+
         void Apply(float t)
         {
             if (!meshRenderer) return;
@@ -1182,7 +1451,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             return Color.Lerp(p.ramp[a], p.ramp[a + 1], t - a);
         }
 
-        public void Build(Profile p, Style style, Frame f, System.Random rng, float delay, bool group)
+        public void Build(Profile p, Style style, Frame f, System.Random rng, float delay, bool group, bool forward = false)
         {
             float s = f.s;
             bool support = style == Style.Support;
@@ -1198,6 +1467,8 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             AccentMarks(p, style, f, rng, delay, group, tier, hotSpot);
             int count = style switch { Style.Heavy => 112, Style.Strike => 82, Style.Light => 52, Style.Support => 64, _ => 52 };
             if (group) count = Mathf.RoundToInt(count * .6f);
+            // Hero forms spray their matter forward, away from the hero, and less of it.
+            if (forward) count = Mathf.RoundToInt(count * .75f);
             if (ReducedMotion) count = Mathf.RoundToInt(count * .6f);
             for (int i = 0; i < count; i++)
             {
@@ -1215,8 +1486,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 }
                 else
                 {
-                    var outDir = (Random3(rng) + f.toCam * .35f + f.up * .25f).normalized;
-                    float speed = R(rng, 3.5f, 10.5f) * s * tier;
+                    var outDir = forward ? (f.dir * 1.15f + Random3(rng) * .55f + f.up * .3f).normalized
+                        : (Random3(rng) + f.toCam * .35f + f.up * .25f).normalized;
+                    float speed = R(rng, 3.5f, 10.5f) * s * tier * (forward ? .7f : 1f);
                     m.pos = hotSpot + outDir * R(rng, 0, .3f) * s;
                     m.vel = outDir * speed;
                     m.life = R(rng, .35f, .8f);
@@ -1514,6 +1786,13 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
 
         void Add(Mark m) => marks.Add(m);
 
+        /// A bright head flying the same ballistic course as a launch trail (no drag).
+        public void Projectile(Vector3 from, Vector3 velocity, float gravity, float delay, float time, float size, Mote mote, Color color, float stretch, float spin)
+        {
+            Add(new Mark { pos = from, vel = velocity, gravity = gravity, drag = 0f, cell = MoteCell(mote), color = color, size = size, sizeEnd = size * .85f,
+                rot = 0f, spin = spin, life = time + .03f, delay = delay, peak = .06f, opacity = 1f, hot = .85f, stretch = stretch });
+        }
+
         void LateUpdate()
         {
             float dt = Time.deltaTime;
@@ -1683,11 +1962,11 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
 
     static Color C(string hex) { ColorUtility.TryParseHtmlString(hex, out var c); return c; }
 
-    static Profile P(string id, Family family, Family alt, Style style, string[] ramp, string line, string core, string wash, string hot, Mote mote, Mote mote2, Matter matter, Accent accent, bool column = false, float scale = 1f, float wobble = 0f)
+    static Profile P(string id, Family family, Family alt, Style style, string[] ramp, string line, string core, string wash, string hot, Mote mote, Mote mote2, Matter matter, Accent accent, bool column = false, float scale = 1f, float wobble = 0f, Form form = Form.Bloom)
     {
         var colors = new Color[ramp.Length];
         for (int i = 0; i < ramp.Length; i++) colors[i] = C(ramp[i]);
-        return new Profile { id = id, family = family, familyAlt = alt, style = style, ramp = colors, line = C(line), core = C(core), wash = C(wash), hot = C(hot), mote = mote, mote2 = mote2, matter = matter, accent = accent, column = column, scale = scale, wobble = wobble };
+        return new Profile { id = id, family = family, familyAlt = alt, style = style, ramp = colors, line = C(line), core = C(core), wash = C(wash), hot = C(hot), mote = mote, mote2 = mote2, matter = matter, accent = accent, column = column, scale = scale, wobble = wobble, form = form };
     }
 
     static readonly string[] Rainbow = { "#ff2a3c", "#ff7a1a", "#ffd21f", "#3ddc6a", "#28c8ff", "#4c6bff", "#b44cff" };
@@ -1699,9 +1978,12 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         ["sidestep"] = P("sidestep", Family.Twin, Family.Twin, Style.Strike, new[] { "#3a0f8f", "#8a3dff", "#ff58c8", "#ffb22e", "#fff0b0" }, "#ffd35a", "#fff6e0", "#8c2bff", "#ffd9a0", Mote.Shard, Mote.Card, Matter.Crystal, Accent.Shards),
         ["mask"] = P("mask", Family.Fan, Family.Fan, Style.Control, new[] { "#0a3a66", "#1f8ad6", "#3ad6e8", "#a57bff", "#f0f4ff" }, "#dff8ff", "#ffffff", "#2aa6c8", "#e8fbff", Mote.Shard, Mote.Wisp, Matter.Crystal, Accent.Shards),
         ["identity"] = P("identity", Family.Fan, Family.Fan, Style.Control, new[] { "#1a4dff", "#46b8ff", "#f4f1ff", "#ffb04a", "#ff6a1f" }, "#ffe0a0", "#ffffff", "#3b6cff", "#ffe6c2", Mote.Card, Mote.Wisp, Matter.Smoke, Accent.Vortex),
-        ["seal"] = P("seal", Family.Falling, Family.Falling, Style.Heavy, new[] { "#3b0a6e", "#9b2cff", "#ff4f9a", "#ff9a2e", "#ffe27a" }, "#ffcf5a", "#fff2d0", "#ff5a1f", "#ffd08a", Mote.Ember, Mote.Card, Matter.Filigree, Accent.Cracks, true),
-        ["chase"] = P("chase", Family.Surge, Family.Twin, Style.Strike, new[] { "#0b3b66", "#1fb7d6", "#6af0e0", "#b58cff", "#ffffff" }, "#c9fff4", "#ffffff", "#1b9bd0", "#e6fffb", Mote.Spark, Mote.Wisp, Matter.Electric, Accent.Lightning),
-        ["climax"] = P("climax", Family.Crescent, Family.Crescent, Style.Heavy, Rainbow, "#ffd24a", "#fff8e0", "#ff4a14", "#ffe39a", Mote.Spark, Mote.Petal, Matter.Filigree, Accent.Wings, true, 1.12f),
+        // Forged evidence: a red wax seal thrown on a high arc, slammed onto the target, splashing forward.
+        ["seal"] = P("seal", Family.Falling, Family.Falling, Style.Strike, new[] { "#1a0306", "#5a0a12", "#a3141f", "#e0392b", "#ffb36b" }, "#ffcf8a", "#fff0d8", "#a3141f", "#ffd0a0", Mote.Ember, Mote.Ink, Matter.Flame, Accent.None, false, 1f, 0f, Form.Throw),
+        // Twin pursuit: two violet shadows run low at the target; the second bites.
+        ["chase"] = P("chase", Family.Twin, Family.Twin, Style.Strike, new[] { "#07030d", "#1d0b33", "#43186e", "#8a3dff", "#e9b8ff" }, "#d6a8ff", "#f6e8ff", "#43186e", "#e6c2ff", Mote.Wisp, Mote.Puff, Matter.Ink, Accent.None, false, 1f, 0f, Form.Hunt),
+        // Absurd finale: a volley of stage props rains onto the target, a spotlight rises, curtains close.
+        ["climax"] = P("climax", Family.Crescent, Family.Crescent, Style.Heavy, Rainbow, "#ffd24a", "#fff8e0", "#ff4a14", "#ffe39a", Mote.Card, Mote.Spark, Matter.Filigree, Accent.None, false, 1f, 0f, Form.Rain),
         ["reversal"] = P("reversal", Family.Curtain, Family.Curtain, Style.Strike, new[] { "#3a0640", "#a81f86", "#ff4fae", "#ffb04a", "#6a3cff" }, "#ffd07a", "#ffe6f4", "#c2289a", "#ffd4ec", Mote.Petal, Mote.Spark, Matter.Silk, Accent.Orbit),
         ["ward"] = P("ward", Family.Rising, Family.Rising, Style.Support, new[] { "#0b5a8a", "#39c6ff", "#8ae0ff", "#ffd66b", "#ffffff" }, "#fff0b0", "#ffffff", "#2a9fe0", "#e6f8ff", Mote.Wisp, Mote.Spark, Matter.Water, Accent.None, false, 1f, 0.04f),
         ["declaration"] = P("declaration", Family.Rising, Family.Rising, Style.Heavy, new[] { "#2b1466", "#6a3cff", "#c07aff", "#ffcf6a", "#fff4dc" }, "#ffd76a", "#fffaf0", "#6f3cff", "#fff0cc", Mote.Card, Mote.Shard, Matter.Filigree, Accent.Vortex, true),

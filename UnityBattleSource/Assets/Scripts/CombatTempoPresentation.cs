@@ -256,18 +256,19 @@ public sealed class CombatTempoPresentation : MonoBehaviour
     {
         if (!Enabled || !battle.NativeCombatEnabled || hero == null) return false;
         var parts = payload.Split(':'); var skill = basic ? "basic" : parts[0];
-        if (!basic && skill != "fool_skill_02" && skill != "fool_skill_06" && skill != "fool_skill_07") return false;
+        if (!basic && skill != "fool_skill_02" && skill != "fool_skill_05" && skill != "fool_skill_06" && skill != "fool_skill_07") return false;
         Transform target = parts.Length > 1 && enemies.TryGetValue(parts[1], out var e) ? e.handle.EffectAnchor : FirstEnemy();
         if (!target) return true;
-        float contact = basic ? .58f : skill == "fool_skill_02" ? .38f : skill == "fool_skill_06" ? .705f : .885f;
+        float contact = basic ? .58f : skill == "fool_skill_02" ? .38f : skill == "fool_skill_05" ? .62f : skill == "fool_skill_06" ? .705f : .885f;
         string clip = basic ? new[] { "BasicSlash", "Thrust", "Card" }[basicVariation++ % 3]
             : skill == "fool_skill_02" ? new[] { "CastMaskFlick", "CastMaskTurn" }[maskVariation++ % 2]
+            : skill == "fool_skill_05" ? "CastCardFan"
             : skill == "fool_skill_06" ? new[] { "CastTwinSweep", "CastTwinCross" }[twinVariation++ % 2]
             : new[] { "CastFinaleLift", "CastFinaleThrow" }[finaleVariation++ % 2];
         hero.body.Play(clip, contact, false, 0);
         SpellAudioDirector20260924.BeginPlayer(battle, skill);
         // Skills keep their full authored effects; only basic attacks use the light card.
-        if (!basic) battle.PlayTempoSkillVisuals(skill, parts.Length > 1 ? parts[1] : null);
+        if (!basic) battle.PlayTempoSkillVisuals(skill, parts.Length > 1 ? parts[1] : null, contact);
         StartCoroutine(PlayerStrike(skill, target, contact, generation, basic)); return true;
     }
     IEnumerator PlayerStrike(string skill, Transform target, float contact, int token, bool placeholder = true)
