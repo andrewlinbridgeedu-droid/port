@@ -2525,6 +2525,23 @@ public sealed class BattlePrototype : MonoBehaviour
             ? HeroChestPoint
             : () => player ? player.transform.position + Vector3.up * 1.15f : Vector3.zero;
         SpellSpectacle20260926.BeginPlayer(this, skillID, caster, points, seeds, expectedContact);
+        // Light comes off the hero itself while it casts (aura, glints, a sigil at its feet).
+        if (points.Count > 0) SpellSpectacle20260926.CastLight(this, skillID, HeroChestPoint, HeroFeetPoint, expectedContact);
+    }
+
+    /// Feet of the hero as currently drawn: the illustrated frame's foot line (50 px above
+    /// the bottom of the plane), else the root.
+    Vector3 HeroFeetPoint()
+    {
+        if (!player) return Vector3.zero;
+        var illustrated = player.GetComponentInChildren<AIHeroAnimatedBody>();
+        if (illustrated && illustrated.Surface && illustrated.Surface.enabled)
+        {
+            var frame = illustrated.Surface.bounds;
+            float unit = frame.size.y / 640f;
+            if (unit > 1e-4f) return new Vector3(frame.center.x, frame.min.y + 50f * unit, frame.center.z);
+        }
+        return player.transform.position;
     }
 
     /// Chest of the hero as currently drawn: the illustrated (video) hero's frame, else

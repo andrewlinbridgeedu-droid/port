@@ -289,11 +289,14 @@ def atlas(out):
       stars   : x 0..1024,    y 0..1024    (2x2 cells of 512)
       splashes: x 1024..2048, y 0..1024    (2x2 cells of 512)
       motes   : x 0..1024,    y 1024..1536 (4x2 cells of 256)
+      glints  : x 0..512,     y 1536..1792 (motes 8 and 9, see glints.py)
     y is measured from the image top."""
+    from glints import paste_glints
     sheet = Image.new("RGBA", (2048, 2048), (255, 255, 255, 0))
     sheet.paste(Image.open(os.path.join(out, "SpectacleStar.png")), (0, 0))
     sheet.paste(Image.open(os.path.join(out, "SpectacleSplash.png")), (1024, 0))
     sheet.paste(Image.open(os.path.join(out, "SpectacleMotes.png")), (0, 1024))
+    paste_glints(sheet)
     sheet.save(os.path.join(out, "SpectacleAtlas.png"))
 
 

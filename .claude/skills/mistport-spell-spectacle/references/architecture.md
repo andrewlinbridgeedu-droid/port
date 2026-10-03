@@ -6,6 +6,7 @@
 - 生命周期与挂接点
 - 身份识别
 - 生成一次命中
+- 主角牌：往前打、流光、命中炸开、出手光（2026-10-03）
 - 如何加一个新签名招式
 - 如何加一种新材质
 - 如何给新敌人或新通缉头目配身份
@@ -19,10 +20,10 @@
 | `Resources/SpellSpectacle20260926/SpectacleFlare.shader` | 公告板：uv2.x = 覆盖比例，uv2.y = 亮芯变白程度 |
 | `Resources/SpellSpectacle20260926/SpectacleWash.shader` | 全屏染色，直接写裁剪空间，任何相机都铺满 |
 | `SpectacleMatter.png` | 1024×2048，8 行 × 1024×256。R 线条、G 体积、B 闪点、A 覆盖。行 0 金纹，1 火，2 水，3 晶体，4 丝，5 墨，6 雷电，7 烟。**导入关闭 mipmap**，否则行间串色 |
-| `SpectacleAtlas.png` | 2048²：星爆 2×2（左上）、撕裂溅射 2×2（右上）、粒子 4×2（下方 1024–1536 行：Spark/Ember/Shard/Ink/Petal/Card/Wisp/Puff） |
+| `SpectacleAtlas.png` | 2048²：星爆 2×2（左上）、撕裂溅射 2×2（右上）、粒子 4×2（下方 1024–1536 行：Spark/Ember/Shard/Ink/Petal/Card/Wisp/Puff），1536–1792 行左边两格是四角星芒 Glint/Twinkle（Mote 8、9） |
 | `SpectacleNoise.png` | 可平铺噪声 |
 
-生成器在仓库 `tools/vfx-spectacle-20260926/`：`make_textures.py`（星爆/溅射/粒子/噪声/金纹）、`make_matter.py`（材质图集，import make_textures 取金纹行）。需要 `/tmp/mistport-vfx-encode/venv`（numpy、pillow、imageio-ffmpeg）。
+生成器在仓库 `tools/vfx-spectacle-20260926/`：`make_textures.py`（星爆/溅射/粒子/噪声/金纹）、`make_matter.py`（材质图集，import make_textures 取金纹行）、`glints.py`（四角星芒，纯 PIL；可单独对已提交的图集补两格，不动其他像素）。前两个需要 `/tmp/mistport-vfx-encode/venv`（numpy、pillow、imageio-ffmpeg）。
 
 ## 生命周期与挂接点
 
@@ -62,6 +63,17 @@
 5. 全屏染色 `Wash.Trigger`：新命中取较强值，不叠加。
 
 `Path` 上的动作字段：`pivot` 旋转中心；`offset` 从偏移位置飞到原位；`drift` 到达后继续漂移；`spin/spinAxis` 持续旋转；`swing/swingAxis` 从合拢到张开；`shrink` 向内收；`rigid` 不做弹出缩放；`revealScale/holdScale` 节奏；`coreAmt/opacity/flicker/wobble` 外观；`impactAt` 到达时触发 `Flares.Impact`。
+
+## 主角牌：往前打、流光、命中炸开、出手光（2026-10-03）
+
+用户在手机上的要求，按先后：法术要“往前打”、不要满屏开花；命中范围别太小；每次命中要“炸裂开”到约半屏、不要结结实实一团；飞行要有流光；出技能时主角身上要冒出各种光。
+
+- **形式 `Form`**（`Throw` 伪证、`Hunt` 双影、`Rain` 荒谬、`Dash` 错步、`Flick` 普攻）：`BeginPlayer` 登记时调 `Launch`，按 `LaunchShots` 生成轨迹带和弹头，掐着预计命中时间落到目标。起点是 `BattlePrototype.HeroChestPoint`（视频主角画面的胸口）。
+- **流光**：`Shot.stream`（`Flares.Stream`，光点沿同一条路径跟在弹头后面流向目标，`Mark.course` 让粒子骑在路径上）、`Shot.glow`（`Flares.Follow`，没有自带弹头的普攻牌、双影分身、错步残影跟一团光和一颗星芒）、`Shot.twinkles`（路过时沿途闪四角星芒）。
+- **命中**：`FormImpact` 有形式的主角牌不走 `SpawnBodies`。先是各自的落地形态（`ImpactPaths`），再加炸开：`BurstSpikes`（身份材质的锥刺，角度和长度错开，晶体直、火和烟弯、彩虹每根换色）加 `Flares.Explode`（白闪、星爆、撕裂溅射、横向抛出的光刺、身份碎屑、地面溅射）。`reach` 按命中深度的屏宽算：单体 0.62、荒谬 0.55、普攻 0.5 个半屏宽；群体主目标再乘 0.6、其余乘 0.4。普攻不再叠形态层（手机上读成一团）。
+- **出手光** `CastLight`（`BattlePrototype.BeginPlayerSpectacle` 调，带 `HeroChestPoint`、`HeroFeetPoint`）：主角背后的光晕和脚下地面光、从脚边往外散开升起的光舌、脚下转动的断弧法阵（两圈，始终留缺口，不闭合成环）都用 `sweepUnderMaterial`/`flareUnderMaterial`（renderQueue 2990，在背景 1000 之后、视频主角 3000 之前画，主角挡在光前面）；身上升起的身份粒子、四角星芒、出手瞬间的手部闪光、全身一亮和从胸口抛出的光用普通材质画在主角前面。普攻只留小光晕、三颗星芒和手部闪光。
+- 释放时刻与 `Launch` 一致：`release = contact − clamp(contact × .45, .22, .42)`。
+- 调试构建输出 `SPELLFORM light/launch/shot/impact` 日志，用来在录像里对时间。
 
 ## 如何加一个新签名招式
 
