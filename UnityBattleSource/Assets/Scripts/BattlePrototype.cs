@@ -2399,7 +2399,8 @@ public sealed class BattlePrototype : MonoBehaviour
                 SpellAudioDirector20260924.BeginPlayer(this, "basic");
                 BeginPlayerSpectacle("basic", basicHandle != null ? new List<EnemyHandle> { basicHandle } : null, basicTarget);
                 var tempo = GetComponent<CombatTempoPresentation>();
-                if (tempo && tempo.Enabled) tempo.HeroCast("basic");
+                // The illustrated hero plays its own basic action in every battle.
+                if (tempo && tempo.HasHero) tempo.HeroCast("basic");
                 else PrepareCompactPlayerBasic();
                 foolBasicTarotVFX.Play(Camera.main, player.transform, basicTarget);
                 basicTarget.GetComponentInChildren<Mindstone.VFXV1.GuardianWard>()?.ImpactAfter(.58f);
@@ -2458,7 +2459,7 @@ public sealed class BattlePrototype : MonoBehaviour
 
     void BeginDistinctPlayerCast(string skillID)
     {
-        if (GetComponent<CombatTempoPresentation>()?.Enabled ?? false) { GetComponent<CombatTempoPresentation>().HeroCast(skillID); return; }
+        if (GetComponent<CombatTempoPresentation>()?.HasHero ?? false) { GetComponent<CombatTempoPresentation>().HeroCast(skillID); return; }
         if (!player || !playerAnimator) return;
         // Every official skill uses its own authored pose, including the quick wrist cast.
         playerChoreography = FoolSkillChoreography.Install(player.transform);

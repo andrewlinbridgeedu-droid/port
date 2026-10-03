@@ -23,12 +23,16 @@ public sealed class FoolBasicTarotVFX : MonoBehaviour
     static readonly int Target = Shader.PropertyToID("_Target");
     static readonly int Aspect = Shader.PropertyToID("_Aspect");
 
+    /// The camera-wide TarotNova overlay is off (2026-10-03): a basic attack is the flying
+    /// tarot alone, aimed from the hero at the target, and a small landing (SpellSpectacle).
+    const bool FullScreenOverlay = false;
+
     public void Play(Camera camera, Transform caster, Transform victim)
     {
         Clear();
         if (!camera || !caster || !victim) return;
-        var shader = Resources.Load<Shader>("Effects/Fool/TarotNova");
-        if (!shader) { Debug.LogError("Fool basic attack shader missing."); return; }
+        var shader = FullScreenOverlay ? Resources.Load<Shader>("Effects/Fool/TarotNova") : null;
+        if (FullScreenOverlay && !shader) { Debug.LogError("Fool basic attack shader missing."); return; }
         view = camera; source = caster; target = victim;
         // The sample owns its illustrated body action; this component keeps
         // the original flying tarot and its sole .58 s contact callback.
@@ -47,13 +51,16 @@ public sealed class FoolBasicTarotVFX : MonoBehaviour
             card.AddComponent<MeshFilter>().sharedMesh=cardMesh;
             card.AddComponent<MeshRenderer>().sharedMaterials=new[]{cardFace,cardEdge};
         }
-        material = new Material(shader) { name = "Fool basic tarot (owned)" };
-        material.SetTexture("_Atlas", Resources.Load<Texture2D>("Effects/Fool/FoolTarotVFXAtlas"));
-        surface = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        surface.name = "Fool Basic Tarot Fullscreen";
-        Destroy(surface.GetComponent<Collider>());
-        surface.transform.SetParent(camera.transform, false);
-        surface.GetComponent<MeshRenderer>().sharedMaterial = material;
+        if (shader)
+        {
+            material = new Material(shader) { name = "Fool basic tarot (owned)" };
+            material.SetTexture("_Atlas", Resources.Load<Texture2D>("Effects/Fool/FoolTarotVFXAtlas"));
+            surface = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            surface.name = "Fool Basic Tarot Fullscreen";
+            Destroy(surface.GetComponent<Collider>());
+            surface.transform.SetParent(camera.transform, false);
+            surface.GetComponent<MeshRenderer>().sharedMaterial = material;
+        }
         elapsed = 0; contactReported = false; launched=false; playing = true; Sample(0);
     }
 
@@ -67,7 +74,8 @@ public sealed class FoolBasicTarotVFX : MonoBehaviour
 
     public void Sample(float time)
     {
-        if (!material || !view || !surface || !source || !target) return;
+        // The card and the contact receipt never depend on the optional overlay.
+        if (!view || !source || !target) return;
         time=Mathf.Max(0,time);
         Vector3 wrist=choreography?choreography.CastingHandPosition:source.position+Vector3.up*1.15f;
         if(!launched)launch=wrist;
@@ -86,16 +94,19 @@ public sealed class FoolBasicTarotVFX : MonoBehaviour
             card.transform.localScale=Vector3.one*(.52f+Mathf.Sin(flight*Mathf.PI)*.08f);
             cardFace.color=cardEdge.color=new Color(1,1,1,alpha);
         }
-        float distance = view.nearClipPlane + .12f;
-        float height = view.orthographic ? view.orthographicSize * 2 : 2 * distance * Mathf.Tan(view.fieldOfView * Mathf.Deg2Rad * .5f);
-        surface.transform.localPosition = new Vector3(0, 0, distance);
-        surface.transform.localScale = new Vector3(height * view.aspect, height, 1);
-        material.SetFloat(Beat, HeroVisualBeat.Sample(time, .58f, .055f));
+        if (surface && material) {
+            float distance = view.nearClipPlane + .12f;
+            float height = view.orthographic ? view.orthographicSize * 2 : 2 * distance * Mathf.Tan(view.fieldOfView * Mathf.Deg2Rad * .5f);
+            surface.transform.localPosition = new Vector3(0, 0, distance);
+            surface.transform.localScale = new Vector3(height * view.aspect, height, 1);
+            material.SetFloat(Beat, HeroVisualBeat.Sample(time, .58f, .055f));
+        }
         if (!contactReported && time >= .58f) {
             contactReported = true;
             if(choreography&&choreography.CurrentSkill==FoolSkillChoreography.BasicID)choreography.Contact();
             UnityBattleBridge.ReportCombatContact("player");
         }
+        if (!material) return;
         material.SetFloat(Aspect, view.aspect);
         material.SetVector(Source, view.WorldToViewportPoint(launch));
         material.SetVector(Target, view.WorldToViewportPoint(target.position + Vector3.up * 1.05f));

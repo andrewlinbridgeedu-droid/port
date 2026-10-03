@@ -26,7 +26,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
     /// burst; the others leave the hero during the cast, travel the corridor to
     /// the target and land on the contact receipt (2026-10-03: attacks must read
     /// as aimed at the enemy, each card with its own form, not a screen-wide bloom).
-    public enum Form { Bloom, Throw, Hunt, Rain, Dash }
+    public enum Form { Bloom, Throw, Hunt, Rain, Dash, Flick }
     /// 错步穿行 cuts each further target this long after the previous one (visual only).
     const float DashChainStep = .12f;
 
@@ -529,7 +529,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 glint.pivot = to; glint.coreAmt = 2f; glint.tile = 2.4f; glint.holdScale = .25f; glint.opacity = .9f; glint.revealEase = ease;
                 var shot = new Shot { path = glint, from = from, time = time, at = leave, headSize = 0f, star = false,
                     course = u => pos(Mathf.Pow(u, ease)) + Vector3.up * .25f * s, sparks = chained ? 8 : 16, spark = Mote.Shard, chained = chained };
-                int prints = chained ? 3 : 8;
+                int prints = chained ? 3 : 10;
                 float heading = Mathf.Atan2(flat.z, flat.x) * Mathf.Rad2Deg;
                 for (int k = 0; k < prints; k++)
                 {
@@ -576,14 +576,17 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         {
             var rng = new System.Random(cue.seeds[i] * 31 + cue.cast * 7 + 11);
             float half = Vector3.Distance(cam.transform.position, points[i]) * Mathf.Tan(cam.fieldOfView * .5f * Mathf.Deg2Rad);
-            var frame = new Frame(cam, caster, points[i], half / 4.5f * p.scale * .55f, rng);
+            // A flicked basic card lands small: it is the steady beat between cards, not a spell.
+            var frame = new Frame(cam, caster, points[i], half / 4.5f * p.scale * (p.form == Form.Flick ? .3f : .55f), rng);
             // A dash cuts its targets one after another; other forms land together.
             float delay = i * (p.form == Form.Dash ? DashChainStep : .035f);
             if (Diagnostics) Debug.Log($"SPELLFORM impact {p.id} t={Time.unscaledTime:F3} at={points[i]:F2} s={frame.s:F2}");
             // One layer of the identity's own form keeps the old layered brilliance around
             // the main target. A thrown seal has none: its family falls from over the top.
             // Bystanders of a group card get only the landing itself.
-            var family = p.form == Form.Throw || i > 0 ? new List<Path>() : Paths(p.family, frame, 1, rng);
+            // The dash's crossed cut is kept small so the afterimage, not the blades, carries it.
+            var familyFrame = p.form == Form.Dash ? new Frame(cam, caster, points[i], frame.s * .6f, rng) : frame;
+            var family = p.form == Form.Throw || p.form == Form.Flick || i > 0 ? new List<Path>() : Paths(p.family, familyFrame, 1, rng);
             for (int k = 0; k < family.Count; k++)
             {
                 var body = Body.Create(root, sweepMaterial, this);
@@ -681,6 +684,17 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 var scuff = Make(28, pos, FacingAcross(pos, Vector3.up), t => s * .09f * Swell(t, .5f) * (1 - .5f * t), Vector3.up);
                 scuff.pivot = foot; scuff.rigid = true; scuff.revealScale = .7f; scuff.holdScale = 2.2f; scuff.coreAmt = 1.6f; scuff.tile = 2f;
                 list.Add(scuff);
+                break;
+            }
+            case Form.Flick:
+            {
+                // The flicked card's nick: one short bright cut across the target, nothing more.
+                var a = f.target - lateral * .35f * s + f.up * .2f * s;
+                var b = f.target + lateral * .35f * s - f.up * .15f * s;
+                Func<float, Vector3> pos = t => Vector3.Lerp(a, b, t) + f.toCam * .1f * s * Swell(t, 1f);
+                var nick = Make(18, pos, FacingAcross(pos, f.toCam), t => s * .07f * Swell(t, .6f), f.toCam);
+                nick.pivot = f.target; nick.rigid = true; nick.revealScale = .6f; nick.holdScale = .6f; nick.coreAmt = 1.8f;
+                list.Add(nick);
                 break;
             }
             case Form.Rain:
@@ -1966,9 +1980,13 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         /// A mirror footprint flat on the floor that flashes as the runner passes and fades.
         public void Footprint(Profile p, Vector3 at, float delay, float heading, float s, System.Random rng)
         {
-            float size = R(rng, .2f, .26f) * s;
-            Add(new Mark { pos = at, cell = MoteCell(Mote.Shard), color = Pick(p, rng, .55f, 1f), size = size * 1.25f, sizeEnd = size,
-                rot = heading, life = R(rng, .6f, .8f), delay = delay, peak = .08f, flat = true, opacity = .95f, hot = .7f });
+            // Large enough to read on the floor from the low camera (it is seen at a grazing
+            // angle), with a short upright glint so each step flashes as the runner passes.
+            float size = R(rng, .36f, .46f) * s;
+            Add(new Mark { pos = at, cell = MoteCell(Mote.Shard), color = Pick(p, rng, .6f, 1f), size = size * 1.3f, sizeEnd = size,
+                rot = heading, life = R(rng, .75f, .95f), delay = delay, peak = .08f, flat = true, opacity = 1f, hot = .9f });
+            Add(new Mark { pos = at + Vector3.up * .08f * s, cell = Star(rng.Next(4)), color = Color.Lerp(p.hot, Color.white, .4f), size = .1f * s, sizeEnd = .55f * s,
+                rot = R(rng, 0, 360), life = .22f, delay = delay, peak = .25f, pop = true, opacity = .7f, hot = 1f });
         }
 
         /// A bright head flying the same ballistic course as a launch trail (no drag).
@@ -2159,7 +2177,8 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
     static readonly Dictionary<string, Profile> Profiles = new Dictionary<string, Profile>
     {
         // Hero: the Fool's tarot light is prismatic; each card keeps its own form.
-        ["paper"] = P("paper", Family.Surge, Family.Surge, Style.Light, new[] { "#5a1bd6", "#b04cff", "#ff5fd0", "#ffc94a", "#7fe8ff" }, "#ffd76a", "#fff4d8", "#7a2cff", "#ffe2a8", Mote.Card, Mote.Spark, Matter.Filigree, Accent.Orbit),
+        // Basic attack: the flicked tarot (FoolBasicTarotVFX) flies; the landing is a small nick and sparks.
+        ["paper"] = P("paper", Family.Surge, Family.Surge, Style.Light, new[] { "#5a1bd6", "#b04cff", "#ff5fd0", "#ffc94a", "#7fe8ff" }, "#ffd76a", "#fff4d8", "#7a2cff", "#ffe2a8", Mote.Card, Mote.Spark, Matter.Filigree, Accent.None, false, 1f, 0f, Form.Flick),
         // Sidestep strike: the hero's afterimage dashes through on mirror footprints and leaves a crossed mirror cut.
         ["sidestep"] = P("sidestep", Family.Twin, Family.Twin, Style.Strike, new[] { "#3a0f8f", "#8a3dff", "#ff58c8", "#ffb22e", "#fff0b0" }, "#ffd35a", "#fff6e0", "#8c2bff", "#ffd9a0", Mote.Shard, Mote.Card, Matter.Crystal, Accent.None, false, 1f, 0f, Form.Dash),
         ["mask"] = P("mask", Family.Fan, Family.Fan, Style.Control, new[] { "#0a3a66", "#1f8ad6", "#3ad6e8", "#a57bff", "#f0f4ff" }, "#dff8ff", "#ffffff", "#2aa6c8", "#e8fbff", Mote.Shard, Mote.Wisp, Matter.Crystal, Accent.Shards),

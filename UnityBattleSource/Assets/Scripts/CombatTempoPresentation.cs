@@ -10,6 +10,11 @@ public sealed class CombatTempoPresentation : MonoBehaviour
 {
     public bool Enabled { get; private set; }
     public bool HoundBodyOnly { get; private set; }
+    /// The illustrated (video) hero is the hero in every battle (2026-10-03, user: the hero
+    /// now shows its actions as video). Outside the tempo samples only the hero is
+    /// replaced; enemies and the rules' presentation stay as they were.
+    public bool HeroOnly { get; private set; }
+    public bool HasHero => hero != null && hero.Valid && (Enabled || HeroOnly);
     BattlePrototype battle;
     int generation, maskVariation;
     string outfit = "mistport-night";
@@ -50,10 +55,11 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         Clear(); encounter = id;
         Enabled = id == "chapter01_q04_encounter" || id == "church_tower_001" || id == "church_bounty_b01";
         HoundBodyOnly = id == "chapter01_q03_encounter";
+        HeroOnly = !Enabled && id != "off";
         InstallBodies();
     }
     void LateUpdate() {
-        if (!(Enabled || HoundBodyOnly)) return;
+        if (!(Enabled || HoundBodyOnly || HeroOnly)) return;
         InstallBodies();
         // Legacy reset paths can restore cached Renderer flags mid-fight.
         // The sample replacement is visible; keep originals for exit/retry.
@@ -67,7 +73,7 @@ public sealed class CombatTempoPresentation : MonoBehaviour
     }
     void InstallBodies()
     {
-        if (!battle || !(Enabled || HoundBodyOnly)) return;
+        if (!battle || !(Enabled || HoundBodyOnly || HeroOnly)) return;
         if (hero != null && !hero.Valid) { Restore(hero); hero = null; }
         foreach (var key in new List<string>(enemies.Keys)) {
             var e = enemies[key]; if (!e.body || !e.handle || !e.handle.gameObject.activeInHierarchy || e.handle.Model != e.replacement) { Restore(e); enemies.Remove(key); }
@@ -75,7 +81,8 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         foreach (var h in battle.TempoSampleEnemies) {
             if (!h || !h.gameObject.activeInHierarchy || enemies.ContainsKey(h.BattleEnemyId)) continue;
             var kind = h.ProfileEnemyId == "early-hell-hound" ? "Hound" : h.ProfileEnemyId == "stonehide" ? "Stonejaw" : h.ProfileEnemyId == "bounty-b01" ? "Hollow" : null;
-            if (kind == null || HoundBodyOnly && kind != "Hound") continue;
+            // Only the tempo samples (and Q3's hound) replace enemy bodies.
+            if (kind == null || (!Enabled && !(HoundBodyOnly && kind == "Hound"))) continue;
             var e = Replace(h.Model, kind, battle.TempoSamplePlayer, h);
             if (e != null) {
                 enemies[h.BattleEnemyId] = e;
@@ -86,7 +93,7 @@ public sealed class CombatTempoPresentation : MonoBehaviour
                 h.GetComponent<MainlineBodyRound2>()?.Stop();
             }
         }
-        if (Enabled && hero == null && battle.TempoSamplePlayer) {
+        if ((Enabled || HeroOnly) && hero == null && battle.TempoSamplePlayer) {
             var a = battle.TempoSamplePlayer.GetComponentInChildren<Animator>(true);
             if (a) hero = Replace(battle.TempoSamplePlayer, "Hero", FirstEnemy(), null);
         }
@@ -286,16 +293,16 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         UnityBattleBridge.ReportCombatContact("enemy:" + id);
     }
     public void MaskCast() {
-        if (!Enabled || !battle.NativeCombatEnabled || hero == null || !hero.Valid) return;
+        if (!(Enabled || HeroOnly) || !battle.NativeCombatEnabled || hero == null || !hero.Valid) return;
         if (hero.ai ? !hero.ai.IsActing : !hero.body.IsActing) PlayHero("fool_skill_02",new[] { "CastMaskFlick", "CastMaskTurn" }[maskVariation++ % 2],.38f);
         // The native manual defence already settled. No player contact receipt.
     }
-    public void HeroCast(string skill) { if (Enabled && hero != null) PlayHero(skill,skill == "basic" ? "Card" : "CastCardFan",skill == "basic" ? .58f : FoolSkillChoreography.ExpectedContact(skill)); }
+    public void HeroCast(string skill) { if ((Enabled || HeroOnly) && hero != null) PlayHero(skill,skill == "basic" ? "Card" : "CastCardFan",skill == "basic" ? .58f : FoolSkillChoreography.ExpectedContact(skill)); }
     public bool EnemyHit(EnemyHandle h, string skill) {
         if (!Enabled || !enemies.TryGetValue(h.BattleEnemyId, out var e)) return false;
         e.body.ConfirmedHit(skill == "fool_skill_07" || skill == "fool_skill_10"); return true;
     }
-    public void PlayerHit() { if (!Enabled || hero == null) return; if(hero.ai) hero.ai.ConfirmedHit(false); else if(hero.body) hero.body.ConfirmedHit(false); }
+    public void PlayerHit() { if (!(Enabled || HeroOnly) || hero == null) return; if(hero.ai) hero.ai.ConfirmedHit(false); else if(hero.body) hero.body.ConfirmedHit(false); }
     static void Restore(Entry e) {
         if (e == null) return;
         if (e.ai) { e.ai.Cancel(); e.ai.gameObject.SetActive(false); Destroy(e.ai.gameObject); }
@@ -311,6 +318,6 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         if (hero != null && hero.body) hero.body.Cancel(); CombatTempoVFX.Clear();
         if (hero != null && hero.ai) hero.ai.Cancel();
     }
-    public void Clear() { Cancel(); foreach (var e in enemies.Values) Restore(e); enemies.Clear(); Restore(hero); hero = null; Enabled = false; HoundBodyOnly = false; encounter = null; }
+    public void Clear() { Cancel(); foreach (var e in enemies.Values) Restore(e); enemies.Clear(); Restore(hero); hero = null; Enabled = false; HoundBodyOnly = false; HeroOnly = false; encounter = null; }
     void OnDisable() => Clear();
 }

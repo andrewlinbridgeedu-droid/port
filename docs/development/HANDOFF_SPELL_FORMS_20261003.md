@@ -103,6 +103,12 @@
   - Preferences 装前装后 264 份逐字节相同；
   - 手机锁屏，启动检查没做；
   - 记录在 SSD 的 `Mistport-archives/releases/Build169.43-ai-hero-integration/`。
+- **“还要改的”全部修改（169.44–169.45，用户：“还要改的 全部都修改”）**：
+  - **普攻**：去掉普攻出招特效里贴在镜头前的全屏 TarotNova 着色器，只留那张飞出去的翻转塔罗牌和 0.58 秒的命中回执（`FoolBasicTarotVFX.FullScreenOverlay = false`）。普攻的法术身份 `paper` 改成“轻弹”形式（`Form.Flick`）：牌本身就是飞行物，命中只有一道小划痕和一撮碎光。
+  - **错步**：镜面鞋印放大约 1.8 倍、加亮，每个带一点闪光，主路 10 个；交叉斜刃缩到原来的 60%。
+  - **视频主角上所有战斗**：节奏样板组件新增“只装主角”模式（`CombatTempoPresentation.HeroOnly`），三场节奏样板以外的战斗也装视频主角；出招、普攻、受击和假面动作都交给它（`HasHero`）。敌人只在三场节奏样板里替换，节奏规则不变。
+  - **模拟器 169.44 看过**：Q4 普攻干净，错步鞋印清楚、斜刃变小；塔第 2 层是视频主角，错步扫中两只铜背，荒谬落在三个目标上；三段录像都没有报错。
+  - **装机**：169.45 替换 169.43，签名校验通过，Preferences 装前装后 264 份逐字节相同；手机锁屏，没做启动检查。记录在 `Mistport-archives/releases/Build169.45-fix-all/`。
 - **Unity 许可证**：上午网络给这台 Mac 分配了主机名 `Mac`，和 Unity 授权里记的 `AndrewLins-AI-Assistant` 对不上，编辑器拒绝启动。用户已用 `scutil` 把 HostName 固定为 `AndrewLins-AI-Assistant`，并在 Unity Hub 刷新了授权。
 
 ## 提交
