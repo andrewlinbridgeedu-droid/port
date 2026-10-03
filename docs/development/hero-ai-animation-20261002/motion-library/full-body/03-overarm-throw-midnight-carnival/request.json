@@ -1,0 +1,14 @@
+{
+  "model": "MiniMax-Hailuo-2.3",
+  "duration": 6,
+  "resolution": "1080P",
+  "prompt_optimizer": false,
+  "prompt": "[Static shot] Animate the supplied detailed hand-painted 2D fantasy character. Preserve his hairstyle, slender proportions, original costume colors, gold embroidery, jewels, fabric folds and fine ink lines. No glossy CGI, no plastic 3D look. A locked full-body camera sees him from behind, with the broad empty margins in this image. He may turn naturally to a rear three-quarter angle during the gesture, but never turns all the way toward the viewer. Keep the entire moving body, fingers, coat tails and boots inside the frame. The camera and plain warm-gray background never move. One coherent athletic action with a short wind-up, a very decisive release and natural follow-through, then return to a balanced relaxed standing pose. Legs, pelvis, ribcage, shoulders and arms move together as one anatomical chain. The feet must visibly step and transfer weight; this must not be an arm-only wave. Boots make clear contact with the floor, no floating. Hair, coat and ribbons lag behind the body then settle. No camera movement, cuts, zoom, text, scenery, particles or glow.  ACTION: A powerful forward OVERARM THROW of one small dark tarot card. Starting relaxed, he shifts his right foot back half a step, flexes both knees, and winds his right hand up beside and just behind his right ear, with a bent elbow. The torso coils slightly to the right; the left arm points toward the target ahead. He then plants the LEFT foot forward, drives his right hip and shoulder forward, and throws the card OVER the right shoulder toward an unseen target straight ahead and away from the camera. The rear heel lifts as weight transfers to the front leg. The throwing arm follows down across the front of his chest, partly occluded by his torso from this rear camera. His whole body leans forward briefly, then recovers and brings the feet back to a balanced stance. The released card is tiny and flies away quickly; the full-body throw is the focus. No giant props or additional cards.",
+  "input": "input.png",
+  "inputSHA256": "f5a7a148fad4d1394f1d6bc5f7a91fb525ddfd2333a1e7e17cd00eab92a33258",
+  "source": "docs/development/hero-refinement-20261001/v4/reference/midnight-carnival-back-4k.png",
+  "sourceSHA256": "ae0ddfaf91402604dce188cd3ebf3441023727419119bb6276f0a49cec0cf512",
+  "inputPreparation": "Original character pixels unchanged; wider and taller gray canvas for complete step/throw framing.",
+  "suggestedSpell": "身份错置",
+  "runtimeSkillID": "identityDisplacement"
+}

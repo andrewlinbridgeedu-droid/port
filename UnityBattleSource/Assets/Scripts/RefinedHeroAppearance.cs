@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine;
 
-// One shared body and Animator; separately tailored outfits never change the arena or clocks.
+// One shared skeleton and Animator; selected outfit meshes never change the arena or clocks.
 public sealed class RefinedHeroAppearance : MonoBehaviour
 {
     public string Outfit { get; private set; } = "mistport-night";

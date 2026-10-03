@@ -1,63 +1,135 @@
 {
-  "fbx": "HeroV4.fbx",
-  "bones": 28,
+  "sources": [
+    {
+      "outfit": "night",
+      "sourceSha256": "5515e9dc39577278c0c2fddf24cfc3bcc942e5ab17765503f05a7cf51ae9ca9a",
+      "sourceTriangles": 842102,
+      "runtimeTriangles": 180000,
+      "runtimeVertices": 89900,
+      "sourceTextureSize": [
+        2048,
+        2048
+      ],
+      "runtimeColourSize": [
+        4096,
+        4096
+      ],
+      "atlasMethod": "source albedo plus high-poly shallow AO emission bake; no reflective lobe; not newly generated 4K painting"
+    },
+    {
+      "outfit": "starlight",
+      "sourceSha256": "f134a0b9ff97110c74cae03503a379212bdb4e32245995df7d2deb15756d4d5a",
+      "sourceTriangles": 1052140,
+      "runtimeTriangles": 180000,
+      "runtimeVertices": 89760,
+      "sourceTextureSize": [
+        2048,
+        2048
+      ],
+      "runtimeColourSize": [
+        4096,
+        4096
+      ],
+      "atlasMethod": "source albedo plus high-poly shallow AO emission bake; no reflective lobe; not newly generated 4K painting"
+    },
+    {
+      "outfit": "carnival",
+      "sourceSha256": "bf65adff1753d46413e6f96253ebfe61427cca989432d87ded0eae806e573448",
+      "sourceTriangles": 1348972,
+      "runtimeTriangles": 180000,
+      "runtimeVertices": 89746,
+      "sourceTextureSize": [
+        2048,
+        2048
+      ],
+      "runtimeColourSize": [
+        4096,
+        4096
+      ],
+      "atlasMethod": "source albedo plus high-poly shallow AO emission bake; no reflective lobe; not newly generated 4K painting"
+    }
+  ],
+  "bones": 50,
+  "sharedSkeleton": true,
+  "sharedClips": true,
+  "motionSource": "tools/animation/build_meshy_hero_v3.py",
+  "motionSourceSha256": "a45640a192ee6bf6402e7a95d93df63019b6470c726814397d97a47e9146321a",
+  "ikCalibration": "minimum shoulder swing from torso rest frame, outward/rear/down elbow pole, hinged forearm, smooth torso clearance, eased target path, continuous quaternion hemisphere; v3 gesture identities and timings retained",
+  "fingerBones": 20,
+  "sleeveRibbonBones": 2,
+  "weightSmoothing": "inverse-square edge-distance weighted, four influences maximum",
   "clips": [
-    "BattleIdle",
-    "BasicSlash",
-    "Thrust",
-    "Card",
-    "Parry",
-    "Hit",
-    "CastPrepare",
-    "CastMaskFlick",
-    "CastMaskTurn",
-    "CastTwinSweep",
-    "CastTwinCross",
-    "CastFinaleLift",
-    "CastFinaleThrow",
-    "CastCardFan"
+    {
+      "name": "BattleIdle",
+      "seconds": 2.4,
+      "contactNormalized": null
+    },
+    {
+      "name": "BasicSlash",
+      "seconds": 0.7,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "Thrust",
+      "seconds": 0.7,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "Card",
+      "seconds": 0.7,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "Parry",
+      "seconds": 0.6,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "Hit",
+      "seconds": 0.42,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastPrepare",
+      "seconds": 0.7,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastMaskFlick",
+      "seconds": 0.68,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastMaskTurn",
+      "seconds": 0.68,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastTwinSweep",
+      "seconds": 0.9,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastTwinCross",
+      "seconds": 0.9,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastFinaleLift",
+      "seconds": 1.12,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastFinaleThrow",
+      "seconds": 1.12,
+      "contactNormalized": 0.58
+    },
+    {
+      "name": "CastCardFan",
+      "seconds": 0.68,
+      "contactNormalized": 0.58
+    }
   ],
-  "renderers": [
-    "Common Body",
-    "Outfit-night-Body",
-    "Outfit-starlight-Body",
-    "Outfit-carnival-Body"
-  ],
-  "triangles": {
-    "Common Body": 56604,
-    "Outfit-night-Body": 61428,
-    "Outfit-starlight-Body": 66720,
-    "Outfit-carnival-Body": 65588
-  },
-  "materials": [
-    "V4 Glove",
-    "V4 Gold",
-    "V4 Hair",
-    "V4 HairCap",
-    "V4 Lace",
-    "V4 Leather",
-    "V4 Skin",
-    "V4 Sole",
-    "V4 Trousers",
-    "V4 carnival CoatAtlas",
-    "V4 carnival Gem",
-    "V4 carnival LiningAtlas",
-    "V4 carnival Sash",
-    "V4 night CoatAtlas",
-    "V4 night Gem",
-    "V4 night LiningAtlas",
-    "V4 night Sash",
-    "V4 night Strap",
-    "V4 starlight CoatAtlas",
-    "V4 starlight Gem",
-    "V4 starlight LiningAtlas",
-    "V4 starlight Sash",
-    "V4 starlight Strap"
-  ],
-  "outfits": [
-    "mistport-night",
-    "starlight-magician",
-    "midnight-carnival"
-  ],
-  "userVisualApproval": false
+  "userVisualApproval": false,
+  "installed": false
 }

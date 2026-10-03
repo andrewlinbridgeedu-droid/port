@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>三套主角 · 背影与施法精修</title>
+<style>
+:root{color-scheme:dark;--gold:#d5b683;--paper:#ede3d3}*{box-sizing:border-box}body{max-width:1380px;margin:auto;padding:32px;background:#151820;color:var(--paper);font:16px/1.7 system-ui}h1{font-size:30px;letter-spacing:1px}h2{font-size:21px;margin:30px 0 14px}p{max-width:980px}button,select{font:inherit;color:var(--paper);background:#252a35;border:1px solid #665a49;border-radius:7px;padding:9px 16px;cursor:pointer;margin:4px}button[aria-pressed=true]{border-color:var(--gold);background:#4d3c4a}a{color:var(--gold)}.muted{color:#b6ad9e}.note{border-left:3px solid var(--gold);padding:8px 16px;background:#1d232c}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}figure{margin:0}figcaption{padding:8px 0;color:#c8bda8}img,video{display:block;width:100%;background:#22242b;border-radius:8px;object-fit:contain}img{max-height:1050px}video{max-height:80vh}.reference{background:radial-gradient(#34303a,#191b22)}details{margin:24px 0;border-top:1px solid #353841;padding-top:16px}summary{cursor:pointer;font-size:18px}footer{padding:30px 0 0;color:#aaa} @media(max-width:700px){body{padding:16px}.grid{grid-template-columns:1fr}h1{font-size:25px}}
+</style>
+<h1>三套主角：背影、衣料与施法</h1>
+<p>以你给的三套模型继续精修，沿用原型的黑紫、象牙白与绯红配色。去掉冲灰衣料的镜面反光，保留金线、褶皱和发束；三套衣装共用同一组动作。</p>
+<p class="note">右侧图与下方动画来自 Unity 实际运行，场景保持原样。左侧是 2D 质感参考。这里是 Mac 预览，尚未装到手机，尚待你认可。</p>
+<nav id="outfits"><button data-id="mistport-night" data-key="night" aria-pressed="true">雾港夜行</button><button data-id="starlight-magician" data-key="starlight" aria-pressed="false">星辉魔术师</button><button data-id="midnight-carnival" data-key="carnival" aria-pressed="false">午夜嘉年华</button></nav>
+<div class="grid"><figure><img class="reference" id="reference" src="reference/mistport-night-back-4k.png" alt="原型 2D 背影"><figcaption>原型 2D 背影 · 质感参考</figcaption></figure><figure><img id="hero" src="mistport-night-close.png" alt="新版真实模型"><figcaption id="hero-name">雾港夜行 · Unity 实际画面</figcaption></figure></div>
+<h2>七种施法</h2>
+<p class="muted">手臂后摆增加避让，袖带独立下垂，手指在蓄势与出招时轻微开合。可以放慢查看手腕、袖口和回收动作。</p>
+<div id="motions"><button data-clip="seven-casts" aria-pressed="true">连续查看</button><button data-clip="CastMaskFlick">翻出假面</button><button data-clip="CastMaskTurn">转身递面</button><button data-clip="CastTwinSweep">双影展开</button><button data-clip="CastTwinCross">双影交错</button><button data-clip="CastFinaleLift">抬幕收场</button><button data-clip="CastFinaleThrow">掷幕谢场</button><button data-clip="CastCardFan">展牌</button></div>
+<video id="motion" src="mistport-night-seven-casts.mp4" poster="mistport-night-close.png" controls loop muted playsinline preload="metadata"></video>
+<div id="speeds"><button data-rate="0.25">¼ 倍慢看</button><button data-rate="0.5">½ 倍慢看</button><button data-rate="1" aria-pressed="true">正常速度</button></div>
+<details><summary>与上一版 v3 对比</summary><p class="muted">左侧保留上一版实际运行图，右侧为本版。两版使用同一场景和全身取景规则。</p><div class="grid"><figure><img id="prior" src="prior-v3-mistport-night-close.png" alt="上一版 v3"><figcaption>上一版 v3</figcaption></figure><figure><img id="current" src="mistport-night-close.png" alt="本版"><figcaption>三套新模型精修版</figcaption></figure></div><select id="comparison-choice" aria-label="对比动作"><option value="CastMaskFlick">翻出假面</option><option value="CastMaskTurn">转身递面</option><option value="CastTwinSweep">双影展开</option><option value="CastTwinCross">双影交错</option><option value="CastFinaleLift">抬幕收场</option><option value="CastFinaleThrow">掷幕谢场</option><option value="CastCardFan">展牌</option></select><video id="comparison" src="CastMaskFlick-comparison.mp4" controls loop muted playsinline preload="metadata"></video></details>
+<details><summary>原战斗机位</summary><img id="battle" src="mistport-night-battle.png" alt="原战斗机位中的实际人物"></details>
+<details><summary>侧后方与抬手检查</summary><div class="grid"><figure><img id="quarter" src="night-blender-quarter.png" alt="Blender 侧后方"><figcaption>Blender 侧后方 · 独立检查灯光</figcaption></figure><figure><img id="release" src="night-blender-release.png" alt="Blender 抬手姿势"><figcaption>Blender 抬手 · 袖口与肩部</figcaption></figure></div></details>
+<footer><a href="HeroSovereign-v4.blend">可编辑 Blender 原件</a> · <a href="unity-verification.txt">运行检查</a> · <a href="README.md">制作与验证范围</a></footer>
+<script>
+let outfit='mistport-night',clip='seven-casts',rate=1;
+const by=id=>document.getElementById(id),motion=by('motion');
+function video(){motion.src=outfit+'-'+clip+'.mp4';motion.poster=outfit+'-close.png';motion.playbackRate=rate;}
+document.querySelectorAll('#outfits button').forEach(b=>b.onclick=()=>{outfit=b.dataset.id;document.querySelectorAll('#outfits button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));by('reference').src='reference/'+outfit+'-back-4k.png';for(const id of ['hero','current'])by(id).src=outfit+'-close.png';by('prior').src='prior-v3-'+outfit+'-close.png';by('battle').src=outfit+'-battle.png';by('quarter').src=b.dataset.key+'-blender-quarter.png';by('release').src=b.dataset.key+'-blender-release.png';by('hero-name').textContent=b.textContent+' · Unity 实际画面';video();});
+document.querySelectorAll('#motions button').forEach(b=>b.onclick=()=>{clip=b.dataset.clip;document.querySelectorAll('#motions button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));video();motion.play();});
+document.querySelectorAll('#speeds button').forEach(b=>b.onclick=()=>{rate=Number(b.dataset.rate);motion.playbackRate=rate;document.querySelectorAll('#speeds button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});
+by('comparison-choice').onchange=e=>{by('comparison').src=e.target.value+'-comparison.mp4';};
+</script></html>

@@ -1,0 +1,19 @@
+{
+  "reviewedAt": "2026-10-03 UTC",
+  "initialTrialApprovedByUser": true,
+  "newFullBodyClipsApprovedByUser": false,
+  "evidence": "Twelve half-second full-body sample frames per new clip; all six originals fully decoded; browser playback checked separately. Not an exhaustive per-frame anatomy review.",
+  "observations": [
+    "Overarm candidates visibly step, raise the throwing arm and transfer the torso during release.",
+    "Sidearm candidates visibly turn the torso and step; some turn toward the viewer more than requested.",
+    "Overarm takes do not all finish in the starting pose.",
+    "Card release is inconsistent: some cards remain visible in the hand after the intended release.",
+    "Fine hand and costume details may change; not a clean transparent animation or verified seamless loop."
+  ],
+  "notDone": [
+    "Transparent extraction",
+    "Runtime binding or Unity/App integration",
+    "Phone installation",
+    "User acceptance of the latest fifteen-clip selection"
+  ]
+}

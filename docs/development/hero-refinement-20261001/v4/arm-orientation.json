@@ -1,0 +1,191 @@
+{
+  "checkedFrames": 752,
+  "all14ClipsPassed": true,
+  "failures": [],
+  "check": "minimum shoulder swing from torso rest frame, elbow hinge swing, no antipodal quaternion keys",
+  "clips": [
+    {
+      "clip": "BattleIdle",
+      "frames": 145,
+      "minimumAdjacentQuaternionDot": 0.9999995827674866,
+      "maxBoneStepDegrees": 0.10467831254882617,
+      "worstStep": [
+        1,
+        "RightForeArm"
+      ],
+      "minimumUpperArmRearFacingDot": 0.9642739136470482,
+      "maxUpperArmAxialDeviationDegrees": 0.03956468205889273,
+      "maxForearmAxialDeviationDegrees": 0.05595291023658669
+    },
+    {
+      "clip": "BasicSlash",
+      "frames": 43,
+      "minimumAdjacentQuaternionDot": 0.9611978530883789,
+      "maxBoneStepDegrees": 32.026530872204205,
+      "worstStep": [
+        12,
+        "RightForeArm"
+      ],
+      "minimumUpperArmRearFacingDot": 0.036203477531671524,
+      "maxUpperArmAxialDeviationDegrees": 0,
+      "maxForearmAxialDeviationDegrees": 0.05595291023658669
+    },
+    {
+      "clip": "Thrust",
+      "frames": 43,
+      "minimumAdjacentQuaternionDot": 0.9716421365737915,
+      "maxBoneStepDegrees": 27.354958628649417,
+      "worstStep": [
+        10,
+        "LeftForeArm"
+      ],
+      "minimumUpperArmRearFacingDot": 0.7391458787024021,
+      "maxUpperArmAxialDeviationDegrees": 0,
+      "maxForearmAxialDeviationDegrees": 0.05595291023658669
+    },
+    {
+      "clip": "Card",
+      "frames": 43,
+      "minimumAdjacentQuaternionDot": 0.9796121716499329,
+      "maxBoneStepDegrees": 23.178949208387834,
+      "worstStep": [
+        29,
+        "LeftForeArm"
+      ],
+      "minimumUpperArmRearFacingDot": 0.8455610857345164,
+      "maxUpperArmAxialDeviationDegrees": 0.03956468205889273,
+      "maxForearmAxialDeviationDegrees": 0.03956468205889273
+    },
+    {
+      "clip": "Parry",
+      "frames": 37,
+      "minimumAdjacentQuaternionDot": 0.9606985449790955,
+      "maxBoneStepDegrees": 32.23329245276236,
+      "worstStep": [
+        34,
+        "LeftForeArm"
+      ],
+      "minimumUpperArmRearFacingDot": 0.5451917015016079,
+      "maxUpperArmAxialDeviationDegrees": 0.03956468205889273,
+      "maxForearmAxialDeviationDegrees": 0
+    },
+    {
+      "clip": "Hit",
+      "frames": 26,
+      "minimumAdjacentQuaternionDot": 0.9993153214454651,
+      "maxBoneStepDegrees": 4.240682625831376,
+      "worstStep": [
+        13,
+        "RightArm"
+      ],
+      "minimumUpperArmRearFacingDot": 0.9031602707691491,
+      "maxUpperArmAxialDeviationDegrees": 0,
+      "maxForearmAxialDeviationDegrees": 0
+    },
+    {
+      "clip": "CastPrepare",
+      "frames": 43,
+      "minimumAdjacentQuaternionDot": 0.9817140698432922,
+      "maxBoneStepDegrees": 21.94775855659059,
+      "worstStep": [
+        39,
+        "LeftForeArm"
+      ],
+      "minimumUpperArmRearFacingDot": 0.6419032867997885,
+      "maxUpperArmAxialDeviationDegrees": 0.05595291023658669,
+      "maxForearmAxialDeviationDegrees": 0
+    },
+    {
+      "clip": "CastMaskFlick",
+      "frames": 42,
+      "minimumAdjacentQuaternionDot": 0.9834752082824707,
+      "maxBoneStepDegrees": 20.861017879534348,
+      "worstStep": [
+        3,
+        "LeftForeArm"
+      ],
+      "minimumUpperArmRearFacingDot": 0.7094052461907268,
+      "maxUpperArmAxialDeviationDegrees": 0.05595291023658669,
+      "maxForearmAxialDeviationDegrees": 0.03956468205889273
+    },
+    {
+      "clip": "CastMaskTurn",
+      "frames": 42,
+      "minimumAdjacentQuaternionDot": 0.9794331192970276,
+      "maxBoneStepDegrees": 23.280859144472135,
+      "worstStep": [
+        38,
+        "LeftForeArm"
+      ],
+      "minimumUpperArmRearFacingDot": -0.00682930089533329,
+      "maxUpperArmAxialDeviationDegrees": 0.03956468205889273,
+      "maxForearmAxialDeviationDegrees": 0.05595291023658669
+    },
+    {
+      "clip": "CastTwinSweep",
+      "frames": 55,
+      "minimumAdjacentQuaternionDot": 0.9639074802398682,
+      "maxBoneStepDegrees": 30.880988205491505,
+      "worstStep": [
+        37,
+        "LeftForeArm"
+      ],
+      "minimumUpperArmRearFacingDot": 0.017357228323817253,
+      "maxUpperArmAxialDeviationDegrees": 0.05595291023658669,
+      "maxForearmAxialDeviationDegrees": 0.03956468205889273
+    },
+    {
+      "clip": "CastTwinCross",
+      "frames": 55,
+      "minimumAdjacentQuaternionDot": 0.9755669236183167,
+      "maxBoneStepDegrees": 25.38311705931499,
+      "worstStep": [
+        14,
+        "LeftForeArm"
+      ],
+      "minimumUpperArmRearFacingDot": 0.008496971800923347,
+      "maxUpperArmAxialDeviationDegrees": 0.03956468205889273,
+      "maxForearmAxialDeviationDegrees": 0.03956468205889273
+    },
+    {
+      "clip": "CastFinaleLift",
+      "frames": 68,
+      "minimumAdjacentQuaternionDot": 0.9819861054420471,
+      "maxBoneStepDegrees": 21.78339378815752,
+      "worstStep": [
+        64,
+        "LeftForeArm"
+      ],
+      "minimumUpperArmRearFacingDot": 0.39186326786875725,
+      "maxUpperArmAxialDeviationDegrees": 0.03956468205889273,
+      "maxForearmAxialDeviationDegrees": 0.03956468205889273
+    },
+    {
+      "clip": "CastFinaleThrow",
+      "frames": 68,
+      "minimumAdjacentQuaternionDot": 0.9880810379981995,
+      "maxBoneStepDegrees": 17.710024044923667,
+      "worstStep": [
+        18,
+        "RightForeArm"
+      ],
+      "minimumUpperArmRearFacingDot": 0.3506692610681057,
+      "maxUpperArmAxialDeviationDegrees": 0.03956468205889273,
+      "maxForearmAxialDeviationDegrees": 0.03956468205889273
+    },
+    {
+      "clip": "CastCardFan",
+      "frames": 42,
+      "minimumAdjacentQuaternionDot": 0.9788052439689636,
+      "maxBoneStepDegrees": 23.634798211356888,
+      "worstStep": [
+        38,
+        "LeftForeArm"
+      ],
+      "minimumUpperArmRearFacingDot": 0.6399906668812037,
+      "maxUpperArmAxialDeviationDegrees": 0.05595291023658669,
+      "maxForearmAxialDeviationDegrees": 0.03956468205889273
+    }
+  ],
+  "userVisualApproval": false
+}

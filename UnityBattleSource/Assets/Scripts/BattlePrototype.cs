@@ -322,7 +322,7 @@ public sealed class BattlePrototype : MonoBehaviour
         return !string.IsNullOrEmpty(GetBuiltInVFXBoardPreviewEffect())
             || System.Array.Exists(arguments, value =>
             value == "--verify-hero-anatomy" || value == "--verify-hero-quality" || value == "--capture-character-closeups" || value == "--verify-story-models" || value == "--verify-character-polish" || value == "--verify-progression-rosters" || value == "--verify-q678-redesign" || value == "--verify-hero-choreography" || value == "--verify-enemy-impact" || value == "--verify-enemy-idle" || value == "--verify-hero-back-art" || value == "--verify-q4-two-flame" || value == "--verify-sidestep-cinematic" || value == "--verify-q2-split" || value == "--verify-enemy-death-fade" || value == "--verify-emerald-escalation" || value == "--verify-early-battle" || value == "--verify-sidestep-hounds" || value == "--preview-hero-spells" || value == "--preview-signatures" || value == "--preview-hound-fire" || value == "--preview-clock-core"
-            || value == "--verify-refined-hero"
+            || value == "--verify-refined-hero" || value == "--verify-ai-hero"
             || value == "--preview-dual-clock-guard"
             || value == "--preview-reverse-tide"
             || value == "--preview-defense"
@@ -1103,8 +1103,8 @@ public sealed class BattlePrototype : MonoBehaviour
     public void SetCombatSpeed(string value) { Time.timeScale = value == "2" ? 2 : 1; }
     public bool CanTempoEnemyAct(EnemyHandle value) => CanPresentEnemy(value);
     public void SetTempoSample(string value) => CombatTempoPresentation.Get(this).Configure(value);
-    public void PresentPlayerBasic() { if (!(GetComponent<CombatTempoPresentation>()?.PlayerAction("basic", true) ?? false)) StartPresentation(PlayerAction.Basic); }
-    public void PresentPlayerBasic(string targetID) { if(NativeCombatEnabled && !(GetComponent<CombatTempoPresentation>()?.PlayerAction("basic:" + targetID, true) ?? false))StartCoroutine(PresentPlayerAction(PlayerAction.Basic,targetID)); }
+    public void PresentPlayerBasic() => StartPresentation(PlayerAction.Basic);
+    public void PresentPlayerBasic(string targetID) { if(NativeCombatEnabled) StartCoroutine(PresentPlayerAction(PlayerAction.Basic,targetID)); }
     public void PresentPlayerSkill() => StartPresentation(PlayerAction.Skill);
     string pendingSidestepSecondary;
     string[] pendingSkillTargets;
@@ -1112,7 +1112,6 @@ public sealed class BattlePrototype : MonoBehaviour
     public void SetSidestepSecondary(string id) { pendingSidestepSecondary = id; }
     public void PresentPlayerSkill(string skillID)
     {
-        if (GetComponent<CombatTempoPresentation>()?.PlayerAction(skillID, false) ?? false) return;
         if (!NativeCombatEnabled || enemy == null || player == null) return;
         var separator = skillID.IndexOf(':');
         var resolvedSkillID = separator >= 0
@@ -2399,10 +2398,13 @@ public sealed class BattlePrototype : MonoBehaviour
                 SetStatus("愚者 · 秘仪飞牌");
                 SpellAudioDirector20260924.BeginPlayer(this, "basic");
                 BeginPlayerSpectacle("basic", basicHandle != null ? new List<EnemyHandle> { basicHandle } : null, basicTarget);
-                PrepareCompactPlayerBasic();
+                var tempo = GetComponent<CombatTempoPresentation>();
+                if (tempo && tempo.Enabled) tempo.HeroCast("basic");
+                else PrepareCompactPlayerBasic();
                 foolBasicTarotVFX.Play(Camera.main, player.transform, basicTarget);
                 basicTarget.GetComponentInChildren<Mindstone.VFXV1.GuardianWard>()?.ImpactAfter(.58f);
                 yield return new WaitForSeconds(0.58f);
+                if (tempo && tempo.Enabled) UnityBattleBridge.ReportPresentationComplete("basic");
                 break;
             case PlayerAction.Skill:
                 SetStatus("愚者 · 错步穿行");
@@ -2456,7 +2458,7 @@ public sealed class BattlePrototype : MonoBehaviour
 
     void BeginDistinctPlayerCast(string skillID)
     {
-        if (GetComponent<CombatTempoPresentation>()?.Enabled ?? false) { GetComponent<CombatTempoPresentation>().HeroCast(); return; }
+        if (GetComponent<CombatTempoPresentation>()?.Enabled ?? false) { GetComponent<CombatTempoPresentation>().HeroCast(skillID); return; }
         if (!player || !playerAnimator) return;
         // Every official skill uses its own authored pose, including the quick wrist cast.
         playerChoreography = FoolSkillChoreography.Install(player.transform);
@@ -2469,39 +2471,19 @@ public sealed class BattlePrototype : MonoBehaviour
         playerChoreography.Begin(skillID);
     }
 
-    // Tempo samples drive the hero body themselves and report the single
-    // contact receipt (CombatTempoPresentation.PlayerStrike). Play the authored
-    // spell effects and the contact spectacle alongside, without a second receipt.
-    public void PlayTempoSkillVisuals(string skillID, string targetBattleEnemyID, float expectedContact = -1f)
+    /// Contact time of each hero card in the standard presentation, where its theatre
+    /// (or, for a card with a travelling form, a timer) reports the contact receipt.
+    static float StandardContactTime(string skillID) => skillID switch
     {
-        if (!NativeCombatEnabled || !player) return;
-        var targetHandle = ResolvePlayerSkillTarget(targetBattleEnemyID);
-        var targets = new List<EnemyHandle>();
-        if (IsActiveEnemyHandle(targetHandle)) targets.Add(targetHandle);
-        BeginPlayerSpectacle(skillID, targets, null, expectedContact);
-        System.Func<Vector3> caster = () => player ? player.transform.position + Vector3.up * 1.15f : Vector3.zero;
-        System.Func<Vector3> target = () => PlayerSkillTargetPoint(targetHandle);
-        // Cards with a travelling form are aimed from the hero at the target; the older
-        // stage-wide theatre (ghost volume, rising great tarot) would cover them.
-        // 双影 keeps only its two hero-shaped shadows, which run the corridor with the form.
-        if (SpellSpectacle20260926.HasForm(skillID))
-        {
-            if (skillID == "fool_skill_06" && foolSkillVFX != null)
-            {
-                foolSkillVFX.HeroActor = player.transform;
-                StartCoroutine(foolSkillVFX.PlayHuntingShadows(caster, target, expectedContact));
-            }
-            return;
-        }
-        if (spellV1Bridge != null && spellV1Bridge.CanPlay(skillID))
-        {
-            StartCoroutine(spellV1Bridge.Play(skillID, caster, target, weapon: caster, impact: target, ground: target));
-            return;
-        }
-        if (foolSkillVFX == null) return;
-        foolSkillVFX.HeroActor = player.transform;
-        StartCoroutine(foolSkillVFX.Play(skillID, caster, target));
-    }
+        "fool_skill_01" => FoolTarotStrikeVFX.ContactTime,
+        "fool_skill_02" => .38f,
+        "fool_skill_04" => .441f,
+        "fool_skill_05" => HeroIdentityTheatreVFX.EvidenceContactTime,
+        "fool_skill_07" => .885f,
+        "fool_skill_08" => .63f,
+        "fool_skill_10" => .96f,
+        _ => .705f,
+    };
 
     // Registers the contact spectacle for the hero cast. Each recipient keeps
     // its own last-known point so a target that exits before contact never
@@ -2544,10 +2526,20 @@ public sealed class BattlePrototype : MonoBehaviour
         SpellSpectacle20260926.BeginPlayer(this, skillID, caster, points, seeds, expectedContact);
     }
 
-    /// Chest of the hero as currently drawn (skinned body bounds), or root + 1.15 m.
+    /// Chest of the hero as currently drawn: the illustrated (video) hero's frame, else
+    /// the skinned body bounds, else root + 1.15 m.
     Vector3 HeroChestPoint()
     {
         if (!player) return Vector3.zero;
+        // The illustrated frame is a fixed-foot plane from 50 px below the feet to 590 px
+        // above them, with a 520 px figure (AIHeroAnimatedBody.Install); chest at 62% of it.
+        var illustrated = player.GetComponentInChildren<AIHeroAnimatedBody>();
+        if (illustrated && illustrated.Surface && illustrated.Surface.enabled)
+        {
+            var frame = illustrated.Surface.bounds;
+            float unit = frame.size.y / 640f;
+            if (unit > 1e-4f) return new Vector3(frame.center.x, frame.min.y + (50f + .62f * 520f) * unit, frame.center.z);
+        }
         var drawn = new Bounds(); bool any = false;
         foreach (var skin in player.GetComponentsInChildren<SkinnedMeshRenderer>(false))
         {
@@ -2668,7 +2660,8 @@ public sealed class BattlePrototype : MonoBehaviour
                     var bystander = FindInstalledEnemyHandle(id);
                     if (IsActiveEnemyHandle(bystander) && !spectacleTargets.Contains(bystander)) spectacleTargets.Add(bystander);
                 }
-            BeginPlayerSpectacle(skillID, spectacleTargets, null);
+            // A travelling form lands on the card's own contact receipt.
+            BeginPlayerSpectacle(skillID, spectacleTargets, null, StandardContactTime(skillID));
         }
         var targetAnimator = targetHandle != null && targetHandle.EnemyRoot != null
             ? targetHandle.EnemyRoot.GetComponentInChildren<Animator>(true)

@@ -1,0 +1,85 @@
+{
+  "clips": [
+    {
+      "action": "03-overarm-throw",
+      "outfit": "mistport-night",
+      "sourceSHA256": "4ab87861c5b50a5930f4cfa1bf2db327b88bc47163a93c394f92351778b642ca",
+      "size": [
+        1080,
+        1484
+      ],
+      "fps": 24.0,
+      "seconds": 5.88,
+      "decodedFrames": 141,
+      "fullDecodePassed": true
+    },
+    {
+      "action": "03-overarm-throw",
+      "outfit": "starlight-magician",
+      "sourceSHA256": "8edc7646ca1fec1b9c4a33d05c253a118332007e7b527fddb854b5cdd6ab4bb5",
+      "size": [
+        1080,
+        1484
+      ],
+      "fps": 24.0,
+      "seconds": 5.88,
+      "decodedFrames": 141,
+      "fullDecodePassed": true
+    },
+    {
+      "action": "03-overarm-throw",
+      "outfit": "midnight-carnival",
+      "sourceSHA256": "1e03c442ebb38bd6901fa106772b064741c30a7b5705da27a7085051f84f70b7",
+      "size": [
+        1080,
+        1484
+      ],
+      "fps": 24.0,
+      "seconds": 5.88,
+      "decodedFrames": 141,
+      "fullDecodePassed": true
+    },
+    {
+      "action": "05-sidearm-cast",
+      "outfit": "mistport-night",
+      "sourceSHA256": "f3105cbb408907727f96ca083a4428934eef8c7f3c28aa0a0ac55fc768e80c27",
+      "size": [
+        1080,
+        1484
+      ],
+      "fps": 24.0,
+      "seconds": 5.88,
+      "decodedFrames": 141,
+      "fullDecodePassed": true
+    },
+    {
+      "action": "05-sidearm-cast",
+      "outfit": "starlight-magician",
+      "sourceSHA256": "0b3eabf113d264875b03917c0af8f036ef394f82511f71346db6142779d185b8",
+      "size": [
+        1080,
+        1484
+      ],
+      "fps": 24.0,
+      "seconds": 5.88,
+      "decodedFrames": 141,
+      "fullDecodePassed": true
+    },
+    {
+      "action": "05-sidearm-cast",
+      "outfit": "midnight-carnival",
+      "sourceSHA256": "154c6c14c22351f635b696256d1a73a97ac55bc4b80de722bd070b70aaf86e9d",
+      "size": [
+        1080,
+        1484
+      ],
+      "fps": 24.0,
+      "seconds": 5.88,
+      "decodedFrames": 141,
+      "fullDecodePassed": true
+    }
+  ],
+  "count": 6,
+  "complete": true,
+  "notInApp": true
+}

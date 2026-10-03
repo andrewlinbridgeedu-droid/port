@@ -1,0 +1,13 @@
+{
+  "id": "01-diagonal-cut",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 14.109730848861286,
+  "sourceStart": 1.0,
+  "sourceRelease": 2.45,
+  "sourceEnd": 5.83,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}

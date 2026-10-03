@@ -78,13 +78,6 @@ public sealed class FoolEffekseerSkillVFX : MonoBehaviour
         tktkDarkRift = Resources.Load<EffekseerEffectAsset>(TktkDarkRiftResource);
     }
 
-    /// The two hero-shaped hunting shadows of 双影追猎 alone, for the travelling spell form.
-    public IEnumerator PlayHuntingShadows(System.Func<Vector3> caster, System.Func<Vector3> target, float contact)
-    {
-        if (!heroArcana) yield break;
-        yield return heroArcana.Play("fool_skill_06", HeroActor, caster, target, null, true, contact);
-    }
-
     public IEnumerator Play(string skillID, System.Func<Vector3> caster, System.Func<Vector3> target, System.Action onContact = null, System.Func<Vector3> secondary = null)
     {
         // No card VFX may survive into target selection or the next combat action.
@@ -92,6 +85,15 @@ public sealed class FoolEffekseerSkillVFX : MonoBehaviour
         // authored lifetime alone is not a safe cleanup boundary.
         StopActiveEffects();
 
+        // Hero cards with a travelling form (SpellSpectacle20260926, 2026-10-03) show that
+        // form instead of the older stage theatre and its screen-wide volume; 双影 keeps its
+        // two hero afterimages. The contact keeps the theatre's authored time.
+        if (SpellSpectacle20260926.HasForm(skillID) && skillID is "fool_skill_05" or "fool_skill_06" or "fool_skill_07")
+        {
+            if (skillID == "fool_skill_06") yield return heroArcana.Play(skillID, HeroActor, caster, target, onContact, ghostsOnly: true);
+            else yield return TimedContact(skillID == "fool_skill_05" ? HeroIdentityTheatreVFX.EvidenceContactTime : .885f, skillID == "fool_skill_05" ? 1.5f : 1.6f, onContact);
+            yield break;
+        }
         if (skillID == "fool_skill_01") { yield return tarotStrike.Play(()=>caster()-Vector3.up*1.15f,()=>target()-Vector3.up*1.05f,onContact, secondary == null ? null : () => secondary()-Vector3.up*1.05f, HeroActor); yield break; }
         if (skillID is "fool_skill_02" or "fool_skill_04" or "fool_skill_05")
         { yield return identityTheatre.Play(skillID, caster, target, onContact, HeroActor); yield break; }
@@ -144,6 +146,19 @@ public sealed class FoolEffekseerSkillVFX : MonoBehaviour
     int targetGeneration;
 
     // One visual owner per resolved recipient; combat still has one cast contact.
+    /// Reports the contact at the theatre's time when no theatre is shown; a new action
+    /// (StopActiveEffects) cancels it before contact, as it cancels a theatre.
+    IEnumerator TimedContact(float contact, float end, System.Action onContact)
+    {
+        int run = targetGeneration;
+        float elapsed = 0; bool contacted = false;
+        while (run == targetGeneration && elapsed < end)
+        {
+            if (!contacted && elapsed >= contact) { contacted = true; onContact?.Invoke(); if (run != targetGeneration) yield break; }
+            yield return null; elapsed += Time.deltaTime;
+        }
+    }
+
     public IEnumerator PlayTargetInstances(string skillID, Func<Vector3> caster,
         IReadOnlyList<EnemyHandle> targets, Action onContact)
     {

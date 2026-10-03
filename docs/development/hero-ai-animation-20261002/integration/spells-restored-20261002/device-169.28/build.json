@@ -1,0 +1,11 @@
+{
+  "build": "169.28",
+  "configuration": "Debug",
+  "unityExportFresh": true,
+  "signedAppVerified": true,
+  "appExecutableSHA256": "4a5160467229f899d0dbddc3fef8315b819bb7e6c61bb4fa9d9c93b4511880de",
+  "unityManifestSHA256": "e695c0cf121b40c8a3904bb3f264dc7dd5f19685bbc3c759de6c72a1917e01ba",
+  "archive": "/Volumes/andrew's SSD/Mistport-archives/releases/Build169.28-ai-hero-spells/Mistport.app",
+  "sourceBaseHEAD": "b2ad039ef675335e53c13e5a4dff67b59eb3edac",
+  "uncommittedFixIncluded": true
+}

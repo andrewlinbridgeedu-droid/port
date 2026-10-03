@@ -1,0 +1,12 @@
+{
+  "model": "MiniMax-Hailuo-2.3",
+  "duration": 6,
+  "resolution": "1080P",
+  "prompt_optimizer": false,
+  "prompt": "[Static shot] Animate exactly the supplied full-body rear-view 2D fantasy character illustration. Preserve the original hairstyle, body proportions, costume colors, embroidery, gold trim, jewels and fine painted line work. Keep an elegant hand-painted anime style, no glossy CGI or plastic 3D. The warm light-gray background, rear camera, framing and scale remain completely fixed. Show the entire character from hair to boots throughout. He faces away throughout; never reveal his face or spin. Perform only ONE complete coherent action sequence, then settle back to the initial relaxed arms-down pose before the clip ends. Natural shoulder-elbow-wrist coordination, no reversed joints or extra limbs. Coat tails, ribbons and hair follow with restrained delayed motion. No camera movement, cuts, zoom, scenery, text, light effects, particles or newly materialized objects. ACTION: One simultaneous two-palm forward spell push. Both hands first lift from the hips to just beside the ribs, elbows down and close to the body, fingertips pointing upward. Then BOTH open palms push forward together, directly away from the rear camera toward the unseen target in front of him. Both shoulders lean forward slightly and the elbows extend only halfway. Hold the forward push for a short clear beat, then bend the elbows, withdraw both hands and lower them to the original relaxed stance. From this rear view the hands and forearms are naturally partly hidden IN FRONT of his torso. Hands must NEVER cross behind his back or appear resting on his spine. No crossed arms, no side-to-side flourishes, no alternating punches, no arms reaching out of frame. Preserve the character silhouette, painted costume detail and natural elbows. Complete the return to arms down.",
+  "input": "../mistport-night-input.png",
+  "inputSHA256": "09ea5c402646330ccf96422c0821a37e55356ed34d9d08944c18d09930527515",
+  "suggestedSpell": "身份错置",
+  "runtimeSkillID": "identityDisplacement",
+  "submittedAt": "2026-10-02T23:40:05Z"
+}

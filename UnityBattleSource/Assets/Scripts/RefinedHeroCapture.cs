@@ -36,14 +36,27 @@ public sealed class RefinedHeroCapture : MonoBehaviour
         if (!appearance || !animator.runtimeAnimatorController) { Fail("Outfit/controller missing"); yield break; }
         var controller = animator.runtimeAnimatorController;
         bool v2 = body.GetComponentsInChildren<Renderer>(true).Any(r => r.name.StartsWith("Outfit-"));
-        report.Add(v2 ? "Meshy hero " + (controller.name.Contains("V3") ? "v3" : "v2") + ": separately tailored costume meshes, shared source body/skeleton." : "Historical v1 comparison; not the v2 model.");
-        if (controller.name.Contains("V3")) {
+        report.Add(controller.name.Contains("V4") ? "Sovereign v4: three user source meshes, one shared skeleton and Animator." : v2 ? "Meshy hero " + (controller.name.Contains("V4") ? "v4" : controller.name.Contains("V3") ? "v3" : "v2") + ": separately tailored costume meshes, shared source body/skeleton." : "Historical v1 comparison; not the v2 model.");
+        if (controller.name.Contains("V3") || controller.name.Contains("V4")) {
             foreach (var r in body.GetComponentsInChildren<Renderer>(true)) foreach (var material in r.sharedMaterials) {
-                if (!material || material.shader.name != "Mistport/HeroIllustratedV3" || !material.shader.isSupported) {
+                if (!material || material.shader.name != (controller.name.Contains("V4") ? "Mistport/HeroIllustratedV4" : "Mistport/HeroIllustratedV3") || !material.shader.isSupported) {
                     Fail("Illustrated material missing/unsupported"); yield break;
                 }
             }
-            report.Add("V3 shared body and all costumes use the supported illustrated shader; no physical specular/metallic lobe.");
+            report.Add(controller.name + ": shared body and all costumes use the supported illustrated shader; no physical specular/metallic lobe.");
+        }
+        if (controller.name.Contains("V4")) {
+            var costumes = body.GetComponentsInChildren<SkinnedMeshRenderer>(true).Where(r => r.name.StartsWith("Outfit-")).ToArray();
+            if (costumes.Length != 3 || costumes.Select(r => r.rootBone).Distinct().Count() != 1) {
+                Fail("V4 outfits do not share one skeleton"); yield break;
+            }
+            foreach (var skin in costumes) {
+                var texture = skin.sharedMaterial.mainTexture;
+                if (!texture || texture.width != 4096 || texture.height != 4096 || skin.sharedMesh.colors.Length != skin.sharedMesh.vertexCount) {
+                    Fail("V4 atlas resolution or hair region mask missing"); yield break;
+                }
+            }
+            report.Add("Three 4096-square runtime atlases and authored hair masks; one shared skin root. Source colour detail remains 2048-square plus high-poly contact bake.");
         }
         var camera = Camera.main; var position = camera.transform.position; var rotation = camera.transform.rotation;
         if (!CombatTempoPresentation.CurrentPoseBounds(body.transform, out var initialBounds)) { Fail("Body skin missing"); yield break; }

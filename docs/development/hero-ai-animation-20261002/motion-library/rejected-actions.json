@@ -1,0 +1,19 @@
+{
+  "outfits": [
+    "mistport-night",
+    "starlight-magician",
+    "midnight-carnival"
+  ],
+  "actions": [
+    {
+      "id": "revisions/03-cross-exchange-rejected",
+      "title": "交手换位 · 原片",
+      "observation": "原意是在身体前交手；我的疑点：约 2–4 秒，手臂交叉却显露在背后。"
+    },
+    {
+      "id": "revisions/03-paired-push-rejected",
+      "title": "双掌同推 · 补做原片",
+      "observation": "原意是双掌向身体前方推；我的疑点：约 2–4 秒，部分手掌像贴在背部，前后遮挡不自然。"
+    }
+  ]
+}
