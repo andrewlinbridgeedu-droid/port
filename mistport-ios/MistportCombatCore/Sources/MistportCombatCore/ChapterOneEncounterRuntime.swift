@@ -571,6 +571,24 @@ public struct MPCFoolSkillTargetResolution: Equatable, Sendable {
     }
 }
 
+/// Group cards (2026-10-03, user: tower minion packs should let group skills shine).
+/// In the church tower, where minion packs walk in, ordinary group cards reach at most
+/// three enemies and the ultimate reaches all. The main story keeps its authored
+/// two-target 错步 and single-target 荒谬 (Q2's split teaching depends on them).
+public enum MPCFoolGroupCards {
+    /// Targets beyond the chosen one: 错步穿行 cuts through, 荒谬归结 splashes.
+    public static func extraTargets(encounterID: String, skill: FoolSkillID) -> Int {
+        let tower = encounterID.hasPrefix("church_tower_")
+        switch skill {
+        case .sidestepStrike: return tower ? 2 : 1
+        case .absurdFinale: return tower ? 2 : 0
+        default: return 0
+        }
+    }
+    /// 荒谬归结 deals this share of its own calculation to each bystander.
+    public static let finaleSplashPercent = 50
+}
+
 public struct MPCFoolSkillEncounterResolution: Equatable, Sendable {
     public let skillID: FoolSkillID
     public let damage: Int
@@ -1704,15 +1722,18 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 modifiers.append("技能Lv.\(loadout.skillLevel(for: skillID))×\(MPCSkillGrowth.multiplierBasisPoints(for: loadout.skillLevel(for: skillID)) / 100)%")
             }
             if damage > 0, state.illusionStacks > 0, loadout.talents.has("omen.2") { playerShield = min(playerMaxHP, playerShield + strengthenedSkillAmount(15, skill: skillID)) }
-            // Select the second target before the first hit can spawn children.
-            let secondaryAtImpact = enemies.first(where: { $0.isAlive && $0.id != id })
+            // Select the further targets before the first hit can spawn children.
+            // Group cards (2026-10-03): in the tower 错步 cuts through up to three
+            // targets and 荒谬's volley lands on up to two more at half damage.
+            let secondariesAtImpact = Array(enemies.filter { $0.isAlive && $0.id != id }
+                .prefix(MPCFoolGroupCards.extraTargets(encounterID: encounter.id, skill: skillID)))
             damage = try applyPartyDamage(damage, to: id, category: actionCategory(for: skillID))
             var affectedTargets = [MPCFoolSkillTargetResolution(targetID: id, damage: damage)]
 
-            // 错步穿行会同时撕开最多两个目标的错误方位。第二个目标
+            // 错步穿行会同时撕开多个目标的错误方位（主线两个，塔内三个）。每个副目标
             // 独立保存状态和承受伤害，避免表现层把它当作第一只敌人的复制品。
-            if outcome == .inProgress, skillID == .sidestepStrike,
-               let secondary = secondaryAtImpact {
+            for secondary in secondariesAtImpact where skillID == .sidestepStrike {
+                guard outcome == .inProgress, enemies.contains(where: { $0.id == secondary.id && $0.isAlive }) else { continue }
                 let secondaryState = foolStates[secondary.id]
                     ?? .init(targetDefense: secondary.defense)
                 var secondaryCalculationState = secondaryState
@@ -1753,6 +1774,23 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                     targetID: secondary.id,
                     damage: secondaryDamage
                 ))
+            }
+            // 塔内，荒谬归结的道具雨落到旁边最多两个敌人身上，伤害减半。余波只读取
+            // 它们的误认和错位，不消耗；归结只对主目标兑现。
+            for secondary in secondariesAtImpact where skillID == .absurdFinale {
+                guard outcome == .inProgress, enemies.contains(where: { $0.id == secondary.id && $0.isAlive }) else { continue }
+                let bystander = foolStates[secondary.id] ?? .init(targetDefense: secondary.defense)
+                var splashState = bystander
+                if isUsurpedLifeMedalActive { splashState.attack = bystander.attack * 130 / 100 }
+                splashState.targetDefense = talentDefense(splashState.targetDefense, skill: skillID, stacks: bystander.illusionStacks)
+                let splash = try FoolComboSimulator.resolve(skillID: skillID, from: splashState)
+                var splashDamage = resolution.totalDamage > 0
+                    ? max(0, splash.totalDamage * nonTalentDamage / resolution.totalDamage) * MPCFoolGroupCards.finaleSplashPercent / 100
+                    : 0
+                splashDamage = talentDamage(splashDamage, skill: skillID, stacks: bystander.illusionStacks, targetID: secondary.id)
+                splashDamage = strengthenedSkillAmount(splashDamage, skill: skillID)
+                splashDamage = try applyPartyDamage(splashDamage, to: secondary.id, category: actionCategory(for: skillID))
+                affectedTargets.append(.init(targetID: secondary.id, damage: splashDamage))
             }
             if damage > 0 {
                 talentDamageCount += 1

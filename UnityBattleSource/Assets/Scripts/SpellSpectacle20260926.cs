@@ -363,8 +363,12 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             float half = Vector3.Distance(cam.transform.position, target) * Mathf.Tan(cam.fieldOfView * .5f * Mathf.Deg2Rad);
             var frame = new Frame(cam, caster, target, half / 4.5f * p.scale, rng);
             if (Diagnostics) Debug.Log($"SPELLFORM frame {p.id} s={frame.s:F2} dir={frame.dir:F2} right={frame.right:F2}");
-            foreach (var shot in LaunchShots(p.form, frame, travel, contact, rng))
+            var shots = LaunchShots(p.form, frame, travel, contact, rng);
+            for (int n = 0; n < shots.Count; n++)
             {
+                // A bystander of a group card gets half the volley, so three never swamp the screen.
+                if (i > 0 && p.form == Form.Rain && n % 2 == 1) continue;
+                var shot = shots[n];
                 float at = (shot.at >= 0 ? shot.at : start + shot.delay) + i * .03f;
                 var path = shot.path;
                 path.rigid = true;
@@ -529,8 +533,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             float delay = i * .035f;
             if (Diagnostics) Debug.Log($"SPELLFORM impact {p.id} t={Time.unscaledTime:F3} at={points[i]:F2} s={frame.s:F2}");
             // One layer of the identity's own form keeps the old layered brilliance around
-            // the target. A thrown seal has none: its family falls from over the top.
-            var family = p.form == Form.Throw ? new List<Path>() : Paths(p.family, frame, 1, rng);
+            // the main target. A thrown seal has none: its family falls from over the top.
+            // Bystanders of a group card get only the landing itself.
+            var family = p.form == Form.Throw || i > 0 ? new List<Path>() : Paths(p.family, frame, 1, rng);
             for (int k = 0; k < family.Count; k++)
             {
                 var body = Body.Create(root, sweepMaterial, this);

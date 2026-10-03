@@ -15,7 +15,7 @@ struct ChurchTowerHundredTests {
             #expect((1...3).contains(f.waves.count))
             #expect(f.waves.flatMap { $0 }.filter { $0.species == .backSac }.count <= 1)
             for w in f.waves.indices {
-                #expect((1...4).contains(f.waves[w].count))
+                #expect((1...MPCChurchTowerCatalog.maxWaveSize).contains(f.waves[w].count))
                 #expect(f.waves[w].filter { $0.species == .saltSac }.count <= 1)
                 #expect(f.number >= 51 || !f.waves[w].contains { $0.species == .boneclaw })
                 for slot in f.waves[w].indices {

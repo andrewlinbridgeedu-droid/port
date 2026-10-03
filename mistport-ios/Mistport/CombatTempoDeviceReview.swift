@@ -108,6 +108,8 @@ struct CombatTempoDeviceReviewRoot: View {
                     Button("主角·雾港夜行") { heroOutfit = .mistportNight; selectedSample = "hero" }
                     Button("主角·星辉魔术师") { heroOutfit = .starlightMagician; selectedSample = "hero" }
                     Button("主角·午夜嘉年华") { heroOutfit = .midnightCarnival; selectedSample = "hero" }
+                    Button("塔·小怪潮") { selectedSample = "pack" }
+                    Button("塔·满编八人") { selectedSample = "pack8" }
                 } label: {
                     Label("换样板", systemImage: "arrow.triangle.2.circlepath")
                         .font(.caption).padding(10)
@@ -166,7 +168,10 @@ struct CombatTempoDeviceReviewRoot: View {
                     if UserDefaults.standard.bool(forKey: "MistportCityMute") {
                         UnityBattleRuntime.shared.send(action: "audio-volume:0")
                     }
-                    let mission = sample == "q4" ? 4 : sample == "hero" ? 13 : 7
+                    // Tower minion packs: "pack" is floor 2 (shield jaw + four walking copperbacks),
+                    // "pack8" a full eight-body wave on floor 72. Group cards on show.
+                    let packFloor = sample == "pack" ? 2 : sample == "pack8" ? 72 : nil
+                    let mission = sample == "q4" ? 4 : sample == "hero" || packFloor != nil ? 13 : 7
                     for n in 1...mission { _ = campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: n) }
                     campaign.grantHoundTutorialCard()
                     campaign.ownedRelicIDs.insert(MPCChapterOneCatalog.ownerlessMaskRelicID)
@@ -176,14 +181,18 @@ struct CombatTempoDeviceReviewRoot: View {
                         loadout = .init(normalSkillIDs: [.sidestepStrike], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
                         id = "chapter01_q04_encounter"
                     } else {
-                        guard let floor = MPCChurchTowerCatalog.floor(number: 1) else { return }
-                        if sample == "hero" {
+                        guard let floor = MPCChurchTowerCatalog.floor(number: packFloor ?? 1) else { return }
+                        if packFloor != nil {
+                            var hand = MPCChapterOneLoadout(normalSkillIDs: [.sidestepStrike, .fabricatedEvidence, .absurdFinale], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
+                            hand.outfit = heroOutfit
+                            loadout = hand
+                        } else if sample == "hero" {
                             var hand = MPCChapterOneLoadout(normalSkillIDs: [.fabricatedEvidence, .mirrorPursuit, .absurdFinale], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
                             hand.selectedActiveRelicID = MPCChapterOneCatalog.ownerlessMaskRelicID
                             hand.outfit = heroOutfit
                             loadout = hand
                         } else { loadout = MPCChurchTowerVerificationRunner.recommendedLoadout(for: floor) }
-                        id = (sample == "d01" || sample == "hero") ? "church_tower_001" : "church_bounty_b01"
+                        id = packFloor != nil ? floor.id : (sample == "d01" || sample == "hero") ? "church_tower_001" : "church_bounty_b01"
                     }
                     campaign.loadout = loadout
                     if let active = loadout.selectedActiveRelicID { campaign.ownedRelicIDs.insert(active) }

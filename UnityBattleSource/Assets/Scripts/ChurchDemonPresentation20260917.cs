@@ -55,6 +55,8 @@ public sealed class ChurchDemonPresentation20260917 : MonoBehaviour
     Transform movingRoot;
     public static bool IsPreparation(string intent) => ((intent.StartsWith("tower_copperback_")||intent.StartsWith("tower_brute_")||intent.StartsWith("tower_veil_")||intent.StartsWith("tower_throat_")||intent.StartsWith("tower_moonfang_")) && intent.Contains("charge")) || intent=="recover" || intent=="tower_sac_charge" || intent=="tower_mend_charge" || intent=="tower_blade_charge" || intent=="tower_raised_blade" || intent=="tower_crown_charge" || intent=="tower_claw_charge";
     public void Prepare(string intent) {
+        // A walking minion reaches its slot before it winds up (tower packs, 2026-10-03).
+        TowerMinionApproach20261003.Arrive(GetComponent<EnemyHandle>());
         Cancel();var a=GetComponentInChildren<Animator>(true);if(!a)return;
         if(intent=="recover"){a.CrossFadeInFixedTime("Meshy · Idle",.12f,0,0);return;}
         effect=new GameObject("Church charge organs");var handle=GetComponent<EnemyHandle>();if(ChurchMinionVfx20260921.Handles(species)){ChurchMinionVfx20260921.Create(handle,species,intent,()=>handle.EffectAnchor.position,1,effect.transform);MinionActingRound220260922.Create(handle,species,intent,1,effect.transform);string clip=intent.EndsWith("charge2")?"Charge2":"Charge";a.CrossFadeInFixedTime(clip,.10f,0,0);StartCoroutine(HoldCharge(a,clip,epoch));return;}if(TowerSupportRound2.Handles(species)){TowerSupportRound2.Create(handle,intent,()=>handle.EffectAnchor.position,1,effect.transform);return;}if(species=="saltmaw"){SaltmawSpell20260919.Create(handle,intent,()=>handle.EffectAnchor.position,1,effect.transform);return;}if(species=="ironclaw"){IronclawSpell20260918.Create(handle,intent,()=>handle.EffectAnchor.position,1,effect.transform);return;}var art=ChurchSpellVisual20260917.Create(species,intent,handle.EnemyRoot.position+Vector3.up*(targetWorldHeight*.75f*handle.EnemyRoot.lossyScale.y),()=>handle.EffectAnchor.position,1);art.transform.SetParent(effect.transform,true);art.ambient=true;
@@ -70,6 +72,7 @@ public sealed class ChurchDemonPresentation20260917 : MonoBehaviour
         while(token==epoch && a){held+=Time.deltaTime;a.speed=0;a.Play(state,0,.92f+.045f*Mathf.Sin(held*3.2f));a.Update(0);yield return null;}
     }
     public IEnumerator Act(EnemyHandle actor, Func<Vector3> target, string intent, Action contact, Func<bool> valid, Action cancelled=null) {
+        TowerMinionApproach20261003.Arrive(actor);
         Cancel();int token=epoch;var a=GetComponentInChildren<Animator>(true);
         bool second=(ChurchMinionVfx20260921.Handles(species)&&intent.EndsWith("second"))||intent=="tower_salt_spike"||intent=="tower_short_pounce"||intent=="tower_cut_second"||intent=="tower_heavy_cut"||intent=="tower_sound_arrow"||intent=="tower_tail_sweep"||intent=="tower_heavy_claw";
         a?.CrossFadeInFixedTime(second?"Cast2":"Cast",.04f,0,0);

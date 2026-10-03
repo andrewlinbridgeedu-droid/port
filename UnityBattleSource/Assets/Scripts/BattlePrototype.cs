@@ -1342,7 +1342,12 @@ public sealed class BattlePrototype : MonoBehaviour
         SelectHellHoundVariant(payload.Contains("@early-hell-hound"));
         var descriptors = payload.Split(',');
         var ids = Array.ConvertAll(descriptors, d => d.Split('@')[0]);
-        if (ids.Length == 0 || ids.Length > 4) throw new System.ArgumentException("Wave must contain 1–4 enemies.");
+        // Tower minion packs (2026-10-03) bring up to eight bodies; elsewhere a wave keeps four.
+        int waveLimit = churchTowerFormation ? 8 : 4;
+        if (ids.Length == 0 || ids.Length > waveLimit) throw new System.ArgumentException($"Wave must contain 1–{waveLimit} enemies.");
+        int towerMinions = churchTowerFormation ? Array.FindAll(descriptors, IsTowerMinionDescriptor).Length : 0;
+        int towerMajors = ids.Length - towerMinions, majorIndex = 0, minionIndex = 0;
+        var walkers = new List<(EnemyHandle handle, int index, Vector3 home, bool quadruped)>();
         var unique = new HashSet<string>();
         var sources = new List<EnemyHandle>();
         for (int sourceIndex = 0; sourceIndex < ids.Length; sourceIndex++) {
@@ -1419,11 +1424,12 @@ public sealed class BattlePrototype : MonoBehaviour
                 handle.EnemyRoot.localScale = Vector3.one * (churchTowerFormation
                     ? (isTowerMinion ? ChurchTowerMinionScale : ChurchTowerMajorScale) : 1f);
                 if (churchTowerFormation) {
-                    float x = ids.Length == 1 ? 0f : ids.Length == 3
-                        ? (index == 0 ? 0f : index == 1 ? -1.55f : 1.55f)
-                        : (index == 0 ? -.75f : index == 1 ? .75f : index == 2 ? -1.75f : 1.75f);
-                    bool escort = ids.Length == 3 ? index > 0 : ids.Length == 4 && index > 1;
-                    handle.EnemyRoot.position = new Vector3(x, 0f, escort ? 8.9f : 8.1f);
+                    handle.EnemyRoot.position = isTowerMinion
+                        ? TowerMinionSlot(minionIndex, towerMinions)
+                        : TowerMajorSlot(majorIndex++, towerMajors);
+                    if (isTowerMinion)
+                        walkers.Add((handle, minionIndex++, handle.EnemyRoot.position,
+                            churchDemon.species == "copperback" || churchDemon.species == "moonfang"));
                 }
             }
             handle.GetComponent<SignatureEnemyPresentation>()?.CalibrateRestPose();
@@ -1437,8 +1443,33 @@ public sealed class BattlePrototype : MonoBehaviour
         enemy = primaryPresented.EnemyRoot.gameObject;
         enemyAnimator = enemy.GetComponentInChildren<Animator>(true);
         enemyHome = enemy.transform.position;
-
+        // The pack walks in from the back after every slot and rest pose is settled.
+        foreach (var walker in walkers)
+            TowerMinionApproach20261003.Begin(walker.handle, walker.index, walker.home, walker.quadruped);
     }
+
+    static bool IsTowerMinionDescriptor(string descriptor) =>
+        descriptor.EndsWith("@copperback") || descriptor.EndsWith("@crimson-brute") || descriptor.EndsWith("@veil-oracle")
+        || descriptor.EndsWith("@golden-throat") || descriptor.EndsWith("@moonfang");
+
+    /// Tower majors hold the front of the marked upper arena, opposite the hero's mark.
+    static Vector3 TowerMajorSlot(int index, int count) => count <= 1 ? new Vector3(0f, 0f, 8.1f)
+        : count == 2 ? new Vector3(index == 0 ? -.75f : .75f, 0f, 8.1f)
+        : new Vector3(Mathf.Lerp(-1.5f, 1.5f, index / (count - 1f)), 0f, 8.1f);
+
+    // The pack ends between the hero and the majors, on both sides of a clear centre
+    // lane that the hero's spells travel to the majors: it has walked up from beside
+    // the majors (TowerMinionApproach20261003). The outer pair stays inside the
+    // portrait view (about ±2.6 m wide at this depth). The floor is painted into the
+    // backdrop, so the pack never starts deeper than the wall line behind the majors.
+    static readonly Vector3[] TowerMinionSlots = {
+        new Vector3(-1.0f, 0f, 5.6f), new Vector3(1.0f, 0f, 5.6f),
+        new Vector3(-1.95f, 0f, 5.9f), new Vector3(1.95f, 0f, 5.9f),
+        new Vector3(-1.5f, 0f, 6.9f), new Vector3(1.5f, 0f, 6.9f),
+    };
+    static Vector3 TowerMinionSlot(int index, int count) => index < TowerMinionSlots.Length
+        ? TowerMinionSlots[index]
+        : new Vector3((index % 2 == 0 ? -1 : 1) * 2.1f, 0f, 7.2f + .4f * (index - TowerMinionSlots.Length));
 
     EnemyHandle ResolveChapterThirtyTemplate(ref EnemyHandle cache, string identity, string folder)
     {
@@ -2628,6 +2659,12 @@ public sealed class BattlePrototype : MonoBehaviour
             var spectacleTargets = new List<EnemyHandle>();
             if (IsActiveEnemyHandle(targetHandle)) spectacleTargets.Add(targetHandle);
             if (IsActiveEnemyHandle(secondaryHandle)) spectacleTargets.Add(secondaryHandle);
+            // 荒谬归结's tower volley also lands on the bystanders the rules hit.
+            if (skillID == "fool_skill_07" && resolvedTargetIDs != null)
+                foreach (var id in resolvedTargetIDs) {
+                    var bystander = FindInstalledEnemyHandle(id);
+                    if (IsActiveEnemyHandle(bystander) && !spectacleTargets.Contains(bystander)) spectacleTargets.Add(bystander);
+                }
             BeginPlayerSpectacle(skillID, spectacleTargets, null);
         }
         var targetAnimator = targetHandle != null && targetHandle.EnemyRoot != null
@@ -2647,7 +2684,9 @@ public sealed class BattlePrototype : MonoBehaviour
             } else {
                 AddRecipient(targetHandle); AddRecipient(secondaryHandle);
             }
-            if (skillID == "fool_skill_01" && recipients.Count > 2) recipients.RemoveRange(2, recipients.Count - 2);
+            // 错步穿行 cuts through three in the tower's minion packs, two elsewhere.
+            int sidestepReach = churchTowerFormation ? 3 : 2;
+            if (skillID == "fool_skill_01" && recipients.Count > sidestepReach) recipients.RemoveRange(sidestepReach, recipients.Count - sidestepReach);
             BeginPlayerSpectacle(skillID, recipients, null);
             BeginDistinctPlayerCast(skillID);
             foolSkillVFX.HeroActor = player.transform;

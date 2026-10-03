@@ -2163,10 +2163,13 @@ struct ChapterOneEncounterTestView: View {
                         .flatMap { unityBattleEnemyID(for: $0) } ?? ""
                     unityBattleRuntime.send(action: "sidestep-secondary:\(secondaryID)")
                 }
-                if skill == .namelessStage || skill == .sidestepStrike {
+                // Same reach as the rules: two for 错步 in the story, three in the tower,
+                // where 荒谬's volley also lands on two bystanders.
+                let reach = MPCFoolGroupCards.extraTargets(encounterID: session.encounter.id, skill: skill)
+                if skill == .namelessStage || reach > 0 {
                     let recipients = skill == .namelessStage
                         ? session.enemies.filter(\.isAlive)
-                        : [target] + Array(session.enemies.filter { $0.isAlive && $0.id != target.id }.prefix(1))
+                        : [target] + Array(session.enemies.filter { $0.isAlive && $0.id != target.id }.prefix(reach))
                     let ids = recipients.compactMap { unityBattleEnemyID(for: $0) }
                     unityBattleRuntime.send(action: "skill-targets:\(ids.joined(separator: "|"))")
                 }
@@ -4807,7 +4810,8 @@ struct ChapterOneEncounterTestView: View {
                                     .flatMap { unityBattleEnemyID(for: $0) } ?? ""
                                 UnityBattleRuntime.shared.send(action: "sidestep-secondary:\(secondaryID)")
                             }
-                            if skill == .namelessStage || skill == .sidestepStrike {
+                            // 荒谬归结 lists its tower bystanders too, so the volley visibly lands on them.
+                            if skill == .namelessStage || skill == .sidestepStrike || (skill == .absurdFinale && result.targets.count > 1) {
                                 let recipients = skill == .namelessStage ? preResolutionRecipients
                                     : result.targets.compactMap { hit in preResolutionRecipients.first { $0.id == hit.targetID } }
                                 let ids = recipients.compactMap { unityBattleEnemyID(for: $0) }
