@@ -1109,6 +1109,10 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         if activated { combatHasBegun = true }
         return activated
     }
+    /// True while a raised guard makes this enemy take no damage at all.
+    public func isShieldedAgainstDamage(enemyID: String) -> Bool {
+        enemies.first(where: { $0.id == enemyID && $0.isAlive }).map(isTrueImmune) ?? false
+    }
     private func isTrueImmune(_ enemy: MPCRuntimeEnemy) -> Bool {
         (enemy.contentID == "bounty_b03_drowned_captain" && enemies.contains { $0.isAlive && $0.contentID.hasPrefix("bounty_b03_escort_") }) ||
         ((enemy.contentID == "bounty_b06_dark_hold_captain" || MPCChurchTowerCatalog.isShieldJaw(enemy.contentID) || enemy.contentID == "enemy_archive_gatekeeper" || (chapterMissionNumber == 10 && enemy.contentID == "enemy_calibration_puppet")) && enemy.currentIntent == "guard")

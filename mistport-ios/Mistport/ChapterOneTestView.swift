@@ -2144,8 +2144,7 @@ struct ChapterOneEncounterTestView: View {
         advanceLightAttacks(at: now)
         guard session.outcome == .inProgress,
               pendingGhostReveals.isEmpty, now >= playerCastReadyAt, pendingPlayerImpact == nil,
-              let target = selectedTargetID.flatMap({ id in session.enemies.first { $0.id == id && $0.isAlive } })
-                ?? session.enemies.first(where: \.isAlive) else { return }
+              let target = automaticCastTarget() else { return }
         let sequence = chosenLoopSkills ?? visibleBattleSkills.map(\.id)
         let automaticSequence = (usesEncoreBellPrototype || usesManualEmeraldMask) ? sequence.filter { $0 != .maskedWhisper } : sequence
         let requestedSkill: FoolSkillID? = requestedUltimate
@@ -2153,7 +2152,13 @@ struct ChapterOneEncounterTestView: View {
             ? .namelessStage : nil
         // Formal mask only enters requestEmeraldMask: lifetime accounting cannot
         // be bypassed through the historical automatic card cast path.
-        let skill = isQ1PreludeActive ? nil : (requestedSkill ?? skillScheduler.next(in: automaticSequence, at: now))
+        // Playtest 2026-10-04: the automatic loop threw cards into Q6's raised
+        // guard ("抓住收盾后的空隙" with no way to act on it). Hold queued cards
+        // while the target takes no damage; basic attacks keep going.
+        let targetIsShielded = session.isShieldedAgainstDamage(enemyID: target.id)
+        var skill: FoolSkillID? = requestedSkill
+        if skill == nil, !targetIsShielded { skill = skillScheduler.next(in: automaticSequence, at: now) }
+        if isQ1PreludeActive { skill = nil }
         if let skill {
             if skill == .namelessStage { requestedUltimate = false }
             if skill == .maskedWhisper { requestedEmeraldMask = false }
@@ -2609,6 +2614,18 @@ struct ChapterOneEncounterTestView: View {
                 .accessibilityIdentifier("combat-relic-usurped-life-medal")
                 .accessibilityLabel("发动僭命勋章")
         }
+    }
+
+    /// The player's chosen target, else the first enemy not behind a raised
+    /// guard, else the first living enemy.
+    private func automaticCastTarget() -> MPCRuntimeEnemy? {
+        if let id = selectedTargetID, let chosen = session.enemies.first(where: { $0.id == id && $0.isAlive }) {
+            return chosen
+        }
+        let open = session.enemies.first { enemy in
+            enemy.isAlive && !session.isShieldedAgainstDamage(enemyID: enemy.id)
+        }
+        return open ?? session.enemies.first(where: \.isAlive)
     }
 
     private var teachesMaskTiming: Bool {
