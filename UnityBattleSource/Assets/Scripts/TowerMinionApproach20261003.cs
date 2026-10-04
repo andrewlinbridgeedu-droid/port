@@ -21,9 +21,12 @@ public sealed class TowerMinionApproach20261003 : MonoBehaviour
     static UnityBattleBridge bridge;
     static BattlePrototype battle;
 
+    /// Set by the spell recorder, whose rows hold every actor in its encounter slot.
+    public static bool Disabled;
+
     public static void Begin(EnemyHandle handle, int index, Vector3 home, bool quadruped)
     {
-        if (!handle || !handle.EnemyRoot) return;
+        if (Disabled || !handle || !handle.EnemyRoot) return;
         var walk = handle.GetComponent<TowerMinionApproach20261003>();
         if (!walk) walk = handle.gameObject.AddComponent<TowerMinionApproach20261003>();
         walk.Configure(handle, index, home, quadruped);

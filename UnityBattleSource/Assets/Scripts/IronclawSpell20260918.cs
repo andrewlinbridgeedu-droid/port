@@ -91,8 +91,8 @@ public sealed class IronclawSpell20260918:MonoBehaviour {
   }
  }
 
- void Ribbon(int i,Func<float,Vector3> path,float width,Color c,float alpha){var l=strips[i];const int n=40;var vs=l.vertices;var uv=l.uv;var ts=l.triangles;var forward=Camera.main?Camera.main.transform.forward:Vector3.forward;
-  for(int j=0;j<=n;j++){float q=j/(float)n;var p=path(q);var tangent=path(Mathf.Min(1,q+.015f))-path(Mathf.Max(0,q-.015f));var normal=Vector3.Cross(tangent,forward).normalized;float w=width*1.18f*Mathf.Pow(Mathf.Max(0,Mathf.Sin(q*Mathf.PI)),.7f)*(1+.18f*Mathf.Sin(q*31+age*17+i));vs[j*2]=p-normal*w;vs[j*2+1]=p+normal*w;uv[j*2]=new Vector2(0,q);uv[j*2+1]=new Vector2(1,q);if(j<n){int k=j*6,a=j*2;ts[k]=a;ts[k+1]=a+2;ts[k+2]=a+1;ts[k+3]=a+1;ts[k+4]=a+2;ts[k+5]=a+3;}}
+ void Ribbon(int i,Func<float,Vector3> path,float width,Color c,float alpha){path=StraightLines20261003.Flatten(path);var l=strips[i];const int n=40;var vs=l.vertices;var uv=l.uv;var ts=l.triangles;var forward=Camera.main?Camera.main.transform.forward:Vector3.forward;
+  for(int j=0;j<=n;j++){float q=j/(float)n;var p=path(q);var tangent=path(Mathf.Min(1,q+.015f))-path(Mathf.Max(0,q-.015f));var normal=Vector3.Cross(tangent,forward).normalized;float w=width*1.18f*Mathf.Pow(Mathf.Max(0,Mathf.Sin(q*Mathf.PI)),.7f);vs[j*2]=p-normal*w;vs[j*2+1]=p+normal*w;uv[j*2]=new Vector2(0,q);uv[j*2+1]=new Vector2(1,q);if(j<n){int k=j*6,a=j*2;ts[k]=a;ts[k+1]=a+2;ts[k+2]=a+1;ts[k+3]=a+1;ts[k+4]=a+2;ts[k+5]=a+3;}}
   l.mesh.Clear();l.mesh.vertices=vs;l.mesh.uv=uv;l.mesh.triangles=ts;l.mesh.RecalculateBounds();c.a=Mathf.Clamp01(alpha);l.mat.SetColor("_Color",c);
  }
  Vector3 Flight(Vector3 start,Vector3 end,float q,int side){return Vector3.Lerp(start,end,q)+Face*new Vector3(Mathf.Sin(q*Mathf.PI)*(heavy?side*.85f:second?-2.0f:0),Mathf.Sin(q*Mathf.PI)*(heavy?.25f:second?.05f:.12f),0);}

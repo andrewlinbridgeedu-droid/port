@@ -571,8 +571,10 @@ public sealed partial class EnemySignatureSpellVFX : MonoBehaviour
     }
     void Stroke(Layer layer, int count, float width, Color color, bool taper = false)
     {
+        // Straightened (2026-10-03: 你很多都设置成这样弯弯的，都改掉吧); rings shrink to a knot.
+        var points = StraightLines20261003.Flattened(curve, count);
         for (int i = 1; i < count; i++)
-            Line(layer, curve[i-1], curve[i], width * (taper ? Mathf.Sin(Mathf.PI * (i-.5f)/(count-1)) : 1), color);
+            Line(layer, points[i-1], points[i], width * (taper ? Mathf.Sin(Mathf.PI * (i-.5f)/(count-1)) : 1), color);
     }
     void Spark(Vector3 c, Vector3 direction, float length, Color color)
     {

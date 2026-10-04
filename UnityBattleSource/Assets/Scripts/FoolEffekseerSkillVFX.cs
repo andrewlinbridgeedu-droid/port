@@ -94,6 +94,16 @@ public sealed class FoolEffekseerSkillVFX : MonoBehaviour
             else yield return TimedContact(skillID == "fool_skill_05" ? HeroIdentityTheatreVFX.EvidenceContactTime : .885f, skillID == "fool_skill_05" ? 1.5f : 1.6f, onContact);
             yield break;
         }
+        // The other cards with a form (2026-10-03, the user's taste carried to every card): the
+        // form replaces the stage theatre and its screen-wide volume; contact and end keep the
+        // theatre's authored times (02 .38/1.45, 04 .441/1.25, 08 .63/1.9, 09 .705/1.9).
+        if (SpellSpectacle20260926.HasForm(skillID) && skillID is "fool_skill_02" or "fool_skill_04" or "fool_skill_08" or "fool_skill_09")
+        {
+            float contact = skillID switch { "fool_skill_02" => .38f, "fool_skill_04" => .441f, "fool_skill_08" => .63f, _ => .705f };
+            float end = skillID switch { "fool_skill_02" => 1.45f, "fool_skill_04" => 1.25f, _ => 1.9f };
+            yield return TimedContact(contact, end, onContact);
+            yield break;
+        }
         if (skillID == "fool_skill_01") { yield return tarotStrike.Play(()=>caster()-Vector3.up*1.15f,()=>target()-Vector3.up*1.05f,onContact, secondary == null ? null : () => secondary()-Vector3.up*1.05f, HeroActor); yield break; }
         if (skillID is "fool_skill_02" or "fool_skill_04" or "fool_skill_05")
         { yield return identityTheatre.Play(skillID, caster, target, onContact, HeroActor); yield break; }
@@ -177,9 +187,12 @@ public sealed class FoolEffekseerSkillVFX : MonoBehaviour
                 StartCoroutine(heroArcana.Play("fool_skill_06", HeroActor, caster, leadPoint, null, true, FoolTarotStrikeVFX.ContactTime, dash: true));
                 break;
             }
+        // 无名宣告 with a form: SpellSpectacle draws the decree on every recipient; the per-target
+        // nameless theatres (masks and a screen-wide volume each) are not played.
+        bool proclaimForm = skillID == "fool_skill_10" && SpellSpectacle20260926.HasForm(skillID);
         foreach (var target in targets)
         {
-            if (dashForm) break;
+            if (dashForm || proclaimForm) break;
             if (target == null || target.EnemyRoot == null || !target.gameObject.activeInHierarchy) continue;
             var bound = target;
             Func<bool> valid = () => bound != null && bound.EnemyRoot != null && bound.gameObject.activeInHierarchy;

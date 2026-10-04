@@ -257,7 +257,10 @@ public sealed class WholeSpellRound2Runner20260922:MonoBehaviour
         string filter=Environment.GetCommandLineArgs().FirstOrDefault(a=>a.StartsWith("--round2-only="))?.Substring(14);
         playerImpactFixture=Environment.GetCommandLineArgs().Contains("--round2-player-impact-fixture");
         safety=Environment.GetCommandLineArgs().Contains("--round2-safety");
-        SpellSpectacle20260926.Suppressed=Environment.GetCommandLineArgs().Contains("--spectacle-off");tag=(safety?"safety-":"record-")+(filter??"all").Replace(",","_");
+        SpellSpectacle20260926.Suppressed=Environment.GetCommandLineArgs().Contains("--spectacle-off");
+        // Tower minions walk in from beyond their slots (2026-10-03); the rows check that every
+        // actor stays in its encounter slot, so the recorder starts them already arrived.
+        TowerMinionApproach20261003.Disabled=true;tag=(safety?"safety-":"record-")+(filter??"all").Replace(",","_");
         using(var sha=SHA256.Create()){
             var sourceFiles=Directory.EnumerateFiles(Application.dataPath,"*",SearchOption.AllDirectories).Where(p=>p.EndsWith(".cs")||p.EndsWith(".shader")).OrderBy(p=>p);
             File.WriteAllLines(output+"/"+tag+"-source-sha256.txt",sourceFiles.Select(p=>BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(p))).Replace("-","").ToLowerInvariant()+"  Assets/"+p.Substring(Application.dataPath.Length+1)));

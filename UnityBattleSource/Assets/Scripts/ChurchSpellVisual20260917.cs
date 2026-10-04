@@ -23,7 +23,16 @@ public sealed class ChurchSpellVisual20260917:MonoBehaviour {
  Mesh Mesh(Vector3[] v,int[] tris){var m=new Mesh();m.vertices=v;m.triangles=tris;var uv=new Vector2[v.Length];for(int i=0;i<v.Length;i++)uv[i]=new Vector2(v[i].x+.5f,v[i].y+.5f);m.uv=uv;m.RecalculateNormals();meshes.Add(m);return m;}
  Mesh Quad(){return Mesh(new[]{new Vector3(-.5f,-.5f,0),new Vector3(.5f,-.5f,0),new Vector3(.5f,.5f,0),new Vector3(-.5f,.5f,0)},new[]{0,1,2,0,2,3});}
  Mesh Crystal(){return Mesh(new[]{new Vector3(0,1,0),new Vector3(-.16f,0,0),new Vector3(0,0,.13f),new Vector3(.16f,0,0),new Vector3(0,0,-.13f),new Vector3(0,-.35f,0)},new[]{0,1,2,0,2,3,0,3,4,0,4,1,5,2,1,5,3,2,5,4,3,5,1,4});}
- Mesh Arc(float from,float to,float thickness,int steps=40){if(species.StartsWith("b"))thickness*=1.28f;var v=new Vector3[(steps+1)*2];var triangles=new int[steps*6];for(int i=0;i<=steps;i++){float u=(float)i/steps,a=Mathf.Lerp(from,to,u)*Mathf.Deg2Rad;float taper=Mathf.Sin(u*Mathf.PI);float inner=1-thickness*taper;v[2*i]=new Vector3(Mathf.Cos(a),Mathf.Sin(a),0);v[2*i+1]=v[2*i]*inner;if(i<steps){int j=i*6,k=i*2;triangles[j]=k;triangles[j+1]=k+2;triangles[j+2]=k+1;triangles[j+3]=k+1;triangles[j+4]=k+2;triangles[j+5]=k+3;}}return Mesh(v,triangles);}
+ // 2026-10-03, the user on the phone: 你很多都设置成这样弯弯的，都改掉吧. Every arc of this
+ // script (cutting crescents, rings, chevrons, bands) is drawn as a gently bowed slash: its
+ // span is held to at most 120 degrees round its middle, so no ring or near-ring is left, and
+ // the curve keeps only 30% of its bow from the chord between its ends.
+ Mesh Arc(float from,float to,float thickness,int steps=40){if(species.StartsWith("b"))thickness*=1.28f;
+  float mid=(from+to)*.5f,half=Mathf.Min(Mathf.Abs(to-from)*.5f,60f);from=mid-half;to=mid+half;
+  Vector3 A=new Vector3(Mathf.Cos(from*Mathf.Deg2Rad),Mathf.Sin(from*Mathf.Deg2Rad),0),B=new Vector3(Mathf.Cos(to*Mathf.Deg2Rad),Mathf.Sin(to*Mathf.Deg2Rad),0);
+  var v=new Vector3[(steps+1)*2];var triangles=new int[steps*6];for(int i=0;i<=steps;i++){float u=(float)i/steps,a=Mathf.Lerp(from,to,u)*Mathf.Deg2Rad;float taper=Mathf.Sin(u*Mathf.PI);
+   Vector3 radial=new Vector3(Mathf.Cos(a),Mathf.Sin(a),0),chord=Vector3.Lerp(A,B,u),p=chord+(radial-chord)*.3f;
+   v[2*i]=p;v[2*i+1]=p-radial*thickness*taper;if(i<steps){int j=i*6,k=i*2;triangles[j]=k;triangles[j+1]=k+2;triangles[j+2]=k+1;triangles[j+3]=k+1;triangles[j+4]=k+2;triangles[j+5]=k+3;}}return Mesh(v,triangles);}
  Mesh Ring(){return Arc(0,360,.07f,64);}
  void Build(){
   if(intent=="guard"||intent=="escorted"){for(int i=0;i<7;i++)Add("Protective interlocked facet",Crystal(),intent=="escorted"?new Color(.24f,.65f,.88f,.52f):new Color(.48f,.62f,.73f,.72f));for(int i=0;i<2;i++)Add("Shield perimeter",Ring(),new Color(.69f,.87f,1,.85f));return;}

@@ -2701,7 +2701,7 @@ public sealed class BattlePrototype : MonoBehaviour
             // 错步穿行 cuts through three in the tower's minion packs, two elsewhere.
             int sidestepReach = churchTowerFormation ? 3 : 2;
             if (skillID == "fool_skill_01" && recipients.Count > sidestepReach) recipients.RemoveRange(sidestepReach, recipients.Count - sidestepReach);
-            BeginPlayerSpectacle(skillID, recipients, null, skillID == "fool_skill_01" ? FoolTarotStrikeVFX.ContactTime : -1f);
+            BeginPlayerSpectacle(skillID, recipients, null, skillID == "fool_skill_01" ? FoolTarotStrikeVFX.ContactTime : StandardContactTime(skillID));
             BeginDistinctPlayerCast(skillID);
             foolSkillVFX.HeroActor = player.transform;
             yield return foolSkillVFX.PlayTargetInstances(skillID,
@@ -2750,7 +2750,8 @@ public sealed class BattlePrototype : MonoBehaviour
         BeginDistinctPlayerCast(skillID);
         if (heroDustRoutine != null) StopCoroutine(heroDustRoutine);
         heroDust?.Clear();heroDustRoutine=null;
-        if (requestedSkillID == "fool_skill_10") {
+        // With its form the ultimate's light is the decree itself; the old dust stream is not drawn.
+        if (requestedSkillID == "fool_skill_10" && !SpellSpectacle20260926.HasForm(requestedSkillID)) {
             if (!heroDust) heroDust = gameObject.AddComponent<ArcaneDustFlow>();
             heroDustRoutine = StartCoroutine(PresentHeroDust(requestedSkillID, targetPoint));
         }

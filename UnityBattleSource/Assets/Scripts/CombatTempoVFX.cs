@@ -119,12 +119,13 @@ public sealed class CombatTempoVFX : MonoBehaviour
         var mesh = new Mesh(); var v = new List<Vector3>(); var uv = new List<Vector2>(); var tr = new List<int>();
         for (int i = 0; i <= 28; i++) {
             float t = i / 28f, side = index == 0 ? -1 : 1;
-            float x = side * (.75f + Mathf.Sin(t * Mathf.PI + index * .2f) * .22f);
+            // Straight silk (it bowed and folded in waves: 弯弯的, 2026-10-03).
+            float x = side * (.75f + Mathf.Sin(t * Mathf.PI + index * .2f) * .06f);
             float y = (t - .5f) * 1.95f;
             float width = .12f + Mathf.Sin(t * Mathf.PI) * .26f;
-            float fold = Mathf.Sin(t * 19 + index) * .10f;
-            v.Add(new Vector3(x - width, y + Mathf.Sin(t * 23) * .035f, fold));
-            v.Add(new Vector3(x + width, y + Mathf.Cos(t * 27) * .048f, -fold));
+            float fold = Mathf.Sin(t * 19 + index) * .02f;
+            v.Add(new Vector3(x - width, y, fold));
+            v.Add(new Vector3(x + width, y, -fold));
             uv.Add(new Vector2(0,t)); uv.Add(new Vector2(1,t));
             if (i > 0) { int k = i * 2; tr.AddRange(new[] {k-2,k,k-1,k-1,k,k+1}); }
         }

@@ -2347,15 +2347,21 @@ struct MistportPlaqueButton: View {
                     .padding(.horizontal, horizontalInset ?? 4)
                     .background(RoundedRectangle(cornerRadius: 12).fill(Color.black.opacity(0.72)).overlay(RoundedRectangle(cornerRadius: 12).stroke(.yellow.opacity(0.72), lineWidth: 1)))
                 } else {
+                    // The art's top 23% is a transparent band holding the quill above the plaque.
+                    // Stretched with 25 pt caps the plaque sank to the lower half and the title sat
+                    // across its top edge, half on the dark page (2026-10-03, user: 这些btn似乎都被挡住了).
+                    // Now the whole art scales to a 74 pt frame (close to its own 4.5:1 shape at full
+                    // width, as GameArtButtonStyle does) and the title is centred on the plaque.
                     Text(title)
                         .font(.system(size: 18, weight: .bold, design: .serif))
                         .tracking(1)
                         .foregroundStyle(Color(red: 0.14, green: 0.12, blue: 0.16))
-                        .frame(maxWidth: expands ? .infinity : nil, minHeight: 62)
+                        .padding(.top, 17)
+                        .frame(maxWidth: expands ? .infinity : nil, minHeight: 74)
                         .padding(.horizontal, horizontalInset ?? 20)
                         .background {
                             Image("ButtonArt25MainAction")
-                                .resizable(capInsets: EdgeInsets(top: 25, leading: 120, bottom: 25, trailing: 120), resizingMode: .stretch)
+                                .resizable()
                                 .accessibilityHidden(true)
                         }
                 }

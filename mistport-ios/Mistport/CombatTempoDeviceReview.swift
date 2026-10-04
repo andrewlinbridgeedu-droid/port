@@ -104,6 +104,8 @@ struct CombatTempoDeviceReviewRoot: View {
                     Button("港城雨云") { selectedSample = "home" }
                     Button("发条猎犬") { selectedSample = "q4" }
                     Button("翠焰亡灵") { selectedSample = "q5" }
+                    Button("主角·其余牌一") { selectedSample = "cards" }
+                    Button("主角·其余牌二") { selectedSample = "cards2" }
                     Button("石颚") { selectedSample = "d01" }
                     Button("第七号空壳") { selectedSample = "b01" }
                     Button("主角·雾港夜行") { heroOutfit = .mistportNight; selectedSample = "hero" }
@@ -173,7 +175,10 @@ struct CombatTempoDeviceReviewRoot: View {
                     // "pack8" a full eight-body wave on floor 72. Group cards on show.
                     let packFloor = sample == "pack" ? 2 : sample == "pack8" ? 72 : nil
                     // "q5": the emerald revenant (poison mist, its heavy burst taken on the mask).
-                    let mission = sample == "q4" ? 4 : sample == "q5" ? 5 : sample == "hero" || packFloor != nil ? 13 : 7
+                    // "cards"/"cards2": the hero's other cards (假面谕令, 张冠李戴, 反客为主 / 后手改写,
+                    // 错步, 双影) with the ultimate (无名宣告) unlocked, on the first tower floor.
+                    let otherCards = sample == "cards" || sample == "cards2"
+                    let mission = sample == "q4" ? 4 : sample == "q5" ? 5 : sample == "hero" || otherCards || packFloor != nil ? 13 : 7
                     for n in 1...mission { _ = campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: n) }
                     campaign.grantHoundTutorialCard()
                     campaign.ownedRelicIDs.insert(MPCChapterOneCatalog.ownerlessMaskRelicID)
@@ -194,13 +199,19 @@ struct CombatTempoDeviceReviewRoot: View {
                             var hand = MPCChapterOneLoadout(normalSkillIDs: [.sidestepStrike, .fabricatedEvidence, .absurdFinale], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
                             hand.outfit = heroOutfit
                             loadout = hand
+                        } else if otherCards {
+                            var hand = MPCChapterOneLoadout(normalSkillIDs: sample == "cards" ? [.maskedWhisper, .identityDisplacement, .turnTheTables] : [.backstageChange, .sidestepStrike, .mirrorPursuit],
+                                isUltimateUnlocked: true, passiveIDs: [], relicIDs: [])
+                            hand.selectedActiveRelicID = MPCChapterOneCatalog.ownerlessMaskRelicID
+                            hand.outfit = heroOutfit
+                            loadout = hand
                         } else if sample == "hero" {
                             var hand = MPCChapterOneLoadout(normalSkillIDs: [.fabricatedEvidence, .mirrorPursuit, .absurdFinale], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
                             hand.selectedActiveRelicID = MPCChapterOneCatalog.ownerlessMaskRelicID
                             hand.outfit = heroOutfit
                             loadout = hand
                         } else { loadout = MPCChurchTowerVerificationRunner.recommendedLoadout(for: floor) }
-                        id = packFloor != nil ? floor.id : (sample == "d01" || sample == "hero") ? "church_tower_001" : "church_bounty_b01"
+                        id = packFloor != nil ? floor.id : (sample == "d01" || sample == "hero" || otherCards) ? "church_tower_001" : "church_bounty_b01"
                     }
                     campaign.loadout = loadout
                     if let active = loadout.selectedActiveRelicID { campaign.ownedRelicIDs.insert(active) }
