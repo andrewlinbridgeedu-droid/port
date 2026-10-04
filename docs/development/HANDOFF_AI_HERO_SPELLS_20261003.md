@@ -4,7 +4,16 @@
 
 ## 现在在哪（先读这一节）
 
-- **分支**：`claude/ai-hero-integration-20261003`（工作树 `/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device`）。
+- **已全部合入 main（2026-10-03 晚，用户：“全部合并到main先”）**：`main` 快进到 `52f3821`，远端所有分支的提交现在都在 main 里。新工作从 `main` 开分支。
+  - 本线 `claude/ai-hero-integration-20261003` 原样快进（它已包含 3D 主角线、决定改名、世界经济、节奏样板、返回按钮各线）。
+  - 另合了四条：
+    - 主检出里一直没提交的设计稿、视频主角三套服装的 4K 背面原画、佛堂法术参考（`493918c`，先提交在 `codex/ui-art-polish-20260930`）；
+    - 169.24 界面装机记录（`codex/unify-return-buttons-20261001`）；
+    - 封印物稿及其评审（`claude/skill-relic-design-20261002`）；
+    - 城市贡献度开放的三类街头任务（`claude/nifty-planck-80307c`，`StreetTasks.swift`）。
+  - 街头任务和 main 上同日写的“档位内容”抽象模型重复，只留了真实的任务账本：`budget.py` 用街头任务的模型；推进模拟器的账本接上 main 后加的体力、第一章不发铜（`TIER_COPPER_CH1=1` 才发）、共享服收入缩放。规则库的账本在第一章仍照发铜，还没按“第一章不给铜”改。
+  - 验证：规则库 582 项 swift-testing 加 4 项 XCTest 全过；推进模拟器编译并跑完整章（“全都做”打到 Q30，街头任务急 21–22／难 5／城 2，档日 6–7/12/18）；iOS App 模拟器包 169.61 编译成功（没装手机）。
+- **分支**：`claude/ai-hero-integration-20261003`（工作树 `/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device`），现在和 `main` 是同一个提交。
 - **最新代码**：命中整体扯散成烟丝和光点、不留形状（见下面“169.56–169.60”一节），在本交接所在的提交里。
 - **手机（iPhone 13）**：**169.60**（18:23 装），替换本线的 169.55。
   - 签名校验通过；Preferences 装前、装后各 264 份，逐字节相同（第一次拷贝网络超时，重试成功）。
