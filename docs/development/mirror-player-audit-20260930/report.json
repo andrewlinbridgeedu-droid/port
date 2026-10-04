@@ -1,0 +1,211 @@
+{
+  "date": "2026-09-30",
+  "device": "iPhone 13",
+  "installedBuildObserved": "169.12",
+  "coverage": "Q1–Q8已完成，正式塔第1–2层已完成；Q9首轮失败；Q10–Q30尚未走查。",
+  "resetAuthorization": "用户明确要求重置进度，第一关开始；旧 Preferences 完整保存在 before。",
+  "observations": [
+    {
+      "mission": "Q1",
+      "result": "首次胜利",
+      "enemyAttack": "镜像实见玩家 -45 伤害；不能判定敌人不攻击",
+      "tutorial": "第三次普攻命中触发玛拉，敌人回血有剧情说明；手点错步编排后开始战斗",
+      "rewards": "30 铜、止痛膏 1、通行证 1",
+      "issue": "点击继续·前往后续后黑屏，返回主屏再开应用出现已恢复战后奖励。"
+    },
+    {
+      "mission": "Q2",
+      "result": "首次胜利",
+      "enemyAttack": "幽灵分裂后红色残影攻击，实见玩家 -27；使用止痛膏显示 +250",
+      "damageTotal": 2080,
+      "rewards": "30 铜、寻人退件索引 1",
+      "issue": "点击继续·前往后续后再次黑屏；重新启动后奖励恢复。"
+    },
+    {
+      "mission": "Q3",
+      "name": "循名而来的猎犬",
+      "result": "首次胜利，正常完成战后剧情并回城",
+      "enemyAttack": "实见主角 -178，生命条下降；猎犬有火焰攻击表现",
+      "mask": "手动使用后出现左侧紫色幻影，按钮变暗；尚不足以确认具体吸引了哪一击",
+      "damageTotal": 620,
+      "skillShare": "65.2%",
+      "rewards": "30 铜、具名项圈拓印 1、迟秒怀表 1",
+      "coinsAfter": 258,
+      "dailyGate": "回城显示第4关明天开放"
+    },
+    {
+      "mission": "Q4",
+      "name": "猎犬试探",
+      "result": "首次胜利，伤害2200，技能60.5%、普攻39.5%；战后剧情正常结束",
+      "enemyAttack": "观察到喉部双焰亮起、试探及追索火球；不用假面时首轮快速死亡，结算伤害322",
+      "mask": "开场过早使用会在火球前消失；较合适时机使用后存活进入第二轮，结算伤害1157或1207，第二轮未能可靠完成操作",
+      "playerExperience": [
+        "错步与普攻的大型明亮特效遮挡猎犬喉部双焰，影响读取预兆",
+        "假面图标暗化但本次镜像未读到明确剩余冷却秒数，需复核"
+      ],
+      "limitations": "工具回合可延迟约10秒，超过预警反应窗口；捕捉出现noWindowsAvailable、SCStreamError -3811/-3812，重绑定/激活/重置仍失败，不能把这些重试失败直接归于关卡平衡或假面逻辑。",
+      "rewards": "30铜、召回节律手记1、伊恩失踪登记1、僭命勋章",
+      "successfulMethod": "缩小镜像并每次操作前Raise；开战约6.5、26.5、46.5秒点击假面，三轮存活后胜利",
+      "navigationCorrection": "复测任务名称可进入，灯笼是体力说明；原入口问题判断受镜像延迟影响，撤回已确认问题结论。"
+    },
+    {
+      "mission": "Q5",
+      "name": "不肯落幕",
+      "result": "后续勋章重试胜利，伤害1600，技能64%、普攻36%；战后剧情及回城正常",
+      "enemyAttack": "实见翠绿色大范围毒雾/重击，主角血条持续下降直至失败",
+      "mask": "使用一次，失败页显示裂纹1/10；重试页初始又显示0/10，随后刷新为1/10，需核对状态刷新",
+      "medal": "点击名称选中并发动后图标变暗，完成胜利",
+      "interruption": "17:07 iPhone使用中，镜像结束；未确认勋章发动或第二次结算",
+      "coinsAfter": 306,
+      "rewards": "30铜、注销底联1"
+    },
+    {
+      "mission": "Q6",
+      "name": "档案街入口",
+      "result": "假面与补给重试胜利；重新启动后已恢复战后奖励，伤害1500，技能65.2%、普攻34.8%",
+      "enemyAttack": "玩家血条多次大幅下降，蓝色护甲展开与收回可见；不能判定不攻击",
+      "healing": "测试档购买止痛膏30铜，实见+250",
+      "playerExperience": [
+        "法术覆盖守卫主体，护甲与收盾空隙难读",
+        "重试页短暂保留上轮血条与已用止痛膏，开战刷新，未确认返还"
+      ],
+      "rewards": "40铜、监护门禁回执1",
+      "coinsAfter": 286,
+      "issue": "镜像捕捉故障后恢复发现主屏，重新启动出现奖励恢复；城市静音参数仍存在，尚未取得本次对应崩溃原因",
+      "mask": "开战约3秒与21.5秒使用，出现幻影、存活明显改善；后段捕捉中断",
+      "recovery": "点击恢复奖励后直接回城进入Q7空白身份牌，未看到Q6正常战后对话"
+    },
+    {
+      "mission": "Q7",
+      "name": "空白身份牌",
+      "result": "首次胜利，伤害2468，技能76.2%、普攻23.8%；战后两页剧情与回城正常",
+      "enemyAttack": "双守卫同时出刀，玩家连续-57/-57；核心显示+180修复，核心受击-101",
+      "rewards": "40铜、空白身份牌1",
+      "coinsAfter": 326,
+      "playerExperience": "后方核心很小，点击后未看清选中反馈；不能确认切换目标成功",
+      "mask": "实见幻影，战后裂纹需存档核对"
+    },
+    {
+      "mission": "Q8",
+      "name": "不属于我的名字",
+      "result": "塔第2层获得伤害+15%的石颚裂刃自动穿戴后胜利，伤害1900，错步60.6%、普攻24%、身份错置15.4%；战后两页剧情与回城正常",
+      "enemyAttack": "实见玩家-108，生命快速下降",
+      "tutorial": "获身份错置，未满4层造成伤害叠1层，满4层再释放迟延目标；编排顺序自动出牌",
+      "failureHint": "失败后建议到教会第10层更换装备",
+      "retrial": "实见止痛膏+250，勋章出现剩余8秒冷却",
+      "nextAction": "继续Q9被改写的证词",
+      "rewards": "40铜、吞名核验记录1",
+      "coinsAfter": 352,
+      "playerExperience": "失败提示要求教会第10层装备，实际第2层武器配勋章和止痛膏已能胜利；主角血条胜利前近零"
+    },
+    {
+      "mission": "Q9",
+      "name": "被改写的证词",
+      "result": "首轮失败，伤害2040，错步61%、普攻22.3%、身份错置16.8%",
+      "enemyAttack": "书记员发动紫色攻击，主角血条迅速下降；核心修复显示+156",
+      "healing": "止痛膏+250，已消耗",
+      "targeting": "战前与战中点击右侧核心后没有明确选中反馈，错步范围伤害仍能击中它；尚不能证明目标切换有效",
+      "nextAction": "补充护甲/成长后再试"
+    }
+  ],
+  "confirmedCrash": {
+    "file": "backups/mirror-player-audit-20260930/Mistport-2026-09-30-115130.ips",
+    "exception": "EXC_CRASH / SIGABRT",
+    "stack": [
+      "AVAudioPlayerNodeImpl::StartImpl",
+      "-[AVAudioPlayerNode play]",
+      "CityAmbience.play(_:volume:pan:rate:priority:)",
+      "CityAmbience.tick()"
+    ],
+    "scope": "Q1 黑屏后同一时段崩溃证据；Q2 黑屏尚未单独取得对应崩溃日志。"
+  },
+  "interruption": "Q2 恢复后镜像先显示 228 铜的下一关，随后无主动读档而变成 1,988 铜旧进度；已询问是否另一个会话操作。未将两套状态混为连续新档。",
+  "q1-win": {
+    "coins": 198,
+    "completed": [
+      "old-clock-1"
+    ],
+    "inventory": {
+      "consumable_pain_salve": 1,
+      "item_old_clock_pass": 1,
+      "material_skill_dust": 0,
+      "currency_copper": 210
+    }
+  },
+  "q2-restored": {
+    "coins": 228,
+    "completed": [
+      "old-clock-1",
+      "old-clock-2"
+    ],
+    "inventory": {
+      "item_old_clock_pass": 1,
+      "consumable_pain_salve": 0,
+      "material_skill_dust": 0,
+      "chapter30_e02": 1,
+      "currency_copper": 240
+    }
+  },
+  "resume": "1988 铜来自另一住房测试 suite；恢复正常新档228铜，启动参数 -MistportCityMute YES 后完成Q3战后流程。此为诊断绕过，未修复音效崩溃。",
+  "isolatedContinuation": {
+    "authorization": "用户允许仅在隔离测试档模拟后续天数",
+    "suite": "mistport.player-test-01-15.audit",
+    "source": "Q3胜利备份",
+    "simulation": "仅将 daily-pacing.start.v1 的 start 前移27天，模拟第28天；未授予后续首通或装备",
+    "verifiedUI": "第28期报纸：今天可推进到第30关，主线猎犬试探",
+    "blocker": null
+  },
+  "normalSaveVerifiedAfterQ6": true,
+  "towerContinuation": {
+    "floor": 3,
+    "observedRewardPreview": "8铜、2功勋",
+    "observedAttack": "第1层玩家-128；第2层石颚举双臂，玩家血条下降",
+    "status": "第1–3层首次通关；第3层+8铜+2功勋；进入第4层备战，护甲奖励井口封甲尚未获得",
+    "thirdFloorAttack": "实见主角-89，两个石颚与小怪有动作",
+    "thirdFloorVisual": "胜利遮罩后右侧小怪仍保留站立模型；清场表现待复核"
+  },
+  "continuationCheckpoint": "主线Q9待重试；塔第4层待完成。捕捉服务持续故障，重启镜像、重新绑定、重置CUA均未恢复，不能确认第4层开战。",
+  "normalSaveVerifiedAfterQ8": true,
+  "resume1855": {
+    "ui": "隔离档Q9，322铜；手机电量29%并充电",
+    "tower": "19:02第3层正式胜利；第4层备战后截图服务持续-3811/-3812",
+    "interruption": "18:58镜像捕捉故障，放大显示后恢复；随后显示iPhone使用中，等待锁屏",
+    "limitations": "镜像捕捉和手机使用中断，不归于游戏缺陷"
+  },
+  "simulatorTransition": {
+    "device": "C18184E9-B717-4256-B265-531B41218032",
+    "source": "当前源码，SSD独立派生目录",
+    "firstHost": "local.mistport.player-audit，无Unity的住房宿主；与当前隐藏SpriteKit主体的代码不兼容，场景和角色不可见",
+    "fallbackResults": "仅原生规则：塔第4层胜利，井口封甲+160生命/7%减伤；Q9未使用止痛膏失败伤害2036。不可作为Unity玩家实测结论。",
+    "next": "构建完整Mistport方案含Unity模拟器依赖，再继续实玩",
+    "fullBuildAttempt": "现有设备版il2cpp.a与iOS Simulator不兼容，链接失败；因此在SSD独立Unity项目导出SimulatorSDK，保留真机导出。",
+    "workingDirectory": "/Volumes/andrew's SSD/Mistport-simulator-player-audit-20260930",
+    "status": "完整Unity SimulatorSDK独立导出、构建安装成功；实见塔第四层完整3D场景/主角/三名敌人",
+    "sourceManifestMatchesDevice": true,
+    "fullBundle": "com.yourcompany.mistport",
+    "saveSource": "重新使用真机塔3层备份，未继承无Unity宿主的塔4层胜利",
+    "simulatorContainer": "/Users/andrewlin/Library/Developer/CoreSimulator/Devices/C18184E9-B717-4256-B265-531B41218032/data/Containers/Data/Application/C1B6F661-EE63-4AE4-9EDF-140F179BDD3D"
+  },
+  "simulatorFullUnityProgress": {
+    "completedMainThrough": "Q15",
+    "completedTowerThrough": 4,
+    "unityExportManifestMatchesDeviceExport": true,
+    "tower4": "胜利，8铜币2功勋，井口封甲自动穿戴；装备页确认生命+160减伤7%",
+    "Q9": "胜利2408伤害：错步64.5%，普攻20.3%，身份15.2%；40铜币，寻人证词双本，技能粉尘30，习得伪证烙印。核心先消失，书记员持续攻击；止痛膏+290，玩家濒死获胜。法术遮挡敌人，目标选择无明显反馈。",
+    "Q10": "胜利2250：错步61.5%，普攻21.4%，伪证17.2%；40铜币名单1，习得双影追猎并四格。天赋利落开场/窥隙/追幕/换手，错步强化Lv2。先伪证后错步，勋章及止痛膏；止痛膏浮字+330与Q9+290不同，待核对装备或生命累计。死后守卫模型短暂留场，随后结算。返城358铜币。",
+    "Q11": "胜利3000伤害，错步46.1%，双影25.5%，身份12.2%。50铜币药柜编号比对记录家庭档案，习得荒谬归结。两蛭与守卫攻击，玩家实际-52/-52及-34/-82，止痛+370。角色最大生命1480。",
+    "Q12firstAttempt": "失败1880伤害：错步51.3%双影20.6%归结13.5%，剩书记员720/1300。强化叠加90%减伤没有清楚战场提示，失败才告诉B01七号缺齿剑；战场抄录书记员与提示校准人偶不一致。",
+    "B01": "五处完整调查，第七号空壳胜利收押并交案60铜币12功勋，缺齿剑自动装备，铜币408。调查未记录时提前显示已记录；废岗亭正确身份选项可提前点但失败缺操作顺序。战前四格开打全部清空，战中重新编排恢复。敌人模型远小于主线同类，需核对。胜利回到城图实际回现场调查页。",
+    "Q12retry": "B01缺齿剑后胜利2600伤害，错步43.9%双影25.5%归结16.3%。50铜币，临时救援回执摘录镜银药膏调拨单，反客为主。止痛未用1份留存。勋章第二次尝试时已胜利；暂不能排除临时生命随结算持久化。",
+    "Q13": "勝利2681：錯步43.2%雙影26.6%歸結17%。50銅幣歸一檔案錄音，習得無名宣告。核心先破，洛克實際玩家傷害-220/-229；兩種藥劑未消耗。技能保留編排。",
+    "Q14": "胜利2800伤害，错步58.6%双影22.6%身份10.3%；50铜币封存名牌箱粉尘30。优先书记员，无名宣告一次生效后本场已使用禁用。双方有造成伤害，剩约30%生命。药剂未用。",
+    "Q15": "胜利3773伤害，错步50.8%双影20.9%归结15.3%；50铜币，维娅监管移交书和归属丝线同图标。核心+141治疗，玩家-186/-49；红色花瓣攻击清晰。无名每场重置正确。药剂点击时已结束未消费。"
+  },
+  "confirmedArmorAccumulationBug": {
+    "severity": "P1",
+    "evidence": "Q9止痛+290、Q10+330、Q11+370；角色Q9后1160，Q11后1480，护甲始终+160。",
+    "cause": "ChapterOneEncounterRuntime.swift start 1268-1269添加churchGear.maxHP；persistentPartyState 2306写入playerMaxHP；settleVictory 424持久化party，下一场重复加装备。",
+    "impact": "重复通关可永久叠生命，后续关卡难度评价污染；勋章临时生命也写入playerMaxHP，需一并核对。",
+    "status": "审计记录，未修改运行代码或手动纠正测试存档"
+  }
+}

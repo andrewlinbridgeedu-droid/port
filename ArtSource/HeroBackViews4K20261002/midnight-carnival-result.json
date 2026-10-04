@@ -1,0 +1,17 @@
+{
+  "job": "midnight-carnival",
+  "state": "completed",
+  "model": "gpt-image-2",
+  "requested_size": [
+    2160,
+    3840
+  ],
+  "actual_size": [
+    2160,
+    3840
+  ],
+  "native_api_output": true,
+  "bytes": 8149703,
+  "sha256": "b64159e59d9c94e70026efb90b13b16e092ec736ff690b261723071837fa96d6",
+  "elapsed_seconds": 79.2
+}

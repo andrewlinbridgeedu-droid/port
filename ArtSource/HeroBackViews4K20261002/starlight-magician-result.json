@@ -1,0 +1,17 @@
+{
+  "job": "starlight-magician",
+  "state": "completed",
+  "model": "gpt-image-2",
+  "requested_size": [
+    2160,
+    3840
+  ],
+  "actual_size": [
+    2160,
+    3840
+  ],
+  "native_api_output": true,
+  "bytes": 7901311,
+  "sha256": "2d94c5c0ddd657b365d36e6e957d704e02fa88e7b6222f2c5f4d068f65dad3ad",
+  "elapsed_seconds": 81.7
+}
