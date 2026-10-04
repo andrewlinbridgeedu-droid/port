@@ -58,7 +58,12 @@ private struct ChapterOneTutorialPage {
             let breakIndex = proposed.indices.reversed().first { index in
                 String(proposed[index]).rangeOfCharacter(from: preferredBreaks) != nil
             }
-            let end = breakIndex.map { remainder.index(after: $0) } ?? proposedEnd
+            var end = breakIndex.map { remainder.index(after: $0) } ?? proposedEnd
+            // Keep closing quotes with their sentence; a lone ” used to open
+            // the next page (playtest 2026-10-04, Q4 aftermath).
+            while end < remainder.endIndex, "”’」』）》".contains(remainder[end]) {
+                end = remainder.index(after: end)
+            }
             result.append(String(remainder[..<end]).trimmingCharacters(in: .whitespacesAndNewlines))
             remainder = remainder[end...].drop { $0.isWhitespace }
         }

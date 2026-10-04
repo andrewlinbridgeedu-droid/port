@@ -171,7 +171,14 @@ struct LocalWorkshopView: View {
     private var gathering: some View {
         step("01", "取材", art: "WorkshopStepGather") {
             Text("每次封堵或重打深井，都会取得该层恶魔的材料；已封层可随时重打。")
-            PlateButton(title: "前往教会塔取材", plate: .workshopSecondary) { showsTower = true }
+            // Playtest 2026-10-04: the workshop opens at Q5 but the church at
+            // Q7; this button used to walk straight past the church lock.
+            if game.cityServiceIsUnlocked(.church) {
+                PlateButton(title: "前往教会塔取材", plate: .workshopSecondary) { showsTower = true }
+            } else {
+                Text(MPCChurchTowerCatalog.lockText + "；之前可先熟悉配方。")
+                    .font(.caption).foregroundStyle(.orange)
+            }
         }
     }
     private var recipe: some View {

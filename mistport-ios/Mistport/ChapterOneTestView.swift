@@ -2612,9 +2612,17 @@ struct ChapterOneEncounterTestView: View {
     }
 
     private var teachesMaskTiming: Bool {
-        ["chapter01_q03_encounter", "chapter01_q04_encounter"].contains(session.encounter.id)
-            && combatIsActive && session.outcome == .inProgress
-            && manualMaskIsReady && session.masqueradeCharges == 0
+        guard ["chapter01_q03_encounter", "chapter01_q04_encounter"].contains(session.encounter.id),
+              combatIsActive, session.outcome == .inProgress,
+              manualMaskIsReady, session.masqueradeCharges == 0 else { return false }
+        guard isQ4Hound else { return true }
+        // Q4 repeats a 20 s cycle: probe at +2.45, flames at +8.45/+9.10.
+        // A 4 s phantom only covers both flames when raised after ~+5.1, and
+        // the mask is ready again before that in later cycles, so light the
+        // cue only inside the real window (playtest 2026-10-04).
+        guard let cycle = q4CycleStart else { return false }
+        let phase = battleTime - cycle
+        return phase >= 5.3 && phase <= 8.3
     }
 
     private var manualMaskIsReady: Bool {
@@ -3090,10 +3098,12 @@ struct ChapterOneEncounterTestView: View {
             combatantHealthOverlay
             if !combatIsActive, !showsTutorial,
                let mission = MPCChapterOneCatalog.mission(forEncounterID: session.encounter.id),
-               (1...8).contains(mission.number) {
+               // From Q3 the bridge's readiness panel carries these lines, so
+               // they never sit on a tall boss's health bar.
+               (1...2).contains(mission.number) {
                 VStack {
                     TimelineView(.periodic(from: .now, by: 4)) { context in
-                        let lines = enemyPreludeLines(mission.number)
+                        let lines = Self.enemyPreludeLines(mission.number)
                         Text(lines[Int(context.date.timeIntervalSince1970 / 4) % lines.count])
                             .font(.system(size: 13, weight: .medium))
                             .foregroundStyle(Color.white.opacity(0.92))
@@ -3103,7 +3113,7 @@ struct ChapterOneEncounterTestView: View {
                     }
                     // The bridge's prebattle readiness panel owns the top
                     // band; sit below it so the two never overlap.
-                    .padding(.top, 88).padding(.horizontal, 28)
+                    .padding(.top, 16).padding(.horizontal, 28)
                     Spacer()
                 }.allowsHitTesting(false)
             }
@@ -3115,7 +3125,7 @@ struct ChapterOneEncounterTestView: View {
         .animation(.easeOut(duration: 0.20), value: targetSelectionDetail)
     }
 
-    private func enemyPreludeLines(_ mission: Int) -> [String] {
+    static func enemyPreludeLines(_ mission: Int) -> [String] {
         switch mission {
         case 1: return ["空壳守卫：已认领人员，不得离开保管区域。", "街区播报：无法说明来历的人，也会得到照看。"]
         case 2: return ["退信间的低语：别送我回家。", "另一道残响：他们没有……领到我。"]
@@ -6938,6 +6948,17 @@ struct ChapterOneMissionBridgeView: View {
                 && game.churchServices.ownedCondition.currentDurability($0) == 0
         }
         return VStack(alignment: .leading, spacing: 5) {
+            if (3...8).contains(number) {
+                let lines = ChapterOneEncounterTestView.enemyPreludeLines(number)
+                if !lines.isEmpty {
+                    TimelineView(.periodic(from: .now, by: 4)) { context in
+                        Text(lines[Int(context.date.timeIntervalSince1970 / 4) % lines.count])
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.white.opacity(0.92))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+            }
             if let objective = Self.prebattleObjective(number) {
                 Text(objective)
                     .font(.caption.bold())
@@ -7791,7 +7812,7 @@ struct ChurchTowerView: View {
                             enabled: available
                         ) { launch(selected) }
                         if !available {
-                            Text(!game.churchRemoteServicesAvailable ? game.churchRemoteContactPauseReason : floor.requiredMission > 0 && !game.churchTowerMissionNumbers.contains(floor.requiredMission) ? "完成主线第 \(floor.requiredMission) 关后取得下井许可" : !game.churchTowerProgress.canEnter(selected, completedMissionNumbers: game.churchTowerMissionNumbers) ? "先封堵上一层" : game.towerPacingLockText ?? "").font(.caption).foregroundStyle(.white.opacity(0.65))
+                            Text(entryBlockReason).font(.caption).foregroundStyle(.white.opacity(0.65))
                         }
                         if !error.isEmpty { Text(error).font(.caption).foregroundStyle(.orange) }
                     }.padding(20).frame(maxWidth: .infinity).background(.black.opacity(0.65)).overlay(alignment: .top) { Rectangle().fill(ChurchGold.opacity(0.6)).frame(height: 1) }
@@ -7828,6 +7849,15 @@ struct ChurchTowerView: View {
         }
     }
     private func changeTier(_ delta: Int) { tier = min(9, max(0, tier + delta)); selected = tier * 10 + 1 }
+    /// Why the selected floor cannot be entered, most fundamental first.
+    private var entryBlockReason: String {
+        let missions = game.churchTowerMissionNumbers
+        if !MPCChurchTowerCatalog.isUnlocked(completedMissionNumbers: missions) { return MPCChurchTowerCatalog.lockText }
+        if !game.churchRemoteServicesAvailable { return game.churchRemoteContactPauseReason }
+        if floor.requiredMission > 0, !missions.contains(floor.requiredMission) { return "完成主线第 \(floor.requiredMission) 关后取得下井许可" }
+        if !game.churchTowerProgress.canEnter(selected, completedMissionNumbers: missions) { return "先封堵上一层" }
+        return game.towerPacingLockText ?? ""
+    }
     private func selectNextUncleared() { let next = min(100, (game.churchTowerProgress.clearedFloors.max() ?? 0) + 1); selected = next; tier = (next - 1) / 10 }
     private func launch(_ number: Int) {
         do {
