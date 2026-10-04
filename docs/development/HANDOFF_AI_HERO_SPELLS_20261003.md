@@ -1,17 +1,18 @@
-# 交接：视频主角 + 法术往前打 + 塔小怪潮 · 2026-10-03（中午写，傍晚 169.55 装机后更新）
+# 交接：视频主角 + 法术往前打 + 塔小怪潮 · 2026-10-03（中午写，晚上 169.60 装机后更新）
 
 接在 [法术形式交接](HANDOFF_SPELL_FORMS_20261003.md) 之后。那份是全天的流水，本份只写**现在在哪、下一步做什么**。
 
 ## 现在在哪（先读这一节）
 
 - **分支**：`claude/ai-hero-integration-20261003`（工作树 `/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device`）。
-- **最新代码提交 `32114b6`**：命中散开、消散（见下面“169.52–169.55”一节）。
-- **手机（iPhone 13）**：**169.55**（提交 `32114b6`，15:42 装），替换本线的 169.51。
-  - 签名校验通过；Preferences 装前、装后各 264 份，逐字节相同。
+- **最新代码**：命中整体扯散成烟丝和光点、不留形状（见下面“169.56–169.60”一节），在本交接所在的提交里。
+- **手机（iPhone 13）**：**169.60**（18:23 装），替换本线的 169.55。
+  - 签名校验通过；Preferences 装前、装后各 264 份，逐字节相同（第一次拷贝网络超时，重试成功）。
   - 手机锁屏，静音预览启动被系统拒绝（设备未解锁）。没有任何东西碰到存档。
   - 只证明装上了；没有在手机上看画面，也没有用户认可。
-  - 记录在 SSD 的 `Mistport-archives/releases/Build169.55-dispersing-landings/`。
-  - 本线更早的装机记录：`Build169.36-spell-forms`、`Build169.41-tower-minions`、`Build169.43-ai-hero-integration`、`Build169.45-fix-all`、`Build169.47-bigger-landings`、`Build169.51-cast-light-bursts`。
+  - 记录在 SSD 的 `Mistport-archives/releases/Build169.60-smoke-dispersal/`。
+  - 本线更早的装机记录：`Build169.36-spell-forms`、`Build169.41-tower-minions`、`Build169.43-ai-hero-integration`、`Build169.45-fix-all`、`Build169.47-bigger-landings`、`Build169.51-cast-light-bursts`、`Build169.55-dispersing-landings`。
+  - 模拟器号 169.56–169.59 只在模拟器上，没有上手机。
 - **主角**：用户定了用视频展示动作，不再做 3D。视频主角（`AIHeroAnimatedBody`）来自 Codex 分支 `codex/combat-tempo-samples-20261001`，已合并进来，并且**在所有战斗里都显示**（`CombatTempoPresentation.HeroOnly`）。
 
 ## 169.46–169.47：放大命中（中午到下午）
@@ -110,10 +111,26 @@
 - 连接断了几次（隧道超时），拷存档和安装都重试后才成功；
 - 记录在 SSD 的 `Mistport-archives/releases/Build169.55-dispersing-landings/`。
 
+## 169.56–169.60：命中彻底散开、不留形状（晚上）
+
+**用户在手机上看 169.55 后的第五条要求**：命中体淡出到最后，整体形状还看得出来，要它彻底散开、不留形状。
+
+- **169.56–169.57（放弃）**：淡出开始时把命中体网格切成大小不一的碎片，各自飞散、翻转、缩小。普攻、错步碎得不错，但荒谬的彩虹扇碎成一片片直边四边形（项目禁用直边光板）；收小碎片、内收外圈顶点后，仍有直边和一道暗线（多半是碎片翻到背面被着色器画暗）。图见 `sim-169.56-*.jpg`。
+  - 那个会话在改完下面的“整体扯散”后、出包前中断；本会话接着出包、复看。
+- **169.58（整体扯散，`Body.Unravel`）**：网格不切开。淡出开始时，每个顶点按自己的方向被推开：背离命中点、背离本体中心、一个随表面平滑变化的湍流（Perlin），再加一点上升，推开的距离先快后慢。同时侵蚀加快，光点在整个侵蚀过程中从被扯开的位置陆续冒出（三分之一立刻冒，其余在前 60% 的淡出里冒）。
+  - 看到的：伪证、双影、普攻都被扯成弯曲的烟丝，再变成光点，没有直边和暗线；
+  - 问题：推开距离只按命中尺寸算，错步的大斜刃、荒谬的彩虹扇这种几米宽的本体只轻微变形就溶掉，读成“立着、然后一下没了”。
+- **169.59（与 169.60 真机同一份代码）**：推开距离再加上本体自身尺寸的 0.35（`Dispersing` 的新参数 `stretch`；主角身上的出手光传 0，保持 169.54 收小后的样子）；推开起速更快（`Pulled`）；侵蚀稍晚（淡出的 75% 处溶完，80% 处全透明），让散开在还亮的时候被看见。
+  - 错步：峰值后明显往外、往上扯开、变薄、出洞，0.4 秒后只剩粉金光点；
+  - 荒谬：彩虹扇被撕开扯成彩虹丝，0.7 秒后只剩彩色光点；扯散时碎丝伸到约 75–85% 屏宽，但很薄、约 0.3 秒、不碰主角。用户嫌宽就给大本体的推开距离设上限（`Unravel` 里 `reach` 的本体尺寸项）。
+  - 伪证、双影、普攻同 169.58；两段录像控制台都没有报错。
+  - 图见 `sim-169.58-*.jpg`、`sim-169.59-*.jpg`，录像在 SSD 的 `…review/smoke/`。都是模拟器逐帧，不是真机，也不是用户认可。
+
 ## 下一步（按顺序）
 
-1. **等用户在手机上看 169.55**：命中的散开、消散是否自然，出手光、流光、半屏炸开是否合适；塔里群体命中三团并排是否太宽（太宽就把 `FormImpact` 里群体的 0.6/0.4 再收）。
-   - 散开太多或太少：改 `Body.Setup` 里淡出的 1.9 倍、`Dispersing` 的外扩 0.55，以及 `Flares.Scatter` 的光点数量、大小和寿命。
+1. **等用户在手机上看 169.60**：命中是否彻底散开、不留形状；散开时会不会太宽（尤其荒谬）。
+   - 散开太多或太少：改 `Body.Unravel` 的推开方向和 `reach`、`Pulled` 的快慢、`Apply` 里侵蚀和透明的时间点，以及 `Flares.Scatter` 的光点数量、大小和寿命。
+   - 塔里群体命中三团并排是否太宽（太宽就把 `FormImpact` 里群体的 0.6/0.4 再收）。
    - 用户最早的反感是“满屏开花”，上一轮是“范围太小”，要卡在两者之间。
    - 还要调的话，改 `SpellSpectacle20260926.FormImpact` 里的命中尺度（现在普攻 0.55、其他 0.8）和 `LaunchShots` 的 `Form.Flick`。
 2. 用户看过后再做：
@@ -133,7 +150,8 @@
 | 普攻去掉全屏着色器；鞋印放大；视频主角上所有战斗 | `64a0efd` | 169.45 已上手机 |
 | 放大命中、普攻加拖尾 | `0ebbbe6` | 169.47 已上手机，用户看过，提出主角冒光、流光、炸开 |
 | 主角出手光、飞行流光、每次命中半屏炸开 | `948d4e9` | 169.51 已上手机，用户看过，提出命中要散开、消散 |
-| 命中散开、消散；出手光散得更小 | `32114b6` | 169.55 已上手机，用户未看 |
+| 命中散开、消散；出手光散得更小 | `32114b6` | 169.55 已上手机，用户看过，提出要彻底散开、不留形状 |
+| 命中整体扯散成烟丝和光点，不切碎片 | 见“现在在哪” | 169.60 |
 | 静音启动不再有声音（音乐、Unity 音效都关） | `e4801b4` | 已上手机 |
 
 ## 怎么复现
@@ -141,14 +159,14 @@
 **构建**（工作树里，会先做 Unity 导出）：
 
 ```bash
-MISTPORT_SIM_DEVICE="iPhone 17 Pro Max" MISTPORT_BUILD_OUT="/Volumes/andrew's SSD/Mistport-build-cache/hero-v4-sim-20261002" sh scripts/build_hero_v4.sh simulator 169.48
+MISTPORT_SIM_DEVICE="iPhone 17 Pro Max" MISTPORT_BUILD_OUT="/Volumes/andrew's SSD/Mistport-build-cache/hero-v4-sim-20261002" sh scripts/build_hero_v4.sh simulator 169.61
 ```
 
 ```bash
-MISTPORT_BUILD_OUT="/Volumes/andrew's SSD/Mistport-build-cache/hero-v4-device-20261001" sh scripts/build_hero_v4.sh device 169.49
+MISTPORT_BUILD_OUT="/Volumes/andrew's SSD/Mistport-build-cache/hero-v4-device-20261001" sh scripts/build_hero_v4.sh device 169.62
 ```
 
-- 号码只是示例（169.47 已用）：出包前先用 `xcrun devicectl device info apps` 查手机上的版本，再看 `Mistport-archives/releases/`，取没用过的号。
+- 号码只是示例（169.60 及以前都已用过）：出包前先用 `xcrun devicectl device info apps` 查手机上的版本，再看 `Mistport-archives/releases/`，取没用过的号。
 - 构建脚本出错时，`| tail` 会吞掉错误码；一定要在输出里看到 `BUILT …` 才继续录像或装机。
 - Unity 导入会给视频主角图集的 `.meta` 补行尾空格，构建后用 `git checkout -- UnityBattleSource/Assets/Resources/CombatTempo/AIHero/` 还原，不要提交。
 

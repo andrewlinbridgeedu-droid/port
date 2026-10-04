@@ -73,6 +73,7 @@
 - **命中**：`FormImpact` 有形式的主角牌不走 `SpawnBodies`。先是各自的落地形态（`ImpactPaths`），再加炸开：`BurstSpikes`（身份材质的锥刺，角度和长度错开，晶体直、火和烟弯、彩虹每根换色）加 `Flares.Explode`（白闪、星爆、撕裂溅射、横向抛出的光刺、身份碎屑、地面溅射）。`reach` 按命中深度的屏宽算：单体 0.62、荒谬 0.55、普攻 0.5 个半屏宽；群体主目标再乘 0.6、其余乘 0.4。普攻不再叠形态层（手机上读成一团）。
 - **出手光** `CastLight`（`BattlePrototype.BeginPlayerSpectacle` 调，带 `HeroChestPoint`、`HeroFeetPoint`）：主角背后的光晕和脚下地面光、从脚边往外散开升起的光舌、脚下转动的断弧法阵（两圈，始终留缺口，不闭合成环）都用 `sweepUnderMaterial`/`flareUnderMaterial`（renderQueue 2990，在背景 1000 之后、视频主角 3000 之前画，主角挡在光前面）；身上升起的身份粒子、四角星芒、出手瞬间的手部闪光、全身一亮和从胸口抛出的光用普通材质画在主角前面。普攻只留小光晕、三颗星芒和手部闪光。
 - 释放时刻与 `Launch` 一致：`release = contact − clamp(contact × .45, .22, .42)`。
+- **散开、不留形状**（`Dispersing` → `Body.Disperse`/`Unravel`）：命中体和出手光淡出时网格不切开，每个顶点按自己的平滑方向被推开（背离命中点和本体中心、Perlin 湍流、上升；推开距离 = 命中尺寸 × 1.1 + 本体尺寸 × `stretch`，出手光 `stretch` 为 0），侵蚀加快，光点从被扯开的位置陆续冒出（`Flares.Scatter`）。不要把网格切成碎片：169.56–169.57 切出来的是直边四边形，还有暗线。
 - 调试构建输出 `SPELLFORM light/launch/shot/impact` 日志，用来在录像里对时间。
 
 ## 如何加一个新签名招式
