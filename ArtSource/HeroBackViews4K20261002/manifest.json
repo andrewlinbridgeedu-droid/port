@@ -1,0 +1,175 @@
+{
+  "status": "candidate, pending user review",
+  "method": "EC2 bundled imagegen CLI, gpt-image-2 images.edit",
+  "requested_size": [
+    2160,
+    3840
+  ],
+  "quality": "high",
+  "credential_handling": "OPENAI_API_KEY loaded on EC2 from existing .env; not copied locally",
+  "inputs": [
+    {
+      "outfit_id": "mistport-night",
+      "name": "雾港夜行",
+      "reference": "references/mistport-night-front.png",
+      "prompt": "prompts/mistport-night-back-4k.txt",
+      "input_sha256": "12590c6b5573ee588812c1b78c8dac8d1f13e1df79301da94b6e47b18dccb8dc"
+    },
+    {
+      "outfit_id": "starlight-magician",
+      "name": "星辉魔术师",
+      "reference": "references/starlight-magician-front.png",
+      "prompt": "prompts/starlight-magician-back-4k.txt",
+      "input_sha256": "9f383534890dc5096ff22d1584e1f1152173c5838f614ef473dce94a60bee5d5"
+    },
+    {
+      "outfit_id": "midnight-carnival",
+      "name": "午夜嘉年华",
+      "reference": "references/midnight-carnival-front.png",
+      "prompt": "prompts/midnight-carnival-back-4k.txt",
+      "input_sha256": "b592ef36e585c6a9da389b12cba7608b3c4071d2cc9467a3c778dd14d58c36b6"
+    }
+  ],
+  "outputs": [
+    {
+      "outfit_id": "mistport-night",
+      "name": "雾港夜行",
+      "raw": "raw/mistport-night-back-4k-chroma.png",
+      "final": "final/mistport-night-back-4k.png",
+      "native_api_result": {
+        "job": "mistport-night",
+        "state": "completed",
+        "model": "gpt-image-2",
+        "requested_size": [
+          2160,
+          3840
+        ],
+        "actual_size": [
+          2160,
+          3840
+        ],
+        "native_api_output": true,
+        "bytes": 7396879,
+        "sha256": "085e8d7ca1b47e86efe4e498a316f34bd5e817aadecfc793fc8425edf7edefb1",
+        "elapsed_seconds": 78.8
+      },
+      "final_size": [
+        2160,
+        3840
+      ],
+      "mode": "RGBA",
+      "alpha_bbox": [
+        269,
+        105,
+        1843,
+        3642
+      ],
+      "transparent_pixels": 5588360,
+      "partially_transparent_pixels": 33869,
+      "fully_opaque_pixels": 2672171,
+      "final_sha256": "e31174c437519e18e659ed6764ea7168fad1bdea6bb1a19ab26a828d26ffcb21",
+      "final_bytes": 4936031
+    },
+    {
+      "outfit_id": "starlight-magician",
+      "name": "星辉魔术师",
+      "raw": "raw/starlight-magician-back-4k-chroma.png",
+      "final": "final/starlight-magician-back-4k.png",
+      "native_api_result": {
+        "job": "starlight-magician",
+        "state": "completed",
+        "model": "gpt-image-2",
+        "requested_size": [
+          2160,
+          3840
+        ],
+        "actual_size": [
+          2160,
+          3840
+        ],
+        "native_api_output": true,
+        "bytes": 7901311,
+        "sha256": "2d94c5c0ddd657b365d36e6e957d704e02fa88e7b6222f2c5f4d068f65dad3ad",
+        "elapsed_seconds": 81.7
+      },
+      "final_size": [
+        2160,
+        3840
+      ],
+      "mode": "RGBA",
+      "alpha_bbox": [
+        270,
+        67,
+        1824,
+        3728
+      ],
+      "transparent_pixels": 5400475,
+      "partially_transparent_pixels": 34304,
+      "fully_opaque_pixels": 2859621,
+      "final_sha256": "ce1f7d7b5fafd19cf18f3efd55ec50d260f2ecc2cd67cb0b4857650da8030d8b",
+      "final_bytes": 5565770
+    },
+    {
+      "outfit_id": "midnight-carnival",
+      "name": "午夜嘉年华",
+      "raw": "raw/midnight-carnival-back-4k-chroma.png",
+      "final": "final/midnight-carnival-back-4k.png",
+      "native_api_result": {
+        "job": "midnight-carnival",
+        "state": "completed",
+        "model": "gpt-image-2",
+        "requested_size": [
+          2160,
+          3840
+        ],
+        "actual_size": [
+          2160,
+          3840
+        ],
+        "native_api_output": true,
+        "bytes": 8149703,
+        "sha256": "b64159e59d9c94e70026efb90b13b16e092ec736ff690b261723071837fa96d6",
+        "elapsed_seconds": 79.2
+      },
+      "final_size": [
+        2160,
+        3840
+      ],
+      "mode": "RGBA",
+      "alpha_bbox": [
+        258,
+        77,
+        1849,
+        3741
+      ],
+      "transparent_pixels": 5217828,
+      "partially_transparent_pixels": 37323,
+      "fully_opaque_pixels": 3039249,
+      "final_sha256": "ae0ddfaf91402604dce188cd3ebf3441023727419119bb6276f0a49cec0cf512",
+      "final_bytes": 5976851
+    }
+  ],
+  "verification": {
+    "reviewed_with_eyes": [
+      "all three native API outputs",
+      "all three transparent outputs"
+    ],
+    "visual_findings": "Rear views are full-body and preserve distinct outfit palettes, embroidery, tails and accessories; no face or obvious 3D render visible. Candidate artwork, pending user review.",
+    "user_approved": false,
+    "app_integration": false,
+    "device_installation": false,
+    "api_calls": 3,
+    "resampling_or_upscaling": false
+  },
+  "alpha_extraction": {
+    "tool": "imagegen/scripts/remove_chroma_key.py",
+    "auto_key": "border",
+    "soft_matte": true,
+    "transparent_threshold": 24,
+    "opaque_threshold": 100,
+    "despill": true,
+    "edge_feather": 0,
+    "edge_contract": 0,
+    "note": "Final PNGs have locally extracted alpha; native API outputs have chroma backgrounds."
+  }
+}

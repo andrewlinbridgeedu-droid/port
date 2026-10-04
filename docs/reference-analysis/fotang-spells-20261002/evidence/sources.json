@@ -1,0 +1,353 @@
+[
+  {
+    "file": "foguang-detail.png",
+    "original_file": "codex-clipboard-a6b5d85c-3d86-4258-beae-7d7eb0769ec8.png",
+    "sha256": "2774a295e2912d617993a1c1eb3ec3ca0de2490ca60bfb8fdde8efae98c1a1c5",
+    "bytes": 1039278
+  },
+  {
+    "file": "bond-editor.png",
+    "original_file": "codex-clipboard-3b0eaa2f-5783-487d-b096-d708f48e74de.png",
+    "sha256": "e5f0b1c06b3d45ebea3512916ba4e44dcf07b714df65a130efef0feb39675de5",
+    "bytes": 1523679
+  },
+  {
+    "file": "zhulong-red-trait.png",
+    "original_file": "codex-clipboard-cc29356a-db62-43a8-b97d-eb053b1d165f.png",
+    "sha256": "1b79eb1e19fc1f8e4279f6c65b86acaf7e6f278e87d0c6ea58e5f39e1f59e64c",
+    "bytes": 1066112
+  },
+  {
+    "file": "generic-trait-choice.png",
+    "original_file": "codex-clipboard-55bfe1b1-4a82-439b-a795-c1eaff212c0f.png",
+    "sha256": "6740c5a521da73452dc42a1c63de6c27bde48cd4dc0d1d3c7a3d15c3c4cf31a8",
+    "bytes": 1041287
+  },
+  {
+    "file": "selected-traits.png",
+    "original_file": "codex-clipboard-394fb0de-defd-4cba-9514-a0f813dc4133.png",
+    "sha256": "33e01290477f266f9ed227ba39f8ebd72ff3bd7161d7ace491ad353762a2d35b",
+    "bytes": 706840
+  },
+  {
+    "file": "fotang-spell-roster.png",
+    "original_file": "codex-clipboard-fa8f590b-63c6-40ef-b260-635f6969fef4.png",
+    "bytes": 839825,
+    "sha256": "a4fbca072c399d43ea3bc99f2027cd926e2ac3c0603b5ab3ca20c1bf9e1e25e9"
+  },
+  {
+    "file": "sword-live-xinghe-floor75.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 21.02.50.jpeg",
+    "description": "第75层实战中星河碎剑诀金色剑气展开帧",
+    "bytes": 157931,
+    "sha256": "d553642cec3548356c6f2cbafc58550cedc5ed5764d99a5ae70e5a2e0eeb7dba"
+  },
+  {
+    "file": "sword-live-xinghe-impact.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 21.16.29.jpeg",
+    "description": "第75层实战中星河碎剑诀紫色弧形斩击帧",
+    "bytes": 159460,
+    "sha256": "976c9c4a4988a9bdfa969008655b0299bbe1d2bca60a2a9d332242f4c557d76b"
+  },
+  {
+    "file": "sword-live-purple-crescent-unattributed.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 21.42.22.jpeg",
+    "description": "第75层紫色横向弧斩，截图帧未显示可辨技能名",
+    "bytes": 147755,
+    "sha256": "fc4835002c8a6998f1cf1632c67e6c3f04076066733f8e4a2c2c5d25d8cc1c94"
+  },
+  {
+    "file": "sword-live-jiemie-sword-drop-01.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 21.42.23.jpeg",
+    "description": "第75层寂灭红尘斩：金色长剑显形与角色周围剑气",
+    "bytes": 152433,
+    "sha256": "20c921bb949a7320119054be44c4f3d7995c85bdd7f33c07840d9665cd2ebc0c"
+  },
+  {
+    "file": "sword-live-jiemie-sword-drop-02.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 21.42.23.jpeg",
+    "description": "第75层寂灭红尘斩：金色长剑下斩瞬间",
+    "bytes": 153137,
+    "sha256": "3d774c6f751184d8c5ae340007602b12925767f31b608bd6b8c1cd629667e657"
+  },
+  {
+    "file": "sword-live-jiemie-sweep.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 21.42.23.jpeg",
+    "description": "第75层寂灭红尘斩：金色飞剑从侧面掠过",
+    "bytes": 153433,
+    "sha256": "c8a7099ff0d4ce4f1d5fc41bf58631dd7819964fdd26695c26310841e53fb23a"
+  },
+  {
+    "file": "sword-live-jiemie-cross-slash.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 21.42.23.jpeg",
+    "description": "第75层寂灭红尘斩：大范围黑金弧形斩击",
+    "bytes": 184210,
+    "sha256": "a5c8ad5a080da7fc2969569aa9697e120426d4774599ee7e8174fb8c92e5a3a9"
+  },
+  {
+    "file": "sword-live-jiemie-followup.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 21.42.24.jpeg",
+    "description": "第75层寂灭红尘斩：后续金色剑击帧",
+    "bytes": 150381,
+    "sha256": "94dc3ab5cbb536739e0a3720ad9dfa953048c4e2a93c6ab2d9e851d6feb64ac9"
+  },
+  {
+    "file": "sword-live-xinghe-tagged-frame.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 21.42.23.jpeg",
+    "description": "第75层战斗画面，技能名“星河碎剑诀”清晰可见",
+    "bytes": 151144,
+    "sha256": "d59f7e61598ef43f6b74519a8d51474e3a7b703871f30f2e0116b1324532833b"
+  },
+  {
+    "file": "sword-live-xinghe-impact-closeup.png",
+    "original_file": "codex-clipboard-a557419b-07be-45ca-b548-a9e19f40419e.png",
+    "description": "用户提供的星河碎剑诀战斗近景截图",
+    "bytes": 354454,
+    "sha256": "e69ecb9bae4608bc72fe3fe52268836d73a152e840bb1ca1ce30a66b731d8db5"
+  },
+  {
+    "file": "sword-battle-frame-contact-sheet.png",
+    "original_file": "本地制作",
+    "description": "剑堂第75层战斗法术帧拼图；由实战截图裁切、缩放和标注构成",
+    "bytes": 1346164,
+    "sha256": "4e2354d9cda8a9f4528cfff77495ed45f77422198427f86701560cf1e0e52dc2"
+  },
+  {
+    "file": "buddha-live-jingshi-yehuo-lotus.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 22.03.20.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-02 at 22.03.20.jpeg",
+    "description": "净世业火莲：地面莲焰与灼烧展开，竖排招式名部分被角色遮挡。",
+    "bytes": 153691,
+    "sha256": "45aab40fbf86205a9d7fdcfb0bd48919d89fcd28955b5dfc7f54222f69c0d33a"
+  },
+  {
+    "file": "buddha-live-futian-futu-tower.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 22.03.20.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/1/iPhone镜像 Screenshot 2026-10-02 at 22.03.20.jpeg",
+    "description": "焚天浮屠塔：火焰塔状冲击，战斗中竖排招式名可见。",
+    "bytes": 161916,
+    "sha256": "31e00288fe4d3016f93289b33572365c4936306f3d21c1b603e0e4dec02e0137"
+  },
+  {
+    "file": "buddha-live-shenglian-zhishi.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 22.03.21.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/1/iPhone镜像 Screenshot 2026-10-02 at 22.03.21.jpeg",
+    "description": "金焰·圣莲灼世：大范围橙金莲瓣与旋转火弧，技能名可见。",
+    "bytes": 157815,
+    "sha256": "b4a393575fe8c3d39aa6ba8664ccbd88ca25a6070c9f522bb6a5d49c01169839"
+  },
+  {
+    "file": "buddha-live-tianfo-baolun.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 22.03.22.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/1/iPhone镜像 Screenshot 2026-10-02 at 22.03.22.jpeg",
+    "description": "金焰·天佛宝轮：多层莲轮展开，技能名可见。",
+    "bytes": 182094,
+    "sha256": "61472e2a232e36b34a30e5a04803786d756c059d6ab8a9168fb0c88e659f2b9c"
+  },
+  {
+    "file": "buddha-live-zhulong-fenzui.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 22.03.24.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-02 at 22.03.24.jpeg",
+    "description": "金焰·烛龙焚罪：盘绕火龙与灼烧区域，技能名可见。",
+    "bytes": 156201,
+    "sha256": "78b7f1a1a01d70dbae0e18a7b2f34d2b130b7d2748ba2e1af7494866803032cb"
+  },
+  {
+    "file": "buddha-live-zichuan-shenhuo.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 22.03.25.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/1/iPhone镜像 Screenshot 2026-10-02 at 22.03.25.jpeg",
+    "description": "金焰·紫川神火：紫金火柱向上爆发，技能名可见。",
+    "bytes": 167031,
+    "sha256": "868b55c5a1f7b07f8b96294f7f8235ee9bf1bc42e2294c4e2bf66e60aaf01668"
+  },
+  {
+    "file": "sword-live-liuguang-slot3-candidate.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 22.16.39.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-02 at 22.16.39.jpeg",
+    "description": "第78层实战：几何状金色剑气展开，战斗栏第3槽高亮；按当前六槽配置对应流光剑意，但本帧未显示名称。",
+    "bytes": 163982,
+    "sha256": "17499976066314273862c50e48ee818e31b58692648879e0db5804e4ae5c703d"
+  },
+  {
+    "file": "sword-live-jian23-labelled.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 22.12.35.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-02 at 22.12.35.jpeg",
+    "description": "第75层实战：幻影分身与金色剑光，竖排招式名“剑二十三”清晰可见。",
+    "bytes": 149429,
+    "sha256": "175955a67f762d63098763153b52e05af88a5bfcfc7f14b0674129060bf499c4"
+  },
+  {
+    "file": "sword-live-wanjian-labelled.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 22.07.37.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-02 at 22.07.37.jpeg",
+    "description": "第75层实战：多把金色飞剑围绕目标出击，竖排招式名“万剑归宗”清晰可见。",
+    "bytes": 147649,
+    "sha256": "6c3973fd721dea427069b388da0ac50aabe9ab2b0b8e9dd825c03bc75086fbe3"
+  },
+  {
+    "file": "buddha-live-frame-contact-sheet.png",
+    "original_file": "本地拼图制作",
+    "description": "佛堂第92层六张实战截图的缩略拼图（保留完整战斗画面）。",
+    "bytes": 1220496,
+    "sha256": "7f88bb87ae0b3b782be7953901771624fd77e42508c9403c3f09ac5375e0f4e8"
+  },
+  {
+    "file": "sword-live-frame-contact-sheet.png",
+    "original_file": "本地拼图制作",
+    "description": "剑堂实战截图拼图；龙吟九霄剑位置明确标注待补拍，流光剑意依据第3槽位映射。",
+    "bytes": 680439,
+    "sha256": "d8f60ac1f5c6a73e3d4576093e6d8bff5fada0119c7e4e913e03942e2f684029"
+  },
+  {
+    "file": "sword-floor90-loadout.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 23.48.49.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-02 at 23.48.49.jpeg",
+    "description": "第90层挑战前的六槽配置：前四招为最高级瞬光系，后两招为次高级法术。",
+    "bytes": 164725,
+    "sha256": "d66d7e8c7fa8707e80726fe1390e48f15b4208fa132a116d69e825c78abd1d40"
+  },
+  {
+    "file": "sword-floor90-defeat-1546wan.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 23.48.27.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-02 at 23.48.27.jpeg",
+    "description": "第90层失败结算：总神通伤害154.6万，记录四个瞬光系和两张配套法术的占比。",
+    "bytes": 100405,
+    "sha256": "9d0a8fbe138d72cb1f47b01b067e67e3d22349282c2184b24836f29f2a907894"
+  },
+  {
+    "file": "sword-floor90-defeat-1326wan.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-02 at 23.53.10.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-02 at 23.53.10.jpeg",
+    "description": "第90层失败结算：总神通伤害132.6万，记录四个瞬光系和两张配套法术的占比。",
+    "bytes": 100528,
+    "sha256": "73bdd3fd5b5a59fa20fb1efb65b09dec4a873e95833a64dbd511f7ba687d8c8d"
+  },
+  {
+    "file": "sword-floor90-live-t10-hongqiaoduxian.jpeg",
+    "original_file": "sword-floor90-live-20261003.mov @ 00:00:10",
+    "source_capture": "/tmp/sword-floor90-live-20261003.mov",
+    "description": "第90层实际战斗录像提帧。瞬光·虹桥渡仙名称可读；虹彩弧面和双点星爆。",
+    "bytes": 162821,
+    "sha256": "db47a5373c9b805422623824ca7ca5b1f3b3651ad0008cb6ce5aa3dfd539f884"
+  },
+  {
+    "file": "sword-floor90-live-t11-golden-swords.jpeg",
+    "original_file": "sword-floor90-live-20261003.mov @ 00:00:11",
+    "source_capture": "/tmp/sword-floor90-live-20261003.mov",
+    "description": "第90层实际战斗录像提帧。多把金色飞剑与蓝紫地面符纹；技能名未读清，暂不归属。",
+    "bytes": 192057,
+    "sha256": "f1b5ee8dcafad882fab614fc0f53043ca5911aecf377bd7994ff9ebbe1cd18fa"
+  },
+  {
+    "file": "sword-floor90-live-t12-jiulongxiaotian.jpeg",
+    "original_file": "sword-floor90-live-20261003.mov @ 00:00:12",
+    "source_capture": "/tmp/sword-floor90-live-20261003.mov",
+    "description": "第90层实际战斗录像提帧。瞬光·九龙啸天名称可读；金边暗色剑形裂隙与橙金火环。",
+    "bytes": 171563,
+    "sha256": "f2aba688f12d1114bfb643c66d05ed72a99d5c8b4f4bb5536c3a84e3ac65ffe7"
+  },
+  {
+    "file": "sword-floor90-live-t13-golden-crescent.jpeg",
+    "original_file": "sword-floor90-live-20261003.mov @ 00:00:13",
+    "source_capture": "/tmp/sword-floor90-live-20261003.mov",
+    "description": "第90层实际战斗录像提帧。大范围金色弧斩；未见清晰招式名，暂不归属。",
+    "bytes": 180469,
+    "sha256": "0c28232ab9dd3ca7e709b42c2c56b513188fa0ce5d846e41568be7a64a112779"
+  },
+  {
+    "file": "sword-floor90-live-t14-blue-dragon.jpeg",
+    "original_file": "sword-floor90-live-20261003.mov @ 00:00:14",
+    "source_capture": "/tmp/sword-floor90-live-20261003.mov",
+    "description": "第90层实际战斗录像提帧。蓝色龙形/波形包围效果；未见清晰招式名，暂不归属。",
+    "bytes": 160934,
+    "sha256": "7968bc55e39c8bb919ba799de15dea07fac4a3bd7d2d6a162f3ce405d48c6fd1"
+  },
+  {
+    "file": "sword-floor90-live-t15-jimiehongchenzhan.jpeg",
+    "original_file": "sword-floor90-live-20261003.mov @ 00:00:15",
+    "source_capture": "/tmp/sword-floor90-live-20261003.mov",
+    "description": "第90层实际战斗录像提帧。寂灭红尘斩名称可读；金色横斩、青蓝地面符纹与星点爆闪。",
+    "bytes": 148881,
+    "sha256": "7989181108d2bf16edead883beacef3d0cc13f58dd51dbc4527c0dde28194313"
+  },
+  {
+    "file": "sword-floor90-live-t16-cross-slash.jpeg",
+    "original_file": "sword-floor90-live-20261003.mov @ 00:00:16",
+    "source_capture": "/tmp/sword-floor90-live-20261003.mov",
+    "description": "第90层实际战斗录像提帧。金青交错斩击；未见清晰招式名，暂不归属。",
+    "bytes": 176911,
+    "sha256": "160b1463cdbd54d24a971e151ce2d4f4d6783a249250b1546e63ec31de501f85"
+  },
+  {
+    "file": "sword-floor90-live-frame-contact-sheet.png",
+    "original_file": "本地制作，由第90层实战录像00:00:10–00:00:16提取帧拼接",
+    "source_capture": "/tmp/sword-floor90-live-20261003.mov",
+    "description": "第90层剑堂实战七帧拼图；三帧可辨认招式名，其余四帧保留为未归属特效。",
+    "bytes": 1601928,
+    "sha256": "b46a879958736e6c94e958263621bf5011cf044b82640161273e4255af196210"
+  },
+  {
+    "file": "sword-floor90-defeat-1198wan-20261003.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-03 at 00.45.05.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-03 at 00.45.05.jpeg",
+    "description": "第90层失败结算，总神通伤害119.8万。",
+    "bytes": 107544,
+    "sha256": "8b6b2e8f590be7faa3ba775d195f1505884b912b070591cdcef7d938f2d0e60e"
+  },
+  {
+    "file": "sword-floor90-defeat-1778wan-20261003.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-03 at 00.46.09.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-03 at 00.46.09.jpeg",
+    "description": "第90层失败结算，总神通伤害177.8万，为本轮观察到的最高值。",
+    "bytes": 104283,
+    "sha256": "250c1f3026667682f56608bb2ed13730b1eb82c397ce533a035b9135fa7b36f1"
+  },
+  {
+    "file": "sword-floor90-defeat-1542wan-20261003.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-03 at 00.51.16.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-03 at 00.51.16.jpeg",
+    "description": "第90层失败结算，总神通伤害154.2万。",
+    "bytes": 105875,
+    "sha256": "a14c27cc9f2a8ab4b3f4b8393b6fa012d9cab8b80c1a4bf307c84a3d8a76ed63"
+  },
+  {
+    "file": "sword-floor90-defeat-1504wan-20261003.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-03 at 00.52.16.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-03 at 00.52.16.jpeg",
+    "description": "第90层失败结算，总神通伤害150.4万。",
+    "bytes": 104547,
+    "sha256": "debd33dbbff014dfec1dc7ad3ac2509379092a37f46671a413da426e5ac6dc8c"
+  },
+  {
+    "file": "sword-floor90-defeat-1398wan-20261003.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-03 at 00.53.24.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-03 at 00.53.24.jpeg",
+    "description": "第90层失败结算，总神通伤害139.8万。",
+    "bytes": 103609,
+    "sha256": "6116329fefd10425e85979ae5ee7b3ebeb0df16325f2836c98094cc559dcdb24"
+  },
+  {
+    "file": "sword-flowing-sword-11-5-detail-20261003.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-03 at 00.58.40.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-03 at 00.58.40.jpeg",
+    "description": "流光剑意技能详情：十一阶五重【剑宗】、2448%攻击、5层流光及自身增益描述。",
+    "bytes": 147749,
+    "sha256": "7c6e01b351f837e57552ccb5f4c60bb896933ce89c81b1032f05396c4d8f3ccf"
+  },
+  {
+    "file": "sword-starry-river-11-5-detail-20261003.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-03 at 00.59.41.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-03 at 00.59.41.jpeg",
+    "description": "星河碎剑诀技能详情：十一阶五重【剑宗】、2592%攻击及招架相关效果。",
+    "bytes": 140501,
+    "sha256": "3e4032f52e75f61a5b59d338e7593c7eef6f341953713fbe11e257de73479afe"
+  },
+  {
+    "file": "sword-floor90-current-6slot-config-20261003.jpeg",
+    "original_file": "iPhone镜像 Screenshot 2026-10-03 at 01.00.10.jpeg",
+    "source_capture": "/var/folders/xc/vyykvxds2kz18n0c6f5y5b6h0000gn/T/com.openai.sky.CUAService/iPhone镜像 Screenshot 2026-10-03 at 01.00.10.jpeg",
+    "description": "第90层六槽编辑界面，显示四个最高级、两个次高级及剑宗霞光4/4、剑宗2/4；候选替换尚未生效。",
+    "bytes": 235196,
+    "sha256": "37b9f6d8de0ba83765700cbad55cef199aad1e23f264000c90ede19e5033ca1f"
+  }
+]
