@@ -103,6 +103,7 @@ struct CombatTempoDeviceReviewRoot: View {
                     Button("重看本场") { reviewPass += 1 }
                     Button("港城雨云") { selectedSample = "home" }
                     Button("发条猎犬") { selectedSample = "q4" }
+                    Button("翠焰亡灵") { selectedSample = "q5" }
                     Button("石颚") { selectedSample = "d01" }
                     Button("第七号空壳") { selectedSample = "b01" }
                     Button("主角·雾港夜行") { heroOutfit = .mistportNight; selectedSample = "hero" }
@@ -171,7 +172,8 @@ struct CombatTempoDeviceReviewRoot: View {
                     // Tower minion packs: "pack" is floor 2 (shield jaw + four walking copperbacks),
                     // "pack8" a full eight-body wave on floor 72. Group cards on show.
                     let packFloor = sample == "pack" ? 2 : sample == "pack8" ? 72 : nil
-                    let mission = sample == "q4" ? 4 : sample == "hero" || packFloor != nil ? 13 : 7
+                    // "q5": the emerald revenant (poison mist, its heavy burst taken on the mask).
+                    let mission = sample == "q4" ? 4 : sample == "q5" ? 5 : sample == "hero" || packFloor != nil ? 13 : 7
                     for n in 1...mission { _ = campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: n) }
                     campaign.grantHoundTutorialCard()
                     campaign.ownedRelicIDs.insert(MPCChapterOneCatalog.ownerlessMaskRelicID)
@@ -180,6 +182,12 @@ struct CombatTempoDeviceReviewRoot: View {
                     if sample == "q4" {
                         loadout = .init(normalSkillIDs: [.sidestepStrike], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
                         id = "chapter01_q04_encounter"
+                    } else if sample == "q5" {
+                        var hand = MPCChapterOneLoadout(normalSkillIDs: [.sidestepStrike, .fabricatedEvidence, .mirrorPursuit], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
+                        hand.selectedActiveRelicID = MPCChapterOneCatalog.ownerlessMaskRelicID
+                        hand.outfit = heroOutfit
+                        loadout = hand
+                        id = "chapter01_q05_encounter"
                     } else {
                         guard let floor = MPCChurchTowerCatalog.floor(number: packFloor ?? 1) else { return }
                         if packFloor != nil {

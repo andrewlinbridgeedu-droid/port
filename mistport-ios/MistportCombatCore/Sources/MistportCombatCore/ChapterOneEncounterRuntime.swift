@@ -768,6 +768,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             let hp = playerHP
             absorbPlayerDamage(tick.damage, isDamageOverTime: true)
             lastPoisonHealthDamage += hp - playerHP
+            pendingPoisonHealthDamage += hp - playerHP
             if tick.remaining > 1 { finiteDamageTicks[next] = .init(source: tick.source, damage: tick.damage, dueAt: tick.dueAt + 3, remaining: tick.remaining - 1) }
             else { finiteDamageTicks.remove(at: next) }
             if playerHP <= 0 { outcome = .defeat; finishRelicBattle() }
@@ -847,6 +848,12 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         emeraldPoisonSourceID = nil
     }
 
+    /// Poison health damage since the last call, wherever its ticks were settled; for display.
+    public mutating func takePendingPoisonHealthDamage() -> Int {
+        defer { pendingPoisonHealthDamage = 0 }
+        return pendingPoisonHealthDamage
+    }
+
     /// Catch up due beats once, without advancing enemy turns or consuming direct-hit defenses.
     @discardableResult
     public mutating func advanceEmeraldPoison(at now: TimeInterval) -> Int {
@@ -869,6 +876,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             let poisonHPBefore = playerHP
             absorbPlayerDamage(emeraldPoisonDamagePerTick, isDamageOverTime: true)
             lastPoisonHealthDamage += poisonHPBefore - playerHP
+            pendingPoisonHealthDamage += poisonHPBefore - playerHP
             log.append(.init(round: round, message: "翠毒漫天：毒雾造成\(emeraldPoisonDamagePerTick)伤害，浓度\(emeraldPoisonIntensity)",
                 damageTaken: emeraldPoisonDamagePerTick, bossMechanicMissed: false))
             triggeredEffects.append("翠毒漫天：持续侵蚀\(emeraldPoisonDamagePerTick)，护盾吸收\(shieldBefore - playerShield)")
@@ -1071,6 +1079,13 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     public var relicBalance = MPCSequenceNineRelicBalance()
     public static let archiveRecoveryDuration: TimeInterval = 4.5
     public private(set) var lastPoisonHealthDamage = 0
+    /// Poison health damage not yet shown. `lastPoisonHealthDamage` only covers the latest
+    /// `advanceEmeraldPoison` call, and the App's frame calls `advanceQ4Clock` first, which
+    /// settles every due tick through `advanceRelicClock`; enemy actions (`endRound`,
+    /// `resolveLightAttack`) do the same. The App's own poison call then read 0 every time:
+    /// on the phone the emerald mist took health with no number (2026-10-03). Every tick
+    /// adds here until the App takes it.
+    public private(set) var pendingPoisonHealthDamage = 0
     public private(set) var sequenceNineRelics = MPCSequenceNineRelicState()
     public private(set) var lastRelicPlayerHealing = 0
     public private(set) var relicDamageEvents: [MPCRelicDamageEvent] = []

@@ -1780,7 +1780,8 @@ struct ChapterOneEncounterTestView: View {
             return
         }
         presentNewRelicEvents()
-        let poisonDamage = session.lastPoisonHealthDamage
+        // Ticks settled inside an enemy action count too (the clock call alone read 0 for those).
+        let poisonDamage = session.takePendingPoisonHealthDamage()
         if poisonDamage > 0 { showPlayerDamageFloatingNumber(poisonDamage) }
         if healthBeforeRelicClock != session.playerHP || maximumBeforeRelicClock != session.playerMaxHP
             || intensityBeforeRelicClock != session.emeraldPoisonIntensity { syncVisualHealth() }
