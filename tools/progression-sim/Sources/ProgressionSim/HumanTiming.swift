@@ -236,6 +236,29 @@ struct HumanTimingModel {
         steps.append(step("读感谢", read(errand.thanks) + taps(1)))
         return steps
     }
+    // MARK: Street tasks (urgent errands, joint errands, city commissions)
+
+    /// Walking to the board or the office counter, reading the notice, taking it.
+    func streetTaskPost(_ task: MPCStreetTask) -> [TimedStep] {
+        [step(task.kind == .commission ? "走到柜台" : "走到委托板", pace.searchSeconds * 0.5 + StreetMap.averageWalkSeconds + taps(1)),
+         step("读委托并接单", read(task.title + task.request) + taps(1))]
+    }
+    /// One step. The target is lit and has an off-screen arrow, so finding it is half a search.
+    func streetStep(_ task: MPCStreetTask, _ index: Int) -> [TimedStep] {
+        let s = task.steps[index]
+        let walk = index == 0 ? StreetMap.averageWalkSeconds : StreetMap.walkSeconds(task.steps[index - 1].target, s.target)
+        var out = [step("走到下一处", pace.searchSeconds * 0.5 + walk + taps(1)), step("读任务条", read(s.goal))]
+        switch s.action {
+        case .talk: break
+        case .handOver: out.append(step("交货", taps(2)))
+        case .answer: out.append(step("三选一", question((s.question ?? "").count + s.choices.reduce(0) { $0 + $1.text.count })))
+        case .battle: out.append(step("开战", taps(1))); out += battleFrame(result: 20, planning: 0.3)
+        }
+        out.append(step("读对话", read(s.line) + taps(1)))
+        return out
+    }
+    func streetThanks(_ task: MPCStreetTask) -> TimedStep { step("读感谢", read(task.thanks) + taps(1)) }
+
     /// A story unlocked by the errand, read once.
     func story(_ text: String) -> TimedStep { step("读小故事", read(text) + taps(1)) }
     var streetOpen: [TimedStep] { [step("打开街道（每天一次）", taps(1) + DeviceWaits.streetOpen)] }

@@ -36,14 +36,10 @@ struct Assumptions: Codable, Sendable {
     var messageWalkSeconds = 60.0
     var remnantInvestigationSeconds = 240.0
     var eventDeliverySeconds = 30.0
-    /// City contribution tiers (HOME_MAP_STREET_TASKS_20260929.md 6.2), candidate content:
-    /// an urgent errand a day (tier 2), a joint errand every third day (tier 3) and a city
-    /// commission every seventh day (tier 4). Minutes are estimates, like the rest here.
-    /// Set STREET_TIERS=0 to leave them out.
+    /// City contribution tiers (HOME_MAP_STREET_TASKS_20260929.md 6.2): the street tasks of
+    /// StreetTasks.swift (urgent errands, joint errands, city commissions), run step by step
+    /// through MPCStreetTaskLedger. Set STREET_TIERS=0 to leave them out.
     var tierContent = ProcessInfo.processInfo.environment["STREET_TIERS"] != "0"
-    var urgentErrandSeconds = 180.0
-    var jointErrandSeconds = 360.0
-    var cityCommissionSeconds = 600.0
     /// Shared server (user 2026-09-30: there is only the shared server): the share of the
     /// daily-loop copper the game actually pays (postal J0, errands, remnants, events,
     /// workshop net profit, tier content). One-time rewards and NPC prices are unchanged.
@@ -201,8 +197,9 @@ struct DailyContentSummary: Codable {
     let contributionTierDays: [String: Int]
     /// Contribution at the end of each day, day 1 first.
     let contributionByDay: [Int]
-    /// Tier content done: urgent, joint, commission (count).
-    let tierContent: [String: Int]
+    /// Street tasks finished by kind (urgent, joint, commission) and home-painting scenes earned.
+    let streetTasks: [String: Int]
+    let scenes: [String]
     /// Shared-server baskets (BASKET or HOUSING): bought and missed days.
     let baskets: [String: Int]
     /// HOUSING: days spent at each daily living cost; STAMINA: actions skipped for lack of stamina.
@@ -256,12 +253,14 @@ final class Campaign {
     var events = MPCCityEventLedger()
     var remnants = MPCRemnantLedger()
     var neighbors = MPCNeighborLedger()
+    /// Urgent errands, joint errands and city commissions, opened by contribution tier (MPCStreetTaskLedger).
+    var streetTasks = MPCStreetTaskLedger()
+    var streetDone: [String: Int] = [:]
     var tickets = 0, errandsDone = 0, remnantsDone = 0
     var missedErrands: [String] = []
     var contribution = MPCCityContributionLedger()
     var contributionTierDays: [String: Int] = [:]
     var contributionByDay: [Int] = []
-    var tierContentDays = Set<String>()
     var basketsBought = 0, basketsMissed = 0
     /// Daily living by tier (bed + food a day → stamina bonus), best first; 12 is the basic basket.
     static let housingTiers: [(cost: Int, bonus: Int)] = [(50, 20), (30, 15), (24, 9), (18, 6), (12, 0)]
@@ -281,7 +280,6 @@ final class Campaign {
         if counting { sharedJ0Count += 1 }
         return sharedJ0Count
     }
-    var tierContentDone: [String: Int] = [:]
     var usesDailyContent: Bool { usesWorkshop }
     var city: MPCCityEvent.Effects { events.effects(day: dayNumber) }
     var salvePrice: Int { Shop.salve + city.salveSurcharge }
@@ -421,7 +419,10 @@ final class Campaign {
             if copper >= assumptions.basketCost { copper -= assumptions.basketCost; basketsBought += 1 } else { basketsMissed += 1 }
         }
         if let m = model { busy("newspaper", total(m.newspaper)) }
-        if usesDailyContent { neighbors.open(day: dayNumber, completedMissions: completedMissions) }
+        if usesDailyContent {
+            neighbors.open(day: dayNumber, completedMissions: completedMissions)
+            streetTasks.open(day: dayNumber, contributionPoints: contribution.points)
+        }
         workshopSession()
         dailyContent()
         missedErrands += neighbors.offers.filter { $0.day == dayNumber && !$0.done }.map(\.errandID)
@@ -476,6 +477,13 @@ final class Campaign {
             for offer in neighbors.offers where !offer.done {
                 if let errand = offer.errand, errand.kind == .deliver, let item = errand.itemID { reserved[item, default: 0] += errand.count }
             }
+            // Street tasks' goods are made first too (they come from the four basic recipes).
+            var street: [String: Int] = [:]
+            for offer in streetTasks.offers where !offer.done {
+                guard let task = offer.task else { continue }
+                for step in task.steps.dropFirst(offer.stepIndex) { for (item, n) in step.items { street[item, default: 0] += n } }
+            }
+            for (item, n) in street.sorted(by: { $0.key < $1.key }) { reserved[item, default: 0] += n; stock(item, reserved[item]!) }
         }
         if usesDailyContent, let event = MPCCityEventCatalog.running(day: dayNumber), events.status(event.id, day: dayNumber) == .running {
             for need in event.deliveries where events.remaining(event, itemID: need.itemID) > 0 {
@@ -533,31 +541,58 @@ final class Campaign {
         return report
     }
 
-    /// The rest of the day (all and completionist): today's neighbour errands, up to two
-    /// counted event battles (three tries), and today's remnant case once a bounty is closed.
-    /// Tier content (design 6.2): copper as designed (15 / 30 / 60), counted as errands for
-    /// contribution, outside the repeatable-work taper. Once per day each.
-    func tierContent() {
-        guard usesDailyContent, assumptions.tierContent else { return }
-        let offers: [(String, MPCCityContribution.Feature, Bool, Int, Double)] = [
-            ("urgent", .urgentErrand, true, 15, assumptions.urgentErrandSeconds),
-            ("joint", .jointErrand, dayNumber % 3 == 0, 30, assumptions.jointErrandSeconds),
-            ("commission", .cityCommission, dayNumber % 7 == 0, 60, assumptions.cityCommissionSeconds),
-        ]
-        for (name, feature, today, pay, seconds) in offers where today && contribution.isOpen(feature) {
-            guard useStamina(name == "urgent" ? 15 : name == "joint" ? 25 : 35) else { continue }
-            guard tierContentDays.insert("\(name)-\(dayNumber)").inserted else { continue }
-            busy(name, seconds)
-            if q < 30 && !assumptions.tierCopperInChapterOne { tierContentDone[name, default: 0] += 1; contribute("\(name)-\(dayNumber)", .errand); continue }
-            loopIncome(name) { copper += pay; earned[name, default: 0] += pay }
-            tierContentDone[name, default: 0] += 1
-            contribute("\(name)-\(dayNumber)", .errand)
+    /// Every open street task, step by step. A step that cannot be done today (goods short,
+    /// fight lost) waits for another day while the offer lasts.
+    /// Like the rest of the daily loop they take stamina (urgent 15, joint 25, commission 35),
+    /// pay no copper during chapter one unless TIER_COPPER_CH1=1 (user 2026-09-30), and on the
+    /// shared server pay only `loopScale` of their copper.
+    func streetTaskRound() {
+        guard assumptions.tierContent else { return }
+        let paysCopper = q >= 30 || assumptions.tierCopperInChapterOne
+        for offer in streetTasks.offers where !offer.done {
+            guard let task = offer.task else { continue }
+            if !offer.accepted {
+                guard useStamina(task.kind == .urgent ? 15 : task.kind == .joint ? 25 : 35) else { continue }
+                try? streetTasks.accept(offerID: offer.id)
+                busy("street", model.map { total($0.streetTaskPost(task)) } ?? assumptions.errandSeconds / 2)
+            }
+            var finished: MPCStreetTaskLedger.Reward?
+            steps: while let current = streetTasks.offers.first(where: { $0.id == offer.id }), !current.done, let step = current.step {
+                let index = current.stepIndex
+                var progress: MPCStreetTaskLedger.Progress?
+                // The ledger only ever adds the task's copper on its last step.
+                var paid = 0
+                switch step.action {
+                case .talk: progress = try? streetTasks.talk(offerID: offer.id, at: step.target, coins: &paid)
+                case .handOver: progress = try? streetTasks.handOver(offerID: offer.id, at: step.target, coins: &paid, inventory: &inventory)
+                case .answer: progress = try? streetTasks.answer(offerID: offer.id, at: step.target, choiceID: step.correctChoiceID!, coins: &paid)
+                case .battle:
+                    tickets += 1
+                    let ticket = "street-\(tickets)"
+                    guard let id = try? streetTasks.beginBattle(offerID: offer.id, ticket: ticket) else { break steps }
+                    let fight = streetFight(id, kind: "street")
+                    progress = try? streetTasks.settleBattle(offerID: offer.id, ticket: ticket, session: fight.session, coins: &paid)
+                }
+                if paid > 0 && paysCopper { loopIncome("street") { copper += paid } }
+                guard let progress else { break }
+                busy("street", model.map { total($0.streetStep(task, index)) } ?? assumptions.errandSeconds / 2)
+                if let reward = progress.reward { finished = reward }
+            }
+            guard let reward = finished else { continue }
+            streetDone[task.kind.rawValue, default: 0] += 1
+            if paysCopper { earned["street", default: 0] += reward.copper }
+            if let receipt = reward.contributionReceipt { contribute(receipt, .errand) }
+            for neighbor in reward.neighbors {
+                if let story = neighbors.raiseAffinity(neighbor), let m = model { busy("street", total([m.story(story)])) }
+            }
+            if let m = model { busy("street", total([m.streetThanks(task)])) }
         }
     }
 
+    /// The rest of the day (all and completionist): today's neighbour errands, up to two
+    /// counted event battles (three tries), and today's remnant case once a bounty is closed.
     func dailyContent() {
         guard usesDailyContent else { return }
-        defer { tierContent() }
         if let m = model, neighbors.offers.contains(where: { $0.day == dayNumber && !$0.done }) { busy("errand", total(m.streetOpen)) }
         for offer in neighbors.offers where offer.day == dayNumber && !offer.done {
             guard let errand = offer.errand, useStamina(errand.kind == .deliver ? 10 : 15) else { continue }
@@ -578,6 +613,7 @@ final class Campaign {
             if let reward { errandsDone += 1; earned["errand", default: 0] += reward.copper; contribute("errand-\(offer.id)", .errand) }
             if let m = model, let story = reward?.story { busy("errand", total([m.story(story)])) }
         }
+        streetTaskRound()
         if let event = MPCCityEventCatalog.running(day: dayNumber) {
             var tries = 0
             while tries < 3, events.status(event.id, day: dayNumber) == .running, events.winsLeft(event) > 0,
@@ -911,7 +947,7 @@ final class Campaign {
                                       storiesUnlocked: MPCNeighborCatalog.all.reduce(0) { $0 + neighbors.stories($1.id).count },
                                       missedErrands: missedErrands,
                                       contribution: contribution.points, contributionTierDays: contributionTierDays,
-                                      contributionByDay: contributionByDay, tierContent: tierContentDone,
+                                      contributionByDay: contributionByDay, streetTasks: streetDone, scenes: streetTasks.scenes,
                                       baskets: ["bought": basketsBought, "missed": basketsMissed],
                                       housingDays: housingDays, staminaShort: staminaShort),
                          merit: merit, towerFloor: tower, bountiesCleared: cleared.sorted(),

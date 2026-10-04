@@ -57,18 +57,31 @@ EVENT_COPPER_PER_DAY = 20         # goods bought by the event's funded order
 TAPER = [(3, 1.0), (6, 0.5), (10**9, 0.1)]   # repeatable jobs today: 1-3 full, 4-6 half, then 10%
 WORKSHOP_ORDER_COPPER = 60        # candidate: NPC order budget a day once several basic recipes exist
 WORKSHOP_PROFIT_PER_BATCH = 14    # 3 straps x 9 - 13 copper of base stock
-# City contribution tier content (HOME_MAP_STREET_TASKS_20260929.md 6.2, user-approved tiers).
-# Open days: the day after the progression sim's all-content players reach tiers 2/3/4
-# (days 6, 12, 18 with this content included). name: (open day, every n days, minutes, copper)
-TIER_CONTENT = {"加急委托": (7, 1, 3, 15), "街区难题": (13, 3, 6, 30), "城市委托": (19, 7, 10, 60)}
+# Street tasks opened by city contribution (StreetTasks.swift, written 2026-09-30). Tier days are the
+# progression simulator's for a player doing the day's street tasks; minutes are the human-timing
+# model at typical pace. Copper is the design's: urgent 15, joint 30, commission 60.
+URGENT_FROM_DAY, JOINT_FROM_DAY, COMMISSION_FROM_DAY = 6, 12, 18
+STREET = {"urgent": (1.4, 15), "joint": (2.0, 30), "commission": (2.8, 60)}
+COMMISSIONS = 2                   # fountain, yard; one every seven days
 
 
 def mission_day(m):
     return max(1, m - (FIRST_DAY_MISSIONS - 1))
 
 
-def simulate(minutes_per_day, taper, max_jobs=None, rich_workshop=False, tiers=False):
+def street_today(day):
+    """Street tasks a player who does the day's street tasks takes on this day."""
+    kinds = []
+    if day >= URGENT_FROM_DAY: kinds.append("urgent")
+    if day >= JOINT_FROM_DAY and day % 3 == 0: kinds.append("joint")
+    if day >= COMMISSION_FROM_DAY and (day - COMMISSION_FROM_DAY) % 7 == 0 and (day - COMMISSION_FROM_DAY) // 7 < COMMISSIONS:
+        kinds.append("commission")
+    return kinds
+
+
+def simulate(minutes_per_day, taper, max_jobs=None, rich_workshop=False, street=False):
     balance, low, earned_jobs, spent = START_COPPER, START_COPPER, 0, 0
+    street_copper, street_minutes = 0, 0.0
     floors, jobs_done, rows = 0, 0, []
     for day in range(1, DAYS + 1):
         left = minutes_per_day
@@ -94,19 +107,20 @@ def simulate(minutes_per_day, taper, max_jobs=None, rich_workshop=False, tiers=F
         event = next((w for w in EVENT_WINDOWS if w[0] <= day <= w[1]), None)
         if event and left >= MIN_EVENT_DAY:
             left -= MIN_EVENT_DAY; copper += EVENT_COPPER_PER_DAY; battles += 2
+        # Street tasks (city contribution), before the workshop.
+        if street:
+            for kind in street_today(day):
+                mins, pay = STREET[kind]
+                if left >= mins:
+                    left -= mins; copper += pay; street_copper += pay; street_minutes += mins
         # Workshop: sell what NPC orders still take today.
         workshop = 0
         if day >= WORKSHOP_DAY:
             demand = (WORKSHOP_ORDER_COPPER // (STRAPS_PER_BATCH * STRAP_PRICE) if rich_workshop
                       else NPC_STRAPS_PER_DAY // STRAPS_PER_BATCH)
-            batches = min(demand, max(0, left) // MIN_WORKSHOP_BATCH)
+            batches = int(min(demand, max(0, left) // MIN_WORKSHOP_BATCH))
             left -= batches * MIN_WORKSHOP_BATCH; workshop = batches * MIN_WORKSHOP_BATCH
             copper += batches * WORKSHOP_PROFIT_PER_BATCH; battles += batches
-        # Tier content before the tavern and repeatable jobs: it is capped by the day.
-        if tiers:
-            for opens, every, mins, pay in TIER_CONTENT.values():
-                if day >= opens and day % every == 0 and left >= mins:
-                    left -= mins; copper += pay
         tavern = 0
         if minutes_per_day >= 90 and left >= MIN_TAVERN:
             left -= MIN_TAVERN; tavern = MIN_TAVERN
@@ -124,7 +138,8 @@ def simulate(minutes_per_day, taper, max_jobs=None, rich_workshop=False, tiers=F
         balance += copper - costs; spent += costs
         low = min(low, balance)
         rows.append((day, minutes_per_day - max(0, left), today, copper, costs, balance, progress, max(0, left)))
-    return {"rows": rows, "end": balance, "low": low, "jobs": jobs_done, "job_copper": earned_jobs, "spent": spent}
+    return {"rows": rows, "end": balance, "low": low, "jobs": jobs_done, "job_copper": earned_jobs, "spent": spent,
+            "street_copper": street_copper, "street_minutes": street_minutes}
 
 
 def main():
@@ -144,17 +159,14 @@ def main():
         total = sum(row[3] for row in r["rows"]) + START_COPPER
         idle = sum(row[7] for row in r["rows"]) / DAYS
         lines.append(f"| {minutes} 分钟 | {jobs} | {total} | {r['end']} | {idle:.0f} |")
-    lines += ["", "**C. B 再加城市贡献度三类内容**（加急委托 15 铜／天、街区难题 30 铜／3 天、城市委托 60 铜／7 天；分别从第 7、13、19 天开放）", "",
-              "| 每天玩 | 30 天总铜（不含） | 30 天总铜（含） | 多出 | 章末余额（含） |",
-              "|---|---:|---:|---:|---:|"]
+    lines += ["", "**C. 再加上城市贡献度开放的三类委托**（加急委托、街区难题、城市委托；第 6／12／18 天起，模拟器口径）", "",
+              "| 每天玩 | 每天做几单重复工作 | 30 天总铜 | 章末余额 | 其中三类委托的铜 | 三类委托平均每天分钟 | 平均每天还空着的分钟 |",
+              "|---|---:|---:|---:|---:|---:|---:|"]
     for minutes, jobs in ((45, 2), (90, 4), (120, 6)):
-        a = simulate(minutes, TAPER, max_jobs=jobs, rich_workshop=True)
-        b = simulate(minutes, TAPER, max_jobs=jobs, rich_workshop=True, tiers=True)
-        ta = sum(row[3] for row in a["rows"]) + START_COPPER
-        tb = sum(row[3] for row in b["rows"]) + START_COPPER
-        lines.append(f"| {minutes} 分钟 | {ta} | {tb} | {tb - ta} | {b['end']} |")
-    steady = sum(pay / every for _, every, _, pay in TIER_CONTENT.values())
-    lines.append(f"\n三类都开放以后，每天平均多 {steady:.1f} 铜。")
+        r = simulate(minutes, TAPER, max_jobs=jobs, rich_workshop=True, street=True)
+        total = sum(row[3] for row in r["rows"]) + START_COPPER
+        idle = sum(row[7] for row in r["rows"]) / DAYS
+        lines.append(f"| {minutes} 分钟 | {jobs} | {total} | {r['end']} | {r['street_copper']} | {r['street_minutes'] / DAYS:.1f} | {idle:.0f} |")
     lines += ["", "| 天 | 推进内容用时（所有人相同，分钟） |", "|---:|---:|"]
     for day in (1, 2, 3, 7, 10, 14, 18, 21, 25, 28, 30):
         lines.append(f"| {day} | {_progress_minutes(day)} |")
