@@ -1238,6 +1238,16 @@ struct ChapterOneEncounterTestView: View {
                                 .allowsHitTesting(false).zIndex(40)
                         }
                         VStack(alignment: .trailing, spacing: 4) {
+                            if teachesMaskTiming {
+                                // Playtest 2026-10-04: new players died in Q3
+                                // without connecting the hound's glow to the
+                                // mask. While the two teaching hunts have it
+                                // ready, say so right above the dock.
+                                MaskTimingCue()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.leading, 84)
+                                .allowsHitTesting(false)
+                            }
                             if combatIsActive || (!showsTutorial) || (showsStandaloneOpeningBattleButton && (holdsQ5Preview || waitsForPostInterventionStart || requiresOpeningBattleStart)) {
                                 combatDock
                             }
@@ -1273,9 +1283,7 @@ struct ChapterOneEncounterTestView: View {
                                 )
                             )
                             .shadow(color: Color.orange.opacity(0.28), radius: 5, y: 2)
-                            .opacity(0.78)
-                            .padding(.horizontal, 42)
-                            .padding(.vertical, 16)
+                            .modifier(BattleStartButtonChrome())
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
@@ -2603,6 +2611,12 @@ struct ChapterOneEncounterTestView: View {
         }
     }
 
+    private var teachesMaskTiming: Bool {
+        ["chapter01_q03_encounter", "chapter01_q04_encounter"].contains(session.encounter.id)
+            && combatIsActive && session.outcome == .inProgress
+            && manualMaskIsReady && session.masqueradeCharges == 0
+    }
+
     private var manualMaskIsReady: Bool {
         usesManualEmeraldMask && ownsManualMask && (maskIsTeachingLoan || maskCrackCount < 10)
             && battleTime >= max(session.ownedManualMaskReadyAt, skillScheduler.readyAt[.maskedWhisper, default: 0])
@@ -3087,7 +3101,9 @@ struct ChapterOneEncounterTestView: View {
                             .padding(.horizontal, 14).padding(.vertical, 8)
                             .background(.black.opacity(0.58), in: RoundedRectangle(cornerRadius: 10))
                     }
-                    .padding(.top, 16).padding(.horizontal, 28)
+                    // The bridge's prebattle readiness panel owns the top
+                    // band; sit below it so the two never overlap.
+                    .padding(.top, 88).padding(.horizontal, 28)
                     Spacer()
                 }.allowsHitTesting(false)
             }
@@ -6108,6 +6124,15 @@ struct ChapterOneBattleSetupOverlay: View {
     let onStart: () -> Void
     @State private var draggedSkillID: FoolSkillID?
     @State private var dragStartIndex: Int?
+
+    /// Playtest 2026-10-04: an empty sequence fought with basic attacks
+    /// only and nothing said so. Fill it in the listed order instead.
+    private func startFillingEmptySequence() {
+        if selectedSkillIDs.isEmpty {
+            selectedSkillIDs = Array(availableSkills.map(\.id).prefix(slotCapacity))
+        }
+        onStart()
+    }
     @State private var insertionIndex: Int?
     @State private var dragTranslation: CGSize = .zero
     @State private var dragHighlightPhase = false
@@ -6139,7 +6164,7 @@ struct ChapterOneBattleSetupOverlay: View {
         ZStack {
             Button("开始战斗") {
                 guard startButtonIsArmed else { return }
-                onStart()
+                startFillingEmptySequence()
             }
             .font(.system(size: 32, weight: .black, design: .serif))
             .foregroundStyle(LinearGradient(
@@ -6148,8 +6173,7 @@ struct ChapterOneBattleSetupOverlay: View {
                          Color(red: 0.72, green: 0.38, blue: 0.08)],
                 startPoint: .top, endPoint: .bottom))
             .shadow(color: .black.opacity(0.65), radius: 2, y: 2)
-            .opacity(0.78)
-            .padding(.horizontal, 22).padding(.vertical, 12)
+            .modifier(BattleStartButtonChrome())
             .buttonStyle(.plain)
             .allowsHitTesting(startButtonIsArmed)
             .accessibilityIdentifier("chapter-one-start-battle")
@@ -6248,7 +6272,7 @@ struct ChapterOneBattleSetupOverlay: View {
                 .padding(.bottom, 4)
             Button {
                 guard startButtonIsArmed else { return }
-                onStart()
+                startFillingEmptySequence()
             } label: {
                 Text("开始挑战")
                     .font(.system(size: 22, weight: .black, design: .serif))
@@ -6848,7 +6872,10 @@ struct ChapterOneMissionBridgeView: View {
                     .zIndex(190)
 
                     VStack {
-                        prebattleReadiness
+                        let number = game.activeChapterMission?.number ?? 1
+                        if number >= 3 || Self.prebattleObjective(number) != nil {
+                            prebattleReadiness
+                        }
                         Spacer(minLength: 0)
                     }
                     .padding(.top, 54)
@@ -7024,7 +7051,13 @@ struct ChapterOneMissionBridgeView: View {
 
         let permitted = Set(availablePrebattleSkills.map(\.id))
         let missionNumber = game.activeChapterMission?.number ?? 1
-        let selected = Array(draftSkillIDs.filter(permitted.contains).prefix(game.chapterOneLoadoutSlotCapacity))
+        var selected = Array(draftSkillIDs.filter(permitted.contains).prefix(game.chapterOneLoadoutSlotCapacity))
+        // Playtest 2026-10-04: starting with an empty sequence silently fought
+        // with basic attacks only. Fill it in the listed order instead.
+        if selected.isEmpty {
+            selected = Array(availablePrebattleSkills.map(\.id).prefix(game.chapterOneLoadoutSlotCapacity))
+            draftSkillIDs = selected
+        }
 
         var loadout = campaign.effectiveLoadout
         loadout.selectedActiveRelicID = [3, 4].contains(missionNumber)
@@ -7782,7 +7815,10 @@ struct ChurchTowerView: View {
                 }
             }
         }.foregroundStyle(.white).preferredColorScheme(.dark).buttonStyle(.plain)
-        .onAppear { let next = min(100, (game.churchTowerProgress.clearedFloors.max() ?? 0) + 1); selected = next; tier = (next - 1) / 10 }
+        .onAppear(perform: selectNextUncleared)
+        // A full-screen battle does not re-trigger onAppear on return; point
+        // at the next floor as soon as the cover closes.
+        .onChange(of: battleDestination == nil) { _, closed in if closed { selectNextUncleared() } }
         .fullScreenCover(item: $battleDestination) { destination in
             ChurchTowerBattleView(game: game, floor: destination.floor, initialSession: destination.session,
                 onExit: { battleDestination = nil }, onNext: { launch(destination.floor + 1) }).id(destination.id)
@@ -7792,6 +7828,7 @@ struct ChurchTowerView: View {
         }
     }
     private func changeTier(_ delta: Int) { tier = min(9, max(0, tier + delta)); selected = tier * 10 + 1 }
+    private func selectNextUncleared() { let next = min(100, (game.churchTowerProgress.clearedFloors.max() ?? 0) + 1); selected = next; tier = (next - 1) / 10 }
     private func launch(_ number: Int) {
         do {
             let prepared = try game.churchTowerSession(floor: number)
@@ -9213,3 +9250,45 @@ func renderChurchDelivery(_ game: GameStore) {
     NSLog("CHURCH_DELIVERY_RENDER_SAVED")
 }
 #endif
+
+
+/// Playtest 2026-10-04: the bare gold title did not read as tappable.
+/// A dark plaque, gold rim and a slow breathing glow mark it as the button.
+private struct BattleStartButtonChrome: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var breathes = false
+
+    func body(content: Content) -> some View {
+        content
+            .padding(.horizontal, 30).padding(.vertical, 10)
+            .background(
+                Capsule().fill(Color(red: 0.12, green: 0.08, blue: 0.05).opacity(0.78))
+            )
+            .overlay(
+                Capsule().stroke(Color(red: 1.0, green: 0.78, blue: 0.32).opacity(breathes ? 0.95 : 0.55), lineWidth: 1.6)
+            )
+            .shadow(color: Color.orange.opacity(breathes ? 0.55 : 0.2), radius: breathes ? 14 : 6)
+            .scaleEffect(breathes ? 1.03 : 1)
+            .onAppear {
+                guard !reduceMotion else { return }
+                withAnimation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true)) { breathes = true }
+            }
+    }
+}
+
+
+private struct MaskTimingCue: View {
+    @State private var pulses = false
+    var body: some View {
+        Text("喉间双焰亮起 → 点假面")
+            .font(.system(size: 12, weight: .heavy))
+            .foregroundStyle(.white)
+            .fixedSize()
+            .padding(.horizontal, 10).padding(.vertical, 5)
+            .background(Capsule().fill(Color.purple.opacity(0.88)))
+            .overlay(Capsule().stroke(Color.yellow.opacity(0.85), lineWidth: 1))
+            .shadow(color: .purple.opacity(0.9), radius: pulses ? 10 : 3)
+            .scaleEffect(pulses ? 1.06 : 0.96)
+            .onAppear { withAnimation(.easeInOut(duration: 0.55).repeatForever(autoreverses: true)) { pulses = true } }
+    }
+}

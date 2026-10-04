@@ -425,6 +425,10 @@ public enum MPCNeighborCatalog {
 
     /// Who asks on a pacing day: the next neighbours in `rotation`, so everyone takes turns.
     public static func askers(day: Int) -> [MPCNeighbor] {
+        // Playtest 2026-10-04: day one had nothing to do after Q3. Two
+        // neighbours from the far end of the rotation ask once on day one,
+        // leaving the day-two-onward rotation exactly as designed.
+        if day == 1 { return Array(all.suffix(2)) }
         let count = askerCount(day: day)
         guard count > 0 else { return [] }
         let start = rotationStart(day: day)

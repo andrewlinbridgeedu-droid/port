@@ -238,6 +238,7 @@ final class GameStore {
     private(set) var activeChapterMissionID: String?
     @ObservationIgnored private var preparedChapterOneMissionID: String?
     var churchServicesRevision = 0
+    @ObservationIgnored fileprivate var churchServicesCache: (data: Data?, state: GameStore.ChurchServicesState)?
     @ObservationIgnored private var preparedChapterOneSession: MPCChapterOneEncounterSession?
     private(set) var isTeamExpeditionActive = false
     private(set) var completedChapterMissionIDs: Set<String> = []
@@ -1911,13 +1912,21 @@ final class GameStore {
                 missionNumber: mission.number
             )
             ?? "encounter_rain_01"
+        // This runs from a view initializer, i.e. during a parent's body.
+        // Writing the observed campaign there, even with an identical value,
+        // invalidated ContentView and re-ran this forever: the 99% CPU freeze
+        // on the Q6/Q8 pages (playtest 2026-10-04). Write only real changes.
+        var campaign = chapterOneCampaign
         if mission.districtID == "old-clock", mission.number >= 3 {
-            let alreadyOwnedMask = chapterOneCampaign.ownsManualMask
-            chapterOneCampaign.grantHoundTutorialCard()
-            if !alreadyOwnedMask { persistChapterProgress() }
+            campaign.grantHoundTutorialCard()
         }
         if hasSeenChapterOneTutorial(.q8Prelude) {
-            _ = chapterOneCampaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: 8)
+            _ = campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: 8)
+        }
+        if campaign != chapterOneCampaign {
+            let alreadyOwnedMask = chapterOneCampaign.ownsManualMask
+            chapterOneCampaign = campaign
+            if !alreadyOwnedMask && campaign.ownsManualMask { persistChapterProgress() }
         }
         var loadout = chapterOneCampaign.loadout(forMissionID: chapterMission?.id ?? encounterID)
         loadout.talents = hermitTalents
@@ -2811,7 +2820,15 @@ extension GameStore {
     }
     var churchServices: ChurchServicesState {
         _ = churchServicesRevision
-        return defaults.data(forKey: "mistport.church.services.v1").flatMap { try? JSONDecoder().decode(ChurchServicesState.self, from: $0) } ?? .init()
+        // SwiftUI bodies read this many times per frame; decoding the whole
+        // ledger each time saturated the main thread (playtest 2026-10-04).
+        // Cache by the stored bytes so any writer, bumped revision or not,
+        // still invalidates it.
+        let data = defaults.data(forKey: "mistport.church.services.v1")
+        if let cached = churchServicesCache, cached.data == data { return cached.state }
+        let state = data.flatMap { try? JSONDecoder().decode(ChurchServicesState.self, from: $0) } ?? .init()
+        churchServicesCache = (data, state)
+        return state
     }
     /// Tower floors pay gear; closed bounty cases pay relics (bounty gear was
     /// retired on 2026-09-28 by a one-time migration recorded in the ledger).

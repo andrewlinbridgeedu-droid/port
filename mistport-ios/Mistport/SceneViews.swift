@@ -93,6 +93,7 @@ struct CityHubView: View {
                         .padding(.top, 8)
                     CityBottomBar(
                         bottomInset: max(geometry.safeAreaInsets.bottom, 8),
+                        workshopUnlocked: serviceIsUnlocked(.workshop),
                         churchUnlocked: serviceIsUnlocked(.church),
                         storeUnlocked: serviceIsUnlocked(.store),
                         onWork: onBuild,
@@ -532,6 +533,7 @@ private struct CityBottomBar: View {
     /// Scale the whole navigation content while keeping the device's safe area intact.
     static let contentScale: CGFloat = 0.9
     var bottomInset: CGFloat = 8
+    var workshopUnlocked = true
     var churchUnlocked = false
     var storeUnlocked = false
     let onWork: () -> Void
@@ -544,7 +546,7 @@ private struct CityBottomBar: View {
         HStack(alignment: .center, spacing: 0) {
             CityBarButton(title: "角色", artName: "GameNavProfile", artScale: 0.88, contentScale: Self.contentScale, action: onProfile)
             // The workbench art is a dense, square object; shown at full size it reads larger than its neighbours.
-            CityBarButton(title: "百工坊", artName: "GameNavWorkshop", artScale: 0.84, contentScale: Self.contentScale, action: onWork)
+            CityBarButton(title: "百工坊", artName: "GameNavWorkshop", isLocked: !workshopUnlocked, artScale: 0.84, contentScale: Self.contentScale, action: onWork)
             CityBarButton(title: "教会", artName: "GameNavChurch", isLocked: !churchUnlocked, artScale: 0.88, contentScale: Self.contentScale, action: onChurch)
             CityBarButton(title: "商店", artName: "GameNavStore", isLocked: !storeUnlocked, artScale: 0.88, contentScale: Self.contentScale, action: onStore)
             CityBarButton(title: "行囊", artName: "GameNavInventory", artScale: 0.88, contentScale: Self.contentScale, action: onInventory)

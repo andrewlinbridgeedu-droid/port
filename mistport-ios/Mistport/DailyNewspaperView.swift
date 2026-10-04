@@ -142,7 +142,7 @@ struct DailyNewspaperView: View {
             }
             row("街坊委托", destination: .neighbors) {
                 let offers = game.newspaperNeighborOffers.filter { !$0.done }
-                if offers.isEmpty { Text(game.pacingDay < 2 ? "第 2 天起，街坊会有小事相托。" : "今天的委托已经完成。") }
+                if offers.isEmpty { Text("今天的委托已经完成。") }
                 ForEach(offers) { offer in
                     Text("\(MPCNeighborCatalog.neighbor(offer.neighborID)?.name ?? "街坊")：\(offer.errand?.request ?? "")")
                 }

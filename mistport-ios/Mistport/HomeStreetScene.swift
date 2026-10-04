@@ -548,8 +548,10 @@ struct HomeCounterAction: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title).font(.body.bold())
-                    if let detail { Text(detail).font(.caption) }
-                }.frame(maxWidth: .infinity, alignment: .leading)
+                    if let detail { Text(detail).font(.caption).fixedSize(horizontal: false, vertical: true) }
+                }
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 Image(systemName: "chevron.right").font(.caption.bold())
             }
         }.buttonStyle(GameArtButtonStyle())
@@ -629,6 +631,20 @@ struct HomeCounterView: View {
                 }
                 ForEach(localTargets) { target in
                     HomeCounterAction(title: target.title, detail: "通缉问话") { selectedTarget = target }
+                }
+                if buildingID == "board" {
+                    // Playtest 2026-10-04: the board looked empty. Neighbour
+                    // errands are accepted on the street; list today's here.
+                    let offers = game.newspaperNeighborOffers.filter { !$0.done }
+                    ForEach(offers) { offer in
+                        let name = MPCNeighborCatalog.neighbor(offer.neighborID)?.name ?? "街坊"
+                        HomeCounterAction(title: "街坊委托 · \(name)", detail: (offer.errand?.request ?? "") + "\n→ 到街上找\(name)交谈") {
+                            greeting = "委托板登记员：\(name)今天托人带话，你在街上走到\(name)面前就能接下。"
+                        }
+                    }
+                    if offers.isEmpty {
+                        Text("今天的街坊委托都已完成，明天会有新的。").font(.caption)
+                    }
                 }
         }.sheet(item: $selectedTarget) { target in HomeBountyInteractionView(game: game, target: target) }
         #if DEBUG

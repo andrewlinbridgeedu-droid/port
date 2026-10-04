@@ -79,7 +79,9 @@ public enum MPCChurchTowerCatalog {
     }
     public static let lockText = "完成第 \(unlockMission) 关后开放教会（深井、通缉与教会工作）"
     public static func floor(number: Int) -> Floor? { floors.first { $0.number == number } }
-    public static func encounter(id: String) -> MPCEncounterContent? { floors.first { $0.id == id }?.encounter }
+    public static func encounter(id: String) -> MPCEncounterContent? { encountersByID[id] }
+    // Views ask this per frame; a linear scan formatting 100 ids each time was a hot spot.
+    private static let encountersByID: [String: MPCEncounterContent] = Dictionary(uniqueKeysWithValues: floors.map { ($0.id, $0.encounter) })
     private static let configurations: [String: Enemy] = {
         var result: [String: Enemy] = [:]
         for floor in floors { for wave in floor.waves.indices { for slot in floor.waves[wave].indices {

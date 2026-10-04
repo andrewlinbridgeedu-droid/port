@@ -336,7 +336,7 @@ enum ChapterOneTutorialCue: String {
             return [
                 .init(kicker: "循名而来的猎犬", message: "寻人信上的追索记录惊动了猎犬。\n它从雾里走来，径直盯住你。", actionTitle: "继续聆听"),
                 .init(kicker: "玛拉的赠予", message: "玛拉从衣袋里取出一张旧假面，递到你手中。\n“这件遗落物叫『无主假面』。让追猎者相信，站在你身旁的幻影才是真正的你。”", actionTitle: "接过无主假面"),
-                .init(kicker: "以假乱真", message: "假面不需要编入技能。开战后，由你点击使用。\n它唤出的幻影只维持四秒，最多承受两次直接攻击；十八秒后才能再次使用，持续伤害无法阻挡。眼前两场猎犬教学不损耗假面。之后每次使用都会留一道永久紫裂纹，十道后失效。留意猎犬的动作。", actionTitle: "继续聆听"),
+                .init(kicker: "以假乱真", message: "假面不需要编入技能。开战后，由你点击使用。\n它唤出的幻影只维持四秒，最多承受两次直接攻击；十八秒后才能再次使用，持续伤害无法阻挡。眼前两场猎犬教学不损耗假面。之后每次使用都会留一道永久紫裂纹，十道后失效。\n猎犬喉间两团火一起亮起，就是它要扑来的信号——立刻点假面。", actionTitle: "继续聆听"),
                 .init(kicker: "烧不掉的记录", message: "打断它的追猎，留下项圈。\n我想知道，究竟是谁命令它来找你。", actionTitle: "准备迎战")
             ]
         }
@@ -816,6 +816,29 @@ struct ChapterOneTutorialOverlay: View {
                 .padding(.top, 30)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .zIndex(1)
+
+            // Playtest 2026-10-04: 5–8 pages between short fights. Skipping
+            // runs the same completion as reading the last page.
+            if !isLastPage {
+                Button {
+                    guard acceptsPageAdvance else { return }
+                    acceptsPageAdvance = false
+                    onDismiss()
+                } label: {
+                    Text("跳过对白 ›")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(Color(red: 1.0, green: 0.86, blue: 0.55))
+                        .padding(.horizontal, 16).padding(.vertical, 9)
+                        .background(Capsule().fill(Color.black.opacity(0.55)))
+                        .overlay(Capsule().stroke(Color(red: 1.0, green: 0.75, blue: 0.24).opacity(0.5), lineWidth: 1))
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("chapter-one-guide-skip")
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                .padding(.leading, 20)
+                .padding(.bottom, 132)
+                .zIndex(3)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     }
@@ -934,7 +957,7 @@ struct ChapterOneTutorialOverlay: View {
         }
         for index in characters.indices {
             guard !Task.isCancelled else { return }
-            try? await Task.sleep(for: .milliseconds(24))
+            try? await Task.sleep(for: .milliseconds(12))
             guard !Task.isCancelled else { return }
             visibleCharacterCount = index + 1
         }
