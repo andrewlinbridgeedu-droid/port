@@ -75,6 +75,13 @@ public struct MPCBountyRelicLedger: Codable, Equatable, Sendable {
 public enum MPCProgressionWalls {
     /// Q3 is not a wall: its fixed hound breath is kept low enough for slow players.
     nonisolated(unsafe) public static var q3BreathDamage = 180
+    /// Q10 is not a wall either. With the authored 150% breath and 1050/1200 health the
+    /// three-card hand only won at the fastest cadence (1.75 s per card); Q9 still wins
+    /// at 2.5 s. These values let a 3 s cadence with the mask and one salve finish
+    /// the puppet (sim 2026-10-05, playtest lost Q10 three times on 169.95).
+    nonisolated(unsafe) public static var q10HoundBreathPercent = 100
+    nonisolated(unsafe) public static var q10HoundHP = 800
+    nonisolated(unsafe) public static var q10PuppetHP = 900
     // Wall enemies. Each value applies only in its own mission.
     nonisolated(unsafe) public static var q8LeechHP = 1900
     nonisolated(unsafe) public static var q8LeechAttack = 100

@@ -2426,7 +2426,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             case "chapter01_q07_encounter": 650
             case "chapter01_q08_encounter": MPCProgressionWalls.q8LeechHP
             case "chapter01_q09_encounter": contentID == "enemy_memory_leech_node" ? 850 : 1300
-            case "chapter01_q10_encounter": contentID == "enemy_clockwork_hound" ? 1050 : 1200
+            case "chapter01_q10_encounter": contentID == "enemy_clockwork_hound" ? MPCProgressionWalls.q10HoundHP : MPCProgressionWalls.q10PuppetHP
             case "chapter01_q11_encounter": contentID == "enemy_memory_leech" ? 1050 : 900
             case "chapter01_q12_encounter": MPCProgressionWalls.q12PuppetHP
             case "chapter01_q18_encounter": MPCProgressionWalls.q18AdjudicatorHP
@@ -2813,7 +2813,9 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         if let skill = (MPCChapterOneCatalog.enemies.first(where: { $0.id == enemy.contentID }) ?? MPCChurchBountyCatalog.enemyDefinition(id: enemy.contentID))?.skills.first(where: { $0.intent == intent }) {
             let damageBasisPoints: Int
             if enemy.contentID == "enemy_clockwork_hound", intent == "memory_breath" {
-                damageBasisPoints = encounter.id == "chapter01_q05_encounter" ? 1_800 : skill.damageBasisPoints
+                damageBasisPoints = encounter.id == "chapter01_q05_encounter" ? 1_800
+                    : encounter.id == "chapter01_q10_encounter" ? skill.damageBasisPoints * MPCProgressionWalls.q10HoundBreathPercent / 100
+                    : skill.damageBasisPoints
             } else {
                 damageBasisPoints = skill.damageBasisPoints
             }

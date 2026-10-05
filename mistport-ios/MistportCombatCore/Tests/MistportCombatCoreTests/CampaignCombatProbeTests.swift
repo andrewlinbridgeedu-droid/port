@@ -13,7 +13,7 @@ enum CampaignCombatProbe {
             return (Double((randomState >> 32) % 10001) / 5000 - 1) * jitter
         }
         var nextMedalAt = max(0, offset + variation())
-        let sequence: [FoolSkillID] = q < 8 ? [.sidestepStrike] : q < 11 ? [.identityDisplacement, .sidestepStrike] : q < 12 ? [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .sidestepStrike] : [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .absurdFinale]
+        let sequence: [FoolSkillID] = q < 8 ? [.sidestepStrike] : q < 9 ? [.identityDisplacement, .sidestepStrike] : q < 11 ? [.fabricatedEvidence, .identityDisplacement, .sidestepStrike] : q < 12 ? [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .sidestepStrike] : [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .absurdFinale]
         var loadout = MPCChapterOneLoadout(normalSkillIDs: sequence, isUltimateUnlocked: false, passiveIDs: [], relicIDs: passive.map { [$0] } ?? [])
         loadout.selectedActiveRelicID = useMedal ? MPCChapterOneCatalog.usurpedLifeMedalRelicID : nil
         var earnedGear = MPCChurchGearLedger()

@@ -6,7 +6,7 @@ struct ChapterOneNaturalCombatTests {
     @Test("Later hound breath uses authored multiplier, not tutorial damage")
     func laterHoundDamage() throws {
         var session = try MPCChapterOneEncounterSession.start(
-            encounterID: "chapter01_q10_encounter", companionIDs: [],
+            encounterID: "chapter01_q16_encounter", companionIDs: [],
             loadout: .init(normalSkillIDs: [.sidestepStrike], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
         )
         let hound = try #require(session.enemies.first { $0.contentID == "enemy_clockwork_hound" })
