@@ -1835,7 +1835,7 @@ struct ChapterOneEncounterTestView: View {
             return
         }
 
-        if let impact = pendingPlayerImpact, (usesUnityBattlefield && !impact.sealed) ? unityBattleRuntime.consumeCombatContact("player") : now >= impact.time {
+        if let impact = pendingPlayerImpact, (usesUnityBattlefield && !impact.sealed) ? (unityBattleRuntime.consumeCombatContact("player") || now >= impact.time + 2.5) : now >= impact.time {
             pendingPlayerImpact = nil
             var value = session
             let previousWave = value.waveIndex
@@ -1919,7 +1919,10 @@ struct ChapterOneEncounterTestView: View {
                 && ["guard", "recover"].contains(resolvingActor?.currentIntent ?? "")
             let isAuthoredPreparation = session.authoredPreparationDuration(for: enemyID) != nil
             let didHit = usesUnityBattlefield && !isWindup && !isArchivePreparation && !isAuthoredPreparation
-                ? nativeID.map { unityBattleRuntime.consumeCombatContact("enemy:" + $0) } ?? false
+                // A lost Unity contact (a body that failed to present) must not hold the
+                // enemy's turn forever: resolve 2.5 s after the expected impact.
+                ? (nativeID.map { unityBattleRuntime.consumeCombatContact("enemy:" + $0) } ?? false)
+                    || now >= pendingEnemyImpacts[enemyID, default: .infinity] + 2.5
                 : now >= pendingEnemyImpacts[enemyID, default: .infinity]
             guard didHit else { continue }
             if isAuthoredPreparation, let nativeID { _ = unityBattleRuntime.consumeCombatContact("enemy:" + nativeID) }
