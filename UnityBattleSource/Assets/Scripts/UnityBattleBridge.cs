@@ -16,6 +16,18 @@ public sealed class UnityBattleBridge : MonoBehaviour
     readonly Dictionary<Transform, Quaternion> originalRotations = new Dictionary<Transform, Quaternion>();
     readonly Queue<string> pendingActions = new Queue<string>();
     public bool IsEnemyExiting(EnemyHandle actor) => actor && actor.EnemyRoot && exits.ContainsKey(actor.EnemyRoot);
+
+    /// A body reused for a later wave must not stay "exiting": the first wave uses the
+    /// family template itself, and after its death every later wave with the same id
+    /// re-enabled a body the bridge still treated as leaving (church maintenance, 2026-10-04).
+    public void ForgetExit(Transform root)
+    {
+        if (!root) return;
+        if (exits.TryGetValue(root, out var exit)) { if (exit != null) StopCoroutine(exit); exits.Remove(root); }
+        RestoreExitMaterials(root);
+        if (originalRotations.TryGetValue(root, out var rotation)) root.localRotation = rotation;
+        RestoreEnemyIdle(root);
+    }
     string pendingTargetPayload;
     string pendingVisibilityPayload;
     const float AnchorReportInterval = 0.12f;

@@ -1286,6 +1286,9 @@ public sealed class BattlePrototype : MonoBehaviour
             StartCoroutine(RotateClockCoreCast(instance)); return;
         }
         if (IsActiveEnemyHandle(instance) && battleEnemyId.StartsWith("clock-guard-")) {
+            // A missing or exiting body must not start the generic turn (NullReference) and
+            // leave the rules waiting for a contact that never comes: acknowledge at once.
+            if (!IsActiveEnemyHandle(instance)) { if (NativeCombatEnabled) UnityBattleBridge.ReportCombatContact("enemy:" + intentParts[0]); return; }
             StartCoroutine(PresentSingleClockGuardTurn(instance)); return;
         }
         if (battleEnemyId == "hell-hound-primary:bite") { StartCoroutine(PresentHellHoundPounceTurn()); return; }
@@ -1408,6 +1411,8 @@ public sealed class BattlePrototype : MonoBehaviour
             if (index == 0) primaryPresented = handle;
             if (handle.GetComponent<SignatureEnemyPresentation>()) handle.EnemyRoot.localScale = Vector3.one;
             handle.gameObject.SetActive(true);
+            if (!enemyLifeBridge) enemyLifeBridge = FindFirstObjectByType<UnityBattleBridge>();
+            if (enemyLifeBridge) enemyLifeBridge.ForgetExit(handle.EnemyRoot);
             var slot = ids.Length == 1 ? EnemyFormationSlotIds.FrontCenter
                 : index == 0 ? EnemyFormationSlotIds.FrontLeft
                 : index == 1 ? EnemyFormationSlotIds.FrontRight : ids.Length==4 ? (index==2?EnemyFormationSlotIds.RearLeft:EnemyFormationSlotIds.RearRight) : EnemyFormationSlotIds.RearCenter;
