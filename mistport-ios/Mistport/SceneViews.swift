@@ -290,13 +290,31 @@ struct CityHubView: View {
         let width = panoramaWidth(for: viewport)
         withAnimation(.easeOut(duration: 0.4)) { panoramaOffset = boundedPanoramaOffset(width / 2 - x * viewport.height, in: viewport) }
     }
+    /// A person who keeps a post inside a building can be met at that counter
+    /// too; say so, because the case location ("封锁公告处") is not a map label.
+    private func targetCaption(_ target: MPCStreetTaskTarget) -> String {
+        guard let personID = target.personID,
+              let name = HomeCitizenCatalog.people.first(where: { $0.id == personID })?.name,
+              let buildingID = HomeMapLayout.current.namedPosts.first(where: { $0.who == name })?.building,
+              let building = HomeMapLayout.current.building(buildingID)?.name else { return target.title }
+        return target.title + "（\(building)）"
+    }
     private func taskStrip(in viewport: CGSize) -> some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
-                Button(trackedTarget?.title ?? nextMissionTitle) {
+                Button {
                     if let target = trackedTarget { center(HomeMapLayout.current.targetPoint(target)[0], in: viewport) }
                     else { onStory() }
-                }.lineLimit(1).frame(maxWidth: .infinity, alignment: .leading)
+                } label: {
+                    HStack(spacing: 9) {
+                        // The red wax seal from the old mission plaque; the
+                        // street-task strip lost it on 2026-09-29.
+                        Image("CityMissionWaxSeal")
+                            .resizable().scaledToFit().frame(width: 30, height: 30)
+                            .saturation(0.75).shadow(color: .black.opacity(0.6), radius: 1.5, y: 1)
+                        Text(trackedTarget.map(targetCaption) ?? nextMissionTitle).lineLimit(1)
+                    }
+                }.frame(maxWidth: .infinity, alignment: .leading)
                 Button(action: onStamina) {
                     HStack(spacing: 3) {
                         HousingLanternIcon(value: staminaValue).frame(width: 24, height: 28)
@@ -310,7 +328,7 @@ struct CityHubView: View {
             if tasksExpanded {
                 Button("主线 · " + nextMissionTitle, action: onStory)
                 ForEach(streetTargets) { target in
-                    Button(target.title) { trackedTargetID = target.id; center(HomeMapLayout.current.targetPoint(target)[0], in: viewport) }
+                    Button(targetCaption(target)) { trackedTargetID = target.id; center(HomeMapLayout.current.targetPoint(target)[0], in: viewport) }
                 }
             }
             if let target = trackedTarget {

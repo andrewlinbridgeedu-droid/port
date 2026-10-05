@@ -193,6 +193,28 @@ struct HomeStreetScene: View {
         let rain = HarborWeather(gameHours: HarborClock.gameHours(at: Date())).rain
         let ambientLimit = (hour < 6 || hour > 20 || rain > 0.4) ? 4 : 7
         var poses: [Pose] = []
+        // Summoned people walk to the hold spot nearest their own post, so two
+        // witnesses of one case (诺恩 and 奥黛尔 both reach H6) stood on the same
+        // point and only the top one could be seen or tapped (playtest
+        // 2026-10-04). Stand later arrivals a step to either side.
+        var holdCounts: [String: Int] = [:]
+        var holdOffsets: [String: Double] = [:]
+        // A fixed post right on a hold spot (the merchant at H7) counts as the
+        // first occupant, so a summoned witness is not hidden behind it.
+        for spot in layout.holdSpots {
+            guard let holdID = spot.id, let at = spot.at else { continue }
+            let posted = HomeCitizenCatalog.people.filter { person in
+                guard let post = person.post, !targets.contains(where: { $0.personID == person.id }) else { return false }
+                return hypot(post[0] - at[0], post[1] - at[1]) < 0.04
+            }.count
+            if posted > 0 { holdCounts[holdID] = posted }
+        }
+        for person in HomeCitizenCatalog.people where targets.contains(where: { $0.personID == person.id }) {
+            let hold = layout.hold(for: person.id)?.id ?? ""
+            let slot = holdCounts[hold, default: 0]
+            holdCounts[hold] = slot + 1
+            holdOffsets[person.id] = slot == 0 ? 0 : Double((slot + 1) / 2) * 0.035 * (slot.isMultiple(of: 2) ? -1 : 1)
+        }
         for (index, person) in HomeCitizenCatalog.people.enumerated() {
             let personTime = time - (personPauses[person.id] ?? 0)
             let tasks = targets.filter { $0.personID == person.id }
@@ -205,7 +227,8 @@ struct HomeStreetScene: View {
                 let route = layout.approach(for: person.id)
                 let progress = min(1, max(0, (time - (summonStarts[person.id] ?? 0)) / 7))
                 let pose = Self.interpolate(route, fraction: progress)
-                point = pose.point; direction = progress < 1 ? pose.direction : 4; moving = progress < 1
+                point = [pose.point[0] + (holdOffsets[person.id] ?? 0), pose.point[1]]
+                direction = progress < 1 ? pose.direction : 4; moving = progress < 1
             } else if person.id == "cafe_keeper" {
                 guard let outing = cafeOuting(time: personTime) else { continue }
                 point = outing.point; direction = outing.direction; moving = true
@@ -743,7 +766,9 @@ struct HomeBountyInteractionView: View {
             }
             if !notice.isEmpty { Text(notice).foregroundStyle(.secondary) }
         }
-        .onAppear { perform { try game.visitChurchBounty(bounty.id, location: node?.location ?? "教会") } }
+        // Arriving is not a record; the "已记录" notice used to show before the
+        // player had done anything (playtest 2026-10-04).
+        .onAppear { perform(success: "") { try game.visitChurchBounty(bounty.id, location: node?.location ?? "教会") } }
         .fullScreenCover(isPresented: $battlePresented) {
             ChurchBountyBattleView(game: game, bounty: bounty, onExit: { battlePresented = false })
         }
