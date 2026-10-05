@@ -822,24 +822,8 @@ struct ChapterOneTutorialOverlay: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .zIndex(1)
 
-            // Playtest 2026-10-04: 5–8 pages between short fights. Skipping
-            // runs the same completion as reading the last page.
-            if !isLastPage {
-                Button(action: skipDialogue) {
-                    Text("跳过对白 ›")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(Color(red: 1.0, green: 0.86, blue: 0.55))
-                        .padding(.horizontal, 16).padding(.vertical, 9)
-                        .background(Capsule().fill(Color.black.opacity(0.55)))
-                        .overlay(Capsule().stroke(Color(red: 1.0, green: 0.75, blue: 0.24).opacity(0.5), lineWidth: 1))
-                }
-                .buttonStyle(.plain)
-                .accessibilityIdentifier("chapter-one-guide-skip")
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-                .padding(.leading, 20)
-                .padding(.bottom, 132)
-                .zIndex(3)
-            }
+            // The only skip control lives in the bubble footer (user, 2026-10-05:
+            // two skip buttons on one page is one too many).
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     }
@@ -914,7 +898,7 @@ struct ChapterOneTutorialOverlay: View {
                         .overlay(Capsule().stroke(Color(red: 1.0, green: 0.75, blue: 0.24).opacity(0.4), lineWidth: 1))
                 }
                 .buttonStyle(.plain)
-                .accessibilityIdentifier("chapter-one-guide-skip-inline")
+                .accessibilityIdentifier("chapter-one-guide-skip")
             }
             Spacer(minLength: 0)
             if isComplete {
