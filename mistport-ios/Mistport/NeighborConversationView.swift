@@ -173,7 +173,10 @@ struct NeighborPestBattleView: View {
                             started = true
                         } catch { startError = game.housingError(error) } }
                     })
-                VStack { HStack { GameArtReturnButton(title: "返回街坊") { onClose() }; Spacer() }; Spacer() }.padding()
+                // The battle page has its own 退出; this spare button sat on its title (2026-10-05).
+                if (configuredSession ?? previewSession) == nil {
+                    VStack { HStack { GameArtReturnButton(title: "返回街坊") { onClose() }; Spacer() }; Spacer() }.padding()
+                }
             }
             if !startError.isEmpty { Text(startError).foregroundStyle(.orange).padding().background(.black) }
             if finished {
