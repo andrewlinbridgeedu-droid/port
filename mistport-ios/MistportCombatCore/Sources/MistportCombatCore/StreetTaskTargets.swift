@@ -32,7 +32,10 @@ public enum MPCStreetTaskCatalog {
                 return .init(id: bounty.id + ":" + node.id, taskID: bounty.id, kind: .bounty,
                              personID: node.id == "identity" ? nil : person,
                              placeID: node.id == "identity" ? bounty.id : (person == nil ? placeID(location: node.location) : nil),
-                             title: bounty.title + " · " + node.location)
+                             // Name the person to find: the location alone ("封锁公告处")
+                             // is not a map label (playtest 2026-10-04).
+                             title: bounty.title + " · " + node.location
+                                + (person == nil || node.id == "identity" ? "" : "，找" + node.speaker))
             }
         }
     }
