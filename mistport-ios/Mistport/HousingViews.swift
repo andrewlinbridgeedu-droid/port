@@ -18,7 +18,10 @@ private enum HousingArt {
     static let anchors = read("housing-home-anchors", as: [String: [Double]].self) ?? [:]
     static func home(_ id: String) -> Home? { homes.first { $0.id == id } }
     static func districtName(_ district: MPCHousingCatalog.District) -> String {
-        geography?.districts.first { $0.id == district.rawValue }?.name ?? district.rawValue
+        // housing-geography.json is the user's unmodified source and has no noble entry;
+        // adding one there broke decoding of the whole file (2026-10-05).
+        if district == .noble { return "贵族区" }
+        return geography?.districts.first { $0.id == district.rawValue }?.name ?? district.rawValue
     }
     static func history(_ id: String) -> String {
         ["shelter": "教会老侧廊的施济铺位，雾夜共用一盏灯。", "dock_bunk": "旧仓房的石拱留下来，船工在木隔间里歇脚。",
