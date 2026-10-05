@@ -1299,10 +1299,13 @@ public sealed class BattlePrototype : MonoBehaviour
         if (battleEnemyId == "memory-leech-primary") {
             StartCoroutine(PresentMemoryLeechCast(memoryLeechHandle,nameDevour)); return;
         }
-        if (battleEnemyId == EnemyBattleIds.ClockGuardPrimary)
-            StartCoroutine(PresentSingleClockGuardTurn(clockGuardHandle));
-        else if (battleEnemyId == EnemyBattleIds.ClockGuardSecondary)
-            StartCoroutine(PresentSingleClockGuardTurn(secondaryClockGuardHandle));
+        if (battleEnemyId == EnemyBattleIds.ClockGuardPrimary || battleEnemyId == EnemyBattleIds.ClockGuardSecondary) {
+            var legacy = battleEnemyId == EnemyBattleIds.ClockGuardPrimary ? clockGuardHandle : secondaryClockGuardHandle;
+            // Same rule as above: a missing or exiting body acknowledges at once instead of
+            // starting the generic turn on it (NullReference, playtest 2026-10-04).
+            if (!IsActiveEnemyHandle(legacy)) { if (NativeCombatEnabled) UnityBattleBridge.ReportCombatContact("enemy:" + intentParts[0]); return; }
+            StartCoroutine(PresentSingleClockGuardTurn(legacy));
+        }
         else
             PresentEnemyAttack();
     }
