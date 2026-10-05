@@ -825,14 +825,7 @@ struct ChapterOneTutorialOverlay: View {
             // Playtest 2026-10-04: 5–8 pages between short fights. Skipping
             // runs the same completion as reading the last page.
             if !isLastPage {
-                Button {
-                    #if DEBUG
-                    NSLog("[MistportGuide] skip tapped cue=%@ page=%d accepts=%d", cue.rawValue, pageIndex, acceptsPageAdvance ? 1 : 0)
-                    #endif
-                    guard acceptsPageAdvance else { return }
-                    acceptsPageAdvance = false
-                    onDismiss()
-                } label: {
+                Button(action: skipDialogue) {
                     Text("跳过对白 ›")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(Color(red: 1.0, green: 0.86, blue: 0.55))
@@ -852,25 +845,37 @@ struct ChapterOneTutorialOverlay: View {
     }
 
     private var dialogueBubble: some View {
-        Button(action: advanceDialogue) {
-            VStack(alignment: .leading, spacing: 7) {
-                dialogueHeader
-                dialogueMessage
-                dialogueFooter
-            }
-            // The cloud silhouette has deep inward curves. Keep every text
-            // row and the next control inside a conservative safe rectangle.
-            .padding(.horizontal, 38)
-            .padding(.top, 24)
-            .padding(.bottom, 12)
-            .frame(width: 326, height: 216, alignment: .topLeading)
-            // Keep the tappable region aligned with the fixed cloud frame.
-            // The action label must not render below the button's hit area.
-            .contentShape(Rectangle())
+        // The bubble itself advances on tap; the footer holds real buttons so
+        // "跳过对白" also lives inside the bubble. The bottom-left skip capsule
+        // never received taps after a battle (playtest 2026-10-05, Q10–Q13),
+        // while the bubble always did.
+        VStack(alignment: .leading, spacing: 7) {
+            dialogueHeader
+            dialogueMessage
+            dialogueFooter
         }
-        .buttonStyle(.plain)
+        // The cloud silhouette has deep inward curves. Keep every text
+        // row and the next control inside a conservative safe rectangle.
+        .padding(.horizontal, 38)
+        .padding(.top, 24)
+        .padding(.bottom, 12)
+        .frame(width: 326, height: 216, alignment: .topLeading)
+        // Keep the tappable region aligned with the fixed cloud frame.
+        // The action label must not render below the button's hit area.
+        .contentShape(Rectangle())
+        .onTapGesture(perform: advanceDialogue)
         .background(dialogueBubbleBackground)
+        .accessibilityAddTraits(.isButton)
         .accessibilityHint(isComplete ? "继续" : "显示完整文字")
+    }
+
+    private func skipDialogue() {
+        #if DEBUG
+        NSLog("[MistportGuide] skip tapped cue=%@ page=%d accepts=%d", cue.rawValue, pageIndex, acceptsPageAdvance ? 1 : 0)
+        #endif
+        guard acceptsPageAdvance else { return }
+        acceptsPageAdvance = false
+        onDismiss()
     }
 
     private var dialogueHeader: some View {
@@ -897,8 +902,23 @@ struct ChapterOneTutorialOverlay: View {
     }
 
     private var dialogueFooter: some View {
-        Group {
+        HStack(spacing: 8) {
+            if isComplete, !isLastPage {
+                Button(action: skipDialogue) {
+                    Text("跳过对白 ›")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color(red: 1.0, green: 0.86, blue: 0.55).opacity(0.9))
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 5)
+                        .background(Capsule().fill(Color.black.opacity(0.35)))
+                        .overlay(Capsule().stroke(Color(red: 1.0, green: 0.75, blue: 0.24).opacity(0.4), lineWidth: 1))
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("chapter-one-guide-skip-inline")
+            }
+            Spacer(minLength: 0)
             if isComplete {
+                Button(action: advanceDialogue) {
                 Text(page.actionTitle)
                     .font(.system(size: isLastPage ? 12 : 11, weight: .bold, design: .rounded))
                     .foregroundStyle(
@@ -920,6 +940,8 @@ struct ChapterOneTutorialOverlay: View {
                         color: Color(red: 1.0, green: 0.62, blue: 0.12).opacity(0.32),
                         radius: 7
                     )
+                }
+                .buttonStyle(.plain)
             } else {
                 Color.clear.frame(height: 1)
             }

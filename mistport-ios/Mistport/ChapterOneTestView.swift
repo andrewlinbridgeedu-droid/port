@@ -2907,6 +2907,15 @@ struct ChapterOneEncounterTestView: View {
         // shelf height.
         .frame(minHeight: 46, maxHeight: 46)
         .frame(maxWidth: .infinity, alignment: .leading)
+        #if DEBUG
+        .simultaneousGesture(SpatialTapGesture().onEnded { value in
+            let supplies = availableBattleSupplyIDs.map { "\($0)=\(session.consumables[$0, default: 0])" }.joined(separator: ",")
+            NSLog("[MistportSupplyRow] tap x=%.0f y=%.0f combatActive=%d outcome=%@ hp=%d/%d shield=%d healBlockUntil=%.1f t=%.1f supplies=%@",
+                  value.location.x, value.location.y, combatIsActive ? 1 : 0, session.outcome.rawValue,
+                  session.playerHP, session.playerMaxHP, session.playerShield,
+                  session.sequenceNineRelics.healingBlockedUntil, battleTime, supplies)
+        })
+        #endif
     }
 
     private var availableBattleSupplyIDs: [String] {
