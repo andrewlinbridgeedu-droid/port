@@ -587,6 +587,9 @@ struct HomeCounterView: View {
     @State private var greeting = ""
     @State private var selectedStaffName: String?
     @State private var selectedTarget: MPCStreetTaskTarget?
+    @State private var neighborVisit: NeighborVisitRef?
+    @State private var streetTarget: MPCStreetTaskTarget?
+    private struct NeighborVisitRef: Identifiable { let id: String }
     private var localTargets: [MPCStreetTaskTarget] {
         MPCStreetTaskCatalog.bountyTargets(game.churchServices.bounties).filter { target in
             if target.placeID == buildingID { return true }
@@ -656,20 +659,30 @@ struct HomeCounterView: View {
                     HomeCounterAction(title: target.title, detail: "通缉问话") { selectedTarget = target }
                 }
                 if buildingID == "board" {
-                    // Playtest 2026-10-04: the board looked empty. Neighbour
-                    // errands are accepted on the street; list today's here.
+                    // The board posts the day's neighbour errands (design §2.3); they can
+                    // be taken here or from the neighbour on the street.
                     let offers = game.newspaperNeighborOffers.filter { !$0.done }
                     ForEach(offers) { offer in
                         let name = MPCNeighborCatalog.neighbor(offer.neighborID)?.name ?? "街坊"
-                        HomeCounterAction(title: "街坊委托 · \(name)", detail: (offer.errand?.request ?? "") + "\n→ 到街上找\(name)交谈") {
-                            greeting = "委托板登记员：\(name)今天托人带话，你在街上走到\(name)面前就能接下。"
+                        HomeCounterAction(title: "街坊委托 · \(name)", detail: (offer.errand?.request ?? "") + "\n→ 在这里接下，或到街上找\(name)") {
+                            neighborVisit = .init(id: offer.neighborID)
                         }
                     }
                     if offers.isEmpty {
                         Text("今天的街坊委托都已完成，明天会有新的。").font(.caption)
                     }
                 }
+                ForEach(MPCStreetTaskCatalog.streetTargets(game.streetTasks).filter { $0.placeID == buildingID }) { target in
+                    if let task = MPCStreetTaskCatalog.streetTask(game.streetTasks.offers.first { $0.id == target.taskID }?.taskID ?? "") {
+                        HomeCounterAction(title: StreetTaskText.kind(target.kind) + " · " + task.title,
+                                          detail: target.id.hasSuffix(":post") ? task.request + "\n→ \(task.copper) 铜，\(task.steps.count) 步" : target.title) {
+                            streetTarget = target
+                        }
+                    }
+                }
         }.sheet(item: $selectedTarget) { target in HomeBountyInteractionView(game: game, target: target) }
+        .sheet(item: $neighborVisit) { visit in HomeNeighborVisit(game: game, neighborID: visit.id) }
+        .sheet(item: $streetTarget) { target in HomeStreetTaskView(game: game, target: target) }
         #if DEBUG
         .task {
             guard ProcessInfo.processInfo.arguments.contains("--home-map-review"),
@@ -717,7 +730,9 @@ struct HomeBountyInteractionView: View {
     private var progress: MPCChurchBountyProgress { game.churchServices.bounties.cases[bounty.id] ?? .init() }
     var body: some View {
         GameArtPage(title: node?.location ?? "教会柜台", subtitle: bounty.title, art: HomeSceneRoom.counter(target.placeID ?? "police").backgroundArt, closeTitle: "返回港城") {
-            if let node {
+            // After the arrest the scene page reopened on its stale interview
+            // (playtest 2026-10-04); say where to go instead.
+            if let node, !progress.pendingTurnIn {
                 Text(node.speaker).font(.headline)
                 Text(node.dialogue)
                 if progress.evidenceIDs.contains(node.id) { Text(node.evidence).foregroundStyle(.secondary) }
@@ -762,7 +777,15 @@ struct HomeBountyInteractionView: View {
                 }
             } else if progress.pendingTurnIn {
                 Text("现场已收押，向教会柜台交付卷宗。")
-                Button("交案并领取报酬") { perform { try game.claimChurchBounty(bounty.id) } }
+                if target.placeID == "church" {
+                    Button("交案并领取报酬") {
+                        perform(success: "已结案：铜币 +\(bounty.copper)，功勋 +\(bounty.merit)。") { try game.claimChurchBounty(bounty.id) }
+                    }
+                }
+            } else if progress.claimed {
+                // Closing a five-step case used to leave a bare 已记录 (playtest 2026-10-04).
+                Text(bounty.closure)
+                Text("已结案 · 报酬 \(bounty.copper) 铜币 / \(bounty.merit) 功勋").foregroundStyle(.secondary)
             }
             if !notice.isEmpty { Text(notice).foregroundStyle(.secondary) }
         }
@@ -779,14 +802,29 @@ struct HomeBountyInteractionView: View {
     }
 }
 
+/// A neighbour met on the home street. The rules only accept errand actions
+/// while this neighbour is the one being talked to.
+struct HomeNeighborVisit: View {
+    @Bindable var game: GameStore
+    let neighborID: String
+    var body: some View {
+        NeighborConversationView(game: game, neighborID: neighborID)
+            .task { try? game.talkToNeighbor(neighborID) }
+            .onDisappear { game.endNeighborConversation() }
+    }
+}
+
 struct HomeTaskChoicesView: View {
     @Bindable var game: GameStore
     let targets: [MPCStreetTaskTarget]
     @State private var selected: MPCStreetTaskTarget?
     @Environment(\.dismiss) private var dismiss
     var body: some View {
-        if let selected { HomeBountyInteractionView(game: game, target: selected) }
-        else {
+        if let selected {
+            if selected.kind == .neighbor, let neighborID = selected.personID { HomeNeighborVisit(game: game, neighborID: neighborID) }
+            else if [.urgentErrand, .jointErrand, .commission].contains(selected.kind) { HomeStreetTaskView(game: game, target: selected) }
+            else { HomeBountyInteractionView(game: game, target: selected) }
+        } else {
             GameArtPage(title: "选择要办的事", subtitle: "港城委托 · 来访登记", art: "HomeCommissionOfficeEmpty20260929", closeTitle: "离开") {
                 Text("把要查的事情告诉柜员。").font(.callout)
                 ForEach(targets) { target in
@@ -872,3 +910,206 @@ final class HomeFrameSampler: NSObject {
     }
 }
 #endif
+
+// MARK: Street tasks (urgent errands, joint errands, city commissions)
+
+/// Names for street-task text; the rules keep ids only.
+enum StreetTaskText {
+    static func kind(_ kind: MPCStreetTaskTarget.Kind) -> String {
+        switch kind {
+        case .commission: "市政委托"
+        case .jointErrand: "联合委托"
+        default: "急件"
+        }
+    }
+    static func kind(_ kind: MPCStreetTask.Kind) -> String {
+        switch kind {
+        case .urgent: "急件"
+        case .joint: "联合委托"
+        case .commission: "市政委托"
+        }
+    }
+    static func target(_ id: String) -> String {
+        if let person = HomeCitizenCatalog.people.first(where: { $0.id == id }) { return person.name }
+        if let building = HomeMapLayout.current.building(id)?.name { return building }
+        return id == "drain" ? "旧排水口" : id
+    }
+    static func item(_ id: String) -> String {
+        MPCCraftingCatalog.all.first { $0.output == id }?.name
+            ?? [MPCCraftingCatalog.salveID: "止痛膏", MPCCraftingCatalog.clothID: "滤布", MPCCraftingCatalog.strapID: "维修绑带", MPCCraftingCatalog.patchID: "修甲片"][id]
+            ?? id
+    }
+    static func action(_ action: MPCStreetStep.Action) -> String {
+        switch action {
+        case .talk: "交谈"
+        case .handOver: "交货"
+        case .answer: "回答"
+        case .battle: "开打"
+        }
+    }
+}
+
+/// A street task met on the home street: the poster before it is taken, then the
+/// current step at its person or place. The rules (MPCStreetTaskLedger) decide
+/// which step is open and what it pays; this page only shows and asks.
+struct HomeStreetTaskView: View {
+    @Bindable var game: GameStore
+    let target: MPCStreetTaskTarget
+    @Environment(\.dismiss) private var dismiss
+    @State private var notice = ""
+    @State private var battle: BattleTicket?
+    private struct BattleTicket: Identifiable { let id: String }
+
+    private var offer: MPCStreetTaskLedger.Offer? { game.streetTasks.offers.first { $0.id == target.taskID } }
+    private var task: MPCStreetTask? { offer?.task }
+    private var here: String { target.personID ?? target.placeID ?? "" }
+
+    var body: some View {
+        GameArtPage(title: task?.title ?? "街头任务", subtitle: StreetTaskText.kind(target.kind) + " · " + StreetTaskText.target(here),
+                    art: HomeSceneRoom.counter(target.placeID ?? "board").backgroundArt, closeTitle: "返回港城") {
+            if let offer, let task {
+                if offer.done {
+                    Text(task.thanks)
+                    Text("已完成 · 报酬 \(task.copper) 铜").foregroundStyle(.secondary)
+                } else if !offer.accepted {
+                    Text(task.request)
+                    Text("\(task.steps.count) 步 · 完成得 \(task.copper) 铜" + (task.kind == .commission ? "" : " · 计入城市贡献")).font(.subheadline)
+                    Text("体力 \(MPCStamina.cost(.errandThreeStep))，第一步时扣除；今天没做完会作废，不扣钱。").font(.footnote).foregroundStyle(.secondary)
+                    Text("第一步：" + task.steps[0].goal + "（" + StreetTaskText.target(task.steps[0].target) + "）").font(.footnote)
+                    Button("接下这件事") { accept { try game.acceptStreetTask(offer.id) } }
+                } else if let step = offer.step {
+                    Text("第 \(offer.stepIndex + 1)/\(task.steps.count) 步 · " + step.goal).font(.headline)
+                    if here == step.target { stepControls(offer, step) }
+                    else { Text("这一步要去找：" + StreetTaskText.target(step.target)).foregroundStyle(.secondary) }
+                }
+            } else {
+                Text("这件事已经过期，或不在今天的委托里。")
+            }
+            if !notice.isEmpty { Text(notice).foregroundStyle(.orange) }
+        }
+        .fullScreenCover(item: $battle) { ticket in
+            if let offer {
+                StreetTaskBattleView(game: game, offerID: offer.id, battleID: ticket.id, onClose: { battle = nil })
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func stepControls(_ offer: MPCStreetTaskLedger.Offer, _ step: MPCStreetStep) -> some View {
+        switch step.action {
+        case .talk:
+            Button("交谈") { run { try await game.streetTalk(offer.id, at: step.target) } }
+        case .handOver:
+            ForEach(step.items.sorted { $0.key < $1.key }, id: \.key) { item, count in
+                Text("需要 \(StreetTaskText.item(item)) ×\(count) · 持有 \(game.chapterOneCampaign.inventory[item, default: 0])")
+            }
+            let stocked = step.items.allSatisfy { game.chapterOneCampaign.inventory[$0.key, default: 0] >= $0.value }
+            Button("交货") { run { try await game.streetHandOver(offer.id, at: step.target) } }.disabled(!stocked)
+            if !stocked { Text("货物不足，先到百工坊制作。").font(.footnote).foregroundStyle(.secondary) }
+        case .answer:
+            if let question = step.question { Text(question).font(.headline) }
+            ForEach(step.choices) { choice in
+                Button(choice.text) {
+                    runAnswer(wrong: choice.explanation) { try await game.streetAnswer(offer.id, at: step.target, choiceID: choice.id) }
+                }
+                .disabled(offer.excludedChoiceIDs.contains(choice.id))
+            }
+        case .battle:
+            Text("一场街头小仗：" + step.pests.map { MPCChurchTowerCatalog.enemyDefinition(id: $0.rawValue + "_street")?.name ?? $0.rawValue }.joined(separator: "、")).font(.footnote)
+            Button("开打") {
+                if let active = offer.activeTicket { battle = .init(id: active) }
+                else { battle = .init(id: "street-" + UUID().uuidString.lowercased()) }
+            }
+        }
+    }
+
+    private func accept(_ action: () throws -> Void) {
+        do { try action(); notice = "已接下。先看任务条，再去找第一步的人。" }
+        catch { notice = "这一步尚未成立。" }
+    }
+    /// Shows the step's line, and the thanks and pay when it was the last step.
+    private func runAnswer(wrong: String?, _ action: @escaping () async throws -> MPCStreetTaskLedger.Progress?) {
+        Task {
+            do {
+                guard let progress = try await action() else { notice = wrong ?? "不对，再想想。"; return }
+                // The done state above already shows the thanks line.
+                notice = progress.line + (progress.reward.map { "\n报酬 +\($0.copper) 铜" + ($0.neighbors.isEmpty ? "" : " · 好感 +1") } ?? "")
+            } catch { notice = game.housingError(error) }
+        }
+    }
+    private func run(_ action: @escaping () async throws -> MPCStreetTaskLedger.Progress) {
+        runAnswer(wrong: nil) { try await action() }
+    }
+}
+
+/// The street fight of a task step; mirrors NeighborPestBattleView.
+struct StreetTaskBattleView: View {
+    @Bindable var game: GameStore
+    let offerID: String
+    let battleID: String
+    let onClose: () -> Void
+    @State private var started = false
+    @State private var finished = false
+    @State private var won = false
+    @State private var skills: [FoolSkillID] = []
+    @State private var reordered = true
+    @State private var configuredSession: MPCChapterOneEncounterSession?
+    @State private var previewSession: MPCChapterOneEncounterSession?
+    @State private var startError = ""
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            if let initial = configuredSession ?? previewSession {
+                ChapterOneEncounterTestView(initialSession: initial,
+                    campaign: game.churchBattleCampaign, playerSequence: game.currentSequence,
+                    battleIsActive: started, automatesSkillSequence: true,
+                    showsStandaloneOpeningBattleButton: false,
+                    onVictory: { result in
+                        guard !finished else { return }
+                        do {
+                            _ = try game.settleStreetBattle(offerID: offerID, ticket: battleID, session: result)
+                            won = true; finished = true
+                        } catch { startError = "结算未完成，请保留本场并重试。" }
+                    }, onExit: {
+                        if started && !finished { try? game.abandonStreetBattle(offerID: offerID, ticket: battleID, defeated: false) }
+                        onClose()
+                    },
+                    onDefeat: {
+                        guard !finished else { return }
+                        try? game.abandonStreetBattle(offerID: offerID, ticket: battleID, defeated: true)
+                        finished = true
+                    },
+                    onRetrySetup: { onClose() },
+                    onSequenceChanged: { skills = $0 },
+                    onSelectActiveRelic: game.selectCampaignActiveRelic,
+                    onSelectPassiveRelic: game.toggleCampaignRelic,
+                    onUseManualMask: { game.recordManualMaskUse(encounterID: initial.encounter.id) },
+                    onConsumeSupply: game.consumeCampaignSupply)
+            }
+            if !started && !finished {
+                ChapterOneBattleSetupOverlay(
+                    availableSkills: MPCChapterOneCatalog.visibleSkills.filter {
+                        game.chapterOneCampaign.unlockedSkillIDs.contains($0.id) && $0.id != .maskedWhisper
+                    }, relics: [], selectedSkillIDs: $skills,
+                    requiresFirstReorder: false, slotCapacity: game.chapterOneLoadoutSlotCapacity,
+                    hasCompletedFirstReorder: $reordered, usesEarlyTutorialLayout: true,
+                    showsStartTutorialHint: false,
+                    onStart: {
+                        game.saveChapterOneBattleLoadout(skills)
+                        Task { do {
+                            configuredSession = try await game.beginStreetBattle(offerID: offerID, ticket: battleID, skills: skills)
+                            started = true
+                        } catch { startError = game.housingError(error) } }
+                    })
+                VStack { HStack { GameArtReturnButton(title: "返回街头") { onClose() }; Spacer() }; Spacer() }.padding()
+            }
+            if !startError.isEmpty { Text(startError).foregroundStyle(.orange).padding().background(.black) }
+            if finished {
+                GameArtBattleResult(won: won, detail: won ? "这一步办妥了，报酬已到账。" : "这一场不算，可以重新准备。", title: "返回街头", action: onClose)
+            }
+        }
+        .preferredColorScheme(.dark).buttonStyle(.plain)
+        .task { if previewSession == nil { previewSession = try? game.streetBattlePreview(offerID: offerID, ticket: battleID) } }
+    }
+}

@@ -1772,6 +1772,7 @@ final class GameStore {
         completedChapterMissionIDs.insert(mission.id)
         venueCoins += earnedCoins
         if wasNewCompletion {
+            recordCityContribution(.mission, receipt: "mission-" + mission.id)
             acting += 1
             grantFirstClearAdvancementIngredient(for: mission)
             _ = chapterOneCampaign.applyChapterMissionProgress(
@@ -3259,6 +3260,7 @@ extension GameStore {
                 state.bountyRelics.grant(caseID: id)
             }
         }
+        if churchServices.bounties.cases[id]?.claimed == true { recordCityContribution(.bounty, receipt: "bounty-" + id) }
     }
 }
 
@@ -4550,6 +4552,12 @@ extension GameStore {
             state.loans.coins = coins
             try settleChurchGear(&state, battleID: ticket, outcome: session.outcome == .victory ? .victory : .defeat)
         }
+        if session.outcome == .victory {
+            recordCityContribution(.eventBattle, receipt: "event-battle-" + ticket)
+            if let event = MPCCityEventCatalog.running(day: pacingDay), cityEvents.status(event.id, day: pacingDay) == .succeeded {
+                recordCityContribution(.eventSuccess, receipt: "event-success-" + event.id)
+            }
+        }
     }
     func abandonCityEvent(ticket: String, defeated: Bool = false) throws {
         var record = try readCityEvents()
@@ -4645,6 +4653,11 @@ extension GameStore {
         _ = churchServicesRevision
         return (try? readNeighbors().ledger) ?? .init()
     }
+    /// Message errands whose asker has been heard; the recipient is lit on the street.
+    var neighborHeardMessages: Set<String> {
+        _ = churchServicesRevision
+        return (try? readNeighbors().heardMessages) ?? []
+    }
     func openNeighborDay() throws {
         var record = try readNeighbors()
         let old = record.ledger
@@ -4723,6 +4736,7 @@ extension GameStore {
             state.loans.coins = coins
             try settleChurchGear(&state, battleID: ticket, outcome: session.outcome == .victory ? .victory : .defeat)
         }
+        if reward != nil { recordCityContribution(.errand, receipt: "errand-" + offerID) }
         return reward
     }
     func abandonNeighborPest(offerID: String, ticket: String, defeated: Bool = false) throws {
@@ -4905,6 +4919,7 @@ extension GameStore {
         let payout = try record.ledger.claim(day: day, today: pacingDay, work: &work.ledger, coins: &coins, inventory: &inventory, usesStamina: true)
         guard let payout else { return nil }
         try updateChurchServices(dailyWork: work, remnants: record, inventory: inventory) { $0.loans.coins = coins }
+        recordCityContribution(.remnant, receipt: "remnant-\(day)")
         return payout
     }
 }
@@ -5183,10 +5198,14 @@ extension GameStore {
         try await housingAction(.eventBattle, receipt: "event-battle-" + ticket) { try beginCityEventBody(eventID: eventID, ticket: ticket, skills: skills) }
     }
     func deliverNeighbor(_ offerID: String) async throws -> MPCNeighborLedger.Reward {
-        try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try deliverNeighborBody(offerID) }
+        let reward = try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try deliverNeighborBody(offerID) }
+        recordCityContribution(.errand, receipt: "errand-" + offerID)
+        return reward
     }
     func answerNeighbor(_ offerID: String, choiceID: String) async throws -> MPCNeighborLedger.Reward? {
-        try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try answerNeighborBody(offerID, choiceID: choiceID) }
+        let reward = try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try answerNeighborBody(offerID, choiceID: choiceID) }
+        if reward != nil { recordCityContribution(.errand, receipt: "errand-" + offerID) }
+        return reward
     }
     func acceptNeighborMessage(_ offerID: String) async throws {
         try await housingAction(.errandThreeStep, receipt: "neighbor-" + offerID) {
@@ -5196,7 +5215,9 @@ extension GameStore {
         }
     }
     func relayNeighbor(_ offerID: String) async throws -> MPCNeighborLedger.Reward {
-        try await housingAction(.errandThreeStep, receipt: "neighbor-" + offerID) { try relayNeighborBody(offerID) }
+        let reward = try await housingAction(.errandThreeStep, receipt: "neighbor-" + offerID) { try relayNeighborBody(offerID) }
+        recordCityContribution(.errand, receipt: "errand-" + offerID)
+        return reward
     }
     func beginNeighborPest(offerID: String, ticket: String, skills: [FoolSkillID]) async throws -> MPCChapterOneEncounterSession {
         try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try beginNeighborPestBody(offerID: offerID, ticket: ticket, skills: skills) }
@@ -5421,3 +5442,148 @@ extension GameStore {
     }
 }
 #endif
+
+
+// MARK: City contribution and street tasks (HOME_MAP_STREET_TASKS_20260929.md §2, §6).
+// The rules in StreetTasks.swift / CityContribution.swift had no App side until
+// 2026-10-04; the home street, the board counters and the newspaper read these.
+extension GameStore {
+    private static let streetTasksKey = "mistport.street-tasks.v1"
+    private static let contributionKey = "mistport.city-contribution.v1"
+    private struct StreetTaskRecord: Codable { var ledger = MPCStreetTaskLedger() }
+    private struct ContributionRecord: Codable { var ledger = MPCCityContributionLedger() }
+
+    private func readStreetTasks() -> StreetTaskRecord {
+        defaults.data(forKey: Self.streetTasksKey).flatMap { try? JSONDecoder().decode(StreetTaskRecord.self, from: $0) } ?? .init()
+    }
+    private func persistStreetTasks(_ record: StreetTaskRecord) {
+        defaults.set(try? JSONEncoder().encode(record), forKey: Self.streetTasksKey)
+        churchServicesRevision += 1
+    }
+    private func readContribution() -> ContributionRecord {
+        defaults.data(forKey: Self.contributionKey).flatMap { try? JSONDecoder().decode(ContributionRecord.self, from: $0) } ?? .init()
+    }
+    private func persistContribution(_ record: ContributionRecord) {
+        defaults.set(try? JSONEncoder().encode(record), forKey: Self.contributionKey)
+        churchServicesRevision += 1
+    }
+
+    var streetTasks: MPCStreetTaskLedger { _ = churchServicesRevision; return readStreetTasks().ledger }
+    var cityContribution: MPCCityContributionLedger { _ = churchServicesRevision; return readContribution().ledger }
+    var cityContributionText: String { MPCCityContribution.progressText(points: cityContribution.points) }
+    /// Short form for the home HUD: tier name, and the next threshold while there is one.
+    var cityContributionLabel: String {
+        let points = cityContribution.points
+        let tier = MPCCityContribution.tier(points: points)
+        return MPCCityContribution.nextTier(points: points).map { "\(tier.name) · 下档\($0.threshold)" } ?? tier.name
+    }
+
+    /// Opens the day's street tasks. A save from before contribution existed converts
+    /// its first clears, closed cases and finished errands once.
+    func openStreetDay() {
+        var contribution = readContribution()
+        if contribution.ledger.migrate(completedMissions: churchTowerMissionNumbers.count, closedBounties: closedBountyIDs.count,
+                                       completedErrands: neighbors.completedErrands) {
+            persistContribution(contribution)
+        }
+        var record = readStreetTasks()
+        let before = record.ledger
+        record.ledger.open(day: pacingDay, contributionPoints: contribution.ledger.points)
+        if record.ledger != before { persistStreetTasks(record) }
+    }
+
+    /// Awards a source once per receipt (the ledger keeps the receipts and the daily caps).
+    @discardableResult
+    func recordCityContribution(_ source: MPCCityContribution.Source, receipt: String) -> Int {
+        var record = readContribution()
+        let added = record.ledger.record(receiptID: receipt, source: source, day: pacingDay)
+        if added > 0 { persistContribution(record) }
+        return added
+    }
+
+    func acceptStreetTask(_ offerID: String) throws {
+        var record = readStreetTasks()
+        try record.ledger.accept(offerID: offerID)
+        persistStreetTasks(record)
+    }
+    private func grantStreetReward(_ reward: MPCStreetTaskLedger.Reward?) throws {
+        guard let reward else { return }
+        if !reward.neighbors.isEmpty {
+            var neighborsRecord = try readNeighbors()
+            for id in reward.neighbors { _ = neighborsRecord.ledger.raiseAffinity(id) }
+            try updateChurchServices(neighbors: neighborsRecord) { _ in }
+        }
+        if let receipt = reward.contributionReceipt { recordCityContribution(.errand, receipt: receipt) }
+    }
+    /// Stamina is charged once per task, on its first step (one receipt per offer).
+    func streetTalk(_ offerID: String, at target: String) async throws -> MPCStreetTaskLedger.Progress {
+        try await housingAction(.errandThreeStep, receipt: "street-" + offerID) {
+            var record = readStreetTasks(), coins = venueCoins
+            let progress = try record.ledger.talk(offerID: offerID, at: target, coins: &coins)
+            persistStreetTasks(record)
+            try updateChurchServices { $0.loans.coins = coins }
+            try grantStreetReward(progress.reward)
+            return progress
+        }
+    }
+    func streetHandOver(_ offerID: String, at target: String) async throws -> MPCStreetTaskLedger.Progress {
+        try await housingAction(.errandThreeStep, receipt: "street-" + offerID) {
+            var record = readStreetTasks(), coins = venueCoins, inventory = chapterOneCampaign.inventory
+            let progress = try record.ledger.handOver(offerID: offerID, at: target, coins: &coins, inventory: &inventory)
+            persistStreetTasks(record)
+            try updateChurchServices(inventory: inventory) { $0.loans.coins = coins }
+            try grantStreetReward(progress.reward)
+            return progress
+        }
+    }
+    /// nil until the right choice; a wrong one is struck out at no cost.
+    func streetAnswer(_ offerID: String, at target: String, choiceID: String) async throws -> MPCStreetTaskLedger.Progress? {
+        try await housingAction(.errandThreeStep, receipt: "street-" + offerID) {
+            var record = readStreetTasks(), coins = venueCoins
+            let progress = try record.ledger.answer(offerID: offerID, at: target, choiceID: choiceID, coins: &coins)
+            persistStreetTasks(record)
+            try updateChurchServices { $0.loans.coins = coins }
+            try grantStreetReward(progress?.reward)
+            return progress
+        }
+    }
+    func streetBattlePreview(offerID: String, ticket: String) throws -> MPCChapterOneEncounterSession {
+        guard let offer = streetTasks.offers.first(where: { $0.id == offerID }) else { throw MPCStreetTaskLedger.Failure.notOffered }
+        let id = MPCStreetTaskCatalog.streetEncounterID(taskID: offer.taskID, step: offer.stepIndex, ticket: ticket)
+        return try MPCChapterOneEncounterSession.start(encounterID: id, party: chapterOneCampaign.party,
+            consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: churchBattleCampaign.loadout)
+    }
+    func beginStreetBattle(offerID: String, ticket: String, skills: [FoolSkillID]) async throws -> MPCChapterOneEncounterSession {
+        try await housingAction(.errandThreeStep, receipt: "street-" + offerID) {
+            var record = readStreetTasks(), loadout = churchBattleCampaign.loadout
+            var legal: [FoolSkillID] = []
+            for skill in skills where skill != .maskedWhisper && chapterOneCampaign.unlockedSkillIDs.contains(skill) && !legal.contains(skill) { legal.append(skill) }
+            loadout.normalSkillIDs = Array(legal.prefix(chapterOneLoadoutSlotCapacity))
+            loadout.talents = hermitTalents; loadout.skillLevels = foolSkillLevels
+            let id = try record.ledger.beginBattle(offerID: offerID, ticket: ticket)
+            let session = try MPCChapterOneEncounterSession.start(encounterID: id, party: chapterOneCampaign.party,
+                consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: loadout)
+            persistStreetTasks(record)
+            try updateChurchServices { try beginChurchGear(&$0, battleID: ticket, loadout: loadout) }
+            return session
+        }
+    }
+    func settleStreetBattle(offerID: String, ticket: String, session: MPCChapterOneEncounterSession) throws -> MPCStreetTaskLedger.Progress? {
+        var record = readStreetTasks(), coins = venueCoins
+        let progress = try record.ledger.settleBattle(offerID: offerID, ticket: ticket, session: session, coins: &coins)
+        persistStreetTasks(record)
+        try updateChurchServices { state in
+            state.loans.coins = coins
+            try settleChurchGear(&state, battleID: ticket, outcome: session.outcome == .victory ? .victory : .defeat)
+        }
+        try grantStreetReward(progress?.reward)
+        return progress
+    }
+    func abandonStreetBattle(offerID: String, ticket: String, defeated: Bool = false) throws {
+        var record = readStreetTasks()
+        guard record.ledger.offers.first(where: { $0.id == offerID })?.activeTicket == ticket else { return }
+        record.ledger.abandonBattle(offerID: offerID, ticket: ticket)
+        persistStreetTasks(record)
+        try updateChurchServices { try settleChurchGear(&$0, battleID: ticket, outcome: defeated ? .defeat : .retreat) }
+    }
+}

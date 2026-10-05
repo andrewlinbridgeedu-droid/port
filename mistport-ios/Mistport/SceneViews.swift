@@ -3,7 +3,6 @@ import MistportCombatCore
 
 struct CityHubView: View {
     @State private var panoramaOffset: CGFloat = 0
-    @State private var tasksExpanded = false
     @State private var trackedTargetID: String?
     /// Height of the bottom bar; the harbour painting ends at its top edge.
     @State private var bottomBarHeight: CGFloat = 0
@@ -13,7 +12,8 @@ struct CityHubView: View {
     let districtName: String
     let nextMissionTitle: String
     let missionProgress: Int
-    let reputation: Int
+    let contributionPoints: Int
+    let contributionLabel: String
     let coins: Int
     let materials: Int
     let clues: Int
@@ -71,7 +71,7 @@ struct CityHubView: View {
                 .allowsHitTesting(false)
 
                 VStack(spacing: 0) {
-                    CityStatusHUD(path: path, sequence: sequence, districtName: districtName, reputation: reputation,
+                    CityStatusHUD(path: path, sequence: sequence, districtName: districtName, contributionPoints: contributionPoints, contributionLabel: contributionLabel,
                                   coins: coins, materials: materials, clues: clues, ingredientCount: ingredientCount,
                                   onSettings: onSettings, onTest: onTest)
                         .padding(.horizontal, 18)
@@ -181,7 +181,6 @@ struct CityHubView: View {
     /// on screen; -MistportHubSnapshot saves the window and its layout to Documents.
     private func debugLabelCheck(in viewport: CGSize) async {
         let arguments = UserDefaults.standard
-        tasksExpanded = arguments.bool(forKey: "MistportHubTasksExpanded")
         let width = panoramaWidth(for: viewport)
         let painting = HarborPainting.rect(in: CGSize(width: width, height: viewport.height))
         if let x = arguments.string(forKey: "MistportHubPanX").flatMap(Double.init) {
@@ -299,48 +298,46 @@ struct CityHubView: View {
               let building = HomeMapLayout.current.building(buildingID)?.name else { return target.title }
         return target.title + "（\(building)）"
     }
+    /// One plaque, one tap: anywhere on it enters the main mission. The
+    /// expandable target list and its chevron were too small to hit
+    /// (user, 2026-10-04); street tasks stay on the map and in the caption.
+    /// " · 在右侧 →" when the tracked target is outside the visible strip of the painting.
+    private func offscreenHint(_ target: MPCStreetTaskTarget, in viewport: CGSize) -> String {
+        let x = HomeMapLayout.current.targetPoint(target)[0]
+        let width = panoramaWidth(for: viewport)
+        let screen = viewport.width / 2 - width / 2 + boundedPanoramaOffset(panoramaOffset + panoramaDrag, in: viewport) + x * viewport.height
+        return screen < 0 ? " · 在左侧 ←" : screen > viewport.width ? " · 在右侧 →" : ""
+    }
     private func taskStrip(in viewport: CGSize) -> some View {
-        VStack(alignment: .leading, spacing: 5) {
-            HStack {
-                Button {
-                    if let target = trackedTarget { center(HomeMapLayout.current.targetPoint(target)[0], in: viewport) }
-                    else { onStory() }
-                } label: {
-                    HStack(spacing: 9) {
-                        // The red wax seal from the old mission plaque; the
-                        // street-task strip lost it on 2026-09-29.
-                        Image("CityMissionWaxSeal")
-                            .resizable().scaledToFit().frame(width: 30, height: 30)
-                            .saturation(0.75).shadow(color: .black.opacity(0.6), radius: 1.5, y: 1)
-                        Text(trackedTarget.map(targetCaption) ?? nextMissionTitle).lineLimit(1)
+        HStack(spacing: 10) {
+            Button(action: onStory) {
+                HStack(spacing: 10) {
+                    Image("CityMissionWaxSeal")
+                        .resizable().scaledToFit().frame(width: 34, height: 34)
+                        .saturation(0.75).shadow(color: .black.opacity(0.6), radius: 1.5, y: 1)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(nextMissionTitle).font(.callout.weight(.semibold)).lineLimit(1)
+                        if let target = trackedTarget {
+                            Text(targetCaption(target) + offscreenHint(target, in: viewport)).font(.caption2).foregroundStyle(.white.opacity(0.78)).lineLimit(1)
+                        }
                     }
-                }.frame(maxWidth: .infinity, alignment: .leading)
-                Button(action: onStamina) {
-                    HStack(spacing: 3) {
-                        HousingLanternIcon(value: staminaValue).frame(width: 24, height: 28)
-                        Text("\(staminaValue)").font(HousingAtlas.digits(12))
-                            .contentTransition(.numericText()).animation(.easeOut(duration: 0.4), value: staminaValue)
-                    }.frame(minHeight: 36)
-                }.accessibilityLabel(HousingAtlas.staminaCaption(staminaValue) + "，体力\(staminaValue)，看看灯火")
-                Button { tasksExpanded.toggle() } label: { Image(systemName: tasksExpanded ? "chevron.up" : "chevron.down").frame(width: 44, height: 36) }
-                    .accessibilityLabel(tasksExpanded ? "收起当前任务" : "展开当前任务，\(streetTargets.count)个目标")
-            }
-            if tasksExpanded {
-                Button("主线 · " + nextMissionTitle, action: onStory)
-                ForEach(streetTargets) { target in
-                    Button(targetCaption(target)) { trackedTargetID = target.id; center(HomeMapLayout.current.targetPoint(target)[0], in: viewport) }
+                    Spacer(minLength: 0)
                 }
+                .frame(maxWidth: .infinity, minHeight: 52, alignment: .leading)
+                .contentShape(Rectangle())
             }
-            if let target = trackedTarget {
-                let x = HomeMapLayout.current.targetPoint(target)[0]
-                let width = panoramaWidth(for: viewport)
-                let screen = viewport.width / 2 - width / 2 + boundedPanoramaOffset(panoramaOffset + panoramaDrag, in: viewport) + x * viewport.height
-                if screen < 0 || screen > viewport.width {
-                    Button { center(x, in: viewport) } label: { Label("任务目标在\(screen < 0 ? "左" : "右")侧", systemImage: screen < 0 ? "arrow.left" : "arrow.right") }
-                }
-            }
-        }.font(.caption).foregroundStyle(.white).padding(.horizontal, 10)
-            .background(.black.opacity(0.68), in: RoundedRectangle(cornerRadius: 10))
+            .buttonStyle(.plain)
+            .accessibilityLabel("主线 \(nextMissionTitle)，进入")
+            Button(action: onStamina) {
+                HStack(spacing: 3) {
+                    HousingLanternIcon(value: staminaValue).frame(width: 24, height: 28)
+                    Text("\(staminaValue)").font(HousingAtlas.digits(12))
+                        .contentTransition(.numericText()).animation(.easeOut(duration: 0.4), value: staminaValue)
+                }.frame(minWidth: 56, minHeight: 44)
+            }.accessibilityLabel(HousingAtlas.staminaCaption(staminaValue) + "，体力\(staminaValue)，看看灯火")
+        }
+        .font(.caption).foregroundStyle(.white).padding(.horizontal, 12).padding(.vertical, 4)
+        .background(.black.opacity(0.68), in: RoundedRectangle(cornerRadius: 10))
     }
 
 }
@@ -351,7 +348,8 @@ private struct CityStatusHUD: View {
     let path: Pathway?
     let sequence: Int
     let districtName: String
-    let reputation: Int
+    let contributionPoints: Int
+    let contributionLabel: String
     let coins: Int
     let materials: Int
     let clues: Int
@@ -449,10 +447,11 @@ private struct CityStatusHUD: View {
                 WalletChip(asset: "RewardReputation", label: "线索", value: clues)
                 WalletChip(asset: "GameNavChurch", label: "演证", value: ingredientCount)
                 VStack(spacing: 2) {
-                    Text("声望").font(.system(size: 9))
-                    Text("\(reputation) · 门槛100").font(.system(size: 11, weight: .bold).monospacedDigit())
+                    Text("贡献").font(.system(size: 9))
+                    Text("\(contributionPoints) · \(contributionLabel)").font(.system(size: 11, weight: .bold).monospacedDigit())
                         .lineLimit(1).minimumScaleFactor(0.7)
                 }.frame(maxWidth: .infinity).foregroundStyle(.yellow)
+                .accessibilityLabel("城市贡献 \(contributionPoints)，\(contributionLabel)")
             }
         }
         .buttonStyle(.plain)
