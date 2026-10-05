@@ -157,7 +157,9 @@ struct CityEventBattleView: View {
                             started = true
                         } catch { startError = game.housingError(error) } }
                     })
-                VStack { HStack { GameArtReturnButton(title: "返回事件板") { onClose() }; Spacer() }; Spacer() }.padding()
+                if (configuredSession ?? previewSession) == nil {
+                    VStack { HStack { GameArtReturnButton(title: "返回事件板") { onClose() }; Spacer() }; Spacer() }.padding()
+                }
             }
             if !startError.isEmpty { Text(startError).foregroundStyle(.orange).padding().background(.black) }
             if finished {
