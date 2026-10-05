@@ -16,6 +16,19 @@ public enum MPCTowerMaterials {
     public static let talon = "material_boneclaw_talon"
     public static let fiber = "material_throat_fiber"
     public static let scale = "material_demon_scale"
+    /// Which tower demon drops a material (for item sources); scale comes from every minion.
+    public static func species(for materialID: String) -> MPCChurchTowerCatalog.Species? {
+        switch materialID {
+        case hide: return .shieldJaw
+        case gland: return .saltSac
+        case membrane: return .backSac
+        case chitin: return .scissor
+        case silk: return .crown
+        case talon: return .boneclaw
+        case fiber: return .goldenThroat
+        default: return nil
+        }
+    }
 
     public static func material(for species: MPCChurchTowerCatalog.Species) -> String {
         switch species {

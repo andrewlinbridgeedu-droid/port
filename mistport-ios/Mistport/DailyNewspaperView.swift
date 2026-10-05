@@ -123,7 +123,11 @@ struct DailyNewspaperView: View {
             row("通缉日刊", destination: .bounties, locked: game.cityServiceIsUnlocked(.church) ? nil : MPCChurchTowerCatalog.lockText) {
                 let offers = game.previewChurchBountyIssue().offerIDs.compactMap(MPCChurchBountyCatalog.bounty(id:))
                     .filter { game.churchServices.bounties.cases[$0.id]?.claimed != true }
-                Text(offers.isEmpty ? "当前没有新的通缉，已接案卷可继续。" : offers.map(\.title).joined(separator: " · "))
+                // Cases past the player's story progress are listed but cannot be taken; say so.
+                let done = game.churchTowerMissionNumbers
+                Text(offers.isEmpty ? "当前没有新的通缉，已接案卷可继续。" : offers.map {
+                    done.contains($0.unlockMission) ? $0.title : "\($0.title)（第 \($0.unlockMission) 关后）"
+                }.joined(separator: " · "))
             }
             row("工坊订单", destination: .workshop, locked: game.cityServiceIsUnlocked(.workshop) ? nil : "完成 Q5 后开放工坊") {
                 Text("可用预算 \(game.workshopOrders.budget) 铜，最多累积 3 天。")

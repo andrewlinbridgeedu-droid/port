@@ -293,26 +293,24 @@ struct HousingSearchView: View {
 
 private struct HousingDistrictMap: View {
     let onSelect: (MPCHousingCatalog.District) -> Void
+    private static let order: [MPCHousingCatalog.District] = [.harbor, .oldArcade, .canal, .church, .highland, .noble]
     var body: some View {
-        GeometryReader { g in
-            let h = g.size.width / HarborPainting.aspect
-            ZStack {
-                Image("CityAutumnDay").resizable().aspectRatio(HarborPainting.aspect, contentMode: .fit)
-                ForEach(HousingArt.geography?.districts ?? []) { district in
-                    if let id = MPCHousingCatalog.District(rawValue: district.id) {
-                        Button { onSelect(id) } label: {
-                            Text(district.name).font(.system(size: 9, weight: .bold)).foregroundStyle(.white)
-                                .padding(5).background(.black.opacity(0.75), in: Capsule())
-                        }.position(x: district.labelAt[0] * h, y: district.labelAt[1] * h)
+        // The labels used to sit on the painting at their map positions and piled up on a
+        // phone (playtest 2026-10-05); a row of chips under the painting reads cleanly.
+        VStack(spacing: 8) {
+            Image("CityAutumnDay").resizable().aspectRatio(HarborPainting.aspect, contentMode: .fit)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(Self.order, id: \.rawValue) { district in
+                        Button { onSelect(district) } label: {
+                            Text(HousingArt.districtName(district)).font(.system(size: 11, weight: .bold)).foregroundStyle(.white)
+                                .padding(.horizontal, 10).padding(.vertical, 6).background(.black.opacity(0.75), in: Capsule())
+                        }.buttonStyle(.plain)
                     }
                 }
-                ForEach(HousingArt.geography?.restrictedAreas ?? []) { area in
-                    Text("贵族区 · 城市贡献度 300 开放").font(.system(size: 9, weight: .semibold)).foregroundStyle(.white)
-                        .padding(4).background(.black.opacity(0.65), in: Capsule())
-                        .position(x: area.labelAt[0] * h, y: area.labelAt[1] * h)
-                }
             }
-        }.aspectRatio(HarborPainting.aspect, contentMode: .fit)
+        }
     }
 }
 
