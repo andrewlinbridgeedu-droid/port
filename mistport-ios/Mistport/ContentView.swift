@@ -227,7 +227,11 @@ struct ContentView: View {
                         focusID: homeFocusID,
                         focusRevision: homeFocusRevision,
                         onStreetTarget: { target in
-                            let choices = target.personID == nil ? [target] : streetTargets.filter { $0.personID == target.personID }
+                            // A place can hold several tasks too (a board poster and a
+                            // commission step both at 委托板, 2026-10-05); offer them all.
+                            let choices = target.personID == nil
+                                ? streetTargets.filter { $0.personID == nil && $0.placeID == target.placeID }
+                                : streetTargets.filter { $0.personID == target.personID }
                             homeDestination = .init(id: target.id, target: target, choices: choices)
                         },
                         onStreetService: openHomeService,

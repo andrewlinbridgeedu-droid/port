@@ -123,7 +123,10 @@ struct CharacterProfileView: View {
                     sectionRibbon
                         .fixedSize(horizontal: false, vertical: true)
                         .layoutPriority(2)
-                    sectionDetail
+                    // The detail band keeps its 184 pt so the portrait stays visible, but
+                    // its content (relic shop, ritual, postal work) is taller than that
+                    // and was simply cut off (playtest 2026-10-05): scroll inside it.
+                    ScrollView(showsIndicators: false) { sectionDetail }
                         .frame(height: 184, alignment: .top)
                         .clipped()
                 }

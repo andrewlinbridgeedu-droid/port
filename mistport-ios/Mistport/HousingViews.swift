@@ -169,16 +169,19 @@ struct HousingSearchView: View {
                     }.frame(maxWidth: .infinity)
                 }.buttonStyle(GameArtButtonStyle())
             }
-            // City contribution is not wired into the App yet, so the noble quarter stays locked here.
-            Button {} label: {
+            // The noble quarter opens at the 雾港的帮手 tier of city contribution (user decision 2026-10-01).
+            let nobleOpen = game.cityContribution.points >= MPCCityContribution.requiredTier(.cityCommission).threshold
+            let nobleHomes = MPCHousingCatalog.lodgings.filter { $0.district == .noble }
+            Button { if nobleOpen { step = .cards(.noble) } } label: {
                 HStack {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("贵族区").font(.headline)
-                        Text("城市贡献度到 300，成了“雾港的帮手”才递得进门牌").font(.caption)
+                        Text(nobleOpen ? "住处 \(nobleHomes.map(\.copperPerDay).min() ?? 0) 铜／日起 · \(districtAvailability(nobleHomes))"
+                             : "城市贡献度到 300，成了“雾港的帮手”才递得进门牌").font(.caption)
                     }
-                    Spacer(); Image(systemName: "lock.fill")
+                    Spacer(); Image(systemName: nobleOpen ? "chevron.right" : "lock.fill")
                 }.frame(maxWidth: .infinity)
-            }.buttonStyle(GameArtButtonStyle()).disabled(true)
+            }.buttonStyle(GameArtButtonStyle()).disabled(!nobleOpen)
         }
     }
     private func districtAvailability(_ homes: [MPCHousingCatalog.Lodging]) -> String {
@@ -315,8 +318,12 @@ private struct HousingInteriorArtwork: View {
                         Button { onDetail(hotspot.title + "：" + hotspot.description) } label: {
                             Image(systemName: "sparkle").foregroundStyle(.white)
                                 .frame(width: 44, height: 44).background(.black.opacity(0.25), in: Circle())
-                        }.accessibilityLabel(hotspot.title)
-                            .position(x: hotspot.at[0] * g.size.width, y: hotspot.at[1] * g.size.height)
+                        }
+                        // The page's GameArtButtonStyle turned these markers into full-width
+                        // plates over the photo (playtest 2026-10-05).
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(hotspot.title)
+                        .position(x: hotspot.at[0] * g.size.width, y: hotspot.at[1] * g.size.height)
                     }
                 }
             }.aspectRatio(1.5, contentMode: .fit)
