@@ -146,7 +146,11 @@ struct DailyNewspaperView: View {
                 ForEach(offers) { offer in
                     Text("\(MPCNeighborCatalog.neighbor(offer.neighborID)?.name ?? "街坊")：\(offer.errand?.request ?? "")")
                 }
-                Text("进入街道，走到人物面前交谈；传话要去收话人处。")
+                ForEach(game.streetTasks.offers.filter { !$0.done }) { offer in
+                    if let task = offer.task { Text("\(StreetTaskText.kind(task.kind)) · \(task.title)：\(task.request)") }
+                }
+                Text(game.cityContributionText).font(.system(size: 12, design: .serif))
+                Text("进入街道，走到人物面前交谈；委托板也能直接接。")
             }
             row("无名残余案", destination: .remnants) {
                 Text(game.todayRemnant?.title ?? "任意通缉结案领奖后，每天开放一个小案。")

@@ -60,7 +60,8 @@ struct ChurchMaintenanceView: View {
                             Text(job.kind == .patrol ? "封口巡检" : "第\(max(1,job.floor-9))–\(job.floor)层维护")
                             Spacer()
                             Text(job.activeBattleID == nil ? "继续核验" : "中断待结")
-                        }.padding(.vertical,13).overlay(alignment:.bottom) { Rectangle().fill(maintenanceGold.opacity(0.5)).frame(height:1) }
+                        }.padding(.vertical,13).contentShape(Rectangle())
+                            .overlay(alignment:.bottom) { Rectangle().fill(maintenanceGold.opacity(0.5)).frame(height:1) }
                     }.buttonStyle(.plain)
                 }
             }
@@ -119,7 +120,8 @@ struct ChurchMaintenanceView: View {
                                 HStack(alignment:.top) {
                                     Text(excluded ? "×" : "◇").foregroundStyle(maintenanceGold)
                                     Text(choice.text).multilineTextAlignment(.leading)
-                                }.frame(maxWidth:.infinity,alignment:.leading).padding(.vertical,10)
+                                }.frame(maxWidth:.infinity,alignment:.leading).padding(.vertical,12)
+                                    .contentShape(Rectangle()) // the whole row answers, not just the glyphs (playtest 2026-10-04)
                                     .overlay(alignment:.bottom) { Rectangle().fill(maintenanceGold.opacity(0.35)).frame(height:1) }
                             }.buttonStyle(.plain).disabled(excluded).opacity(excluded ? 0.5 : 1)
                         }

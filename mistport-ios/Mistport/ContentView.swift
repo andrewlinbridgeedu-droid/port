@@ -31,8 +31,18 @@ struct ContentView: View {
     private struct HomeDestination: Identifiable {
         let id: String
         var target: MPCStreetTaskTarget?
+        /// The person's tasks at the moment of the tap. Recomputing them while the
+        /// sheet is up swapped its page the instant a step completed (2026-10-04).
+        var choices: [MPCStreetTaskTarget] = []
     }
-    private var streetTargets: [MPCStreetTaskTarget] { MPCStreetTaskCatalog.bountyTargets(game.churchServices.bounties) }
+    // Neighbour errands were only reachable through MissionBoardView's walkable
+    // street, which no button opens (playtest 2026-10-04); they belong on the
+    // home street next to the bounty targets.
+    private var streetTargets: [MPCStreetTaskTarget] {
+        MPCStreetTaskCatalog.bountyTargets(game.churchServices.bounties)
+            + MPCStreetTaskCatalog.neighborTargets(game.neighbors, heardMessages: game.neighborHeardMessages)
+            + MPCStreetTaskCatalog.streetTargets(game.streetTasks)
+    }
     private var homeIsActive: Bool {
         let uncovered = scenePhase == .active && presentedSheet == nil && homeDestination == nil && !newspaperPresented
             && !churchPresented && !blackSaltShorePresented && !tavernBountyPresented
@@ -172,7 +182,8 @@ struct ContentView: View {
                         districtName: game.selectedChapterDistrict.name,
                         nextMissionTitle: game.nextChapterMission.map { game.missionLockText($0) ?? $0.title } ?? "本次调查已完成 · 可重访",
                         missionProgress: game.completedMissionCount(in: game.selectedChapterDistrict),
-                        reputation: game.reputation(in: game.selectedChapterDistrict),
+                        contributionPoints: game.cityContribution.points,
+                        contributionLabel: game.cityContributionLabel,
                         coins: game.venueCoins,
                         materials: game.materials,
                         clues: game.clues,
@@ -215,7 +226,10 @@ struct ContentView: View {
                         streetTargets: streetTargets,
                         focusID: homeFocusID,
                         focusRevision: homeFocusRevision,
-                        onStreetTarget: { homeDestination = .init(id: $0.id, target: $0) },
+                        onStreetTarget: { target in
+                            let choices = target.personID == nil ? [target] : streetTargets.filter { $0.personID == target.personID }
+                            homeDestination = .init(id: target.id, target: target, choices: choices)
+                        },
                         onStreetService: openHomeService,
                         onCounter: { if $0 == "cafe" { openHomeService("cafe_keeper") } else { homeDestination = .init(id: $0) } },
                         blackSaltShore: game.churchHasDepartedMistport ? (
@@ -398,7 +412,7 @@ struct ContentView: View {
         .task(id: game.phase) {
             guard game.phase == .cityHub else { return }
             while !Task.isCancelled {
-                if scenePhase == .active { await game.openHousingDay() }
+                if scenePhase == .active { await game.openHousingDay(); try? game.openNeighborDay(); game.openStreetDay() }
                 do { try await Task.sleep(for: .seconds(30)) } catch { return }
             }
         }
@@ -416,8 +430,10 @@ struct ContentView: View {
         }
         .sheet(item: $homeDestination) { destination in
             if let target = destination.target {
-                let matching = target.personID == nil ? [target] : streetTargets.filter { $0.personID == target.personID }
+                let matching = destination.choices.isEmpty ? [target] : destination.choices
                 if matching.count > 1 { HomeTaskChoicesView(game: game, targets: matching) }
+                else if [.urgentErrand, .jointErrand, .commission].contains(target.kind) { HomeStreetTaskView(game: game, target: target) }
+                else if target.kind == .neighbor, let neighborID = target.personID { HomeNeighborVisit(game: game, neighborID: neighborID) }
                 else { HomeBountyInteractionView(game: game, target: target) }
             }
             else if destination.id == "housing" { HousingAgencyView(game: game) }
