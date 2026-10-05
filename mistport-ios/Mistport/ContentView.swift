@@ -224,6 +224,7 @@ struct ContentView: View {
                         onHousing: { homeDestination = .init(id: "housing-home") },
                         homeIsActive: homeIsActive,
                         streetTargets: streetTargets,
+                        commissionScenes: game.streetTasks.scenes,
                         focusID: homeFocusID,
                         focusRevision: homeFocusRevision,
                         onStreetTarget: { target in

@@ -126,8 +126,12 @@ struct CharacterProfileView: View {
                     // The detail band keeps its 184 pt so the portrait stays visible, but
                     // its content (relic shop, ritual, postal work) is taller than that
                     // and was simply cut off (playtest 2026-10-05): scroll inside it.
-                    ScrollView(showsIndicators: false) { sectionDetail }
+                    ScrollView(showsIndicators: false) { sectionDetail.padding(.bottom, 10) }
                         .frame(height: 184, alignment: .top)
+                        // A solid backdrop: the grey detail text sat straight on the portrait's
+                        // black boots and was unreadable (playtest 2026-10-05).
+                        .background(Color(red: 0.055, green: 0.035, blue: 0.10).opacity(0.92),
+                                    in: UnevenRoundedRectangle(bottomLeadingRadius: 18, bottomTrailingRadius: 18))
                         .clipped()
                 }
                 .padding(.horizontal, 14)
@@ -506,10 +510,12 @@ struct CharacterProfileView: View {
                         .font(.subheadline).padding(8)
                         .background(.secondary.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
                     Text(["请选择收件人", "请选择投递街道", "请选择封记"][game.postalJobStep]).font(.caption.bold())
-                    HStack {
+                    // One option per row: three side by side wrapped their titles and the band's
+                    // bottom edge cut them in half (playtest 2026-10-05).
+                    VStack(alignment: .leading, spacing: 6) {
+                        StaminaCostView(activity: .post)
                         ForEach(game.postalJobOptions, id: \.self) { answer in
-                            StaminaCostView(activity: .post)
-            let serial = game.postalJobSerial
+                            let serial = game.postalJobSerial
                             let step = game.postalJobStep
                             Button(answer) { Task { await game.verifyPostalField(answer, serial: serial, step: step) } }
                                 .buttonStyle(GameArtButtonStyle(compact: true))

@@ -42,6 +42,8 @@ struct CityHubView: View {
     var onHousing: () -> Void = {}
     var homeIsActive = true
     var streetTargets: [MPCStreetTaskTarget] = []
+    /// Scenes earned by finished city commissions (MPCStreetTaskLedger.scenes); drawn on the painting.
+    var commissionScenes: [String] = []
     var focusID: String?
     var focusRevision = 0
     private var trackedTarget: MPCStreetTaskTarget? { streetTargets.first { $0.id == trackedTargetID } ?? streetTargets.first }
@@ -131,6 +133,7 @@ struct CityHubView: View {
                 .frame(width: panoramaWidth, height: viewport.height)
 
             let painting = HarborPainting.rect(in: CGSize(width: panoramaWidth, height: viewport.height))
+            CommissionDecalLayer(scenes: commissionScenes, painting: painting, active: homeIsActive)
             let offset = boundedPanoramaOffset(panoramaOffset + panoramaDrag, in: viewport)
             let left = (panoramaWidth / 2 - viewport.width / 2 - offset - painting.minX) / painting.height
             HomeStreetScene(painting: painting, visibleRange: Double(left - 0.035)...Double(left + viewport.width / painting.height + 0.035),
@@ -1129,7 +1132,9 @@ struct HubFeatureView: View {
                 $0.rewardItemIDs.contains(id)
                     && game.completedChapterMissionIDs.contains("old-clock-\($0.number)")
             }
-            let source = missions.isEmpty ? "已收入行囊" : missions.map {
+            // Tower materials drop from a species; say which instead of "已收入行囊".
+            let towerSource = MPCTowerMaterials.species(for: id).map { "深井掉落 · " + $0.name }
+            let source = missions.isEmpty ? (towerSource ?? (category == .material ? "深井掉落" : "已收入行囊")) : missions.map {
                 "第\($0.number)关 · \($0.name)"
             }.joined(separator: "；")
             let usage = id == "consumable_pain_salve" ? "\n进入战斗后，受伤时点击面板中的止痛膏使用。" : ""
@@ -1285,6 +1290,9 @@ func chapterOneInventoryArtName(_ id: String) -> String? {
         case "campaign-item-material_clock_bronze": "ItemOwnerlessSpring"
         case "campaign-item-material_skill_dust": "RewardMaterial"
         case "campaign-item-material_shield_jaw_hide": "ItemShieldJawHide"
+        case "campaign-item-material_demon_scale": "ItemDemonScale"
+        case "campaign-item-material_salt_sac_gland": "ItemSaltSacGland"
+        case "campaign-item-material_throat_fiber": "ItemThroatFiber"
         case "campaign-item-crafted_repair_strap": "ItemRepairStrap"
         case "clock-coffee": "ItemClockCoffee"
         case "fog-sugar": "ItemFogSugar"
@@ -2550,6 +2558,37 @@ private struct AmbientLightLayer: View {
             .frame(width: 360, height: 360)
             .offset(y: 75)
             .blendMode(.screen)
+        }
+    }
+}
+
+
+/// A finished city commission leaves a permanent scene on the home painting
+/// (HOME_MAP_STREET_TASKS_20260929.md §0; decals approved 2026-10-01). The variant
+/// follows the harbour's light and lying snow; coordinates are painting-height units.
+private struct CommissionDecalLayer: View {
+    let scenes: [String]
+    let painting: CGRect
+    let active: Bool
+    private struct Decal { let scene: String; let at: CGPoint; let size: CGFloat; let prefix: String; let hasSnow: Bool }
+    private static let decals = [
+        Decal(scene: "fountain", at: CGPoint(x: 1.05639913, y: 0.5835141), size: 0.29934924, prefix: "CommissionFountainV3", hasSnow: true),
+        Decal(scene: "yard", at: CGPoint(x: 1.56, y: 0.70), size: 0.26, prefix: "CommissionYardV3", hasSnow: false),
+    ]
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: active ? 30 : 3600)) { timeline in
+            let hours = HarborClock.gameHours(at: timeline.date)
+            let light = HarborLight(hour: HarborClock.hour(at: timeline.date))
+            let snow = HarborSnowCover.at(gameHours: hours) > 0.35
+            ForEach(Self.decals.filter { scenes.contains($0.scene) }, id: \.scene) { decal in
+                let time = light.dark > 0.5 ? "Night" : light.sunset > 0.5 ? "Sunset" : "Day"
+                let name = decal.prefix + (snow && decal.hasSnow ? "Snow" : "") + time
+                Image(UIImage(named: name) != nil ? name : decal.prefix + "Day")
+                    .resizable().scaledToFit()
+                    .frame(width: decal.size * painting.height, height: decal.size * painting.height)
+                    .position(x: painting.minX + decal.at.x * painting.height, y: painting.minY + decal.at.y * painting.height)
+                    .allowsHitTesting(false)
+            }
         }
     }
 }
