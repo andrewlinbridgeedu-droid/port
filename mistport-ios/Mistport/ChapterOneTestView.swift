@@ -2915,6 +2915,9 @@ struct ChapterOneEncounterTestView: View {
     }
 
     private func useBattleSupply(_ id: String) {
+        #if DEBUG
+        NSLog("[MistportSupply] tap id=%@ combatActive=%d outcome=%@ hp=%d/%d held=%d campaign=%d", id, combatIsActive ? 1 : 0, session.outcome.rawValue, session.playerHP, session.playerMaxHP, session.consumables[id, default: 0], campaign.inventory[id, default: 0])
+        #endif
         guard combatIsActive, session.outcome == .inProgress else { return }
         let name = MPCChapterOneCatalog.items.first { $0.id == id }?.name ?? "补给"
         var updated = session
@@ -6793,6 +6796,9 @@ struct ChapterOneMissionBridgeView: View {
                     onDefeat: { game.finishChurchLoanBattle(loanBattleID, outcome: .defeat) },
                     wallHintText: game.activeChapterMission.flatMap { game.wallDefeatHint(missionNumber: $0.number) },
                     onRetrySetup: {
+                        #if DEBUG
+                        NSLog("[MistportRetry] retry setup mission=%@ phase=%@", game.activeChapterMissionID ?? "nil", String(describing: battleFlowPhase))
+                        #endif
                         game.finishChurchLoanBattle(loanBattleID, outcome: .retreat)
                         loanBattleID = UUID().uuidString
                         draftSkillIDs = []
@@ -7071,6 +7077,9 @@ struct ChapterOneMissionBridgeView: View {
         // Starting combat is only legal from the setup phase. This prevents a
         // stale gesture or an async entrance completion from carrying a prior
         // mission directly into combat and hiding its setup button.
+        #if DEBUG
+        NSLog("[MistportStart] tapped phase=%@ cue=%@", String(describing: battleFlowPhase), tutorialCue.map { $0.rawValue } ?? "nil")
+        #endif
         guard battleFlowPhase == .setup else { return }
 
         let permitted = Set(availablePrebattleSkills.map(\.id))
@@ -7528,8 +7537,11 @@ struct ChapterOneVictoryReceiptView: View {
         self.onFinished = onFinished
     }
     @State private var didFinish = false
+    // Playtest 2026-10-05: card taps still landing after the last blow pressed
+    // this button before the player saw the rewards (Q11, Q12). Arm it late.
+    @State private var continueIsArmed = false
     private func finish() {
-        guard !didFinish else { return }
+        guard !didFinish, continueIsArmed else { return }
         didFinish = true
         onFinished()
     }
@@ -7610,7 +7622,14 @@ struct ChapterOneVictoryReceiptView: View {
                     }
                     MistportPlaqueButton(title: "继续 · 前往后续", action: finish)
                     .accessibilityIdentifier("chapter-one-victory-continue")
+                    .opacity(continueIsArmed ? 1 : 0.45)
+                    .allowsHitTesting(continueIsArmed)
                     .padding(.top, 14)
+                    .task {
+                        try? await Task.sleep(for: .milliseconds(1_100))
+                        guard !Task.isCancelled else { return }
+                        withAnimation(.easeOut(duration: 0.25)) { continueIsArmed = true }
+                    }
                 }
                 Color.clear.frame(height: 16)
             }.padding(.horizontal, 24).padding(.top, 24)

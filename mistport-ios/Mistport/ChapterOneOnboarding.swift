@@ -826,6 +826,9 @@ struct ChapterOneTutorialOverlay: View {
             // runs the same completion as reading the last page.
             if !isLastPage {
                 Button {
+                    #if DEBUG
+                    NSLog("[MistportGuide] skip tapped cue=%@ page=%d accepts=%d", cue.rawValue, pageIndex, acceptsPageAdvance ? 1 : 0)
+                    #endif
                     guard acceptsPageAdvance else { return }
                     acceptsPageAdvance = false
                     onDismiss()

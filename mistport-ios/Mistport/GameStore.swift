@@ -1936,7 +1936,10 @@ final class GameStore {
         if let trialSkillID = chapterMission?.trialSkillID {
             permittedSkills.insert(trialSkillID)
         }
-        loadout.normalSkillIDs = loadout.normalSkillIDs.filter(permittedSkills.contains)
+        // Chapter one battles show at most four ordinary cards. A fifth card can
+        // reach the saved loadout through the legacy five-slot capacity when a
+        // first clear appends its permanent skill (playtest 2026-10-05, Q12).
+        loadout.normalSkillIDs = Array(loadout.normalSkillIDs.filter(permittedSkills.contains).prefix(chapterOneLoadoutSlotCapacity))
         if mission.districtID == "old-clock", mission.number == 1 {
             loadout.normalSkillIDs = [.sidestepStrike]
         }

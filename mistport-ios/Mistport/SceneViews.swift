@@ -295,11 +295,23 @@ struct CityHubView: View {
     /// A person who keeps a post inside a building can be met at that counter
     /// too; say so, because the case location ("封锁公告处") is not a map label.
     private func targetCaption(_ target: MPCStreetTaskTarget) -> String {
+        // The caption sits under the main-mission title, so name the kind of
+        // street task first; "婚礼的花篮" alone read like the mission's subtitle
+        // (playtest 2026-10-05, shots 488/495).
+        let kind: String = switch target.kind {
+        case .postal: "送信"
+        case .neighbor: "邻里"
+        case .bounty: "通缉"
+        case .remnant: "遗落案卷"
+        case .urgentErrand: "街头急件"
+        case .jointErrand: "合力差事"
+        case .commission: "市政委托"
+        }
         guard let personID = target.personID,
               let name = HomeCitizenCatalog.people.first(where: { $0.id == personID })?.name,
               let buildingID = HomeMapLayout.current.namedPosts.first(where: { $0.who == name })?.building,
-              let building = HomeMapLayout.current.building(buildingID)?.name else { return target.title }
-        return target.title + "（\(building)）"
+              let building = HomeMapLayout.current.building(buildingID)?.name else { return kind + "·" + target.title }
+        return kind + "·" + target.title + "（\(building)）"
     }
     /// One plaque, one tap: anywhere on it enters the main mission. The
     /// expandable target list and its chevron were too small to hit
