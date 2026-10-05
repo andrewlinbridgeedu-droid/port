@@ -81,6 +81,10 @@
         1.55,
         0.52
       ]
+    },
+    {
+      "id": "noble",
+      "name": "贵族区"
     }
   ],
   "restrictedAreas": [

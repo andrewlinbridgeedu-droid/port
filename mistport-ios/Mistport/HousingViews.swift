@@ -217,11 +217,18 @@ struct HousingSearchView: View {
     }
     private func interior(_ id: String) -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            if let home = HousingArt.home(id), let lodging = MPCHousingCatalog.lodging(id) {
+            if let lodging = MPCHousingCatalog.lodging(id) {
+                let home = HousingArt.home(id)
                 Button("‹ 回住处册") { step = .cards(lodging.district) }
-                Text("\(home.name)").font(.title2.bold())
-                HousingInteriorArtwork(homeID: id) { detail = $0 }
-                Text(detail.isEmpty ? "窗边、炉火和门楣，都藏着这间屋子的旧事。" : detail).font(.footnote)
+                Text(home?.name ?? lodging.name).font(.title2.bold())
+                if home != nil {
+                    HousingInteriorArtwork(homeID: id) { detail = $0 }
+                    Text(detail.isEmpty ? "窗边、炉火和门楣，都藏着这间屋子的旧事。" : detail).font(.footnote)
+                } else {
+                    // No interior art for this lodging yet (the noble quarter, 2026-10-05):
+                    // keep the page usable instead of drawing nothing.
+                    Text("这间屋子的画还没挂好，伊蕾娜先凭房册带你看。").font(.footnote)
+                }
                 if lodging.belowRecoveryLineOnly {
                     Text("若钱袋已难以维持食宿，教会会替你留一处铺位。").font(.footnote)
                 } else {
