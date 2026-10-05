@@ -2418,6 +2418,10 @@ final class GameStore {
         guard let data = try? JSONEncoder().encode(purchase) else { return }
         defaults.set(data, forKey: Self.earlyRelicPurchaseKey)
         recoverEarlyRelicPurchase()
+        // Keep the campaign's copper mirror in step with the purse; it drifted
+        // by every salve purchase (playtest 2026-10-05: 680 vs 610).
+        chapterOneCampaign.inventory["currency_copper"] = max(0, chapterOneCampaign.inventory["currency_copper", default: 0] - painSalvePrice)
+        persistChapterProgress()
         preparedChapterOneSession = nil
         preparedChapterOneMissionID = nil
         featureMessage = "已购入止痛膏，战斗中使用可恢复25%生命。"

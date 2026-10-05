@@ -2882,6 +2882,11 @@ struct ChapterOneEncounterTestView: View {
                             Text(isShield ? "获得100护盾" : id == "consumable_pain_salve" ? "恢复25%生命" : "恢复20%生命").foregroundStyle(.white.opacity(0.65))
                         }.font(.system(size: 9, weight: .semibold))
                     }
+                    // Playtest 2026-10-05: taps on the caption or just beside the
+                    // icon did nothing. The whole 46 pt row cell is the target.
+                    .padding(.horizontal, 6)
+                    .frame(minHeight: 46)
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .disabled(!combatIsActive || session.outcome != .inProgress
@@ -7089,6 +7094,11 @@ struct ChapterOneMissionBridgeView: View {
         #if DEBUG
         NSLog("[MistportStart] tapped phase=%@ cue=%@", String(describing: battleFlowPhase), tutorialCue.map { $0.rawValue } ?? "nil")
         #endif
+        // A tap that arrives while the entrance curtain is still finishing
+        // used to be dropped silently (playtest 2026-10-05: Q11/Q12 needed a
+        // second or third tap). The player's intent is clear: close the
+        // curtain and start.
+        if battleFlowPhase == .entrance, tutorialCue == nil { finishEntranceSequence() }
         guard battleFlowPhase == .setup else { return }
 
         let permitted = Set(availablePrebattleSkills.map(\.id))

@@ -333,7 +333,14 @@ struct HomeStreetScene: View {
         return (route[0], 4)
     }
     private func citizen(_ pose: Pose, date: Date, time: Double) -> some View {
-        Button {
+        // Name plates near either screen edge slide inward instead of being
+        // cut in half (playtest 2026-10-05, shots 488/495/506).
+        let screenX = painting.minX + pose.point[0] * painting.height
+        let viewportWidth = max(1, (visibleRange.upperBound - visibleRange.lowerBound - 0.07) * painting.height)
+        let plateHalfWidth = 36.0
+        let plateShift = screenX < plateHalfWidth ? plateHalfWidth - screenX
+            : screenX > viewportWidth - plateHalfWidth ? (viewportWidth - plateHalfWidth) - screenX : 0
+        return Button {
             if let task = pose.tasks.first { onTarget(task) }
             else if pose.person.id == "cafe_keeper" {
                 greet(pose, date: date, time: time)
@@ -355,7 +362,7 @@ struct HomeStreetScene: View {
                     VStack(spacing: 1) {
                         if let kind = pose.tasks.first?.kind { Image(systemName: kind == .postal ? "envelope.fill" : kind == .neighbor ? "bell.fill" : "seal.fill").foregroundStyle(kind == .bounty ? .red : .yellow) }
                         Text(pose.person.name).font(.system(size: 10, weight: .semibold)).fixedSize(horizontal: true, vertical: false).foregroundStyle(.white)
-                    }.padding(3).background(.black.opacity(0.55), in: Capsule()).opacity(pose.tasks.isEmpty || pose.tasks.contains { $0.id == trackedID } ? 1 : 0.55).offset(y: -pose.size * 0.7)
+                    }.padding(3).background(.black.opacity(0.55), in: Capsule()).opacity(pose.tasks.isEmpty || pose.tasks.contains { $0.id == trackedID } ? 1 : 0.55).offset(x: plateShift, y: -pose.size * 0.7)
                 }
             }.frame(width: 44, height: max(44, pose.size)).contentShape(Rectangle())
         }.buttonStyle(.plain).accessibilityLabel("\(pose.person.name)\(pose.tasks.isEmpty ? "，打招呼" : "，任务互动")")
