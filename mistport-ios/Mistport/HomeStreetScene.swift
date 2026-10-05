@@ -1015,7 +1015,7 @@ struct HomeStreetTaskView: View {
                 .disabled(offer.excludedChoiceIDs.contains(choice.id))
             }
         case .battle:
-            Text("一场街头小仗：" + step.pests.map { MPCChurchTowerCatalog.enemyDefinition(id: $0.rawValue + "_street")?.name ?? $0.rawValue }.joined(separator: "、")).font(.footnote)
+            Text("一场街头小仗：" + step.pests.map(\.name).joined(separator: "、")).font(.footnote)
             Button("开打") {
                 if let active = offer.activeTicket { battle = .init(id: active) }
                 else { battle = .init(id: "street-" + UUID().uuidString.lowercased()) }
