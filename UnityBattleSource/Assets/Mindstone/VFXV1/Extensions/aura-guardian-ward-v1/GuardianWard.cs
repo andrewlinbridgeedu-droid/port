@@ -52,8 +52,15 @@ public sealed class GuardianWard : MonoBehaviour, ISpellExtension {
         Vector3 front=Camera.main?(Camera.main.transform.position-transform.position).normalized:Vector3.back;
         front.y=0; if(front.sqrMagnitude<1e-4f)front=Vector3.back; front.Normalize();
         Vector3 right=Vector3.Cross(up,front).normalized;
+        // Size from the body's renderers, so a tall armoured guard is wrapped
+        // whole and a small puppet is not swimming in it.
         Vector3 center=transform.position+up*.05f;
         float rx=.82f, ry=1.22f;
+        if(anchor){
+            bool any=false; var b=new Bounds(anchor.position,Vector3.zero);
+            foreach(var r in anchor.GetComponentsInChildren<Renderer>()){ if(!r || r.GetComponentInParent<GuardianWard>()) continue; if(!any){b=r.bounds;any=true;} else b.Encapsulate(r.bounds); }
+            if(any && b.size.y>.5f){ center=b.center+up*.05f; rx=Mathf.Max(b.extents.x,b.extents.z)*1.12f+.08f; ry=b.extents.y*1.08f+.08f; }
+        }
         float pulse=1-Mathf.Clamp01(hit),flow=.95f+.05f*Mathf.Sin(time*1.7f);
         float breathe=1f+.035f*Mathf.Sin(time*1.3f)+pulse*.08f;
         float loosen=broken?(1-opacity)*.5f:0;

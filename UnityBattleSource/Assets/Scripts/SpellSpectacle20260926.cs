@@ -73,6 +73,8 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         public bool player;
         /// Travelling bodies of a hero form, finished early if the contact comes first.
         public readonly List<Body> launch = new List<Body>();
+        /// The recipient's rendered body, for shells that must wrap it whole (Dome).
+        public Vector3 bodyCentre; public float bodyHalfW, bodyHalfH;
     }
 
     static SpellSpectacle20260926 instance;
@@ -176,7 +178,28 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             targets.Add(playerTarget);
             seeds.Add(StableHash(actor.BattleEnemyId + intent));
         }
-        director.Register(key, profile, style, caster, targets, seeds);
+        var registered = director.Register(key, profile, style, caster, targets, seeds);
+        if (registered != null && style == Style.Support)
+        {
+            var who = supportRecipient ? supportRecipient : actor;
+            if (BodyExtents(who, out var centre, out float hw, out float hh)) { registered.bodyCentre = centre; registered.bodyHalfW = hw; registered.bodyHalfH = hh; }
+        }
+    }
+
+    /// World-space extents of the handle's rendered body (ignores effect children).
+    public static bool BodyExtents(EnemyHandle handle, out Vector3 centre, out float halfW, out float halfH)
+    {
+        centre = Vector3.zero; halfW = halfH = 0f;
+        if (!handle || !handle.EnemyRoot) return false;
+        bool any = false; var b = new Bounds();
+        foreach (var r in handle.EnemyRoot.GetComponentsInChildren<Renderer>())
+        {
+            if (!r || !(r is SkinnedMeshRenderer || r is MeshRenderer) || r.GetComponentInParent<SpellSpectacle20260926>()) continue;
+            if (!any) { b = r.bounds; any = true; } else b.Encapsulate(r.bounds);
+        }
+        if (!any || b.size.y < .3f) return false;
+        centre = b.center; halfW = Mathf.Max(b.extents.x, b.extents.z); halfH = b.extents.y;
+        return true;
     }
 
     /// Immediate enveloping burst for a state that has no contact callback
@@ -1121,6 +1144,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
     {
         var p = cue.profile;
         var frame = new Frame(cam, caster, target, s, rng);
+        frame.bodyCentre = cue.bodyCentre; frame.bodyHalfW = cue.bodyHalfW; frame.bodyHalfH = cue.bodyHalfH;
         var family = cue.cast % 2 == 1 ? p.familyAlt : p.family;
         if (style == Style.Support) family = p.family == Family.Dome ? Family.Dome : Family.Rising;
         // Strike casts open two layers, not three: three broad bands stacked into a wall (2026-10-04).
@@ -1202,9 +1226,11 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
     {
         public Vector3 target, caster, right, up, toCam, dir;
         public float s, side;
+        public Vector3 bodyCentre; public float bodyHalfW, bodyHalfH;
         public Frame(Camera cam, Vector3 caster, Vector3 target, float s, System.Random rng)
         {
             this.target = target; this.caster = caster; this.s = s;
+            bodyCentre = Vector3.zero; bodyHalfW = 0f; bodyHalfH = 0f;
             right = cam.transform.right; up = Vector3.up;
             toCam = -cam.transform.forward; toCam.y *= .35f; toCam.Normalize();
             var d = target - caster; d.y = 0;
@@ -1366,20 +1392,24 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 // An oval shell wrapping the whole body (user, 2026-10-05: 改成一个椭圆的笼罩全身的盾):
                 // meridians of unequal azimuth, span and width, bowed outward, so it reads as a
                 // crystal shroud and never as a wireframe globe or a closed ring.
-                var centre = f.target + f.up * (.05f * s);
-                float rx = R(rng, .95f, 1.1f) * s, ry = R(rng, 1.45f, 1.6f) * s;
+                // Sized from the recipient's rendered body (169.60-style world units; frame.s alone
+                // drew a cage across the whole screen on 170.01).
+                bool measured = f.bodyHalfH > 0f;
+                var centre = measured ? f.bodyCentre + f.up * .04f : f.target + f.up * (.02f * s);
+                float rx = measured ? f.bodyHalfW * 1.18f + .06f : .5f * s, ry = measured ? f.bodyHalfH * 1.1f + .06f : .8f * s;
+                s = Mathf.Clamp(ry * .6f, .35f, 1.4f);
                 float[] az = { -64f, -30f, 6f, 38f, 70f, -98f, 104f };
                 int count = Mathf.Min(az.Length, 4 + layers);
                 for (int k = 0; k < count; k++)
                 {
                     float a = (az[k] + R(rng, -8f, 8f)) * Mathf.Deg2Rad;
                     var dir = (f.right * Mathf.Sin(a) + f.toCam * Mathf.Cos(a)).normalized;
-                    float span = R(rng, .62f, .96f), width = R(rng, .16f, .3f) * s * (k < 5 ? 1f : .7f);
+                    float span = R(rng, .62f, .96f), width = R(rng, .11f, .2f) * s * (k < 5 ? 1f : .7f);
                     float facing = Mathf.Clamp01(Vector3.Dot(dir, f.toCam) * .5f + .6f);
                     Func<float, Vector3> pos = t => { float u = Mathf.Lerp(-span, span, t); return centre + f.up * (ry * u) + dir * (rx * Mathf.Sqrt(Mathf.Max(0f, 1f - u * u))); };
                     var path = Make(48, pos, FacingAcross(pos, f.toCam), t => width * Swell(t, .35f), f.toCam);
                     path.delay = k * .025f; path.rampShift = R(rng, -.12f, .12f); path.tile = 2.4f; path.opacity = .55f + .4f * facing;
-                    path.reveal = 1.35f; path.holdScale = 1.6f;
+                    path.reveal = 1.35f; path.holdScale = 1.0f; path.rigid = true;
                     list.Add(path);
                 }
                 // Two open girdle arcs, offset and unequal: chest and hips.
@@ -1390,7 +1420,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                     var c = centre + f.up * (ry * y);
                     Func<float, Vector3> pos = t => { float a = Mathf.Lerp(a0, a1, t); return c + (f.right * Mathf.Sin(a) + f.toCam * Mathf.Cos(a)) * r; };
                     var path = Make(40, pos, t => f.up, t => (g == 0 ? .11f : .085f) * s * Swell(t, .5f), f.toCam);
-                    path.delay = .04f; path.rampShift = .15f; path.tile = 2.8f; path.reveal = 1.35f; path.holdScale = 1.6f;
+                    path.delay = .04f; path.rampShift = .15f; path.tile = 2.8f; path.reveal = 1.35f; path.holdScale = 1.0f; path.rigid = true;
                     list.Add(path);
                 }
                 break;
