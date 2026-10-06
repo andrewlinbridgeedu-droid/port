@@ -77,7 +77,10 @@ public sealed class OvalLightShield : MonoBehaviour
         }
         if (any && b.size.y > .3f)
         {
-            lastCentre = b.center; lastW = Mathf.Max(b.extents.x, b.extents.z); lastH = b.extents.y;
+            // Width from the torso, not from an outstretched sword: never wider than
+            // 55% of the body height (user, 2026-10-05: Q1 的这个太大了).
+            lastCentre = b.center; lastH = b.extents.y;
+            lastW = Mathf.Min(Mathf.Max(b.extents.x, b.extents.z), lastH * .55f);
         }
         else if (force) { lastCentre = body.position + Vector3.up * 1f; }
     }
@@ -99,13 +102,19 @@ public sealed class OvalLightShield : MonoBehaviour
             if (u >= 1f) { Destroy(gameObject); return; }
         }
         if (life > 0f && t > life) { Destroy(gameObject); return; }
-        float rx = (lastW * 1.22f + .1f) * breathe * grow * (1f + hit * .06f), ry = (lastH * 1.12f + .1f) * breathe * grow;
+        float rx = (lastW * 1.08f + .06f) * breathe * grow * (1f + hit * .06f), ry = (lastH * 1.04f + .06f) * breathe * grow;
+        // Comes and goes: a slow tide of visibility with an occasional quick flicker
+        // (user: 需要忽隐忽现). Never fully gone while the state holds.
+        float tideRate = preset == Preset.Ward ? .55f : 1.1f;
+        float tide = .5f + .5f * Mathf.Sin(t * tideRate * 6.2832f + seed);
+        float flick = Mathf.PerlinNoise(t * (preset == Preset.Ward ? 2.4f : 4.5f), seed) ;
+        float visible = Mathf.Lerp(.18f, 1f, tide * tide) * Mathf.Lerp(.7f, 1f, flick);
         transform.position = lastCentre + Vector3.up * .04f;
         transform.rotation = Quaternion.identity;
         var parentScale = transform.parent ? transform.parent.lossyScale : Vector3.one;
         transform.localScale = new Vector3(2f * rx / Mathf.Max(.001f, parentScale.x), 2f * ry / Mathf.Max(.001f, parentScale.y), 2f * rx / Mathf.Max(.001f, parentScale.z));
         material.SetFloat("_Age", t);
-        material.SetFloat("_Opacity", opacity * fade * (.78f + .3f * hit));
+        material.SetFloat("_Opacity", opacity * fade * visible * (.85f + .35f * hit));
     }
 
     void OnDestroy() { if (material) Destroy(material); }
