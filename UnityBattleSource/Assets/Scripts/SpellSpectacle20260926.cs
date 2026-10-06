@@ -178,6 +178,13 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             targets.Add(playerTarget);
             seeds.Add(StableHash(actor.BattleEnemyId + intent));
         }
+        if (style == Style.Support && profile.id == "enemy-ward")
+        {
+            // Guard / fortify / calibrate: one oval light shield round the body, not bands.
+            var who = supportRecipient ? supportRecipient : actor;
+            if (who && who.EnemyRoot) OvalLightShield.Flash(who.EnemyRoot, OvalLightShield.Preset.Fortify, 2.2f);
+            return;
+        }
         var registered = director.Register(key, profile, style, caster, targets, seeds);
         if (registered != null && style == Style.Support)
         {
@@ -3472,7 +3479,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         // Support semantics.
         ["heal"] = P("heal", Family.Rising, Family.Rising, Style.Support, new[] { "#0a4a3a", "#1ac89a", "#6affc8", "#ffe08a", "#ffffff" }, "#fff0b0", "#ffffff", "#18b88a", "#e0fff4", Mote.Petal, Mote.Spark, Matter.Water, Accent.Lotus, false, 1f, 0.04f),
         ["heal-crimson"] = P("heal-crimson", Family.Rising, Family.Rising, Style.Support, new[] { "#4a0a1a", "#d03a6a", "#ffb0c8", "#ffffff", "#ffe08a" }, "#ffe0b0", "#ffffff", "#d03a6a", "#ffe4ec", Mote.Petal, Mote.Wisp, Matter.Silk, Accent.Lotus),
-        ["enemy-ward"] = P("enemy-ward", Family.Dome, Family.Dome, Style.Support, new[] { "#0a1640", "#1f4fc8", "#3aa8ff", "#ffb83a", "#fff2c8" }, "#ffe0a0", "#ffffff", "#3a7ad0", "#e4f2ff", Mote.Shard, Mote.Wisp, Matter.Crystal, Accent.None),
+        ["enemy-ward"] = P("enemy-ward", Family.Rising, Family.Rising, Style.Support, new[] { "#0a1640", "#1f4fc8", "#3aa8ff", "#ffb83a", "#fff2c8" }, "#ffe0a0", "#ffffff", "#3a7ad0", "#e4f2ff", Mote.Shard, Mote.Wisp, Matter.Crystal, Accent.None),
         ["relic-mask"] = P("relic-mask", Family.Rising, Family.Rising, Style.Support, new[] { "#1a0f3a", "#5a3cc8", "#9a8cff", "#e8e4ff", "#ffd88a" }, "#ffe6a8", "#ffffff", "#5a4ad0", "#eeeaff", Mote.Card, Mote.Wisp, Matter.Smoke, Accent.Orbit),
         ["stone-ward"] = P("stone-ward", Family.Rising, Family.Rising, Style.Support, new[] { "#1a1006", "#6a4a1a", "#d69a3a", "#ffe08a", "#fff8e0" }, "#ffd87a", "#fff6e0", "#c87a2a", "#ffe0b0", Mote.Shard, Mote.Spark, Matter.Crystal, Accent.None),
         ["anchor-ward"] = P("anchor-ward", Family.Rising, Family.Rising, Style.Support, new[] { "#040e1f", "#12386a", "#2a7ac8", "#8ad8ff", "#ffffff" }, "#dff4ff", "#ffffff", "#1a5a9a", "#dcefff", Mote.Shard, Mote.Wisp, Matter.Water, Accent.None, false, 1f, 0.04f),
