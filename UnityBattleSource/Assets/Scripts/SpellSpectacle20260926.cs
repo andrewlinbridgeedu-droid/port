@@ -13,7 +13,7 @@ using UnityEngine;
 /// </summary>
 public sealed class SpellSpectacle20260926 : MonoBehaviour
 {
-    public enum Family { Crescent, Rising, Falling, Surge, Fan, Twin, Curtain, Tide, MirrorCut }
+    public enum Family { Crescent, Rising, Falling, Surge, Fan, Twin, Curtain, Tide, MirrorCut, Dome }
     public enum Style { Light, Strike, Heavy, Support, Control }
     /// Row in SpectacleMatter; each matter has its own edge, darkness, flow and flicker.
     public enum Matter { Filigree = 0, Flame = 1, Water = 2, Crystal = 3, Silk = 4, Ink = 5, Electric = 6, Smoke = 7 }
@@ -1122,7 +1122,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         var p = cue.profile;
         var frame = new Frame(cam, caster, target, s, rng);
         var family = cue.cast % 2 == 1 ? p.familyAlt : p.family;
-        if (style == Style.Support) family = Family.Rising;
+        if (style == Style.Support) family = p.family == Family.Dome ? Family.Dome : Family.Rising;
         // Strike casts open two layers, not three: three broad bands stacked into a wall (2026-10-04).
         int layers = style switch { Style.Heavy => 3, Style.Strike => 2, Style.Light => 2, Style.Support => 3, _ => 2 };
         // The coiling dragon is the subject; keep only one light companion body.
@@ -1357,6 +1357,40 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                     var path = Make(72, pos, t => { float a = Mathf.Lerp(a0, a1, t); return Mathf.Cos(a) * f.right + Mathf.Sin(a) * squash * yAxis; },
                         t => width * Swell(t, .45f), f.toCam);
                     path.delay = k * .03f; path.rampShift = -.1f * k; path.rampSpan = 1.05f; path.tile = 3.2f;
+                    list.Add(path);
+                }
+                break;
+            }
+            case Family.Dome:
+            {
+                // An oval shell wrapping the whole body (user, 2026-10-05: 改成一个椭圆的笼罩全身的盾):
+                // meridians of unequal azimuth, span and width, bowed outward, so it reads as a
+                // crystal shroud and never as a wireframe globe or a closed ring.
+                var centre = f.target + f.up * (.05f * s);
+                float rx = R(rng, .95f, 1.1f) * s, ry = R(rng, 1.45f, 1.6f) * s;
+                float[] az = { -64f, -30f, 6f, 38f, 70f, -98f, 104f };
+                int count = Mathf.Min(az.Length, 4 + layers);
+                for (int k = 0; k < count; k++)
+                {
+                    float a = (az[k] + R(rng, -8f, 8f)) * Mathf.Deg2Rad;
+                    var dir = (f.right * Mathf.Sin(a) + f.toCam * Mathf.Cos(a)).normalized;
+                    float span = R(rng, .62f, .96f), width = R(rng, .16f, .3f) * s * (k < 5 ? 1f : .7f);
+                    float facing = Mathf.Clamp01(Vector3.Dot(dir, f.toCam) * .5f + .6f);
+                    Func<float, Vector3> pos = t => { float u = Mathf.Lerp(-span, span, t); return centre + f.up * (ry * u) + dir * (rx * Mathf.Sqrt(Mathf.Max(0f, 1f - u * u))); };
+                    var path = Make(48, pos, FacingAcross(pos, f.toCam), t => width * Swell(t, .35f), f.toCam);
+                    path.delay = k * .025f; path.rampShift = R(rng, -.12f, .12f); path.tile = 2.4f; path.opacity = .55f + .4f * facing;
+                    path.reveal = 1.35f; path.holdScale = 1.6f;
+                    list.Add(path);
+                }
+                // Two open girdle arcs, offset and unequal: chest and hips.
+                for (int g = 0; g < 2; g++)
+                {
+                    float y = g == 0 ? .36f : -.32f, r = rx * Mathf.Sqrt(1f - y * y);
+                    float a0 = (g == 0 ? -75f : -15f) * Mathf.Deg2Rad, a1 = (g == 0 ? 30f : 100f) * Mathf.Deg2Rad;
+                    var c = centre + f.up * (ry * y);
+                    Func<float, Vector3> pos = t => { float a = Mathf.Lerp(a0, a1, t); return c + (f.right * Mathf.Sin(a) + f.toCam * Mathf.Cos(a)) * r; };
+                    var path = Make(40, pos, t => f.up, t => (g == 0 ? .11f : .085f) * s * Swell(t, .5f), f.toCam);
+                    path.delay = .04f; path.rampShift = .15f; path.tile = 2.8f; path.reveal = 1.35f; path.holdScale = 1.6f;
                     list.Add(path);
                 }
                 break;
@@ -3408,7 +3442,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         // Support semantics.
         ["heal"] = P("heal", Family.Rising, Family.Rising, Style.Support, new[] { "#0a4a3a", "#1ac89a", "#6affc8", "#ffe08a", "#ffffff" }, "#fff0b0", "#ffffff", "#18b88a", "#e0fff4", Mote.Petal, Mote.Spark, Matter.Water, Accent.Lotus, false, 1f, 0.04f),
         ["heal-crimson"] = P("heal-crimson", Family.Rising, Family.Rising, Style.Support, new[] { "#4a0a1a", "#d03a6a", "#ffb0c8", "#ffffff", "#ffe08a" }, "#ffe0b0", "#ffffff", "#d03a6a", "#ffe4ec", Mote.Petal, Mote.Wisp, Matter.Silk, Accent.Lotus),
-        ["enemy-ward"] = P("enemy-ward", Family.Rising, Family.Rising, Style.Support, new[] { "#0a1640", "#1f4fc8", "#3aa8ff", "#ffb83a", "#fff2c8" }, "#ffe0a0", "#ffffff", "#3a7ad0", "#e4f2ff", Mote.Shard, Mote.Wisp, Matter.Crystal, Accent.None),
+        ["enemy-ward"] = P("enemy-ward", Family.Dome, Family.Dome, Style.Support, new[] { "#0a1640", "#1f4fc8", "#3aa8ff", "#ffb83a", "#fff2c8" }, "#ffe0a0", "#ffffff", "#3a7ad0", "#e4f2ff", Mote.Shard, Mote.Wisp, Matter.Crystal, Accent.None),
         ["relic-mask"] = P("relic-mask", Family.Rising, Family.Rising, Style.Support, new[] { "#1a0f3a", "#5a3cc8", "#9a8cff", "#e8e4ff", "#ffd88a" }, "#ffe6a8", "#ffffff", "#5a4ad0", "#eeeaff", Mote.Card, Mote.Wisp, Matter.Smoke, Accent.Orbit),
         ["stone-ward"] = P("stone-ward", Family.Rising, Family.Rising, Style.Support, new[] { "#1a1006", "#6a4a1a", "#d69a3a", "#ffe08a", "#fff8e0" }, "#ffd87a", "#fff6e0", "#c87a2a", "#ffe0b0", Mote.Shard, Mote.Spark, Matter.Crystal, Accent.None),
         ["anchor-ward"] = P("anchor-ward", Family.Rising, Family.Rising, Style.Support, new[] { "#040e1f", "#12386a", "#2a7ac8", "#8ad8ff", "#ffffff" }, "#dff4ff", "#ffffff", "#1a5a9a", "#dcefff", Mote.Shard, Mote.Wisp, Matter.Water, Accent.None, false, 1f, 0.04f),

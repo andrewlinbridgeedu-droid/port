@@ -45,22 +45,48 @@ public sealed class GuardianWard : MonoBehaviour, ISpellExtension {
     }
     void Draw(float time,float opacity,float hit) {
         if(!surface)return;
-        Vector3 right=anchor?anchor.right:Vector3.right,up=Vector3.up;
+        // An oval shell that wraps the whole body (user, 2026-10-05: 改成一个椭圆的笼罩全身的盾).
+        // Meridians of unequal span, width and spacing, so it reads as a living
+        // crystal shroud rather than a wireframe globe; it never closes into rings.
+        Vector3 up=Vector3.up;
         Vector3 front=Camera.main?(Camera.main.transform.position-transform.position).normalized:Vector3.back;
-        Vector3 center=transform.position+up*.30f+front*.20f;
-        float pulse=1-Mathf.Clamp01(hit),flow=.94f+.06f*Mathf.Sin(time*2.1f);
+        front.y=0; if(front.sqrMagnitude<1e-4f)front=Vector3.back; front.Normalize();
+        Vector3 right=Vector3.Cross(up,front).normalized;
+        Vector3 center=transform.position+up*.05f;
+        float rx=.82f, ry=1.22f;
+        float pulse=1-Mathf.Clamp01(hit),flow=.95f+.05f*Mathf.Sin(time*1.7f);
+        float breathe=1f+.035f*Mathf.Sin(time*1.3f)+pulse*.08f;
+        float loosen=broken?(1-opacity)*.5f:0;
         surface.Begin(time,pulse*.35f);
-        // Four open, unequal folds follow the body, never a spherical membrane,
-        // closed perimeter, repeated ribs or a detached display plate.
-        for(int i=0;i<4;i++){
-            float side=i%2==0?-1:1,h=i<2?.42f:.04f;
-            Vector3 start=center+right*side*(i<2?.47f:.23f)+up*(h-.23f);
-            Vector3 end=center+right*side*(i<2?.24f:.06f)+up*(h+.23f+(i%2)*.07f);
-            float loosen=broken?(1-opacity)*.16f:0;
-            start+=right*side*loosen;end+=up*loosen;
-            var tint=new Color(.25f+.22f*pulse,.67f+.15f*pulse,.86f,opacity*(.45f+.3f*pulse));
-            surface.Ribbon(start,start+up*.17f+front*.035f,end+right*side*.11f-front*.025f,end,
-                right+front*.35f,(i<2?.06f:.042f)*flow*(1+pulse*.25f),tint,i*2.19f);
+        float[] azimuth={-62f,-27f,8f,41f,74f,-96f,106f};
+        float[] span={.92f,.78f,.98f,.84f,.72f,.6f,.66f};
+        float[] widths={.16f,.11f,.19f,.13f,.10f,.09f,.08f};
+        const float k=1.3333f; // cubic Bezier reach for a half ellipse
+        for(int i=0;i<azimuth.Length;i++){
+            float a=azimuth[i]*Mathf.Deg2Rad;
+            Vector3 dir=(right*Mathf.Sin(a)+front*Mathf.Cos(a)).normalized;
+            float facing=Mathf.Clamp01(Vector3.Dot(dir,front)*.5f+.65f); // back meridians dimmer
+            float r=rx*breathe*(1+loosen), h=ry*breathe;
+            float lo=-(span[i]), hi=span[i];
+            Vector3 bottom=center+up*(h*lo), top=center+up*(h*hi);
+            Vector3 reach=dir*r*k*Mathf.Sin(Mathf.Acos(Mathf.Clamp(span[i],0,1)))+dir*r*k*(1-span[i]);
+            Vector3 bulge=dir*r*k;
+            Vector3 p1=bottom+bulge*.9f+dir*r*(1-span[i])*.4f, p2=top+bulge*.9f+dir*r*(1-span[i])*.4f;
+            bottom+=dir*r*Mathf.Sqrt(Mathf.Max(0,1-span[i]*span[i]))*.55f; top+=dir*r*Mathf.Sqrt(Mathf.Max(0,1-span[i]*span[i]))*.55f;
+            var tint=new Color(.30f+.22f*pulse,.70f+.14f*pulse,.95f,opacity*facing*(.42f+.3f*pulse));
+            Vector3 across=Vector3.Cross(up,dir).normalized;
+            surface.Ribbon(bottom,p1,p2,top,across+front*.2f,widths[i]*flow*(1+pulse*.3f)*(1-loosen*.5f),tint,i*2.19f);
+        }
+        // Two short, offset girdle arcs round the chest and hips: open, unequal, never a full ring.
+        for(int g=0;g<2;g++){
+            float y=g==0?.38f:-.34f, r=rx*breathe*Mathf.Sqrt(1-(y/ry)*(y/ry))*(1+loosen);
+            float a0=(g==0?-70f:-20f)*Mathf.Deg2Rad, a1=(g==0?35f:95f)*Mathf.Deg2Rad;
+            Vector3 c=center+up*y;
+            Vector3 P(float a){return c+(right*Mathf.Sin(a)+front*Mathf.Cos(a))*r;}
+            float am=(a0+a1)*.5f, q=(a1-a0)*.5f; float kk=1.3333f*Mathf.Tan(q*.5f)/1f;
+            Vector3 t0=(right*Mathf.Cos(a0)-front*Mathf.Sin(a0))*r*kk, t1=(right*Mathf.Cos(a1)-front*Mathf.Sin(a1))*r*kk;
+            var tint=new Color(.5f+.2f*pulse,.82f,1f,opacity*(.30f+.25f*pulse));
+            surface.Ribbon(P(a0),P(a0)+t0,P(a1)-t1,P(a1),up+front*.15f,(g==0?.07f:.055f)*flow,tint,9f+g*3.1f);
         }
         surface.End();
     }
