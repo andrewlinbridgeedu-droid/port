@@ -20,7 +20,7 @@ npm install                       # 安装 Playwright
 npx playwright install chromium   # 下载无头 Chromium；装不上也行，会自动改用本机 Google Chrome
 ```
 
-字体放在 `fonts/`：若随包附带的 `nobel-2026-fonts.zip` 已解压到此处即可；否则运行 `bash scripts/setup.sh` 自动下载（全部为开源字体：思源宋体、霞鹜文楷、马善政楷书、志莽行书、Cormorant Garamond、GFS Didot）。
+字体放在 `fonts/`：若已在本目录解压随包附带的 `nobel-2026-fonts-1.zip`、`nobel-2026-fonts-2.zip` 即可；否则运行 `bash scripts/setup.sh` 自动下载（全部为开源字体：思源宋体、霞鹜文楷、马善政楷书、志莽行书、Cormorant Garamond、GFS Didot）。
 
 > 国内网络若下载慢：`npm config set registry https://registry.npmmirror.com`，
 > 以及 `PLAYWRIGHT_DOWNLOAD_HOST=https://npmmirror.com/mirrors/playwright npx playwright install chromium`。
