@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Nobel 2026 film engine</title>
+<link rel="stylesheet" href="fonts/@fontsource/noto-serif-sc/400.css">
+<link rel="stylesheet" href="fonts/@fontsource/noto-serif-sc/500.css">
+<link rel="stylesheet" href="fonts/@fontsource/noto-serif-sc/600.css">
+<link rel="stylesheet" href="fonts/@fontsource/noto-serif-sc/700.css">
+<link rel="stylesheet" href="fonts/@fontsource/noto-serif-sc/900.css">
+<link rel="stylesheet" href="fonts/lxgw-wenkai-webfont/lxgwwenkai-regular.css">
+<link rel="stylesheet" href="fonts/lxgw-wenkai-webfont/lxgwwenkai-bold.css">
+<link rel="stylesheet" href="fonts/@fontsource/ma-shan-zheng/400.css">
+<link rel="stylesheet" href="fonts/@fontsource/zcool-xiaowei/400.css">
+<link rel="stylesheet" href="fonts/@fontsource/cormorant-garamond/500.css">
+<link rel="stylesheet" href="fonts/@fontsource/cormorant-garamond/600.css">
+<link rel="stylesheet" href="fonts/@fontsource/cormorant-garamond/500-italic.css">
+<link rel="stylesheet" href="fonts/@fontsource/noto-serif/400.css">
+<link rel="stylesheet" href="fonts/@fontsource/noto-serif/400-italic.css">
+<link rel="stylesheet" href="fonts/@fontsource/noto-serif/600.css">
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script type="module">
+import { setup, renderAt } from './core.js';
+const id = new URLSearchParams(location.search).get('v');
+window.renderAt = renderAt;
+setup(id).then(info => { window.__info = info; window.__ready = true; })
+  .catch(e => { window.__error = String(e && e.stack || e); });
+</script>
+</body>
+</html>
