@@ -34,7 +34,7 @@ npm run render:all                # 依次渲染四部
 
 - 并行进程数默认取 CPU 核数的一半，可手动指定：`node engine/render.js physics --workers 8`，再 `bash engine/finish.sh physics 01_物理学奖_以冰为眼`。
 - 只看某一秒的静帧：`node engine/render.js physics --still 30,60,90`（输出到 `build/physics/still_*.jpg`）。
-- 只渲染一段：`node engine/render.js physics --from 40 --to 70`。
+- 只渲染一段（仅供检查画面；`finish.sh` 的音轨总是从 0 秒开始，成片请完整渲染）：`node engine/render.js physics --from 40 --to 70`。
 - 带声音的实时预览（可拖动时间轴）：`npm run preview`，或 `node engine/preview.js chemistry`。
 - 字幕已烧录在画面中；另附外挂字幕 `assets/<片>/subtitles.srt`。
 
