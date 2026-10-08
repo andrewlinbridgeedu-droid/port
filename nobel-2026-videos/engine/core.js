@@ -153,7 +153,7 @@
   function makeGrain() {
     grainTiles = []; for (let k = 0; k < 6; k++) { const c = document.createElement('canvas'); c.width = 480; c.height = 270; const g = c.getContext('2d'); const id = g.createImageData(480, 270); const r = rng(77 + k); for (let i = 0; i < id.data.length; i += 4) { const v = r() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255; } g.putImageData(id, 0, 0); grainTiles.push(c); }
   }
-  function grain(ctx, frame, amt = .045) { if (!grainTiles) makeGrain(); ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = amt; ctx.imageSmoothingEnabled = false; ctx.drawImage(grainTiles[frame % 6], 0, 0, W, H); ctx.restore(); }
+  function grain(ctx, frame, amt = .045) { if (!grainTiles) makeGrain(); ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = amt; ctx.imageSmoothingEnabled = false; ctx.drawImage(grainTiles[Math.floor(frame / 2) % 6], 0, 0, W, H); ctx.restore(); }
   function vignette(ctx, amt = .55, color = '#000') { const g = ctx.createRadialGradient(W / 2, H / 2, H * .35, W / 2, H / 2, H * 1.0); g.addColorStop(0, rgba(color, 0)); g.addColorStop(1, rgba(color, amt)); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
   let bloomC = null, bloomC2 = null;
   function bloom(ctx, canvas, amt = .55, blur = 10, thresh = 'brightness(0.9) contrast(1.6)') {

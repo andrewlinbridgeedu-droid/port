@@ -59,7 +59,7 @@
         glow(ctx, p.x, p.y, r * 2.6, h.col, .55 * h.a * a);
         dot(ctx, p.x, p.y, r, h.col, .95 * h.a * a);
       } else {
-        const base = o.domColor || '#a9cfff';
+        const base = o.colorFn ? o.colorFn(d) : (o.domColor || '#a9cfff');
         dot(ctx, p.x, p.y, Math.max(.7, 2.2 * s), base, (o.domAlpha ?? .55) * a * (o.dim ? o.dim(d, i) : 1));
       }
     }
@@ -304,12 +304,12 @@
       const n = 86 * E.inOut(prog(t, c2 + .3, c2 + 6.5, x => x));
       const c = cam({ yaw: .5 + (t - c2) * .07, pitch: -.32, dist: 2900, fov: 1750, cy: H * .5 + 20 });
       drawArray(ctx, c, { strings: n, alpha: a, domAlpha: .75 });
-      const k = smooth(c2 + .5, c2 + 1.5, t);
+      const k = smooth(c2 + 1.3, c2 + 2.2, t);
       counter(ctx, Math.min(86, n), 230, 300, { alpha: k, size: 96, unit: '根缆绳', align: 'left' });
       counter(ctx, Math.min(5160, Math.round(n / 86 * 5160)), 230, 440, { alpha: k, size: 96, unit: '颗感应球', align: 'left' });
       text(ctx, '热水钻孔 · 冰下 1450—2450 米', 235, 540, { size: 30, font: 'kai', align: 'left', color: '#bcdcff', alpha: k * .9 });
       const ta = smooth(S.cend(2) - 2.4, S.cend(2) - 1, t);
-      term(ctx, '冰立方中微子天文台', 'IceCube Neutrino Observatory · 1 km³', 1470, 930, { alpha: ta, color: CY, size: 40 });
+      term(ctx, '冰立方中微子天文台', 'IceCube Neutrino Observatory · 1 km³', 1480, 820, { alpha: ta, color: CY, size: 40 });
     }
   };
 
@@ -340,10 +340,10 @@
       const s = Math.min(2300, tt * 300);
       if (t > tv && s < 2250) {
         const p = P(s), pb = P(s - 60); const ang = Math.atan2(p.y - pb.y, p.x - pb.x); const L = 120 * c.p(0, 0, 0).s * 1.6;
-        ctx.save(); ctx.globalCompositeOperation = 'lighter';
+        ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 1 - smooth(1400, 2000, s);
         for (let k = 0; k < 6; k++) { const back = L * (1 - k * .12), sp = Math.tan(49 * Math.PI / 180) * back; const ex = p.x - Math.cos(ang) * back, ey = p.y - Math.sin(ang) * back; ctx.strokeStyle = rgba('#7ab8ff', .28 - k * .045); ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(ex - Math.sin(ang) * sp, ey + Math.cos(ang) * sp); ctx.lineTo(p.x, p.y); ctx.lineTo(ex + Math.sin(ang) * sp, ey - Math.cos(ang) * sp); ctx.stroke(); }
         const gr = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, L * 1.3); gr.addColorStop(0, 'rgba(110,170,255,.28)'); gr.addColorStop(.5, 'rgba(90,150,255,.08)'); gr.addColorStop(1, 'rgba(90,160,255,0)'); ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(p.x, p.y); const bx = p.x - Math.cos(ang) * L, by = p.y - Math.sin(ang) * L, sp = Math.tan(49 * Math.PI / 180) * L; ctx.lineTo(bx - Math.sin(ang) * sp, by + Math.cos(ang) * sp); ctx.lineTo(bx + Math.sin(ang) * sp, by - Math.cos(ang) * sp); ctx.closePath(); ctx.fill();
-        ctx.restore(); glow(ctx, p.x, p.y, 22, '#ffffff', 1);
+        ctx.restore(); glow(ctx, p.x, p.y, 22, '#ffffff', 1 - smooth(1500, 2100, s));
         if (s > 200) { const p0 = P(0); line(ctx, [[p0.x, p0.y], [p.x, p.y]], rgba('#ffffff', .7), 1.6); }
       }
       if (t > tv + 1) { const p0 = P(0), p1 = P(Math.min(s, 2200)); line(ctx, [[p0.x, p0.y], [p1.x, p1.y]], rgba('#ffffff', .55), 1.4); }
@@ -420,7 +420,7 @@
       const outHits = trackHits([-700, -600, 200], (() => { const v = [.8, .5, -.2]; const n = Math.hypot(...v); return v.map(x => x / n); })(), Math.max(0, tt - .8), { len: 520 });
       const hits = new Array(DOMS.length);
       for (let i = 0; i < DOMS.length; i++) { if (outHits[i] && tt < 3.3) hits[i] = { ...outHits[i], col: RED, a: outHits[i].a * (1 - smooth(2.6, 3.2, tt)) }; else if (inHits[i]) hits[i] = { ...inHits[i], col: CY }; }
-      drawArray(ctx, c, { hits, domAlpha: .7, dim: d => isOuter(d) ? 1 : .45, domColor: '#9cc2ea' });
+      const og = smooth(.2, 1.4, tt); drawArray(ctx, c, { hits, domAlpha: .75, dim: d => isOuter(d) ? 1 : .4, colorFn: d => isOuter(d) && og > .5 ? AMBER : '#9cc2ea' });
       // 外层高亮
       ctx.save(); ctx.globalCompositeOperation = 'lighter';
       for (let i = 0; i < DOMS.length; i += 2) { const d = DOMS[i]; if (!isOuter(d)) continue; const p = c.p(d.x, d.y, d.z); dot(ctx, p.x, p.y, 2.2 * p.s, AMBER, .45 * smooth(.2, 1.2, tt)); }
@@ -457,8 +457,8 @@
     text(ctx, '2010—2012 年数据 · 能量分布为示意', ox + w / 2, oy + 72, { size: 22, font: 'song', color: '#9fb3cc', alpha: ra });
     // 结论
     const ka = smooth(c1 + .2, c1 + 1.4, t);
-    text(ctx, '来自太阳系之外', W / 2, 860, { size: 56, font: 'song', weight: 700, spacing: .3, color: '#ffffff', alpha: ka, glow: 24, glowColor: CY });
-    text(ctx, '统计显著性：2013 年约 4σ（首批证据）→ 2014 年 5.7σ', W / 2, 922, { size: 24, font: 'song', color: '#bcd0e6', alpha: smooth(c1 + 3, c1 + 4, t) * (1 - smooth(S.d - 1.2, S.d - .4, t)) });
+    text(ctx, '来自太阳系之外', W / 2, 838, { size: 56, font: 'song', weight: 700, spacing: .3, color: '#ffffff', alpha: ka, glow: 24, glowColor: CY });
+    text(ctx, '统计显著性：2013 年约 4σ（首批证据）→ 2014 年 5.7σ', W / 2, 898, { size: 24, font: 'song', color: '#bcd0e6', alpha: smooth(c1 + 3, c1 + 4, t) * (1 - smooth(S.d - 1.2, S.d - .4, t)) });
   };
 
   // 8. 追溯源头
@@ -514,8 +514,9 @@
         // 伽马被挡、中微子逃逸
         for (let k = 0; k < 6; k++) { const a = k / 6 * 6.28 + .3; const u = ((t - c2) * .5 + k / 6) % 1; const r = u * 90; glow(ctx, gx + Math.cos(a) * r, gy + Math.sin(a) * r * .6, 10, GOLD, ga * (1 - smooth(.6, 1, u))); }
         for (let k = 0; k < 5; k++) { const a = k / 5 * 6.28 + 1; const u = ((t - c2) * .35 + k / 5) % 1; const r = u * 520; glow(ctx, gx + Math.cos(a) * r, gy + Math.sin(a) * r * .7, 16, CY, ga * (1 - u)); }
-        term(ctx, '活动星系 NGC 1068（M77）', '约 4700 万光年 · 2022 年 · 4.2σ', 1450, 380, { alpha: ga * smooth(c2 + .5, c2 + 1.5, t), color: CY, size: 38 });
-        text(ctx, '伽马射线困于尘埃，中微子破茧而出', 1450, 500, { size: 32, font: 'kai', color: '#d6ecff', alpha: ga * smooth(c2 + 1.5, c2 + 2.5, t) });
+        term(ctx, '活动星系 NGC 1068（M77）', 'active galaxy · Seyfert II', 1450, 380, { alpha: ga * smooth(c2 + .5, c2 + 1.5, t), color: CY, size: 38 });
+        text(ctx, '约 4700 万光年 · 2022 年 · 4.2σ', 1450, 478, { size: 26, font: 'song', color: '#a9d8f5', alpha: ga * smooth(c2 + 1, c2 + 2, t) });
+        text(ctx, '伽马射线困于尘埃，中微子破茧而出', 1450, 540, { size: 32, font: 'kai', color: '#d6ecff', alpha: ga * smooth(c2 + 1.5, c2 + 2.5, t) });
       }
       if (mw > 0) {
         GLFX.layer(ctx, 'milkyway', { T: t, A: 1.1 * mw, TILT: -.18, Y0: .03, C1: [0, 0, 0] });
@@ -554,7 +555,8 @@
     const aC = smooth(c2 - .3, c2 + .8, t);
     if (aC > 0) {
       const c = cam({ yaw: t * .05, pitch: -1.5707, dist: 14000, fov: 5200, cy: H * .46 });
-      ctx.save(); ctx.globalAlpha = aC; drawArray(ctx, c, { domAlpha: .9, domColor: '#bfe6ff' }); ctx.restore();
+      ctx.save(); ctx.globalAlpha = aC; drawArray(ctx, c, { domAlpha: 1, domColor: '#d6f1ff' }); ctx.restore();
+      ctx.save(); ctx.globalCompositeOperation = 'lighter'; STRINGS.forEach((st, i) => { const p = c.p(st.x, 0, st.z); glow(ctx, p.x, p.y, 16, CY, aC * (.35 + .25 * Math.sin(t * 1.5 + i))); }); ctx.restore();
       ctx.save(); ctx.globalCompositeOperation = 'lighter';
       for (let k = 0; k < 4; k++) { ctx.strokeStyle = rgba(CY, (.25 - k * .05) * aC); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(W / 2, H * .46, 250 + k * 34 + 6 * Math.sin(t + k), 0, 7); ctx.stroke(); }
       ctx.restore();
@@ -574,5 +576,5 @@
     });
   };
 
-  FILM({ id: 'physics', scenes, accent: '#bfe6ff', brand: 'NOBEL PRIZE 2026 · PHYSICS', chapters: { messengers: [1, '宇宙的信使'], ice: [2, '以冰为眼'], flash: [3, '一闪蓝光'], shield: [4, '以地球为盾'], discovery: [5, '天外来客'], sources: [6, '追本溯源'], window: [7, '新的窗口'] }, noPush: ['title', 'end'], post: { bloom: .55, vignette: .55, grain: .05 } });
+  FILM({ id: 'physics', scenes, accent: '#bfe6ff', brand: 'NOBEL PRIZE 2026 · PHYSICS', chapters: { messengers: [1, '宇宙的信使'], ice: [2, '以冰为眼'], flash: [3, '一闪蓝光'], shield: [4, '以地球为盾'], discovery: [5, '天外来客'], sources: [6, '追本溯源'], window: [7, '新的窗口'] }, noPush: ['title', 'end'], post: { bloom: .55, vignette: .55, grain: .035 } });
 })();
