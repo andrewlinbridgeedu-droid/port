@@ -1,7 +1,7 @@
 """程序化配乐与音效，并与解说混音。
 
 用法: python3 engine/score.py <film>
-输入: build/<film>/timeline.json, build/<film>/narration.wav
+输入: assets/<film>/timeline.json, build/<film>/narration.wav
 输出: build/<film>/music.wav（配乐+音效）, build/<film>/mix.wav（最终混音，48 kHz 立体声）
 """
 import json, os, sys
@@ -11,7 +11,7 @@ import scipy.signal as sg
 SR = 48000
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 film = sys.argv[1]
-TL = json.load(open(f'{ROOT}/build/{film}/timeline.json'))
+TL = json.load(open(f'{ROOT}/assets/{film}/timeline.json'))
 TOTAL = TL['total']
 N = int((TOTAL + 2) * SR)
 SC = {s['id']: s for s in TL['scenes']}

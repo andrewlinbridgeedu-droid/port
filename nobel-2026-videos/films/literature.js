@@ -4,7 +4,7 @@
   'use strict';
   const { W, H, clamp, lerp, inv, smooth, E, prog, env, rng, hash, glow, dot, text, vtext, rgba, mix, cam, line, partial, fbm, noise3, font, measure } = MP;
   const PAPER = '#efe6d4', INK = '#1a1612', INK2 = '#3a3027', INK3 = '#6e6252', INK4 = '#a39682', RED = '#b8321e', RED2 = '#c8321e', GOLD = '#b08a3e', HONEY = '#c48f2a', UMBER = '#1e140d';
-  const GK = '"FreeSerif"'; // 多调希腊文：项目字体缺字，改用系统 FreeSerif
+  const GK = '"GFS Didot", "FreeSerif"'; // 多调希腊文：GFS Didot（开源，支持多调符号；月形 sigma 以形同的 C 代替）
   const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
   const OFF = [mk(W, H), mk(W, H), mk(W, H), mk(W, H)];
   const TEX = {};
@@ -135,6 +135,8 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
     for (let i = 0; i <= n; i++) { const a = i / n * TAU; const r = blobR(a, seed, g, jag); const px = x + Math.cos(a) * rx * r, py = y + Math.sin(a) * ry * r; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
     ctx.closePath();
   }
+  // 柔边绘制：用阴影偏移实现真正的高斯模糊（Chromium 的 filter: blur 在大半径时会出现块状）
+  function soft(g, r, color, fn) { const m = g.getTransform(); const sc = Math.hypot(m.a, m.b) || 1; const dx = 12000 / sc; g.save(); g.translate(dx, 0); g.shadowColor = color; g.shadowBlur = r * 2; g.shadowOffsetX = -m.a * dx; g.shadowOffsetY = -m.b * dx; g.fillStyle = '#000'; g.strokeStyle = '#000'; fn(g); g.restore(); }
   function inPoly(x, y, P) { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) { if ((P[i][1] > y) !== (P[j][1] > y) && x < (P[j][0] - P[i][0]) * (y - P[i][1]) / (P[j][1] - P[i][1]) + P[i][0]) c = !c; } return c; }
   // 墨晕（静态纹理按比例放大，模拟在宣纸上洇开）
   function blot(ctx, k, x, y, r, a, o = {}) { if (a <= 0 || r <= 1) return; const B = (o.color ? TEX.blotC[k % 4][o.color] || (TEX.blotC[k % 4][o.color] = tint(TEX.blot[k % 4], o.color)) : TEX.blotInk[k % 4]); ctx.save(); ctx.globalAlpha = clamp(a); if (o.mode) ctx.globalCompositeOperation = o.mode; ctx.translate(x, y); ctx.rotate(o.rot ?? k * 1.3); ctx.drawImage(B, -r, -r, r * 2, r * 2); ctx.restore(); }
@@ -171,7 +173,7 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
 
   // ---------- 1. 纸草残片：萨福残篇 130（古抄本式大写连写、月形 sigma） ----------
   const PAP = { cx: 960, cy: 540, hw: 530, hh: 330, seed: 4.2 };
-  const GLINES = ['ΕΡΟϹΔΗΥΤΕΜΟΛΥϹΙ', 'ΜΕΛΗϹΔΟΝΕΙ', 'ΓΛΥΚΥΠΙΚΡΟΝΑΜΑ', 'ΧΑΝΟΝΟΡΠΕΤΟΝ'];
+  const GLINES = ['ΕΡΟCΔΗΥΤΕΜΟΛΥCΙ', 'ΜΕΛΗCΔΟΝΕΙ', 'ΓΛΥΚΥΠΙΚΡΟΝΑΜΑ', 'ΧΑΝΟΝΟΡΠΕΤΟΝ'];
   const GADV = 55, GX0 = 572, GY0 = 400, GLH = 92, GSIZE = 60;
   const LETTERS = []; GLINES.forEach((s, li) => [...s].forEach((ch, i) => { const k = LETTERS.length; LETTERS.push({ ch, li, i, k, x: GX0 + i * GADV + (hash(k, 3) - .5) * 6, y: GY0 + li * GLH + (hash(k, 4) - .5) * 5, rot: (hash(k, 5) - .5) * .08, s: .93 + hash(k, 6) * .12, a: .70 + hash(k, 7) * .26 }); }));
   // 缺口（前四个对应方括号）
@@ -183,7 +185,7 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
     { x: 1330, y: 296, rx: 30, ry: 20, g: .6, seed: 7.7 }, { x: 540, y: 772, rx: 36, ry: 22, g: .5, seed: 8.8 }, { x: 1170, y: 784, rx: 22, ry: 15, g: .7, seed: 9.9 }, { x: 1440, y: 640, rx: 18, ry: 26, g: .5, seed: 11.1 }
   ];
   // 残行的墨迹痕（无法辨读的残笔）
-  const TRACES = (() => { const r = rng(61); const a = []; const al = 'ΑΒΓΔΕΗΘΙΚΛΜΝΞΟΠΡϹΤΥΦΧΩ'; for (const [y, top] of [[312, false], [768, true]]) for (let i = 0; i < 15; i++) { if (r() < .3) continue; a.push({ x: GX0 + i * GADV + (r() - .5) * 8, y: y + (r() - .5) * 6, ch: al[Math.floor(r() * al.length)], top, cut: .25 + r() * .35, a: .45 + r() * .4 }); } return a; })();
+  const TRACES = (() => { const r = rng(61); const a = []; const al = 'ΑΒΓΔΕΗΘΙΚΛΜΝΞΟΠΡCΤΥΦΧΩ'; for (const [y, top] of [[312, false], [768, true]]) for (let i = 0; i < 15; i++) { if (r() < .3) continue; a.push({ x: GX0 + i * GADV + (r() - .5) * 8, y: y + (r() - .5) * 6, ch: al[Math.floor(r() * al.length)], top, cut: .25 + r() * .35, a: .45 + r() * .4 }); } return a; })();
   const CHIPS = (() => { const r = rng(91); const a = []; for (let i = 0; i < 70; i++) { const h = Math.floor(r() * 4); a.push({ h, ang: r() * TAU, ts: 5.6 + r() * 5.8, dur: 1.8 + r() * 1.6, sz: 3 + r() * 7, rot: r() * 6, vr: (r() - .5) * 6, dx: (r() - .5) * 60, sh: r() }); } return a; })();
 
   // 漂浮诗行（萨福残篇 130 的意译，缺处即方括号）
@@ -205,12 +207,10 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
       g.save(); g.translate(L.x, L.y); g.rotate(L.rot); g.scale(L.s, L.s * 1.04); g.globalAlpha = L.a * ap * (o.letterAlpha ?? 1);
       g.fillStyle = o.letterColor ? o.letterColor(L) : '#2b1a0e'; g.shadowColor = 'rgba(43,26,14,.55)'; g.shadowBlur = 2.5; g.fillText(L.ch, 0, 0); g.restore();
     }
-    for (const tr of TRACES) drawTrace(g, tr);
+    const tw = o.traceAlpha ?? 1; if (tw > 0) for (const tr of TRACES) { g.save(); g.globalAlpha = tw; drawTrace(g, tr); g.restore(); }
     // 破洞：先压暗边缘，再挖空
     const er = o.erode ?? 0;
-    g.save(); g.filter = 'blur(6px)'; g.fillStyle = o.rim || 'rgba(88,58,30,.36)';
-    HOLES.forEach(h => { const k = 1 + h.g * er; blobPath(g, h.x, h.y, h.rx * k * 1.12 + 6, h.ry * k * 1.12 + 6, h.seed, er); g.fill(); });
-    g.restore();
+    soft(g, 6, o.rim || 'rgba(88,58,30,.36)', g => HOLES.forEach(h => { const k = 1 + h.g * er; blobPath(g, h.x, h.y, h.rx * k * 1.12 + 6, h.ry * k * 1.12 + 6, h.seed, er); g.fill(); }));
     g.globalCompositeOperation = 'destination-out'; g.fillStyle = '#000';
     HOLES.forEach(h => { const k = 1 + h.g * er; blobPath(g, h.x, h.y, h.rx * k, h.ry * k, h.seed, er); g.fill(); });
     if (o.burn) o.burn(g);
@@ -220,9 +220,9 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
   // 投影（同样挖出破洞，边缘柔化）
   function papShadow(er, dx = 12, dy = 24) {
     const c = OFF[2], g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.filter = 'none'; g.clearRect(0, 0, W, H);
-    g.drawImage(TEX.papShadow, dx, dy); g.globalCompositeOperation = 'destination-out'; g.filter = 'blur(9px)'; g.fillStyle = '#000';
-    HOLES.forEach(h => { const k = 1 + h.g * er; blobPath(g, h.x + dx, h.y + dy, h.rx * k * .92, h.ry * k * .9, h.seed, er, 60, .5); g.fill(); });
-    g.filter = 'none'; g.globalCompositeOperation = 'source-over'; return c;
+    g.drawImage(TEX.papShadow, dx, dy); g.globalCompositeOperation = 'destination-out';
+    soft(g, 9, '#000', g => HOLES.forEach(h => { const k = 1 + h.g * er; blobPath(g, h.x + dx, h.y + dy, h.rx * k * .92, h.ry * k * .9, h.seed, er, 60, .5); g.fill(); }));
+    g.globalCompositeOperation = 'source-over'; return c;
   }
   function holeR(h, er) { return { rx: h.rx * (1 + h.g * er), ry: h.ry * (1 + h.g * er) }; }
 
@@ -238,7 +238,7 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
     const fx = lerp(960, 610, shift), fy = lerp(500, 470, intro) + 0 * shift, frot = lerp(-.05, -.025, intro);
     const fa = smooth(.2, 2.4, t);
     const er = E.inOut(prog(t, 5.6, 11.2, x => x));
-    const F = composePapyrus(t, { erode: er, write: L => smooth(1.2 + L.k * .055, 1.5 + L.k * .055, t) });
+    const F = composePapyrus(t, { erode: er, write: L => smooth(1.2 + L.k * .055, 1.5 + L.k * .055, t), traceAlpha: smooth(3.4, 4.4, t) });
     const M = (x, y) => { const dx = (x - 960) * fs, dy = (y - 540) * fs; const c = Math.cos(frot), s = Math.sin(frot); return [fx + dx * c - dy * s, fy + dx * s + dy * c]; };
     // 投影 + 残片
     ctx.save(); ctx.translate(fx, fy); ctx.rotate(frot); ctx.scale(fs, fs); ctx.translate(-960, -540);
@@ -273,7 +273,7 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
       const wa = smooth(tLift2 + .2 + k * .35, tLift2 + 1.4 + k * .35, t) * .9;
       if (wa > 0 && POEM[k]) { const [l, r] = POEM[k]; if (l) text(ctx, l, cx - gap - 26, cy, { size: 36, font: 'song', weight: 300, color: INK2, alpha: wa, align: 'right', spacing: .18 }); if (r) text(ctx, r, cx + gap + 26, cy, { size: 36, font: 'song', weight: 300, color: INK2, alpha: wa, align: 'left', spacing: .18 }); }
       ctx.save(); ctx.translate(cx, cy); ctx.rotate(rot);
-      if (lu > 0) { ctx.save(); ctx.globalAlpha = .22 * lu; ctx.fillStyle = 'rgba(90,40,20,1)'; ctx.filter = 'blur(6px)'; ctx.fillRect(-gap - 4, -hh / 2 + 14, 8, hh); ctx.fillRect(gap - 4, -hh / 2 + 14, 8, hh); ctx.restore(); }
+      if (lu > 0) { ctx.save(); ctx.globalAlpha = .22 * lu; soft(ctx, 6, 'rgba(90,40,20,1)', g => { g.fillRect(-gap - 4, -hh / 2 + 14, 8, hh); g.fillRect(gap - 4, -hh / 2 + 14, 8, hh); }); ctx.restore(); }
       bracket(ctx, -gap, 0, hh, -1, bu, { w: lerp(4.4 * fs, 4.2, lu) });
       bracket(ctx, gap, 0, hh, 1, bu, { w: lerp(4.4 * fs, 4.2, lu) });
       ctx.restore();
@@ -288,7 +288,7 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
     // 洇开的墨：每个字从中心向外晕染出来
     const F = OFF[1], g = F.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.clearRect(0, 0, W, H);
     const Mk = OFF[2], mg = Mk.getContext('2d'); mg.setTransform(1, 0, 0, 1, 0, 0); mg.globalCompositeOperation = 'source-over'; mg.globalAlpha = 1; mg.clearRect(0, 0, W, H);
-    T.cx.forEach((x, i) => { const u = E.out(prog(t, .25 + i * .3, 2.2 + i * .3, x => x)); blot(mg, i, x, T.y, 30 + 200 * u, 1, { rot: i * 2.1 }); });
+    T.cx.forEach((x, i) => { const u = E.out(prog(t, .25 + i * .3, 2.2 + i * .3, x => x)); if (u > 0) blot(mg, i, x, T.y, 230 * u, 1, { rot: i * 2.1 }); });
     g.drawImage(T.canvas, 0, 0); g.globalCompositeOperation = 'destination-in'; g.drawImage(Mk, 0, 0); g.globalCompositeOperation = 'source-over';
     // 水痕
     T.cx.forEach((x, i) => { const u = E.out(prog(t, .25 + i * .3, 2.6 + i * .3, x => x)); blot(ctx, i + 1, x, T.y + 6, 40 + 200 * u, .045 * (1 - .8 * smooth(2.2, 4.5, t)) * u, { rot: i * 1.4 + 2, color: '#5a4a38', mode: 'multiply' }); });
@@ -357,8 +357,9 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
     const t = S.t, c1 = S.cue(1);
     paper(ctx); motes(ctx, t + 60, .7);
     const tB = c1 - .6; const mv = E.inOut(prog(t, tB, tB + 1.4, x => x));
-    // 名字
+    // 名字（身后一团极淡的墨晕，缓缓洇开）
     const na = smooth(.5, 1.8, t);
+    blot(ctx, 3, W / 2, lerp(430, 175, mv), lerp(160, 520, E.out(prog(t, .3, 7, x => x))) * lerp(1, .55, mv), .032 * na * (1 - mv * .6), { color: '#6a5a48', mode: 'multiply', rot: .7 });
     const ny = lerp(420, 168, mv), nsz = lerp(116, 54, mv);
     ctx.save(); ctx.globalAlpha = na; ctx.fillStyle = RED; const rw = lerp(70, 40, mv) * E.out(prog(t, .6, 2, x => x)); ctx.fillRect(W / 2 - rw / 2, ny - nsz * .95 - 6, rw, 2.5); ctx.restore();
     text(ctx, '安妮·卡森', W / 2, ny, { size: nsz, font: 'song', weight: 300, spacing: .22, color: INK, alpha: na, reveal: prog(t, .5, 2.2, E.out) });
@@ -475,6 +476,9 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
       }
       // 底边：没有直接的路
       const ba = smooth(tBl, tBl + .6, t) * aB; if (ba > 0) { ctx.save(); ctx.setLineDash([3, 9]); line(ctx, [A, B], rgba(INK4, .9), 1.2, ba * (1 - cl)); ctx.restore(); }
+      // 需要三方：先出现三个虚位
+      const t3 = at(S, 1, '三方') - .2; const ga3 = smooth(t3, t3 + .6, t) * aB * (1 - smooth(tX, tX + .5, t));
+      if (ga3 > 0) { ctx.save(); ctx.setLineDash([2, 6]); ctx.strokeStyle = rgba(INK3, .8); ctx.lineWidth = 1.4; [[A, tA], [B, tBl], [C, tG]].forEach(([P, tt], k) => { const a = ga3 * (1 - smooth(tt - .1, tt + .4, t) * .7) * smooth(t3 + k * .25, t3 + .5 + k * .25, t); if (a <= 0) return; ctx.globalAlpha = a; ctx.beginPath(); ctx.arc(P[0], P[1], 22, 0, TAU); ctx.stroke(); }); ctx.restore(); }
       // 三个点
       const a1 = smooth(tA - .1, tA + .5, t) * aB, a2 = smooth(tBl - .1, tBl + .5, t) * aB, a3 = ea;
       const emb = mix(RED2, '#8a8478', dim);
@@ -515,7 +519,6 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
       // 竖排诗句
       const vs = 74; vtext(ctx, '所谓伊人', 1730, 240, { size: vs, font: 'brush', color: INK, alpha: aC, reveal: prog(t, tY - .3, tY + 1.2, E.out), spacing: .12 });
       vtext(ctx, '在水一方', 1636, 300, { size: vs, font: 'brush', color: INK, alpha: aC, reveal: prog(t, tZ - .3, tZ + 1.2, E.out), spacing: .12 });
-      drawSeal(ctx, TEX.sealName, 1636, 680, smooth(tZ + .9, tZ + 1.1, t) * .9 * aC, lerp(1.3, .8, E.out(prog(t, tZ + .9, tZ + 1.2, x => x))), .03);
       tag(ctx, '《诗经·蒹葭》', null, 1683, 812, { size: 22, align: 'center', alpha: aC * smooth(tZ + .4, tZ + 1.4, t), mark: false, color: INK3 });
     }
   };
@@ -740,7 +743,7 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
     const px = 30 + r() * 30, py = 30 + r() * 60, pw = 220 + r() * 40, ph = 160 + r() * 30;
     g.save(); g.translate(px + pw / 2, py + ph / 2); g.rotate((r() - .5) * .16); g.fillStyle = '#f2efe8'; g.fillRect(-pw / 2 - 10, -ph / 2 - 10, pw + 20, ph + 34);
     const gr = g.createLinearGradient(0, -ph / 2, 0, ph / 2); gr.addColorStop(0, '#b9b6b0'); gr.addColorStop(1, '#7c7974'); g.fillStyle = gr; g.fillRect(-pw / 2, -ph / 2, pw, ph);
-    g.filter = 'blur(5px)'; g.fillStyle = 'rgba(40,38,36,.7)'; const fx = (r() - .5) * pw * .5; g.beginPath(); g.ellipse(fx, -ph * .12, 16, 18, 0, 0, TAU); g.fill(); g.beginPath(); g.ellipse(fx, ph * .28, 32, 50, 0, 0, TAU); g.fill(); g.fillStyle = 'rgba(230,228,222,.5)'; g.fillRect(-pw / 2, ph * .3, pw, ph * .2); g.filter = 'none'; g.restore();
+    const fx = (r() - .5) * pw * .5; soft(g, 5, 'rgba(40,38,36,.7)', g => { g.beginPath(); g.ellipse(fx, -ph * .12, 16, 18, 0, 0, TAU); g.fill(); g.beginPath(); g.ellipse(fx, ph * .28, 32, 50, 0, 0, TAU); g.fill(); }); soft(g, 5, 'rgba(230,228,222,.5)', g => g.fillRect(-pw / 2, ph * .3, pw, ph * .2)); g.restore();
     // 手写信笺
     g.save(); g.translate(40 + r() * 40, 300 + r() * 40); g.rotate((r() - .5) * .2); g.fillStyle = '#efe9da'; g.fillRect(0, 0, 230, 130); g.strokeStyle = 'rgba(40,40,70,.75)'; g.lineWidth = 1.6;
     for (let l = 0; l < 5; l++) { g.beginPath(); let x = 14; const y = 24 + l * 22; g.moveTo(x, y); while (x < 200 - r() * 40) { x += 4; g.lineTo(x, y + Math.sin(x * .45 + l * 2 + r()) * 4 * (r() < .2 ? 2 : 1)); } g.stroke(); }
@@ -814,7 +817,7 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
       const c = cam({ yaw: lerp(-.28, -.18, foc), pitch: .10, dist, fov: 1350, cx: W / 2, cy: H * .47, tx, ty: lerp(380, 0, rise), tz: 60 });
       const order = [...Array(NPAN).keys()].map(i => ({ i, z: c.p((V[i][0] + V[i + 1][0]) / 2, 0, (V[i][1] + V[i + 1][1]) / 2).z })).sort((p, q) => q.z - p.z);
       // 地面投影
-      ctx.save(); ctx.globalAlpha = sa * .22 * rise; ctx.fillStyle = '#4a3a28'; ctx.filter = 'blur(14px)'; ctx.beginPath(); V.forEach(([x, z], i) => { const q = c.p(x, PH / 2 + 6, z); i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y); }); for (let i = NPAN; i >= 0; i--) { const q = c.p(V[i][0] + 30, PH / 2 + 6, V[i][1] + 60); ctx.lineTo(q.x, q.y); } ctx.closePath(); ctx.fill(); ctx.filter = 'none'; ctx.restore();
+      ctx.save(); ctx.globalAlpha = sa * .22 * rise; const gp = V.map(([x, z]) => c.p(x, PH / 2 + 6, z)), gq = V.map(([x, z]) => c.p(x + 30, PH / 2 + 6, z + 60)); soft(ctx, 14, '#4a3a28', g => { g.beginPath(); gp.forEach((q, i) => i ? g.lineTo(q.x, q.y) : g.moveTo(q.x, q.y)); for (let i = NPAN; i >= 0; i--) g.lineTo(gq[i].x, gq[i].y); g.closePath(); g.fill(); }); ctx.restore();
       for (const { i } of order) {
         const P3 = [[V[i][0], -PH / 2, V[i][1]], [V[i + 1][0], -PH / 2, V[i + 1][1]], [V[i + 1][0], PH / 2, V[i + 1][1]], [V[i][0], PH / 2, V[i][1]]];
         const tl = c.p(...P3[0]), tr = c.p(...P3[1]), bl = c.p(...P3[3]); const front = (tr.x - tl.x) * (bl.y - tl.y) - (tr.y - tl.y) * (bl.x - tl.x) > 0;
@@ -826,7 +829,7 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
       const a1 = smooth(c1 + .6, c1 + 1.4, t) * (1 - smooth(at(S, 1, '另一侧') - .4, at(S, 1, '另一侧') + .3, t)) * sa;
       const q4 = c.p((V[4][0] + V[5][0]) / 2, -PH / 2, (V[4][1] + V[5][1]) / 2);
       tag(ctx, '逐词查考 · 卡图卢斯第 101 首', 'Catullus 101 · word by word', q4.x, Math.min(q4.y - 60, 200), { size: 30, align: 'center', mark: false, alpha: a1, color: INK, enFont: 'latinI', raw: true, enSize: 26, enSpacing: .04 });
-      const a2 = smooth(at(S, 1, '照片') - .4, at(S, 1, '照片') + .4, t) * sa;
+      const a2 = smooth(at(S, 1, '另一侧') + .1, at(S, 1, '另一侧') + .8, t) * sa;
       const q5 = c.p((V[5][0] + V[6][0]) / 2, -PH / 2, (V[5][1] + V[6][1]) / 2);
       tag(ctx, '照片 · 信件 · 记忆的碎片', 'photographs · letters · fragments', q5.x, Math.min(q5.y - 60, 200), { size: 30, align: 'center', mark: false, alpha: a2, color: INK, enSize: 15 });
       tag(ctx, 'Nox《夜》', '2010', 150, 830, { size: 30, alpha: sa * smooth(tFold, tFold + 1, t), color: INK, enFont: 'latin', enSize: 20 });
@@ -866,7 +869,7 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
   };
 
   // ---------- 8. 新的形式：盒中小册子、探戈、漫画、歌剧；去创造 ----------
-  const BOOKS = (() => { const r = rng(2016); const tints = ['#efe7d6', '#e9dfca', '#f2ece0', '#e4dccb', '#ece2cf']; const p1 = [...Array(22).keys()].sort(() => r() - .5), p2 = [...Array(22).keys()].sort(() => r() - .5); return [...Array(22)].map((_, i) => ({ i, h: 200 + r() * 26, tint: tints[Math.floor(r() * tints.length)], sx: 360 + r() * 1200, sy: 600 + r() * 160, sr: (r() - .5) * 1.6, d: r() * .5, p1: p1[i], p2: p2[i], red: r() < .14 })); })();
+  const BOOKS = (() => { const r = rng(2016); const tints = ['#efe7d6', '#e9dfca', '#f2ece0', '#e4dccb', '#ece2cf']; const shuf = () => { const a = [...Array(22).keys()]; for (let i = 21; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }; const p1 = shuf(), p2 = shuf(); return [...Array(22)].map((_, i) => ({ i, h: 200 + r() * 26, tint: tints[Math.floor(r() * tints.length)], sx: 360 + r() * 1200, sy: 600 + r() * 160, sr: (r() - .5) * 1.6, d: r() * .5, p1: p1[i], p2: p2[i], red: r() < .14 })); })();
   function booklet(ctx, b, x, y, rot, a) { if (a <= 0) return; ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.globalAlpha = a; ctx.shadowColor = 'rgba(60,40,20,.18)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3; ctx.fillStyle = b.red ? RED2 : b.tint; ctx.fillRect(-13, -b.h / 2, 26, b.h); ctx.shadowColor = 'transparent'; ctx.strokeStyle = 'rgba(80,60,40,.35)'; ctx.lineWidth = 1; ctx.strokeRect(-13, -b.h / 2, 26, b.h); ctx.rotate(-Math.PI / 2); ctx.fillStyle = b.red ? '#f6eee0' : INK2; ctx.font = font('latin', 15, 600); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(b.i + 1), b.h / 2 - 22, 0); ctx.restore(); }
   const TANGO = (() => { const a = []; for (let k = 0; k < 29; k++) { const u = k / 28; const x = lerp(330, 1590, u); const side = k % 2 ? 1 : -1; a.push({ x, y: 470 + Math.sin(u * TAU * 1.5) * 90 + side * 34, side, rot: Math.cos(u * TAU * 1.5) * .5 + side * .25 }); } return a; })();
   function tangoLine(ph, amp) { const o = []; for (let i = 0; i <= 160; i++) { const u = i / 160; o.push([lerp(300, 1620, u), 470 + Math.sin(u * TAU * 1.5) * 90 + Math.sin(u * TAU * 6 + ph) * amp]); } return o; }
@@ -892,7 +895,7 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
     figure(ctx, mid, y1 - 4, 130, open, INK);
     // 两幅幕布：收拢到两侧并束起
     for (const side of [-1, 1]) {
-      const edge = side < 0 ? x0 : x1; const inner = lerp(mid, edge - side * -110, open); const tieY = lerp(y1, y0 + (y1 - y0) * .62, open);
+      const edge = side < 0 ? x0 : x1; const inner = lerp(mid, edge - side * 175, open); const tieY = lerp(y1, y0 + (y1 - y0) * .62, open);
       const nf = 7; for (let k = 0; k < nf; k++) { const u0 = k / nf, u1 = (k + 1) / nf; const xa = lerp(edge, inner, u0), xb = lerp(edge, inner, u1); const tie = side < 0 ? x0 + 70 : x1 - 70; const ta = lerp(xa, tie + (u0 - .5) * 30 * open, open * .9), tb = lerp(xb, tie + (u1 - .5) * 30 * open, open * .9);
         const g = ctx.createLinearGradient(xa, 0, xb, 0); g.addColorStop(0, '#8e2214'); g.addColorStop(.55, '#cf4a2c'); g.addColorStop(1, '#962616'); ctx.fillStyle = g;
         ctx.beginPath(); ctx.moveTo(xa, y0); ctx.lineTo(xb, y0); ctx.quadraticCurveTo(xb, (y0 + tieY) / 2, tb, tieY); ctx.quadraticCurveTo(tb + (xb - tb) * .3, (tieY + y1) / 2, lerp(tb, xb, .55) + side * 10 * open, y1); ctx.lineTo(lerp(ta, xa, .55) + side * 10 * open, y1); ctx.quadraticCurveTo(ta + (xa - ta) * .3, (tieY + y1) / 2, ta, tieY); ctx.quadraticCurveTo(xa, (y0 + tieY) / 2, xa, y0); ctx.closePath(); ctx.fill(); }
@@ -910,8 +913,8 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
     const t = S.t, c1 = S.cue(1);
     paper(ctx); motes(ctx, t + 180, .6);
     const tBox = at(S, 0, '一盒'), tAny = at(S, 0, '任意次序'), tTan = at(S, 0, '二十九支'), tCom = at(S, 0, '漫画'), tOp = at(S, 0, '歌剧');
-    const ends = [tTan - .25, tCom - .2, tOp - .1, c1 - .2]; const starts = [.2, tTan - .25, tCom - .2, tOp - .1];
-    const va = k => smooth(starts[k] - .05, starts[k] + .35, t) * (1 - smooth(ends[k] - .3, ends[k] + .05, t));
+    const ends = [tTan - .25, tCom - .55, tOp - .4, c1 + .6]; const starts = [.2, tTan - .25, tCom - .55, tOp - .4];
+    const va = k => (k === 0 ? smooth(starts[k] - .05, starts[k] + .35, t) : smooth(starts[k] - .18, starts[k] + .18, t)) * (1 - smooth(ends[k] - .18, ends[k] + .18, t));
     // 目录
     const ia = smooth(.4, 1.2, t) * (1 - smooth(c1 - .6, c1, t));
     if (ia > 0) { const items = ['一盒小册子', '二十九支探戈', '漫画', '歌剧']; items.forEach((w, k) => { const x = W / 2 + (k - 1.5) * 250; const on = va(k); text(ctx, w, x, 170, { size: 26, font: 'song', weight: on > .5 ? 500 : 300, spacing: .2, color: on > .5 ? INK : INK4, alpha: ia }); ctx.save(); ctx.globalAlpha = ia * on; ctx.fillStyle = RED2; ctx.fillRect(x - 20, 196, 40, 2.5); ctx.restore(); }); }
@@ -949,7 +952,7 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
     if (a3 > 0) { const gx = 560, gy = 250, pw = 260, ph = 220, gap = 14; for (let k = 0; k < 6; k++) { const c = k % 3, r = Math.floor(k / 3); comicPanel(ctx, k, gx + c * (pw + gap), gy + r * (ph + gap), pw, ph, a3 * smooth(starts[2] + k * .08, starts[2] + .25 + k * .08, t), t); } tag(ctx, '漫画', 'The Trojan Women: A Comic · 2021', 150, 800, { size: 34, alpha: a3, color: INK, enFont: 'latinI', raw: true, enSize: 24, enSpacing: .03, enColor: INK2 }); }
     // 4. 歌剧
     const a4 = va(3);
-    if (a4 > 0) { curtain(ctx, E.inOut(prog(t, starts[3] + .2, starts[3] + 1.3, x => x)), a4, t); tag(ctx, '歌剧', 'opera', 150, 800, { size: 34, alpha: a4, color: INK, enFont: 'latinI', raw: true, enSize: 24, enSpacing: .03, enColor: INK2 }); }
+    if (a4 > 0) { curtain(ctx, E.inOut(prog(t, starts[3] + .05, starts[3] + .85, x => x)), a4, t); tag(ctx, '歌剧', 'opera', 150, 800, { size: 34, alpha: a4, color: INK, enFont: 'latinI', raw: true, enSize: 24, enSpacing: .03, enColor: INK2 }); }
     // B：去创造
     const ba = smooth(c1 - .2, c1 + .7, t);
     if (ba > 0) {
@@ -1002,14 +1005,13 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
       const BR = BURN.map(([x, y, d], i) => ({ x, y, r: Math.max(0, bu - d * .22) * 400 * (1 + .25 * Math.sin(i)), seed: i + 20 }));
       const cut = (g, k, grow) => BR.forEach(b => { if (b.r > 2) { blobPath(g, b.x, b.y, b.r * 1.12 * k + grow, b.r * 1.0 * k + grow, b.seed, bu * 2, 90, .6); g.fill(); } });
       const F = composePapyrus(t, { erode: 1, letterColor: L => rgba(mix('#2b1a0e', '#ff8a30', smooth(tBurn + L.k * .025, tBurn + 1.0 + L.k * .025, t))), burn: g => {
-        g.globalCompositeOperation = 'source-atop'; g.save(); g.filter = 'blur(12px)'; g.fillStyle = 'rgba(34,14,4,.95)'; cut(g, 1, 34); g.restore();
-        g.save(); g.filter = 'blur(5px)'; g.fillStyle = 'rgba(20,8,2,1)'; cut(g, 1, 10); g.restore();
+        g.globalCompositeOperation = 'source-atop'; soft(g, 12, 'rgba(34,14,4,.95)', g => cut(g, 1, 34)); soft(g, 5, 'rgba(20,8,2,1)', g => cut(g, 1, 10));
         g.globalCompositeOperation = 'destination-out'; cut(g, 1, 0);
       } });
       // 燃烧的边：只保留真正的火线（去掉落在其它烧穿区域里的部分）
       const R = OFF[3], rg = R.getContext('2d'); rg.setTransform(1, 0, 0, 1, 0, 0); rg.globalCompositeOperation = 'source-over'; rg.globalAlpha = 1; rg.clearRect(0, 0, W, H); rg.lineJoin = 'round';
       const fk = .8 + .2 * Math.sin(t * 9) * Math.sin(t * 5.3);
-      BR.forEach(b => { if (b.r > 2) { blobPath(rg, b.x, b.y, b.r * 1.12, b.r, b.seed, bu * 2, 90, .6); rg.filter = 'blur(10px)'; rg.strokeStyle = `rgba(255,96,24,${.9 * fk})`; rg.lineWidth = 26; rg.stroke(); rg.filter = 'blur(3px)'; rg.strokeStyle = 'rgba(255,170,70,1)'; rg.lineWidth = 9; rg.stroke(); rg.filter = 'none'; rg.strokeStyle = 'rgba(255,236,190,1)'; rg.lineWidth = 2.6; rg.stroke(); } });
+      BR.forEach(b => { if (b.r > 2) { soft(rg, 10, `rgba(255,96,24,${.9 * fk})`, g => { blobPath(g, b.x, b.y, b.r * 1.12, b.r, b.seed, bu * 2, 90, .6); g.lineWidth = 26; g.stroke(); }); soft(rg, 3, 'rgba(255,170,70,1)', g => { blobPath(g, b.x, b.y, b.r * 1.12, b.r, b.seed, bu * 2, 90, .6); g.lineWidth = 9; g.stroke(); }); blobPath(rg, b.x, b.y, b.r * 1.12, b.r, b.seed, bu * 2, 90, .6); rg.strokeStyle = 'rgba(255,236,190,1)'; rg.lineWidth = 2.6; rg.stroke(); } });
       rg.globalCompositeOperation = 'destination-out'; rg.fillStyle = '#000'; BR.forEach(b => { if (b.r > 12) { blobPath(rg, b.x, b.y, b.r * 1.12 - 9, b.r - 9, b.seed, bu * 2, 90, .6); rg.fill(); } });
       rg.globalCompositeOperation = 'destination-in'; rg.drawImage(TEX.papWide, 0, 0); rg.globalCompositeOperation = 'source-over';
       // 火舌：沿火线向上
@@ -1029,7 +1031,7 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
     const ta = smooth(tFire - .3, tFire + .9, t);
     if (ta > 0) {
       const T = TEX.titleFire; ctx.save(); ctx.globalAlpha = ta; const k = lerp(1.06, 1, E.out(ta)); ctx.translate(W / 2, 800); ctx.scale(k * .6, k * .6); ctx.translate(-W / 2, -T.y);
-      ctx.globalCompositeOperation = 'lighter'; ctx.filter = 'blur(14px)'; ctx.globalAlpha = ta * .7; ctx.drawImage(T.canvas, 0, 0); ctx.filter = 'none'; ctx.globalAlpha = ta; ctx.drawImage(T.canvas, 0, 0); ctx.restore();
+      ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = ta * .8; soft(ctx, 16, 'rgba(255,130,50,.9)', g => g.drawImage(T.canvas, 0, 0)); ctx.globalAlpha = ta; ctx.drawImage(T.canvas, 0, 0); ctx.restore();
     }
   };
 
@@ -1055,7 +1057,7 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
     GLFX.define('xuan', SH_XUAN); GLFX.define('papyrus', SH_PAP); GLFX.define('blot', SH_BLOT); GLFX.define('shan', SH_SHAN);
     TEX.paper = snap('xuan', { C1: PAPER, SEED: 3.7 }, 1);
     TEX.pap = snap('papyrus', { SEED: PAP.seed }, 1);
-    { const c = mk(W, H), g = c.getContext('2d'); g.filter = 'blur(16px)'; g.drawImage(tint(TEX.pap, '#4a2e14'), 0, 0); TEX.papShadow = c; }
+    { const c = mk(W, H), g = c.getContext('2d'); soft(g, 16, '#4a2e14', g => g.drawImage(TEX.pap, 0, 0)); TEX.papShadow = c; }
     TEX.blot = []; TEX.blotInk = []; TEX.blotC = [];
     for (let k = 0; k < 4; k++) { const g = GLFX.draw('blot', { SEED: 1.7 + k * 3.1, RAD: .36 }, .5); const c = mk(512, 512); c.getContext('2d').drawImage(g, (g.width - g.height) / 2, 0, g.height, g.height, 0, 0, 512, 512); TEX.blot.push(c); TEX.blotInk.push(tint(c, INK)); TEX.blotC.push({}); }
     TEX.mount = snap('shan', { SEED: 2.3, BASE: 560, AMP: 260 }, .75);
@@ -1066,12 +1068,12 @@ void main(){vec2 p=vec2(gl_FragCoord.x,R.y-gl_FragCoord.y)*(1080./R.y);
       const c = mk(W, H), g = c.getContext('2d'); const chars = [...'与火为邻']; const size = 236; g.font = font('brush', size, 400); g.textAlign = 'center'; g.textBaseline = 'middle';
       const ws = chars.map(ch => g.measureText(ch).width); const gap = size * .16; const total = ws.reduce((a, b) => a + b, 0) + gap * 3; let x = W / 2 - total / 2; const cx = []; const y = 512;
       chars.forEach((ch, i) => { const xc = x + ws[i] / 2; cx.push(xc); x += ws[i] + gap; });
-      g.save(); g.filter = 'blur(3px)'; g.globalAlpha = .35; g.fillStyle = INK; chars.forEach((ch, i) => g.fillText(ch, cx[i], y + (i % 2 ? 6 : -4))); g.restore();
+      g.save(); g.globalAlpha = .35; soft(g, 3, INK, g => chars.forEach((ch, i) => g.fillText(ch, cx[i], y + (i % 2 ? 6 : -4)))); g.restore();
       g.fillStyle = INK; chars.forEach((ch, i) => { g.save(); g.translate(cx[i], y + (i % 2 ? 6 : -4)); g.rotate((i % 2 ? .02 : -.015)); g.fillText(ch, 0, 0); g.restore(); });
       TEX.title = { canvas: c, cx, y, x1: W / 2 + total / 2 };
     }
     TEX.noxPan = [...Array(NPAN)].map((_, i) => i % 2 === 0 ? makeDictPanel(DICT[(i / 2) % DICT.length], i / 2) : makeCollagePanel(i)); TEX.noxLid = makeLid(); TEX.noxStack = makeStack();
-    { const c = mk(W, H), g = c.getContext('2d'); g.drawImage(TEX.pap, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = '#fff'; g.fillRect(0, 0, W, H); const c2 = mk(W, H), g2 = c2.getContext('2d'); g2.filter = 'blur(10px)'; g2.drawImage(c, 0, 0); g2.drawImage(c, 0, 0); TEX.papWide = c2; }
+    { const c = mk(W, H), g = c.getContext('2d'); g.drawImage(TEX.pap, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = '#fff'; g.fillRect(0, 0, W, H); const c2 = mk(W, H), g2 = c2.getContext('2d'); soft(g2, 10, '#fff', g => { g.drawImage(c, 0, 0); g.drawImage(c, 0, 0); }); TEX.papWide = c2; }
     { const T = TEX.title; const c = mk(W, H), g = c.getContext('2d'); g.drawImage(T.canvas, 0, 0); g.globalCompositeOperation = 'source-in'; const gr = g.createLinearGradient(0, T.y - 120, 0, T.y + 120); gr.addColorStop(0, '#ffd890'); gr.addColorStop(.55, '#ff9a48'); gr.addColorStop(1, '#d8462a'); g.fillStyle = gr; g.fillRect(0, 0, W, H); TEX.titleFire = { canvas: c, y: T.y }; }
     { const c = mk(W, 200), g = c.getContext('2d'); g.font = font('song', 50, 400); g.textBaseline = 'middle'; g.fillStyle = '#000'; const chs = [...ASHLINE]; const ws = chs.map(ch => g.measureText(ch).width); const tot = ws.reduce((a, b) => a + b, 0); let x = W / 2 - tot / 2; const chars = []; chs.forEach((ch, i) => { chars.push({ s: ch, x: x + ws[i] / 2, x0: x, x1: x + ws[i] }); g.fillText(ch, x, 100); x += ws[i]; }); const id = g.getImageData(0, 0, W, 200).data; const pts = []; const r = rng(55); for (let y = 0; y < 200; y += 2) for (let xx = (y / 2) % 2; xx < W; xx += 2) { if (id[(y * W + xx) * 4 + 3] > 120) { let ci = chars.findIndex(c => xx >= c.x0 && xx < c.x1); if (ci < 0) ci = 0; pts.push({ x: xx, y: y - 100, c: ci, r: r(), r2: r() }); } } const self = 2; const order = chars.map((c, i) => Math.abs(i - self) * .6 + (i > 5 ? 1.5 : 0)); ASH = { chars, pts, order }; }
     TEX.sealName = makeSeal('卡森', 64, 118, { cols: 1, seed: 5 });

@@ -1,8 +1,16 @@
 #!/bin/bash
-# 合成最终成片：视频 + 混音，响度统一到 -16 LUFS
+# 合成成片：渲染出的画面 build/<片>/video.mp4 + 配乐混音
+#   有 build/<片>/mix.wav（自己重新生成过音频）时用它并做响度标准化，
+#   否则直接使用仓库里已标准化（−16 LUFS）的 assets/<片>/soundtrack.ogg。
+# 用法: bash engine/finish.sh physics [输出文件名]
 set -e
-F=$1; D=$(dirname "$0")/../build/$F; OUT=$(dirname "$0")/../output; mkdir -p "$OUT"
+F=$1; ROOT="$(cd "$(dirname "$0")/.." && pwd)"; D="$ROOT/build/$F"; OUT="$ROOT/output"; mkdir -p "$OUT"
 NAME=${2:-$F}
-ffmpeg -y -loglevel error -i "$D/mix.wav" -af loudnorm=I=-16:TP=-1.5:LRA=11:print_format=summary -ar 48000 "$D/mix_norm.wav" 2>&1 | tail -3
-ffmpeg -y -loglevel error -i "$D/video.mp4" -i "$D/mix_norm.wav" -map 0:v -map 1:a -c:v copy -c:a aac -b:a 192k -movflags +faststart -shortest "$OUT/$NAME.mp4"
+if [ -f "$D/mix.wav" ]; then
+  ffmpeg -y -loglevel error -i "$D/mix.wav" -af loudnorm=I=-16:TP=-1.5:LRA=11 -ar 48000 "$D/mix_norm.wav"
+  AUDIO="$D/mix_norm.wav"
+else
+  AUDIO="$ROOT/assets/$F/soundtrack.ogg"
+fi
+ffmpeg -y -loglevel error -i "$D/video.mp4" -i "$AUDIO" -map 0:v -map 1:a -c:v copy -c:a aac -b:a 192k -movflags +faststart -shortest "$OUT/$NAME.mp4"
 ls -la "$OUT/$NAME.mp4"

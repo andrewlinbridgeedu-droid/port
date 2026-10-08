@@ -1,0 +1,17 @@
+{
+  "name": "nobel-2026-videos",
+  "private": true,
+  "description": "2026 诺贝尔奖四部解说短片：确定性 Canvas/WebGL 渲染",
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "render:physics": "node engine/render.js physics && bash engine/finish.sh physics 01_物理学奖_以冰为眼",
+    "render:chemistry": "node engine/render.js chemistry && bash engine/finish.sh chemistry 02_化学奖_积微成著",
+    "render:medicine": "node engine/render.js medicine && bash engine/finish.sh medicine 03_生理学或医学奖_以光为钥",
+    "render:literature": "node engine/render.js literature && bash engine/finish.sh literature 04_文学奖_与火为邻",
+    "render:all": "npm run render:physics && npm run render:chemistry && npm run render:medicine && npm run render:literature",
+    "preview": "node engine/preview.js"
+  },
+  "dependencies": {
+    "playwright": "1.56.1"
+  }
+}

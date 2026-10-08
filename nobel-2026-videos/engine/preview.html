@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Nobel 2026 Preview</title>
+<style>
+  @font-face { font-family: "Noto Serif SC"; src: url(../fonts/NotoSerifSC.ttf); font-weight: 200 900; }
+  @font-face { font-family: "LXGW WenKai"; src: url(../fonts/LXGWWenKai.ttf); }
+  @font-face { font-family: "LXGW WenKai Medium"; src: url(../fonts/LXGWWenKaiMedium.ttf); }
+  @font-face { font-family: "Ma Shan Zheng"; src: url(../fonts/MaShanZheng.ttf); }
+  @font-face { font-family: "Zhi Mang Xing"; src: url(../fonts/ZhiMangXing.ttf); }
+  @font-face { font-family: "Cormorant Garamond"; src: url(../fonts/CormorantGaramond.ttf); font-weight: 300 700; }
+  @font-face { font-family: "GFS Didot"; src: url(../fonts/GFSDidot.ttf); }
+  @font-face { font-family: "Cormorant Garamond Italic"; src: url(../fonts/CormorantGaramondItalic.ttf); font-weight: 300 700; }
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  canvas { display: block; width: 100vw; height: calc(100vw * 9 / 16); max-height: calc(100vh - 56px); max-width: calc((100vh - 56px) * 16 / 9); margin: 0 auto; }
+  #bar { position: fixed; left: 0; right: 0; bottom: 0; height: 56px; display: flex; align-items: center; gap: 12px; padding: 0 16px; background: #111; color: #ddd; font: 14px -apple-system, "PingFang SC", sans-serif; }
+  #bar button, #bar select { background: #222; color: #eee; border: 1px solid #444; border-radius: 6px; padding: 6px 12px; }
+  #seek { flex: 1; }
+  html, body { overflow: hidden; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="core.js"></script>
+<script src="land.js"></script>
+<script src="kit.js"></script>
+<script src="gl.js"></script>
+<script src="player.js"></script>
+<div id="bar"><select id="film"><option value="physics">物理 · 以冰为眼</option><option value="chemistry">化学 · 积微成著</option><option value="medicine">医学 · 以光为钥</option><option value="literature">文学 · 与火为邻</option></select>
+<button id="play">播放</button><input id="seek" type="range" min="0" max="1000" value="0"><span id="time">0:00</span></div>
+<audio id="aud" preload="auto"></audio>
+<script>
+(async () => {
+  const q = new URLSearchParams(location.search); const film = q.get('film') || 'physics';
+  const sel = document.getElementById('film'); sel.value = film; sel.onchange = () => { location.search = '?film=' + sel.value; };
+  const info = await window.ready; const aud = document.getElementById('aud'); aud.src = `../assets/${film}/soundtrack.ogg`;
+  const seek = document.getElementById('seek'), tm = document.getElementById('time'), btn = document.getElementById('play');
+  let playing = false, T = +(q.get('t') || 0), last = 0, frame = 0;
+  const fmt = x => `${Math.floor(x / 60)}:${String(Math.floor(x % 60)).padStart(2, '0')}`;
+  function draw() { renderAt(T, frame++); seek.value = Math.round(T / info.total * 1000); tm.textContent = `${fmt(T)} / ${fmt(info.total)}`; }
+  btn.onclick = () => { playing = !playing; btn.textContent = playing ? '暂停' : '播放'; if (playing) { aud.currentTime = T; aud.play(); } else aud.pause(); };
+  seek.oninput = () => { T = seek.value / 1000 * info.total; aud.currentTime = T; draw(); };
+  function loop() { if (playing) { T = aud.currentTime; if (T >= info.total) { playing = false; btn.textContent = '播放'; } draw(); } requestAnimationFrame(loop); }
+  draw(); loop();
+})();
+</script>
+</body>
+</html>

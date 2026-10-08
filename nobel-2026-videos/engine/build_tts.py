@@ -2,13 +2,13 @@
 
 用法: python3 engine/build_tts.py <film> [--sid 60] [--speed 1.0]
 输入: films/<film>.script.json
-输出: build/<film>/timeline.json, build/<film>/narration.wav (48 kHz 单声道)
+输出: assets/<film>/timeline.json, build/<film>/narration.wav (48 kHz 单声道)
 """
 import hashlib, json, os, sys, argparse
 import numpy as np, soundfile as sf
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODELS = os.environ.get('TTS_MODELS', '/tmp/claude-0/-home-user-port/d9417c34-2fe5-5682-a656-16c594bd732d/scratchpad/tts')
+MODELS = os.environ.get('TTS_MODELS', os.path.join(ROOT, 'models'))
 SR = 48000
 FPS = 30
 
@@ -91,6 +91,7 @@ peak = np.abs(y).max() or 1
 y = y / peak * 0.89
 os.makedirs(f'{ROOT}/build/{a.film}', exist_ok=True)
 sf.write(f'{ROOT}/build/{a.film}/narration.wav', y[:int(total * SR)], SR)
-json.dump({'fps': FPS, 'total': total, 'sid': sid, 'speed': speed, 'scenes': scenes}, open(f'{ROOT}/build/{a.film}/timeline.json', 'w'), ensure_ascii=False, indent=1)
+os.makedirs(f'{ROOT}/assets/{a.film}', exist_ok=True)
+json.dump({'fps': FPS, 'total': total, 'sid': sid, 'speed': speed, 'scenes': scenes}, open(f'{ROOT}/assets/{a.film}/timeline.json', 'w'), ensure_ascii=False, indent=1)
 print(f'{a.film}: total {total:.1f}s')
 for s in scenes: print(f"  {s['id']:<12} {s['start']:7.2f} +{s['dur']:6.2f}  lines={len(s['lines'])}")

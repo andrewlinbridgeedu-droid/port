@@ -100,7 +100,7 @@ void main(){vec2 u=UV()*S+OFF; float w=fbm4(vec3(u*1.3,T*.02)); float d=fbm(vec3
     const g = ctx.createRadialGradient(W * .5, H * .42, 0, W * .5, H * .5, W * .78);
     g.addColorStop(0, o.c1 || '#0a242b'); g.addColorStop(.5, o.c2 || '#06161c'); g.addColorStop(1, '#010507');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-    if ((o.neb ?? 0) > 0) GLFX.layer(ctx, 'haze', { T: t + (o.seed || 0) * 30, C1: o.h1 || '#04323c', C2: o.h2 || '#1b7f93', S: o.ns || 1.2, A: o.neb, OFF: [(o.seed || 0) * 2.3 + t * .004, (o.seed || 0) * 1.7] });
+    if ((o.neb ?? 0) > 0) GLFX.layer(ctx, 'haze', { T: t + (o.seed || 0) * 30, C1: o.h1 || '#04323c', C2: o.h2 || '#1b7f93', S: o.ns || 1.2, A: o.neb, OFF: [(o.seed || 0) * 2.3 + t * .004, (o.seed || 0) * 1.7] }, { scale: .25 });
     motes(ctx, t, o.motes ?? 1, o.moteCol);
   }
 
@@ -465,10 +465,11 @@ void main(){vec2 u=UV()*S+OFF; float w=fbm4(vec3(u*1.3,T*.02)); float d=fbm(vec3
     const flip = clamp((V + 70) / 100);
     for (let x = 262; x < 1000; x += 46) {
       const nearC = Math.max(...CHX.map(c => 1 - smooth(40, 170, Math.abs(c - x)))); const f = flip * (.35 + .65 * nearC);
-      text(ctx, '+', x, MY - 86, { size: 26, font: 'song', weight: 300, color: '#ffd9a8', alpha: pa * .8 * (1 - f) });
-      text(ctx, '−', x, MY - 86, { size: 26, font: 'song', weight: 300, color: '#9fd0ff', alpha: pa * .8 * f });
-      text(ctx, '−', x + 23, MY + 86, { size: 26, font: 'song', weight: 300, color: '#9fd0ff', alpha: pa * .8 * (1 - f) });
-      text(ctx, '+', x + 23, MY + 86, { size: 26, font: 'song', weight: 300, color: '#ffd9a8', alpha: pa * .8 * f });
+      const onCh = c0 => CHX.some(c => Math.abs(c - c0) < 42);
+      if (!onCh(x)) { text(ctx, '+', x, MY - 86, { size: 26, font: 'song', weight: 300, color: '#ffd9a8', alpha: pa * .8 * (1 - f) });
+      text(ctx, '−', x, MY - 86, { size: 26, font: 'song', weight: 300, color: '#9fd0ff', alpha: pa * .8 * f }); }
+      if (!onCh(x + 23)) { text(ctx, '−', x + 23, MY + 86, { size: 26, font: 'song', weight: 300, color: '#9fd0ff', alpha: pa * .8 * (1 - f) });
+      text(ctx, '+', x + 23, MY + 86, { size: 26, font: 'song', weight: 300, color: '#ffd9a8', alpha: pa * .8 * f }); }
     }
     // 离子
     for (const n of NA) {
@@ -491,7 +492,7 @@ void main(){vec2 u=UV()*S+OFF; float w=fbm4(vec3(u*1.3,T*.02)); float d=fbm(vec3
     const ia = smooth(1.5, 2.5, t) * (1 - smooth(tThr + 1.5, tThr + 2.3, t));
     ion(ctx, 700, 640, 'Na', ia, .9); text(ctx, '钠离子 Na⁺', 720, 640, { size: 22, font: 'song', align: 'left', color: '#ffe2a0', alpha: ia });
     ion(ctx, 870, 640, 'K', ia * .8, .9); text(ctx, '钾离子 K⁺', 890, 640, { size: 22, font: 'song', align: 'left', color: '#d8c4ff', alpha: ia * .8 });
-    label(ctx, '离子通道', CHX[2], MY - 92, { alpha: smooth(tOpen - 1.2, tOpen - .2, t) * (1 - smooth(tThr + 1.5, tThr + 2.3, t)), dx: 70, dy: -70, size: 24, en: 'ion channel' });
+    label(ctx, '离子通道', CHX[2], MY - 92, { alpha: smooth(tOpen - 1.2, tOpen - .2, t) * (1 - smooth(tThr + 1.5, tThr + 2.3, t)), dx: 36, dy: -64, size: 24, en: 'ion channel' });
     ctx.restore();
     // —— 示波器 ——
     const ox = 1130, oy = 255, ow = 680, oh = 370; const X = ms => ox + ms / 10 * ow, Y = v => oy + oh - (v + 90) / 130 * oh;
@@ -592,18 +593,19 @@ void main(){vec2 u=UV()*S+OFF; float w=fbm4(vec3(u*1.3,T*.02)); float d=fbm(vec3
       text(ctx, '周围细胞一并激活', 500, 858, { size: 30, font: 'song', weight: 500, color: '#e6f8ff', alpha: pA * smooth(tZap + .4, tZap + 1.2, t), spacing: .15 });
       // —— 药物 ——
       const dc = [1420, 520]; const dr = 300 * Math.sqrt(prog(t, tDrug + .2, tDrug + 5.5, x => x));
-      if (dr > 2) GLFX.layer(ctx, 'nebula', { T: t * .6, C1: '#2a1650', C2: '#6a42c0', C3: '#d6b8ff', S: 3.2, D: .7, A: 1.25 * pA, MODE: 0, OFF: [1.3, 2.2], MC: GLFX.uv(dc[0], dc[1]), MR: [dr / H * 1.35, dr / H * 1.15] });
+      if (dr > 2) GLFX.layer(ctx, 'nebula', { T: t * .6, C1: '#2a1650', C2: '#6a42c0', C3: '#d6b8ff', S: 3.2, D: .7, A: 1.25 * pA, MODE: 0, OFF: [1.3, 2.2], MC: GLFX.uv(dc[0], dc[1]), MR: [dr / H * 1.35, dr / H * 1.15] }, { scale: .35 });
       for (const c of TB) {
         const d = Math.hypot(c.x - dc[0], c.y - dc[1]); const inf = smooth(dr + 10, dr - 90, d);
         const pulseB = .5 + .5 * Math.sin(t * 1.2 + c.ph);
         drawNeuron(ctx, MINI[c.tpl], c.x, c.y, c.s, c.rot, { alpha: pA * (.26 + .34 * inf * pulseB), lite: true, core: inf > .3 ? '#efe2ff' : TCOL[c.type][0], halo: inf > .3 ? VIO : TCOL[c.type][1], axonA: .4 });
       }
       const pp = E.out(prog(t, tDrug - .8, tDrug + .2, x => x));
-      ctx.save(); ctx.globalAlpha = pA * pp; const py0 = lerp(-60, 130, pp);
-      const gg = ctx.createLinearGradient(1405, 0, 1435, 0); gg.addColorStop(0, 'rgba(220,240,255,.55)'); gg.addColorStop(.5, 'rgba(160,190,220,.18)'); gg.addColorStop(1, 'rgba(220,240,255,.55)');
-      ctx.fillStyle = gg; ctx.beginPath(); ctx.moveTo(1404, py0 - 200); ctx.lineTo(1436, py0 - 200); ctx.lineTo(1436, py0 + 100); ctx.lineTo(1424, py0 + 200); ctx.lineTo(1416, py0 + 200); ctx.lineTo(1404, py0 + 100); ctx.closePath(); ctx.fill();
-      ctx.fillStyle = 'rgba(181,140,255,.55)'; ctx.fillRect(1409, py0 - 60, 22, 160); ctx.restore();
-      glow(ctx, 1420, py0 + 205, 22, VIO, pA * pp * .8);
+      { const py0 = lerp(60, 200, pp), top = py0 - 110, tipY = py0 + 200; ctx.save(); ctx.globalAlpha = pA * pp;
+        const vg = ctx.createLinearGradient(0, top, 0, tipY); vg.addColorStop(0, 'rgba(210,230,250,0)'); vg.addColorStop(.35, 'rgba(210,230,250,.42)'); vg.addColorStop(1, 'rgba(210,230,250,.5)');
+        ctx.fillStyle = vg; ctx.beginPath(); ctx.moveTo(1404, top); ctx.lineTo(1436, top); ctx.lineTo(1436, py0 + 100); ctx.lineTo(1424, tipY); ctx.lineTo(1416, tipY); ctx.lineTo(1404, py0 + 100); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = 'rgba(8,16,22,.55)'; ctx.fillRect(1409, top, 22, py0 + 100 - top);
+        const fg = ctx.createLinearGradient(0, top, 0, py0 + 100); fg.addColorStop(0, 'rgba(181,140,255,0)'); fg.addColorStop(.5, 'rgba(181,140,255,.55)'); fg.addColorStop(1, 'rgba(181,140,255,.6)'); ctx.fillStyle = fg; ctx.fillRect(1410, py0 - 40, 20, 140);
+        ctx.restore(); glow(ctx, 1420, tipY + 4, 22, VIO, pA * pp * .8); }
       // 时钟
       const ka = pA * smooth(tMin - .3, tMin + .5, t); const kx = 1745, ky = 330;
       if (ka > 0) {
@@ -779,33 +781,33 @@ void main(){vec2 u=UV()*S+OFF; float w=fbm4(vec3(u*1.3,T*.02)); float d=fbm(vec3
       const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#0a2a26'); g.addColorStop(.55, '#06171a'); g.addColorStop(1, '#120a08'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
       ctx.restore();
       const k = E.out(prog(t, tz1 - .3, tz1 + 2.4, x => x)); const sc = lerp(2.2, 1, k);
-      ctx.save(); ctx.globalAlpha = mol; ctx.translate(W / 2, 470); ctx.scale(sc, sc); ctx.translate(-W / 2, -470);
+      ctx.save(); ctx.globalAlpha = mol; ctx.translate(W / 2, 490); ctx.scale(sc, sc); ctx.translate(-W / 2, -490);
       // 自上方射入的光
       ctx.save(); ctx.globalCompositeOperation = 'lighter'; const lg = ctx.createLinearGradient(0, 0, 0, 420); lg.addColorStop(0, 'rgba(190,255,215,.12)'); lg.addColorStop(1, 'rgba(190,255,215,0)'); ctx.fillStyle = lg; ctx.fillRect(0, 0, W, 420); ctx.restore();
       motes(ctx, t, .5, '#c8ffd0');
-      const yf = x => 470 + (x - 960) * (x - 960) / 14000;
+      const yf = x => 490 + (x - 960) * (x - 960) / 14000;
       // 眼点颗粒
       for (const q of GRAN) { const yy = q.y + (yf(q.x) - 470); const ef = 1 - smooth(560, 900, Math.abs(q.x - 960)); if (ef <= .02) continue; const gr = ctx.createRadialGradient(q.x - q.r * .35, yy - q.r * .4, 1, q.x, yy, q.r); gr.addColorStop(0, '#e8a070'); gr.addColorStop(.5, '#b8441f'); gr.addColorStop(1, '#3a0e0a'); ctx.globalAlpha = mol * ef * .9; ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(q.x, yy, q.r, 0, TAU); ctx.fill(); } ctx.globalAlpha = mol;
       
       bilayer(ctx, 80, 1840, { yf, half: 60, t, skip: x => Math.abs(x - 960) < 140 });
       const re = smooth(tRet - .2, tRet + .5, t) * (1 - .5 * smooth(tRet + 1.5, tRet + 3, t));
-      rhodo(ctx, 960, 470, 1.18, { ex: 0, retA: .6 + .4 * smooth(tRet - .3, tRet + .3, t) });
-      if (re > 0) { glow(ctx, 969, 461, 150, AMB, re * .4); glow(ctx, 969, 461, 50, '#fff0c8', re * .5); }
+      rhodo(ctx, 960, 490, 1.18, { ex: 0, retA: .6 + .4 * smooth(tRet - .3, tRet + .3, t) });
+      if (re > 0) { glow(ctx, 969, 481, 150, AMB, re * .4); glow(ctx, 969, 481, 50, '#fff0c8', re * .5); }
       ctx.restore();
-      const la = mol * smooth(tz1 + .3, tz1 + 1.1, t);
-      label(ctx, '感光蛋白', 880, 326, { alpha: la, dx: -150, dy: -100, size: 30, en: 'light-sensitive protein' });
-      label(ctx, '视黄醛', 922, 461, { alpha: mol * smooth(tRet - .1, tRet + .7, t), dx: -260, dy: -150, size: 34, en: 'retinal', color: '#ffe2a8', lineColor: 'rgba(255,220,160,.8)' });
-      label(ctx, '眼点', 410, 744, { alpha: la * .95, dx: -110, dy: 100, size: 26, en: 'eyespot', color: '#ffd2b8' });
+      const lo = 1 - smooth(S.d - 1.5, S.d - .8, t); const la = mol * smooth(tz1 + .3, tz1 + 1.1, t) * lo;
+      label(ctx, '感光蛋白', 880, 346, { alpha: la, dx: -150, dy: -100, size: 30, en: 'light-sensitive protein' });
+      label(ctx, '视黄醛', 922, 481, { alpha: mol * lo * smooth(tRet - .1, tRet + .7, t), dx: -260, dy: -150, size: 34, en: 'retinal', color: '#ffe2a8', lineColor: 'rgba(255,220,160,.8)' });
+      label(ctx, '眼点', 410, 764, { alpha: la * .95, dx: -110, dy: 100, size: 26, en: 'eyespot', color: '#ffd2b8' });
       label(ctx, '细胞膜', 420, yf(420) - 60, { alpha: la * .9, dx: -90, dy: -110, size: 26, en: 'cell membrane', color: '#f2d6c8' });
       // 人眼：同一种分子
-      const ea = mol * smooth(tEye - .2, tEye + .8, t);
+      const ea = mol * lo * smooth(tEye - .2, tEye + .8, t);
       if (ea > 0) {
         const ex = 1560, ey = 235; const ew = 110;
         ctx.save(); ctx.globalAlpha = ea; shade(ctx, ex, ey, 300, 190, .6);
         ctx.strokeStyle = '#f4ead8'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(ex - ew, ey); ctx.quadraticCurveTo(ex, ey - 78, ex + ew, ey); ctx.quadraticCurveTo(ex, ey + 78, ex - ew, ey); ctx.stroke();
         ctx.strokeStyle = 'rgba(255,214,140,.85)'; ctx.beginPath(); ctx.arc(ex, ey, 34, 0, TAU); ctx.stroke(); ctx.fillStyle = '#05080a'; ctx.beginPath(); ctx.arc(ex, ey, 15, 0, TAU); ctx.fill();
         ctx.restore(); glow(ctx, ex, ey, 70, AMB, ea * .35);
-        const arc = KIT.arcPts(1000, 452, ex - 120, ey + 10, -.22, 50); const pu = prog(t, tEye, tEye + 1.2, E.inOut);
+        const arc = KIT.arcPts(1000, 472, ex - 120, ey + 10, -.22, 50); const pu = prog(t, tEye, tEye + 1.2, E.inOut);
         ctx.save(); ctx.globalAlpha = ea * .8; ctx.setLineDash([3, 7]); ctx.strokeStyle = '#ffd9a0'; ctx.lineWidth = 1.4; ctx.beginPath(); arc.slice(0, Math.max(2, Math.floor(arc.length * pu))).forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke(); ctx.restore();
         text(ctx, '我们的眼睛', ex, ey - 92, { size: 26, font: 'song', weight: 500, color: '#efe6d6', alpha: ea, spacing: .25 });
         text(ctx, '同一种分子：视黄醛', ex, ey + 96, { size: 30, font: 'song', weight: 600, color: '#ffdca0', alpha: ea * smooth(tEye + .8, tEye + 1.6, t), spacing: .1, glow: 10, glowColor: AMB });
@@ -825,7 +827,7 @@ void main(){vec2 u=UV()*S+OFF; float w=fbm4(vec3(u*1.3,T*.02)); float d=fbm(vec3
     const pA = 1 - smooth(tEgg - .7, tEgg - .15, t);
     const hit = tBlue + 1.0;
     if (pA > 0) {
-      const sc = 1.25, cx = 960, cy = 520;
+      const sc = 1.25, cx = 960, cy = 505;
       ctx.save(); ctx.globalAlpha = pA;
       const yf = () => cy;
       const tg = ctx.createLinearGradient(0, 0, 0, cy - 72); tg.addColorStop(0, 'rgba(40,80,140,.16)'); tg.addColorStop(1, 'rgba(40,80,140,0)'); ctx.fillStyle = tg; ctx.fillRect(0, 0, W, cy - 72);
@@ -838,11 +840,11 @@ void main(){vec2 u=UV()*S+OFF; float w=fbm4(vec3(u*1.3,T*.02)); float d=fbm(vec3
       // 蓝光光子
       const pu = prog(t, tBlue - .1, hit, x => x);
       if (pu > 0 && t < hit + .35) {
-        const x0 = 230, y0 = 120, x1 = cx - 4, y1 = cy - 14; const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L; const hs = Math.min(1, pu) * L;
+        const x0 = 230, y0 = 130, x1 = cx - 4, y1 = cy - 14; const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L; const hs = Math.min(1, pu) * L;
         const pts = []; for (let k = 0; k <= 120; k++) { const s = hs - 300 + k * 300 / 120; if (s < 0) continue; const en = Math.exp(-Math.pow((s - hs + 110) / 85, 2)); const w = Math.sin((s - t * 260) / 28 * TAU) * 20 * en; pts.push([x0 + ux * s - uy * w, y0 + uy * s + ux * w]); }
         glowLine(ctx, pts, BLUE2, 2.4, pA * (1 - smooth(hit - .05, hit + .3, t)), '#e4f0ff');
         const hp = [x0 + ux * hs, y0 + uy * hs]; glow(ctx, hp[0], hp[1], 60, BLUE, .5 * pA * (1 - smooth(hit - .05, hit + .2, t)));
-        label(ctx, '蓝光', 330, 175, { alpha: pA * smooth(tBlue, tBlue + .6, t) * (1 - smooth(hit + 1, hit + 2, t)), dx: 90, dy: -50, size: 28, en: 'blue light · ~470 nm', color: '#cfe0ff', lineColor: 'rgba(160,200,255,.8)' });
+        label(ctx, '蓝光 · 约 470 纳米', 420, 224, { alpha: pA * smooth(tBlue, tBlue + .6, t) * (1 - smooth(hit + 1, hit + 2, t)), dx: 110, dy: -70, size: 28, en: 'blue light', color: '#cfe0ff', lineColor: 'rgba(160,200,255,.8)' });
       }
       const fl = smooth(hit - .05, hit + .05, t) * (1 - smooth(hit + .1, hit + 1.2, t)); if (fl > 0) { glow(ctx, cx, cy - 14, 320, BLUE2, fl * .6 * pA); glow(ctx, cx, cy - 14, 60, '#ffffff', fl * pA); }
       // 阳离子流
@@ -863,13 +865,14 @@ void main(){vec2 u=UV()*S+OFF; float w=fbm4(vec3(u*1.3,T*.02)); float d=fbm(vec3
       text(ctx, '细胞外', 120, 300, { size: 24, font: 'song', weight: 500, align: 'left', color: '#e6dccd', alpha: pA * .85, spacing: .25 });
       text(ctx, '细胞内', 120, 760, { size: 24, font: 'song', weight: 500, align: 'left', color: '#e6dccd', alpha: pA * .85, spacing: .25 });
       // 光的开关 = 离子的闸门
-      const sA = smooth(tSw - .2, tSw + .6, t) * (1 - smooth(tName - .6, tName + .2, t)) * pA;
+      const sA = smooth(tSw - .2, tSw + .6, t) * (1 - smooth(tSame + .4, tSame + 1.1, t)) * pA;
       label(ctx, '光的开关', cx - 40, cy - 14, { alpha: sA, dx: -330, dy: -170, size: 32, color: '#dce8ff', lineColor: 'rgba(170,200,255,.85)' });
-      label(ctx, '离子的闸门', cx + 4, cy + 150, { alpha: smooth(tSw + .5, tSw + 1.2, t) * (1 - smooth(tName - .6, tName + .2, t)) * pA, dx: 300, dy: 120, size: 32, color: '#dce8ff', lineColor: 'rgba(170,200,255,.85)' });
+      label(ctx, '离子的闸门', cx + 4, cy + 150, { alpha: smooth(tSw + .5, tSw + 1.2, t) * (1 - smooth(tSame + .4, tSame + 1.1, t)) * pA, dx: 300, dy: 120, size: 32, color: '#dce8ff', lineColor: 'rgba(170,200,255,.85)' });
       const same = smooth(tSame - .2, tSame + .7, t) * (1 - smooth(tName - .6, tName + .2, t)) * pA;
       if (same > 0) {
         ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.setLineDash([4, 9]); ctx.lineDashOffset = -t * 20; ctx.strokeStyle = rgba(ACC, .7 * same); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.ellipse(cx, cy, 200 * (.9 + .1 * E.out(same)), 210, 0, 0, TAU); ctx.stroke(); ctx.restore();
-        shade(ctx, cx, 222, 300, 70, .8 * same); text(ctx, '同一个分子', cx, 222, { size: 40, font: 'song', weight: 600, color: '#ffffff', alpha: same, spacing: .3, glow: 18, glowColor: ACC });
+        shade(ctx, cx, 215, 520, 100, .8 * same); text(ctx, '光的开关 ＝ 离子的闸门', cx, 195, { size: 44, font: 'song', weight: 600, color: '#ffffff', alpha: same, spacing: .12, glow: 18, glowColor: ACC });
+        text(ctx, '竟是同一个分子', cx, 258, { size: 26, font: 'song', weight: 500, color: '#bfe4ff', alpha: same * smooth(tSame + .5, tSame + 1.2, t), spacing: .35 });
       }
       // 命名
       const na = smooth(tName + .2, tName + 1.1, t) * pA;
@@ -1025,7 +1028,7 @@ void main(){vec2 u=UV()*S+OFF; float w=fbm4(vec3(u*1.3,T*.02)); float d=fbm(vec3
       label(ctx, 'ChR2 基因', lerp(gx0, gx1, .72), gy - 18, { alpha: da * smooth(c2 + .9, c2 + 1.7, t), dx: 140, dy: -55, size: 28, color: '#cfe2ff', lineColor: 'rgba(160,200,255,.85)' });
       shade(ctx, W / 2, 312, 330, 40, .7 * da * smooth(tSel - 1.2, tSel - .4, t)); text(ctx, '只有这一类神经元表达光敏通道', W / 2, 312, { size: 24, font: 'song', color: '#d6e6ff', alpha: da * smooth(tSel - 1.2, tSel - .4, t), spacing: .15 });
       // 光遗传学诞生
-      const ba = smooth(tBorn - .2, tBorn + .8, t) * aC;
+      const ba = smooth(tBorn - .2, tBorn + .8, t) * aC * (1 - smooth(S.d - 1.3, S.d - .6, t));
       if (ba > 0) { shade(ctx, W / 2, 545, 640, 190, .75 * ba); term(ctx, '光遗传学', 'optogenetics', W / 2, 520, { alpha: ba, color: ACC, size: 76, glow: 22 }); text(ctx, '以光控制时间 · 以基因选择细胞', W / 2, 640, { size: 28, font: 'song', color: '#d8ecf6', alpha: ba * smooth(tBorn + .8, tBorn + 1.6, t), spacing: .2 }); }
     }
   };
@@ -1209,7 +1212,7 @@ void main(){vec2 u=UV()*S+OFF; float w=fbm4(vec3(u*1.3,T*.02)); float d=fbm(vec3
       const lt = [wt(S, 1, '帕金森'), wt(S, 1, '抑郁'), wt(S, 1, '焦虑')];
       LOOPS.forEach((L, i) => {
         const u = prog(t, lt[i] - .1, lt[i] + 1.8, E.inOut); if (u <= 0) return;
-        const n = Math.max(2, Math.floor(L.pts.length * u)); glowLine(ctx, L.pts.slice(0, n), L.c, 2, la, '#ffffff');
+        const n = Math.max(2, Math.floor(L.pts.length * u)); glowLine(ctx, L.pts.slice(0, n), L.c, 2.2, la, hex(mix(L.c, '#ffffff', .35)));
         const hp = L.pts[n - 1]; if (u < 1) glow(ctx, hp[0], hp[1], 30, L.c, la);
         L.P.forEach((q, j) => { if (j / L.P.length <= u) { glow(ctx, q[0] + BOX, q[1] + BOY, 22, L.c, la * .6); dot(ctx, q[0] + BOX, q[1] + BOY, 3.5, '#ffffff', la); } });
         if (u >= 1) { const cu = ((t - lt[i] - 1.9) * .35) % 1; const k2 = Math.floor(cu * (L.pts.length - 1)); glow(ctx, L.pts[k2][0], L.pts[k2][1], 26, L.c, la * .9); glow(ctx, L.pts[k2][0], L.pts[k2][1], 8, '#ffffff', la); }
@@ -1268,7 +1271,7 @@ void main(){vec2 u=UV()*S+OFF; float w=fbm4(vec3(u*1.3,T*.02)); float d=fbm(vec3
         for (let k = -3; k <= 3; k++) { const y0 = gy + k * 18, y1 = EC[1] - k * 22; const on = hash(k + 10, pat) > .35 ? 1 : .35; const lg = ctx.createLinearGradient(gx, 0, EC[0] + ER, 0); lg.addColorStop(0, rgba(AMB, .5 * gA * on)); lg.addColorStop(1, rgba(AMB, .12 * gA * on)); ctx.strokeStyle = lg; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(gx + 30, y0); ctx.lineTo(lx, EC[1] + k * 9); ctx.lineTo(EC[0] + ER - 16, y1); ctx.stroke(); }
         ctx.restore();
         for (let k = -3; k <= 3; k++) glow(ctx, EC[0] + ER - 18, EC[1] - k * 22, 18, AMB, gA * .8);
-        label(ctx, '投影眼镜', gx, gy + 85, { alpha: gA, dx: 50, dy: 120, size: 28, en: 'goggles · 595 nm amber light', color: '#ffe6b0', lineColor: 'rgba(255,214,140,.8)' });
+        label(ctx, '投影眼镜 · 595 纳米琥珀光', gx, gy + 85, { alpha: gA, dx: 50, dy: 120, size: 28, en: 'projection goggles', color: '#ffe6b0', lineColor: 'rgba(255,214,140,.8)' });
       }
       // —— 放大：视网膜细胞层 ——
       const iA = aA * smooth(1.2, 2.2, t); const IX = 1350, IY = 450, IR = 260;
@@ -1321,16 +1324,16 @@ void main(){vec2 u=UV()*S+OFF; float w=fbm4(vec3(u*1.3,T*.02)); float d=fbm(vec3
     if (aB > 0) {
       const vx = 960, vy = 430; const tWay = wt(S, 1, '走向临床');
       ctx.save(); ctx.globalCompositeOperation = 'lighter';
-      for (let k = 0; k < 44; k++) { const u = k / 44; const z = Math.pow(u, 2.2); for (const sd of [-1, 1]) { const x = lerp(vx + sd * 380, vx + sd * 6, Math.sqrt(u)), y = lerp(880, vy, Math.sqrt(u)); glow(ctx, x, y, lerp(10, 2, u), '#bfe8f0', aB * (1 - u * .7) * .55 * smooth(k / 44 * 2, k / 44 * 2 + .6, t - c1)); } }
+      for (let k = 0; k < 44; k++) { const u = k / 44; const z = Math.pow(u, 2.2); for (const sd of [-1, 1]) { const x = lerp(vx + sd * 380, vx + sd * 6, Math.sqrt(u)), y = lerp(850, vy, Math.sqrt(u)); glow(ctx, x, y, lerp(10, 2, u), '#bfe8f0', aB * (1 - u * .7) * .55 * smooth(k / 44 * 2, k / 44 * 2 + .6, t - c1)); } }
       ctx.restore();
       ctx.save(); ctx.globalCompositeOperation = 'lighter';
       for (let r0 = 0; r0 < 14; r0++) { const u = Math.pow(r0 / 14, 1.6); const y = lerp(900, vy + 6, Math.sqrt(u)); const hw = lerp(900, 20, Math.sqrt(u)); for (let k = -6; k <= 6; k++) { const x = vx + k / 6 * hw; glow(ctx, x, y, lerp(5, 1.5, u), '#9fd8e6', aB * .16 * (1 - u * .6) * smooth(r0 / 14 * 2, r0 / 14 * 2 + .8, t - c1)); } }
       ctx.restore();
       glow(ctx, vx, vy, 160, AMB, aB * .18); glow(ctx, vx, vy, 16, '#fff1d6', aB * .5);
-      { const mu2 = .42, my2 = lerp(880, vy, mu2); const ma = aB * smooth(c1 + 1.2, c1 + 2, t); ctx.save(); ctx.globalAlpha = ma * .8; ctx.strokeStyle = '#ffd9a0'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(vx + 120, my2); ctx.lineTo(vx + 240, my2 - 40); ctx.lineTo(vx + 400, my2 - 40); ctx.stroke(); ctx.restore(); dot(ctx, vx + 120, my2, 4, '#ffe6b8', ma); glow(ctx, vx + 120, my2, 24, AMB, ma * .6); text(ctx, '2021 · 一位患者部分恢复视觉', vx + 410, my2 - 40, { size: 24, font: 'song', align: 'left', color: '#ffe6c0', alpha: ma }); }
-      const mu = .28 + .08 * prog(t, c1, c2, x => x); const my = lerp(880, vy, mu);
+      { const mu2 = .42, my2 = lerp(850, vy, mu2); const ma = aB * smooth(c1 + 1.2, c1 + 2, t); ctx.save(); ctx.globalAlpha = ma * .8; ctx.strokeStyle = '#ffd9a0'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(vx + 120, my2); ctx.lineTo(vx + 240, my2 - 40); ctx.lineTo(vx + 400, my2 - 40); ctx.stroke(); ctx.restore(); dot(ctx, vx + 120, my2, 4, '#ffe6b8', ma); glow(ctx, vx + 120, my2, 24, AMB, ma * .6); text(ctx, '2021 · 一位患者部分恢复视觉', vx + 410, my2 - 40, { size: 24, font: 'song', align: 'left', color: '#ffe6c0', alpha: ma }); }
+      const mu = .28 + .08 * prog(t, c1, c2, x => x); const my = lerp(850, vy, mu);
       glow(ctx, vx, my, 70, BLUE2, aB * .5); glow(ctx, vx, my, 14, '#ffffff', aB);
-      text(ctx, '研究工具', vx, 890, { size: 30, font: 'song', weight: 600, color: '#e6f4ff', alpha: aB * smooth(c1 + .2, c1 + 1, t), spacing: .3 });
+      text(ctx, '研究工具', vx, 872, { size: 30, font: 'song', weight: 600, color: '#e6f4ff', alpha: aB * smooth(c1 + .2, c1 + 1, t), spacing: .3 });
       text(ctx, '临床', vx, vy - 44, { size: 30, font: 'song', weight: 600, color: '#ffe8c0', alpha: aB * smooth(tWay, tWay + .8, t), spacing: .3 });
       text(ctx, '仍以研究工具为主 · 临床尚在早期', W / 2, 200, { size: 40, font: 'song', weight: 500, color: '#f6efe2', alpha: aB * smooth(c1 + .3, c1 + 1.3, t), spacing: .15 });
       text(ctx, '截至 2026 年尚无获批的光遗传疗法', W / 2, 262, { size: 24, font: 'song', color: '#b8ccd2', alpha: aB * smooth(c1 + 1.3, c1 + 2.3, t), spacing: .12 });

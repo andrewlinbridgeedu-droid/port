@@ -1,5 +1,5 @@
 // 用无头 Chromium 逐帧渲染，并行分段编码，再无损拼接。
-// 用法: node engine/render.js <film> [--workers 4] [--from 0] [--to <秒>] [--still <秒,秒,...>] [--scale 1]
+// 用法: node engine/render.js <film> [--workers N] [--from 秒] [--to 秒] [--still 秒,秒,...] [--channel chrome]
 const { chromium } = require('playwright');
 const { spawn } = require('child_process');
 const http = require('http');
@@ -10,7 +10,7 @@ const ROOT = path.resolve(__dirname, '..');
 const args = process.argv.slice(2);
 const film = args[0];
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
-const WORKERS = +opt('workers', 4);
+const WORKERS = +opt('workers', Math.max(2, Math.floor(require('os').cpus().length / 2)));
 const FPS = 30;
 
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.ttf': 'font/ttf', '.png': 'image/png', '.jpg': 'image/jpeg' };
@@ -40,7 +40,12 @@ async function grab(page, T, frame) {
 
 async function main() {
   const srv = await serve(); const port = srv.address().port;
-  const browser = await chromium.launch({ args: ['--disable-web-security', '--font-render-hinting=none', '--disable-lcd-text', '--force-color-profile=srgb'] });
+  const launchArgs = { args: ['--disable-web-security', '--font-render-hinting=none', '--disable-lcd-text', '--force-color-profile=srgb', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] };
+  // 优先用 Playwright 自带的 Chromium；没装时退回本机的 Google Chrome（--channel chrome 可强制）
+  let browser;
+  const channel = opt('channel', null);
+  try { browser = await chromium.launch(channel ? { ...launchArgs, channel } : launchArgs); }
+  catch (e) { console.log('未找到 Playwright Chromium，改用本机 Google Chrome'); browser = await chromium.launch({ ...launchArgs, channel: 'chrome' }); }
   const outDir = path.join(ROOT, 'build', film); fs.mkdirSync(outDir, { recursive: true });
 
   const still = opt('still', null);

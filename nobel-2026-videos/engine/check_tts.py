@@ -2,7 +2,7 @@
 import sys, os, json, hashlib, re
 import numpy as np, soundfile as sf, sherpa_onnx
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-A = os.environ.get('TTS_MODELS', '/tmp/claude-0/-home-user-port/d9417c34-2fe5-5682-a656-16c594bd732d/scratchpad/tts') + '/sherpa-onnx-sense-voice-zh-en-ja-ko-yue-2024-07-17/'
+A = os.environ.get('TTS_MODELS', os.path.join(ROOT, 'models')) + '/sherpa-onnx-sense-voice-zh-en-ja-ko-yue-2024-07-17/'
 rec = sherpa_onnx.OfflineRecognizer.from_sense_voice(model=A + 'model.int8.onnx', tokens=A + 'tokens.txt', language='zh', use_itn=False, num_threads=2)
 clean = lambda s: re.sub(r'[^一-鿿A-Za-z]', '', s)
 def lev(a, b):

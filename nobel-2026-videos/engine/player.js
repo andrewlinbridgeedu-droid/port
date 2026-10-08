@@ -66,11 +66,11 @@
 
   window.ready = (async () => {
     await loadScript(`../films/${filmId}.js`);
-    TL = await (await fetch(`../build/${filmId}/timeline.json`)).json();
+    TL = await (await fetch(`../assets/${filmId}/timeline.json`)).json();
     window.__TL = TL;
     window.__subs = TL.scenes.flatMap(s => s.lines.filter(l => !l.nosub)).flatMap(splitSub);
-    const fams = ['Noto Serif SC', 'LXGW WenKai', 'LXGW WenKai Medium', 'Ma Shan Zheng', 'Zhi Mang Xing', 'Cormorant Garamond', 'Cormorant Garamond Italic'];
-    await Promise.all(fams.flatMap(f => [document.fonts.load(`400 40px "${f}"`, '诺贝尔永ABCabc'), document.fonts.load(`700 40px "${f}"`, '诺贝尔永ABCabc')]));
+    const fams = ['Noto Serif SC', 'LXGW WenKai', 'LXGW WenKai Medium', 'Ma Shan Zheng', 'Zhi Mang Xing', 'Cormorant Garamond', 'Cormorant Garamond Italic', 'GFS Didot'];
+    await Promise.all(fams.flatMap(f => [document.fonts.load(`400 40px "${f}"`, '诺贝尔永ABCabcγλυκύ'), document.fonts.load(`700 40px "${f}"`, '诺贝尔永ABCabc')]));
     if (film.init) await film.init();
     return { total: TL.total, fps: TL.fps };
   })();
