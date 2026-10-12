@@ -5,7 +5,7 @@ import Foundation
 /// replays church battles (user decision 2026-09-30: there is only the shared server).
 ///
 /// Rules follow the App's `tickContinuousCombat()` story path (story-battle-v1):
-/// - the automatic skill loop, the 2.4 s basic attack, 1.75 s / 1.65 s player recovery;
+/// - the automatic skill loop, the 2.4 s basic attack, shared 1.1 s / 0.8 s player recovery;
 ///   each cast re-applies the chosen loop (`setContinuousSkillSequence`), as the App does;
 /// - player casts land at the authored Unity contacts (`MPCChurchBattleDriver.playerContact`),
 ///   sealed-paperweight casts included;
@@ -432,11 +432,11 @@ public struct MPCStoryBattleStepper: Sendable {
             if skill == .namelessStage { self.ultimateRequested = false }
             session.setContinuousSkillSequence(self.loop)
             self.scheduler.didCast(skill, at: now)
-            playerAt = now + (light?.tempo.skillRecovery ?? 1.75) + tuning.actionDelay + (skill == .namelessStage ? 0 : max(0, variation()))
+            playerAt = now + (light?.tempo.skillRecovery ?? MPCCombatTempo.standard.skillRecovery) + tuning.actionDelay + (skill == .namelessStage ? 0 : max(0, variation()))
             chosen = skill
         } else if now >= basicAt + (light?.tempo.basicInterval ?? 2.4) {
             basicAt = now
-            playerAt = now + (light?.tempo.basicRecovery ?? 1.65) + tuning.actionDelay + max(0, variation())
+            playerAt = now + (light?.tempo.basicRecovery ?? MPCCombatTempo.standard.basicRecovery) + tuning.actionDelay + max(0, variation())
             chosen = nil
         } else {
             return events

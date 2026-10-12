@@ -98,10 +98,10 @@ struct Q3TwoBreathTests {
                 if let skill = scheduler.next(in: [.sidestepStrike], at: now) {
                     scheduler.didCast(skill, at: now)
                     let duration = MPCBattleContactTiming.playerContact(skill)
-                    playerHit = (skill, now + duration); playerReady = now + duration + 0.12
+                    playerHit = (skill, now + duration); playerReady = now + MPCCombatTempo.standard.skillRecovery
                 } else if now >= basicReady {
                     let duration = MPCBattleContactTiming.playerContact(nil)
-                    playerHit = (nil, now + duration); playerReady = now + duration + 0.12; basicReady = now + 2.4
+                    playerHit = (nil, now + duration); playerReady = now + MPCCombatTempo.standard.basicRecovery; basicReady = now + 2.4
                 }
             }
         }

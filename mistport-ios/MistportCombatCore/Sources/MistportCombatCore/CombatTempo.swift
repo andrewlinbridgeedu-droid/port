@@ -9,8 +9,9 @@ import Foundation
 /// double, the free evasion): while the phantom stands, it parries them for half damage.
 /// Shields, damage reduction and the blank card's window still apply.
 ///
-/// Samples first (user 2026-10-01): only `sampleEncounterIDs` use it until the user
-/// approves them on device; every other battle keeps its current rules.
+/// Enemy light attacks and basic damage/interval changes remain limited to the
+/// samples. Player recovery is shared across battles (user 2026-10-12): Q5 must
+/// chain its ready cards as promptly as Q4 instead of retaining a longer lockout.
 public struct MPCCombatTempo: Equatable, Sendable {
     public init(lightInterval: TimeInterval, lightWindup: TimeInterval, lightOpening: TimeInterval, lightOpeningPerSlot: TimeInterval,
                 lightAttackPercent: Int, authoredDamagePercent: Int, parryPercent: Int, authoredClearance: TimeInterval,

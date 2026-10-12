@@ -288,7 +288,7 @@ public struct MPCChurchBattleStepper: Sendable {
     public var isFinished: Bool { session.outcome != .inProgress || tick >= MPCChurchBattleDriver.maxTicks }
     public var now: TimeInterval { Double(tick) * MPCChurchBattleDriver.step }
     public var log: MPCBattleInputLog { MPCBattleInputLog(encounterID: encounterID, inputs: inputs) }
-    private var skillRecovery: TimeInterval { light?.tempo.skillRecovery ?? 1.75 }
+    private var skillRecovery: TimeInterval { light?.tempo.skillRecovery ?? MPCCombatTempo.standard.skillRecovery }
 
     /// What a policy sees before this step's inputs are applied. If its session is already
     /// over, the step ends the battle before reading inputs: send none.
@@ -475,7 +475,7 @@ public struct MPCChurchBattleStepper: Sendable {
             hitAt = now + max(0.15, MPCChurchBattleDriver.playerContact(chosen) + variation())
         } else if now >= basicAt {
             basicAt = now + (light?.tempo.basicInterval ?? 2.4); chosen = nil
-            playerAt = now + (light?.tempo.basicRecovery ?? 1.65) + tuning.actionDelay + max(0, variation())
+            playerAt = now + (light?.tempo.basicRecovery ?? MPCCombatTempo.standard.basicRecovery) + tuning.actionDelay + max(0, variation())
             hitAt = now + max(0.15, MPCChurchBattleDriver.playerContact(nil) + variation())
         } else {
             return events

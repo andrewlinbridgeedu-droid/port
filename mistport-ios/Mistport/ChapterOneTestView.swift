@@ -2340,7 +2340,7 @@ struct ChapterOneEncounterTestView: View {
             if skill == .maskedWhisper { requestedEmeraldMask = false }
             session.setContinuousSkillSequence(sequence)
             skillScheduler.didCast(skill, at: now)
-            playerCastReadyAt = now + (session.tempo?.skillRecovery ?? 1.75)
+            playerCastReadyAt = now + (session.tempo?.skillRecovery ?? MPCCombatTempo.standard.skillRecovery)
             let sealsSkill = session.willSealPreparedSkill(skill, at: now)
             pendingPlayerImpact = (skill, target.id, now + MPCBattleContactTiming.playerContact(skill), sealsSkill)
             if sealsSkill {
@@ -2370,7 +2370,7 @@ struct ChapterOneEncounterTestView: View {
             if !sealsSkill { announceSignatureMove(skill) }
         } else if now >= (basicCooldownStarted ?? -100) + (session.tempo?.basicInterval ?? 2.4) {
             basicCooldownStarted = now
-            playerCastReadyAt = now + (session.tempo?.basicRecovery ?? 1.65)
+            playerCastReadyAt = now + (session.tempo?.basicRecovery ?? MPCCombatTempo.standard.basicRecovery)
             pendingPlayerImpact = (nil, target.id, now + MPCBattleContactTiming.playerContact(nil), false)
             if usesUnityBattlefield {
                 let suffix = unityBattleEnemyID(for: target).map { ":\($0)" } ?? ""
