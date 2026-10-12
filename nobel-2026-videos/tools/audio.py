@@ -21,6 +21,8 @@ PRESETS = {
                        bar=8.0, bell_rate=0.7, bell_up=24, bright=1500, seed=2, pad=0.85, bell=0.45, timbre=[1, .35, .22, .1, .05]),
     "medicine":   dict(chords=[[45, 57, 61, 64, 69, 71], [42, 54, 57, 61, 64, 69], [38, 50, 57, 62, 66, 69], [40, 52, 56, 59, 64, 71]],
                        bar=8.0, bell_rate=0.6, bell_up=24, bright=1900, seed=3, pad=0.85, bell=0.38, timbre=[1, .45, .25, .12, .06], pulse=True),
+    "economics":  dict(chords=[[43, 55, 62, 66, 71, 74], [40, 52, 59, 64, 67, 71], [36, 48, 55, 60, 64, 69], [38, 50, 57, 62, 66, 69]],
+                       bar=9.0, bell_rate=0.5, bell_up=24, bright=1600, seed=5, pad=0.85, bell=0.42, timbre=[1, .4, .22, .1, .05]),
     "literature": dict(chords=[[38, 50, 57, 62, 65, 69], [34, 46, 53, 58, 62, 65], [41, 48, 57, 60, 65, 69], [36, 48, 55, 59, 62, 67]],
                        bar=10.0, bell_rate=0.42, bell_up=12, bright=1300, seed=4, pad=0.8, bell=0.5, timbre=[1, .3, .15, .07, .03], piano=True),
 }
