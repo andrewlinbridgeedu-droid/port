@@ -2792,6 +2792,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             } else if encounter.id == "encounter_rain_02",
                                              contentID == "enemy_clockwork_hound" {
                 ["charge", "pounce"]
+            } else if encounter.id == "chapter01_q03_encounter", contentID == "enemy_clockwork_hound" {
+                MPCQ3HoundTiming.intents
             } else if encounter.id == "chapter01_q04_encounter", contentID == "enemy_clockwork_hound" {
                 ["q4_probe", "charge", "q4_flame_first", "q4_flame_second"]
             } else if (encounter.id == "chapter01_q06_encounter" && contentID == "enemy_archive_gatekeeper") || (chapterMissionNumber == 10 && contentID == "enemy_calibration_puppet") {
@@ -2829,6 +2831,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 content.intentPattern
             }
             let localHP: Int = switch encounter.id {
+            case "chapter01_q03_encounter": MPCProgressionWalls.q3HoundHP
             case "chapter01_q05_encounter": 1600
             case "chapter01_q04_encounter": 2200
             case "chapter01_q06_encounter": 1500
@@ -3266,10 +3269,10 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         let attackPower = authoredAttackPower(for: enemy)
         if enemy.contentID == "enemy_clockwork_hound", intent == "memory_breath",
            ["chapter01_q03_encounter", "chapter01_q04_encounter"].contains(encounter.id) {
-            // Fixed damage belongs to the early hound lessons only. Later
-            // formations use the authored enemy attack and skill multiplier.
-            // Q3 is the first lesson and must stay winnable for slow hands (sim 2026-09-29).
-            return .attack(encounter.id == "chapter01_q03_encounter" ? MPCProgressionWalls.q3BreathDamage : 260)
+            // Q3's paired breaths teach the two-hit mask. Scale with base health
+            // so growth cannot turn the lesson into two harmless hits.
+            return .attack(encounter.id == "chapter01_q03_encounter"
+                ? (playerBaseMaxHP * MPCProgressionWalls.q3BreathHealthPercent + 99) / 100 : 260)
         }
         if enemy.contentID == "enemy_clockwork_hound", intent != "name_hunt" {
             houndNameHuntStacks = 0

@@ -103,13 +103,13 @@ def shape(t, center, width):
     return max(0, 1 - abs(t - center) / width)
 
 
-def pose(rig, kind, clip, t, duration):
+def pose(rig, kind, clip, t, duration, bone_scales=None):
     p = t / duration
     for b in rig.pose.bones:
         b.location = (0, 0, 0)
         b.rotation_mode = 'QUATERNION'
         b.rotation_quaternion = (1, 0, 0, 0)
-        b.scale = (1, 1, 1)
+        b.scale = bone_scales.get(b.name, (1, 1, 1)) if bone_scales else (1, 1, 1)
     idle = clip == 'BattleIdle'
     wind = shape(p, .27, .27)
     hit = shape(p, .58, .20)
@@ -216,6 +216,13 @@ def build(kind, source):
     bpy.ops.import_scene.fbx(filepath=str(ROOT / 'UnityBattleSource/Assets' / source))
     rig = next(x for x in bpy.context.scene.objects if x.type == 'ARMATURE')
     walking = rig.animation_data.action.copy() if kind == 'Hound' and rig.animation_data else None
+    bone_scales = None
+    if walking:
+        # Walking carries the imported rig's non-unit Hips scale. Starting each
+        # authored pose at unit scale enlarged the hound whenever it attacked.
+        bpy.context.scene.frame_set(round(walking.frame_range[0]))
+        bpy.context.view_layer.update()
+        bone_scales = {b.name: tuple(b.scale) for b in rig.pose.bones}
     rig.animation_data_clear()
     for action in list(bpy.data.actions):
         if action != walking:
@@ -249,10 +256,12 @@ def build(kind, source):
         end = round(duration * FPS)
         for frame in range(end + 1):
             bpy.context.scene.frame_set(frame)
-            pose(rig, kind, name, frame / FPS, duration)
+            pose(rig, kind, name, frame / FPS, duration, bone_scales)
             for bone in rig.pose.bones:
                 bone.keyframe_insert('rotation_quaternion', frame=frame, group=bone.name)
                 bone.keyframe_insert('location', frame=frame, group=bone.name)
+                if bone_scales:
+                    bone.keyframe_insert('scale', frame=frame, group=bone.name)
         # Unity's Light clip is speed-adjusted so this authored contact pose
         # lands at exactly the shared rules' scheduled landsAtTick.
         manifest.append({'clip': name, 'frames': end + 1, 'seconds': duration,
@@ -273,6 +282,11 @@ def build(kind, source):
 
 
 if __name__ == '__main__':
-    report = [build(kind, source) for kind, source in SOURCES.items()]
-    (AUTHOR / 'manifest.json').write_text(json.dumps(report, indent=2) + '\n')
+    args = sys.argv[sys.argv.index('--') + 2:]
+    kinds = [args[args.index('--kind') + 1]] if '--kind' in args else list(SOURCES)
+    report = [build(kind, SOURCES[kind]) for kind in kinds]
+    manifest_path = AUTHOR / 'manifest.json'
+    previous = json.loads(manifest_path.read_text()) if manifest_path.exists() else []
+    entries = {entry['kind']: entry for entry in previous + report}
+    manifest_path.write_text(json.dumps([entries[kind] for kind in SOURCES if kind in entries], indent=2) + '\n')
     print('TEMPO_ANIMATION_COMPLETE', [(x['kind'], len(x['clips'])) for x in report])

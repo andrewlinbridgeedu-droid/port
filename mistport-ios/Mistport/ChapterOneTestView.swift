@@ -977,7 +977,9 @@ struct ChapterOneEncounterTestView: View {
     @State private var queuedActions: [QueuedCombatAction] = []
     @State private var requestedUltimate = false
     @State private var requestedEmeraldMask = false
+    @State private var q3HuntStart: TimeInterval?
     @State private var q4CycleStart: TimeInterval?
+    private var isQ3Hound: Bool { session.encounter.id == "chapter01_q03_encounter" }
     private var isQ4Hound: Bool { session.encounter.id == "chapter01_q04_encounter" }
     @State private var chosenLoopSkills: [FoolSkillID]? = []
     @State private var skillScheduler = ContinuousSkillScheduler()
@@ -1522,6 +1524,7 @@ struct ChapterOneEncounterTestView: View {
                 pendingEnemyImpacts.removeAll()
                 enemyReadyAt.removeAll()
                 lightAttackClock?.reset()
+                q3HuntStart = nil
                 q4CycleStart = nil
                 session.clearQ4HoundState()
                 unityBattleRuntime.send(action: "q4-hound:clear")
@@ -1975,6 +1978,7 @@ struct ChapterOneEncounterTestView: View {
                 pendingEnemyImpacts.removeAll()
                 enemyReadyAt.removeAll()
                 lightAttackClock?.reset()
+                q3HuntStart = nil
                 q4CycleStart = nil
                 session.clearQ4HoundState()
                 unityBattleRuntime.send(action: "q4-hound:clear")
@@ -2056,6 +2060,7 @@ struct ChapterOneEncounterTestView: View {
                 if value.waveIndex != previousWave {
                     pendingEnemyImpacts.removeAll()
                     enemyReadyAt.removeAll()
+                    q3HuntStart = nil
                     q4CycleStart = nil
                     session.clearQ4HoundState()
                     unityBattleRuntime.send(action: "q4-hound:clear")
@@ -2187,6 +2192,11 @@ struct ChapterOneEncounterTestView: View {
                 }
                 if session.encounter.id == "chapter01_q06_encounter" { enemyReadyAt[enemy.id] = now }
                 if session.encounter.id == "chapter01_q08_encounter" { enemyReadyAt[enemy.id] = now + 2.9 }
+            }
+            if isQ3Hound {
+                if q3HuntStart == nil { q3HuntStart = now }
+                enemyReadyAt[enemy.id] = MPCQ3HoundTiming.castTime(
+                    start: q3HuntStart ?? now, attackIndex: enemy.intentIndex)
             }
             if isQ4Hound {
                 if q4CycleStart == nil { q4CycleStart = now }
@@ -3030,6 +3040,11 @@ struct ChapterOneEncounterTestView: View {
         guard ["chapter01_q03_encounter", "chapter01_q04_encounter"].contains(session.encounter.id),
               combatIsActive, session.outcome == .inProgress,
               manualMaskIsReady, session.masqueradeCharges == 0 else { return false }
+        if isQ3Hound {
+            guard let start = q3HuntStart else { return false }
+            let phase = (battleTime - start).truncatingRemainder(dividingBy: MPCQ3HoundTiming.cycle)
+            return phase >= 1.5 && phase <= 3.0
+        }
         guard isQ4Hound else { return true }
         // Q4 repeats a 20 s cycle: probe at +2.45, flames at +8.45/+9.10.
         // A 4 s phantom only covers both flames when raised after ~+5.1, and
@@ -4657,6 +4672,7 @@ struct ChapterOneEncounterTestView: View {
         pendingPlayerImpact = nil
         pendingEnemyImpacts.removeAll()
         enemyReadyAt.removeAll()
+        q3HuntStart = nil
         q4CycleStart = nil
         session.clearQ4HoundState()
         unityBattleRuntime.send(action: "q4-hound:clear")
@@ -4721,6 +4737,7 @@ struct ChapterOneEncounterTestView: View {
         pendingPlayerImpact = nil
         pendingEnemyImpacts.removeAll()
         enemyReadyAt.removeAll()
+        q3HuntStart = nil
         q4CycleStart = nil
         session.clearQ4HoundState()
         unityBattleRuntime.send(action: "q4-hound:clear")

@@ -39,7 +39,7 @@ struct Q4TwoFlameTests {
         #expect(!s.isQ4OpeningActive)
         #expect(try s.applyPartyDamage(20, to: id) == 20)
     }
-    @Test("Cleanup removes the opening, and Q3 keeps its old attack")
+    @Test("Cleanup removes the Q4 opening; Q3 also requires its manual mask")
     func cleanupAndQ3() throws {
         var s = try MPCChapterOneEncounterSession.start(encounterID: "chapter01_q04_encounter", companionIDs: [], loadout: tutorialLoadout)
         let id = s.enemies[0].id
@@ -55,7 +55,9 @@ struct Q4TwoFlameTests {
         #expect(!q3.enemies[0].intentPattern.contains("q4_probe"))
         let before = q3.playerHP + q3.playerShield
         try q3.endRound(actingEnemyID: q3.enemies[0].id, at: 2)
-        #expect(before - q3.playerHP - q3.playerShield == MPCProgressionWalls.q3BreathDamage)
+        #expect(before - q3.playerHP - q3.playerShield == min(before, (q3.playerBaseMaxHP * MPCProgressionWalls.q3BreathHealthPercent + 99) / 100))
+        try q3.endRound(actingEnemyID: q3.enemies[0].id, at: 3.4)
+        #expect(q3.outcome == .defeat)
     }
     @Test("Three accurate manual masks win during the third opening", arguments: [6.2, 7.2, 8.4], [0.05, 1.0 / 30.0])
     func threeRounds(maskOffset: Double, tickDuration: Double) throws {

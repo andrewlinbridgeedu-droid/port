@@ -73,8 +73,9 @@ public struct MPCBountyRelicLedger: Codable, Equatable, Sendable {
 /// They are `var` only so the simulator can sweep them (`WALLS=` in tools/progression-sim);
 /// the game never writes them.
 public enum MPCProgressionWalls {
-    /// Q3 is not a wall: its fixed hound breath is kept low enough for slow players.
-    nonisolated(unsafe) public static var q3BreathDamage = 180
+    /// Q3 teaches the manual mask: two unblocked breaths defeat a fresh hero.
+    nonisolated(unsafe) public static var q3BreathHealthPercent = 90
+    nonisolated(unsafe) public static var q3HoundHP = 1200
     /// Q10 is not a wall either. With the authored 150% breath and 1050/1200 health the
     /// three-card hand only won at the fastest cadence (1.75 s per card); Q9 still wins
     /// at 2.5 s. These values let a 3 s cadence with the mask and one salve finish

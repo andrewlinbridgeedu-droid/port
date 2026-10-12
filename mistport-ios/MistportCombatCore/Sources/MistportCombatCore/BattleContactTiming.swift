@@ -72,3 +72,19 @@ public enum MPCBattleContactTiming {
         return 1
     }
 }
+
+/// Two breaths fit one four-second phantom. The next pair gives the eighteen-
+/// second mask cooldown two seconds of reaction room. Times are combat seconds.
+public enum MPCQ3HoundTiming {
+    public static let firstCast: TimeInterval = 2
+    public static let pairSpacing: TimeInterval = 1.4
+    public static let cycle: TimeInterval = 20
+
+    public static let intents = ["memory_breath", "memory_breath", "bite", "bite", "bite", "bite", "bite"]
+    public static let castOffsets: [TimeInterval] = [firstCast, firstCast + pairSpacing, 6, 9, 12, 15, 18]
+
+    public static func castTime(start: TimeInterval, attackIndex: Int) -> TimeInterval {
+        start + Double(attackIndex / intents.count) * cycle
+            + castOffsets[attackIndex % intents.count]
+    }
+}
