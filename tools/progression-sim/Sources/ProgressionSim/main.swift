@@ -8,6 +8,7 @@ PacingTuning.apply(ProcessInfo.processInfo.environment["PACING"])
 var arguments = CommandLine.arguments
 if arguments.count > 5 && arguments[1] == "fight" {
     // fight <mission> <profile> <floor> <bounty relic id or -> : every shop relic, medal time and salve choice.
+    // BLESSINGS=<hero>,<sovereign> (e.g. lamp_wick,salt_crust) adds a Q30 离场祝福 pair; default none.
     let q = Int(arguments[2])!, profile = (Profile.all + HumanPace.all.map(\.profile)).first { $0.name == arguments[3] } ?? Profile(name: "delay", actionDelay: Double(arguments[3]) ?? 0, priorityCore: true), floor = Int(arguments[4])!
     let relic = arguments[5] == "-" ? nil : arguments[5]
     let owned = Shop.passives.filter { q - 1 >= $0.unlock }.map { Optional($0.id) }

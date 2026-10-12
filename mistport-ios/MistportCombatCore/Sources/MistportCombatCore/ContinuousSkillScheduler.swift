@@ -20,7 +20,10 @@ public struct ContinuousSkillScheduler: Sendable {
         }
     }
 
-    public func next(in sequence: [FoolSkillID], at now: TimeInterval) -> FoolSkillID? {
+    /// `sealed` cards (the final boss's 夺名代签, `sealedFoolSkillIDs(at:)`) are passed over
+    /// until the seal lifts; the rest of the loop keeps its order.
+    public func next(in sequence: [FoolSkillID], at now: TimeInterval, skipping sealed: Set<FoolSkillID> = []) -> FoolSkillID? {
+        let sequence = sealed.isEmpty ? sequence : sequence.filter { !sealed.contains($0) }
         if let first = sequence.first(where: { !used.contains($0) }) { return first }
         return sequence.enumerated()
             .filter { readyAt[$0.element, default: 0] <= now }

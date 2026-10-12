@@ -86,7 +86,11 @@ struct BountyRelicTests {
                 #expect(taken[0] >= s.playerBaseMaxHP * MPCProgressionWalls.q30EnragedBlowHealthPercent / 100 * 3 / 4)
                 continue
             }
-            for step in 1...3 { try act(&s, boss.id, at: 2 + Double(step) * 3) }
+            // Below the enrage line the loop is phase three's four beats (no recovery), entered
+            // at the sovereign's next action; shields keep this solo hero standing through it.
+            #expect(s.finalBossPhase == 3 && s.enemies.first { $0.id == boss.id }?.intentPattern == ["slam", "name_seal", "thirteenth_charge", "strike"])
+            for step in 1...4 { s.grantPlayerShield(s.playerMaxHP); try act(&s, boss.id, at: 2 + Double(step) * 3) }
+            #expect(s.outcome == .inProgress)
             #expect(s.completedBossCycles == 1)
             #expect(s.triggeredEffects.contains { $0.hasPrefix("绯月寿账签") })
         }

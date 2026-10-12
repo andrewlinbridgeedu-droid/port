@@ -107,17 +107,72 @@ public enum MPCProgressionWalls {
     nonisolated(unsafe) public static var q26ConvoyHP = 5600
     nonisolated(unsafe) public static var q26ConvoyAttack = 150
     nonisolated(unsafe) public static var q26SlamPercent = 200
-    nonisolated(unsafe) public static var q30SovereignHP = 6500
-    /// Q30: the sovereign enrages below this share of its health.
-    nonisolated(unsafe) public static var q30EnrageBelowPercent = 67
-    /// Q30: while enraged (below a third), each blow takes at least this share of base health.
+    /// Q30 is a three-person fight in three phases (2026-10-10, user: 18000–20000 health,
+    /// winnable only with good relics).
+    nonisolated(unsafe) public static var q30SovereignHP = 20_000
+    /// Q30 phase two (name seal and slam join the loop) starts below this share of health.
+    nonisolated(unsafe) public static var q30PhaseTwoBelowPercent = 60
+    /// Q30: phase three, the enrage, below this share of its health.
+    nonisolated(unsafe) public static var q30EnrageBelowPercent = 30
+    /// Q30: while enraged, each blow takes at least this share of base health.
     nonisolated(unsafe) public static var q30EnragedBlowHealthPercent = 70
+    /// Q30 blows at their target, percent of the hero's base health before any defence;
+    /// name seal on an ally takes its share of that ally's health instead.
+    nonisolated(unsafe) public static var q30StrikeHealthPercent = 32
+    nonisolated(unsafe) public static var q30ChargeHealthPercent = 52
+    nonisolated(unsafe) public static var q30SlamHealthPercent = 42
+    nonisolated(unsafe) public static var q30SealHealthPercent = 12
+    /// Q30 离场祝福 (2026-10-10, user: a small easter egg, `MPCFarewellBlessings`). 伊莱娅's
+    /// blessing: 灯芯长明 adds this percent to the hero's own damage on the sovereign, 羽翼庇护
+    /// adds shared revives (each bringing the hero back at this share of health), 照名之光
+    /// makes every 夺名代签 last this many seconds.
+    /// Sim 10-10 (9 pairs × 3 profiles): the first draft (10%, a full 30% revive, crust 10%,
+    /// bell 20%) let the four ordinary relics win at F90 + life ledger, since their near misses
+    /// end 255–900 short of 20000. These keep them at 0, the clasp ≥ 3/8 at high and medium,
+    /// and no-ledger / F80 at 0; one step off lamp 9, crust 14 or mend 4 breaks a pair again.
+    nonisolated(unsafe) public static var q30LampWickPercent = 8
+    nonisolated(unsafe) public static var q30FeatherRevives = 1
+    nonisolated(unsafe) public static var q30FeatherReviveHealthPercent = 10
+    nonisolated(unsafe) public static var q30NameLightSealSeconds = 3
+    /// The pursuer's gift: 黑盐外壳 cuts all damage the sovereign takes by this percent, 冷钟
+    /// adds this percent to the thirteenth blow (below ~28% 诺恩's intercept swallows it),
+    /// 雾中续命 heals this share of its health on entering phases two and three.
+    nonisolated(unsafe) public static var q30SaltCrustPercent = 15
+    nonisolated(unsafe) public static var q30ColdBellPercent = 32
+    nonisolated(unsafe) public static var q30MistMendPercent = 5
+    /// Q28/Q29, the sovereign's survive-five-loops meetings (no wall): flat blows at the hero,
+    /// about 1.4× the Q30 shares at day-28 health, so the party's mend does not erase them.
+    nonisolated(unsafe) public static var finalBossEarlyBlows: [String: Int] = ["strike": 700, "thirteenth_charge": 1_130, "slam": 920]
+    /// Final-boss party (Q28–Q30): the slam also hits each standing ally for this share of
+    /// its health, more while enraged.
+    nonisolated(unsafe) public static var partySlamAllyPercent = 18
+    nonisolated(unsafe) public static var partySlamAllyEnragedPercent = 30
+    /// The protector's intercept takes this share of the thirteenth blow; the hero takes none.
+    nonisolated(unsafe) public static var partyInterceptPercent = 60
+    /// 夺名代签 holds one card of the hero, or an ally to its basic attack, this long.
+    nonisolated(unsafe) public static var partySealSeconds = 6
+    /// Each ally acts at most once per this many tenths of a second of combat time.
+    nonisolated(unsafe) public static var partyAllyActionTenths = 25
+    /// The healer's mend and its cooldown (tenths of a second; vials in between), the
+    /// protector's guard shield when nothing can be hit, and ally health as a percent of the
+    /// catalog value.
+    nonisolated(unsafe) public static var partyHealAmount = 180
+    nonisolated(unsafe) public static var partyHealCooldownTenths = 50
+    nonisolated(unsafe) public static var partyGuardShield = 60
+    nonisolated(unsafe) public static var partyAllyHPPercent = 100
+    /// A fallen hero (2026-10-10, user: the party loses only when all three are down): the
+    /// healer, standing and unsealed, spends the shared revive after this channel (tenths of
+    /// a second), bringing the hero back at this share of health.
+    nonisolated(unsafe) public static var partyReviveTenths = 30
+    nonisolated(unsafe) public static var partyReviveHealthPercent = 30
+    /// The allies' clock in party fights: they act on combat time, not only after the hero's hits.
+    nonisolated(unsafe) public static var partyCompanionTickTenths = 10
     /// Q17/Q22: hits needed while the enemy calibrates, and the failed blow's multiplier.
     nonisolated(unsafe) public static var verificationHitsRequired: [Int: Int] = [17: 2, 22: 5]
     nonisolated(unsafe) public static var verificationFailPercent: [Int: Int] = [17: 180, 22: 160]
     /// The reverse seal's cap on a failed-verification blow.
     nonisolated(unsafe) public static var reverseSealFailPercent = 120
-    /// Q30: the sovereign's damage below a third of its health.
+    /// Q30: the sovereign's damage while enraged (phase three).
     nonisolated(unsafe) public static var q30EnragePercent = 125
     /// The life ledger heals this share of entry health per completed boss cycle.
     nonisolated(unsafe) public static var lifeLedgerCycleHealPercent = 5
@@ -139,7 +194,7 @@ public enum MPCProgressionWalls {
         .init(mission: 18, towerFloor: 50, caseID: nil, cause: "裁定者的第十三击要够深的深井装备才扛得住。"),
         .init(mission: 22, towerFloor: nil, caseID: "b04", cause: "钟匠校准时命中不够，校验失败的重击扛不住。"),
         .init(mission: 26, towerFloor: 70, caseID: nil, cause: "押运车的猛砸要够深的深井装备才扛得住。"),
-        .init(mission: 30, towerFloor: 90, caseID: "b10", cause: "总签官的猛砸要够深的深井装备才扛得住；掉到三分之二血后还会狂暴，每一击都按你的生命算。"),
+        .init(mission: 30, towerFloor: 90, caseID: "b10", cause: "总签官的猛砸要够深的深井装备才扛得住；血掉到三成后还会狂暴，每一击都按你的生命算。"),
     ]
     public static func wall(mission: Int) -> Wall? { walls.first { $0.mission == mission } }
 

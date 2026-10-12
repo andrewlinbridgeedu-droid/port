@@ -61,6 +61,9 @@ public sealed class BountySpellRound2 : MonoBehaviour
     public void Draw(float age, bool held, float intensity = 1)
     {
         if (target == null) return;
+        // Bounties drawn by the hit layer's painted props (2026-10-09) leave out their old
+        // travelling matter, ribbons and contact bursts; states and charges stay.
+        if (SpellSpectacle20260926.DrawsBounty(species) && !state && !charge) age = -1f;
         if (age < 0) { if (matter) matter.Clear(); if (binding) binding.Draw(source, target(), age, contact, held); if (travel) travel.Draw(source, target(), age, contact); if (impact) impact.Draw(-1, target()); StopSilk(); return; }
         Vector3 victim = target();
         // Follow the wrist while it loads. Once released the starting point is fixed,

@@ -175,6 +175,33 @@ enum WallTuning {
             case "q30EnragedHP": W.q30EnragedBlowHealthPercent = v
             case "q30EnrageBelow": W.q30EnrageBelowPercent = v
             case "lifeLedgerHeal": W.lifeLedgerCycleHealPercent = v
+            case "q30PhaseTwoBelow": W.q30PhaseTwoBelowPercent = v
+            case "q30StrikeHP": W.q30StrikeHealthPercent = v
+            case "q30ChargeHP": W.q30ChargeHealthPercent = v
+            case "q30SlamHP": W.q30SlamHealthPercent = v
+            case "q30SealHP": W.q30SealHealthPercent = v
+            case "q30LampWick": W.q30LampWickPercent = v
+            case "q30FeatherRevives": W.q30FeatherRevives = v
+            case "q30FeatherReviveHP": W.q30FeatherReviveHealthPercent = v
+            case "q30NameLightSeal": W.q30NameLightSealSeconds = v
+            case "q30SaltCrust": W.q30SaltCrustPercent = v
+            case "q30ColdBell": W.q30ColdBellPercent = v
+            case "q30MistMend": W.q30MistMendPercent = v
+            case "partySlamAlly": W.partySlamAllyPercent = v
+            case "partySlamAllyEnraged": W.partySlamAllyEnragedPercent = v
+            case "partyIntercept": W.partyInterceptPercent = v
+            case "partySealSeconds": W.partySealSeconds = v
+            case "partyAllyActionTenths": W.partyAllyActionTenths = v
+            case "partyHeal": W.partyHealAmount = v
+            case "partyHealCooldownTenths": W.partyHealCooldownTenths = v
+            case "partyGuardShield": W.partyGuardShield = v
+            case "partyAllyHP": W.partyAllyHPPercent = v
+            case "partyRevive": W.partyReviveHealthPercent = v
+            case "partyReviveTenths": W.partyReviveTenths = v
+            case "partyTickTenths": W.partyCompanionTickTenths = v
+            case "earlyStrike": W.finalBossEarlyBlows["strike"] = v
+            case "earlyCharge": W.finalBossEarlyBlows["thirteenth_charge"] = v
+            case "earlySlam": W.finalBossEarlyBlows["slam"] = v
             default: print("unknown wall knob \(kv[0])")
             }
         }

@@ -52,4 +52,37 @@ struct ChurchGearTests {
         }
         #expect(geared.playerMaxHP - geared.playerHP < bare.playerMaxHP - bare.playerHP)
     }
+
+    /// Armor health is added at every battle start, so story victories must not
+    /// write it back into the persistent party (it would stack once per win).
+    @Test func armorHealthNeverStacksIntoThePersistentParty() throws {
+        var ledger = MPCChurchGearLedger()
+        for floor in 1...10 {
+            if let drop = MPCChurchGearCatalog.towerDrop(floor: floor) { ledger.grant(drop.id) }
+        }
+        #expect(ledger.stats.maxHP == 270)
+        var campaign = MPCChapterOneCampaignState.chapterStartState
+        let baseMaxHP = campaign.party.playerMaxHP
+        for number in 1...2 {
+            let mission = try #require(MPCChapterOneCatalog.mission(forOldClockMissionNumber: number))
+            var loadout = campaign.loadout(forMissionID: mission.id)
+            loadout.churchGear = ledger.stats
+            var session = try MPCChapterOneEncounterSession.start(
+                encounterID: mission.encounterID, party: campaign.party, companionIDs: [], loadout: loadout)
+            #expect(session.playerBaseMaxHP == baseMaxHP + 270)
+            for step in 0..<200 where session.outcome == .inProgress {
+                for enemy in session.enemies.filter(\.isAlive) {
+                    _ = try session.applyPartyDamage(99_999, to: enemy.id)
+                    if session.outcome == .inProgress, session.enemies.contains(where: { $0.id == enemy.id && $0.isAlive }) {
+                        session.commitEnemyImpact(from: enemy.id)
+                        try session.endRound(actingEnemyID: enemy.id, at: Double(step))
+                    }
+                }
+            }
+            try #require(session.outcome == .victory)
+            campaign.completeEncounter(session)
+            #expect(campaign.party.playerMaxHP == baseMaxHP)
+            #expect(campaign.party.playerHP <= campaign.party.playerMaxHP)
+        }
+    }
 }

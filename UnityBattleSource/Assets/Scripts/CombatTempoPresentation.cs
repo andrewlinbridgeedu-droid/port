@@ -81,8 +81,9 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         foreach (var h in battle.TempoSampleEnemies) {
             if (!h || !h.gameObject.activeInHierarchy || enemies.ContainsKey(h.BattleEnemyId)) continue;
             var kind = h.ProfileEnemyId == "early-hell-hound" ? "Hound" : h.ProfileEnemyId == "stonehide" ? "Stonejaw" : h.ProfileEnemyId == "bounty-b01" ? "Hollow" : null;
-            // Only the tempo samples (and Q3's hound) replace enemy bodies.
-            if (kind == null || (!Enabled && !(HoundBodyOnly && kind == "Hound"))) continue;
+            // The tempo samples replace enemy bodies; the early hound always does (its original
+            // controller has only a walk cycle in every state: Idle, Attack, Hit, Run, Block).
+            if (kind == null || (!Enabled && kind != "Hound")) continue;
             var e = Replace(h.Model, kind, battle.TempoSamplePlayer, h);
             if (e != null) {
                 enemies[h.BattleEnemyId] = e;
@@ -238,6 +239,16 @@ public sealed class CombatTempoPresentation : MonoBehaviour
             else if(hero.body) hero.body.Play("Parry",contact);
         }
     }
+    /// Plays an authored clip on an enemy's replacement body outside the tempo samples (the
+    /// early hound's bite and breath in Q3/Q16, 2026-10-10: its old model only walked).
+    /// Returns false when the enemy has no replacement body.
+    public bool PlayEnemyClip(EnemyHandle h, string clip, float contactAfter, bool hold = false, float tail = .22f)
+    {
+        if (!h) return false;
+        foreach (var e in enemies.Values)
+            if (e.handle == h && e.body) { e.body.Play(clip, contactAfter, hold, tail); return true; }
+        return false;
+    }
     public void LightContact(string payload)
     {
         if (!Enabled || !battle.NativeCombatEnabled) return;
@@ -302,7 +313,7 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         if (!Enabled || !enemies.TryGetValue(h.BattleEnemyId, out var e)) return false;
         e.body.ConfirmedHit(skill == "fool_skill_07" || skill == "fool_skill_10"); return true;
     }
-    public void PlayerHit() { if (!(Enabled || HeroOnly) || hero == null) return; if(hero.ai) hero.ai.ConfirmedHit(false); else if(hero.body) hero.body.ConfirmedHit(false); }
+    public void PlayerHit(float strength = 1f) { if (!(Enabled || HeroOnly) || hero == null) return; if(hero.ai) hero.ai.ConfirmedHit(strength); else if(hero.body) hero.body.ConfirmedHit(strength > 1f); }
     static void Restore(Entry e) {
         if (e == null) return;
         if (e.ai) { e.ai.Cancel(); e.ai.gameObject.SetActive(false); Destroy(e.ai.gameObject); }

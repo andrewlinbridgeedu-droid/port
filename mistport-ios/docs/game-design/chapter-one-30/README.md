@@ -81,6 +81,7 @@ Q1–8失名与诊所 → Q9–16假家庭、错误救援与终止旧犬 → Q17
 | [战役Swift原型与288次战斗对照](../../../../docs/development/world-campaign-prototype-20260927/README.md) | 可运行的隔离规则、唯一死亡/继任/退款与事实新闻；现有内容配装/药品对照已跑，原型没有接入游戏页面或改旧奖励 |
 | [最新27组战役经济实验](../../../../docs/development/economy-agent-sim-20260926/campaign-v3/INTERPRETATION.md)／[全部数表](../../../../docs/development/economy-agent-sim-20260926/campaign-v3/RESULTS.md) | 2000成熟账户×365周期×27组；四专业/进口/普通封印物维修/阵营采购已进入离线模型，固定价格不验证通胀；下一步先验证真实核心战与配装用途 |
 | [四项审查与后续计划](CHAPTER1_REVIEW_AND_PLAN_20260925.md) | 本轮总结果、证据层级、优先级与验收顺序 |
+| [光盾第三版、名招与全法术“实物化” 10/07](../../../../docs/development/SPELL_SPECTACLE_20261007.md) | Q1印记、Q12流动晶盾获模拟器认可；荒谬归结名招获认可；98组法术主体由光条改为实物+烟团（录制451/安全1617全过，170.16模拟器已装），待用户视觉认可，未装机 |
 | [全法术命中华彩层 9/26](../../../../docs/development/SPELL_SPECTACLE_20260926.md)（89组Unity实录，未装机、待视觉认可）／[法术强度返工](../../../../docs/development/SPELL_IMPACT_GRADE_20260925.md)／[M12/M15与Build126](../../../../docs/development/SPELL_IMPACT_DEVICE_20260925.md)／[M12二次展开补修](../../../../docs/development/M12_DEPLOY_GRADE_20260926.md)／[受创反馈](../../../../docs/development/PLAYER_IMPACT_FEEDBACK_20260925.md) | 原批82段Unity实录、M12/M15补修片与正式受创桥接分批核对；Build126已装机、Q6旧蓝盾仍偏平，M12加强版正式录制、设备导出和签名Build127完成但未装机，M15/H10及用户视觉认可仍未完成 |
 | [高塔／十案战场Debug直达入口](../../../../docs/development/CHAPTER1_AUDIT_DIRECT_PREVIEW_20260925.md) | Build126已编入隔离战场夹具并装机，但该入口尚未真机实玩；不能当塔百层或十案自然通关 |
 | [世界事件与经济](WORLD_EVENTS_AND_ECONOMY_20260926.md) | Pro v2审核包已取得并本地复跑19,710日行；先做雾潮/泵站闭环，伤患潮需盐茶产业前置；结构候选可开发，经济稳定性未通过、未实施 |

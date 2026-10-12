@@ -81,6 +81,9 @@ public sealed class Q4HoundPresentation : MonoBehaviour
         bool heavy=Phase=="first"||Phase=="second";
         if(source==null||target==null||!actor||!actor.gameObject.activeInHierarchy)yield break;
         bodyTime=0;if(body)body.Begin(MainlineBodyRound2.Pose.EarlyHound,Phase=="second",.04f,.45f,.85f);
+        // The big travelling fireballs stay (2026-10-10, user: 保留两连发的大火球); the spell
+        // layer paints the landing, so the old blast and detonation orb stay hidden.
+        bool painted=SpellSpectacle20260926.DrawsBreath;
         var root=new GameObject(heavy?"Q4 heavy pursuit fireball":"Q4 probe fireball");effects.Add(root);
         Material coreMat,tailMat;
         var core=Orb("Incandescent rolling core",root.transform,out coreMat);
@@ -104,12 +107,12 @@ public sealed class Q4HoundPresentation : MonoBehaviour
         }
         tail.gameObject.SetActive(false);
         var fireball=Resources.Load<EffekseerEffectAsset>("Effects/HellHound/FireBall");
-        if(fireball)
+        if(fireball&&!painted)
         {
             var args=EffekseerPlayEffectParameters.Create(end);args.SetScale(Vector3.one*(heavy?.44f:.16f));args.Speed=2.2f;
             var blast=EffekseerSystem.PlayEffect(fireball,args);blast.SetAllColor(new Color(.98f,.85f,.70f,.84f));blast.SetTargetLocation(end);blast.UpdateHandleToMoveToFrame(150);blasts.Add(blast);
         }
-        Material impactMat;var impact=Orb("Local pursuit detonation",root.transform,out impactMat);impactMat.SetFloat("_Mode",1);
+        Material impactMat;var impact=Orb("Local pursuit detonation",root.transform,out impactMat);impactMat.SetFloat("_Mode",1);if(painted)impact.gameObject.SetActive(false);
         if(token==generation)contact?.Invoke();
         float fade=0;
         while(fade<.40f&&token==generation)

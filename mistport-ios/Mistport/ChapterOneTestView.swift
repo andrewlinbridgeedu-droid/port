@@ -201,7 +201,7 @@ struct ChapterOneTestView: View {
            let mission = MPCChapterOneCatalog.missions.first(where: { $0.number == number }) {
             _session = State(initialValue: try? .start(encounterID: mission.encounterID,
                 party: previewCampaign.party, consumables: previewCampaign.inventory,
-                companionIDs: [], loadout: previewCampaign.loadout))
+                companionIDs: mission.companionIDs, loadout: previewCampaign.loadout))
         }
         if let number = requestedTowerFloor, (1...100).contains(number),
            let floor = MPCChurchTowerCatalog.floor(number: number) {
@@ -979,6 +979,9 @@ struct ChapterOneEncounterTestView: View {
     @State private var skillScheduler = ContinuousSkillScheduler()
     @State private var playerCastReadyAt: TimeInterval = 0
     @State private var pendingPlayerImpact: (skill: FoolSkillID?, target: String, time: TimeInterval, sealed: Bool)?
+    @State private var signatureCallout: SignatureCalloutCue?
+    /// The session whose Q30 离场祝福 have been shown (once per attempt).
+    @State private var announcedFarewellSessionID: UUID?
     @State private var presentedRelicEventIDs: Set<String> = []
     @State private var pendingGhostReveals: [String: TimeInterval] = [:]
     @State private var revealedGhostIDs: Set<String> = []
@@ -1271,18 +1274,8 @@ struct ChapterOneEncounterTestView: View {
                     } label: {
                         Text("开始战斗")
                             .font(.system(size: 30, weight: .black, design: .serif))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [
-                                        Color(red: 1.00, green: 0.96, blue: 0.72),
-                                        Color(red: 0.96, green: 0.72, blue: 0.22),
-                                        Color(red: 0.72, green: 0.38, blue: 0.08)
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                            .shadow(color: Color.orange.opacity(0.28), radius: 5, y: 2)
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.6), radius: 3, y: 1)
                             .modifier(BattleStartButtonChrome())
                             .contentShape(Rectangle())
                     }
@@ -1290,6 +1283,17 @@ struct ChapterOneEncounterTestView: View {
                     .accessibilityIdentifier("chapter-one-preview-start-battle")
                     .offset(y: -52)
                     .zIndex(100)
+                }
+
+                if let callout = signatureCallout {
+                    SignatureMoveCallout(kicker: callout.kicker, title: callout.title, detail: callout.detail,
+                                         hold: callout.hold, reduceMotion: reduceCombatMotion)
+                        .id(callout.id)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                        .padding(.top, 104)
+                        .allowsHitTesting(false)
+                        .accessibilityIdentifier("chapter-one-signature-callout")
+                        .zIndex(95)
                 }
 
                 if showsQ1GoddessIntervention {
@@ -1835,6 +1839,8 @@ struct ChapterOneEncounterTestView: View {
             return
         }
 
+        // Q28–Q30 (2026-10-10): a fallen hero's cast in flight is lost; the allies fight on.
+        if session.playerIsDown { pendingPlayerImpact = nil }
         if let impact = pendingPlayerImpact, (usesUnityBattlefield && !impact.sealed) ? (unityBattleRuntime.consumeCombatContact("player") || now >= impact.time + 2.5) : now >= impact.time {
             pendingPlayerImpact = nil
             var value = session
@@ -2144,8 +2150,16 @@ struct ChapterOneEncounterTestView: View {
             }
         }
 
+        // Final-boss party allies act on combat time, including while the hero is down; the
+        // healer's revive channel runs here too (no-op outside Q28–Q30).
+        let heroHPBeforeAllies = session.playerHP
+        if !session.advanceCompanions(at: now, focusTargetID: selectedTargetID).isEmpty || session.playerHP != heroHPBeforeAllies {
+            syncVisualHealth()
+        }
+        guard session.outcome == .inProgress else { return }
+
         advanceLightAttacks(at: now)
-        guard session.outcome == .inProgress,
+        guard session.outcome == .inProgress, !session.playerIsDown,
               pendingGhostReveals.isEmpty, now >= playerCastReadyAt, pendingPlayerImpact == nil,
               let target = selectedTargetID.flatMap({ id in session.enemies.first { $0.id == id && $0.isAlive } })
                 ?? session.enemies.first(where: \.isAlive) else { return }
@@ -2156,7 +2170,8 @@ struct ChapterOneEncounterTestView: View {
             ? .namelessStage : nil
         // Formal mask only enters requestEmeraldMask: lifetime accounting cannot
         // be bypassed through the historical automatic card cast path.
-        let skill = isQ1PreludeActive ? nil : (requestedSkill ?? skillScheduler.next(in: automaticSequence, at: now))
+        // The final boss's 夺名代签 (2026-10-10) holds one card; the loop passes over it.
+        let skill = isQ1PreludeActive ? nil : (requestedSkill ?? skillScheduler.next(in: automaticSequence, at: now, skipping: session.sealedFoolSkillIDs(at: now)))
         if let skill {
             if skill == .namelessStage { requestedUltimate = false }
             if skill == .maskedWhisper { requestedEmeraldMask = false }
@@ -2189,6 +2204,7 @@ struct ChapterOneEncounterTestView: View {
             } else {
                 visualScene.presentFoolSkill(FoolSpellVFXSkill.authored(skill), extendedPresentation: true)
             }
+            if !sealsSkill { announceSignatureMove(skill) }
         } else if now >= (basicCooldownStarted ?? -100) + (session.tempo?.basicInterval ?? 2.4) {
             basicCooldownStarted = now
             playerCastReadyAt = now + (session.tempo?.basicRecovery ?? 1.65)
@@ -2198,6 +2214,20 @@ struct ChapterOneEncounterTestView: View {
                 unityBattleRuntime.send(action: "basic\(suffix)")
             }
             else { visualScene.presentFoolBasicAttack() }
+        }
+    }
+
+    /// Named finishers announce themselves as they are cast (2026-10-07, after comparing
+    /// with other games' signature moves: 名招出手时打一行招式名). Only 荒谬归结 for now.
+    private static let signatureMoves: Set<FoolSkillID> = [.absurdFinale]
+
+    private func announceSignatureMove(_ skill: FoolSkillID) {
+        guard Self.signatureMoves.contains(skill) else { return }
+        let cue = SignatureCalloutCue(title: skillName(skill))
+        signatureCallout = cue
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(1300))
+            if signatureCallout?.id == cue.id { signatureCallout = nil }
         }
     }
 
@@ -2357,7 +2387,7 @@ struct ChapterOneEncounterTestView: View {
     private func nextAutomaticSkill(in sequence: [FoolSkillID]) -> FoolSkillID? {
         skillScheduler.next(in: sequence.filter {
             $0 != .namelessStage || session.canUseFoolSkill($0)
-        }, at: battleTime)
+        }, at: battleTime, skipping: session.sealedFoolSkillIDs(at: battleTime))
     }
 
     /// Automatic fallback attacks must be fully resolved without opening the
@@ -4175,6 +4205,26 @@ struct ChapterOneEncounterTestView: View {
         isHoldingQ5VictoryPresentation = false
         syncVisualHealth()
         updateQueuedTargetPresentation()
+        announceFarewellBlessingsIfNeeded(configuredSession)
+    }
+
+    /// Q30 离场祝福 (2026-10-10, user): as combat begins, 伊莱娅's blessing and then the
+    /// pursuer's gift, each through the signature callout with its one-line effect.
+    private func announceFarewellBlessingsIfNeeded(_ value: MPCChapterOneEncounterSession) {
+        guard battleIsActive, let blessings = value.farewellBlessings,
+              announcedFarewellSessionID != value.settlementID else { return }
+        announcedFarewellSessionID = value.settlementID
+        let cues = [
+            SignatureCalloutCue(kicker: "伊莱娅的祝福", title: blessings.hero.name, detail: blessings.hero.effect, hold: 2.2),
+            SignatureCalloutCue(kicker: "追索者的赠礼", title: blessings.sovereign.name, detail: blessings.sovereign.effect, hold: 2.2),
+        ]
+        Task { @MainActor in
+            for cue in cues {
+                signatureCallout = cue
+                try? await Task.sleep(for: .milliseconds(2700))
+                if signatureCallout?.id == cue.id { signatureCallout = nil }
+            }
+        }
     }
 
     private func restartEncounter() {
@@ -4868,6 +4918,7 @@ struct ChapterOneEncounterTestView: View {
                                 action: "skill:\(skill.rawValue)\(targetSuffix)"
                             )
                         }
+                        if !skipsCombatAnimations { announceSignatureMove(skill) }
                         let brokeControlSeal = controlSealWasActive && !value.controlSealActive
                         playerDamageDealt += result.targets.reduce(0) { total, hit in
                             total + max(0, hit.damage)
@@ -6197,12 +6248,8 @@ struct ChapterOneBattleSetupOverlay: View {
                 startFillingEmptySequence()
             }
             .font(.system(size: 32, weight: .black, design: .serif))
-            .foregroundStyle(LinearGradient(
-                colors: [Color(red: 1, green: 0.96, blue: 0.72),
-                         Color(red: 0.96, green: 0.72, blue: 0.22),
-                         Color(red: 0.72, green: 0.38, blue: 0.08)],
-                startPoint: .top, endPoint: .bottom))
-            .shadow(color: .black.opacity(0.65), radius: 2, y: 2)
+            .foregroundStyle(.white)
+            .shadow(color: .black.opacity(0.6), radius: 3, y: 1)
             .modifier(BattleStartButtonChrome())
             .buttonStyle(.plain)
             .allowsHitTesting(startButtonIsArmed)
@@ -7132,13 +7179,19 @@ struct ChapterOneMissionBridgeView: View {
             ?? session.encounter.id
         loadout = game.applyingChurchLoans(to: loadout, allowsActive: ![3, 4].contains(missionNumber))
         do {
-            let prepared = try MPCChapterOneEncounterSession.start(
+            var prepared = try MPCChapterOneEncounterSession.start(
                 encounterID: encounterID,
                 party: campaign.party,
                 consumables: campaign.inventory,
                 companionIDs: mission?.companionIDs ?? [],
                 loadout: loadout
             )
+            // Q30 离场祝福 (2026-10-10, user): each attempt, 伊莱娅 and the pursuer leave one
+            // random blessing each; the battle view announces them as combat begins.
+            if prepared.chapterMissionNumber == 30 {
+                var generator = SystemRandomNumberGenerator()
+                prepared.applyFarewellBlessings(.roll(using: &generator))
+            }
             try game.beginChurchLoanBattle(loanBattleID, loadout: loadout)
             session = prepared
         } catch {
@@ -9332,13 +9385,10 @@ private struct BattleStartButtonChrome: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding(.horizontal, 30).padding(.vertical, 10)
-            .background(
-                Capsule().fill(Color(red: 0.12, green: 0.08, blue: 0.05).opacity(0.78))
-            )
-            .overlay(
-                Capsule().stroke(Color(red: 1.0, green: 0.78, blue: 0.32).opacity(breathes ? 0.95 : 0.55), lineWidth: 1.6)
-            )
-            .shadow(color: Color.orange.opacity(breathes ? 0.55 : 0.2), radius: breathes ? 14 : 6)
+            // No border and no regular pill: a faint, uneven gold-to-violet haze behind
+            // white lettering (user, 2026-10-07: 不要边框，金紫色渐变底，白色 / 是很淡的
+            // 透明的背景 / 太规整 / 羽化要有一定的实体感，但又不能有明显的边缘感).
+            .background(StartButtonHaze(breathes: breathes))
             .scaleEffect(breathes ? 1.03 : 1)
             .onAppear {
                 guard !reduceMotion else { return }
@@ -9347,6 +9397,151 @@ private struct BattleStartButtonChrome: ViewModifier {
     }
 }
 
+
+/// Volumetric lit mist behind "开始战斗" (user, 2026-10-07 on the blurred-ellipse
+/// version: 羽化要有一定的实体感，但又不能有明显的边缘感). A cushion of gold -> violet
+/// light whose density is shaped by smooth bell-profile elliptical gradients (no
+/// flat plateau, zero slope where each lobe reaches transparent), so there is body
+/// in the core but no rim anywhere. A warm highlight sits inside the upper-left of
+/// the body and a deeper violet inside the lower-right, giving it volume.
+private struct StartButtonHaze: View {
+    let breathes: Bool
+
+    private struct Lobe {
+        let color: Color
+        let peak: Double      // alpha at the lobe centre
+        let x: CGFloat        // centre offset, fraction of width
+        let y: CGFloat        // centre offset, fraction of height
+        let w: CGFloat        // full extent where alpha reaches 0, fraction of width
+        let h: CGFloat        // full extent where alpha reaches 0, fraction of height
+        let tilt: Double      // degrees
+        let power: Double     // bell exponent: higher = tighter core, thinner tail
+    }
+
+    private static let gold       = Color(red: 0.90, green: 0.60, blue: 0.18)
+    private static let warmLight  = Color(red: 1.00, green: 0.82, blue: 0.50)
+    private static let rose       = Color(red: 0.78, green: 0.38, blue: 0.54)
+    private static let violet     = Color(red: 0.50, green: 0.24, blue: 0.84)
+    private static let deepViolet = Color(red: 0.32, green: 0.11, blue: 0.62)
+    private static let amber      = Color(red: 0.74, green: 0.40, blue: 0.12)
+
+    private static let lobes: [Lobe] = [
+        // --- atmosphere: very wide, very thin, irregular. It carries the outer falloff so
+        //     the dense core never ends on its own contour (dissolves edges on dark scenes).
+        Lobe(color: rose, peak: 0.06, x: 0.02, y: -0.04, w: 1.20, h: 2.24, tilt: -3, power: 1.8),
+        Lobe(color: gold, peak: 0.12, x: -0.32, y: -0.16, w: 0.80, h: 2.16, tilt: -22, power: 1.8),
+        Lobe(color: violet, peak: 0.13, x: 0.34, y: 0.16, w: 0.88, h: 2.16, tilt: 18, power: 1.8),
+        // --- mantle: between atmosphere and body so the density steps down gradually
+        //     (sum of nested bells ~ an exponential falloff: no shoulder, no rim)
+        Lobe(color: gold, peak: 0.20, x: -0.26, y: -0.10, w: 1.35, h: 2.40, tilt: -14, power: 2.0),
+        Lobe(color: violet, peak: 0.22, x: 0.28, y: 0.12, w: 1.45, h: 2.40, tilt: 14, power: 2.0),
+        // --- body: warm half sits high-left, cool half sits low-right and runs longer
+        Lobe(color: gold, peak: 0.48, x: -0.19, y: -0.05, w: 0.92, h: 1.70, tilt: -10, power: 2.4),
+        Lobe(color: violet, peak: 0.52, x: 0.20, y: 0.08, w: 1.02, h: 1.80, tilt: 10, power: 2.4),
+        Lobe(color: rose, peak: 0.26, x: 0.00, y: -0.03, w: 0.80, h: 1.50, tilt: -4, power: 2.2),
+        // --- internal shading (kept well inside the body, never on the outline)
+        Lobe(color: warmLight, peak: 0.30, x: -0.14, y: -0.18, w: 0.56, h: 0.90, tilt: -14, power: 2.2),
+        Lobe(color: deepViolet, peak: 0.42, x: 0.22, y: 0.24, w: 0.62, h: 1.00, tilt: 16, power: 2.2),
+        // shaded belly on the warm side: the cushion is lit from above, darker underneath
+        Lobe(color: amber, peak: 0.26, x: -0.20, y: 0.24, w: 0.60, h: 0.95, tilt: -6, power: 2.2),
+        // --- drifting wisps: break the outline into a diagonal plume, not an egg
+        Lobe(color: gold, peak: 0.20, x: -0.50, y: -0.34, w: 0.42, h: 0.90, tilt: -30, power: 2.0),
+        Lobe(color: violet, peak: 0.22, x: 0.54, y: 0.34, w: 0.44, h: 0.86, tilt: 24, power: 2.0),
+    ]
+
+    /// Built once: each lobe's bell-profile gradient.
+    private static let gradients: [Gradient] = lobes.map {
+        Gradient(stops: stops($0.color, peak: $0.peak, power: $0.power))
+    }
+
+    /// Bell profile (1 - t^2)^p sampled into stops: dense core, long tail, zero slope at t = 1.
+    private static func stops(_ color: Color, peak: Double, power: Double) -> [Gradient.Stop] {
+        let n = 14
+        return (0...n).map { i in
+            let t = Double(i) / Double(n)
+            let a = peak * pow(max(0, 1 - t * t), power)
+            return Gradient.Stop(color: color.opacity(a), location: t)
+        }
+    }
+
+    var body: some View {
+        GeometryReader { proxy in
+            let w = proxy.size.width, h = proxy.size.height
+            ZStack {
+                ForEach(0..<Self.lobes.count, id: \.self) { i in
+                    let l = Self.lobes[i]
+                    Rectangle()
+                        .fill(EllipticalGradient(
+                            gradient: Self.gradients[i],
+                            center: .center, startRadiusFraction: 0, endRadiusFraction: 0.5))
+                        .frame(width: w * l.w, height: h * l.h)
+                        .rotationEffect(.degrees(l.tilt))
+                        .offset(x: w * l.x, y: h * l.y)
+                }
+            }
+            .frame(width: w, height: h)
+            .compositingGroup()
+            .blur(radius: 4)
+            .scaleEffect(breathes ? 1.02 : 0.98)
+            .opacity(breathes ? 1.0 : 0.84)
+        }
+        .allowsHitTesting(false)
+    }
+}
+
+private struct SignatureCalloutCue: Equatable {
+    let id = UUID()
+    var kicker = "终结技"
+    let title: String
+    /// Q30 离场祝福 also show their one-line effect and hold longer.
+    var detail: String? = nil
+    var hold: Double = 0.85
+}
+
+/// A named finisher's title (2026-10-07: 名招出手时打一行招式名). Plain type, not
+/// calligraphy: the game ships overseas and every string will move to English together
+/// (user: 先考虑普通字体，到时一起切换到英文), so the width follows the text. It pops in
+/// over the approved gold-violet haze, holds while the hero winds up, and fades as the
+/// stage-sized hit lands below it.
+private struct SignatureMoveCallout: View {
+    var kicker = "终结技"
+    let title: String
+    var detail: String? = nil
+    var hold: Double = 0.85
+    let reduceMotion: Bool
+    @State private var shown = false
+    @State private var leaving = false
+
+    var body: some View {
+        VStack(spacing: 1) {
+            Text(kicker)
+                .font(.system(size: 12, weight: .bold))
+                .tracking(4)
+                .foregroundStyle(Color(red: 1.0, green: 0.84, blue: 0.52))
+            Text(title)
+                .font(.system(size: 34, weight: .heavy))
+                .tracking(6)
+                .foregroundStyle(.white)
+            if let detail {
+                Text(detail)
+                    .font(.system(size: 13, weight: .semibold))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.white.opacity(0.88))
+            }
+        }
+        .shadow(color: .black.opacity(0.55), radius: 4, y: 1)
+        .padding(.horizontal, 40).padding(.vertical, 12)
+        .background(StartButtonHaze(breathes: true))
+        .scaleEffect(reduceMotion ? 1 : (leaving ? 1.04 : (shown ? 1 : 1.22)))
+        .blur(radius: reduceMotion || shown ? 0 : 6)
+        .offset(x: reduceMotion ? 0 : (leaving ? 10 : (shown ? 0 : -18)))
+        .opacity(leaving ? 0 : (shown ? 1 : 0))
+        .onAppear {
+            withAnimation(.spring(response: 0.22, dampingFraction: 0.72)) { shown = true }
+            withAnimation(.easeIn(duration: 0.25).delay(hold)) { leaving = true }
+        }
+    }
+}
 
 private struct MaskTimingCue: View {
     @State private var pulses = false

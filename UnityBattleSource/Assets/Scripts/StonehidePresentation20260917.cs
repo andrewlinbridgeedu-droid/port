@@ -69,18 +69,18 @@ public sealed class StonehidePresentation20260917 : MonoBehaviour
         var animator=handle.GetComponentInChildren<Animator>(true);
         float oldSpeed=animator?animator.speed:1;
         try {
-            if(animator)animator.speed=3.5f;
-            animator?.CrossFadeInFixedTime(second?"Charge2":"Charge",.06f,0,0);
+            int phase=0;
+            StoryStrikeTiming20261010.BeginCharge(animator,second?"Charge2":"Charge");
             effect=new GameObject(second?"StonehideGroundSlam":"StonehideGroundSlam");
             material=new Material(Shader.Find("Sprites/Default"));ownedEffect=effect;ownedMaterial=material;
             var art=ChurchSpellVisual20260917.Create("stonehide","slam",handle.EnemyRoot.position,()=>target.position,1f);art.transform.SetParent(effect.transform,true);
             var gesture=TowerBodyRound2.Create(handle,"stonehide","slam",1,effect.transform);
             for(float t=0;t<2.5f;t+=Time.deltaTime){
                 if(token!=epoch||!handle||!handle.gameObject.activeInHierarchy||!valid())yield break;
-                if(t>=.4f&&animator&&animator.speed!=1){animator.speed=1;animator.CrossFadeInFixedTime(second?"Cast2":"Cast",.04f,0,0);}
+                StoryStrikeTiming20261010.Tick(animator,t,second?"Cast2":"Cast",ref phase);
                 var start=handle.EnemyRoot.position+Vector3.up*(1.8f*handle.EnemyRoot.lossyScale.y);
                 var end=target.position+Vector3.up*(isConvoy?.06f:.9f);
-                float flight=Mathf.Clamp01((t-.4f)/.6f);
+                float flight=Mathf.Clamp01((t-StoryStrikeTiming20261010.Release)/(StoryStrikeTiming20261010.Contact-StoryStrikeTiming20261010.Release));
                 var center=isConvoy?end:Vector3.Lerp(start,end,flight);
                 gesture.Tick(t);art.Tick(t);
                 if(!hit&&t>=1){hit=true;contact?.Invoke();}

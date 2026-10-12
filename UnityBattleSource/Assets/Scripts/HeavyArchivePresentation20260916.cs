@@ -59,21 +59,21 @@ public sealed class HeavyArchivePresentation20260916 : MonoBehaviour
         var animator=handle.GetComponentInChildren<Animator>(true);
         float oldSpeed=animator?animator.speed:1;
         body=MainlineBodyRound2.Get(handle.gameObject);
-        body.Begin(isConvoy?MainlineBodyRound2.Pose.Convoy:MainlineBodyRound2.Pose.Hammer,second,.4f,1f,2.5f);
+        body.Begin(isConvoy?MainlineBodyRound2.Pose.Convoy:MainlineBodyRound2.Pose.Hammer,second,StoryStrikeTiming20261010.Release,1f,2.5f);
         if(!weapon)foreach(var bone in handle.GetComponentsInChildren<Transform>())if(bone.name=="Weapon"){weapon=bone;break;}
         try {
-            if(animator)animator.speed=3.5f;
-            animator?.CrossFadeInFixedTime(second?"Charge2":"Charge",.06f,0,0);
+            int phase=0;
+            StoryStrikeTiming20261010.BeginCharge(animator,second?"Charge2":"Charge");
             effect=new GameObject(second?"ConvoyWeightImpulse":"AdjudicatorSealImpact");
             material=new Material(Shader.Find("Sprites/Default"));ownedEffect=effect;ownedMaterial=material;
             var tier=effect.AddComponent<EnemyAuthoredBurstTier20260919>();
             for(float t=0;t<2.5f;t+=Time.deltaTime){
                 if(token!=epoch||!handle||!target||!handle.gameObject.activeInHierarchy||!valid())yield break;
                 body.Sample(t);
-                if(t>=.4f&&animator&&animator.speed!=1){animator.speed=1;animator.CrossFadeInFixedTime(second?"Cast2":"Cast",.04f,0,0);}
+                StoryStrikeTiming20261010.Tick(animator,t,second?"Cast2":"Cast",ref phase);
                 var start=body?body.WeaponHeadWorld:weapon?weapon.position:handle.EnemyRoot.position+Vector3.up*1.8f;
                 var end=target.position+Vector3.up*(isConvoy?.06f:.9f);
-                float flight=Mathf.Clamp01((t-.4f)/.6f);
+                float flight=Mathf.Clamp01((t-StoryStrikeTiming20261010.Release)/(StoryStrikeTiming20261010.Contact-StoryStrikeTiming20261010.Release));
                 var center=isConvoy?end:Vector3.Lerp(start,end,flight);
                 tier.Draw(isConvoy?EnemyAuthoredBurstTier20260919.Motif.Convoy:EnemyAuthoredBurstTier20260919.Motif.Hammer,t,start,end,second);
                 if(!hit&&t>=1){hit=true;contact?.Invoke();}

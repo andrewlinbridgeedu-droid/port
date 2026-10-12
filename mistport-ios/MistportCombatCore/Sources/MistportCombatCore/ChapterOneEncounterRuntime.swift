@@ -66,6 +66,52 @@ public struct MPCPartyPersistentState: Equatable, Sendable {
     }
 }
 
+/// Q30 离场祝福 (2026-10-10, user: 2人离开时分别会随机给予主角和小boss一个祝福…设计个小彩蛋而已).
+/// As 伊莱娅 drags the outside pursuer into the rift, she leaves the hero one blessing and the
+/// pursuer leaves 瑟维安 one gift. Battle-only: never written to the party or the campaign.
+/// Magnitudes live in `MPCProgressionWalls.q30*`.
+public struct MPCFarewellBlessings: Equatable, Sendable {
+    public enum Hero: String, CaseIterable, Sendable {
+        case lampWick = "lamp_wick", featherShelter = "feather_shelter", nameLight = "name_light"
+        public var name: String {
+            switch self { case .lampWick: "灯芯长明"; case .featherShelter: "羽翼庇护"; case .nameLight: "照名之光" }
+        }
+        /// One line for the UI, without the name; `summary` puts the name in front.
+        public var effect: String {
+            typealias W = MPCProgressionWalls
+            return switch self {
+            case .lampWick: "你对瑟维安的伤害 +\(W.q30LampWickPercent)%"
+            case .featherShelter: "奥黛尔可多唤回你 \(W.q30FeatherRevives) 次（\(W.q30FeatherReviveHealthPercent)% 生命）"
+            case .nameLight: "夺名代签只封 \(W.q30NameLightSealSeconds) 秒"
+            }
+        }
+        public var summary: String { "\(name)：\(effect)" }
+    }
+    public enum Sovereign: String, CaseIterable, Sendable {
+        case saltCrust = "salt_crust", coldBell = "cold_bell", mistMend = "mist_mend"
+        public var name: String {
+            switch self { case .saltCrust: "黑盐外壳"; case .coldBell: "冷钟"; case .mistMend: "雾中续命" }
+        }
+        public var effect: String {
+            typealias W = MPCProgressionWalls
+            return switch self {
+            case .saltCrust: "瑟维安受到的伤害 −\(W.q30SaltCrustPercent)%"
+            case .coldBell: "第十三响伤害 +\(W.q30ColdBellPercent)%"
+            case .mistMend: "瑟维安进入第二、三阶段时各回复 \(W.q30MistMendPercent)% 生命"
+            }
+        }
+        public var summary: String { "\(name)：\(effect)" }
+    }
+    public let hero: Hero
+    public let sovereign: Sovereign
+    public init(hero: Hero, sovereign: Sovereign) { self.hero = hero; self.sovereign = sovereign }
+    public static func roll<G: RandomNumberGenerator>(using generator: inout G) -> Self {
+        .init(hero: Hero.allCases.randomElement(using: &generator)!, sovereign: Sovereign.allCases.randomElement(using: &generator)!)
+    }
+    /// The two lines `applyFarewellBlessings` adds to `triggeredEffects`.
+    public var announcements: [String] { ["伊莱娅的祝福：\(hero.name)", "追索者的赠礼：\(sovereign.name)"] }
+}
+
 public enum MPCChapterOneRitual: String, CaseIterable, Codable, Sendable {
     case observe = "ritual_observe"
     case paperWard = "ritual_paper_ward"
@@ -236,8 +282,8 @@ public struct MPCChapterOneCampaignState: Equatable, Sendable {
             skillUnlockStates: Dictionary(uniqueKeysWithValues: MPCChapterOneCatalog.skills.map { ($0.id, .permanent) }),
             unlockedPassiveIDs: Set(MPCChapterOneCatalog.passives.map(\.id)),
             party: MPCPartyPersistentState(
-                allyHP: Dictionary(uniqueKeysWithValues: MPCChapterOneCatalog.companions.map { ($0.id, 800) }),
-                allyMaxHP: Dictionary(uniqueKeysWithValues: MPCChapterOneCatalog.companions.map { ($0.id, 800) })
+                allyHP: Dictionary(uniqueKeysWithValues: MPCChapterOneCatalog.companions.map { ($0.id, $0.maxHP) }),
+                allyMaxHP: Dictionary(uniqueKeysWithValues: MPCChapterOneCatalog.companions.map { ($0.id, $0.maxHP) })
             ),
             loadout: MPCChapterOneLoadout(),
             loadoutSlotCapacity: 4
@@ -421,11 +467,13 @@ public struct MPCChapterOneCampaignState: Equatable, Sendable {
                 )
             })
         }
-        party = session.persistentPartyState()
+        // The final-boss party is battle-only: its allies, their health and the spent revive
+        // never reach the persistent party that tower and bounty battles start from.
+        if !session.isPartyBossEncounter { party = session.persistentPartyState() }
         if session.mistAnchorWasConsumed {
             depletedRelicIDs.insert("relic_mist_anchor_shard")
         }
-        applyPostEncounterRecovery()
+        if !session.isPartyBossEncounter { applyPostEncounterRecovery() }
     }
 
     public mutating func claimVictory(for encounter: MPCEncounterContent) {
@@ -620,6 +668,10 @@ public struct MPCCompanionActionResolution: Equatable, Sendable {
     public let companionID: String
     public let skillID: String
     public let message: String
+    /// Enemy hit, party member healed/cleansed/shielded (`MPCChapterOneEncounterSession.partyPlayerUnitID`
+    /// for the hero), and the amount dealt or restored.
+    public internal(set) var targetID: String? = nil
+    public internal(set) var amount: Int = 0
 }
 
 /// One authoritative enemy beat, kept in authored formation order.
@@ -633,6 +685,14 @@ public struct MPCEnemyActionResolution: Equatable, Sendable {
     public let healedTargetID: String?
     public let healing: Int
     public let defenseBoostBP: Int
+    /// Final-boss party (Q28–Q30): health each ally lost to this beat (the slam, a name
+    /// seal, an intercepted thirteenth blow).
+    public internal(set) var allyDamage: [String: Int] = [:]
+    /// The ally that took the thirteenth blow in the hero's place.
+    public internal(set) var interceptedBy: String? = nil
+    /// 夺名代签: the hero's sealed card, or the ally held to its basic attack.
+    public internal(set) var sealedSkillID: FoolSkillID? = nil
+    public internal(set) var sealedAllyID: String? = nil
 }
 
 private struct MPCResolvedEnemyIntent {
@@ -656,6 +716,8 @@ public enum MPCEncounterRuntimeError: Error, Equatable {
     case unknownConsumable
     case noConsumableRemaining
     case noHealingNeeded
+    /// Final-boss party: the hero has fallen and cannot act until revived.
+    case playerDown
 }
 
 /// The authored Q5 tutorial beat is deliberately isolated from the generic
@@ -686,6 +748,174 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     public var chapterMissionNumber: Int { MPCChapterOneCatalog.mission(forEncounterID: encounter.id)?.number ?? 0 }
     public var chapterObjectiveRequired: Int { chapterMissionNumber == 20 ? 1600 : chapterMissionNumber == 25 ? 1800 : 0 }
     public var chapterDepartedEnemyIDs: Set<String> { Set(enemies.filter(\.hasDeparted).map(\.id)) }
+
+    // MARK: Final-boss party (Q28–Q30; 2026-10-10, user: the hero plus AI 诺恩 and 奥黛尔)
+    /// The hero's unit in the party planner, companion results and 夺名代签 targets.
+    public static let partyPlayerUnitID = "chapter_one_player"
+    /// The sovereign's three meetings. Allies start full with one shared revive and never
+    /// touch the persistent party; the slam reaches every standing ally; Q30 runs in phases.
+    public var isPartyBossEncounter: Bool { (28...30).contains(chapterMissionNumber) }
+    /// Battle health of each active ally.
+    public private(set) var allyMaxHP: [String: Int] = [:]
+    /// The protector who takes the next thirteenth blow aimed at the hero (once per boss loop).
+    public private(set) var armedInterceptAllyID: String?
+    private var interceptUsedSerial: Int?
+    /// Sovereign loops, finished or cut short by a Q30 phase change.
+    private var sovereignCycleSerial = 0
+    /// 夺名代签: one sealed card of the hero, or allies held to their basic attack, until then.
+    public private(set) var sealedFoolSkillID: FoolSkillID?
+    public private(set) var heroSealExpiresAt: TimeInterval = 0
+    public private(set) var allySealExpiresAt: [String: TimeInterval] = [:]
+    private var nameSealCursor = 0
+    private var foolSkillCastAt: [FoolSkillID: TimeInterval] = [:]
+    private var allyReadyAt: [String: TimeInterval] = [:]
+    /// The healer's mend has its own cooldown; between mends she throws vials.
+    private var mendReadyAt: [String: TimeInterval] = [:]
+    private var resolvingCompanionDamage = false
+    /// The allies' latest actions, for presentation when the caller dropped the return value.
+    public private(set) var lastCompanionActions: [MPCCompanionActionResolution] = []
+    /// When the healer's revive channel completes for a fallen hero; nil when none is running.
+    public private(set) var heroReviveAt: TimeInterval?
+    private var nextCompanionTickAt: TimeInterval = 0
+    /// Q30 离场祝福 (2026-10-10, user): nil until `applyFarewellBlessings`, and in every other battle.
+    public private(set) var farewellBlessings: MPCFarewellBlessings?
+    /// 雾中续命: the phase whose entry last healed the sovereign; its loop never falls back below it.
+    private var mistMendPhase = 0
+
+    /// Q30 only, once, before combat begins (the App rolls as the Q30 session is created).
+    /// 羽翼庇护 adds its revives now; the other five act where their rule lands. False when refused.
+    @discardableResult
+    public mutating func applyFarewellBlessings(_ blessings: MPCFarewellBlessings) -> Bool {
+        guard chapterMissionNumber == 30, farewellBlessings == nil, outcome == .inProgress, !combatHasBegun else { return false }
+        farewellBlessings = blessings
+        if blessings.hero == .featherShelter { sharedReviveCharges += MPCProgressionWalls.q30FeatherRevives }
+        triggeredEffects += blessings.announcements
+        return true
+    }
+
+    /// Final-boss party (2026-10-10, user): the hero has fallen while an ally still fights.
+    /// The hero cannot act; blows meant for the hero fall on the next standing ally; the
+    /// party loses only when all three are down.
+    public var playerIsDown: Bool { isPartyBossEncounter && outcome == .inProgress && playerHP <= 0 }
+    /// The hero stands, or in a party fight an ally still stands for the fallen hero.
+    private var partyStillStanding: Bool { playerHP > 0 || (isPartyBossEncounter && activeCompanionIDs.contains { isAllyStanding($0) }) }
+    /// The ally a blow meant for the fallen hero lands on: protector first, then healer.
+    private var heroStandInID: String? { activeCompanionIDs.first { isAllyStanding($0) } }
+    private var revivingHealerID: String? {
+        activeCompanionIDs.first { id in
+            MPCChapterOneCatalog.companions.first { $0.id == id }?.role == .healer && isAllyStanding(id) && !isAllySealed(id)
+        }
+    }
+
+    /// The allies' combat-time clock for party fights; call every frame or step (the story
+    /// stepper and the App's loop do). It runs the healer's revive channel and lets the allies
+    /// act on their cadence even while the hero is down. Other battles return at once: their
+    /// allies still act after each player hit.
+    @discardableResult
+    public mutating func advanceCompanions(at now: TimeInterval, focusTargetID: String? = nil) -> [MPCCompanionActionResolution] {
+        guard isPartyBossEncounter, outcome == .inProgress, now.isFinite else { return [] }
+        _ = advanceRelicClock(at: now)
+        guard outcome == .inProgress else { return [] }
+        advanceHeroRevive()
+        guard !activeCompanionIDs.isEmpty, relicClock >= nextCompanionTickAt else { return [] }
+        nextCompanionTickAt = relicClock + Double(MPCProgressionWalls.partyCompanionTickTenths) / 10
+        return performCompanionActions(focusTargetID: focusTargetID)
+    }
+
+    /// The healer channels the shared revive while she stands unsealed; a seal or her fall
+    /// breaks the channel, which restarts when she can again.
+    private mutating func advanceHeroRevive() {
+        guard playerIsDown, sharedReviveCharges > 0, let healer = revivingHealerID else { heroReviveAt = nil; return }
+        guard let due = heroReviveAt else {
+            heroReviveAt = relicClock + Double(MPCProgressionWalls.partyReviveTenths) / 10
+            return
+        }
+        guard relicClock >= due else { return }
+        heroReviveAt = nil
+        // 羽翼庇护's revives come after the battle's own one, at their own share of health.
+        let blessed = farewellBlessings?.hero == .featherShelter && sharedReviveCharges <= MPCProgressionWalls.q30FeatherRevives
+        sharedReviveCharges -= 1
+        playerHP = max(1, playerMaxHP * (blessed ? MPCProgressionWalls.q30FeatherReviveHealthPercent : MPCProgressionWalls.partyReviveHealthPercent) / 100)
+        triggeredEffects.append("\(companionName(healer))：唤回主角")
+        log.append(.init(round: round, message: "\(companionName(healer))使用界锚复原", damageTaken: 0, bossMechanicMissed: false))
+    }
+
+    public func isFoolSkillSealed(_ skill: FoolSkillID, at now: TimeInterval) -> Bool {
+        skill == sealedFoolSkillID && now < heroSealExpiresAt
+    }
+    /// What the automatic loop must pass over (`ContinuousSkillScheduler.next(skipping:)`).
+    public func sealedFoolSkillIDs(at now: TimeInterval) -> Set<FoolSkillID> {
+        guard let skill = sealedFoolSkillID, isFoolSkillSealed(skill, at: now) else { return [] }
+        return [skill]
+    }
+    public func isAllySealed(_ id: String) -> Bool { relicClock < allySealExpiresAt[id, default: 0] }
+    public func isAllyStanding(_ id: String) -> Bool { activeCompanionIDs.contains(id) && allyHP[id, default: 0] > 0 }
+    /// Q30's loop by the sovereign's health: 1 down to 60%, 2 down to 30%, then 3 (enraged);
+    /// never below the phase a 雾中续命 heal was given for.
+    public var finalBossPhase: Int? {
+        guard chapterMissionNumber == 30, let boss = enemies.first(where: { $0.contentID == "boss_chronarch_sovereign" }) else { return nil }
+        return max(Self.q30Phase(of: boss), mistMendPhase)
+    }
+    /// Who the next 夺名代签 lands on: hero → protector → healer, skipping the fallen.
+    public var nextNameSealTargetID: String? { nameSealTarget()?.id }
+
+    static func q30Phase(of boss: MPCRuntimeEnemy) -> Int {
+        if boss.hp * 100 >= boss.maxHP * MPCProgressionWalls.q30PhaseTwoBelowPercent { return 1 }
+        return boss.hp * 100 >= boss.maxHP * MPCProgressionWalls.q30EnrageBelowPercent ? 2 : 3
+    }
+    /// Four attacks (2026-10-10, user): the strike and the thirteenth blow at the hero, the
+    /// slam at all three, the name seal at one. Phase three drops the recovery.
+    static func q30Pattern(phase: Int) -> [String] {
+        switch phase {
+        case 1: ["strike", "strike", "thirteenth_charge", "recover"]
+        case 2: ["name_seal", "strike", "slam", "thirteenth_charge", "recover"]
+        default: ["slam", "name_seal", "thirteenth_charge", "strike"]
+        }
+    }
+    private func nameSealTarget() -> (id: String, cursor: Int)? {
+        let order = [Self.partyPlayerUnitID] + activeCompanionIDs
+        for step in 0..<order.count {
+            let slot = (nameSealCursor + step) % order.count
+            let id = order[slot]
+            if id == Self.partyPlayerUnitID ? playerHP > 0 : isAllyStanding(id) { return (id, slot + 1) }
+        }
+        return nil
+    }
+    private func companionName(_ id: String) -> String {
+        MPCChapterOneCatalog.companions.first { $0.id == id }?.name ?? id
+    }
+    /// Battle health for an ally; party fights scale the catalog value for tuning.
+    static func battleMaxHP(companionID: String, partyBoss: Bool) -> Int {
+        let base = MPCChapterOneCatalog.companions.first { $0.id == companionID }?.maxHP ?? 800
+        return partyBoss ? max(1, base * MPCProgressionWalls.partyAllyHPPercent / 100) : base
+    }
+    @discardableResult
+    private mutating func damageAlly(_ id: String, _ amount: Int) -> Int {
+        guard let hp = allyHP[id], hp > 0, amount > 0 else { return 0 }
+        let dealt = min(hp, amount)
+        allyHP[id] = hp - dealt
+        if hp == dealt {
+            allySealExpiresAt[id] = nil
+            if armedInterceptAllyID == id { armedInterceptAllyID = nil }
+            triggeredEffects.append("\(companionName(id))倒下")
+        }
+        return dealt
+    }
+    /// The next card the automatic loop would cast: an unused one in loop order, else the
+    /// oldest ready deadline (`ContinuousSkillScheduler`'s rule, from contact times).
+    private func nextScheduledFoolSkill() -> FoolSkillID? {
+        let loop = loadout.normalSkillIDs.filter { $0 != .maskedWhisper }
+        if let unused = loop.first(where: { foolSkillCastAt[$0] == nil }) { return unused }
+        func ready(_ skill: FoolSkillID) -> TimeInterval { foolSkillCastAt[skill, default: 0] + ContinuousSkillScheduler.duration(for: skill) }
+        return loop.enumerated().min { ready($0.element) == ready($1.element) ? $0.offset < $1.offset : ready($0.element) < ready($1.element) }?.element
+    }
+    private mutating func clearHeroSeal() -> Bool {
+        guard sealedFoolSkillID != nil, relicClock < heroSealExpiresAt else { sealedFoolSkillID = nil; return false }
+        sealedFoolSkillID = nil
+        heroSealExpiresAt = 0
+        return true
+    }
+
     private var finiteDamageTicks: [MPCTimedRelicDamage] = []
     private var towerPoisonSpent: Set<String> = []
     private var towerWaveReadyAt: TimeInterval?
@@ -771,7 +1001,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             pendingPoisonHealthDamage += hp - playerHP
             if tick.remaining > 1 { finiteDamageTicks[next] = .init(source: tick.source, damage: tick.damage, dueAt: tick.dueAt + 3, remaining: tick.remaining - 1) }
             else { finiteDamageTicks.remove(at: next) }
-            if playerHP <= 0 { outcome = .defeat; finishRelicBattle() }
+            if playerHP <= 0, isPartyBossEncounter { settlePlayerDownIfNeeded() }
+            else if playerHP <= 0 { outcome = .defeat; finishRelicBattle() }
         }
     }
     private mutating func queueFiniteDamage(source: String, damage: Int, ticks: Int = 3) {
@@ -780,7 +1011,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         finiteDamageTicks.append(.init(source: source, damage: damage, dueAt: relicClock + 3, remaining: ticks))
     }
     private mutating func updateChapterObjective() {
-        guard outcome == .inProgress, playerHP > 0, !resolvingEnemyAction, committedEnemyImpacts.isEmpty else { return }
+        guard outcome == .inProgress, partyStillStanding, !resolvingEnemyAction, committedEnemyImpacts.isEmpty else { return }
         let q = chapterMissionNumber
         if [28,29].contains(q), completedBossCycles >= 5,
            let boss = enemies.firstIndex(where: { $0.contentID == "boss_chronarch_sovereign" }) {
@@ -1102,7 +1333,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     }
     @discardableResult
     public mutating func activateBlankNameCard(isOwned: Bool, targetID: String, at now: TimeInterval) -> Bool {
-        guard isOwned, outcome == .inProgress, loadout.selectedActiveRelicID == "relic_blank_name_card",
+        guard isOwned, outcome == .inProgress, !playerIsDown, loadout.selectedActiveRelicID == "relic_blank_name_card",
               !isUsurpedLifeMedalActive, masqueradeCharges == 0,
               enemies.contains(where: { $0.id == targetID && $0.isAlive }) else { return false }
         let activated = sequenceNineRelics.activateBlankCard(targetID: targetID, at: now)
@@ -1301,8 +1532,12 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         let activeIDs = Array(availableIDs.filter { id in
             MPCChapterOneCatalog.companions.contains(where: { $0.id == id })
         }.prefix(encounter.companionSlots))
-        var initialAllyHP = party.allyHP
-        for id in activeIDs where initialAllyHP[id] == nil { initialAllyHP[id] = 800 }
+        // Final-boss party fights stand alone: allies at full health, one shared revive,
+        // nothing read from (or later written to) the persistent party.
+        let partyBoss = (28...30).contains(MPCChapterOneCatalog.mission(forEncounterID: encounter.id)?.number ?? 0)
+        let allyMaxHP = Dictionary(uniqueKeysWithValues: activeIDs.map { ($0, Self.battleMaxHP(companionID: $0, partyBoss: partyBoss)) })
+        var initialAllyHP = partyBoss ? [:] : party.allyHP
+        for id in activeIDs where initialAllyHP[id] == nil { initialAllyHP[id] = allyMaxHP[id] }
         var session = Self(
             encounter: encounter,
             waveIndex: 0,
@@ -1316,7 +1551,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             playerShield: (loadout.passiveIDs.contains("fool_passive_01") ? 50 : 0)
                 + (loadout.ritual == .paperWard ? 100 : 0),
             allyHP: initialAllyHP,
-            sharedReviveCharges: party.sharedReviveCharges,
+            sharedReviveCharges: partyBoss ? 1 : party.sharedReviveCharges,
             bossPhase: encounter.id == "encounter_midnight_02" ? .calibration : nil,
             bossExposedRounds: 0,
             bossEmpowermentStacks: 0,
@@ -1374,6 +1609,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             houndNameHuntStacks: 0
         )
         session.campaignPrototype = campaignPrototype.map { MPCCampaignBattleState($0) }
+        session.allyMaxHP = allyMaxHP
         session.loadWave(0)
         return session
     }
@@ -1430,6 +1666,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     public func canUseFoolSkill(_ skillID: FoolSkillID) -> Bool {
         foolCooldowns.isAvailable(skillID)
             && !(skillID == .namelessStage && foolUltimateUsed)
+            && !isFoolSkillSealed(skillID, at: relicClock)
     }
 
     /// Adds a mission-granted trial card to the active combat session without
@@ -1524,7 +1761,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         _ = expireOwnedManualMasquerade(at: now)
         let isTeaching = encounter.id == "chapter01_q03_encounter" || encounter.id == "chapter01_q04_encounter"
         guard loadout.selectedActiveRelicID != MPCChapterOneCatalog.usurpedLifeMedalRelicID, loadout.selectedActiveRelicID != "relic_blank_name_card", !isUsurpedLifeMedalActive, isOwned, (lifetimeCracks < 10 || isTeaching), now.isFinite, now >= ownedManualMaskReadyAt,
-              outcome == .inProgress,
+              outcome == .inProgress, !playerIsDown,
               ((MPCChapterOneCatalog.mission(forEncounterID: encounter.id)?.number ?? 0) >= 3 || isChurchCombat)
         else { return nil }
         advanceQ4Clock(at: now)
@@ -1557,6 +1794,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         activeDamageSource = skillID.rawValue
         defer { activeDamageSource = "other" }
         guard outcome == .inProgress else { throw MPCEncounterRuntimeError.encounterFinished }
+        guard !playerIsDown else { throw MPCEncounterRuntimeError.playerDown }
         guard loadout.battleSkillIDs.contains(skillID) else {
             throw MPCEncounterRuntimeError.skillNotEquipped(skillID)
         }
@@ -1566,6 +1804,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 remainingActions: remainingCooldownActions(for: skillID)
             )
         }
+        // A card already on its way when the name seal fell still lands; the loop skips it next.
+        foolSkillCastAt[skillID] = relicClock
         if (sealedByPaperweight ?? willSealPreparedSkill(skillID, at: relicClock)),
            loadout.relicIDs.contains("relic_sealed_paperweight"), relicClock >= sequenceNineRelics.paperweightReadyAt {
             sequenceNineRelics.establishPaperweight(baseHP: playerBaseMaxHP, at: relicClock)
@@ -1601,7 +1841,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             // cleanse and a second extra misread. Relic costs (the needle's healing block)
             // are the player's own bargain and are not cleansed.
             let hasVial = loadout.relicIDs.contains("relic_memory_leech_vial")
-            var cleansed = [cleanseOnePlayerDamageOverTime()].compactMap { $0 }
+            // It also strikes out the final boss's name seal on the hero (2026-10-10).
+            var cleansed = (clearHeroSeal() ? ["夺名封印"] : []) + [cleanseOnePlayerDamageOverTime()].compactMap { $0 }
             if hasVial {
                 if !memoryLeechCostPaid {
                     playerHP = max(1, playerHP - 40)
@@ -1858,6 +2099,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
 
     public mutating func useConsumable(_ itemID: String) throws {
         guard outcome == .inProgress else { throw MPCEncounterRuntimeError.encounterFinished }
+        guard !playerIsDown else { throw MPCEncounterRuntimeError.playerDown }
         guard MPCChapterOneCatalog.items.contains(where: { $0.id == itemID && $0.kind == .consumable }) else {
             throw MPCEncounterRuntimeError.unknownConsumable
         }
@@ -1884,40 +2126,95 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
 
     @discardableResult
     public mutating func performCompanionActions(focusTargetID: String? = nil) -> [MPCCompanionActionResolution] {
+        lastCompanionActions.removeAll()
         guard outcome == .inProgress, !activeCompanionIDs.isEmpty else { return [] }
-        let playerID = "chapter_one_player"
+        let playerID = Self.partyPlayerUnitID
+        let partyBoss = isPartyBossEncounter
         var units = [MPCPartyUnitState(
-            id: playerID, side: .party, hp: playerHP, maxHP: playerMaxHP, shield: playerShield
+            id: playerID, side: .party, hp: playerHP, maxHP: playerMaxHP, shield: playerShield,
+            hasCleansableStatus: partyBoss && !sealedFoolSkillIDs(at: relicClock).isEmpty
         )]
         units += activeCompanionIDs.map {
-            MPCPartyUnitState(id: $0, side: .party, hp: allyHP[$0, default: 800], maxHP: 800)
+            MPCPartyUnitState(id: $0, side: .party, hp: allyHP[$0, default: 0], maxHP: allyMaxHP[$0, default: 800],
+                              hasCleansableStatus: partyBoss && isAllySealed($0))
         }
         units += enemies.filter(\.isAlive).map { enemy in
             let content = MPCChapterOneCatalog.enemies.first(where: { $0.id == enemy.contentID })
             return MPCPartyUnitState(
                 id: enemy.id, side: .enemy, hp: enemy.hp, maxHP: enemy.maxHP,
+                isInvulnerable: isTrueImmune(enemy) || isProtectedSovereign(enemy),
                 isBoss: content?.rank == .boss, isElite: content?.rank == .elite
             )
         }
-        let intentDamage = enemies.filter(\.isAlive).map(\.attack).max() ?? 0
         let state = MPCPartyBattleState(
             playerUnitID: playerID,
             units: units,
             tacticMode: tacticMode,
-            sharedReviveCharges: sharedReviveCharges,
+            // Party fights: the revive is the healer's timed channel, not a planned action.
+            sharedReviveCharges: partyBoss ? 0 : sharedReviveCharges,
             focusTargetUnitID: focusTargetID,
-            enemyIntent: MPCKnownEnemyIntent(targetUnitID: playerID, expectedDamage: intentDamage)
+            enemyIntent: knownEnemyIntent(playerID: playerID)
         )
-        let candidates = Dictionary(uniqueKeysWithValues: activeCompanionIDs.map { id in
+        // Party fights: each standing ally acts on its own cadence, not on every player hit.
+        // The healer channelling the hero's revive does nothing else.
+        let ready = activeCompanionIDs.filter { !partyBoss || (isAllyStanding($0) && relicClock >= allyReadyAt[$0, default: 0]
+                                                               && !(heroReviveAt != nil && $0 == revivingHealerID)) }
+        let candidates = Dictionary(uniqueKeysWithValues: ready.map { id in
             (id, companionCandidates(for: id, playerID: playerID))
         })
-        guard let plan = MPCPartyAIPlanner.chooseActions(
-            state: state, candidatesByActor: candidates, actorOrder: activeCompanionIDs
+        // An ally with nothing legal to do (a sealed protector facing Q28's untouchable body)
+        // must not keep the other from acting.
+        let actors = partyBoss ? ready.filter { !MPCPartyAIPlanner.legalCandidates(candidates[$0, default: []], state: state).isEmpty } : ready
+        guard !actors.isEmpty, let plan = MPCPartyAIPlanner.chooseActions(
+            state: state, candidatesByActor: candidates, actorOrder: actors
         ) else { return [] }
-
-        return plan.actions.compactMap { action in
+        if partyBoss {
+            for id in actors { allyReadyAt[id] = relicClock + Double(MPCProgressionWalls.partyAllyActionTenths) / 10 }
+        }
+        let resolved = plan.actions.compactMap { action in
             applyCompanionAction(action, playerID: playerID)
         }
+        lastCompanionActions = resolved
+        return resolved
+    }
+
+    /// Q28/Q29: outside authority absorbs every hit on the sovereign's body.
+    private func isProtectedSovereign(_ enemy: MPCRuntimeEnemy) -> Bool {
+        [28, 29].contains(chapterMissionNumber) && enemy.contentID == "boss_chronarch_sovereign"
+    }
+
+    /// What the allies plan against: in party fights the sovereign's real next action, its
+    /// target and the blow the hero would take after armour (same rules as `endRound`).
+    private func knownEnemyIntent(playerID: String) -> MPCKnownEnemyIntent {
+        if isPartyBossEncounter, let boss = enemies.first(where: { $0.contentID == "boss_chronarch_sovereign" && $0.isAlive }) {
+            let intent = boss.currentIntent
+            if intent == "name_seal", let target = nameSealTarget()?.id, target != playerID {
+                return MPCKnownEnemyIntent(targetUnitID: target, expectedDamage: allyMaxHP[target, default: 0] * MPCProgressionWalls.q30SealHealthPercent / 100)
+            }
+            // A fallen hero's blows land on the stand-in at the same share of its health.
+            if playerHP <= 0, let standIn = heroStandInID {
+                return MPCKnownEnemyIntent(targetUnitID: standIn, expectedDamage: sovereignBlow(boss, intent: intent) * allyMaxHP[standIn, default: 0] / max(1, playerBaseMaxHP))
+            }
+            return MPCKnownEnemyIntent(targetUnitID: playerID, expectedDamage: heroBlowAfterArmour(sovereignBlow(boss, intent: intent)))
+        }
+        let intentDamage = enemies.filter(\.isAlive).map(\.attack).max() ?? 0
+        return MPCKnownEnemyIntent(targetUnitID: playerID, expectedDamage: intentDamage)
+    }
+
+    private func heroBlowAfterArmour(_ damage: Int) -> Int {
+        damage * (10_000 - loadout.churchGear.damageReductionBP - loadout.outfitBonus.damageReductionBP) / 10_000
+    }
+
+    /// Companion hits obey the same protection as the player's (true immunity, gift shields,
+    /// the Q28/Q29 sovereign's outside authority, objectives) but fire no player relic,
+    /// talent or gear bonus.
+    @discardableResult
+    private mutating func applyCompanionDamage(_ damage: Int, to enemyID: String, companionID: String) -> Int {
+        let source = activeDamageSource
+        activeDamageSource = companionID
+        resolvingCompanionDamage = true
+        defer { activeDamageSource = source; resolvingCompanionDamage = false }
+        return (try? applyPartyDamage(damage, to: enemyID)) ?? 0
     }
 
     @discardableResult
@@ -1934,10 +2231,11 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         }
         // The visible Q6 ward blocks all damage; status/control rules remain separate.
         if isTrueImmune(enemies[index]) { return 0 }
-        if sequenceNineRelics.blankCardBlocks(enemyID, at: relicClock) { return 0 }
+        // The blank card pairs the hero and one enemy; an ally is a third party.
+        if !resolvingCompanionDamage, sequenceNineRelics.blankCardBlocks(enemyID, at: relicClock) { return 0 }
         let defenseIntents = ["guard", "fortify", "calibrate", "架起防御"]
         var brokeDefense = false
-        if !resolvingDeferredDamage, loadout.bountyRelicID == MPCBountyRelicCatalog.brokenSword,
+        if !resolvingDeferredDamage, !resolvingCompanionDamage, loadout.bountyRelicID == MPCBountyRelicCatalog.brokenSword,
            enemyDefenseBoosts[enemyID] != nil || q12FortifyStacks[enemyID, default: 0] > 0
             || defenseIntents.contains(enemies[index].currentIntent),
            relicClock >= brokenSwordReadyAt[enemyID, default: 0] {
@@ -1964,6 +2262,11 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
            (isBasicAttack || FoolSkillID(rawValue: activeDamageSource) != nil) {
             finalDamage = finalDamage * (10_000 + loadout.churchGear.attackBP + loadout.outfitBonus.attackBP) / 10_000
         }
+        // 灯芯长明 (Q30 离场祝福): the hero's own hits only, counted once before any deferral.
+        if !resolvingDeferredDamage, !resolvingCompanionDamage, farewellBlessings?.hero == .lampWick,
+           enemies[index].contentID == "boss_chronarch_sovereign" {
+            finalDamage = finalDamage * (100 + MPCProgressionWalls.q30LampWickPercent) / 100
+        }
         if !resolvingDeferredDamage, chapterMissionNumber == 12, let stacks = q12FortifyStacks[enemyID], stacks > 0 {
             let cut = min(MPCProgressionWalls.q12FortifyMaxPercent, stacks * MPCProgressionWalls.q12FortifyStackPercent)
             finalDamage = finalDamage * (100 - cut) / 100
@@ -1978,7 +2281,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             finalDamage = finalDamage * 150 / 100
         }
         if encounter.id == "chapter01_q06_encounter", enemies[index].contentID == "enemy_clockwork_hound",
-           houndOpeningReady, finalDamage > 0 {
+           houndOpeningReady, finalDamage > 0, !resolvingCompanionDamage {
             finalDamage = finalDamage * 150 / 100
             houndOpeningReady = false
             triggeredEffects.append("追名破绽：本次伤害提高50%，破绽消退")
@@ -1991,6 +2294,10 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             return 0
         }
         finalDamage = campaignMitigatedDamage(finalDamage, to: enemyID)
+        // 黑盐外壳 (Q30 离场祝福): every source, a deferred hit when it finally lands.
+        if farewellBlessings?.sovereign == .saltCrust, enemies[index].contentID == "boss_chronarch_sovereign" {
+            finalDamage = finalDamage * (100 - MPCProgressionWalls.q30SaltCrustPercent) / 100
+        }
         // Ordinary gift shields sit behind true immunity. Guard-phase zeroes returned above
         // cannot remove this debt, and the debt never expires merely with time.
         if [17,22].contains(chapterMissionNumber), enemies[index].currentIntent == "calibration", finalDamage > 0 {
@@ -2025,7 +2332,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             encoreDebtEnemyID = nil
         }
         splitQ2GhostIfDefeated(at: index)
-        applyBossActionCategory(category)
+        if !resolvingCompanionDamage { applyBossActionCategory(category) }
         updateBossPhaseIfNeeded()
         updateChapterObjective()
         if enemies.allSatisfy({ !$0.isAlive }) { advanceWaveOrWin() }
@@ -2048,6 +2355,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         activeDamageSource = "basic"
         defer { activeDamageSource = "other" }
         guard outcome == .inProgress else { throw MPCEncounterRuntimeError.encounterFinished }
+        guard !playerIsDown else { throw MPCEncounterRuntimeError.playerDown }
         expireFinaleReadyIfNeeded()
 
         var damage: Int
@@ -2153,6 +2461,17 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             }
             missedBossMechanic = missedBossMechanic || result.missedBossMechanic
             if !appliesEmeraldPoison, sequenceNineRelics.blankCardBlocks(enemies[index].id, at: now) { resolvedDamage = 0 }
+            // Final-boss party: the seal's target, the protector's intercept, the slam on allies.
+            var partyBeat = resolvePartyBossBeat(enemy: enemies[index], intent: intent, heroDamage: &resolvedDamage)
+            if playerIsDown, resolvedDamage > 0 {
+                // A blow meant for the fallen hero lands on the next standing ally at the same
+                // share of its health; the slam has already struck every ally.
+                let isSlam = enemies[index].contentID == "boss_chronarch_sovereign" && intent == "slam"
+                if !isSlam, let standIn = heroStandInID {
+                    partyBeat.allyDamage[standIn, default: 0] += damageAlly(standIn, resolvedDamage * allyMaxHP[standIn, default: 0] / max(1, playerBaseMaxHP))
+                }
+                resolvedDamage = 0
+            }
             if resolvedDamage > 0, !appliesEmeraldPoison, !result.missedBossMechanic,
                chapterMissionNumber != 3, chapterMissionNumber != 4,
                masqueradeCharges == 0, paperDoubleCounterCharges == 0, freeEvasionCharges == 0,
@@ -2266,7 +2585,11 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 redirectedByPaperDouble: redirectedByPaperDouble,
                 healedTargetID: result.healedTargetID,
                 healing: result.healing,
-                defenseBoostBP: result.defenseBoostBP
+                defenseBoostBP: result.defenseBoostBP,
+                allyDamage: partyBeat.allyDamage,
+                interceptedBy: partyBeat.interceptedBy,
+                sealedSkillID: partyBeat.sealedSkillID,
+                sealedAllyID: partyBeat.sealedAllyID
             ))
             // The finite sac is spent after its first discharge. Preserve the
             // authored wind-up and cycle duration, but future releases are real salt hits.
@@ -2285,6 +2608,10 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                     if heal > 0 { playerHP += heal; triggeredEffects.append("绯月寿账签：回复\(heal)生命") }
                 }
                 if [28,29].contains(chapterMissionNumber), completedBossCycles >= 5 { enemies[index].hasDeparted = true }
+                sovereignCycleSerial += 1
+            }
+            if chapterMissionNumber == 30, enemies[index].contentID == "boss_chronarch_sovereign", enemies[index].isAlive {
+                swapSovereignPhaseIfNeeded(at: index)
             }
             if [17,22].contains(chapterMissionNumber), intent == "calibration" {
                 chapterVerificationFailed = chapterVerificationHits < MPCProgressionWalls.verificationHitsRequired[chapterMissionNumber, default: 2]
@@ -2330,6 +2657,82 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         if outcome == .inProgress && enemies.allSatisfy({ !$0.isAlive }) { advanceWaveOrWin() }
     }
 
+    private struct PartyBossBeat {
+        var allyDamage: [String: Int] = [:]
+        var interceptedBy: String?
+        var sealedSkillID: FoolSkillID?
+        var sealedAllyID: String?
+    }
+
+    /// The sovereign's beat against the party (Q28–Q30). 夺名代签 seals the hero's next card
+    /// or holds an ally to its basic attack; an armed, standing, unsealed protector takes
+    /// the thirteenth blow at a share; the slam reaches every standing ally. `heroDamage`
+    /// is what is still bound for the hero's own defences.
+    private mutating func resolvePartyBossBeat(enemy: MPCRuntimeEnemy, intent: String, heroDamage: inout Int) -> PartyBossBeat {
+        var beat = PartyBossBeat()
+        guard isPartyBossEncounter, enemy.contentID == "boss_chronarch_sovereign" else { return beat }
+        // 照名之光 (Q30 离场祝福) shortens every seal, the hero's and the allies'.
+        let sealTime = TimeInterval(farewellBlessings?.hero == .nameLight
+                                    ? MPCProgressionWalls.q30NameLightSealSeconds : MPCProgressionWalls.partySealSeconds)
+        switch intent {
+        case "name_seal":
+            guard let target = nameSealTarget() else { break }
+            nameSealCursor = target.cursor
+            if target.id == Self.partyPlayerUnitID {
+                guard let skill = nextScheduledFoolSkill() else { break }
+                sealedFoolSkillID = skill
+                heroSealExpiresAt = relicClock + sealTime
+                beat.sealedSkillID = skill
+                triggeredEffects.append("夺名代签：\(skill.rawValue)被封\(Int(sealTime))秒")
+            } else {
+                heroDamage = 0
+                beat.allyDamage[target.id] = damageAlly(target.id, allyMaxHP[target.id, default: 0] * MPCProgressionWalls.q30SealHealthPercent / 100)
+                guard isAllyStanding(target.id) else { break }
+                allySealExpiresAt[target.id] = relicClock + sealTime
+                if armedInterceptAllyID == target.id { armedInterceptAllyID = nil }
+                beat.sealedAllyID = target.id
+                triggeredEffects.append("夺名代签：\(companionName(target.id))\(Int(sealTime))秒内只能普攻")
+            }
+        case "thirteenth_charge":
+            guard heroDamage > 0, playerHP > 0, let guardID = armedInterceptAllyID, isAllyStanding(guardID), !isAllySealed(guardID) else { break }
+            beat.allyDamage[guardID] = damageAlly(guardID, heroDamage * MPCProgressionWalls.partyInterceptPercent / 100)
+            beat.interceptedBy = guardID
+            armedInterceptAllyID = nil
+            interceptUsedSerial = sovereignCycleSerial
+            heroDamage = 0
+            triggeredEffects.append("\(companionName(guardID))：替主角挡下第十三响")
+        case "slam":
+            let percent = sovereignIsEnraged(enemy) ? MPCProgressionWalls.partySlamAllyEnragedPercent : MPCProgressionWalls.partySlamAllyPercent
+            for id in activeCompanionIDs where isAllyStanding(id) {
+                beat.allyDamage[id] = damageAlly(id, allyMaxHP[id, default: 0] * percent / 100)
+            }
+        default: break
+        }
+        return beat
+    }
+
+    /// Q30 phases by health (2026-10-10): the loop changes at the sovereign's next action,
+    /// starting the new loop from its first beat; the index never runs backwards.
+    private mutating func swapSovereignPhaseIfNeeded(at index: Int) {
+        let phase = max(Self.q30Phase(of: enemies[index]), mistMendPhase)
+        let pattern = Self.q30Pattern(phase: phase)
+        guard enemies[index].intentPattern != pattern else { return }
+        let count = pattern.count
+        enemies[index].intentIndex = (enemies[index].intentIndex + count - 1) / count * count
+        enemies[index].intentPattern = pattern
+        sovereignCycleSerial += 1
+        triggeredEffects.append(phase == 3 ? "瑟维安狂暴：第三阶段" : "瑟维安进入第\(phase)阶段")
+        // 雾中续命 (Q30 离场祝福): one heal per new phase (a skip from one to three heals once),
+        // capped at full health; the phase it was given for holds even above the health line.
+        let maxHP = enemies[index].maxHP, hp = enemies[index].hp
+        guard farewellBlessings?.sovereign == .mistMend, phase > max(1, mistMendPhase), hp > 0 else { return }
+        mistMendPhase = phase
+        let heal = min(maxHP * MPCProgressionWalls.q30MistMendPercent / 100, maxHP - hp)
+        guard heal > 0 else { return }
+        enemies[index].hp += heal
+        triggeredEffects.append("雾中续命：瑟维安回复\(heal)生命")
+    }
+
     /// Legacy preview callback: delivery cannot rewind a battle.
     public mutating func resolveQ5MaraIntervention() { }
 
@@ -2354,13 +2757,19 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         )
     }
 
+    /// Writes back the health the party brought in. `start` adds the worn armor's health on
+    /// top every battle, and the breathing bag and the medal end with the battle, so writing
+    /// the live maximum would stack the armor once per victory.
+    /// 羽翼庇护's extra revives are battle-only: they come off whatever is left.
     public func persistentPartyState(maxAllyHP: [String: Int] = [:]) -> MPCPartyPersistentState {
-        MPCPartyPersistentState(
-            playerHP: playerHP,
-            playerMaxHP: playerMaxHP,
+        let partyMaxHP = playerBaseMaxHP - loadout.churchGear.maxHP
+        let blessedRevives = farewellBlessings?.hero == .featherShelter ? MPCProgressionWalls.q30FeatherRevives : 0
+        return MPCPartyPersistentState(
+            playerHP: min(playerHP, partyMaxHP),
+            playerMaxHP: partyMaxHP,
             allyHP: allyHP,
             allyMaxHP: maxAllyHP,
-            sharedReviveCharges: sharedReviveCharges
+            sharedReviveCharges: max(0, sharedReviveCharges - blessedRevives)
         )
     }
 
@@ -2533,7 +2942,9 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         var candidates = enemies.filter(\.isAlive).enumerated().map { slot, enemy in
             MPCAIActionCandidate(
                 actorUnitID: companionID,
-                skillID: companion.role == .construct ? companion.normalSkillIDs[1] : companion.normalSkillIDs[0],
+                skillID: companion.role == .construct ? companion.normalSkillIDs[1]
+                    : companion.role == .healer ? companion.normalSkillIDs[2]
+                    : companion.normalSkillIDs[isPartyBossEncounter ? 1 : 0],
                 skillPriority: 10,
                 targetUnitID: enemy.id,
                 targetSlot: slot,
@@ -2541,6 +2952,42 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 magnitude: companion.role == .construct ? 120 : (companion.role == .healer ? 65 : 80),
                 supportsPlayerCombo: companion.role == .construct
             )
+        }
+        if isPartyBossEncounter {
+            // 夺名代签 holds a sealed ally to its basic attack.
+            guard !isAllySealed(companionID) else { return candidates }
+            let party = [playerID] + activeCompanionIDs.filter(isAllyStanding)
+            switch companion.role {
+            case .protector:
+                // The intercept is armed only against the sovereign's announced thirteenth
+                // blow, once per loop; otherwise the lantern guards when nothing can be hit.
+                if playerHP > 0, armedInterceptAllyID == nil, interceptUsedSerial != sovereignCycleSerial,
+                   let boss = enemies.first(where: { $0.contentID == "boss_chronarch_sovereign" && $0.isAlive }),
+                   boss.currentIntent == "thirteenth_charge" {
+                    let blow = heroBlowAfterArmour(sovereignBlow(boss, intent: "thirteenth_charge"))
+                    candidates.append(.init(actorUnitID: companionID, skillID: companion.normalSkillIDs[2], skillPriority: 1,
+                                            targetUnitID: playerID, kind: .protect, magnitude: blow, preventsKnownDamage: blow))
+                }
+                candidates.append(.init(actorUnitID: companionID, skillID: companion.normalSkillIDs[0], skillPriority: 2,
+                                        targetUnitID: playerID, kind: .shield, magnitude: MPCProgressionWalls.partyGuardShield))
+            case .healer:
+                for (slot, id) in party.enumerated() {
+                    if relicClock >= mendReadyAt[companionID, default: 0] {
+                        candidates.append(.init(actorUnitID: companionID, skillID: companion.normalSkillIDs[0], skillPriority: 1,
+                                                targetUnitID: id, targetSlot: slot, kind: .heal, magnitude: MPCProgressionWalls.partyHealAmount))
+                    }
+                    let sealed = id == playerID ? !sealedFoolSkillIDs(at: relicClock).isEmpty : isAllySealed(id)
+                    if sealed {
+                        // Lifting a seal outranks any mend (score 150 + magnitude in the planner).
+                        candidates.append(.init(actorUnitID: companionID, skillID: companion.normalSkillIDs[1], skillPriority: 0,
+                                                targetUnitID: id, targetSlot: slot, kind: .cleanse, magnitude: playerMaxHP))
+                    }
+                }
+            case .construct:
+                candidates.append(.init(actorUnitID: companionID, skillID: companion.normalSkillIDs[2], skillPriority: 1,
+                                        targetUnitID: playerID, kind: .shield, magnitude: 100))
+            }
+            return candidates
         }
         switch companion.role {
         case .protector:
@@ -2566,10 +3013,13 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         _ action: MPCAIActionCandidate,
         playerID: String
     ) -> MPCCompanionActionResolution? {
-        let companionName = MPCChapterOneCatalog.companions.first(where: { $0.id == action.actorUnitID })?.name ?? action.actorUnitID
+        let actorName = companionName(action.actorUnitID)
+        func result(_ message: String, amount: Int = 0) -> MPCCompanionActionResolution {
+            .init(companionID: action.actorUnitID, skillID: action.skillID, message: message, targetID: action.targetUnitID, amount: amount)
+        }
         switch action.kind {
         case .damage:
-            guard let index = enemies.firstIndex(where: { $0.id == action.targetUnitID && $0.isAlive }) else { return nil }
+            guard enemies.contains(where: { $0.id == action.targetUnitID && $0.isAlive }) else { return nil }
             var magnitude = action.magnitude
             if mirrorThreadBonusReady {
                 magnitude += 80
@@ -2584,25 +3034,39 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 borrowedBellTriggeredRound = round
                 triggeredEffects.append("借声铜铃：队友破甲获得50护盾")
             }
-            enemies[index].hp = max(0, enemies[index].hp - magnitude)
-            splitQ2GhostIfDefeated(at: index)
-            updateBossPhaseIfNeeded()
-            if enemies.allSatisfy({ !$0.isAlive }) { advanceWaveOrWin() }
-            return .init(companionID: action.actorUnitID, skillID: action.skillID, message: "\(companionName)造成\(magnitude)伤害")
+            // Through the same protection as the player's hits: the Q28/Q29 sovereign's body
+            // stays untouched, guards and gift shields hold.
+            let dealt = applyCompanionDamage(magnitude, to: action.targetUnitID, companionID: action.actorUnitID)
+            return result("\(actorName)造成\(dealt)伤害", amount: dealt)
+        case .heal where isPartyBossEncounter && action.targetUnitID != playerID:
+            guard let hp = allyHP[action.targetUnitID], hp > 0 else { return nil }
+            mendReadyAt[action.actorUnitID] = relicClock + Double(MPCProgressionWalls.partyHealCooldownTenths) / 10
+            let restored = min(action.magnitude, max(0, allyMaxHP[action.targetUnitID, default: hp] - hp))
+            allyHP[action.targetUnitID] = hp + restored
+            return result("\(actorName)为\(companionName(action.targetUnitID))恢复\(restored)生命", amount: restored)
         case .heal:
+            if isPartyBossEncounter { mendReadyAt[action.actorUnitID] = relicClock + Double(MPCProgressionWalls.partyHealCooldownTenths) / 10 }
             let healing = receivePlayerHealing(action.magnitude)
-            return .init(companionID: action.actorUnitID, skillID: action.skillID, message: "\(companionName)恢复\(healing)生命")
+            return result("\(actorName)恢复\(healing)生命", amount: healing)
+        case .cleanse:
+            let lifted = action.targetUnitID == playerID ? clearHeroSeal() : allySealExpiresAt.removeValue(forKey: action.targetUnitID) != nil
+            guard lifted else { return nil }
+            triggeredEffects.append("\(actorName)：解除夺名代签")
+            return result("\(actorName)解除夺名代签")
+        case .protect where isPartyBossEncounter:
+            armedInterceptAllyID = action.actorUnitID
+            return result("\(actorName)护住主角，准备替挡第十三响")
         case .shield, .protect:
             grantPlayerShield(action.magnitude)
-            return .init(companionID: action.actorUnitID, skillID: action.skillID, message: "\(companionName)提供\(action.magnitude)护盾")
+            return result("\(actorName)提供\(action.magnitude)护盾", amount: action.magnitude)
         default:
-            return .init(companionID: action.actorUnitID, skillID: action.skillID, message: "\(companionName)提供战术支援")
+            return result("\(actorName)提供战术支援")
         }
     }
 
     private mutating func advanceWaveOrWin() {
         clearDefeatedTowerEffects()
-        guard committedEnemyImpacts.isEmpty, !resolvingEnemyAction, playerHP > 0, finiteDamageTicks.isEmpty else { return }
+        guard committedEnemyImpacts.isEmpty, !resolvingEnemyAction, partyStillStanding, finiteDamageTicks.isEmpty else { return }
         if [28,29].contains(chapterMissionNumber), completedBossCycles < 5 { return }
         if [20,25].contains(chapterMissionNumber), chapterObjectiveProgress < chapterObjectiveRequired { return }
         if waveIndex + 1 < encounter.waves.count {
@@ -2943,7 +3407,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             "calibration", "thirteenth_charge", "slam", "recover",      // no simultaneous double heavy
             "calibration", "thirteenth_charge", "slam", "recover"      // final reserve pays for departure
         ]
-        case "boss_chronarch_sovereign": return ["strike", "thirteenth_charge", "slam", "recover"]
+        // Q30 opens in phase one; `endRound` swaps the loop as its health falls.
+        case "boss_chronarch_sovereign": return Self.q30Pattern(phase: 1)
         case "enemy_archive_gatekeeper": return ["guard", "archive_slam", "recover"]
         case "enemy_codex_executor": return ["calibration", "strike", "slam", "recover"]
         case "enemy_archive_adjudicator": return chapterMissionNumber == 23 ? ["thirteenth_charge", "memory_breath", "recover"] : ["thirteenth_charge", "strike", "recover"]
@@ -2964,25 +3429,45 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         return loadout.bountyRelicID == MPCBountyRelicCatalog.reverseSeal ? min(failed, MPCProgressionWalls.reverseSealFailPercent) : failed
     }
 
-    private mutating func resolveChapterThirtyIntent(enemy: MPCRuntimeEnemy, intent: String) -> MPCResolvedEnemyIntent? {
-        if enemy.contentID == "boss_chronarch_sovereign" {
-            let enraged = enemy.hp * 100 < enemy.maxHP * MPCProgressionWalls.q30EnrageBelowPercent
-                && loadout.bountyRelicID != MPCBountyRelicCatalog.lifeLedger
-            let multiplier = chapterMissionNumber == 30 ? (enraged ? MPCProgressionWalls.q30EnragePercent : 100)
-                : chapterMissionNumber == 29 ? 65 : 100
-            let base: Int = switch intent { case "strike": 65; case "thirteenth_charge": 85; case "slam": 110; default: 0 }
-            // Q30 wall, tower half: without F90-or-deeper gear the slam takes a share of health.
-            if chapterMissionNumber == 30, intent == "slam",
-               !MPCProgressionWalls.meetsTowerFloor(mission: 30, gear: loadout.churchGear),
-               let share = MPCProgressionWalls.towerCheckBlowHealthPercent[30] {
-                return .attack(max(base * multiplier / 100, playerBaseMaxHP * share / 100))
-            }
-            // Q30 wall: enraged blows take a share of the player's health, so gear cannot race past them.
-            if chapterMissionNumber == 30, enraged, base > 0, MPCProgressionWalls.q30EnragedBlowHealthPercent > 0 {
-                return .attack(max(base * multiplier / 100, playerBaseMaxHP * MPCProgressionWalls.q30EnragedBlowHealthPercent / 100))
-            }
-            return .attack(base * multiplier / 100)
+    /// Q30 phase three without the life ledger (a 雾中续命 heal does not lift it).
+    private func sovereignIsEnraged(_ enemy: MPCRuntimeEnemy) -> Bool {
+        chapterMissionNumber == 30 && enemy.contentID == "boss_chronarch_sovereign"
+            && (enemy.hp * 100 < enemy.maxHP * MPCProgressionWalls.q30EnrageBelowPercent || mistMendPhase >= 3)
+            && loadout.bountyRelicID != MPCBountyRelicCatalog.lifeLedger
+    }
+
+    /// The sovereign's blow at the hero before any player defence. Pure, so the allies'
+    /// planner reads the same number `endRound` lands.
+    private func sovereignBlow(_ enemy: MPCRuntimeEnemy, intent: String) -> Int {
+        typealias W = MPCProgressionWalls
+        // Q28/Q29 are no walls: flat blows, heavy enough that the party's mend does not erase them.
+        guard chapterMissionNumber == 30 else { return W.finalBossEarlyBlows[intent, default: 0] }
+        let enraged = sovereignIsEnraged(enemy)
+        // Q30 blows are shares of the hero's health (2026-10-10), so gear cannot race past them.
+        let share: Int = switch intent {
+        case "strike": W.q30StrikeHealthPercent
+        case "thirteenth_charge": W.q30ChargeHealthPercent
+        case "slam": W.q30SlamHealthPercent
+        case "name_seal": W.q30SealHealthPercent
+        default: 0
         }
+        var blow = playerBaseMaxHP * share / 100 * (enraged ? W.q30EnragePercent : 100) / 100
+        // Q30 wall, tower half: without F90-or-deeper gear the slam takes a share of health.
+        if intent == "slam", !W.meetsTowerFloor(mission: 30, gear: loadout.churchGear),
+           let wall = W.towerCheckBlowHealthPercent[30] {
+            blow = max(blow, playerBaseMaxHP * wall / 100)
+        }
+        // Q30 wall: every enraged blow (not the seal) takes at least this share of health.
+        if enraged, share > 0, intent != "name_seal", W.q30EnragedBlowHealthPercent > 0 {
+            blow = max(blow, playerBaseMaxHP * W.q30EnragedBlowHealthPercent / 100)
+        }
+        // 冷钟 (Q30 离场祝福): on top of every share above, so an intercept takes its part of more.
+        if intent == "thirteenth_charge", farewellBlessings?.sovereign == .coldBell { blow = blow * (100 + W.q30ColdBellPercent) / 100 }
+        return blow
+    }
+
+    private mutating func resolveChapterThirtyIntent(enemy: MPCRuntimeEnemy, intent: String) -> MPCResolvedEnemyIntent? {
+        if enemy.contentID == "boss_chronarch_sovereign" { return .attack(sovereignBlow(enemy, intent: intent)) }
         if enemy.contentID == "enemy_codex_executor", intent == "slam" {
             return .attack(enemy.attack * verificationBlowPercent() / 100)
         }
@@ -3136,10 +3621,26 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         return base * (100 + bonus) / 100
     }
 
-    /// A shared revive if an ally still stands, otherwise defeat.
+    /// A shared revive if an active ally still stands, otherwise defeat: the hero down with
+    /// no revive left loses even while allies stand (2026-10-10). Only this battle's allies
+    /// count, never leftover persistent entries.
     private mutating func settlePlayerDownIfNeeded() {
+        if isPartyBossEncounter {
+            // The party loses only when all three are down (2026-10-10, user); a fallen hero
+            // waits for the healer's revive channel (`advanceCompanions`).
+            guard playerHP <= 0 else { return }
+            if partyStillStanding {
+                if heroReviveAt == nil, sharedReviveCharges > 0, revivingHealerID != nil {
+                    heroReviveAt = relicClock + Double(MPCProgressionWalls.partyReviveTenths) / 10
+                }
+                return
+            }
+            outcome = .defeat
+            settleUsurpedLifeMedal()
+            return
+        }
         if playerHP <= 0 {
-            if sharedReviveCharges > 0, allyHP.values.contains(where: { $0 > 0 }) {
+            if sharedReviveCharges > 0, activeCompanionIDs.contains { isAllyStanding($0) } {
                 sharedReviveCharges -= 1
                 playerHP = max(1, playerMaxHP * 3 / 10)
                 if loadout.relicIDs.contains("relic_mist_anchor_shard") {
@@ -3148,7 +3649,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                     triggeredEffects.append("雾锚碎片：复活后获得护盾")
                 }
                 log.append(.init(round: round, message: "AI队友使用界锚复原", damageTaken: 0, bossMechanicMissed: false))
-            } else if allyHP.isEmpty || allyHP.values.allSatisfy({ $0 <= 0 }) {
+            } else {
                 outcome = .defeat
                 settleUsurpedLifeMedal()
             }
@@ -3179,6 +3680,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     }
 
     private mutating func absorbPlayerDamage(_ damage: Int, isDamageOverTime: Bool = false, isLightHit: Bool = false) {
+        if playerIsDown { return } // nothing more lands on a fallen hero
         var adjustedDamage = max(0, !isDamageOverTime && unreliableNarratorTriggeredRound == round ? damage * 105 / 100 : damage)
         if isDamageOverTime, adjustedDamage > 0, loadout.relicIDs.contains("relic_salt_sealed_breathing_bag") {
             let captured = min(adjustedDamage * relicBalance.poisonCapturePercent / 100, max(0, playerBaseMaxHP * relicBalance.poisonCapacityPercent / 100 - saltBreathingBagStored))

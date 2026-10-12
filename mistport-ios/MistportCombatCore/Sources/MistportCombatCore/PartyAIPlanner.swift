@@ -334,7 +334,8 @@ public enum MPCPartyAIPlanner {
             }
         case .cleanse:
             target.hasCleansableStatus = false
-            score += 150
+            // Magnitude ranks how much the status matters (0 keeps the flat 150).
+            score += 150 + max(0, action.magnitude)
             reason = "净化危险状态"
         case .revive:
             target.hp = max(1, target.maxHP * 3 / 10)

@@ -113,6 +113,9 @@ public sealed partial class EnemySignatureSpellVFX : MonoBehaviour
             if (id != generation) yield break;
             onRelease?.Invoke();
             if (id != generation) yield break;
+            // The spell layer paints the hound's breath (2026-10-10): it leaves the jaw now.
+            if (kind == Kind.Hound && SpellSpectacle20260926.DrawsBreath)
+                SpellSpectacle20260926.EnemyBreath(GetComponentInParent<EnemyHandle>(), source, target, TravelDuration);
             if (launchArm != null && !launchArm.Release(target()))
             { launchArm.Dispose(); launchArm = null; }
             t = 0;
@@ -160,6 +163,7 @@ public sealed partial class EnemySignatureSpellVFX : MonoBehaviour
     Vector3 Radial(float angle) { return right * Mathf.Cos(angle) + up * Mathf.Sin(angle); }
     void Draw(Kind kind, int variant, int phase, float p, Vector3 source, Vector3 target)
     {
+        if (kind == Kind.Hound && SpellSpectacle20260926.DrawsBreath) return;   // painted by the spell layer
         float rawPhaseProgress=p;
         if (phase == 2) p = EnemyImpactEnvelope20260921.Sample(p);
         archiveShield?.Clear(); glow.Clear(); ink.Clear(); flames.Clear(); smoke.Clear(); bloom.Clear(); parchment.Clear();

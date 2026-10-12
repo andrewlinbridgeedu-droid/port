@@ -74,10 +74,21 @@ public struct MPCCompanionContent: Identifiable, Equatable, Sendable {
     public let name: String
     public let pathName: String
     public let role: MPCCompanionRole
+    /// Skill slots by role: protector [guard, strike, intercept], healer [mend, cleanse, attack],
+    /// construct [bolt, sunder, plating].
     public let normalSkillIDs: [String]
     public let ultimateSkillID: String
     public let passiveID: String
     public let unlockStage: MPCUnlockStage
+    /// Battle health; party fights start every ally here (2026-10-10 final-boss party).
+    public let maxHP: Int
+
+    public init(id: String, name: String, pathName: String, role: MPCCompanionRole, normalSkillIDs: [String],
+                ultimateSkillID: String, passiveID: String, unlockStage: MPCUnlockStage, maxHP: Int = 800) {
+        self.id = id; self.name = name; self.pathName = pathName; self.role = role
+        self.normalSkillIDs = normalSkillIDs; self.ultimateSkillID = ultimateSkillID
+        self.passiveID = passiveID; self.unlockStage = unlockStage; self.maxHP = max(1, maxHP)
+    }
 }
 
 public enum MPCEnemyContentRank: String, Codable, Sendable {
@@ -321,9 +332,9 @@ public enum MPCChapterOneCatalog {
         .init(id: "chapter01_q25", number: 25, name: "自愿断线", location: "雾港·签发与押运线", encounterID: "chapter01_q25_encounter", storyText: "维娅在清醒、自愿的状态下同意断契。契约自动防御拦住拆线，却不能代替她的选择。协助她解除归属后，她重新作证并接受审理，永久退出敌对。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 25)!.itemIDs),
         .init(id: "chapter01_q26", number: 26, name: "最后一趟押运", location: "雾港·签发与押运线", encounterID: "chapter01_q26_encounter", storyText: "同一具押运锤卫守着最后一趟车。先切掉供能，再承受它余力驱动的重锤。此次它被永久摧毁；总签钥与最后一份运输记录留在断开的车链旁。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 26)!.itemIDs),
         .init(id: "chapter01_q27", number: 27, name: "未签署的归属", location: "雾港·签发与押运线", encounterID: "chapter01_q27_encounter", storyText: "夺回原始档案，未签署的归属栏旁仍是你当初自己报出的名字。外部追索比入港更早，总签官没有创造那段过去。封存交易存根指向第七住客，名字仍被遮住。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 27)!.itemIDs),
-        .init(id: "chapter01_q28", number: 28, name: "五次回流", location: "雾港·签发与押运线", encounterID: "chapter01_q28_encounter", storyText: "瑟维安独自站在五路回流中央。撑过五次完整行动，让每处供能暴露真实回路。最后一击落定且你仍活着时，伊莱娅才同时切源；他带着钟环储备退入签发廊。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 28)!.itemIDs),
-        .init(id: "chapter01_q29", number: 29, name: "最后的代签", location: "雾港·签发与押运线", encounterID: "chapter01_q29_encounter", storyText: "瑟维安以五格储备维持最后的代签，新执行者与空壳守卫护在两侧。五次完整行动耗尽储备后，他使用一次性归庭印撤回总册。清除留下的手下，你才能继续追入。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 29)!.itemIDs),
-        .init(id: "chapter01_q30", number: 30, name: "无主者的签名", location: "雾港·签发与押运线", encounterID: "chapter01_q30_encounter", storyText: "替代封口已经稳定，私印再也接不回旧链。瑟维安仍想以自己的签名认领所有人，这次你必须真正击败他的本体。伊恩回诊所泡茶，洛克安置居民，维娅接受审理；更早的外部追索却迫使你沿赫斯维持的单向航线离港，去往黑盐岸。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 30)!.itemIDs)
+        .init(id: "chapter01_q28", number: 28, name: "五次回流", location: "雾港·签发与押运线", encounterID: "chapter01_q28_encounter", storyText: "瑟维安独自站在五路回流中央。撑过五次完整行动，让每处供能暴露真实回路。最后一击落定且你仍活着时，伊莱娅才同时切源；他带着钟环储备退入签发廊。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 28)!.itemIDs, companionIDs: MPCChapterOneCatalog.finalBossPartyIDs),
+        .init(id: "chapter01_q29", number: 29, name: "最后的代签", location: "雾港·签发与押运线", encounterID: "chapter01_q29_encounter", storyText: "瑟维安以五格储备维持最后的代签，新执行者与空壳守卫护在两侧。五次完整行动耗尽储备后，他使用一次性归庭印撤回总册。清除留下的手下，你才能继续追入。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 29)!.itemIDs, companionIDs: MPCChapterOneCatalog.finalBossPartyIDs),
+        .init(id: "chapter01_q30", number: 30, name: "无主者的签名", location: "雾港·签发与押运线", encounterID: "chapter01_q30_encounter", storyText: "替代封口已经稳定，私印再也接不回旧链。瑟维安仍想以自己的签名认领所有人，这次你必须真正击败他的本体。伊恩回诊所泡茶，洛克安置居民，维娅接受审理；更早的外部追索却迫使你沿赫斯维持的单向航线离港，去往黑盐岸。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 30)!.itemIDs, companionIDs: MPCChapterOneCatalog.finalBossPartyIDs)
     ]
 
     public static let skills: [MPCSkillContent] = [
@@ -474,11 +485,16 @@ public enum MPCChapterOneCatalog {
         item("cosmetic_clockface_fragment", "归一档案碎片", .cosmetic, .rare, "归一档案回声模式的外观兑换物。", 999, false, .echoReplay)
     ]
 
+    /// Q28–Q30 final-boss party (2026-10-10, user): the hero plus two AI allies, protector
+    /// 诺恩 and healer 奥黛尔. Mara does not fight.
+    public static let finalBossPartyIDs = ["ally_norn_kade", "ally_odelle_finn"]
+
     public static let companions: [MPCCompanionContent] = [
-        .init(id: "ally_norn_kade", name: "诺恩·凯德", pathName: "雾灯巡官", role: .protector, normalSkillIDs: ["ally_guard_wall", "ally_armor_break", "ally_intercept"], ultimateSkillID: "ally_unbroken_march", passiveID: "ally_passive_stand_fast", unlockStage: .investigationOne),
+        .init(id: "ally_norn_kade", name: "诺恩·凯德", pathName: "雾灯巡官", role: .protector, normalSkillIDs: ["ally_guard_wall", "ally_armor_break", "ally_intercept"], ultimateSkillID: "ally_unbroken_march", passiveID: "ally_passive_stand_fast", unlockStage: .investigationOne, maxHP: 1_600),
         .init(id: "ally_chariot_warden", name: "铁誓·洛恩", pathName: "远征之径", role: .protector, normalSkillIDs: ["ally_guard_wall", "ally_armor_break", "ally_intercept"], ultimateSkillID: "ally_unbroken_march", passiveID: "ally_passive_stand_fast", unlockStage: .investigationTwo),
         .init(id: "ally_tide_mender", name: "潮医·赛芙", pathName: "潮忆之径", role: .healer, normalSkillIDs: ["ally_memory_mend", "ally_cleanse_tide", "ally_vulnerability_echo"], ultimateSkillID: "ally_returning_tide", passiveID: "ally_passive_gentle_recall", unlockStage: .investigationThree),
-        .init(id: "ally_alchemy_construct", name: "铜枝构装·柒", pathName: "炼成之径", role: .construct, normalSkillIDs: ["ally_catalyst_bolt", "ally_sunder_formula", "ally_emergency_plating"], ultimateSkillID: "ally_grand_transmutation", passiveID: "ally_passive_recycle_heat", unlockStage: .investigationThree)
+        .init(id: "ally_alchemy_construct", name: "铜枝构装·柒", pathName: "炼成之径", role: .construct, normalSkillIDs: ["ally_catalyst_bolt", "ally_sunder_formula", "ally_emergency_plating"], ultimateSkillID: "ally_grand_transmutation", passiveID: "ally_passive_recycle_heat", unlockStage: .investigationThree),
+        .init(id: "ally_odelle_finn", name: "奥黛尔·芬", pathName: "诊所医生", role: .healer, normalSkillIDs: ["ally_odelle_mend", "ally_odelle_cleanse", "ally_odelle_vial"], ultimateSkillID: "ally_odelle_clinic_rounds", passiveID: "ally_passive_bedside_watch", unlockStage: .investigationFour, maxHP: 1_200)
     ]
 
     public static let enemies: [MPCEnemyContent] = [
@@ -676,9 +692,9 @@ public enum MPCChapterOneCatalog {
         encounter("chapter01_q25_encounter", "自愿断线", "chapter01_old_district", [["enemy_hollow_clockmaker"]], 0, MPCChapterOneThirtyMissionContract.firstClear(for: 25)!.itemIDs, nil, ["chapter30_v3"]),
         encounter("chapter01_q26_encounter", "最后一趟押运", "chapter01_old_district", [["enemy_archive_convoy"]], 0, MPCChapterOneThirtyMissionContract.firstClear(for: 26)!.itemIDs, nil, ["chapter30_v3"]),
         encounter("chapter01_q27_encounter", "未签署的归属", "chapter01_old_district", [["enemy_archive_gatekeeper", "enemy_clockwork_hound"]], 0, MPCChapterOneThirtyMissionContract.firstClear(for: 27)!.itemIDs, nil, ["chapter30_v3"]),
-        encounter("chapter01_q28_encounter", "五次回流", "chapter01_old_district", [["boss_chronarch_sovereign"]], 0, MPCChapterOneThirtyMissionContract.firstClear(for: 28)!.itemIDs, nil, ["chapter30_v3"]),
-        encounter("chapter01_q29_encounter", "最后的代签", "chapter01_old_district", [["boss_chronarch_sovereign", "enemy_codex_executor", "enemy_hollow_clockmaker"]], 0, MPCChapterOneThirtyMissionContract.firstClear(for: 29)!.itemIDs, nil, ["chapter30_v3"]),
-        encounter("chapter01_q30_encounter", "无主者的签名", "chapter01_old_district", [["boss_chronarch_sovereign"]], 0, MPCChapterOneThirtyMissionContract.firstClear(for: 30)!.itemIDs, nil, ["chapter30_v3"]),
+        encounter("chapter01_q28_encounter", "五次回流", "chapter01_old_district", [["boss_chronarch_sovereign"]], 2, MPCChapterOneThirtyMissionContract.firstClear(for: 28)!.itemIDs, nil, ["chapter30_v3"]),
+        encounter("chapter01_q29_encounter", "最后的代签", "chapter01_old_district", [["boss_chronarch_sovereign", "enemy_codex_executor", "enemy_hollow_clockmaker"]], 2, MPCChapterOneThirtyMissionContract.firstClear(for: 29)!.itemIDs, nil, ["chapter30_v3"]),
+        encounter("chapter01_q30_encounter", "无主者的签名", "chapter01_old_district", [["boss_chronarch_sovereign"]], 2, MPCChapterOneThirtyMissionContract.firstClear(for: 30)!.itemIDs, nil, ["chapter30_v3"]),
         encounter("encounter_rain_01", "雨中的空壳", "investigation_rain_bell", [["enemy_hollow_clockmaker"]], 0, ["currency_copper", "material_clock_bronze"], nil, ["intent"]),
         encounter("encounter_rain_02", "猎犬蓄火", "investigation_rain_bell", [["enemy_clockwork_hound"]], 0, ["material_skill_dust"], "relic_late_second_watch", ["guard", "evasion"]),
         encounter("encounter_stolen_01", "盐晶植入街口", "investigation_stolen_day", [["enemy_memory_leech", "enemy_hollow_clockmaker"]], 1, ["material_memory_filament"], nil, ["focus_fire"]),

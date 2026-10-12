@@ -11,7 +11,9 @@ public enum MPCCombatHapticCue: String, CaseIterable, Sendable {
         case .hurtMedium: 75
         case .ultimate: 70
         case .heavy: 65
-        case .hurtLight: 74
+        // 2026-10-08: 74 → 60 so a light hit cannot pre-empt a finisher or heavy blow inside
+        // the 16 ms coalescing window / 160 ms gate; still above the 50 card cues.
+        case .hurtLight: 60
         case .shield: 30
         case .sidestep, .identity, .stamp, .pursuit, .counter: 50
         case .defense, .maskActivate: 15
@@ -20,26 +22,39 @@ public enum MPCCombatHapticCue: String, CaseIterable, Sendable {
         }
     }
 
-    /// Initial authored values, to be calibrated by feel on the target iPhone.
+    /// Raised 2026-10-07 (user: 关键是手机震动，以及角色摇晃): every hit should be felt,
+    /// the finishers and heavy blows hard. Still to be calibrated by feel on the iPhone.
     public var intensity: Float {
         switch self {
-        case .basic: 0.20
-        case .sidestep: 0.42
-        case .identity: 0.32
-        case .stamp: 0.48
-        case .pursuit: 0.42
-        case .heavy: 0.68
-        case .counter: 0.48
-        case .defense: 0.18
-        case .ultimate: 0.78
-        case .maskActivate: 0.15
-        case .maskBlock: 0.45
-        case .heal: 0.18
-        case .shield: 0.30
-        case .hurtLight: 0.35
-        case .hurtMedium: 0.50
-        case .hurtHeavy: 0.65
-        case .defeat: 0.70
+        case .basic: 0.55
+        case .sidestep: 0.82
+        case .identity: 0.72
+        case .stamp: 0.92
+        case .pursuit: 0.82
+        case .heavy: 1.0
+        case .counter: 0.88
+        case .defense: 0.32
+        case .ultimate: 1.0
+        case .maskActivate: 0.30
+        case .maskBlock: 0.78
+        case .heal: 0.25
+        case .shield: 0.55
+        case .hurtLight: 0.62
+        case .hurtMedium: 0.82
+        case .hurtHeavy: 1.0
+        case .defeat: 1.0
+        }
+    }
+
+    /// Seconds of low rumble after the strike (0: a single tap).
+    public var rumble: Double {
+        switch self {
+        case .basic, .defense, .maskActivate, .heal, .shield, .maskBlock: 0
+        case .sidestep, .identity, .pursuit, .counter, .hurtLight: 0.07
+        case .stamp, .hurtMedium: 0.10
+        case .heavy, .hurtHeavy: 0.20
+        case .ultimate: 0.26
+        case .defeat: 0.40
         }
     }
 

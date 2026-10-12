@@ -23,7 +23,11 @@ import Foundation
 ///   (`Events.intervention`; she appears only in the early tutorials and major events),
 ///   the attacks in flight are dropped, the trial card is granted and the battle goes on;
 /// - a new wave drops every enemy attack and clock; one opened by the poison clock also drops
-///   the player's cast in flight and resets the target.
+///   the player's cast in flight and resets the target;
+/// - Q28–Q30 bring the mission's two allies (pass `companionIDs`); they act on combat time
+///   (`advanceCompanions`) as well as after landed casts, the loop passes over a card under
+///   夺名代签, and a fallen hero's cast in flight is lost and no new one starts until the
+///   healer's revive (2026-10-10).
 /// Inputs add three kinds to the church set: `mask` (the ownerless mask, with its lifetime
 /// cracks), `bell` (ring the encore bell during a charge) and `sequence` (reorder the loop).
 public struct MPCStoryBattleStepper: Sendable {
@@ -304,10 +308,10 @@ public struct MPCStoryBattleStepper: Sendable {
             return events
         }
 
-        // The player's cast lands.
+        // The player's cast lands (a fallen hero's cast in flight is lost).
         if let p = hit, now >= hitAt {
             hit = nil
-            if s.enemies.contains(where: { $0.id == p.targetID && $0.isAlive }) {
+            if !s.playerIsDown, s.enemies.contains(where: { $0.id == p.targetID && $0.isAlive }) {
                 let wave = s.waveIndex
                 if let skill = p.skill {
                     if !s.loadout.normalSkillIDs.contains(skill) { s.setContinuousSkillSequence([skill] + self.loop) }
@@ -348,6 +352,10 @@ public struct MPCStoryBattleStepper: Sendable {
             }
             if s.outcome != .inProgress { break }
         }
+        guard s.outcome == .inProgress else { session = s; tick += 1; return events }
+
+        // Final-boss party allies act on combat time, including while the hero is down.
+        _ = s.advanceCompanions(at: now, focusTargetID: self.target)
         guard s.outcome == .inProgress else { session = s; tick += 1; return events }
 
         // Enemies start attacks, independently of the player.
@@ -414,13 +422,13 @@ public struct MPCStoryBattleStepper: Sendable {
         tick += 1
 
         // The player's next action.
-        guard reveals.isEmpty, now >= playerAt, hit == nil,
+        guard reveals.isEmpty, now >= playerAt, hit == nil, !session.playerIsDown,
               let current = self.target.flatMap({ id in s.enemies.first { $0.id == id && $0.isAlive } }) ?? s.enemies.first(where: \.isAlive)
         else { return events }
         let automatic = usesManualMask ? self.loop.filter { $0 != .maskedWhisper } : self.loop
         let chosen: FoolSkillID?
         let requested: FoolSkillID? = self.ultimateRequested && loadout.isUltimateUnlocked && s.canUseFoolSkill(.namelessStage) ? .namelessStage : nil
-        if !preludeActive, let skill = requested ?? scheduler.next(in: automatic, at: now) {
+        if !preludeActive, let skill = requested ?? scheduler.next(in: automatic, at: now, skipping: s.sealedFoolSkillIDs(at: now)) {
             if skill == .namelessStage { self.ultimateRequested = false }
             session.setContinuousSkillSequence(self.loop)
             self.scheduler.didCast(skill, at: now)

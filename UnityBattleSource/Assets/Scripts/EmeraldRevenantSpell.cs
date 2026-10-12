@@ -168,6 +168,8 @@ public sealed class EmeraldRevenantSpell : MonoBehaviour
 
     public IEnumerator PlayCharge(Func<Vector3> source,Func<Vector3> target)
     {
+        // The spell layer paints the revenant's breaths (2026-10-10); keep the authored clock only.
+        if(SpellSpectacle20260926.DrawsBreath){int quiet=Begin();for(float e=0;e<ChargeDuration&&quiet==playId;e+=PresentationStep)yield return null;yield break;}
         int id=Begin();CreateClouds();float elapsed=0;
         while(elapsed<ChargeDuration&&id==playId) {
             Draw(Read(source,Vector3.zero),Read(target,Vector3.forward*3),0,elapsed/ChargeDuration);
@@ -176,6 +178,7 @@ public sealed class EmeraldRevenantSpell : MonoBehaviour
     }
     public IEnumerator Fly(Func<Vector3> source,Func<Vector3> target)
     {
+        if(SpellSpectacle20260926.DrawsBreath){int quiet=playId;for(float e=0;e<TravelDuration&&quiet==playId;e+=PresentationStep)yield return null;yield break;}
         int id=playId;if(shadow==null)CreateClouds();
         var launch=Read(source,Vector3.zero);var destination=Read(target,launch+Vector3.forward*3);float elapsed=0;
         while(elapsed<TravelDuration&&id==playId) {
@@ -185,6 +188,7 @@ public sealed class EmeraldRevenantSpell : MonoBehaviour
     }
     public IEnumerator PlayImpact(Func<Vector3> target,Action contact=null)
     {
+        if(SpellSpectacle20260926.DrawsBreath){int quiet=playId;contact?.Invoke();for(float e=0;e<ImpactDuration&&quiet==playId;e+=PresentationStep)yield return null;yield break;}
         int id=playId;var destination=Read(target,Vector3.zero);if(shadow==null)CreateClouds();
         Draw(destination-Vector3.forward,destination,2,0);contact?.Invoke();
         if(id!=playId)yield break;

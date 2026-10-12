@@ -1,0 +1,143 @@
+{
+ "cut": "norn_back",
+ "full": "norn_back_full.png",
+ "origin": [
+  450,
+  560
+ ],
+ "parts": {
+  "torso": {
+   "index": 0,
+   "pivot": [
+    203,
+    480
+   ],
+   "at": [
+    0,
+    0
+   ],
+   "z": 5
+  },
+  "panelL": {
+   "index": 6,
+   "pivot": [
+    290,
+    15
+   ],
+   "parent": "torso",
+   "attach": [
+    140,
+    480
+   ],
+   "z": 2,
+   "scale": 0.6,
+   "sy": 1.6
+  },
+  "panelR": {
+   "index": 9,
+   "pivot": [
+    20,
+    15
+   ],
+   "parent": "torso",
+   "attach": [
+    266,
+    480
+   ],
+   "z": 2,
+   "scale": 0.6,
+   "sy": 1.6
+  },
+  "legL": {
+   "index": 7,
+   "pivot": [
+    72,
+    12
+   ],
+   "parent": "torso",
+   "attach": [
+    146,
+    660
+   ],
+   "z": 0
+  },
+  "legR": {
+   "index": 8,
+   "pivot": [
+    72,
+    12
+   ],
+   "parent": "torso",
+   "attach": [
+    260,
+    660
+   ],
+   "z": 0
+  },
+  "armL": {
+   "index": 1,
+   "pivot": [
+    115,
+    30
+   ],
+   "parent": "torso",
+   "attach": [
+    62,
+    250
+   ],
+   "z": 4.5
+  },
+  "handL": {
+   "index": 3,
+   "pivot": [
+    45,
+    15
+   ],
+   "parent": "armL",
+   "attach": [
+    70,
+    330
+   ],
+   "z": 4.6
+  },
+  "armR": {
+   "index": 2,
+   "pivot": [
+    45,
+    30
+   ],
+   "parent": "torso",
+   "attach": [
+    345,
+    250
+   ],
+   "z": 4.5
+  },
+  "handR": {
+   "index": 4,
+   "pivot": [
+    45,
+    15
+   ],
+   "parent": "armR",
+   "attach": [
+    95,
+    330
+   ],
+   "z": 4.6
+  },
+  "lantern": {
+   "index": 5,
+   "pivot": [
+    57,
+    12
+   ],
+   "parent": "handR",
+   "attach": [
+    45,
+    125
+   ],
+   "z": 4.7
+  }
+ }
+}

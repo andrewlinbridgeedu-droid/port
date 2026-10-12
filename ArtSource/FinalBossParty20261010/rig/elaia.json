@@ -1,0 +1,10 @@
+{
+ "cut": "elaia", "full": "elaia_full.png", "origin": [450, 330],
+ "parts": {
+  "body":   {"index": 1, "pivot": [253, 230], "at": [0, 0], "z": 5},
+  "wingL":  {"index": 0, "pivot": [345, 190], "parent": "body", "attach": [175, 215], "z": 1},
+  "wingR":  {"index": 2, "pivot": [15, 190],  "parent": "body", "attach": [335, 215], "z": 1},
+  "staff":  {"index": 3, "pivot": [78, 470],  "parent": "body", "attach": [69, 521], "z": 6},
+  "fist":   {"index": 4, "pivot": [29, 40],   "parent": "body", "attach": [69, 521], "z": 7}
+ }
+}

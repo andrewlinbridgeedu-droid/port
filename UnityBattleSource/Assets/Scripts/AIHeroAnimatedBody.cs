@@ -28,8 +28,10 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
     Mesh mesh;
     MeshRenderer surface;
     Clip current;
-    float age, contact, recoverDuration, recoilAge = -1;
-    Vector3 home;
+    float age, contact, recoverDuration, recoilAge = -1, recoilStrength = 1, height = 1;
+    /// The hero's standing height in world units (the final-boss party is sized from it).
+    public float Height => height;
+    Vector3 home, homeScale = Vector3.one;
     bool initialized;
     const string Root = "CombatTempo/AIHero/";
 
@@ -55,7 +57,8 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
         body.surface = go.AddComponent<MeshRenderer>(); body.surface.sharedMaterial = body.material;
         body.surface.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         body.surface.receiveShadows = false;
-        body.home = go.transform.localPosition;
+        body.home = go.transform.localPosition; body.homeScale = go.transform.localScale;
+        body.height = Mathf.Max(.3f, original.size.y);
         if (!body.Apply(outfit)) { Destroy(go); return null; }
         body.initialized = true; body.Cancel(); return body;
     }
@@ -163,7 +166,7 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
         if (IsActing) { age+=Time.deltaTime; Draw(); }
         if (recoilAge >= 0) {
             recoilAge += Time.deltaTime;
-            if (recoilAge >= .22f) recoilAge=-1;
+            if (recoilAge >= RecoilTime) recoilAge=-1;
         }
     }
     void Draw() {
@@ -181,14 +184,35 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
     void LateUpdate() {
         if (!initialized) return;
         if (Camera.main) transform.rotation=Camera.main.transform.rotation;
-        transform.localPosition=home;
-        if (recoilAge>=0) transform.position += transform.right * (Mathf.Sin(recoilAge*50)*.017f*(1-recoilAge/.22f));
+        transform.localPosition=home; transform.localScale=homeScale;
+        if (recoilAge>=0) {
+            // Hit shake (2026-10-07, user: 关键是手机震动，以及角色摇晃): the figure is knocked
+            // back and down a little, rattles side to side and rocks, damped over ~0.38 s.
+            // It used to move 1.7 cm side to side, which nobody could see.
+            // 2026-10-08: the first version rattled at 17 Hz with 5 % of the height. On the
+            // simulator a hit frame runs at ~15 fps, so the sine was sampled at nearly the same
+            // phase every frame and read as a still; 3 % of the figure is below notice anyway.
+            // Now: an immediate 9 % knock that eases back, a 9 Hz damped swing of 6 % (three
+            // visible swings at any frame rate), a squash for the first tenth of a second.
+            float t=recoilAge, e=Mathf.Pow(1-t/RecoilTime,2f)*recoilStrength;
+            float knock=Mathf.Exp(-t/.12f)*recoilStrength;
+            float squash=Mathf.Exp(-t/.07f)*recoilStrength;
+            transform.position += transform.right*(Mathf.Sin(t*2*Mathf.PI*9)*.06f*e*height)
+                                + Vector3.down*(knock*.09f*height) - transform.forward*(knock*.03f*height);
+            transform.rotation = transform.rotation*Quaternion.Euler(0,0,Mathf.Sin(t*2*Mathf.PI*7+.6f)*9f*e);
+            transform.localScale=new Vector3(homeScale.x*(1+.14f*squash),homeScale.y*(1-.11f*squash),homeScale.z);
+        }
     }
-    public void ConfirmedHit(bool heavy) { recoilAge=0; }
+    const float RecoilTime = .38f;
+    public void ConfirmedHit(bool heavy) => ConfirmedHit(heavy ? 1.3f : 1f);
+    public void ConfirmedHit(float strength) {
+        recoilAge=0;
+        recoilStrength=Mathf.Clamp(strength,.3f,1.4f)*(SpellSpectacle20260926.ReducedMotion?.35f:1f);
+    }
     public void Cancel() {
         CurrentAction=null; age=0; DisplayFrame=0; recoilAge=-1;
         if (material) material.SetFloat("_IdleBlend",1);
-        transform.localPosition=home;
+        transform.localPosition=home; transform.localScale=homeScale;
     }
     void OnDisable() => Cancel();
     void OnDestroy() {

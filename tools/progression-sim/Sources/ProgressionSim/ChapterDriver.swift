@@ -8,6 +8,15 @@ import MistportCombatCore
 /// the authored VFX contact constants. A 50 ms step is a model, not device input.
 enum ChapterDriver {
     static let trace = ProcessInfo.processInfo.environment["TRACE"] != nil
+    /// `BLESSINGS=lamp_wick,salt_crust`: the Q30 离场祝福 pair (hero, sovereign) applied at the start,
+    /// as the App does after its roll; unset, no blessing. Other missions ignore it.
+    static let farewell: MPCFarewellBlessings? = {
+        guard let text = ProcessInfo.processInfo.environment["BLESSINGS"], !text.isEmpty else { return nil }
+        let parts = text.split(separator: ",").map(String.init)
+        guard parts.count == 2, let hero = MPCFarewellBlessings.Hero(rawValue: parts[0]),
+              let sovereign = MPCFarewellBlessings.Sovereign(rawValue: parts[1]) else { fatalError("BLESSINGS=<hero>,<sovereign>, got \(text)") }
+        return .init(hero: hero, sovereign: sovereign)
+    }()
     struct Report {
         let session: MPCChapterOneEncounterSession
         let seconds: Double
@@ -31,9 +40,14 @@ enum ChapterDriver {
         if let suppliedLoadout { loadout = suppliedLoadout }
         if medalOffset != nil { loadout.selectedActiveRelicID = MPCChapterOneCatalog.usurpedLifeMedalRelicID }
         let encounterID = String(format: "chapter01_q%02d_encounter", q)
+        // Q28–Q30 are party fights (2026-10-10): forward the mission's allies as the App does.
         var stepper = try MPCStoryBattleStepper(encounterID: encounterID, loadout: loadout, consumables: consumables, party: party,
+                                                companionIDs: MPCChapterOneCatalog.mission(forEncounterID: encounterID)?.companionIDs ?? [],
                                                 mask: mask ? .init(owned: true, teachingLoan: q == 3 || q == 4) : nil,
-                                                tuning: .init(actionDelay: actionDelay, tempo: tempo)) { $0.relicBalance = relicBalance }
+                                                tuning: .init(actionDelay: actionDelay, tempo: tempo)) {
+            $0.relicBalance = relicBalance
+            if let farewell { $0.applyFarewellBlessings(farewell) }
+        }
         var stats = MPCTempoStats()
         var used = 0, ultimateAsked = false
         let quiet: Set<String> = ["guard", "fortify", "calibrate", "recover", "repair_guard", "charge"]
@@ -74,7 +88,11 @@ enum ChapterDriver {
                 ultimateAsked = true
                 out.append(.init(tick: view.tick, kind: .ultimate))
             }
-            do { stats.record(try stepper.step(out), session: stepper.session) }
+            do {
+                let events = try stepper.step(out)
+                stats.record(events, session: stepper.session)
+                if trace { printTrace(events, stepper.session, at: now) }
+            }
             catch MPCChurchBattleDriver.Failure.refused {
                 // A choice the rules refuse at this step (for example the mask after the
                 // medal): drop it and step without inputs, as a client would.
@@ -84,5 +102,25 @@ enum ChapterDriver {
         }
         return .init(session: stepper.session, seconds: max(0, stepper.now - MPCChurchBattleDriver.step),
                      medicinesUsed: used, maskUses: stepper.maskUses, tempoStats: stats)
+    }
+
+    /// TRACE=1: every enemy action that resolved this step, with the party's health.
+    static func printTrace(_ events: MPCChurchBattleStepper.Events, _ s: MPCChapterOneEncounterSession, at now: Double) {
+        if events.landed != nil, ProcessInfo.processInfo.environment["TRACE"] == "2" {
+            for a in s.lastCompanionActions { print(String(format: "%6.2fs", now) + "    ally \(a.message)") }
+        }
+        for id in events.enemyResolved {
+            for r in s.lastEnemyActionResolutions where r.enemyID == id {
+                let enemy = s.enemies.first { $0.id == id }
+                var parts = [String(format: "%6.2fs", now), r.intent.padding(toLength: 17, withPad: " ", startingAt: 0),
+                             "hero -\(r.playerDamage) → \(s.playerHP)/\(s.playerMaxHP)", "boss \(enemy?.hp ?? 0)"]
+                if !r.allyDamage.isEmpty { parts.append("allies " + r.allyDamage.sorted { $0.key < $1.key }.map { "\($0.key.dropFirst(5))-\($0.value)" }.joined(separator: " ")) }
+                if let by = r.interceptedBy { parts.append("intercept \(by.dropFirst(5))") }
+                if let skill = r.sealedSkillID { parts.append("seal \(skill.rawValue)") }
+                if let ally = r.sealedAllyID { parts.append("seal \(ally.dropFirst(5))") }
+                if !s.activeCompanionIDs.isEmpty { parts.append("[" + s.activeCompanionIDs.map { "\($0.dropFirst(5)) \(s.allyHP[$0, default: 0])" }.joined(separator: ", ") + "] revive \(s.sharedReviveCharges)") }
+                print(parts.joined(separator: "  "))
+            }
+        }
     }
 }

@@ -28,7 +28,11 @@ public sealed class MainlineBodyRound2 : MonoBehaviour
             if (value == Pose.EarlyHound && contactTime > .8f) sample.Play("Pounce", contactTime);
             return;
         }
-        foreach(var t in GetComponentsInChildren<Transform>(true)){
+        // Active (visible) bones win a shared name (2026-10-09): a fog ghost keeps the hidden
+        // guard model, whose LeftArm/RightArm came first and took the ghost's arm motion.
+        var ordered=new List<Transform>(GetComponentsInChildren<Transform>(false));
+        foreach(var t in GetComponentsInChildren<Transform>(true))if(!t.gameObject.activeInHierarchy)ordered.Add(t);
+        foreach(var t in ordered){
             if(!bones.ContainsKey(t.name))bones.Add(t.name,new Bone{t=t});
             int colon=t.name.LastIndexOf(':');
             if(colon>=0){string shortName=t.name.Substring(colon+1);if(!bones.ContainsKey(shortName))bones.Add(shortName,bones[t.name]);}

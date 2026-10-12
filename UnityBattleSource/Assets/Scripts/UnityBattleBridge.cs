@@ -579,6 +579,15 @@ public sealed class UnityBattleBridge : MonoBehaviour
             case "encore-charge":
                 battle.PresentEncoreCharge();
                 break;
+            case "angel-intro":
+                battle.PresentAngelIntro();
+                break;
+            case "party-show":
+                battle.PartyRig("norn"); battle.PartyRig("odelle");
+                break;
+            case "party-clear":
+                battle.ClearPartyRigs();
+                break;
             case "encore-bell":
                 battle.PresentEncoreBell();
                 break;
@@ -590,6 +599,8 @@ public sealed class UnityBattleBridge : MonoBehaviour
                 break;
             default:
                 if(action.StartsWith("emerald-spell:", StringComparison.Ordinal)) { battle.SetEmeraldSpell(action.Substring(14)); break; }
+                // ally:<norn|odelle>:<attack|cast|guard|hit|down|revive> (2026-10-10, the final-boss party)
+                if(action.StartsWith("ally:", StringComparison.Ordinal)) { var ap=action.Split(':'); if(ap.Length==3) battle.PresentPartyAction(ap[1],ap[2]); break; }
                 if(action.StartsWith("emerald-poison:", StringComparison.Ordinal) && int.TryParse(action.Substring(15), out var poisonRemaining)) { battle.SetEmeraldPoison(poisonRemaining); break; }
                 if (action.StartsWith("masquerade:", StringComparison.Ordinal) && int.TryParse(action.Substring(11), out var charges)) {
                     battle.SetMasquerade(charges, false); break;

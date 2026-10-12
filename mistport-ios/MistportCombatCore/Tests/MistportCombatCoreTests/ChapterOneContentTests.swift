@@ -90,12 +90,12 @@ struct ChapterOneContentTests {
         #expect(MPCChapterOneCatalog.investigations.count >= 9)
     }
 
-    @Test("Q1–Q5 companion slots grow without free-roaming party selection")
+    @Test("Only the final boss's three meetings bring the fixed two-ally party")
     func q1ThroughQ5PartyOrder() {
         let slots = MPCChapterOneCatalog.missions.compactMap { mission in
             MPCChapterOneCatalog.encounters.first(where: { $0.id == mission.encounterID })?.companionSlots
         }
-        #expect(slots == Array(repeating: 0, count: 30))
+        #expect(slots == Array(repeating: 0, count: 27) + [2, 2, 2])
     }
 
     @Test("Each authored Q mission owns one fixed encounter and reward flow")
@@ -152,7 +152,12 @@ struct ChapterOneContentTests {
     @Test("All three AI roles are available")
     func companionRoles() {
         #expect(Set(MPCChapterOneCatalog.companions.map(\.role)) == [.protector, .healer, .construct])
-        #expect(MPCChapterOneCatalog.companions.allSatisfy { $0.normalSkillIDs.count == 3 })
+        #expect(MPCChapterOneCatalog.companions.allSatisfy { $0.normalSkillIDs.count == 3 && $0.maxHP > 0 })
+        // The final-boss party: protector 诺恩 and the clinic healer 奥黛尔, unlocked before Q28.
+        let party = MPCChapterOneCatalog.finalBossPartyIDs.compactMap { id in MPCChapterOneCatalog.companions.first { $0.id == id } }
+        #expect(party.map(\.role) == [.protector, .healer])
+        #expect(party.last?.name == "奥黛尔·芬" && party.last?.pathName == "诊所医生")
+        #expect(party.allSatisfy { $0.unlockStage <= .investigationFour && $0.maxHP > 800 })
     }
 
     @Test("Story-critical rewards are fixed, not random")

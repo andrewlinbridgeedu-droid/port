@@ -1,0 +1,157 @@
+{
+ "cut": "odelle",
+ "full": "odelle_full.png",
+ "parts": {
+  "torso": {
+   "index": 2,
+   "pivot": [
+    163,
+    285
+   ],
+   "at": [
+    0,
+    0
+   ],
+   "z": 5
+  },
+  "head": {
+   "index": 1,
+   "pivot": [
+    106,
+    200
+   ],
+   "parent": "torso",
+   "attach": [
+    163,
+    30
+   ],
+   "z": 6,
+   "fadeBottom": [
+    188,
+    204
+   ]
+  },
+  "skirt": {
+   "index": 9,
+   "pivot": [
+    172,
+    15
+   ],
+   "parent": "torso",
+   "attach": [
+    163,
+    285
+   ],
+   "z": 1,
+   "scale": 1.3
+  },
+  "panelL": {
+   "index": 8,
+   "pivot": [
+    205,
+    20
+   ],
+   "parent": "torso",
+   "attach": [
+    78,
+    285
+   ],
+   "z": 2,
+   "scale": 1.22
+  },
+  "panelR": {
+   "index": 10,
+   "pivot": [
+    40,
+    20
+   ],
+   "parent": "torso",
+   "attach": [
+    250,
+    285
+   ],
+   "z": 2,
+   "scale": 1.22
+  },
+  "bootL": {
+   "index": 11,
+   "pivot": [
+    65,
+    15
+   ],
+   "parent": "torso",
+   "attach": [
+    72,
+    830
+   ],
+   "z": 0,
+   "scale": 1.35
+  },
+  "bootR": {
+   "index": 12,
+   "pivot": [
+    70,
+    15
+   ],
+   "parent": "torso",
+   "attach": [
+    255,
+    830
+   ],
+   "z": 0,
+   "scale": 1.35
+  },
+  "armL": {
+   "index": 0,
+   "pivot": [
+    112,
+    35
+   ],
+   "parent": "torso",
+   "attach": [
+    84,
+    108
+   ],
+   "z": 4.5
+  },
+  "foreL": {
+   "index": 5,
+   "pivot": [
+    105,
+    290
+   ],
+   "parent": "armL",
+   "attach": [
+    75,
+    195
+   ],
+   "z": 7
+  },
+  "armR": {
+   "index": 4,
+   "pivot": [
+    35,
+    35
+   ],
+   "parent": "torso",
+   "attach": [
+    278,
+    112
+   ],
+   "z": 4.5
+  },
+  "foreR": {
+   "index": 6,
+   "pivot": [
+    55,
+    15
+   ],
+   "parent": "armR",
+   "attach": [
+    75,
+    195
+   ],
+   "z": 7
+  }
+ }
+}

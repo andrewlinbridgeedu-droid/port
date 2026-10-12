@@ -1079,7 +1079,24 @@ public sealed class BattlePrototype : MonoBehaviour
         && !playerDefeatPresentationActive && !playerHiddenByPaper;
     public PlayerImpactFeedback20260925 PlayerImpactFeedback => playerImpactFeedback;
     public void BeginPlayerImpactContext(string token) => playerImpactFeedback?.BeginContext(token);
-    public void PresentPlayerImpact(string payload) { if (playerImpactFeedback?.Present(payload) == true) GetComponent<CombatTempoPresentation>()?.PlayerHit(); }
+    public void PresentPlayerImpact(string payload)
+    {
+        // A defeat packet is accepted (Clear) but carries no strength of its own; the hero is
+        // about to go down, so no extra shake from the stale LastStrength. The unreduced value
+        // goes out because AIHeroAnimatedBody.ConfirmedHit applies the reduced-motion ×.35 itself.
+        if (playerImpactFeedback?.Present(payload) != true || playerImpactFeedback.LastWasDefeat) return;
+        GetComponent<CombatTempoPresentation>()?.PlayerHit(playerImpactFeedback.LastStrengthUnreduced);
+    }
+
+    /// How hard a hero card shakes the body it hits: the flicked basic least, the finishers most.
+    static float HitWeight(string skillID) => skillID switch
+    {
+        "basic" => .55f,
+        "fool_skill_07" or "fool_skill_10" => 1.45f,
+        "fool_skill_05" or "fool_skill_08" => 1.15f,
+        "fool_skill_02" => .7f,
+        _ => 1f,
+    };
     public void ClearPlayerImpact(bool invalidateContext = false) => playerImpactFeedback?.Clear(invalidateContext);
 
     public void PresentEnemyImpact(string payload)
@@ -1095,6 +1112,17 @@ public sealed class BattlePrototype : MonoBehaviour
             foreach (var candidate in encounterRoster)
                 if (candidate && candidate.BattleEnemyId == id && candidate.gameObject.activeInHierarchy) { victim = candidate; break; }
             if (victim && !(GetComponent<CombatTempoPresentation>()?.EnemyHit(victim, parts[0]) ?? false)) EnemyImpactFeedback.Install(victim).Play(parts[0]);
+            // The body that is hit shakes (2026-10-07, user: 关键是手机震动，以及角色摇晃).
+            // Same actor choice as EnemyImpactFeedback.Play: fog ghosts / emerald revenants keep
+            // handle.Model on the hidden old model (SetFogGhostModel, EarlyEnemyIdlePresence.
+            // ResolveVisibleActor), and a component on an inactive object never runs.
+            if (victim)
+            {
+                var presence = victim.GetComponent<EarlyEnemyIdlePresence>();
+                var visible = presence ? presence.VisibleActor : null;
+                var shaken = visible ? visible : (victim.Model ? victim.Model : victim.EnemyRoot);
+                HitShake20261007.Hit(shaken, player ? player.transform.position : victim.transform.position + Vector3.back, HitWeight(parts[0]));
+            }
         }
     }
 
@@ -1247,8 +1275,17 @@ public sealed class BattlePrototype : MonoBehaviour
         if(intentParts.Length==2 && (intentParts[1]=="archive_slam" || intentParts[1]=="name_devour")) {
             archivePresentation?.Clear(); battleEnemyId=intentParts[0];
         }
+        // 瑟维安's party-fight moves (2026-10-10) play his strike turn with the move's own video and hit.
+        if(intentParts.Length==2 && (intentParts[1]=="slam" || intentParts[1]=="name_seal")) {
+            var boss=FindInstalledEnemyHandle(intentParts[0]);
+            var chronarchMove=boss?boss.GetComponent<ChronarchPresentation20260916>():null;
+            if(chronarchMove)chronarchMove.NextMove=intentParts[1];
+            battleEnemyId=intentParts[0];
+        }
         if(intentParts.Length==2 && intentParts[1]=="thirteenth_charge") {
             var elite=FindInstalledEnemyHandle(intentParts[0]);
+            // 瑟维安: the palm-thrust clip spans the 1.1 s wind-up glow and the strike's 1 s to contact.
+            if(IsActiveEnemyHandle(elite))elite.GetComponent<ChronarchPresentation20260916>()?.PlayChargeWindup(2.1f);
             if(IsActiveEnemyHandle(elite))StartCoroutine(PresentEliteChargedStrike(elite));
             return;
         }
@@ -1604,11 +1641,14 @@ public sealed class BattlePrototype : MonoBehaviour
     IEnumerator PresentEliteChargedStrike(EnemyHandle handle) {
         var light=handle.GetComponent<SpellSceneLighting>();if(!light)light=handle.gameObject.AddComponent<SpellSceneLighting>();
         var round2=MainlineStateRound2.Attach(handle,"thirteenth_charge",1.1f);
+        // 瑟维安's video body: the heat and the light follow its raised gauntlet (2026-10-11).
+        var videoHand=handle.GetComponent<ChronarchPresentation20260916>()?.VideoHand();
+        round2.Hand=videoHand;
         try {
             for(float t=0;t<1.1f;t+=Time.deltaTime){
                 if(!CanPresentEnemy(handle))yield break;
                 round2.Sample(t);
-                light.Draw(handle.EnemyRoot.position+Vector3.up*1.8f,new Color(1,.55f,.16f),1.2f+t*3,3);
+                light.Draw(videoHand!=null?videoHand():handle.EnemyRoot.position+Vector3.up*1.8f,new Color(1,.55f,.16f),1.2f+t*3,3);
                 yield return null;
             }
             light.Clear();
@@ -2286,12 +2326,16 @@ public sealed class BattlePrototype : MonoBehaviour
     int emeraldRequestedVariant;
     EmeraldPoisonField emeraldPoisonField;
     public void SetEmeraldSpell(string value) { emeraldRequestedVariant = value == "burst" ? 1 : 0; }
+    /// 0 翠毒漫天 (mist), 1 返场毒爆 (burst): the revenant's next breath.
+    public int EmeraldVariant => emeraldRequestedVariant;
     public void SetEmeraldPoison(int remaining) {
-        if (remaining <= 0) { if(emeraldPoisonField) emeraldPoisonField.Clear(); return; }
+        if (remaining <= 0) { if(emeraldPoisonField) emeraldPoisonField.Clear(); SpellSpectacle20260926.PoisonPool(this, null, 0); return; }
         if (!NativeCombatEnabled || !player) return;
         if(!emeraldPoisonField) emeraldPoisonField = gameObject.AddComponent<EmeraldPoisonField>();
         // Ambient mist remains on the battlefield; a phantom redirects only the heavy attack.
         emeraldPoisonField.SetIntensity(remaining, () => playerHome + Vector3.up * .85f);
+        // Poison bubbles lie round the hero's feet for as long as the fog lasts (2026-10-10).
+        SpellSpectacle20260926.PoisonPool(this, () => playerHome, remaining);
         // Visible toxic uprising on each authoritative poison update; no explosion.
         SpellSpectacle20260926.PlayState(this, "poison-field", () => playerHome + Vector3.up * .85f, remaining);
     }
@@ -2309,10 +2353,70 @@ public sealed class BattlePrototype : MonoBehaviour
         emeraldRevenant.Install(hellHoundHandle);
         if (emeraldSpell == null) emeraldSpell = gameObject.AddComponent<EmeraldRevenantSpell>();
     }
+    /// The final-boss party's AI companions as painted cutout rigs (2026-10-10): 诺恩 on the hero's
+    /// left, 奥黛尔 on the right, a little behind him, facing the boss.
+    readonly Dictionary<string, CutoutRig20261010> partyRigs = new Dictionary<string, CutoutRig20261010>();
+    public CutoutRig20261010 PartyRig(string ally)
+    {
+        if (partyRigs.TryGetValue(ally, out var rig) && rig) return rig;
+        var cam = Camera.main; if (!cam || !player) return null;
+        var right = cam.transform.right; right.y = 0f; right.Normalize();
+        var ahead = cam.transform.forward; ahead.y = 0f; ahead.Normalize();
+        bool norn = ally == "norn";
+        var heroBody = player.GetComponentInChildren<AIHeroAnimatedBody>();
+        float heroH = heroBody ? heroBody.Height : 2.2f;
+        // Beside him, nearly level (a little ahead so the hero stays nearest the camera); about his
+        // size on screen (user 10-10 of v1: 比例不对 - they stood ahead yet looked a third bigger).
+        var feet = playerHome + right * ((norn ? -.74f : .74f) * heroH) + ahead * (.18f * heroH);
+        ApplyPartyFormation(heroH);
+        // Back views: the battle camera looks over the hero's shoulder at the boss (2026-10-10).
+        rig = CutoutRig20261010.Create(norn ? "norn_back" : "odelle_back", feet, transform);
+        if (!rig) return null;
+        // Sized against the video hero (the in-game body; the editor's 3D stand-in misled v2).
+        rig.SetHeight(heroH * (norn ? .96f : .89f));
+        rig.FallSide = norn ? 1f : -1f;   // falls away from the hero
+        var boss = FindInstalledEnemyHandle(EnemyBattleIds.ClockGuardPrimary);
+        rig.Face(boss ? boss.EnemyRoot.position : feet + cam.transform.forward * 5f);
+        partyRigs[ally] = rig;
+        return rig;
+    }
+    public void PresentPartyAction(string ally, string action) => PartyRig(ally)?.Play(action);
+    public void ClearPartyRigs()
+    {
+        foreach (var r in partyRigs.Values) if (r) Destroy(r.gameObject);
+        partyRigs.Clear();
+        if (partyBoss && partyBoss.EnemyRoot) { partyBoss.EnemyRoot.position = partyBossHome; partyBoss.EnemyRoot.localScale = partyBossScale; partyBoss.GetComponent<ChronarchPresentation20260916>()?.SetVideoSize(1f); }
+        partyBoss = null;
+    }
+    // The boss further off and smaller in the party fight (user 10-10: 敌人也要小一些远一些).
+    EnemyHandle partyBoss; Vector3 partyBossHome, partyBossScale;
+    void ApplyPartyFormation(float heroH)
+    {
+        if (partyBoss) return;
+        var boss = FindInstalledEnemyHandle(EnemyBattleIds.ClockGuardPrimary);
+        var cam = Camera.main;
+        if (!IsActiveEnemyHandle(boss) || !boss.EnemyRoot || !cam) return;
+        partyBoss = boss; partyBossHome = boss.EnemyRoot.position; partyBossScale = boss.EnemyRoot.localScale;
+        var ahead = cam.transform.forward; ahead.y = 0f; ahead.Normalize();
+        boss.EnemyRoot.position += ahead * (1.1f * heroH);
+        boss.EnemyRoot.localScale = partyBossScale * .82f;
+        boss.GetComponent<ChronarchPresentation20260916>()?.SetVideoSize(.82f);
+    }
+
+    /// Q30 opening (2026-10-10): the church's angel takes the stronger pursuer away (SpellSpectacle20260926.AngelIntro).
+    public void PresentAngelIntro()
+    {
+        var boss = FindInstalledEnemyHandle(EnemyBattleIds.ClockGuardPrimary);
+        if (!IsActiveEnemyHandle(boss) || !player) return;
+        boss.GetComponent<ChronarchPresentation20260916>()?.PlayIntroSeal();
+        SpellSpectacle20260926.AngelIntro(this, boss.EnemyRoot.position, () => PlayerFireBreathImpactAnchor,
+            // His chest on the illustrated body (the 3D body's anchors sit at its hips, angel14).
+            () => { if (!boss) return Vector3.zero; var body = boss.GetComponentInChildren<SevianVideoBody20261009>(); return boss.EnemyRoot.position + Vector3.up * ((body ? body.FigureHeight : 2.6f) * .64f); });
+    }
     public void PresentEncoreCharge() { EncoreBell.Charge(hellHoundHandle); emeraldRevenant?.Charge(); }
     public void PresentEncoreBell() { EncoreBell.Bell(hellHoundHandle); }
     public void PresentEncoreRelease() { encoreBellPresentation?.Release(); emeraldRevenant?.Release(); }
-    public void ClearEncorePresentation() { emeraldPoisonField?.Clear(); encoreBellPresentation?.Clear(); emeraldRevenant?.Release(); emeraldSpell?.StopRoot(); }
+    public void ClearEncorePresentation() { emeraldPoisonField?.Clear(); SpellSpectacle20260926.PoisonPool(this, null, 0); encoreBellPresentation?.Clear(); emeraldRevenant?.Release(); emeraldSpell?.StopRoot(); }
 
     int earlyPresenceMission;
     public void SetEarlyBattlePresence(string value)
@@ -3048,6 +3152,9 @@ public sealed class BattlePrototype : MonoBehaviour
         // fireball instead of leaving a static model beside the VFX.
         animator?.ResetTrigger("Attack");
         animator?.SetTrigger("Attack");
+        // The early hound's replacement body lunges forward and breathes (HeavyRelease), its
+        // release timed to the native 1.1 s contact; the old model only had a walk cycle.
+        if (!isRevenant) CombatTempoPresentation.Get(this).PlayEnemyClip(committedHound, "HeavyRelease", 1.0f);
         FaceHellHoundAt(player.transform.position);
         yield return new WaitForSeconds(0.08f);
 
@@ -3061,6 +3168,8 @@ public sealed class BattlePrototype : MonoBehaviour
             () => PlayerFireBreathImpactAnchor);
         if(!CanPresentEnemy(committedHound))yield break;
         UnityBattleBridge.ReportPresentationPhase("hell-hound-breath");
+        // The painted breath leaves the mouth now and reaches the victim at the contact (2026-10-10).
+        SpellSpectacle20260926.EnemyBreath(committedHound, () => HellHoundFireBreathSourceAnchor, () => PlayerFireBreathImpactAnchor, .78f);
         yield return isRevenant ? emeraldSpell.Fly(
             () => HellHoundFireBreathSourceAnchor,
             () => PlayerFireBreathImpactAnchor) : hellHoundFireball.Fly(
@@ -3117,6 +3226,8 @@ public sealed class BattlePrototype : MonoBehaviour
         var home = actor.position;
         var animator = actor.GetComponentInChildren<Animator>(true);
         animator?.SetTrigger("Attack");
+        // A real pounce on the replacement body, its bite on the 1.1 s contact (it used to walk).
+        CombatTempoPresentation.Get(this).PlayEnemyClip(hellHoundHandle, "Pounce", 1.1f);
         var target = Vector3.Lerp(home, player.transform.position, .65f);
         float elapsed = 0;
         while (elapsed < 1.1f) {

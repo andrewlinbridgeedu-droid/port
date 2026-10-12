@@ -7,7 +7,8 @@ import UIKit
 final class CombatHaptics {
     static let shared = CombatHaptics()
     private var engine: CHHapticEngine?
-    private var player: (any CHHapticPatternPlayer)?
+    /// The transient-strike player plus, for rumbling cues, a separate continuous player.
+    private var players: [any CHHapticPatternPlayer] = []
     private var gate = MPCCombatHapticGate()
     private var pending: (id: String, cue: MPCCombatHapticCue)?
     private var flushTask: Task<Void, Never>?
@@ -62,11 +63,15 @@ final class CombatHaptics {
     func cancel() {
         flushTask?.cancel(); flushTask = nil; pending = nil
         previewTask?.cancel(); previewTask = nil
-        try? player?.stop(atTime: CHHapticTimeImmediate)
-        player = nil
+        stopPlayers()
         engine?.stop(completionHandler: nil)
         gate.reset()
         receivedIDs.removeAll()
+    }
+
+    private func stopPlayers() {
+        for player in players { try? player.stop(atTime: CHHapticTimeImmediate) }
+        players.removeAll()
     }
 
     func preview() {
@@ -88,33 +93,49 @@ final class CombatHaptics {
                 newEngine.isAutoShutdownEnabled = true
                 newEngine.playsHapticsOnly = true
                 newEngine.resetHandler = { [weak self] in
-                    Task { @MainActor in self?.engine = nil; self?.player = nil }
+                    Task { @MainActor in self?.engine = nil; self?.players.removeAll() }
                 }
                 engine = newEngine
             }
             guard let engine else { return }
             try engine.start()
-            try? player?.stop(atTime: CHHapticTimeImmediate)
+            stopPlayers()
             func transient(_ intensity: Float, _ sharpness: Float, at time: Double = 0) -> CHHapticEvent {
                 CHHapticEvent(eventType: .hapticTransient, parameters: [
                     CHHapticEventParameter(parameterID: .hapticIntensity, value: intensity),
                     CHHapticEventParameter(parameterID: .hapticSharpness, value: sharpness)
                 ], relativeTime: time)
             }
+            // A crisp strike, then (for cards and hits on the hero) a short low rumble that
+            // fades; finishers add an aftershock (2026-10-07, user: 关键是手机震动).
             var events = [transient(Float(cue.intensity), Float(cue.sharpness))]
             if cue == .pursuit {
-                events = [transient(0.25, 0.72), transient(0.42, 0.8, at: 0.07)]
-            } else if cue == .heavy || cue == .ultimate || cue == .defeat {
-                events.append(CHHapticEvent(eventType: .hapticContinuous, parameters: [
-                    CHHapticEventParameter(parameterID: .hapticIntensity, value: Float(cue.intensity) * 0.32),
-                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.15),
-                    CHHapticEventParameter(parameterID: .decayTime, value: 0.09)
-                ], relativeTime: 0.015, duration: cue == .ultimate ? 0.12 : 0.085))
+                events = [transient(0.6, 0.72), transient(Float(cue.intensity), 0.8, at: 0.07)]
             }
-            player = try engine.makePlayer(with: CHHapticPattern(events: events, parameters: []))
-            try player?.start(atTime: CHHapticTimeImmediate)
+            if cue == .heavy || cue == .ultimate || cue == .hurtHeavy || cue == .defeat {
+                events.append(transient(Float(cue.intensity) * 0.75, 0.35, at: 0.075))
+            }
+            if cue == .ultimate { events.append(transient(0.6, 0.3, at: 0.16)) }
+            // Strikes and rumble are separate patterns on separate players: a
+            // hapticIntensityControl curve scales its whole pattern, so sharing one pattern
+            // faded the aftershock / second / third transients along with the rumble
+            // (pursuit's second tap fell to ~0.14 instead of 0.82) (2026-10-08).
+            var patterns = [try CHHapticPattern(events: events, parameters: [])]
+            if cue.rumble > 0 {
+                let rumbleEvent = CHHapticEvent(eventType: .hapticContinuous, parameters: [
+                    CHHapticEventParameter(parameterID: .hapticIntensity, value: Float(cue.intensity) * 0.6),
+                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.12)
+                ], relativeTime: 0.012, duration: cue.rumble)
+                let fade = CHHapticParameterCurve(parameterID: .hapticIntensityControl, controlPoints: [
+                    .init(relativeTime: 0, value: 1), .init(relativeTime: cue.rumble, value: 0)
+                ], relativeTime: 0.012)
+                patterns.append(try CHHapticPattern(events: [rumbleEvent], parameterCurves: [fade]))
+            }
+            players = try patterns.map { try engine.makePlayer(with: $0) }
+            for player in players { try player.start(atTime: CHHapticTimeImmediate) }
         } catch {
             engine = nil
+            players.removeAll()
             fallback(cue)
         }
     }

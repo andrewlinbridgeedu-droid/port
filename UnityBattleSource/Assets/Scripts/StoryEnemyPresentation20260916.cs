@@ -63,16 +63,15 @@ public sealed class StoryEnemyPresentation20260916 : MonoBehaviour
         bool hit=false;
         bool second=(castCount++ & 1)!=0;
         body=MainlineBodyRound2.Get(handle.gameObject);
-        body.Begin(isExecutor?MainlineBodyRound2.Pose.Executor:isScribe?MainlineBodyRound2.Pose.Scribe:MainlineBodyRound2.Pose.Bearer,second,.4f,1f,2.5f);
+        body.Begin(isExecutor?MainlineBodyRound2.Pose.Executor:isScribe?MainlineBodyRound2.Pose.Scribe:MainlineBodyRound2.Pose.Bearer,second,StoryStrikeTiming20261010.Release,1f,2.5f);
+        int phase=0;
         try {
-            if(animator)animator.speed=3.5f; // 1.4 second authored charge in the existing 0.4 second windup.
-            animator?.CrossFadeInFixedTime(second?"Charge2":"Charge",.06f,0,0);
+            // The authored charge eases into its full pose over the windup (StoryStrikeTiming20261010).
+            StoryStrikeTiming20261010.BeginCharge(animator,second?"Charge2":"Charge");
             for(float t=0;t<2.5f;t+=Time.deltaTime) {
                 if(current!=epoch || !handle || !target || !handle.gameObject.activeInHierarchy || !valid())yield break;
                 body.Sample(t);
-                if(t>=.4f && !effect) {
-                    if(animator)animator.speed=1f;
-                    animator?.CrossFadeInFixedTime(second?"Cast2":"Cast",.04f,0,0);
+                if(StoryStrikeTiming20261010.Tick(animator,t,second?"Cast2":"Cast",ref phase) && !effect) {
                     effect=new GameObject(isExecutor ? (second ? "ExecutorCountermark" : "ExecutorNibStroke") : isScribe?"InkNibStroke":"BearerPalmImpulse");
                     effect.AddComponent<EnemyAuthoredBurstTier20260919>();
                     var line=effect.AddComponent<LineRenderer>();
@@ -88,7 +87,7 @@ public sealed class StoryEnemyPresentation20260916 : MonoBehaviour
                     var start=handle.EnemyRoot.position+Vector3.up*1.25f;
                     if(executorPen)start=executorPen.position;
                     var end=target.position+Vector3.up*.95f;
-                    float p=Mathf.Clamp01((t-.4f)/.6f);
+                    float p=Mathf.Clamp01((t-StoryStrikeTiming20261010.Release)/(StoryStrikeTiming20261010.Contact-StoryStrikeTiming20261010.Release));
                     var head=Vector3.Lerp(start,end,p);
                     if(isExecutor && second) head += Vector3.up * Mathf.Sin(p*Mathf.PI)*.45f;
                     line.SetPosition(0,Vector3.Lerp(start,head,.72f));line.SetPosition(1,head);
