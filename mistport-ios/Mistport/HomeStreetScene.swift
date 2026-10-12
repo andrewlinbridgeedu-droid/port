@@ -981,7 +981,7 @@ struct HomeStreetTaskView: View {
                 } else if !offer.accepted {
                     Text(task.request)
                     Text("\(task.steps.count) 步 · 完成得 \(task.copper) 铜" + (task.kind == .commission ? "" : " · 计入城市贡献")).font(.subheadline)
-                    Text("体力 \(MPCStamina.cost(.errandThreeStep))，第一步时扣除；今天没做完会作废，不扣钱。").font(.footnote).foregroundStyle(.secondary)
+                    Text("体力 \(MPCStamina.cost(.errandThreeStep))，第一步时扣除；有效至第 \(offer.lastDay) 天，逾期未完成会作废，不扣钱。").font(.footnote).foregroundStyle(.secondary)
                     Text("第一步：" + task.steps[0].goal + "（" + StreetTaskText.target(task.steps[0].target) + "）").font(.footnote)
                     Button("接下这件事") { accept { try game.acceptStreetTask(offer.id) } }
                 } else if let step = offer.step {

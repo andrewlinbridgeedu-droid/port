@@ -742,7 +742,8 @@ struct CharacterProfileView: View {
 
     private func chapterOneSkillArtName(_ skillID: FoolSkillID) -> String {
         switch skillID {
-        case .sidestepStrike, .fabricatedEvidence: "IconSkillWeakness"
+        case .sidestepStrike: "IconSkillWeakness"
+        case .fabricatedEvidence: "IconSkillFabricatedEvidence20261012"
         case .maskedWhisper: "IconSkillDangerPremonition"
         case .paperDouble: "IconSkillPaperDouble"
         case .identityDisplacement, .turnTheTables: "IconSkillDivination"

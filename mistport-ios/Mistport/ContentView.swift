@@ -181,6 +181,7 @@ struct ContentView: View {
                         sequence: game.displayedSequence,
                         districtName: game.selectedChapterDistrict.name,
                         nextMissionTitle: game.nextChapterMission.map { game.missionLockText($0) ?? $0.title } ?? "本次调查已完成 · 可重访",
+                        storyIsAvailable: game.canEnterStoryMission,
                         missionProgress: game.completedMissionCount(in: game.selectedChapterDistrict),
                         contributionPoints: game.cityContribution.points,
                         contributionLabel: game.cityContributionLabel,

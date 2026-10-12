@@ -846,8 +846,20 @@ final class GameStore {
         fresh.completedChapterMissionIDs = Set((1...3).map { "old-clock-\($0)" })
         assert(!fresh.missionIsAvailable(all[3]) && fresh.missionLockText(all[3]) == "第 4 关明天开放")
         assert(fresh.missionIsAvailable(all[0]) && fresh.missionLockText(all[0]) == nil)
+        fresh.selectedPathID = .fool
+        fresh.phase = .cityHub
+        assert(!fresh.canEnterStoryMission)
+        fresh.enterDistrictMap()
+        fresh.beginMission(all[3])
+        assert(fresh.phase == .cityHub && fresh.activeChapterMissionID == nil)
         fresh.pacingClock = { Date().addingTimeInterval(86_400) }
         assert(fresh.pacingDay == 2 && fresh.missionIsAvailable(all[3]))
+        assert(fresh.canEnterStoryMission)
+        fresh.enterDistrictMap()
+        assert(fresh.phase == .dungeon && fresh.activeChapterMissionID == all[3].id)
+        fresh.returnToCity()
+        fresh.completedChapterMissionIDs = Set(all.map(\.id))
+        assert(fresh.canEnterStoryMission && fresh.storyEntryMission?.id == all.last?.id)
         let reopened = GameStore(launchArguments: [], defaults: storage)
         assert(reopened.dailyPacingStart == fresh.dailyPacingStart)
         // The church opens after Q7; the day-1 allowance of four new floors still applies.
@@ -869,7 +881,7 @@ final class GameStore {
         assert(again.dailyPacingStart == migrated.dailyPacingStart)
         migrated.restart()
         assert(migrated.dailyPacingStart?.origin == .newSave && migrated.pacingDay == 1)
-        NSLog("DAILY_PACING_VERIFY_PASS: new save day 1, Q4 tomorrow, replay open, next day, reopen, church after Q7, tower 4/day, migration once, restart")
+        NSLog("DAILY_PACING_VERIFY_PASS: new save day 1, Q4 tomorrow blocks entry, replay open, next day enters Q4, completed chapter replay, reopen, church after Q7, tower 4/day, migration once, restart")
     }
 
     /// Explicit DEBUG walk only. Never seed or reset either player-owned suite.
@@ -1143,6 +1155,15 @@ final class GameStore {
         playerTestMissions.first { !completedChapterMissionIDs.contains($0.id) }
     }
 
+    private var storyEntryMission: DistrictMission? {
+        if let next = nextChapterMission {
+            return missionIsAvailable(next) ? next : nil
+        }
+        return playerTestMissions.last(where: missionIsAvailable)
+    }
+
+    var canEnterStoryMission: Bool { storyEntryMission != nil }
+
     var currentTeamExpedition: ExpeditionDefinition {
         selectedChapterDistrict.teamExpedition
     }
@@ -1385,12 +1406,9 @@ final class GameStore {
             phase = .pathSelection
             return
         }
-        // The intermediate street screen is no longer part of mission entry.
-        guard let mission = nextChapterMission.flatMap({ missionIsAvailable($0) ? $0 : nil })
-            ?? playerTestMissions.last(where: { missionIsAvailable($0) }) else {
-            returnToCity()
-            return
-        }
+        // A future mission's plaque must not silently enter a cleared mission.
+        // Re-evaluate daily pacing here even when the caller showed an enabled button.
+        guard let mission = storyEntryMission else { return }
         completeChapterOneTutorial(.mapEntry)
         prepareChapterOneMission(mission)
         beginMission(mission)
@@ -1864,6 +1882,7 @@ final class GameStore {
     }
 
     func beginMission(_ mission: DistrictMission) {
+        // Check the current MPCDailyPacing allowance again at the final entry boundary.
         guard missionIsAvailable(mission) else { return }
         settledMissionReward = nil
         selectedChapterDistrictID = mission.districtID

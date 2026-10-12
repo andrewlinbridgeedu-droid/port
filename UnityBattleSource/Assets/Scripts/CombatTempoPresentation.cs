@@ -310,7 +310,7 @@ public sealed class CombatTempoPresentation : MonoBehaviour
     }
     public void HeroCast(string skill) { if ((Enabled || HeroOnly) && hero != null) PlayHero(skill,skill == "basic" ? "Card" : "CastCardFan",skill == "basic" ? .58f : FoolSkillChoreography.ExpectedContact(skill)); }
     public bool EnemyHit(EnemyHandle h, string skill) {
-        if (!Enabled || !enemies.TryGetValue(h.BattleEnemyId, out var e)) return false;
+        if (!(Enabled || HoundBodyOnly) || !enemies.TryGetValue(h.BattleEnemyId, out var e)) return false;
         e.body.ConfirmedHit(skill == "fool_skill_07" || skill == "fool_skill_10"); return true;
     }
     public void PlayerHit(float strength = 1f) { if (!(Enabled || HeroOnly) || hero == null) return; if(hero.ai) hero.ai.ConfirmedHit(strength); else if(hero.body) hero.body.ConfirmedHit(strength > 1f); }

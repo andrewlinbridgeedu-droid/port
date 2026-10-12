@@ -183,13 +183,24 @@ struct LocalWorkshopView: View {
     }
     private var recipe: some View {
         step("02", "制作", art: "WorkshopStepCraft") {
-            Picker("手艺", selection: $selectedCraft) {
-                Text("皮革").tag(MPCCraftRecipe.Craft.leather)
-                Text("药剂").tag(MPCCraftRecipe.Craft.alchemy)
-                Text("金属").tag(MPCCraftRecipe.Craft.metal)
-                Text("织造").tag(MPCCraftRecipe.Craft.weaving)
-            }.pickerStyle(.segmented)
-            Text("本门熟练 \(game.craftingLedger.points(selectedCraft))/20").font(.headline)
+            craftSelector
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("\(craftTitle(selectedCraft))熟练度")
+                        .foregroundStyle(.white.opacity(0.88))
+                    Spacer(minLength: 12)
+                    Text("\(game.craftingLedger.points(selectedCraft)) / 20")
+                        .foregroundStyle(GameArt.gold)
+                        .monospacedDigit()
+                }
+                .font(.subheadline.weight(.semibold))
+                ProgressView(value: Double(min(20, max(0, game.craftingLedger.points(selectedCraft)))), total: 20)
+                    .tint(GameArt.gold)
+                    .accessibilityLabel("\(craftTitle(selectedCraft))熟练度")
+                    .accessibilityValue("\(game.craftingLedger.points(selectedCraft))，满级20")
+            }
+            .padding(.top, 6)
+            .padding(.bottom, 4)
             StaminaCostView(activity: .craft)
                     Text(game.workshopProficiencyNotice).font(.caption).foregroundStyle(.secondary)
             ForEach(MPCCraftingCatalog.all.filter { $0.craft == selectedCraft }) { recipe in
@@ -199,6 +210,55 @@ struct LocalWorkshopView: View {
             }
         }
     }
+    private var craftSelector: some View {
+        HStack(spacing: 6) {
+            ForEach(MPCCraftRecipe.Craft.allCases, id: \.self) { craft in
+                let isSelected = selectedCraft == craft
+                Button {
+                    GameInterfaceSound.shared.playClick()
+                    selectedCraft = craft
+                } label: {
+                    VStack(spacing: 7) {
+                        Text(craftTitle(craft))
+                            .font(.subheadline.weight(.semibold))
+                            .fontDesign(.serif)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
+                        Capsule()
+                            .fill(isSelected ? GameArt.gold : .clear)
+                            .frame(width: 22, height: 2)
+                    }
+                    .foregroundStyle(isSelected ? GameArt.gold : .white.opacity(0.72))
+                    .frame(maxWidth: .infinity, minHeight: 52)
+                    .background(
+                        isSelected ? GameArt.gold.opacity(0.12) : Color.black.opacity(0.16),
+                        in: RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    )
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 9, style: .continuous)
+                            .strokeBorder(isSelected ? GameArt.gold.opacity(0.6) : .white.opacity(0.08), lineWidth: 1)
+                    }
+                    .contentShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(craftTitle(craft))
+                .accessibilityAddTraits(isSelected ? .isSelected : [])
+                .accessibilityIdentifier("workshop.craft.\(craft.rawValue)")
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("制作分类")
+    }
+
+    private func craftTitle(_ craft: MPCCraftRecipe.Craft) -> String {
+        switch craft {
+        case .leather: "皮革"
+        case .alchemy: "药剂"
+        case .metal: "金属"
+        case .weaving: "织造"
+        }
+    }
+
     private var dailyOrders: some View {
         step("03", "每日订单", art: "WorkshopStepInstall") {
             Text("诊所 · 港务处 · 教会").font(.headline)

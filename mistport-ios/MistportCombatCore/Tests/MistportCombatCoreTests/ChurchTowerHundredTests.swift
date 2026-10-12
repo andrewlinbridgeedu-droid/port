@@ -12,7 +12,7 @@ struct ChurchTowerHundredTests {
         #expect(Set(floors.map(\.id)).count == 100)
         var ids = Set<String>()
         for f in floors {
-            #expect((1...3).contains(f.waves.count))
+            #expect(f.number == 1 ? f.waves.count == 1 : (3...5).contains(f.waves.count))
             #expect(f.waves.flatMap { $0 }.filter { $0.species == .backSac }.count <= 1)
             for w in f.waves.indices {
                 #expect((1...MPCChurchTowerCatalog.maxWaveSize).contains(f.waves[w].count))
@@ -41,87 +41,129 @@ struct ChurchTowerHundredTests {
         #expect(coins == 1700 && merit == 320 && restored.nextFloor == nil)
     }
     func start(_ n: Int) throws -> MPCChapterOneEncounterSession {
-        try .start(encounterID: MPCChurchTowerCatalog.floor(number: n)!.id, companionIDs: [], loadout: .init(normalSkillIDs: [], isUltimateUnlocked: false, passiveIDs: [], relicIDs: []))
+        let floor = try #require(MPCChurchTowerCatalog.floor(number: n))
+        return try .start(encounterID: floor.id, companionIDs: [], loadout: .init(normalSkillIDs: [], isUltimateUnlocked: false, passiveIDs: [], relicIDs: []))
+    }
+    /// Reach the authored threat through the preceding minion waves. Keep the
+    /// same session and advance its clock through each real one-second fade.
+    func start(_ n: Int, containing species: [MPCChurchTowerCatalog.Species], minimumEnemies: Int = 1) throws -> (session: MPCChapterOneEncounterSession, now: TimeInterval) {
+        let floor = try #require(MPCChurchTowerCatalog.floor(number: n))
+        let targetWave = try #require(floor.waves.firstIndex { wave in
+            wave.count >= minimumEnemies && species.allSatisfy { requested in
+                wave.contains { $0.species == requested }
+            }
+        }, "Floor \(n) must retain the required threat composition")
+        var session = try start(n)
+        var now: TimeInterval = 0
+        for wave in 0..<targetWave {
+            try #require(session.waveIndex == wave && session.outcome == .inProgress)
+            for enemy in session.enemies.filter(\.isAlive) {
+                _ = try session.applyPartyDamage(10000, to: enemy.id)
+            }
+            try #require(session.isAwaitingTowerWave)
+            now += 1
+            _ = session.advanceEmeraldPoison(at: now)
+            try #require(session.waveIndex == wave + 1 && session.outcome == .inProgress)
+        }
+        return (session, now)
     }
     @Test func allChurchPreparationFamiliesShareAnExclusiveGate() throws {
-        for n in [6, 11, 21, 31, 41, 51] {
-            var s = try start(n)
-            let id = s.enemies[0].id
+        let families: [(Int, MPCChurchTowerCatalog.Species)] = [
+            (1, .shieldJaw), (6, .saltSac), (11, .saltSac), (21, .backSac),
+            (31, .scissor), (41, .crown), (51, .boneclaw)
+        ]
+        for (n, species) in families {
+            var (s, now) = try start(n, containing: [species])
+            let id = try #require(s.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == species }).id
+            if species == .shieldJaw {
+                #expect(!s.isChurchHighThreatPreparation(enemyID: id)) // guard precedes charge
+                try s.endRound(actingEnemyID: id, at: now)
+            }
             #expect(s.isChurchHighThreatPreparation(enemyID: id))
             #expect(!s.churchPreparationMustWait(enemyID: id, pendingEnemyIDs: [id]))
-            try s.endRound(actingEnemyID: id, at: 0)
+            try s.endRound(actingEnemyID: id, at: now)
             #expect(!s.isChurchHighThreatPreparation(enemyID: id))
         }
-        var s = try start(13) // F12 now introduces Copperback; F13 retains the shield/poison pair.
-        let hound = s.enemies.first { MPCChurchTowerCatalog.isShieldJaw($0.contentID) }!.id
-        let poison = s.enemies.first { $0.id != hound }!.id
-        try s.endRound(actingEnemyID: hound, at: 0)
+        // F12 introduces Copperback; F13 retains the shield/poison pair after its minions.
+        var (s, now) = try start(13, containing: [.shieldJaw, .saltSac])
+        let hound = try #require(s.enemies.first { MPCChurchTowerCatalog.isShieldJaw($0.contentID) }).id
+        let poison = try #require(s.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .saltSac }).id
+        try s.endRound(actingEnemyID: hound, at: now)
         #expect(s.churchPreparationMustWait(enemyID: hound, pendingEnemyIDs: [poison]))
-        try s.endRound(actingEnemyID: poison, at: 0)
+        try s.endRound(actingEnemyID: poison, at: now)
         #expect(!s.churchPreparationMustWait(enemyID: hound, pendingEnemyIDs: [poison]))
     }
     @Test func poisonHasThreeTicksDoesNotStackAndDiesWithSource() throws {
-        var s = try start(11); let id = s.enemies[0].id
-        try s.endRound(actingEnemyID: id, at: 0)
-        try s.endRound(actingEnemyID: id, at: 1)
+        var (s, now) = try start(11, containing: [.saltSac])
+        let id = try #require(s.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .saltSac }).id
+        try s.endRound(actingEnemyID: id, at: now)
+        try s.endRound(actingEnemyID: id, at: now + 1)
         #expect(s.churchFinitePoisonActive)
-        #expect(!s.enemies[0].intentPattern.contains("tower_poison"))
+        let poisonSource = try #require(s.enemies.first { $0.id == id })
+        #expect(!poisonSource.intentPattern.contains("tower_poison"))
         let before = s.playerHP
-        _ = s.advanceEmeraldPoison(at: 10)
+        _ = s.advanceEmeraldPoison(at: now + 10)
         let after = s.playerHP
         #expect(!s.churchFinitePoisonActive)
-        #expect(before - after == 3 * (s.enemies[0].attack / 2))
-        _ = s.advanceEmeraldPoison(at: 100)
+        #expect(before - after == 3 * (poisonSource.attack / 2))
+        _ = s.advanceEmeraldPoison(at: now + 100)
         #expect(s.playerHP == after)
         // A second cast by this same body cannot restart a carpet.
-        for _ in 0..<4 { try s.endRound(actingEnemyID: id, at: 101) }
+        for _ in 0..<4 { try s.endRound(actingEnemyID: id, at: now + 101) }
         let afterAttack = s.playerHP
-        _ = s.advanceEmeraldPoison(at: 120)
+        _ = s.advanceEmeraldPoison(at: now + 120)
         #expect(s.playerHP == afterAttack)
-        var death = try start(12)
-        let poison = death.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .saltSac }!.id
-        try death.endRound(actingEnemyID: poison, at: 0); try death.endRound(actingEnemyID: poison, at: 1)
+        var (death, deathNow) = try start(12, containing: [.saltSac])
+        let poison = try #require(death.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .saltSac }).id
+        try death.endRound(actingEnemyID: poison, at: deathNow); try death.endRound(actingEnemyID: poison, at: deathNow + 1)
         _ = try death.applyPartyDamage(10000, to: poison)
         #expect(!death.churchFinitePoisonActive)
         let hp = death.playerHP
-        _ = death.advanceEmeraldPoison(at: 20)
+        _ = death.advanceEmeraldPoison(at: deathNow + 20)
         #expect(death.playerHP == hp)
     }
     @Test func repairFreezesRecipientNoRetargetAndNoSelfHeal() throws {
-        var s = try start(23)
-        let healer = s.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .backSac }!.id
+        var (s, now) = try start(23, containing: [.backSac], minimumEnemies: 3)
+        let healer = try #require(s.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .backSac }).id
         let recipients = s.enemies.filter { $0.id != healer }
+        try #require(recipients.count >= 2)
         _ = try s.applyPartyDamage(100, to: recipients[0].id)
-        try s.endRound(actingEnemyID: healer, at: 0)
+        try s.endRound(actingEnemyID: healer, at: now)
         s.commitEnemyImpact(from: healer)
         #expect(s.repairTargetID(for: healer) == recipients[0].id)
         _ = try s.applyPartyDamage(10000, to: recipients[0].id)
         _ = try s.applyPartyDamage(100, to: recipients[1].id)
-        let hp = s.enemies.first { $0.id == recipients[1].id }!.hp
-        try s.endRound(actingEnemyID: healer, at: 1)
-        #expect(s.enemies.first { $0.id == recipients[1].id }!.hp == hp)
+        let hp = try #require(s.enemies.first { $0.id == recipients[1].id }).hp
+        try s.endRound(actingEnemyID: healer, at: now + 1)
+        #expect(s.enemies.first { $0.id == recipients[1].id }?.hp == hp)
         #expect(s.lastEnemyActionResolutions.last?.healing == 0)
     }
     @Test func crownEmpowersOneAttackCycleThenDisappearsAndDeathCancels() throws {
-        var s = try start(41)
-        let crown = s.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .crown }!.id
-        let dog = s.enemies.first { $0.id != crown }!.id
-        try s.endRound(actingEnemyID: crown, at: 0)
+        var (s, now) = try start(41, containing: [.crown, .shieldJaw])
+        let crown = try #require(s.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .crown }).id
+        let dog = try #require(s.enemies.first { MPCChurchTowerCatalog.isShieldJaw($0.contentID) }).id
+        // Crown chooses the first living recipient. Clear the minion escort
+        // so this contract still measures the shield-jaw's full attack cycle.
+        for escort in s.enemies.filter({ $0.id != crown && $0.id != dog }) {
+            _ = try s.applyPartyDamage(10000, to: escort.id)
+        }
+        #expect(s.towerEmpowerTargetID(for: crown) == dog)
+        try s.endRound(actingEnemyID: crown, at: now)
         s.commitEnemyImpact(from: crown)
-        try s.endRound(actingEnemyID: crown, at: 1)
+        try s.endRound(actingEnemyID: crown, at: now + 1)
         #expect(s.towerEmpoweredEnemyIDs.contains(dog))
-        try s.endRound(actingEnemyID: dog, at: 2)
-        try s.endRound(actingEnemyID: dog, at: 2.5)
-        let hp = s.playerHP, attack = s.enemies.first { $0.id == dog }!.attack
-        try s.endRound(actingEnemyID: dog, at: 3)
+        try s.endRound(actingEnemyID: dog, at: now + 2)
+        try s.endRound(actingEnemyID: dog, at: now + 2.5)
+        let hp = s.playerHP, attack = try #require(s.enemies.first { $0.id == dog }).attack
+        try s.endRound(actingEnemyID: dog, at: now + 3)
         #expect(hp - s.playerHP == attack * 2 * 125 / 100)
-        try s.endRound(actingEnemyID: dog, at: 4)
-        try s.endRound(actingEnemyID: dog, at: 5)
+        try s.endRound(actingEnemyID: dog, at: now + 4)
+        try s.endRound(actingEnemyID: dog, at: now + 5)
         while let e = s.enemies.first(where: { $0.id == dog }), e.intentIndex < e.intentPattern.count {
-            try s.endRound(actingEnemyID: dog, at: 5)
+            try s.endRound(actingEnemyID: dog, at: now + 5)
         }
         #expect(!s.towerEmpoweredEnemyIDs.contains(dog))
-        for _ in 0..<4 { try s.endRound(actingEnemyID: crown, at: 6) }
+        for _ in 0..<4 { try s.endRound(actingEnemyID: crown, at: now + 6) }
         #expect(s.towerEmpoweredEnemyIDs.contains(dog))
         _ = try s.applyPartyDamage(10000, to: crown)
         #expect(s.towerEmpoweredEnemyIDs.isEmpty)

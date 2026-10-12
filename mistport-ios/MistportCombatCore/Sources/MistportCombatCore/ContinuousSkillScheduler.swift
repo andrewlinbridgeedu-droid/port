@@ -34,6 +34,18 @@ public struct ContinuousSkillScheduler: Sendable {
             }?.element
     }
 
+    /// Repositioned cards start a full cooldown, including cards not yet cast.
+    /// Unchanged positions and a cancelled/no-op drag keep their deadlines.
+    @discardableResult
+    public mutating func didReorder(from old: [FoolSkillID], to new: [FoolSkillID], at now: TimeInterval) -> Set<FoolSkillID> {
+        guard now.isFinite, old != new else { return [] }
+        let moved = Set(new.enumerated().compactMap { index, skill in
+            old.firstIndex(of: skill) == index ? nil : skill
+        })
+        for skill in moved { didCast(skill, at: now) }
+        return moved
+    }
+
     public mutating func didCast(_ skill: FoolSkillID, at now: TimeInterval) {
         used.insert(skill)
         startedAt[skill] = now

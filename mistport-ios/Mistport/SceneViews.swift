@@ -11,6 +11,7 @@ struct CityHubView: View {
     let sequence: Int
     let districtName: String
     let nextMissionTitle: String
+    let storyIsAvailable: Bool
     let missionProgress: Int
     let contributionPoints: Int
     let contributionLabel: String
@@ -342,7 +343,8 @@ struct CityHubView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("主线 \(nextMissionTitle)，进入")
+            .disabled(!storyIsAvailable)
+            .accessibilityLabel("主线 \(nextMissionTitle)" + (storyIsAvailable ? "，进入" : ""))
             Button(action: onStamina) {
                 HStack(spacing: 3) {
                     HousingLanternIcon(value: staminaValue).frame(width: 24, height: 28)

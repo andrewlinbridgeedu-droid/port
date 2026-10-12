@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import AVFoundation
 import MistportCombatCore
 
 private enum HousingArt {
@@ -24,9 +25,9 @@ private enum HousingArt {
         return geography?.districts.first { $0.id == district.rawValue }?.name ?? district.rawValue
     }
     static func history(_ id: String) -> String {
-        ["shelter": "教会老侧廊的施济铺位，雾夜共用一盏灯。", "dock_bunk": "旧仓房的石拱留下来，船工在木隔间里歇脚。",
+        ["shelter": "教会老侧廊的施济铺位，雾夜共用一盏灯。", "dock_bunk": "码头边的旧木棚隔出窄铺，潮气重，船工在这里落脚。",
          "arcade_room": "楼下开店，楼上住人；拱廊挡住一整条街的雾雨。", "canal_house": "临水的窄屋把雾收进檐沟，铁阳台上种着香草。",
-         "bell_loft": "报时钟下的斜梁阁楼，灯窗在雾中认得回家的路。", "highland_house": "旧港高处的石宅，门廊后是雾池与书房。"] [id] ?? ""
+         "bell_loft": "报时钟下的斜梁阁楼，灯窗在雾中认得回家的路。", "highland_house": "高处的住屋收拾得整齐，窗边留出安静歇脚的地方。", "noble_suite": "公馆的客房宽敞而安静，石墙把街上的喧嚣隔在外面。"] [id] ?? ""
     }
 }
 
@@ -121,6 +122,19 @@ struct HousingSearchView: View {
             case .moving(let id): moving(id)
             }
             if !message.isEmpty { Text(message).font(.footnote).foregroundStyle(.red) }
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if case .lease(let id) = step {
+                VStack(spacing: 7) {
+                    let room = MPCHousingCatalog.lodging(id)?.copperPerDay ?? 0
+                    let food = MPCHousingCatalog.meal(mealID)?.copperPerDay ?? 0
+                    Text("已选饮食 · 每日合计 \(room + food) 铜")
+                        .font(.footnote).foregroundStyle(GameArt.ink)
+                    signLeaseButton(id)
+                }
+                .padding(.horizontal, 24).padding(.vertical, 12)
+                .background(GameArt.paper)
+            }
         }.onChange(of: step) { _, next in
             switch next {
             case .districts: recordManualView("districts")
@@ -260,7 +274,15 @@ struct HousingSearchView: View {
                 let perDay = lodging.copperPerDay + (meal?.copperPerDay ?? 0)
                 Text("房钱与伙食每日 \(perDay) 铜 · 七日合计 \(perDay * MPCHousingCatalog.leaseDays) 铜").font(.headline)
                 Text("租期七日，房钱与伙食按日收，不必一次付清。今晨的费用已经付过，新约明晨起计；若钱袋紧了，伊蕾娜会另替你安排便宜些的食宿。").font(.footnote)
-                Button(isSigning ? "伊蕾娜正盖上封蜡…" : "签约并搬家") {
+                if isSigning {
+                    Image(uiImage: HousingAtlas.frame("HousingSeal20260930", index: stampFrame, columns: 2, rows: 2))
+                        .resizable().scaledToFit().frame(height: 120).accessibilityLabel("封蜡盖章")
+                }
+            }
+        }
+    }
+    private func signLeaseButton(_ id: String) -> some View {
+        Button(isSigning ? "伊蕾娜正盖上封蜡…" : "签约并搬家") {
                     Task {
                         isSigning = true; defer { isSigning = false }
                         do {
@@ -273,13 +295,8 @@ struct HousingSearchView: View {
                         } catch { message = game.housingError(error) }
                     }
                 }.buttonStyle(GameArtButtonStyle(primary: true)).disabled(isSigning)
-                if isSigning {
-                    Image(uiImage: HousingAtlas.frame("HousingSeal20260930", index: stampFrame, columns: 2, rows: 2))
-                        .resizable().scaledToFit().frame(height: 120).accessibilityLabel("封蜡盖章")
-                }
-            }
-        }
     }
+
     private func moving(_ id: String) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("你的新门牌").font(.title2.bold())
@@ -322,6 +339,7 @@ private struct HousingInteriorArtwork: View {
             GeometryReader { g in
                 ZStack {
                     Image(home.interior).resizable().aspectRatio(1.5, contentMode: .fit)
+                    if homeID == "dock_bunk" { HousingRatScurry().allowsHitTesting(false).accessibilityHidden(true) }
                     ForEach(home.hotspots) { hotspot in
                         Button { onDetail(hotspot.title + "：" + hotspot.description) } label: {
                             Image(systemName: "sparkle").foregroundStyle(.white)
@@ -754,3 +772,78 @@ struct HousingDeviceReviewRoot: View {
     }
 }
 #endif
+
+
+private struct HousingRatScurry: View {
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var running = false
+    @State private var progress: CGFloat = -0.15
+    var body: some View {
+        GeometryReader { geometry in
+            if running {
+                TimelineView(.animation(minimumInterval: 0.08)) { timeline in
+                    let frame = Int(timeline.date.timeIntervalSinceReferenceDate * 12) % 4
+                    Image(uiImage: HousingAtlas.frame("HousingRatRun20261012", index: frame, columns: 4, rows: 1))
+                        .resizable().scaledToFit().frame(width: 58, height: 77)
+                        .position(x: geometry.size.width * (1 - progress), y: geometry.size.height * 0.85)
+                }
+            }
+        }
+        .clipped()
+        .task(id: scenePhase) {
+            guard scenePhase == .active, !reduceMotion else { return }
+            while !Task.isCancelled {
+                do {
+                    try await Task.sleep(for: .seconds(Double.random(in: 9...19)))
+                    guard !Task.isCancelled else { return }
+                    progress = -0.15; running = true
+                    try await Task.sleep(for: .milliseconds(30))
+                    HousingRatSound.shared.play()
+                    withAnimation(.linear(duration: 2.2)) { progress = 1.15 }
+                    try await Task.sleep(for: .seconds(2.2))
+                    running = false
+                } catch { running = false; HousingRatSound.shared.stop(); return }
+            }
+        }
+        .onDisappear { HousingRatSound.shared.stop() }
+    }
+}
+
+@MainActor
+private final class HousingRatSound {
+    static let shared = HousingRatSound()
+    private var player: AVAudioPlayer?
+    func stop() { player?.stop() }
+    func play() {
+        guard !UserDefaults.standard.bool(forKey: "MistportCityMute") else { return }
+        let volume = UserDefaults.standard.object(forKey: CityAmbience.volumeKey) as? Double ?? 0.6
+        guard volume > 0 else { return }
+        if player == nil { player = try? AVAudioPlayer(data: Self.squeak()) }
+        player?.volume = Float(min(1, volume) * 0.22)
+        player?.currentTime = 0
+        player?.play()
+    }
+    private static func squeak() -> Data {
+        let rate = 22_050, count = 7_938
+        var pcm = Data()
+        for i in 0..<count {
+            let t = Double(i) / Double(rate)
+            let local = t < 0.16 ? t : t - 0.21
+            let active = local >= 0 && local < 0.12
+            let envelope = active ? sin(.pi * local / 0.12) * exp(-local * 12) : 0
+            let phase = 2 * Double.pi * (2100 * local + 5500 * local * local)
+            let sample = (sin(phase) + 0.18 * sin(phase * 2.03)) * envelope * 0.26
+            var word = Int16(sample * Double(Int16.max)).littleEndian
+            withUnsafeBytes(of: &word) { pcm.append(contentsOf: $0) }
+        }
+        var wave = Data()
+        func tag(_ value: String) { wave.append(contentsOf: value.utf8) }
+        func u32(_ value: UInt32) { var x = value.littleEndian; withUnsafeBytes(of: &x) { wave.append(contentsOf: $0) } }
+        func u16(_ value: UInt16) { var x = value.littleEndian; withUnsafeBytes(of: &x) { wave.append(contentsOf: $0) } }
+        tag("RIFF"); u32(UInt32(36 + pcm.count)); tag("WAVEfmt "); u32(16)
+        u16(1); u16(1); u32(UInt32(rate)); u32(UInt32(rate * 2)); u16(2); u16(16)
+        tag("data"); u32(UInt32(pcm.count)); wave.append(pcm)
+        return wave
+    }
+}

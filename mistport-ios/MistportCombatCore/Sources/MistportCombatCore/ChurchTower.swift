@@ -62,7 +62,7 @@ public enum MPCChurchTowerCatalog {
         }
         public func enemyID(slot: Int) -> String { enemyID(wave: 0, slot: slot) }
         public func enemyID(wave: Int, slot: Int) -> String {
-            waves[wave][slot].species.rawValue + (number <= 10 ? String(format: "_f%02d_s%d", number, slot) : String(format: "_f%03d_w%d_s%d", number, wave, slot))
+            waves[wave][slot].species.rawValue + (number <= 10 && wave == 0 ? String(format: "_f%02d_s%d", number, slot) : String(format: "_f%03d_w%d_s%d", number, wave, slot))
         }
         public var encounter: MPCEncounterContent {
             MPCEncounterContent(id: id, name: title, investigationID: "church_tower", waves: waves.indices.map { w in .init(enemyIDs: waves[w].indices.map { enemyID(wave: w, slot: $0) }) }, companionSlots: 0, fixedRewardItemIDs: [], firstClearRelicID: nil, recommendedTags: ["church_tower"])
@@ -184,7 +184,32 @@ public enum MPCChurchTowerCatalog {
     ]
     /// Explicit wave compositions, not one roster with a floor-number HP multiplier.
     /// Each decade changes target order, attack timing and between-wave resources.
-    public static let floors: [Floor] = openingFloors + laterFloors
+    public static let floors: [Floor] = (openingFloors + laterFloors).map(sequentialMinionWaves)
+
+    /// Ordinary packs arrive in 3–5 cleared waves. Redistribute the authored
+    /// roster instead of multiplying its HP, attack or first-clear reward budget.
+    /// Floor 1 remains a single-enemy introduction; majors close the later waves.
+    private static func sequentialMinionWaves(_ floor: Floor) -> Floor {
+        let roster = floor.waves.flatMap { $0 }
+        let small = roster.filter { minionSpecies.contains($0.species) }
+        guard !small.isEmpty else { return floor }
+        let majorGroups = floor.waves.map { $0.filter { !minionSpecies.contains($0.species) } }.filter { !$0.isEmpty }
+        let count = min(floor.number <= 10 ? 3 : floor.number <= 40 ? 4 : 5, roster.count)
+        var waves = Array(repeating: [Enemy](), count: count)
+        // Keep original support/major groups together so crown buffs and
+        // escorted threats still have their intended targets in the later waves.
+        let smallWaveCount = count
+        for (index, enemy) in small.enumerated() {
+            let wave = index % smallWaveCount
+            waves[wave].append(Enemy(species: enemy.species, hp: enemy.hp, attack: enemy.attack,
+                                     interval: enemy.interval, initialDelay: minionArrival(waves[wave].count), elite: enemy.elite))
+        }
+        for (index, group) in majorGroups.enumerated() {
+            let wave = count - majorGroups.count + index
+            waves[wave].append(contentsOf: group)
+        }
+        return Floor(number: floor.number, title: floor.title, waves: waves.filter { !$0.isEmpty })
+    }
     private static let laterFloors: [Floor] = {
         typealias S = Species
         // Both legacy layout symbols now resolve to D01; no D00 can spawn.

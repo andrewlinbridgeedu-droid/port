@@ -760,72 +760,77 @@ struct ChapterOneTutorialOverlay: View {
     }
 
     private var guideContent: some View {
-        ZStack(alignment: .bottom) {
-            MirielStardustAura()
-                .frame(width: 450, height: 610)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .padding(.top, 208)
-                .offset(x: 38)
-                .accessibilityHidden(true)
+        GeometryReader { proxy in
+            // Reserve the nameplate and its bottom inset even on shorter screens.
+            let portraitTop: CGFloat = 188
+            let nameplateClearance: CGFloat = 132
+            let portraitHeight = min(500, max(0, proxy.size.height - portraitTop - nameplateClearance))
 
-            GuideMirielPortrait()
-                .frame(width: 270, height: 500, alignment: .bottom)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                // Keep her centered slightly to the right, but let the full
-                // silhouette sit lower in the composition so the upper-left
-                // remains available for the guide's spoken line.
-                .padding(.top, 236)
-                .offset(x: 40)
-                .zIndex(2)
-                .accessibilityHidden(true)
+            ZStack(alignment: .bottom) {
+                MirielStardustAura()
+                    .frame(width: 450, height: 610)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .padding(.top, 160)
+                    .offset(x: 38)
+                    .accessibilityHidden(true)
 
-            MirielFireAura()
-                .frame(width: 225.5, height: 270)
-                .mask {
-                    LinearGradient(stops: [
-                        .init(color: .clear, location: 0),
-                        .init(color: .white, location: 0.18),
-                        .init(color: .white, location: 0.82),
-                        .init(color: .clear, location: 1)
-                    ], startPoint: .leading, endPoint: .trailing)
-                }
-                .mask {
-                    LinearGradient(stops: [
-                        .init(color: .clear, location: 0),
-                        .init(color: .white, location: 0.12),
-                        .init(color: .white, location: 0.55),
-                        .init(color: .clear, location: 0.90)
-                    ], startPoint: .top, endPoint: .bottom)
-                }
-                .blendMode(.screen)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .padding(.top, 215)
-                .offset(x: 40)
-                .zIndex(1)
-                .allowsHitTesting(false)
-                .accessibilityHidden(true)
+                GuideMirielPortrait()
+                    .frame(width: 270, height: portraitHeight, alignment: .bottom)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    // Lift the full silhouette above the reserved nameplate area.
+                    .padding(.top, portraitTop)
+                    .offset(x: 40)
+                    .zIndex(2)
+                    .accessibilityHidden(true)
 
-            MirielGoldenNameplate()
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                .padding(.horizontal, 48)
-                .padding(.bottom, 48)
-                .offset(x: 22)
-                .zIndex(0.5)
+                MirielFireAura()
+                    .frame(width: 225.5, height: 270)
+                    .mask {
+                        LinearGradient(stops: [
+                            .init(color: .clear, location: 0),
+                            .init(color: .white, location: 0.18),
+                            .init(color: .white, location: 0.82),
+                            .init(color: .clear, location: 1)
+                        ], startPoint: .leading, endPoint: .trailing)
+                    }
+                    .mask {
+                        LinearGradient(stops: [
+                            .init(color: .clear, location: 0),
+                            .init(color: .white, location: 0.12),
+                            .init(color: .white, location: 0.55),
+                            .init(color: .clear, location: 0.90)
+                        ], startPoint: .top, endPoint: .bottom)
+                    }
+                    .blendMode(.screen)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .padding(.top, 167)
+                    .offset(x: 40)
+                    .zIndex(1)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
 
-            dialogueBubble
-                .frame(maxWidth: .infinity, alignment: .leading)
-                // The physical iPhone viewport clips the old cloud at x = 0.
-                // Give the irregular silhouette a generous leading safe lane.
-                .padding(.leading, 10)
-                .padding(.trailing, 18)
-                .padding(.top, 30)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .zIndex(1)
+                MirielGoldenNameplate()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                    .padding(.horizontal, 48)
+                    .padding(.bottom, 48)
+                    .offset(x: 22)
+                    .zIndex(0.5)
 
-            // The only skip control lives in the bubble footer (user, 2026-10-05:
-            // two skip buttons on one page is one too many).
+                dialogueBubble
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    // The physical iPhone viewport clips the old cloud at x = 0.
+                    // Give the irregular silhouette a generous leading safe lane.
+                    .padding(.leading, 10)
+                    .padding(.trailing, 18)
+                    .padding(.top, 30)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .zIndex(1)
+
+                // The only skip control lives in the bubble footer (user, 2026-10-05:
+                // two skip buttons on one page is one too many).
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     }
 
     private var dialogueBubble: some View {

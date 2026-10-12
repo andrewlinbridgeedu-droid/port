@@ -932,6 +932,10 @@ struct ChapterOneEncounterTestView: View {
     @State private var battleTime = ProcessInfo.processInfo.systemUptime
     @State private var lastBattleWallTime: TimeInterval?
     @State private var battleTickRemainder: TimeInterval = 0
+    @State private var isFastForwardingBattle = false
+    @State private var didSkipBattle = false
+    @State private var combatDraggedSkill: FoolSkillID?
+    @State private var combatDragOffset: CGSize = .zero
     @State private var lightAttackClock: MPCLightAttackClock?
     @State private var playerHitFlashUntil: TimeInterval = 0
     #if DEBUG
@@ -1385,6 +1389,18 @@ struct ChapterOneEncounterTestView: View {
                     .zIndex(120)
                 }
             }
+            .overlay {
+                if isFastForwardingBattle && combatIsActive && session.outcome == .inProgress {
+                    ZStack {
+                        Color(red: 0.055, green: 0.045, blue: 0.085)
+                        VStack(spacing: 18) {
+                            ProgressView().tint(.yellow)
+                            Text("正在结算战斗…").font(.title3.bold())
+                        }.padding(28)
+                    }
+                    .accessibilityIdentifier("combat-fast-settlement")
+                }
+            }
             .foregroundStyle(.white)
             .ignoresSafeArea(edges: .bottom)
         }
@@ -1436,6 +1452,9 @@ struct ChapterOneEncounterTestView: View {
                 }
             }
             #endif
+        }
+        .task(id: isFastForwardingBattle) {
+            if isFastForwardingBattle { await finishSkippedBattle() }
         }
         .task(id: unityBattleRuntime.isReady) {
             guard usesEncoreRevenant, unityBattleRuntime.isReady else { return }
@@ -1529,6 +1548,8 @@ struct ChapterOneEncounterTestView: View {
             unityBattleRuntime.send(action: "emerald-poison:\(intensity)")
         }
         .onDisappear {
+            isFastForwardingBattle = false
+            unityBattleRuntime.suppressesPresentation = false
             HomeMusicController.shared.setBattleActive(false, encounterID: session.encounter.id)
             _ = session.finishRelicBattle()
             CombatHaptics.shared.cancel()
@@ -1575,6 +1596,7 @@ struct ChapterOneEncounterTestView: View {
             adoptConfiguredSession(configuredSession)
         }
         .onChange(of: session.outcome) { _, outcome in
+
             if outcome != .inProgress { HomeMusicController.shared.setBattleActive(false, encounterID: session.encounter.id) }
             if outcome == .defeat { CombatHaptics.shared.emit(.defeat); onDefeat() }
             if outcome != .inProgress && usesEncoreRevenant {
@@ -1596,6 +1618,10 @@ struct ChapterOneEncounterTestView: View {
                 } else {
                     visualScene.presentChapterOnePlayerDefeat()
                 }
+                return
+            }
+            if didSkipBattle {
+                isDefeatOverlayVisible = true
                 return
             }
             // Let the player shatter finish before the defeat surface claims
@@ -1742,7 +1768,71 @@ struct ChapterOneEncounterTestView: View {
     /// casts use the earliest real-time cooldown deadline, with slot-order ties.
     /// One main-actor clock owns all rule mutations. Each actor has its own
     /// cast/impact deadlines; no suspended task can overwrite a newer session.
+    private var canSkipBattle: Bool {
+        combatIsActive && session.outcome == .inProgress && !isFastForwardingBattle
+            && !showsTutorial && !showsQ1GoddessIntervention && !showsQ5MaraIntervention
+            && !waitsForPostInterventionStart && !showsQ30AngelIntro
+            && !isQ1PreludeActive && !isFirstCardTutorial
+    }
+
+    private func beginSkippingBattle() {
+        guard canSkipBattle else { return }
+        didSkipBattle = true
+        // Stop presentation only. Every existing pending impact, cooldown, shield,
+        // poison timer, wave and random state remains in the current session.
+        unityBattleRuntime.send(action: "combat-stop")
+        CombatHaptics.shared.cancel()
+        isFastForwardingBattle = true
+    }
+
+    @MainActor
+    private func finishSkippedBattle() async {
+        unityBattleRuntime.suppressesPresentation = true
+        defer {
+            unityBattleRuntime.suppressesPresentation = false
+            isFastForwardingBattle = false
+            lastBattleWallTime = nil
+            battleTickRemainder = 0
+        }
+        // Same 50 ms step as watched combat, batched without wall-clock waiting.
+        // Yield between batches so the settlement indicator and cancellation work.
+        var steps = 0
+        while !Task.isCancelled && combatIsActive && session.outcome == .inProgress {
+            for _ in 0..<200 {
+                guard session.outcome == .inProgress && !showsQ1GoddessIntervention
+                    && !showsQ5MaraIntervention && !waitsForPostInterventionStart else { break }
+                battleTime += 0.05
+                advanceContinuousCombat(at: battleTime)
+                steps += 1
+            }
+            if showsQ1GoddessIntervention || showsQ5MaraIntervention || waitsForPostInterventionStart { break }
+            if steps >= 72_000 { break } // Never fabricate a result for a non-terminating encounter.
+            await Task.yield()
+        }
+        guard !Task.isCancelled else { return }
+        if session.outcome == .victory {
+            if !continuousVictoryReported {
+                continuousVictoryReported = true
+                onVictory(session)
+            }
+        } else if session.outcome == .defeat {
+            isDefeatOverlayVisible = !(session.encounter.id == "chapter01_q05_encounter"
+                && session.paperDoubleTutorialPhase == .awaitingMara)
+        } else {
+            // An authored intervention must still be read; resume the same state.
+            didSkipBattle = false
+            isFastForwardingBattle = false
+            unityBattleRuntime.suppressesPresentation = false
+            unityBattleRuntime.configureEncounter(unityBattlePresentation)
+            unityBattleRuntime.setPlayerPlacement(playerPlacement)
+            replaceVisualScene(for: session)
+            unityBattleRuntime.send(action: "combat-start")
+            if steps >= 72_000 { actionMessage = "战斗暂未分出胜负，已返回战场" }
+        }
+    }
+
     private func tickContinuousCombat() {
+        guard !isFastForwardingBattle else { return }
         let wall = ProcessInfo.processInfo.systemUptime
         defer { lastBattleWallTime = wall }
         guard let previous = lastBattleWallTime,
@@ -1790,7 +1880,7 @@ struct ChapterOneEncounterTestView: View {
                         pendingEnemyImpacts.removeValue(forKey: enemy.id)
                         _ = unityBattleRuntime.consumeCombatContact("enemy:" + nativeID)
                     }
-                } else if unityBattleRuntime.consumeCombatContact("enemy-cancel:" + nativeID) {
+                } else {
                     if session.cancelTargetedSupport(enemyID: enemy.id, at: now) {
                         pendingEnemyImpacts.removeValue(forKey: enemy.id)
                         enemyReadyAt[enemy.id] = now
@@ -1803,7 +1893,7 @@ struct ChapterOneEncounterTestView: View {
         // live anchors yet; only attacks must wait for a rendered model.
         // Framework attachment precedes Unity's first installed battle frame.
         // Do not commit attacks that have no model yet to produce a contact.
-        guard session.outcome != .inProgress || !usesUnityBattlefield || (session.isChurchCombat && !session.enemies.contains(where: \.isAlive))
+        guard isFastForwardingBattle || session.outcome != .inProgress || !usesUnityBattlefield || (session.isChurchCombat && !session.enemies.contains(where: \.isAlive))
             || (unityBattleRuntime.isReady && !unityBattleRuntime.enemyHealthAnchorViewports.isEmpty) else { return }
         #if DEBUG
         // Labelled review input through the real manual-mask path; no HP or
@@ -1898,7 +1988,10 @@ struct ChapterOneEncounterTestView: View {
 
         // Q28–Q30 (2026-10-10): a fallen hero's cast in flight is lost; the allies fight on.
         if session.playerIsDown { pendingPlayerImpact = nil }
-        if let impact = pendingPlayerImpact, (usesUnityBattlefield && !impact.sealed) ? (unityBattleRuntime.consumeCombatContact("player") || now >= impact.time + 2.5) : now >= impact.time {
+        // Both watched and skipped battles resolve on the same authored deadline.
+        // Unity contact messages are presentation acknowledgements, never rule clocks.
+        if let impact = pendingPlayerImpact, now >= impact.time {
+            _ = unityBattleRuntime.consumeCombatContact("player")
             pendingPlayerImpact = nil
             var value = session
             let previousWave = value.waveIndex
@@ -1978,17 +2071,8 @@ struct ChapterOneEncounterTestView: View {
             let nativeID = session.enemies.first(where: { $0.id == enemyID }).flatMap { unityBattleEnemyID(for: $0) }
             let resolvingActor = session.enemies.first(where: { $0.id == enemyID })
             let isWindup = resolvingActor?.currentIntent == "charge"
-            let isArchivePreparation = resolvingActor?.contentID == "enemy_archive_gatekeeper"
-                && ["guard", "recover"].contains(resolvingActor?.currentIntent ?? "")
-            let isAuthoredPreparation = session.authoredPreparationDuration(for: enemyID) != nil
-            let didHit = usesUnityBattlefield && !isWindup && !isArchivePreparation && !isAuthoredPreparation
-                // A lost Unity contact (a body that failed to present) must not hold the
-                // enemy's turn forever: resolve 2.5 s after the expected impact.
-                ? (nativeID.map { unityBattleRuntime.consumeCombatContact("enemy:" + $0) } ?? false)
-                    || now >= pendingEnemyImpacts[enemyID, default: .infinity] + 2.5
-                : now >= pendingEnemyImpacts[enemyID, default: .infinity]
-            guard didHit else { continue }
-            if isAuthoredPreparation, let nativeID { _ = unityBattleRuntime.consumeCombatContact("enemy:" + nativeID) }
+            guard now >= pendingEnemyImpacts[enemyID, default: .infinity] else { continue }
+            if let nativeID { _ = unityBattleRuntime.consumeCombatContact("enemy:" + nativeID) }
             let hapticID = "enemy-\(enemyID)-\(pendingEnemyImpacts[enemyID, default: now])"
             pendingEnemyImpacts.removeValue(forKey: enemyID)
             if usesBellTiming && isWindup {
@@ -2036,12 +2120,12 @@ struct ChapterOneEncounterTestView: View {
                         maxHP: value.playerMaxHP, defeated: value.outcome == .defeat, eventID: hapticID
                     )
                 }
-                CombatHaptics.shared.incoming(
+                if !isFastForwardingBattle { CombatHaptics.shared.incoming(
                     hpLoss: max(0, hpBefore - value.playerHP),
                     shieldLoss: max(0, shieldBefore - value.playerShield),
                     blocked: value.masqueradeCharges < phantomBefore,
                     maxHP: value.playerMaxHP, defeated: value.outcome == .defeat, id: hapticID
-                )
+                ) }
                 if value.encounter.id == "chapter01_q06_encounter" {
                     enemyReadyAt[enemyID] = now
                     if resolvingActor?.currentIntent == "archive_slam" { unityBattleRuntime.send(action: "archive-state:open") }
@@ -2136,8 +2220,9 @@ struct ChapterOneEncounterTestView: View {
             }
             if session.encounter.id.hasPrefix("church_"), session.authoredPreparationDuration(for: enemy.id) == nil {
                 session.commitEnemyImpact(from: enemy.id)
-                pendingEnemyImpacts[enemy.id] = now + 0.5
-                enemyReadyAt[enemy.id] = now + 0.5
+                let contact = MPCBattleContactTiming.enemyContact(contentID: enemy.contentID, intent: enemy.currentIntent, encounterID: session.encounter.id)
+                pendingEnemyImpacts[enemy.id] = now + contact
+                enemyReadyAt[enemy.id] = now + contact
                 if let nativeID = unityBattleEnemyID(for: enemy) {
                     _ = unityBattleRuntime.consumeCombatContact("enemy:" + nativeID)
                     let target = enemy.currentIntent == "tower_mend" ? session.repairTargetID(for: enemy.id) : enemy.currentIntent == "tower_empower" ? session.towerEmpowerTargetID(for: enemy.id) : nil
@@ -2191,7 +2276,7 @@ struct ChapterOneEncounterTestView: View {
                 unityBattleRuntime.send(action: "archive-state:clear")
             }
             session.commitEnemyImpact(from: enemy.id)
-            pendingEnemyImpacts[enemy.id] = now + (isQ4Hound ? 0.45 : MPCChapterOneBattleIdentity.family(for: enemy.contentID) == "memory-leech" ? 1.1 : isGhost ? (isSplitGhost ? 0.68 : 0.94) : isHound ? 1.1 : 0.65)
+            pendingEnemyImpacts[enemy.id] = now + MPCBattleContactTiming.enemyContact(contentID: enemy.contentID, intent: enemy.currentIntent, encounterID: session.encounter.id)
             if usesUnityBattlefield {
                 if isCore, let id = unityBattleEnemyID(for: enemy) {
                     if enemy.currentIntent == "repair_guard" {
@@ -2247,7 +2332,7 @@ struct ChapterOneEncounterTestView: View {
             skillScheduler.didCast(skill, at: now)
             playerCastReadyAt = now + (session.tempo?.skillRecovery ?? 1.75)
             let sealsSkill = session.willSealPreparedSkill(skill, at: now)
-            pendingPlayerImpact = (skill, target.id, now + (sealsSkill ? sealedSkillContactDuration(skill) : 0.78), sealsSkill)
+            pendingPlayerImpact = (skill, target.id, now + MPCBattleContactTiming.playerContact(skill), sealsSkill)
             if sealsSkill {
                 // The card's slot and cooldown are consumed normally. Its
                 // original attack must never be shown before the seal resolves.
@@ -2276,7 +2361,7 @@ struct ChapterOneEncounterTestView: View {
         } else if now >= (basicCooldownStarted ?? -100) + (session.tempo?.basicInterval ?? 2.4) {
             basicCooldownStarted = now
             playerCastReadyAt = now + (session.tempo?.basicRecovery ?? 1.65)
-            pendingPlayerImpact = (nil, target.id, now + 0.58, false)
+            pendingPlayerImpact = (nil, target.id, now + MPCBattleContactTiming.playerContact(nil), false)
             if usesUnityBattlefield {
                 let suffix = unityBattleEnemyID(for: target).map { ":\($0)" } ?? ""
                 unityBattleRuntime.send(action: "basic\(suffix)")
@@ -2536,6 +2621,7 @@ struct ChapterOneEncounterTestView: View {
     private static let signatureMoves: Set<FoolSkillID> = [.absurdFinale]
 
     private func announceSignatureMove(_ skill: FoolSkillID) {
+        guard !isFastForwardingBattle else { return }
         guard Self.signatureMoves.contains(skill) else { return }
         let cue = SignatureCalloutCue(title: skillName(skill))
         signatureCallout = cue
@@ -2578,6 +2664,7 @@ struct ChapterOneEncounterTestView: View {
     }
 
     private func presentNewRelicEvents() {
+        guard !isFastForwardingBattle else { return }
         for event in session.relicDamageEvents {
             guard presentedRelicEventIDs.insert("damage-\(event.id)").inserted, event.damage > 0 else { continue }
             showCombatFloatingNumber(event.damage, for: event.targetID, kind: .damage)
@@ -2592,27 +2679,7 @@ struct ChapterOneEncounterTestView: View {
         }
     }
 
-    /// Same contact times as the shipped Unity hero spell implementations.
-    /// Sealing skips those renderers, but does not advance the effect deadline.
-    private func sealedSkillContactDuration(_ skill: FoolSkillID) -> TimeInterval {
-        switch skill {
-        case .sidestepStrike: return 0.6192
-        case .maskedWhisper: return 0.38
-        case .identityDisplacement: return 0.441
-        case .fabricatedEvidence:
-            var low = 0.0, high = 1.0
-            for _ in 0..<24 {
-                let middle = (low + high) / 2
-                if middle * middle * (3 - 2 * middle) < 0.86 { low = middle } else { high = middle }
-            }
-            return 0.95 * (0.38 + 0.25 * (low + high) / 2)
-        case .absurdFinale: return 0.885
-        case .turnTheTables: return 0.63
-        case .mirrorPursuit, .backstageChange: return 0.705
-        case .namelessStage: return 0.96
-        case .paperDouble: return 0.78
-        }
-    }
+
 
     private func recordRelicEnemyContact(_ value: MPCChapterOneEncounterSession, beforeHP: Int, beforeShield: Int) {
         #if DEBUG
@@ -2811,6 +2878,7 @@ struct ChapterOneEncounterTestView: View {
     /// Only positive, authoritative damage receives a body impact. Mapping uses
     /// the pre-resolution formation so lethal hits retain their original identity.
     private func presentEnemyImpacts(skill: FoolSkillID?, hits: [(String, Int)], enemies: [MPCRuntimeEnemy]? = nil, hapticID: String = UUID().uuidString) {
+        guard !isFastForwardingBattle else { return }
         if !skipsCombatAnimations {
             CombatHaptics.shared.outgoing(skillID: skill?.rawValue, damage: hits.reduce(0) { $0 + max(0, $1.1) }, id: hapticID)
         }
@@ -3384,9 +3452,14 @@ struct ChapterOneEncounterTestView: View {
             Spacer()
 
             Button { savedBattleSpeed = battleSpeed == 1 ? 2 : 1 } label: {
-                Text("×\(battleSpeed)").font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white).frame(width: 44, height: 34)
-                    .background(.white.opacity(0.12), in: RoundedRectangle(cornerRadius: 8))
+                VStack(spacing: 1) {
+                    Text("\(battleSpeed)×").font(.system(size: 17, weight: .bold, design: .rounded)).monospacedDigit()
+                    Text("倍速").font(.system(size: 9, weight: .medium))
+                }
+                .foregroundStyle(Color(red: 1, green: 0.84, blue: 0.48))
+                .frame(width: 46, height: 44)
+                .background(Color(red: 0.12, green: 0.11, blue: 0.16), in: RoundedRectangle(cornerRadius: 9))
+                .overlay { RoundedRectangle(cornerRadius: 9).stroke(.yellow.opacity(0.38), lineWidth: 1) }
             }.buttonStyle(.plain).accessibilityIdentifier("combat-speed")
                 .accessibilityLabel("战斗速度 \(battleSpeed) 倍")
             battleProgressChip
@@ -3624,16 +3697,9 @@ struct ChapterOneEncounterTestView: View {
                         )
                     }
                 }
-                .overlay(alignment: .bottom) {
-                    let giftShield = session.enemyGiftShields[enemy.id] ?? 0
-                    if giftShield > 0 {
-                        Text("盾 \(giftShield)")
-                            .font(.system(size: 10, weight: .bold, design: .rounded))
-                            .foregroundStyle(Color(red: 1, green: 0.85, blue: 0.43))
-                            .shadow(color: .black.opacity(0.9), radius: 2)
-                            .offset(y: 15)
-                            .accessibilityLabel("礼盾\(giftShield)")
-                    }
+                .overlay(alignment: .top) {
+                    combatStatusStrip(session.enemyCombatStatuses(enemyID: enemy.id, at: battleTime))
+                        .offset(y: 9)
                 }
                 .overlay(alignment: .top) {
                     if index == 0 {
@@ -3683,12 +3749,9 @@ struct ChapterOneEncounterTestView: View {
             )
             // This is the protagonist's bar. Anchor it to the protagonist's
             // configured screen placement, never to the enemy row.
-            .overlay(alignment: .bottom) {
-                if battleTime < session.sequenceNineRelics.healingBlockedUntil {
-                    Text("封疗 \(Int(ceil(session.sequenceNineRelics.healingBlockedUntil - battleTime)))")
-                        .font(.system(size: 9, weight: .bold)).foregroundStyle(.orange)
-                        .offset(y: 14)
-                }
+            .overlay(alignment: .top) {
+                combatStatusStrip(session.playerCombatStatuses(at: battleTime))
+                    .offset(y: 10)
             }
             .position(playerHealthBarPosition(in: proxy.size))
 
@@ -3719,6 +3782,33 @@ struct ChapterOneEncounterTestView: View {
         }
         .allowsHitTesting(false)
         .zIndex(20)
+    }
+
+    private func combatStatusStrip(_ statuses: [MPCCombatStatus]) -> some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.fixed(23), spacing: 3), count: 4), spacing: 3) {
+            ForEach(statuses) { status in
+                let tint: Color = status.harmful ? Color(red: 1, green: 0.55, blue: 0.62) : Color(red: 0.55, green: 0.85, blue: 1)
+                Image(systemName: status.symbol)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(tint)
+                    .frame(width: 23, height: 23)
+                    .background(.black.opacity(0.88), in: RoundedRectangle(cornerRadius: 4))
+                    .overlay { RoundedRectangle(cornerRadius: 4).stroke(tint.opacity(0.85), lineWidth: 1) }
+                    .overlay(alignment: .bottomTrailing) {
+                        if let count = status.count {
+                            Text("\(count)")
+                                .font(.system(size: 9, weight: .heavy, design: .rounded))
+                                .monospacedDigit().foregroundStyle(.white)
+                                .padding(.horizontal, 1)
+                                .background(.black.opacity(0.95), in: RoundedRectangle(cornerRadius: 2))
+                                .offset(x: 2, y: 2)
+                        }
+                    }
+                    .accessibilityLabel(status.name + (status.count.map { "，\($0)\(status.countUnit)" } ?? ""))
+            }
+        }
+        .frame(width: 101)
+        .fixedSize(horizontal: true, vertical: true)
     }
 
     private func enemyHealthBarPosition(
@@ -3863,6 +3953,7 @@ struct ChapterOneEncounterTestView: View {
 
     @MainActor
     private func enqueueCombatFloatingNumber(_ number: CombatFloatingNumber) {
+        guard !isFastForwardingBattle else { return }
         let siblings = combatFloatingNumbers.filter { $0.enemyID == number.enemyID }
         // Fade the oldest through the existing removal transition before a
         // fifth label is added. Slots offset the labels so simultaneous hits read.
@@ -4122,6 +4213,10 @@ struct ChapterOneEncounterTestView: View {
                     .accessibilityLabel(skill == .maskedWhisper ? "假面谕令" : skill.rawValue)
                     .accessibilityValue(session.isFoolSkillSealed(skill, at: battleTime) ? "被夺名代签封住" : "")
                     .accessibilityIdentifier("combat-action-" + skill.rawValue)
+                    .offset(skill == combatDraggedSkill ? combatDragOffset : .zero)
+                    .zIndex(skill == combatDraggedSkill ? 1 : 0)
+                    .highPriorityGesture(combatCardDragGesture(for: skill))
+
                     .overlay {
                         if skill == .maskedWhisper && manualMaskIsReady && combatIsActive {
                             RoundedRectangle(cornerRadius: 10)
@@ -4132,15 +4227,62 @@ struct ChapterOneEncounterTestView: View {
                     }
                 }
                 Spacer(minLength: 0)
+                VStack(spacing: 7) {
+                    Button { beginSkippingBattle() } label: {
+                        Label("跳过战斗", systemImage: "forward.end.fill")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(Color(red: 1, green: 0.84, blue: 0.48))
+                            .padding(.horizontal, 7).frame(minHeight: 32)
+                            .background(.black.opacity(0.85), in: RoundedRectangle(cornerRadius: 7))
+                            .overlay { RoundedRectangle(cornerRadius: 7).stroke(.yellow.opacity(0.4), lineWidth: 1) }
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(!canSkipBattle)
+                    .accessibilityIdentifier("combat-skip-picture")
                 basicActionCard("普攻", subtitle: "自动出招", systemImage: "sparkles",
                                 artName: "IconBasicAttackFool", tint: .orange,
                                 isLocked: false, queuePositions: []) { }
                     .overlay { ClockwiseCardCooldown(now: battleTime, startedAt: basicCooldownStarted, duration: session.tempo?.basicInterval ?? 2.4) }
+                }
             }
             .frame(minHeight: 85, alignment: .bottom)
             .padding(.horizontal, 8)
             combatInventoryDock
         }
+    }
+
+    @discardableResult
+    private func combatCardDragGesture(for skill: FoolSkillID) -> some Gesture {
+        DragGesture(minimumDistance: 8, coordinateSpace: .global)
+            .onChanged { value in
+                combatDraggedSkill = skill
+                combatDragOffset = value.translation
+            }
+            .onEnded { value in
+                defer { combatDraggedSkill = nil; combatDragOffset = .zero }
+                let sequence = chosenLoopSkills ?? visibleBattleSkills.map(\.id)
+                guard let from = sequence.firstIndex(of: skill), sequence.count > 1 else { return }
+                let pitch: CGFloat = (sequence.count > 4 ? 44 : 58) + 7
+                let shift = Int((value.translation.width / pitch).rounded())
+                let to = min(sequence.count - 1, max(0, from + shift))
+                _ = moveCombatCard(skill, to: sequence[to])
+            }
+    }
+
+    private func moveCombatCard(_ source: FoolSkillID, to target: FoolSkillID) -> Bool {
+        let previous = chosenLoopSkills ?? visibleBattleSkills.map(\.id)
+        guard session.outcome == .inProgress, source != target,
+              let from = previous.firstIndex(of: source), let to = previous.firstIndex(of: target) else { return false }
+        var reordered = previous
+        reordered.insert(reordered.remove(at: from), at: to)
+        if combatIsActive {
+            _ = skillScheduler.didReorder(from: previous, to: reordered, at: battleTime)
+            actionMessage = "顺序已调整 · 换位卡牌重新冷却"
+        }
+        chosenLoopSkills = reordered
+        session.setContinuousSkillSequence(reordered)
+        if !combatIsActive { onSequenceChanged(reordered) }
+        return true
     }
 
     private func cooldownOverlay(for skill: FoolSkillID) -> some View {
@@ -4493,6 +4635,8 @@ struct ChapterOneEncounterTestView: View {
     }
 
     private func adoptConfiguredSession(_ configuredSession: MPCChapterOneEncounterSession) {
+        didSkipBattle = false
+        isFastForwardingBattle = false
         _ = session.finishRelicBattle()
         CombatHaptics.shared.cancel()
         var configuredSession = configuredSession
@@ -5655,6 +5799,7 @@ struct ChapterOneEncounterTestView: View {
                 pendingGhostReveals[enemy.id] = battleTime + 1.0
             }
         }
+        guard !isFastForwardingBattle else { return }
         visualScene.syncChapterOnePresentation(
             playerHP: session.playerHP,
             playerMaxHP: session.playerMaxHP,
@@ -5682,6 +5827,7 @@ struct ChapterOneEncounterTestView: View {
     }
 
     private func replaceVisualScene(for session: MPCChapterOneEncounterSession) {
+        guard !isFastForwardingBattle else { return }
         clearChurchStatusPresentation()
         let scene = makeChapterOnePresentationScene(
             for: session,
@@ -6248,7 +6394,8 @@ private struct ChapterRelicDetailSheet: View {
 
 private func skillCardArtName(_ skillID: FoolSkillID) -> String {
     switch skillID {
-    case .sidestepStrike, .fabricatedEvidence: "IconSkillWeakness"
+    case .sidestepStrike: "IconSkillWeakness"
+    case .fabricatedEvidence: "IconSkillFabricatedEvidence20261012"
     case .maskedWhisper: "IconSkillDangerPremonition"
     case .paperDouble: "IconSkillPaperDouble"
     case .identityDisplacement, .turnTheTables: "IconSkillDivination"

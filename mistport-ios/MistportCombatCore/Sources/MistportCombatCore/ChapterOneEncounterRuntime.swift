@@ -3926,3 +3926,101 @@ extension MPCChapterOneEncounterSession {
         }
     }
 }
+
+
+/// A read-only projection of active combat rules. Cooldowns and unlocked passives
+/// are deliberately excluded: they are not effects currently on a combatant.
+public struct MPCCombatStatus: Identifiable, Equatable, Sendable {
+    public let id: String
+    public let name: String
+    public let symbol: String
+    public let harmful: Bool
+    public let count: Int?
+    public let countUnit: String
+    public init(_ id: String, _ name: String, _ symbol: String, harmful: Bool = false,
+                count: Int? = nil, unit: String = "层") {
+        self.id = id; self.name = name; self.symbol = symbol; self.harmful = harmful
+        self.count = count; self.countUnit = unit
+    }
+}
+
+extension MPCChapterOneEncounterSession {
+    public func playerCombatStatuses(at now: TimeInterval) -> [MPCCombatStatus] {
+        guard outcome == .inProgress else { return [] }
+        var result: [MPCCombatStatus] = []
+        func add(_ id: String, _ name: String, _ symbol: String, _ active: Bool,
+                 harmful: Bool = false, count: Int? = nil, unit: String = "层") {
+            if active { result.append(.init(id, name, symbol, harmful: harmful, count: count, unit: unit)) }
+        }
+        add("shield", "护盾", "shield.fill", playerShield > 0, count: playerShield, unit: "护盾值")
+        let maskLive = (ownedManualMaskExpiresAt.map { now < $0 } ?? true) && (timedMasqueradeExpiresAt.map { now < $0 } ?? true)
+        add("mask", "幻影", "theatermasks.fill", masqueradeCharges > 0 && maskLive, count: masqueradeCharges, unit: "次")
+        add("paper", "纸人反击", "person.fill", paperDoubleCounterCharges > 0, count: paperDoubleCounterCharges, unit: "次")
+        add("evade", "闪避", "wind", freeEvasionCharges > 0, count: freeEvasionCharges, unit: "次")
+        add("medal", "借命", "heart.fill", isUsurpedLifeMedalActive)
+        add("control", "控制封印", "lock.fill", controlSealActive, harmful: true)
+        add("skill-seal", "夺名封印", "lock.rectangle.fill", sealedFoolSkillID != nil && now < heroSealExpiresAt, harmful: true)
+        add("poison", "翠毒", "drop.fill", isEmeraldPoisonActive, harmful: true, count: emeraldPoisonIntensity)
+        add("tower-poison", "毒雾", "cloud.fog.fill", churchFinitePoisonActive, harmful: true)
+        add("spittle", "腐蚀", "drop.triangle.fill", churchSpittleActive, harmful: true)
+        add("binding", "缠缚", "link", !churchBindingSourceIDs.isEmpty, harmful: true)
+        add("campaign-poison", "中毒", "drop.fill", (campaignPrototype?.poisonRemaining ?? 0) > 0, harmful: true)
+        add("healing-block", "封疗", "cross.case.fill", now < sequenceNineRelics.healingBlockedUntil, harmful: true)
+        add("healing-penalty", "治疗削弱", "heart.slash.fill", healingPenaltyBP > 0, harmful: true)
+        add("exposure", "易伤", "exclamationmark.shield.fill", ringExposurePending, harmful: true)
+        add("salt", "封存", "lungs.fill", saltBreathingBagStored > 0, harmful: true, count: saltBreathingBagStored, unit: "封存值")
+        add("paperweight", "镇纸庇护", "shield.lefthalf.filled", sequenceNineRelics.paperweightCapacity > 0 && now < sequenceNineRelics.paperweightExpiresAt)
+        add("anchor", "锚定减伤", "anchor", sequenceNineRelics.anchorCapacity > 0 && sequenceNineRelics.anchorSegments > 0 && now < sequenceNineRelics.anchorExpiresAt, count: sequenceNineRelics.anchorSegments, unit: "次")
+        add("blank", "无名隔绝", "rectangle.dashed", sequenceNineRelics.blankCardTargetID != nil && now < sequenceNineRelics.blankCardExpiresAt)
+        add("intercept", "队友守护", "person.badge.shield.checkmark.fill", armedInterceptAllyID != nil)
+        add("conversion", "封印转化", "arrow.triangle.2.circlepath", sealConversionReady)
+        add("applause", "迟到的掌声", "hands.clap.fill", lateApplauseReady)
+        add("mirror-thread", "镜潮银线", "link", mirrorThreadBonusReady)
+        add("gear-damage", "三证环强化", "bolt.fill", unifiedGearDamageReady)
+        add("rewritten-setup", "强化铺垫", "pencil", enhancedSetupStacks > 0, count: enhancedSetupStacks)
+        add("hound-opening", "反击机会", "scope", houndOpeningReady)
+        add("talent-echo", "幻影回响强化", "waveform", talentEchoReady)
+        add("talent-final-echo", "末次幻影强化", "sparkles", talentFinalEchoReady)
+        add("talent-mask", "假面强化", "theatermasks.fill", talentMaskReady)
+        add("talent-evidence", "伪证强化", "doc.text.fill", talentEvidenceReady)
+        add("second", "借来的秒针", "clock.fill", borrowedSecondAvailable)
+        if let blessing = farewellBlessings?.hero { result.append(.init("blessing", blessing.name, "sparkles")) }
+        return result
+    }
+
+    public func enemyCombatStatuses(enemyID: String, at now: TimeInterval) -> [MPCCombatStatus] {
+        guard outcome == .inProgress, let enemy = enemies.first(where: { $0.id == enemyID && $0.isAlive }) else { return [] }
+        var result: [MPCCombatStatus] = []
+        func add(_ id: String, _ name: String, _ symbol: String, _ active: Bool,
+                 harmful: Bool = false, count: Int? = nil, unit: String = "层") {
+            if active { result.append(.init(id, name, symbol, harmful: harmful, count: count, unit: unit)) }
+        }
+        if let state = foolStates[enemyID] {
+            add("illusion", "误认", "eye.trianglebadge.exclamationmark", state.illusionStacks > 0, harmful: true, count: state.illusionStacks)
+            add("misalignment", "错位", "arrow.triangle.swap", state.misalignmentStacks > 0, harmful: true, count: state.misalignmentStacks)
+            add("evidence", "伪证", "doc.text.fill", state.fabricatedEvidenceCharges > 0, harmful: true, count: state.fabricatedEvidenceCharges, unit: "次")
+            add("finale", "归结", "sparkles", state.finaleReady, harmful: true)
+        }
+        let shield = enemyGiftShields[enemyID, default: 0]
+        add("gift", "礼盾", "shield.fill", shield > 0, count: shield, unit: "护盾值")
+        let fortify = q12FortifyStacks[enemyID, default: 0]
+        add("fortify", "固守", "shield.lefthalf.filled", fortify > 0, count: fortify)
+        add("defense", "防御强化", "shield.fill", enemyDefenseBoosts[enemyID] != nil)
+        add("immune", "免疫", "lock.shield.fill", isTrueImmune(enemy) || isProtectedSovereign(enemy))
+        add("empower", "强化", "flame.fill", towerEmpowers[enemyID].map { effect in now < effect.expiresAt && enemies.contains(where: { $0.id == effect.sourceID && $0.isAlive }) } ?? false)
+        add("opening", "破绽", "scope", isQ4OpeningActive && enemy.contentID == "enemy_clockwork_hound", harmful: true)
+        add("hunt", "猎名", "pawprint.fill", enemy.contentID == "enemy_clockwork_hound" && houndNameHuntStacks > 0, count: houndNameHuntStacks)
+        add("deferred", "迟付伤害", "clock.fill", sequenceNineRelics.deferredDamage?.targetID == enemyID, harmful: true)
+        add("mirror", "镜债", "arrow.uturn.backward", sequenceNineRelics.mirrorTargetID == enemyID && now < sequenceNineRelics.mirrorExpiresAt, harmful: true)
+        add("blank", "无名隔绝", "rectangle.dashed", sequenceNineRelics.blankCardTargetID == enemyID && now < sequenceNineRelics.blankCardExpiresAt)
+        if enemy.contentID == "boss_severian_unified_clock" {
+            add("boss-empower", "威能", "bolt.fill", bossEmpowermentStacks > 0, count: bossEmpowermentStacks)
+            add("exposed", "暴露", "scope", bossExposedRounds > 0, harmful: true)
+        }
+        if enemy.contentID == "boss_chronarch_sovereign" {
+            add("enrage", "狂暴", "flame.fill", finalBossPhase == 3)
+            if let blessing = farewellBlessings?.sovereign { result.append(.init("blessing", blessing.name, "sparkles")) }
+        }
+        return result
+    }
+}
