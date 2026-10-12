@@ -982,6 +982,15 @@ struct ChapterOneEncounterTestView: View {
     @State private var signatureCallout: SignatureCalloutCue?
     /// The session whose Q30 离场祝福 have been shown (once per attempt).
     @State private var announcedFarewellSessionID: UUID?
+    /// Q30 天使出场 (2026-10-11, user: 天使出场…): Unity's `angel-intro` before the clock starts,
+    /// every attempt, skippable. Pauses combat like the Q1/Q5 interventions.
+    @State private var showsQ30AngelIntro = false
+    /// When `angel-intro` went to Unity (the line table's zero); nil while waiting for the stage.
+    @State private var q30AngelIntroStartedAt: Date?
+    /// The attempt whose intro has begun (each start builds a new session).
+    @State private var q30AngelIntroSessionID: UUID?
+    /// Allies whose rig was last sent `down` (final-boss party; `syncPartyRigPresentation`).
+    @State private var lastPartyFallenPresentation: Set<String> = []
     @State private var presentedRelicEventIDs: Set<String> = []
     @State private var pendingGhostReveals: [String: TimeInterval] = [:]
     @State private var revealedGhostIDs: Set<String> = []
@@ -1251,6 +1260,14 @@ struct ChapterOneEncounterTestView: View {
                                 .padding(.leading, 84)
                                 .allowsHitTesting(false)
                             }
+                            if session.playerIsDown && combatIsActive {
+                                // Final-boss party (2026-10-11): the fallen hero's cards stop; say why
+                                // in the same slot above the dock while the allies fight on.
+                                partyHeroDownCue
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.leading, 84)
+                                .allowsHitTesting(false)
+                            }
                             if combatIsActive || (!showsTutorial) || (showsStandaloneOpeningBattleButton && (holdsQ5Preview || waitsForPostInterventionStart || requiresOpeningBattleStart)) {
                                 combatDock
                             }
@@ -1258,7 +1275,9 @@ struct ChapterOneEncounterTestView: View {
                             .frame(width: max(0, geometry.size.width - 24))
                             .padding(.horizontal, 12)
                             .padding(.bottom, geometry.safeAreaInsets.bottom)
-                            .allowsHitTesting(true)
+                            // The Q30 intro is a cutscene: the dock steps aside for its dialogue.
+                            .opacity(showsQ30AngelIntro ? 0 : 1)
+                            .allowsHitTesting(!showsQ30AngelIntro)
                             .zIndex(50)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -1294,6 +1313,12 @@ struct ChapterOneEncounterTestView: View {
                         .allowsHitTesting(false)
                         .accessibilityIdentifier("chapter-one-signature-callout")
                         .zIndex(95)
+                }
+
+                if showsQ30AngelIntro {
+                    q30AngelIntroOverlay(bottomInset: geometry.safeAreaInsets.bottom)
+                        .transition(.opacity)
+                        .zIndex(105)
                 }
 
                 if showsQ1GoddessIntervention {
@@ -1386,6 +1411,7 @@ struct ChapterOneEncounterTestView: View {
             UnityBattleRuntime.shared.send(action: "early-presence:\(MPCChapterOneCatalog.mission(forEncounterID: session.encounter.id)?.number ?? 0)")
                 UnityBattleRuntime.shared.setPlayerPlacement(playerPlacement)
                 synchronizeBattlePresentationSettings()
+                showPartyRigs()
             }
             syncVisualHealth()
             // The SpriteKit scene may finish spawning its actors one run loop
@@ -1416,11 +1442,11 @@ struct ChapterOneEncounterTestView: View {
             // Unity retains this request until its battle handles are installed.
             unityBattleRuntime.send(action: "encore-model-on")
         }
-        .task(id: "\(combatIsActive)-\(showsTutorial)-\(showsQ1GoddessIntervention)-\(showsQ5MaraIntervention)-\(waitsForPostInterventionStart)") {
+        .task(id: "\(combatIsActive)-\(showsTutorial)-\(showsQ1GoddessIntervention)-\(showsQ5MaraIntervention)-\(waitsForPostInterventionStart)-\(showsQ30AngelIntro)") {
             guard automatesSkillSequence, combatIsActive else { return }
             lastBattleWallTime = nil
             while !Task.isCancelled && combatIsActive {
-                if !showsTutorial && !showsQ1GoddessIntervention && !showsQ5MaraIntervention && !waitsForPostInterventionStart {
+                if !showsTutorial && !showsQ1GoddessIntervention && !showsQ5MaraIntervention && !waitsForPostInterventionStart && !showsQ30AngelIntro {
                     tickContinuousCombat()
                 } else {
                     lastBattleWallTime = nil
@@ -1429,12 +1455,31 @@ struct ChapterOneEncounterTestView: View {
                 try? await Task.sleep(for: .milliseconds(33))
             }
         }
+        // Q30 天使出场: send the cutscene once the stage stands (same test as the combat loop's:
+        // Unity up and the boss reporting anchors), so its line table starts with the picture.
+        .task(id: "\(showsQ30AngelIntro)-\(unityBattleRuntime.isReady)-\(unityBattleRuntime.enemyHealthAnchorViewports.isEmpty)") {
+            guard showsQ30AngelIntro, q30AngelIntroStartedAt == nil, unityBattleRuntime.isReady,
+                  !unityBattleRuntime.enemyHealthAnchorViewports.isEmpty else { return }
+            unityBattleRuntime.send(action: "party-show")
+            unityBattleRuntime.send(action: "angel-intro")
+            // The cutscene runs on Unity's scaled clock; ×2 would outrun the lines.
+            unityBattleRuntime.send(action: "combat-speed:1")
+            q30AngelIntroStartedAt = Date()
+        }
+        .task(id: q30AngelIntroStartedAt) {
+            guard let start = q30AngelIntroStartedAt else { return }
+            try? await Task.sleep(for: .seconds(max(0, Self.q30AngelIntroDuration - Date().timeIntervalSince(start))))
+            guard !Task.isCancelled, showsQ30AngelIntro, q30AngelIntroStartedAt == start else { return }
+            finishQ30AngelIntro(skipped: false)
+        }
         .onChange(of: unityBattleRuntime.combatContactToken) { _, _ in
             guard automatesSkillSequence, combatIsActive, !showsTutorial,
-                  !showsQ1GoddessIntervention, !showsQ5MaraIntervention, !waitsForPostInterventionStart else { return }
+                  !showsQ1GoddessIntervention, !showsQ5MaraIntervention, !waitsForPostInterventionStart, !showsQ30AngelIntro else { return }
             tickContinuousCombat()
         }
         .onChange(of: unityBattleRuntime.isReady) { _, isReady in
+            // A Unity reload loses the cutscene; replay it from the top once the stage is back.
+            if !isReady, showsQ30AngelIntro { q30AngelIntroStartedAt = nil }
             guard isReady, usesUnityBattlefield else { return }
             UnityBattleRuntime.shared.send(action: "audio-volume:\(unityCombatVolume)")
             UnityBattleRuntime.shared.send(action: combatIsActive ? "combat-start" : "combat-stop")
@@ -1443,6 +1488,7 @@ struct ChapterOneEncounterTestView: View {
                 UnityBattleRuntime.shared.send(action: "early-presence:\(MPCChapterOneCatalog.mission(forEncounterID: session.encounter.id)?.number ?? 0)")
             UnityBattleRuntime.shared.setPlayerPlacement(playerPlacement)
                 synchronizeBattlePresentationSettings()
+            showPartyRigs()
             syncVisualHealth()
         }
         .onChange(of: session.chapterDepartedEnemyIDs) { _, _ in
@@ -1463,6 +1509,12 @@ struct ChapterOneEncounterTestView: View {
                 pendingGhostReveals.removeAll()
                 revealedGhostIDs.removeAll()
                 playerCastReadyAt = 0
+                // Back to setup mid-intro: the cutscene goes with the battle phase.
+                if showsQ30AngelIntro {
+                    unityBattleRuntime.send(action: "angel-intro-skip")
+                    showsQ30AngelIntro = false
+                    q30AngelIntroStartedAt = nil
+                }
             }
             if usesUnityBattlefield {
                 UnityBattleRuntime.shared.send(action: isActive ? "combat-start" : "combat-stop")
@@ -1484,6 +1536,10 @@ struct ChapterOneEncounterTestView: View {
             unityBattleRuntime.send(action: "emerald-poison:0")
             clearChurchStatusPresentation()
             if usesBellTiming { unityBattleRuntime.send(action: "encore-clear"); unityBattleRuntime.send(action: "encore-model-off") }
+            // Final-boss party (2026-10-11): leaving mid-intro stops the cutscene; the allies go
+            // and the boss steps back to its usual place for whatever battle Unity hosts next.
+            if showsQ30AngelIntro { unityBattleRuntime.send(action: "angel-intro-skip") }
+            if usesUnityBattlefield && session.isPartyBossEncounter { unityBattleRuntime.send(action: "party-clear") }
             if usesUnityBattlefield { UnityBattleRuntime.shared.send(action: "combat-stop") }
         }
         .onChange(of: battleIsActive) { _, isActive in
@@ -1597,6 +1653,7 @@ struct ChapterOneEncounterTestView: View {
         }
         actionMessage = "战斗开始 · 先完成三次前置攻击"
         syncVisualHealth()
+        beginQ30AngelIntroIfNeeded(session)
     }
 
     private func startHeldQ5Preview() {
@@ -1896,7 +1953,7 @@ struct ChapterOneEncounterTestView: View {
                     }
                 }
                 if value.outcome == .inProgress {
-                    _ = value.performCompanionActions(focusTargetID: selectedTargetID)
+                    presentCompanionActions(value.performCompanionActions(focusTargetID: selectedTargetID))
                 }
                 session = value
                 presentNewRelicEvents()
@@ -2019,7 +2076,9 @@ struct ChapterOneEncounterTestView: View {
                         }
                     }
                     if action.redirectedByPaperDouble { visualScene.presentChapterOnePaperDoubleBreak() }
+                    presentPartyEnemyBeat(action, in: value)
                 }
+                // Also plays `down` for any ally this beat felled, instead of its flinch.
                 syncVisualHealth()
                 if value.paperDoubleTutorialPhase == .awaitingMara {
                     showsQ5MaraIntervention = true
@@ -2153,7 +2212,16 @@ struct ChapterOneEncounterTestView: View {
         // Final-boss party allies act on combat time, including while the hero is down; the
         // healer's revive channel runs here too (no-op outside Q28–Q30).
         let heroHPBeforeAllies = session.playerHP
-        if !session.advanceCompanions(at: now, focusTargetID: selectedTargetID).isEmpty || session.playerHP != heroHPBeforeAllies {
+        let reviveBeforeAllies = session.heroReviveAt
+        let allyActions = session.advanceCompanions(at: now, focusTargetID: selectedTargetID)
+        presentCompanionActions(allyActions)
+        // 奥黛尔 kneels to channel the hero's revive (2026-10-11): her rig casts as it begins.
+        if reviveBeforeAllies == nil, session.heroReviveAt != nil, let healer = partyHealerID,
+           let rig = Self.partyRigName(healer), usesUnityBattlefield {
+            unityBattleRuntime.send(action: "ally:\(rig):cast")
+        }
+        if heroHPBeforeAllies <= 0, session.playerHP > 0 { showCombatStatus("救起", at: nil) }
+        if !allyActions.isEmpty || session.playerHP != heroHPBeforeAllies {
             syncVisualHealth()
         }
         guard session.outcome == .inProgress else { return }
@@ -2215,6 +2283,252 @@ struct ChapterOneEncounterTestView: View {
             }
             else { visualScene.presentFoolBasicAttack() }
         }
+    }
+
+    // MARK: Final-boss party presentation (Q28–Q30; 2026-10-11, user: 为什么不接入：队友画面…)
+
+    /// Unity's painted cut-out rigs for the party allies (`ally:<rig>:<take>`).
+    private static func partyRigName(_ companionID: String) -> String? {
+        switch companionID {
+        case "ally_norn_kade": "norn"
+        case "ally_odelle_finn": "odelle"
+        default: nil
+        }
+    }
+
+    /// The rig take for an ally's skill: 诺恩 strikes (破甲) or raises the lantern (守墙, armed
+    /// 替挡); 奥黛尔 casts her mend, cleanse or rounds and throws the vial between them.
+    private static func partyRigAction(skillID: String) -> String {
+        switch skillID {
+        case "ally_guard_wall", "ally_intercept": "guard"
+        case "ally_odelle_mend", "ally_odelle_cleanse", "ally_odelle_clinic_rounds": "cast"
+        default: "attack"   // ally_armor_break, ally_odelle_vial, ally_unbroken_march
+        }
+    }
+
+    /// The HUD's short name: 诺恩·凯德 → 诺恩.
+    private static func partyShortName(_ companionID: String) -> String {
+        let name = MPCChapterOneCatalog.companions.first { $0.id == companionID }?.name ?? companionID
+        return name.split(separator: "·").first.map(String.init) ?? name
+    }
+
+    private var partyHealerID: String? {
+        session.activeCompanionIDs.first { id in MPCChapterOneCatalog.companions.first { $0.id == id }?.role == .healer }
+    }
+
+    /// Puts 诺恩 and 奥黛尔 beside the hero and sets the boss back (`party-show`). `rebuild` clears
+    /// the old rigs first (a retried attempt); either way any fallen pose is sent again.
+    private func showPartyRigs(rebuild: Bool = false) {
+        guard usesUnityBattlefield, session.isPartyBossEncounter else { return }
+        if rebuild { unityBattleRuntime.send(action: "party-clear") }
+        unityBattleRuntime.send(action: "party-show")
+        lastPartyFallenPresentation = []
+        syncPartyRigPresentation()
+    }
+
+    /// Each resolved ally action plays its take on that ally's rig.
+    private func presentCompanionActions(_ actions: [MPCCompanionActionResolution]) {
+        guard usesUnityBattlefield, session.isPartyBossEncounter else { return }
+        for action in actions {
+            guard let rig = Self.partyRigName(action.companionID) else { continue }
+            unityBattleRuntime.send(action: "ally:\(rig):\(Self.partyRigAction(skillID: action.skillID))")
+        }
+    }
+
+    /// One enemy beat on the rigs: an ally it hurt flinches, the protector who took the thirteenth
+    /// blow for the hero guards instead; one it felled is left to `syncPartyRigPresentation` (down).
+    private func presentPartyEnemyBeat(_ action: MPCEnemyActionResolution, in value: MPCChapterOneEncounterSession) {
+        guard usesUnityBattlefield, value.isPartyBossEncounter else { return }
+        var struck = Set(action.allyDamage.filter { $0.value > 0 }.keys)
+        if let guardID = action.interceptedBy { struck.insert(guardID) }
+        for id in struck.sorted() where value.isAllyStanding(id) {
+            guard let rig = Self.partyRigName(id) else { continue }
+            unityBattleRuntime.send(action: "ally:\(rig):\(id == action.interceptedBy ? "guard" : "hit")")
+        }
+    }
+
+    /// Keeps the rigs' fallen poses with the rules: `down` once per fall (`revive` should an ally
+    /// ever stand again). Runs from `syncVisualHealth`.
+    private func syncPartyRigPresentation() {
+        guard usesUnityBattlefield, session.isPartyBossEncounter else { return }
+        let fallen = Set(session.activeCompanionIDs.filter { !session.isAllyStanding($0) })
+        guard fallen != lastPartyFallenPresentation else { return }
+        for id in fallen.subtracting(lastPartyFallenPresentation).sorted() {
+            if let rig = Self.partyRigName(id) { unityBattleRuntime.send(action: "ally:\(rig):down") }
+        }
+        for id in lastPartyFallenPresentation.subtracting(fallen).sorted() {
+            if let rig = Self.partyRigName(id) { unityBattleRuntime.send(action: "ally:\(rig):revive") }
+        }
+        lastPartyFallenPresentation = fallen
+    }
+
+    /// Party HUD (2026-10-11): each ally's battle health in the hero bar's look, small in the
+    /// battlefield's top-left corner, clear of the boss and the card dock. Grey with 倒下 when
+    /// fallen, 封 under 夺名代签, 救起中 beside the healer while she channels the hero's revive.
+    private var partyAllyHUD: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            ForEach(session.activeCompanionIDs, id: \.self) { id in
+                let standing = session.isAllyStanding(id)
+                let sealed = standing && session.isAllySealed(id)
+                let reviving = standing && id == partyHealerID && session.heroReviveAt != nil
+                HStack(spacing: 5) {
+                    Text(Self.partyShortName(id))
+                        .font(.system(size: 10, weight: .bold))
+                        .frame(width: 36, alignment: .leading)
+                    compactHealthBar(value: session.allyHP[id, default: 0], maximum: session.allyMaxHP[id, default: 1],
+                                     tint: .green, condensed: true)
+                    if !standing {
+                        Text("倒下")
+                            .font(.system(size: 9, weight: .heavy))
+                            .foregroundStyle(.white.opacity(0.85))
+                    } else if sealed {
+                        Text("封")
+                            .font(.system(size: 9, weight: .black))
+                            .foregroundStyle(Color(red: 1, green: 0.85, blue: 0.43))
+                            .padding(.horizontal, 4).padding(.vertical, 1)
+                            .background(Color.purple.opacity(0.82), in: Capsule())
+                    }
+                    if reviving {
+                        Text("救起中")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.cyan)
+                    }
+                }
+                .saturation(standing ? 1 : 0)
+                .opacity(standing ? 1 : 0.6)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("队友 \(Self.partyShortName(id))，生命 \(session.allyHP[id, default: 0])/\(session.allyMaxHP[id, default: 0])"
+                    + (standing ? "" : "，倒下") + (sealed ? "，被夺名代签封住" : "") + (reviving ? "，正在救起主角" : ""))
+            }
+        }
+        .padding(.horizontal, 7)
+        .padding(.vertical, 5)
+        .background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 6))
+    }
+
+    /// The fallen hero (2026-10-11): who is bringing them back, or that the allies hold the line.
+    private var partyHeroDownCue: some View {
+        let healer = partyHealerID.map(Self.partyShortName) ?? "队友"
+        return Text(session.heroReviveAt != nil ? "主角倒地 · \(healer)救援中" : "主角倒地 · 队友支撑中")
+            .font(.system(size: 12, weight: .heavy))
+            .foregroundStyle(.white)
+            .fixedSize()
+            .padding(.horizontal, 10).padding(.vertical, 5)
+            .background(Capsule().fill(Color(red: 0.42, green: 0.08, blue: 0.10).opacity(0.88)))
+            .overlay(Capsule().stroke(Color.yellow.opacity(0.6), lineWidth: 1))
+    }
+
+    /// 夺名代签's sealed card (2026-10-11): dimmed in the strip with a small lock and 封.
+    private var sealedCardMark: some View {
+        VStack(spacing: 0) {
+            Image(systemName: "lock.fill").font(.system(size: 10, weight: .black))
+            Text("封").font(.system(size: 10, weight: .black))
+        }
+        .foregroundStyle(Color(red: 1, green: 0.85, blue: 0.43))
+        .padding(.horizontal, 5).padding(.vertical, 3)
+        .background(Color.purple.opacity(0.82), in: RoundedRectangle(cornerRadius: 5))
+        .shadow(color: .black.opacity(0.8), radius: 2)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
+    // MARK: Q30 天使出场 (2026-10-11, user: 天使出场…)
+
+    /// Unity's `angel-intro` runs 28.5 s from the command.
+    private static let q30AngelIntroDuration: Double = 28.5
+    /// The intro's lines, seconds from `angel-intro` (drafts; edit here). 18.4–24.1 is the fight
+    /// inside the ball of light, left wordless.
+    private static let q30AngelIntroLines: [Q30AngelIntroLine] = [
+        .init(start: 0.6, end: 3.6, speaker: "瑟维安", text: "切断了外接，就以为切断了我？"),
+        .init(start: 3.6, end: 6.6, speaker: "瑟维安", text: "雾港的每一个名字，都签在我的册子上——包括你的。"),
+        .init(start: 6.6, end: 9.6, speaker: "瑟维安", text: "可惜你的名字，在你入港之前，就已经有人订下了。"),
+        .init(start: 9.6, end: 12.6, speaker: "瑟维安", text: "来吧，收件人。我把他交还给你。"),
+        .init(start: 12.6, end: 14.4, speaker: "裂口深处的声音", text: "……归还。"),
+        .init(start: 14.4, end: 16.6, speaker: nil, text: "天上亮起一盏孤灯。"),
+        .init(start: 16.6, end: 18.4, speaker: "伊莱娅", text: "到此为止。外面的那位，归我。"),
+        .init(start: 24.1, end: 26.1, speaker: "伊莱娅", text: "里面的私印，交给你们。"),
+        .init(start: 26.1, end: 28.5, speaker: "瑟维安", text: "没有主人……那就用我自己的名字，签完这一份。"),
+    ]
+
+    /// Every Q30 attempt opens on the cutscene with the clock held, so hero, allies and boss stay
+    /// full; the stage task sends it once Unity stands. The farewell blessings wait for its end.
+    private func beginQ30AngelIntroIfNeeded(_ value: MPCChapterOneEncounterSession) {
+        guard value.chapterMissionNumber == 30, usesUnityBattlefield, value.outcome == .inProgress,
+              q30AngelIntroSessionID != value.settlementID else { return }
+        q30AngelIntroSessionID = value.settlementID
+        q30AngelIntroStartedAt = nil
+        showsQ30AngelIntro = true
+    }
+
+    /// Natural end or 跳过 (Unity drops the cutscene at once): then the blessings, the player's
+    /// speed again, and the loop resumes as after the other interludes.
+    private func finishQ30AngelIntro(skipped: Bool) {
+        guard showsQ30AngelIntro else { return }
+        if skipped { unityBattleRuntime.send(action: "angel-intro-skip") }
+        withAnimation(.easeOut(duration: 0.25)) { showsQ30AngelIntro = false }
+        q30AngelIntroStartedAt = nil
+        synchronizeBattlePresentationSettings()
+        announceFarewellBlessingsIfNeeded(session)
+    }
+
+    /// The intro's dialogue box and 跳过: the battle's dark violet with a gold hairline, plain type.
+    /// Lines follow the wall clock from `angel-intro`, so they stay with Unity's picture.
+    private func q30AngelIntroOverlay(bottomInset: CGFloat) -> some View {
+        VStack(alignment: .trailing, spacing: 10) {
+            Spacer(minLength: 0)
+            Button { finishQ30AngelIntro(skipped: true) } label: {
+                Text("跳过 ›")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(Color(red: 1.0, green: 0.86, blue: 0.55))
+                    .padding(.horizontal, 14).padding(.vertical, 7)
+                    .background(Capsule().fill(Color.black.opacity(0.5)))
+                    .overlay(Capsule().stroke(Color(red: 1.0, green: 0.75, blue: 0.24).opacity(0.5), lineWidth: 1))
+                    .contentShape(Capsule())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("跳过开场")
+            .accessibilityIdentifier("chapter-one-q30-intro-skip")
+            TimelineView(.periodic(from: .now, by: 0.1)) { context in
+                let elapsed = q30AngelIntroStartedAt.map { context.date.timeIntervalSince($0) } ?? -1
+                let line = Self.q30AngelIntroLines.first { elapsed >= $0.start && elapsed < $0.end }
+                ZStack(alignment: .bottom) {
+                    if let line {
+                        q30AngelIntroDialogue(line)
+                            .id(line.start)
+                            .transition(.opacity)
+                    }
+                }
+                .frame(maxWidth: .infinity, minHeight: 92, alignment: .bottom)
+                .animation(.easeOut(duration: 0.25), value: line?.start)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, bottomInset + 18)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func q30AngelIntroDialogue(_ line: Q30AngelIntroLine) -> some View {
+        let narration = line.speaker == nil
+        return VStack(alignment: narration ? .center : .leading, spacing: 5) {
+            if let speaker = line.speaker {
+                Text(speaker)
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(Color(red: 1.0, green: 0.82, blue: 0.45))
+            }
+            Text(line.text)
+                .font(.system(size: 16, weight: narration ? .regular : .medium))
+                .foregroundStyle(.white.opacity(narration ? 0.8 : 0.96))
+                .multilineTextAlignment(narration ? .center : .leading)
+                .lineSpacing(3)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: narration ? .center : .leading)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(Color(red: 0.13, green: 0.12, blue: 0.22).opacity(0.86), in: RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color(red: 0.78, green: 0.62, blue: 0.34).opacity(0.55), lineWidth: 1))
+        .shadow(color: .black.opacity(0.55), radius: 10, y: 3)
+        .accessibilityElement(children: .combine)
     }
 
     /// Named finishers announce themselves as they are cast (2026-10-07, after comparing
@@ -3146,6 +3460,16 @@ struct ChapterOneEncounterTestView: View {
                 }
             }
             combatantHealthOverlay
+                .opacity(showsQ30AngelIntro ? 0 : 1)
+            if session.isPartyBossEncounter && combatIsActive {
+                partyAllyHUD
+                    .padding(.leading, 10)
+                    .padding(.top, 8)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .opacity(showsQ30AngelIntro ? 0 : 1)
+                    .allowsHitTesting(false)
+                    .zIndex(21)
+            }
             if !combatIsActive, !showsTutorial,
                let mission = MPCChapterOneCatalog.mission(forEncounterID: session.encounter.id),
                // From Q3 the bridge's readiness panel carries these lines, so
@@ -3566,7 +3890,8 @@ struct ChapterOneEncounterTestView: View {
     }
 
     private func synchronizeBattlePresentationSettings() {
-        unityBattleRuntime.send(action: "combat-speed:\(battleSpeed)")
+        // The Q30 intro plays at its own pace (its lines are timed in real seconds).
+        unityBattleRuntime.send(action: "combat-speed:\(showsQ30AngelIntro ? 1 : battleSpeed)")
         unityBattleRuntime.send(action: "hero-outfit:\((session.loadout.outfit ?? .mistportNight).rawValue)")
         unityBattleRuntime.send(action: "tempo-sample:\(CombatTempoReviewConfiguration.baseline ? "off" : session.encounter.id)")
     }
@@ -3786,10 +4111,16 @@ struct ChapterOneEncounterTestView: View {
 
                             }
                         }
+                        // 夺名代签 (final boss, 2026-10-11): the loop passes over this card until the seal
+                        // lifts; same clock as the scheduler's `skipping:`.
+                        .saturation(session.isFoolSkillSealed(skill, at: battleTime) ? 0.12 : 1)
+                        .brightness(session.isFoolSkillSealed(skill, at: battleTime) ? -0.3 : 0)
+                        .overlay { if session.isFoolSkillSealed(skill, at: battleTime) { sealedCardMark } }
                         .contentShape(RoundedRectangle(cornerRadius: 10))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(skill == .maskedWhisper ? "假面谕令" : skill.rawValue)
+                    .accessibilityValue(session.isFoolSkillSealed(skill, at: battleTime) ? "被夺名代签封住" : "")
                     .accessibilityIdentifier("combat-action-" + skill.rawValue)
                     .overlay {
                         if skill == .maskedWhisper && manualMaskIsReady && combatIsActive {
@@ -3947,6 +4278,10 @@ struct ChapterOneEncounterTestView: View {
                                     )
 
                                     cooldownOverlay(for: skill.id)
+                                    if session.isFoolSkillSealed(skill.id, at: battleTime) {
+                                        Color.black.opacity(0.5)
+                                        sealedCardMark.frame(maxHeight: .infinity, alignment: .center)
+                                    }
                                     if session.loadout.relicIDs.contains(EarlyRelicShop.paperweight), queueIndex == 2 {
                                         Text("封")
                                             .font(.system(size: 22, weight: .black, design: .serif))
@@ -4205,13 +4540,16 @@ struct ChapterOneEncounterTestView: View {
         isHoldingQ5VictoryPresentation = false
         syncVisualHealth()
         updateQueuedTargetPresentation()
+        // Q30 opens on the angel's cutscene; its end announces the blessings (2026-10-11).
+        if battleIsActive { beginQ30AngelIntroIfNeeded(configuredSession) }
         announceFarewellBlessingsIfNeeded(configuredSession)
     }
 
     /// Q30 离场祝福 (2026-10-10, user): as combat begins, 伊莱娅's blessing and then the
-    /// pursuer's gift, each through the signature callout with its one-line effect.
+    /// pursuer's gift, each through the signature callout with its one-line effect. After the
+    /// angel intro when it plays (2026-10-11).
     private func announceFarewellBlessingsIfNeeded(_ value: MPCChapterOneEncounterSession) {
-        guard battleIsActive, let blessings = value.farewellBlessings,
+        guard battleIsActive, !showsQ30AngelIntro, let blessings = value.farewellBlessings,
               announcedFarewellSessionID != value.settlementID else { return }
         announcedFarewellSessionID = value.settlementID
         let cues = [
@@ -4268,6 +4606,11 @@ struct ChapterOneEncounterTestView: View {
         isFirstCardTutorial = false
         q1PreludeRoundsCompleted = 0
         showsQ1GoddessIntervention = false
+        // The next Q30 start plays the angel intro again (the standalone preview reuses this session).
+        if showsQ30AngelIntro { unityBattleRuntime.send(action: "angel-intro-skip") }
+        showsQ30AngelIntro = false
+        q30AngelIntroStartedAt = nil
+        q30AngelIntroSessionID = nil
         waitsForPostInterventionStart = !showsStandaloneOpeningBattleButton
         onSequenceChanged([])
         onRetrySetup()
@@ -4275,6 +4618,8 @@ struct ChapterOneEncounterTestView: View {
         if usesUnityBattlefield {
             UnityBattleRuntime.shared.send(action: "player-reset")
         }
+        // Fresh, standing ally rigs for the retry (a fallen rig only answers revive).
+        showPartyRigs(rebuild: true)
     }
 
     private func responseButton(_ title: String, _ response: MPCBossMechanicResponse) -> some View {
@@ -5304,6 +5649,7 @@ struct ChapterOneEncounterTestView: View {
 
     private func syncVisualHealth() {
         syncChurchStatusPresentation()
+        syncPartyRigPresentation()
         for enemy in session.enemies where enemy.isAlive && enemy.contentID == "enemy_resonant_clock_guard_q2_split" {
             if !revealedGhostIDs.contains(enemy.id) && pendingGhostReveals[enemy.id] == nil {
                 pendingGhostReveals[enemy.id] = battleTime + 1.0
@@ -9487,6 +9833,15 @@ private struct StartButtonHaze: View {
         }
         .allowsHitTesting(false)
     }
+}
+
+/// One line over Unity's Q30 `angel-intro` (2026-10-11), in seconds from the command; a nil
+/// speaker is narration.
+private struct Q30AngelIntroLine {
+    let start: Double
+    let end: Double
+    let speaker: String?
+    let text: String
 }
 
 private struct SignatureCalloutCue: Equatable {

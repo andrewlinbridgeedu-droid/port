@@ -764,6 +764,7 @@ public sealed class BattlePrototype : MonoBehaviour
         // the authored background covering the current camera viewport rather
         // than preserving the old launch-time portrait rectangle.
         FitRuntimeBackground(Camera.main);
+        ServePartyRequests();
 
         for (var i = 0; i < rings.Count; i++)
             rings[i].Rotate(Vector3.up, (i % 2 == 0 ? 1f : -1f) * (8f + i * 5f) * Time.deltaTime, Space.World);
@@ -2381,8 +2382,23 @@ public sealed class BattlePrototype : MonoBehaviour
         return rig;
     }
     public void PresentPartyAction(string ally, string action) => PartyRig(ally)?.Play(action);
+    /// The app sends party-show and angel-intro as a Q28-Q30 battle opens (2026-10-11), possibly
+    /// before the hero and the boss are installed: both are held and served once they are, the
+    /// allies first so the intro plays round the party's formation.
+    bool partyRequested, angelIntroRequested;
+    public void RequestParty() { partyRequested = true; ServePartyRequests(); }
+    public void RequestAngelIntro() { angelIntroRequested = true; ServePartyRequests(); }
+    void ServePartyRequests()
+    {
+        if (!partyRequested && !angelIntroRequested) return;
+        var boss = FindInstalledEnemyHandle(EnemyBattleIds.ClockGuardPrimary);
+        if (!player || !IsActiveEnemyHandle(boss)) return;
+        if (partyRequested && (partyRigs.Count < 2 || !partyBoss)) { PartyRig("norn"); PartyRig("odelle"); }
+        if (angelIntroRequested && (!partyRequested || partyRigs.Count == 2)) { angelIntroRequested = false; PresentAngelIntro(); }
+    }
     public void ClearPartyRigs()
     {
+        partyRequested = angelIntroRequested = false;
         foreach (var r in partyRigs.Values) if (r) Destroy(r.gameObject);
         partyRigs.Clear();
         if (partyBoss && partyBoss.EnemyRoot) { partyBoss.EnemyRoot.position = partyBossHome; partyBoss.EnemyRoot.localScale = partyBossScale; partyBoss.GetComponent<ChronarchPresentation20260916>()?.SetVideoSize(1f); }

@@ -580,10 +580,13 @@ public sealed class UnityBattleBridge : MonoBehaviour
                 battle.PresentEncoreCharge();
                 break;
             case "angel-intro":
-                battle.PresentAngelIntro();
+                battle.RequestAngelIntro();
+                break;
+            case "angel-intro-skip":   // the app's 跳过 (2026-10-11): the whole cutscene goes at once
+                SpellSpectacle20260926.SkipAngelIntro();
                 break;
             case "party-show":
-                battle.PartyRig("norn"); battle.PartyRig("odelle");
+                battle.RequestParty();
                 break;
             case "party-clear":
                 battle.ClearPartyRigs();

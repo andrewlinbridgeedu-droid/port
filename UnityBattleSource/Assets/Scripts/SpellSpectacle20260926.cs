@@ -414,17 +414,17 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
     [DefaultExecutionOrder(30800)]
     sealed class AngelShake : MonoBehaviour
     {
-        float age; public Vector3 basePos, appliedPos; public Quaternion baseRot, appliedRot; public bool written;
+        float age; int epoch; public Vector3 basePos, appliedPos; public Quaternion baseRot, appliedRot; public bool written;
         public static void Begin(Camera cam)
         {
             var s = cam.GetComponent<AngelShake>() ?? cam.gameObject.AddComponent<AngelShake>();
             var r = cam.GetComponent<AngelShakeRestore>() ?? cam.gameObject.AddComponent<AngelShakeRestore>();
-            r.shake = s; s.age = 0f; s.enabled = true;
+            r.shake = s; s.age = 0f; s.enabled = true; s.epoch = angelIntroEpoch;
         }
         void LateUpdate()
         {
             age += Time.deltaTime;
-            if (age > AngelIntroSeconds) { enabled = false; return; }
+            if (age > AngelIntroSeconds || epoch != angelIntroEpoch) { enabled = false; return; }
             float k = AngelTrauma(age) * (ReducedMotion ? .35f : 1f);
             var cam = GetComponent<Camera>();
             float half = cam ? Mathf.Tan(cam.fieldOfView * .5f * Mathf.Deg2Rad) * 8f : 3f;
@@ -448,6 +448,10 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         }
     }
 
+    /// Bumped by every intro and by a skip: everything an intro made checks it and goes when it
+    /// changes (the app's 跳过 sends angel-intro-skip, 2026-10-11).
+    static int angelIntroEpoch;
+    public static void SkipAngelIntro() => angelIntroEpoch++;
     public static void AngelIntro(Component battle, Vector3 bossFeet, Func<Vector3> heroChest, Func<Vector3> bossChest = null)
     {
         var director = Ensure(battle);
@@ -457,6 +461,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
 
     void PlayAngelIntro(Vector3 at, Vector3 chest, Vector3 bossChest)
     {
+        int epoch = ++angelIntroEpoch;
         var cam = Camera.main; var ct = cam.transform;
         // Sevian's chest in his own plane (the black salt lands there).
         var bd = bossChest - at; var boss = new Vector2(Vector3.Dot(bd, ct.right), Vector3.Dot(bd, ct.up));
@@ -468,9 +473,12 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         Pose2 P(Vector2 off, float roll, float scale, float alpha, Color tint, float z) => new Pose2 { off = off, roll = roll, scale = scale, alpha = alpha, tint = tint, z = z };
         // A figure standing with its feet at `feet` (cells keep the feet on the bottom edge, 12 px up).
         Vector2 Stand(Vector2 feet, float height) { float q = height * 1024f / 1000f; return feet + new Vector2(0f, q * .5f - q * 12f / 1024f); }
+        // Every painted part of the intro goes at once when it is skipped (or another intro starts).
+        void Paint(float end, int cell, Func<float, Pose2> script) =>
+            PaintSprite.Create(root, paintFlipMaterial, this, at, 0f, end, cell, t => epoch != angelIntroEpoch ? new Pose2 { scale = -1f } : script(t));
 
         var light = Ink2D.Create(root, inkMaterial, this, cam, at + Vector3.up, at, 1f, 0f, 9301, "angelintro");
-        light.heroOff = hero; light.bossOff = boss;
+        light.heroOff = hero; light.bossOff = boss; light.stillActing = () => epoch == angelIntroEpoch;
         AngelDim.Create(root, dimMaterial, at + Vector3.up * 1.2f);
         // The whole screen shakes with it (user 10-10: 要整个屏幕都震动，空间撕裂，一片昏暗).
         AngelShake.Begin(cam);
@@ -484,7 +492,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             for (int layer_ = 0; layer_ < 2; layer_++)
             {
                 int layer = layer_;
-                PaintSprite.Create(root, paintFlipMaterial, this, at, 0f, S(AiClose + .6f), layer == 0 ? 10 : 8, t =>
+                Paint(S(AiClose + .6f), layer == 0 ? 10 : 8, t =>
                 {
                     float r = t / HitPace, rip = Eout(Iv(tear.w, tear.w + .35f, r)) * (1f - Ein(Iv(AiClose - .2f, AiClose + .3f, r)));
                     float jag = 1f + .08f * Mathf.Sin(r * 13f + k) + .05f * Mathf.Sin(r * 29f + k * 2f);
@@ -499,7 +507,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         for (int k_ = 0; k_ < (AngelRiftPainted ? 2 : 0); k_++)
         {
             int k = k_;   // a fresh copy per pass: lambdas below capture it
-            PaintSprite.Create(root, paintFlipMaterial, this, at, 0f, S(AiClose + .8f), k == 0 ? 8 : 10, t =>
+            Paint(S(AiClose + .8f), k == 0 ? 8 : 10, t =>
             {
                 float r = t / HitPace, open = Eout(Iv(AiRiftOpen, AiRiftOpen + .9f, r)) * (1f - Ein(Iv(AiClose - .3f, AiClose + .5f, r)));
                 var pose = P(AngelRift, k * 180f + 3f * Mathf.Sin(r * 1.3f + k), (4.4f - 1.2f * k) * open, (k == 0 ? .85f : .6f) * Iv(0f, .2f, open), k == 0 ? new Color(.12f, .22f, .3f) : new Color(.35f, .75f, .9f), -2.4f - .1f * k);
@@ -515,7 +523,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             var p = new Vector2(AngelRift.x + .3f + .4f * recoil, AngelRift.y - sunk * (1f - rise) - PursuerHeight * .7f * drag + .12f * Mathf.Sin(r * 1.1f));
             return p;
         }
-        PaintSprite.Create(root, paintFlipMaterial, this, at, 0f, S(AiClose + .2f), 49, t =>
+        Paint(S(AiClose + .2f), 49, t =>
         {
             float r = t / HitPace;
             // Gone into the light as the ball forms (the fight clip takes over, FightStart).
@@ -538,7 +546,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             float u = (i + .5f) / puffs, born = AiBind + .5f * u, sc = .9f + .4f * (float)rng.NextDouble(), ph = (float)rng.NextDouble() * 6f;
             var basePos = hand + span * u + new Vector2(0f, -.3f * Mathf.Sin(u * Mathf.PI));
             var tearV = new Vector2(((float)rng.NextDouble() - .5f) * 1.4f, .3f + .8f * (float)rng.NextDouble());
-            PaintSprite.Create(root, paintFlipMaterial, this, at, 0f, S(AiPlant + 1.2f), i % 2 == 0 ? 9 : 11, t =>
+            Paint(S(AiPlant + 1.2f), i % 2 == 0 ? 9 : 11, t =>
             {
                 float r = t / HitPace;
                 if (r < born) return P(Vector2.zero, 0f, 0f, 0f, Color.white, 0f);
@@ -558,7 +566,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             int m = m_;   // a fresh copy per pass: lambdas below capture it
             var tint = m == 3 ? new Color(.55f, .8f, 1f) : m == 0 ? new Color(1f, .93f, .78f) : new Color(1f, .86f, .55f);
             float spin = (m % 2 == 0 ? 1f : -1f) * (30f + 12f * m), size0 = m == 3 ? 5.4f : 6.6f - .5f * m;
-            PaintSprite.Create(root, paintFlipMaterial, this, at, 0f, S(AiClose + .3f), m == 1 ? 11 : 7, t =>
+            Paint(S(AiClose + .3f), m == 1 ? 11 : 7, t =>
             {
                 float r = t / HitPace;
                 float grow = Smooth01(Iv(AiBall - .4f, AiBall + .5f, r)), shrink = Smooth01(Iv(AiBallEnd, AiClose, r));
@@ -573,7 +581,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         }
         // The fight itself: the clip as a darkened flipbook in the light (FightStart), the figures
         // most visible as each blow lights them from behind; they fade into the light at its ends.
-        PaintSprite.Create(root, paintFlipMaterial, this, at, 0f, S(AiBallEnd + .3f), 100, t =>
+        Paint(S(AiBallEnd + .3f), 100, t =>
         {
             float r = t / HitPace, c = r - FightStart;
             float show = Iv(FightStart, FightStart + .5f, r) * (1f - Iv(AiBallEnd - .5f, AiBallEnd, r));
@@ -596,7 +604,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                 bool feather = j < 3;
                 if (feather ? !herHit : !hisHit) continue;
                 if (blow.z < .75f && (feather ? j > 1 : j > 4)) continue;   // fewer from a lighter blow
-                PaintSprite.Create(root, paintFlipMaterial, this, at, 0f, S(when + (feather ? 2.8f : 1.7f)), feather ? 48 : (j % 2 == 0 ? 9 : 11), t =>
+                Paint(S(when + (feather ? 2.8f : 1.7f)), feather ? 48 : (j % 2 == 0 ? 9 : 11), t =>
                 {
                     float r = t / HitPace, du = r - when;
                     if (du < 0f) return P(Vector2.zero, 0f, 0f, 0f, Color.white, 0f);
@@ -620,13 +628,13 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         }
         // Elaia: down from the sky with her wings spread, then her sealing pose on the rift; inside
         // the ball only a faint, darting shape of her shows.
-        PaintSprite.Create(root, paintFlipMaterial, this, at, 0f, S(AiLand + .1f), 50, t =>
+        Paint(S(AiLand + .1f), 50, t =>
         {
             float r = t / HitPace;
             return P(Stand(AngelFeet(r), AngelHeight * AngelDescendK), 1.5f * Mathf.Sin(r * 1.7f), AngelHeight * AngelDescendK * 1024f / 1000f * (1f + .015f * Mathf.Sin(r * 2.4f)),
                 Iv(AiDescend, AiDescend + .5f, r) * (1f - Iv(AiLand - .2f, AiLand, r)), new Color(.86f, .84f, .8f), .4f);
         });
-        PaintSprite.Create(root, paintFlipMaterial, this, at, 0f, S(AiClose + .2f), 51, t =>
+        Paint(S(AiClose + .2f), 51, t =>
         {
             float r = t / HitPace;
             float inBall = Iv(AiBall - .2f, AiBall + .4f, r) * (1f - Iv(AiBallEnd - .2f, AiBallEnd + .3f, r));
@@ -641,7 +649,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         {
             int g = g_;   // a fresh copy per pass: lambdas below capture it
             var target = g == 0 ? hero : boss;
-            PaintSprite.Create(root, paintFlipMaterial, this, at, 0f, S(GiftArrive(g) + .5f), g == 0 ? 14 : 17, t =>
+            Paint(S(GiftArrive(g) + .5f), g == 0 ? 14 : 17, t =>
             {
                 float r = t / HitPace;
                 if (r < AiGift) return P(Vector2.zero, 0f, 0f, 0f, Color.white, 0f);
@@ -656,12 +664,12 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
     /// The backdrop held dark through the angel intro: in over a second, held, out at the end.
     sealed class AngelDim : MonoBehaviour
     {
-        Mesh mesh; MeshRenderer view; MaterialPropertyBlock block; Vector3 centre; float age;
+        Mesh mesh; MeshRenderer view; MaterialPropertyBlock block; Vector3 centre; float age; int epoch;
         public static void Create(Transform parent, Material material, Vector3 centre)
         {
             if (!material) return;
             var go = new GameObject("SpectacleAngelDim"); go.transform.SetParent(parent, false);
-            var d = go.AddComponent<AngelDim>(); d.centre = centre;
+            var d = go.AddComponent<AngelDim>(); d.centre = centre; d.epoch = angelIntroEpoch;
             d.mesh = new Mesh { name = "SpectacleAngelDimQuad" };
             d.mesh.vertices = new[] { new Vector3(0, 0, 0), new Vector3(0, 1, 0), new Vector3(1, 1, 0), new Vector3(1, 0, 0) };
             d.mesh.uv = new[] { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0) };
@@ -675,7 +683,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         void LateUpdate()
         {
             age += Time.deltaTime;
-            if (age > AngelIntroSeconds) { Destroy(gameObject); return; }
+            if (age > AngelIntroSeconds || epoch != angelIntroEpoch) { Destroy(gameObject); return; }
             // Darker still once the tether binds the hero, until the ball of light is gone.
             // A gloom falls once the rift opens - nearly dark, a little light left round him - and
             // lifts after the rift closes (user 10-10: 一片昏暗).
@@ -3161,6 +3169,8 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         void LateUpdate()
         {
             age += Time.deltaTime;
+            // A non-gather ink whose owner says it is over (a skipped angel intro) goes at once.
+            if (!gather && stillActing != null && !stillActing()) { Destroy(gameObject); return; }
             if (gather)
             {
                 if (released < 0f && stillActing != null && !stillActing()) Release();
