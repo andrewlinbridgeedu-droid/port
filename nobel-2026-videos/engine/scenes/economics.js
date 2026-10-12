@@ -312,7 +312,7 @@ S.pricing = (c, st, sp) => {
     text(c, '不同的商家，在不同的时刻调价', W / 2, 650, { size: 30, color: '#c8d4e2', alpha: a1 * smooth(c0 + 4, c0 + 5, st), spacing: 4 });
   }
   // 2) set the price with the future in mind
-  const a2 = smooth(c1, c1 + 1, st) * (1 - smooth(c2 + 3, c2 + 4, st));
+  const a2 = smooth(c1, c1 + 1, st) * (1 - smooth(c2 - 0.4, c2 + 0.6, st));
   if (a2 > 0) {
     const x0 = 300, x1 = 1600, y0 = 820, y1 = 240;
     axes(c, x0, y0, x1, y1, a2, '时间', '价格 / 成本');
@@ -330,9 +330,8 @@ S.pricing = (c, st, sp) => {
     callout(c, x0 + 440, priceAt(x0 + 440), x0 + 620, 300, '往前看', '把未来的成本也算进去', P.jade, a2 * fa);
   }
   // 3) the forward-looking Phillips curve
-  const a3 = smooth(c2, c2 + 1, st);
+  const a3 = smooth(c2 + 0.4, c2 + 1.2, st);
   if (a3 > 0) {
-    if (a2 < 0.99) { c.fillStyle = `rgba(4,8,15,${0.7 * a3 * (1 - a2 * 0)})`; c.fillRect(0, 0, W, H); }
     const y = 470;
     text(c, '今天的通胀', 520, y, { size: 52, weight: 900, color: '#ffffff', alpha: a3 });
     text(c, '≈', 770, y, { size: 60, color: '#ffffff', alpha: a3 });
