@@ -4305,12 +4305,39 @@ struct ChapterOneEncounterTestView: View {
                               duration: ContinuousSkillScheduler.duration(for: skill))
     }
 
+    private var ultimateCardStatus: String {
+        if session.foolUltimateUsed { return "本场已用" }
+        if pendingPlayerImpact?.skill == .namelessStage { return "释放中" }
+        if session.playerIsDown { return "主角倒地" }
+        if session.isFoolSkillSealed(.namelessStage, at: battleTime) { return "暂被封住" }
+        if !combatIsActive { return "战中手动" }
+        return requestedUltimate ? "等待释放" : "点击释放"
+    }
+
+    private var ultimateCardStatusOverlay: some View {
+        VStack(spacing: 4) {
+            Text("每场一次")
+                .font(.system(size: 8, weight: .bold))
+                .padding(.horizontal, 4).padding(.vertical, 2)
+                .background(.black.opacity(0.8), in: Capsule())
+            Spacer(minLength: 0)
+            Text(ultimateCardStatus)
+                .font(.system(size: 10, weight: .black))
+                .padding(.horizontal, 3).padding(.vertical, 4)
+                .frame(maxWidth: .infinity)
+                .background(.black.opacity(0.85))
+        }
+        .foregroundStyle(session.foolUltimateUsed ? .white.opacity(0.75) : .yellow)
+        .padding(.top, 4).padding(.bottom, 16)
+        .allowsHitTesting(false)
+    }
+
     private func toggleLoopSkill(_ skill: FoolSkillID) {
         if usesManualEmeraldMask && combatIsActive && skill == .maskedWhisper { requestEmeraldMask(); return }
         if usesEncoreBellPrototype && combatIsActive { return }
         guard ownedBattleSkills.contains(where: { $0.id == skill }) else { return }
         if skill == .namelessStage {
-            guard combatIsActive, session.outcome == .inProgress,
+            guard combatIsActive, session.outcome == .inProgress, !session.playerIsDown,
                   session.loadout.isUltimateUnlocked, session.canUseFoolSkill(skill),
                   pendingPlayerImpact?.skill != skill else { return }
             requestedUltimate.toggle()
@@ -4434,7 +4461,14 @@ struct ChapterOneEncounterTestView: View {
                                         endPoint: .bottom
                                     )
 
-                                    cooldownOverlay(for: skill.id)
+                                    // An ultimate is once per battle, not a normal card that
+                                    // becomes usable again when its 20-second timer clears.
+                                    if skill.isUltimate {
+                                        if session.foolUltimateUsed { Color.black.opacity(0.58) }
+                                        ultimateCardStatusOverlay
+                                    } else {
+                                        cooldownOverlay(for: skill.id)
+                                    }
                                     if session.isFoolSkillSealed(skill.id, at: battleTime) {
                                         Color.black.opacity(0.5)
                                         sealedCardMark.frame(maxHeight: .infinity, alignment: .center)
@@ -4481,7 +4515,7 @@ struct ChapterOneEncounterTestView: View {
                                     .accessibilityLabel("查看 \(skill.name) 详情")
                                     }
                                 }
-                                .saturation(combatIsActive ? 1 : (remaining > 0 ? 0.08 : (session.canUseFoolSkill(skill.id) ? 1 : 0.15)))
+                                .saturation(skill.isUltimate && session.foolUltimateUsed ? 0.08 : (combatIsActive ? 1 : (remaining > 0 ? 0.08 : (session.canUseFoolSkill(skill.id) ? 1 : 0.15))))
                                 .opacity(combatIsActive ? 1 : (remaining > 0 ? 1 : (session.canUseFoolSkill(skill.id) ? 1 : 0.55)))
                                 // Once cooldown starts, show only the dark cooldown
                                 // state instead of briefly stacking selection glow.
@@ -4527,10 +4561,10 @@ struct ChapterOneEncounterTestView: View {
                                 LongPressGesture(minimumDuration: 0.42, maximumDistance: 18)
                                     .onEnded { _ in if !combatIsActive { inspectedSkill = skill } }
                             )
-                            .disabled(skill.isUltimate && (!combatIsActive || !session.canUseFoolSkill(skill.id) || pendingPlayerImpact?.skill == skill.id))
+                            .disabled(skill.isUltimate && (!combatIsActive || session.playerIsDown || session.outcome != .inProgress || !session.canUseFoolSkill(skill.id) || pendingPlayerImpact?.skill == skill.id))
                             .accessibilityLabel(queueIndex.map { "第\($0 + 1)张，\(skill.name)卡牌" } ?? "\(skill.name)卡牌，未编排")
                             .accessibilityValue(skill.isUltimate
-                                ? (!session.canUseFoolSkill(skill.id) ? "本场已使用" : requestedUltimate ? "等待释放" : combatIsActive ? "可以释放" : "战斗开始后可释放")
+                                ? "每场一次，\(ultimateCardStatus)"
                                 : (remaining > 0 ? "冷却剩余\(remaining)次行动" : "可以使用"))
                             .accessibilityHint(usesManualEmeraldMask && combatIsActive && skill.id == .maskedWhisper ? (isQ4Hound ? "手动展开假面，承接双焰预警后的两颗火球" : "手动释放假面，承接绿焰预警后的大招") : skill.isUltimate ? "战斗中点击释放，每场一次；再次点击可取消尚未开始的释放" : "点击加入或移出行动栏，长按查看卡牌介绍")
                             .id(skill.id)
