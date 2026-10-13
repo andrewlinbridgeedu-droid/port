@@ -1,5 +1,7 @@
 # 十张技能与四格编排接入交接
 
+最终设备版本：**169.86**（已安装、静音隔离核验完成）。
+
 日期：2026-10-12；分支 `codex/playtest-ui-20261012`；开发基线 `7c572ae`。用户授权实装技能重做与区分鲜明的卡牌，并沿用完成后 commit、push、handoff 的要求。
 
 ## 实装范围
@@ -66,4 +68,6 @@
 
 复看169.85重试截图发现上一局受击红边仍在：逻辑时钟归0后，`playerHitFlashUntil`仍是上一局的时间。新局/重试同步清除此截止时间、拖动暂态；重试还清除`didSkipBattle`/`isFastForwardingBattle`，避免前次跳过标记外溢。规则数值与169.85的Unity资源不变。
 
-设备再次实查169.85，加一为169.86。归档 `Mistport-169.86-ordered-layout-20261012-codex-01a12f14`；Derived在SSD做APFS写时复制，保留169.85构建目录，继续完整标准脚本导出→新鲜度→宿主。标准构建与codesign深度校验通过，169.86安装成功；安装前后271个Preferences文件逐文件SHA-256完全一致（`preferences-install-comparison.json`）。最终隔离重试核验首次启动被iOS拒绝，明确返回Locked；已请求用户解锁，待继续。169.85的布局证据仍有效，但不能把它记作169.86红边修复的实机证明。
+设备再次实查169.85，加一为169.86。归档 `Mistport-169.86-ordered-layout-20261012-codex-01a12f14`；Derived在SSD做APFS写时复制，保留169.85构建目录，继续完整标准脚本导出→新鲜度→宿主。标准构建与codesign深度校验通过，169.86安装成功；安装前后271个Preferences文件逐文件SHA-256完全一致（`preferences-install-comparison.json`）。最终隔离重试核验首次启动被iOS拒绝，返回Locked；用户解锁后于22:56成功静音启动，再锁屏恢复镜像。22:58实机完成四牌开打→跳过结算→重试；红边消失、血条回满、倒计时归16秒且停在战前。证据 `device-qa/16986-q12-skip-settlement.png` 与 `device-qa/16986-q12-clean-retry-settled.png`。
+
+测试结束已终止隔离进程。271个既有Preferences文件全部不变，仅新添2个daily-pacing临时验证文件（273总数），真实档与盲玩档SHA-256都不变，报告 `preferences-qa-comparison.json`。代码提交 `b9015a4` 已推送到 `origin/codex/playtest-ui-20261012`；本次补充交接提交只记录最终设备证据，不改构建源码。
