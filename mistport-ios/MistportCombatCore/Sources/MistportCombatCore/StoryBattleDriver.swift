@@ -197,6 +197,7 @@ public struct MPCStoryBattleStepper: Sendable {
         _ = s.expireOwnedManualMasquerade(at: now)
         s.advanceQ4Clock(at: now)
         _ = s.advanceEmeraldPoison(at: now)
+        events.orderedImpacts = s.drainOrderedSkillImpacts()
         guard s.outcome == .inProgress else {
             if !newInputs.isEmpty { throw Failure.refused(index: inputs.count, input: newInputs[0]) }
             session = s; tick += 1
@@ -256,9 +257,9 @@ public struct MPCStoryBattleStepper: Sendable {
             case .sequence:
                 let skills = (input.itemID ?? "").split(separator: ",").compactMap { FoolSkillID(rawValue: String($0)) }
                 let allowed = Set(self.loadout.normalSkillIDs + (mission == 1 ? [.sidestepStrike] : []))
-                ok = skills.count <= 5 && Set(skills).count == skills.count && !skills.contains(.namelessStage)
+                ok = !skills.isEmpty && skills.count <= 4 && Set(skills).count == skills.count && !skills.contains(.namelessStage)
                     && Set(skills).isSubset(of: allowed)
-                if ok { loop = skills; s.setContinuousSkillSequence(skills) }
+                if ok { scheduler.didReorder(from: loop, to: skills, at: now); loop = skills; s.setContinuousSkillSequence(skills) }
             }
             guard ok else { throw Failure.refused(index: inputs.count + applied.count, input: input) }
             applied.append(input)
@@ -314,7 +315,7 @@ public struct MPCStoryBattleStepper: Sendable {
             if !s.playerIsDown, s.enemies.contains(where: { $0.id == p.targetID && $0.isAlive }) {
                 let wave = s.waveIndex
                 if let skill = p.skill {
-                    if !s.loadout.normalSkillIDs.contains(skill) { s.setContinuousSkillSequence([skill] + self.loop) }
+                    if skill != .namelessStage, !s.loadout.normalSkillIDs.contains(skill) { s.setContinuousSkillSequence([skill] + self.loop) }
                     _ = try s.useFoolSkill(skill, targetID: p.targetID, usesRealtimeCooldown: true, sealedByPaperweight: p.sealed)
                     s.setContinuousSkillSequence(self.loop)
                 } else {
@@ -422,7 +423,7 @@ public struct MPCStoryBattleStepper: Sendable {
         tick += 1
 
         // The player's next action.
-        guard reveals.isEmpty, now >= playerAt, hit == nil, !session.playerIsDown,
+        guard reveals.isEmpty, now >= playerAt, now >= session.orderedCastReadyAt, hit == nil, !session.playerIsDown,
               let current = self.target.flatMap({ id in s.enemies.first { $0.id == id && $0.isAlive } }) ?? s.enemies.first(where: \.isAlive)
         else { return events }
         let automatic = usesManualMask ? self.loop.filter { $0 != .maskedWhisper } : self.loop
@@ -432,7 +433,7 @@ public struct MPCStoryBattleStepper: Sendable {
             if skill == .namelessStage { self.ultimateRequested = false }
             session.setContinuousSkillSequence(self.loop)
             self.scheduler.didCast(skill, at: now)
-            playerAt = now + (light?.tempo.skillRecovery ?? MPCCombatTempo.standard.skillRecovery) + tuning.actionDelay + (skill == .namelessStage ? 0 : max(0, variation()))
+            playerAt = now + (skill.isOrderedOrdinary ? 0 : (light?.tempo.skillRecovery ?? MPCCombatTempo.standard.skillRecovery)) + tuning.actionDelay + (skill == .namelessStage ? 0 : max(0, variation()))
             chosen = skill
         } else if now >= basicAt + (light?.tempo.basicInterval ?? 2.4) {
             basicAt = now
@@ -443,6 +444,7 @@ public struct MPCStoryBattleStepper: Sendable {
         }
         let sealed = chosen.map { session.willSealPreparedSkill($0, at: now) } ?? false
         hitAt = now + (chosen == .namelessStage ? MPCChurchBattleDriver.playerContact(chosen) : max(0.15, MPCChurchBattleDriver.playerContact(chosen) + variation()))
+        if let chosen, let timing = session.prepareOrderedSkill(chosen, targetID: current.id, at: now) { hitAt = timing.firstImpactAt }
         let cast = Events.Cast(skill: chosen, targetID: current.id, landsAtTick: Int((hitAt / step).rounded(.up)), sealed: sealed)
         hit = cast
         events.cast = cast

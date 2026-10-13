@@ -772,6 +772,9 @@ public sealed class FoolEffekseerSkillVFX : MonoBehaviour
         "fool_skill_08" => "反客为主",
         "fool_skill_09" => "后手改写",
         "fool_skill_10" => "无名宣告",
+        "fool_skill_11" => "抢拍开幕",
+        "fool_skill_12" => "碎镜连弹",
+        "fool_skill_13" => "延时落款",
         _ => "帷幕技能"
     };
 }

@@ -1450,7 +1450,7 @@ public sealed class BattlePrototype : MonoBehaviour
             var handle = source.BattleEnemyId == ids[index] && !isolatedBounty ? source : source.CloneForBattle(ids[index]);
             if (handle != source) additionalWaveEnemies.Add(handle);
             if (index == 0) primaryPresented = handle;
-            if (handle.GetComponent<SignatureEnemyPresentation>()) handle.EnemyRoot.localScale = Vector3.one;
+            if (handle.GetComponent<SignatureEnemyPresentation>()) handle.EnemyRoot.localScale = Vector3.one * EnemyPresenter.BattleScale;
             handle.gameObject.SetActive(true);
             if (!enemyLifeBridge) enemyLifeBridge = FindFirstObjectByType<UnityBattleBridge>();
             if (enemyLifeBridge) enemyLifeBridge.ForgetExit(handle.EnemyRoot);
@@ -1459,19 +1459,19 @@ public sealed class BattlePrototype : MonoBehaviour
                 : index == 1 ? EnemyFormationSlotIds.FrontRight : ids.Length==4 ? (index==2?EnemyFormationSlotIds.RearLeft:EnemyFormationSlotIds.RearRight) : EnemyFormationSlotIds.RearCenter;
             EnemyPresenter.Reposition(handle, slot, ids[index].StartsWith("clock-core-"));
             // Four large silhouettes: front inside, rear outside so perspective does not stack pairs.
-            if(ids.Length==4)handle.EnemyRoot.position=new Vector3(index==0?-1.05f:index==1?1.05f:index==2?-2.65f:2.65f,0,index<2?11.6f:15.5f);
+            if(ids.Length==4)handle.EnemyRoot.position=new Vector3(index==0?-1.05f:index==1?1.05f:index==2?-2.65f:2.65f,0,index<2?11.6f:15.5f) + EnemyPresenter.BattleRetreat;
             // Keep the tower formation in the marked upper arena, opposite the
             // hero's lower mark. The attendants flank rather than hide the boss.
             // Absolute scale prevents repeated waves and retries shrinking it.
             var churchDemon = handle.GetComponent<ChurchDemonPresentation20260917>();
             if (handle.GetComponent<StonehidePresentation20260917>() || churchDemon) {
                 bool isTowerMinion = churchDemon && ChurchMinionVfx20260921.Handles(churchDemon.species);
-                handle.EnemyRoot.localScale = Vector3.one * (churchTowerFormation
+                handle.EnemyRoot.localScale = Vector3.one * EnemyPresenter.BattleScale * (churchTowerFormation
                     ? (isTowerMinion ? ChurchTowerMinionScale : ChurchTowerMajorScale) : 1f);
                 if (churchTowerFormation) {
                     handle.EnemyRoot.position = isTowerMinion
-                        ? TowerMinionSlot(minionIndex, towerMinions)
-                        : TowerMajorSlot(majorIndex++, towerMajors);
+                        ? TowerMinionSlot(minionIndex, towerMinions) + EnemyPresenter.BattleRetreat
+                        : TowerMajorSlot(majorIndex++, towerMajors) + EnemyPresenter.BattleRetreat;
                     if (isTowerMinion)
                         walkers.Add((handle, minionIndex++, handle.EnemyRoot.position,
                             churchDemon.species == "copperback" || churchDemon.species == "moonfang"));
@@ -1593,7 +1593,7 @@ public sealed class BattlePrototype : MonoBehaviour
             EnemyPresenter.Reposition(left, EnemyFormationSlotIds.FrontLeft, false);
             EnemyPresenter.Reposition(right, EnemyFormationSlotIds.FrontRight, false);
             // The leader keeps the central silhouette; escorts screen either side.
-            boss.EnemyRoot.localScale = Vector3.one * 1.13f;
+            boss.EnemyRoot.localScale = Vector3.one * (1.13f * EnemyPresenter.BattleScale);
             left.EnemyRoot.position += Vector3.back * .18f;
             right.EnemyRoot.position += Vector3.forward * .15f;
             enemyHome = boss.EnemyRoot.position;
@@ -2051,7 +2051,7 @@ public sealed class BattlePrototype : MonoBehaviour
             ApplyHellHoundRagePresentation();
             // Keep the quadruped readable in the portrait camera without
             // changing its combat reach or restoring the old red rage tint.
-            hellHoundHandle.EnemyRoot.localScale = Vector3.one * (hellHoundHandle == earlyHellHoundHandle ? 1f : 1.32f);
+            hellHoundHandle.EnemyRoot.localScale = Vector3.one * EnemyPresenter.BattleScale * (hellHoundHandle == earlyHellHoundHandle ? 1f : 1.32f);
             hellHoundHandle.GetComponent<SignatureEnemyPresentation>()?.CalibrateRestPose();
             var fill = hellHoundHandle.EnemyRoot.Find("PortraitFill");
             if (fill == null) {
@@ -2780,8 +2780,54 @@ public sealed class BattlePrototype : MonoBehaviour
             : Vector3.zero;
     }
 
+    readonly Dictionary<string, (float first, float last)> orderedTimings = new();
+    public void SetOrderedSkillTiming(string payload)
+    {
+        var parts = payload.Split(':');
+        if (parts.Length == 3 && float.TryParse(parts[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var first)
+            && float.TryParse(parts[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var last)
+            && first > 0f && last >= first && last < 10f) orderedTimings[parts[0]] = (first, last);
+    }
+
+    public void PresentOrderedImpact(string payload)
+    {
+        var parts = payload.Split(':');
+        if (parts.Length != 2 || !NativeCombatEnabled) return;
+        var points = new List<System.Func<Vector3>>();
+        foreach (var id in parts[1].Split('|')) {
+            var handle = FindInstalledEnemyHandle(id);
+            if (IsActiveEnemyHandle(handle)) points.Add(() => PlayerSkillTargetPoint(handle));
+        }
+        SpellSpectacle20260926.OrderedImpact(this, parts[0], HeroChestPoint, points);
+    }
+
+    IEnumerator PresentOrderedSkill(string skillID, string targetID, string[] targetIDs, float first, float last)
+    {
+        actionRunning = true; playerDefending = false;
+        SetStatus($"愚者 · {FoolEffekseerSkillVFX.DisplayName(skillID)}");
+        var handles = new List<EnemyHandle>();
+        foreach (var id in targetIDs ?? new[] { targetID }) {
+            var handle = ResolvePlayerSkillTarget(id);
+            if (IsActiveEnemyHandle(handle) && !handles.Contains(handle)) handles.Add(handle);
+        }
+        if (GetComponent<CombatTempoPresentation>()?.HasHero ?? false) GetComponent<CombatTempoPresentation>().HeroCast(skillID, first);
+        else BeginDistinctPlayerCast(skillID);
+        BeginPlayerSpectacle(skillID, handles, null, first);
+        SpellAudioDirector20260924.BeginPlayer(this, skillID);
+        yield return new WaitForSeconds(first);
+        playerChoreography?.Contact(); UnityBattleBridge.ReportCombatContact("player");
+        if (last > first) yield return new WaitForSeconds(last - first);
+        playerChoreography?.Finish(); actionRunning = false;
+        UnityBattleBridge.ReportPresentationComplete(skillID);
+    }
+
     IEnumerator PresentPlayerSkillAction(string skillID, string targetBattleEnemyID, string secondaryID = null, string[] resolvedTargetIDs = null)
     {
+        if (orderedTimings.TryGetValue(skillID, out var timing)) {
+            orderedTimings.Remove(skillID);
+            yield return PresentOrderedSkill(skillID, targetBattleEnemyID, resolvedTargetIDs, timing.first, timing.last);
+            yield break;
+        }
         var requestedSkillID = skillID;
         actionRunning = true;
         playerDefending = false;

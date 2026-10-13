@@ -11,6 +11,9 @@ public enum FoolSkillID: String, Codable, CaseIterable, Sendable {
     case turnTheTables = "fool_skill_08"
     case backstageChange = "fool_skill_09"
     case namelessStage = "fool_skill_10"
+    case stolenTempo = "fool_skill_11"
+    case mirrorBarrage = "fool_skill_12"
+    case delayedSignature = "fool_skill_13"
 }
 
 public struct FoolComboState: Equatable, Sendable {
@@ -20,6 +23,10 @@ public struct FoolComboState: Equatable, Sendable {
     public var misalignmentStacks: Int
     public var fabricatedEvidenceCharges: Int
     public var finaleReady: Bool
+    public var illusionExpiresAt: TimeInterval = .infinity
+    public var misalignmentExpiresAt: TimeInterval = .infinity
+    public var armorBreakExpiresAt: TimeInterval = 0
+    public var orderedChainHits: Int = 0
 
     public init(
         attack: Int = 100,
@@ -156,7 +163,7 @@ public enum FoolComboSimulator {
             }
             consumesFabricatedEvidence = state.fabricatedEvidenceCharges > 0
 
-        case .paperDouble, .turnTheTables, .backstageChange, .namelessStage:
+        case .paperDouble, .turnTheTables, .backstageChange, .namelessStage, .stolenTempo, .mirrorBarrage, .delayedSignature:
             throw FoolComboError.unsupportedSkill(skillID)
         }
 

@@ -141,7 +141,7 @@ public struct MPCChapterOneLoadout: Equatable, Sendable {
 
     public init(
         normalSkillIDs: [FoolSkillID] = [
-            .sidestepStrike, .maskedWhisper, .identityDisplacement, .fabricatedEvidence,
+            .sidestepStrike, .fabricatedEvidence, .identityDisplacement, .absurdFinale,
         ],
         ultimateSkillID: FoolSkillID = .namelessStage,
         isUltimateUnlocked: Bool = true,
@@ -155,7 +155,7 @@ public struct MPCChapterOneLoadout: Equatable, Sendable {
                 uniqueNormalSkills.append(skillID)
             }
         }
-        self.normalSkillIDs = Array(uniqueNormalSkills.prefix(5))
+        self.normalSkillIDs = Array(uniqueNormalSkills.prefix(4))
         self.ultimateSkillID = ultimateSkillID
         self.isUltimateUnlocked = isUltimateUnlocked
         self.passiveIDs = Array(passiveIDs.prefix(2))
@@ -326,17 +326,8 @@ public struct MPCChapterOneCampaignState: Equatable, Sendable {
         // for chapter one. Later areas deepen relic and ultimate branches
         // instead of widening the active row indefinitely.
 
-        let skillID: FoolSkillID? = switch (districtID, missionNumber) {
-        case ("old-clock", 3): nil
-        case ("old-clock", 8): .identityDisplacement
-        case ("old-clock", 9): .fabricatedEvidence
-        case ("old-clock", 10): .mirrorPursuit
-        case ("old-clock", 11): .absurdFinale
-        case ("old-clock", 12): .turnTheTables
-        case ("old-clock", 13): .namelessStage
-        case ("tide-gate", 5): .backstageChange
-        default: nil
-        }
+        let granted = districtID == "old-clock" ? unlockOrderedSkills(availableThrough: missionNumber + 1) : []
+        let skillID: FoolSkillID? = districtID == "old-clock" && missionNumber == 13 ? .namelessStage : granted.first
         guard let skillID else { return nil }
         let wasNew = unlockedSkillIDs.insert(skillID).inserted
         skillUnlockStates[skillID] = .permanent
@@ -345,14 +336,33 @@ public struct MPCChapterOneCampaignState: Equatable, Sendable {
         } else if !loadout.normalSkillIDs.contains(skillID), loadout.normalSkillIDs.count < loadoutSlotCapacity {
             loadout.normalSkillIDs.append(skillID)
         }
-        return wasNew ? skillID : nil
+        return wasNew || granted.contains(skillID) ? skillID : nil
+    }
+
+    /// Only eligibility changes: no first-clear settlement, money or items are replayed.
+    @discardableResult
+    public mutating func unlockOrderedSkills(availableThrough mission: Int) -> [FoolSkillID] {
+        let old = unlockedSkillIDs
+        if mission >= 2 { loadoutSlotCapacity = max(loadoutSlotCapacity, 2) }
+        if mission >= 4 { loadoutSlotCapacity = 4 }
+        for skill in MPCOrderedSkillRules.ordinarySkills {
+            guard let gate = MPCOrderedSkillRules.unlockMission(skill), gate <= mission,
+                  skill != .sidestepStrike || mission > 1 else { continue }
+            unlockedSkillIDs.insert(skill); skillUnlockStates[skill] = .permanent
+            if !old.contains(skill), !loadout.normalSkillIDs.contains(skill), loadout.normalSkillIDs.count < loadoutSlotCapacity {
+                loadout.normalSkillIDs.append(skill)
+            }
+        }
+        loadout.normalSkillIDs = Array(loadout.normalSkillIDs.filter(\.isOrderedOrdinary).prefix(4))
+        return MPCOrderedSkillRules.ordinarySkills.filter { !old.contains($0) && unlockedSkillIDs.contains($0) }
     }
 
     public var ownsManualMask: Bool { ownedRelicIDs.contains(MPCChapterOneCatalog.ownerlessMaskRelicID) }
 
     /// Compatibility entry point: Q3 now grants a relic, never a skill card.
     public mutating func grantHoundTutorialCard() {
-        _ = applyChapterMissionProgress(districtID: "old-clock", missionNumber: 3)
+        loadoutSlotCapacity = max(loadoutSlotCapacity, 2)
+        ownedRelicIDs.insert(MPCChapterOneCatalog.ownerlessMaskRelicID)
         migrateLegacyMaskCardToRelic()
     }
 
@@ -901,13 +911,12 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         }
         return dealt
     }
-    /// The next card the automatic loop would cast: an unused one in loop order, else the
-    /// oldest ready deadline (`ContinuousSkillScheduler`'s rule, from contact times).
+    /// Same strict position cursor as ContinuousSkillScheduler, recorded at dispatch.
     private func nextScheduledFoolSkill() -> FoolSkillID? {
         let loop = loadout.normalSkillIDs.filter { $0 != .maskedWhisper }
-        if let unused = loop.first(where: { foolSkillCastAt[$0] == nil }) { return unused }
-        func ready(_ skill: FoolSkillID) -> TimeInterval { foolSkillCastAt[skill, default: 0] + ContinuousSkillScheduler.duration(for: skill) }
-        return loop.enumerated().min { ready($0.element) == ready($1.element) ? $0.offset < $1.offset : ready($0.element) < ready($1.element) }?.element
+        guard !loop.isEmpty else { return nil }
+        let next = orderedLastDispatched.flatMap { loop.firstIndex(of: $0) }.map { ($0 + 1) % loop.count } ?? 0
+        return loop[next]
     }
     private mutating func clearHeroSeal() -> Bool {
         guard sealedFoolSkillID != nil, relicClock < heroSealExpiresAt else { sealedFoolSkillID = nil; return false }
@@ -1123,6 +1132,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         resolveDeferredRelicDamage(through: now)
         updateChapterObjective()
         _ = advanceUsurpedLifeMedal(at: now)
+        advanceOrderedSkills(at: now)
         relicClock = max(relicClock, now)
         return hpBefore - playerHP
     }
@@ -1395,6 +1405,16 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     public private(set) var returnGiftClaspReadyAt: TimeInterval = 0
     private var returnGiftClaspDebtorID: String?
     private var relicClock: TimeInterval = 0
+    public private(set) var orderedHasteUntil: TimeInterval = 0
+    public private(set) var orderedCastReadyAt: TimeInterval = 0
+    private var orderedPrepared: MPCOrderedPreparedCast?
+    private var orderedPending: [MPCOrderedPendingHit] = []
+    private var orderedDamageContext: MPCOrderedDamageContext? = nil
+    private var orderedImpacts: [MPCOrderedSkillImpact] = []
+    private var orderedLastDispatched: FoolSkillID?
+    private var orderedShield = 0
+    private var orderedShieldUntil: TimeInterval = 0
+    private var orderedWardUntil: TimeInterval = 0
     private var brokenSwordReadyAt: [String: TimeInterval] = [:]
     /// Q12 wall: fortify stacks per puppet (MPCProgressionWalls.q12FortifyStackPercent).
     public private(set) var q12FortifyStacks: [String: Int] = [:]
@@ -1416,6 +1436,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     public mutating func finishRelicBattle() {
         _ = settleUsurpedLifeMedal()
         saltBreathingBagStored = 0
+        orderedPending.removeAll(); orderedPrepared = nil
+        orderedShield = 0; orderedWardUntil = 0; orderedHasteUntil = 0
         enemyGiftShields.removeAll()
         finiteDamageTicks.removeAll()
         towerWaveReadyAt = nil
@@ -1773,7 +1795,9 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
 
     public mutating func setContinuousSkillSequence(_ skills: [FoolSkillID]) {
         var seen = Set<FoolSkillID>()
-        loadout.normalSkillIDs = Array(skills.filter { $0 != .namelessStage && seen.insert($0).inserted }.prefix(5))
+        let next = Array(skills.filter { $0 != .namelessStage && seen.insert($0).inserted }.prefix(4))
+        if loadout.normalSkillIDs != next { orderedLastDispatched = nil }
+        loadout.normalSkillIDs = next
     }
 
     /// Prevents a battle from deadlocking when every equipped action is on
@@ -1808,12 +1832,16 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         foolSkillCastAt[skillID] = relicClock
         if (sealedByPaperweight ?? willSealPreparedSkill(skillID, at: relicClock)),
            loadout.relicIDs.contains("relic_sealed_paperweight"), relicClock >= sequenceNineRelics.paperweightReadyAt {
+            orderedPrepared = nil
             sequenceNineRelics.establishPaperweight(baseHP: playerBaseMaxHP, at: relicClock)
             foolCooldowns.currentPlayerActionIndex += 1
             foolCooldowns.startCooldown(skillID, reuseDelayActions: reuseDelay(for: skillID))
             updateHeldReadySkills(used: skillID)
             triggeredEffects.append("缄卷镇纸：封存第3槽，护层建立")
             return .init(skillID: skillID, damage: 0, targetID: targetID)
+        }
+        if usesRealtimeCooldown, skillID.isOrderedOrdinary {
+            return try resolveOrderedFirstImpact(skillID, targetID: targetID)
         }
         defer { talentLastSkill = skillID }
         expireFinaleReadyIfNeeded()
@@ -1861,7 +1889,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             let hasSeal = loadout.relicIDs.contains("relic_nameless_seal")
             for id in foolStates.keys {
                 foolStates[id]?.illusionStacks = hasSeal ? 2 : 4
-                foolStates[id]?.finaleReady = true
+                if usesRealtimeCooldown { foolStates[id]?.illusionExpiresAt = relicClock + MPCOrderedSkillRules.markDuration }
+                foolStates[id]?.finaleReady = !usesRealtimeCooldown
             }
             sealConversionReady = hasSeal
             foolUltimateUsed = true
@@ -2366,7 +2395,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 applyBossActionCategory(.damage)
                 damage = 0
             } else {
-                damage = isUsurpedLifeMedalActive ? 78 : 60
+                let basic = chapterMissionNumber <= 3 && chapterMissionNumber > 0 ? 60 : 32
+                damage = isUsurpedLifeMedalActive ? basic * 130 / 100 : basic
                 if let tempo { damage = damage * tempo.basicDamagePercent / 100 }
                 if loadout.relicIDs.contains("relic_reflecting_ink_mirror"), let idx = enemies.firstIndex(where: { $0.id == id }) {
                     let gift = sequenceNineRelics.offerMirrorGift(basicDamage: damage, targetID: id,
@@ -2558,8 +2588,10 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                     triggeredEffects.append("返礼银扣：收容\(contained)，返还\(contained / 2)礼盾")
                 }
                 resolvedDamage = resolvedDamage * (10_000 - loadout.churchGear.damageReductionBP - loadout.outfitBonus.damageReductionBP) / 10_000
-                damageTaken += resolvedDamage
+                let healthBefore = playerHP
                 absorbPlayerDamage(resolvedDamage)
+                resolvedDamage = max(0, healthBefore - playerHP)
+                damageTaken += resolvedDamage
             }
             if encounter.id == "chapter01_q04_encounter" {
                 advanceQ4Clock(at: now)
@@ -2774,6 +2806,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     }
 
     private mutating func loadWave(_ index: Int) {
+        orderedPending.removeAll(); orderedPrepared = nil
         let enemyIDs = encounter.waves[index].enemyIDs
         enemyDefenseBoosts.removeAll()
         committedRepairTargets.removeAll()
@@ -2831,6 +2864,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 content.intentPattern
             }
             let localHP: Int = switch encounter.id {
+            case "chapter01_q02_encounter": contentID == "enemy_resonant_clock_guard_q2" ? 300 : content.maxHP
             case "chapter01_q03_encounter": MPCProgressionWalls.q3HoundHP
             case "chapter01_q05_encounter": 1600
             case "chapter01_q04_encounter": 2200
@@ -2888,7 +2922,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             enemies += (0..<(chapterMissionNumber == 24 ? 2 : 4)).map { slot in
                 MPCRuntimeEnemy(id: "enemy_resonant_clock_guard_q2_split#\(slot)",
                     contentID: "enemy_resonant_clock_guard_q2_split", name: "赤怨幽灵",
-                    maxHP: 260, hp: 0, attack: MPCChapterOneCatalog.enemies.first { $0.id == "enemy_resonant_clock_guard_q2_split" }?.attack ?? 32, defense: 12,
+                    maxHP: encounter.id == "chapter01_q02_encounter" ? 150 : 260, hp: 0, attack: MPCChapterOneCatalog.enemies.first { $0.id == "enemy_resonant_clock_guard_q2_split" }?.attack ?? 32, defense: 12,
                     intentPattern: ["strike", "strike"], intentIndex: 0, delayedRounds: 0)
             }
         }
@@ -2937,6 +2971,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         case .turnTheTables: 4
         case .absurdFinale, .backstageChange: 5
         case .namelessStage: 0
+        case .stolenTempo, .mirrorBarrage, .delayedSignature: 3
         }
     }
 
@@ -3676,7 +3711,9 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         if parried { damage = max(1, damage * tempo.parryPercent / 100) }
         damage = damage * (10_000 - loadout.churchGear.damageReductionBP - loadout.outfitBonus.damageReductionBP) / 10_000
         if parried { triggeredEffects.append("招架：幻影挡开轻击，承受\(damage)") }
+        let healthBefore = playerHP
         absorbPlayerDamage(damage, isLightHit: true)
+        damage = max(0, healthBefore - playerHP)
         settlePlayerDownIfNeeded()
         if outcome != .inProgress { clearEmeraldPoison(); finiteDamageTicks.removeAll() }
         return .init(enemyID: enemyID, damage: damage, parried: parried)
@@ -3684,6 +3721,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
 
     private mutating func absorbPlayerDamage(_ damage: Int, isDamageOverTime: Bool = false, isLightHit: Bool = false) {
         if playerIsDown { return } // nothing more lands on a fallen hero
+        let pressure = MPCOrderedSkillRules.pressureLayers(mission: chapterMissionNumber, at: relicClock)
+        let damage = damage * (1 << pressure)
         var adjustedDamage = max(0, !isDamageOverTime && unreliableNarratorTriggeredRound == round ? damage * 105 / 100 : damage)
         if isDamageOverTime, adjustedDamage > 0, loadout.relicIDs.contains("relic_salt_sealed_breathing_bag") {
             let captured = min(adjustedDamage * relicBalance.poisonCapturePercent / 100, max(0, playerBaseMaxHP * relicBalance.poisonCapacityPercent / 100 - saltBreathingBagStored))
@@ -3696,6 +3735,14 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             triggeredEffects.append("未写结局：闪避本次伤害")
             return
         }
+        if !isDamageOverTime, adjustedDamage > 0, relicClock < orderedWardUntil {
+            adjustedDamage = adjustedDamage * 40 / 100
+            orderedWardUntil = 0
+        }
+        if relicClock >= orderedShieldUntil { orderedShield = 0 }
+        let orderedAbsorbed = min(orderedShield, adjustedDamage)
+        orderedShield -= orderedAbsorbed
+        adjustedDamage -= orderedAbsorbed
         let shieldBefore = playerShield
         let absorbed = min(playerShield, adjustedDamage)
         playerShield -= absorbed
@@ -3761,7 +3808,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             behaviorTags.insert(.castFinale)
         case .paperDouble:
             behaviorTags.insert(.defensiveResponse)
-        case .backstageChange, .namelessStage:
+        case .backstageChange, .namelessStage, .stolenTempo, .mirrorBarrage, .delayedSignature:
             break
         }
 
@@ -3811,6 +3858,255 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
 
 // MARK: - Isolated campaign mechanics (explicit opt-in; no rewards/save writes)
 extension MPCChapterOneEncounterSession {
+    /// Authoritative cast timing shared by the visible loop and offline settlement.
+    public mutating func prepareOrderedSkill(_ skill: FoolSkillID, targetID: String, at now: TimeInterval) -> MPCOrderedCastTiming? {
+        guard skill.isOrderedOrdinary else { return nil }
+        expireOrderedStatuses(at: now)
+        let work = MPCOrderedSkillRules.timing(skill)
+        let end = skill == .mirrorBarrage ? now + work.cast
+            : MPCOrderedSkillRules.finishWork(start: now, work: work.cast, hasteUntil: orderedHasteUntil)
+        let first = skill == .mirrorBarrage
+            ? MPCOrderedSkillRules.finishWork(start: now, work: 0.6, hasteUntil: orderedHasteUntil)
+            : skill == .mirrorPursuit
+                ? MPCOrderedSkillRules.finishWork(start: now, work: work.cast / 2, hasteUntil: orderedHasteUntil) : end
+        let ready = MPCOrderedSkillRules.finishWork(start: end, work: work.recovery, hasteUntil: orderedHasteUntil)
+        let timing = MPCOrderedCastTiming(firstImpactAt: first, lastImpactAt: end, readyAt: ready)
+        orderedPrepared = .init(skill: skill, target: targetID, start: now, timing: timing,
+            empowered: (foolStates[targetID]?.misalignmentStacks ?? 0) > 0)
+        orderedLastDispatched = skill
+        orderedCastReadyAt = ready
+        return timing
+    }
+
+    public mutating func drainOrderedSkillImpacts() -> [MPCOrderedSkillImpact] {
+        defer { orderedImpacts.removeAll(keepingCapacity: true) }
+        return orderedImpacts
+    }
+
+    private mutating func expireOrderedStatuses(at now: TimeInterval) {
+        for id in Array(foolStates.keys) {
+            if now >= foolStates[id]!.illusionExpiresAt { foolStates[id]!.illusionStacks = 0 }
+            if now >= foolStates[id]!.misalignmentExpiresAt {
+                foolStates[id]!.misalignmentStacks = 0; foolStates[id]!.orderedChainHits = 0
+            }
+        }
+        if now >= orderedShieldUntil { orderedShield = 0 }
+    }
+
+    /// Extra hits retain their logical deadlines even when several become due in one frame.
+    private mutating func advanceOrderedSkills(at now: TimeInterval) {
+        let savedClock = relicClock
+        defer { relicClock = max(savedClock, now); orderedDamageContext = nil; expireOrderedStatuses(at: now) }
+        guard outcome == .inProgress, !playerIsDown else {
+            orderedPending.removeAll(); orderedPrepared = nil; return
+        }
+        while let index = orderedPending.indices.min(by: { orderedPending[$0].at < orderedPending[$1].at }),
+              orderedPending[index].at <= now + 0.000_001, outcome == .inProgress, !playerIsDown {
+            let event = orderedPending.remove(at: index)
+            relicClock = event.at
+            orderedDamageContext = event.damageContext
+            expireOrderedStatuses(at: event.at)
+            // A new wave never inherits an old target's channel or delayed contract.
+            guard event.damageContext?.waveIndex == waveIndex, enemies.contains(where: { $0.id == event.target }) else { continue }
+            let alive = enemies.contains { $0.id == event.target && $0.isAlive }
+            var targets: [MPCFoolSkillTargetResolution] = []
+            switch event.kind {
+            case .signature(let hits):
+                guard alive else { continue }
+                let recipients = [event.target] + enemies.filter { $0.isAlive && $0.id != event.target }.prefix(2).map(\.id)
+                for (position, id) in recipients.enumerated() {
+                    let coefficient = (5_000 + 7_000 * hits) / (position == 0 ? 1 : 2)
+                    let damage = orderedDamage(event.skill, to: id, coefficient: coefficient, counts: false)
+                    targets.append(.init(targetID: id, damage: damage))
+                }
+                triggeredEffects.append("延时落款：兑现\(hits)次命中")
+            case .mirror:
+                guard let id = alive ? event.target : enemies.first(where: \.isAlive)?.id else { continue }
+                let boosted = event.empowered && (foolStates[id]?.misalignmentStacks ?? 0) > 0
+                targets = [.init(targetID: id, damage: orderedDamage(event.skill, to: id, coefficient: boosted ? 18_000 : 4_000))]
+                if event.empowered, foolStates[id] != nil { foolStates[id]!.misalignmentStacks = max(0, foolStates[id]!.misalignmentStacks - 1) }
+            case .barrage(let end):
+                guard let id = alive ? event.target : enemies.first(where: \.isAlive)?.id else { continue }
+                targets = [.init(targetID: id, damage: orderedDamage(event.skill, to: id, coefficient: 3_600))]
+                orderedMark(id, stacks: 1)
+                let next = MPCOrderedSkillRules.finishWork(start: event.at, work: 0.6, hasteUntil: orderedHasteUntil)
+                if next <= end + 0.000_001 {
+                    orderedPending.append(.init(at: next, skill: event.skill, target: id, kind: .barrage(end: end), damageContext: orderedDamageContext))
+                }
+            }
+            if loadout.passiveIDs.contains("fool_passive_04"), !orderedPending.contains(where: { $0.skill == event.skill }), targets.contains(where: { $0.damage > 0 }) {
+                lateApplauseReady = true
+            }
+            orderedImpacts.append(.init(skill: event.skill, at: event.at, targets: targets))
+        }
+    }
+
+    private mutating func orderedMark(_ id: String, stacks: Int) {
+        guard orderedDamageContext?.waveIndex == waveIndex, foolStates[id] != nil, enemies.contains(where: { $0.id == id && $0.isAlive }) else { return }
+        foolStates[id]!.illusionStacks = min(4, foolStates[id]!.illusionStacks + stacks)
+        foolStates[id]!.illusionExpiresAt = relicClock + MPCOrderedSkillRules.markDuration
+        if foolStates[id]!.illusionStacks == 4 { behaviorTags.insert(.reachFourIllusion) }
+    }
+
+    private mutating func orderedMisalign(_ id: String) {
+        guard orderedDamageContext?.waveIndex == waveIndex, foolStates[id] != nil, enemies.contains(where: { $0.id == id && $0.isAlive }) else { return }
+        foolStates[id]!.misalignmentStacks = 2
+        foolStates[id]!.misalignmentExpiresAt = relicClock + MPCOrderedSkillRules.markDuration
+        foolStates[id]!.armorBreakExpiresAt = relicClock + MPCOrderedSkillRules.markDuration
+        foolStates[id]!.orderedChainHits = 0
+        behaviorTags.insert(.convertToMisalignment)
+    }
+
+    private mutating func orderedDamage(_ skill: FoolSkillID, to id: String, coefficient: Int, penetration: Int = 0, counts: Bool = true) -> Int {
+        guard outcome == .inProgress, orderedDamageContext?.waveIndex == waveIndex, let enemy = enemies.first(where: { $0.id == id && $0.isAlive }) else { return 0 }
+        let state = foolStates[id] ?? .init(targetDefense: enemy.defense)
+        var attack = state.attack
+        if isUsurpedLifeMedalActive { attack = attack * 130 / 100 }
+        let pierce = max(penetration, relicClock < state.armorBreakExpiresAt ? 7_000 : 0)
+        var amount = MPCFixedPointCombatMath.damage(.init(attack: attack, coefficientBP: coefficient,
+            targetDefense: talentDefense(state.targetDefense, skill: skill, stacks: state.illusionStacks),
+            armorPenetrationBP: pierce)).damageAfterDefense
+        // One-shot and alternating-cast bonuses are captured once for the entire spell.
+        // Target health, marks and defense are still evaluated at each real contact.
+        var bonus = orderedDamageContext?.actionBonusPercent ?? 0
+        if loadout.talents.has("trickery.4"), enemy.hp * 100 <= enemy.maxHP * 35 { bonus += 18 }
+        if loadout.talents.has("omen.1") { bonus += state.illusionStacks * 4 }
+        if loadout.talents.has("omen.5"), state.illusionStacks == 4, skill == .absurdFinale { bonus += 45 }
+        amount = amount * (100 + bonus) / 100
+        amount = amount * (orderedDamageContext?.multiplierBP ?? 10_000) / 10_000
+        if loadout.relicIDs.contains("relic_red_wax_seal"), skill == .fabricatedEvidence { amount = amount * 90 / 100 }
+        amount = strengthenedSkillAmount(amount, skill: skill)
+        if loadout.relicIDs.contains("relic_cracked_monocle"), state.illusionStacks < 4 { amount = amount * 97 / 100 }
+        if loadout.relicIDs.contains("relic_thirteenth_record"), round.isMultiple(of: 3) { amount = amount * 95 / 100 }
+        let oldSource = activeDamageSource
+        activeDamageSource = skill.rawValue
+        let dealt = (try? applyPartyDamage(amount, to: id, category: actionCategory(for: skill))) ?? 0
+        activeDamageSource = oldSource
+        if dealt > 0, counts {
+            // Only damage reaching health fuels the contract, never fully absorbed hits.
+            for index in orderedPending.indices where orderedPending[index].target == id {
+                if case .signature(let hits) = orderedPending[index].kind, relicClock < orderedPending[index].at {
+                    orderedPending[index].kind = .signature(hits: min(8, hits + 1))
+                }
+            }
+            if (foolStates[id]?.misalignmentStacks ?? 0) > 0 {
+                foolStates[id]!.orderedChainHits = min(3, foolStates[id]!.orderedChainHits + 1)
+            }
+        }
+        return dealt
+    }
+
+    private mutating func resolveOrderedFirstImpact(_ skill: FoolSkillID, targetID: String?) throws -> MPCFoolSkillEncounterResolution {
+        let id = try validatedTargetID(targetID ?? (skill == .backstageChange ? enemies.first(where: \.isAlive)?.id : nil))
+        let prepared = orderedPrepared.flatMap { $0.skill == skill ? $0 : nil }
+        orderedPrepared = nil
+        let savedClock = relicClock
+        if let prepared { relicClock = prepared.timing.firstImpactAt }
+        defer { relicClock = savedClock; talentLastSkill = skill; orderedDamageContext = nil }
+        let isMultiple = skill == .mirrorPursuit || skill == .mirrorBarrage || skill == .delayedSignature
+        var multiplier = 10_000
+        if lateApplauseReady, !isMultiple { multiplier = multiplier * 110 / 100; lateApplauseReady = false }
+        if unifiedGearDamageReady { multiplier = multiplier * 120 / 100; unifiedGearDamageReady = false }
+        if loadout.relicIDs.contains("relic_clock_chaser_spur"), readySkillHeldActions[skill, default: 0] >= 2 { multiplier = multiplier * 115 / 100 }
+        orderedDamageContext = .init(waveIndex: waveIndex, actionBonusPercent: talentDamage(10_000, skill: skill, stacks: 0, targetID: "") / 100 - 100, multiplierBP: multiplier)
+
+        expireOrderedStatuses(at: relicClock)
+        var targets: [MPCFoolSkillTargetResolution] = []
+        func result(_ damage: Int) -> MPCFoolSkillTargetResolution { .init(targetID: id, damage: damage) }
+        switch skill {
+        case .sidestepStrike:
+            if controlSealActive && encounter.id == "chapter01_q01_encounter" {
+                controlSealActive = false; applyBossActionCategory(.damage); targets = [result(0)]
+            } else {
+                let recipients = [id] + enemies.filter { $0.isAlive && $0.id != id }.prefix(2).map(\.id)
+                for target in recipients { targets.append(.init(targetID: target, damage: orderedDamage(skill, to: target, coefficient: relicClock < orderedHasteUntil || (foolStates[target]?.illusionStacks ?? 0) >= 4 ? 15_000 : 6_500))) }
+            }
+        case .fabricatedEvidence:
+            targets = [result(orderedDamage(skill, to: id, coefficient: 2_000))]
+            orderedMark(id, stacks: 4)
+            if loadout.relicIDs.contains("relic_red_wax_seal") { foolStates[id]?.illusionExpiresAt += 1 }
+            if loadout.talents.has("omen.0") { foolStates[id]?.illusionExpiresAt += 0.5 }
+            if enhancedSetupStacks > 0 { foolStates[id]?.illusionExpiresAt += Double(enhancedSetupStacks) * 0.5; enhancedSetupStacks = 0 }
+            if loadout.passiveIDs.contains("fool_passive_02"), unreliableNarratorTriggeredRound != round {
+                foolStates[id]?.illusionExpiresAt += 0.5
+                unreliableNarratorTriggeredRound = round
+            }
+            if loadout.talents.has("omen.4") { talentEvidenceReady = true }
+        case .stolenTempo:
+            targets = [result(orderedDamage(skill, to: id, coefficient: 1_000))]
+            orderedHasteUntil = relicClock + MPCOrderedSkillRules.hasteDuration
+            triggeredEffects.append("抢拍开幕：施法速度+100%，持续3.2秒")
+        case .mirrorBarrage:
+            targets = [result(orderedDamage(skill, to: id, coefficient: 3_600))]
+            orderedMark(id, stacks: 1)
+            let end = prepared?.timing.lastImpactAt ?? relicClock + 1.2
+            let next = MPCOrderedSkillRules.finishWork(start: relicClock, work: 0.6, hasteUntil: orderedHasteUntil)
+            if next <= end + 0.000_001 { orderedPending.append(.init(at: next, skill: skill, target: id, kind: .barrage(end: end), damageContext: orderedDamageContext)) }
+        case .identityDisplacement:
+            let valid = (foolStates[id]?.illusionStacks ?? 0) >= (sealConversionReady ? 2 : 4)
+            targets = [result(orderedDamage(skill, to: id, coefficient: valid ? 11_000 : 3_000))]
+            if valid {
+                foolStates[id]?.illusionStacks = 0; orderedMisalign(id); sealConversionReady = false
+                triggeredEffects.append("张冠李戴：4误认转为2错位，破甲70%，持续4秒")
+            } else { orderedMark(id, stacks: 1) }
+            if valid, loadout.passiveIDs.contains("fool_passive_03") { _ = receivePlayerHealing(80) }
+        case .mirrorPursuit:
+            let empowered = prepared?.empowered ?? ((foolStates[id]?.misalignmentStacks ?? 0) > 0)
+            let valid = empowered && (foolStates[id]?.misalignmentStacks ?? 0) > 0
+            targets = [result(orderedDamage(skill, to: id, coefficient: valid ? 18_000 : 4_000))]
+            orderedPending.append(.init(at: prepared?.timing.lastImpactAt ?? relicClock + 0.575, skill: skill, target: id, kind: .mirror, empowered: empowered, damageContext: orderedDamageContext))
+            if loadout.relicIDs.contains("relic_mirror_thread") { mirrorThreadBonusReady = true }
+        case .absurdFinale:
+            let state = foolStates[id] ?? .init()
+            let valid = state.misalignmentStacks > 0
+            targets = [result(orderedDamage(skill, to: id, coefficient: 6_000 + (valid ? 50_000 + 8_000 * state.orderedChainHits : 0), penetration: valid ? 8_000 : 0))]
+            foolStates[id]?.misalignmentStacks = 0; foolStates[id]?.orderedChainHits = 0
+        case .turnTheTables:
+            let boost = enemyDefenseBoosts.removeValue(forKey: id)
+            let shield = enemyGiftShields.removeValue(forKey: id) ?? 0
+            let empower = towerEmpowers.removeValue(forKey: id)
+            let dispelled = boost != nil || shield > 0 || empower != nil
+            if boost != nil { foolStates[id]?.targetDefense = enemies.first(where: { $0.id == id })?.defense ?? 0 }
+            targets = [result(orderedDamage(skill, to: id, coefficient: dispelled ? 27_500 : 3_500))]
+            if dispelled { orderedMisalign(id) } else { orderedMark(id, stacks: 2) }
+            orderedWardUntil = relicClock + 4
+        case .backstageChange:
+            targets = [result(orderedDamage(skill, to: id, coefficient: 2_000))]
+            if clearHeroSeal() { triggeredEffects.append("后手改写：划去夺名封印") }; _ = cleanseOnePlayerDamageOverTime()
+            orderedShield = max(orderedShield, strengthenedSkillAmount(240, skill: skill)); orderedShieldUntil = relicClock + 4
+            if relicClock < orderedHasteUntil { orderedHasteUntil += 1.3 }
+            if (foolStates[id]?.illusionStacks ?? 0) > 0 { foolStates[id]!.illusionExpiresAt += 1.3 }
+            if (foolStates[id]?.misalignmentStacks ?? 0) > 0 { foolStates[id]!.misalignmentExpiresAt += 1.3 }
+            if relicClock < (foolStates[id]?.armorBreakExpiresAt ?? 0) { foolStates[id]!.armorBreakExpiresAt += 1.3 }
+            if loadout.relicIDs.contains("relic_memory_leech_vial") {
+                if !memoryLeechCostPaid { playerHP = max(1, playerHP - 40); memoryLeechCostPaid = true }
+                _ = cleanseOnePlayerDamageOverTime()
+                enhancedSetupStacks = max(enhancedSetupStacks, 1)
+            }
+        case .delayedSignature:
+            targets = [result(orderedDamage(skill, to: id, coefficient: 2_000))]
+            orderedPending.removeAll { $0.target == id && $0.skill == .delayedSignature }
+            orderedPending.append(.init(at: relicClock + MPCOrderedSkillRules.signatureDelay, skill: skill, target: id, kind: .signature(hits: 0), damageContext: orderedDamageContext))
+        default: throw FoolComboError.unsupportedSkill(skill)
+        }
+        if skill != .mirrorPursuit && skill != .mirrorBarrage {
+            orderedCastReadyAt = MPCOrderedSkillRules.finishWork(start: relicClock, work: MPCOrderedSkillRules.timing(skill).recovery, hasteUntil: orderedHasteUntil)
+        }
+        borrowedSecondAvailable = false
+        foolCooldowns.currentPlayerActionIndex += 1
+        foolCooldowns.startCooldown(skill, reuseDelayActions: reuseDelay(for: skill))
+        updateHeldReadySkills(used: skill); recordPlayerSkill(skill, targetID: id)
+        if targets.contains(where: { $0.damage > 0 }) {
+            if loadout.talents.has("omen.2"), (foolStates[id]?.illusionStacks ?? 0) > 0 {
+                playerShield = min(playerMaxHP, playerShield + strengthenedSkillAmount(15, skill: skill))
+            }
+            talentDamageCount += 1; talentLastDamageSkill = skill
+            talentEchoReady = false; talentFinalEchoReady = false; talentMaskReady = false
+            if skill != .fabricatedEvidence { talentEvidenceReady = false }
+        }
+        log.append(.init(round: round, message: "编排 \(skill.rawValue)：首次命中\(targets.reduce(0) { $0 + $1.damage })", damageTaken: 0, bossMechanicMissed: false))
+        return .init(skillID: skill, damage: targets.first?.damage ?? 0, targetID: id, targets: targets)
+    }
     public mutating func campaignRecord(_ kind: String, target: String = "", amount: Int = 0, detail: String = "") {
         campaignPrototype?.record(kind, target: target, amount: amount, detail: detail)
     }
@@ -3955,6 +4251,9 @@ extension MPCChapterOneEncounterSession {
                  harmful: Bool = false, count: Int? = nil, unit: String = "层") {
             if active { result.append(.init(id, name, symbol, harmful: harmful, count: count, unit: unit)) }
         }
+        add("haste", "抢拍", "hourglass", now < orderedHasteUntil, count: max(0, Int(ceil(orderedHasteUntil - now))), unit: "秒")
+        add("ordered-shield", "改写护盾", "shield.fill", orderedShield > 0 && now < orderedShieldUntil, count: orderedShield, unit: "护盾值")
+        add("ordered-ward", "反客减伤", "shield.lefthalf.filled", now < orderedWardUntil, count: 1, unit: "次")
         add("shield", "护盾", "shield.fill", playerShield > 0, count: playerShield, unit: "护盾值")
         let maskLive = (ownedManualMaskExpiresAt.map { now < $0 } ?? true) && (timedMasqueradeExpiresAt.map { now < $0 } ?? true)
         add("mask", "幻影", "theatermasks.fill", masqueradeCharges > 0 && maskLive, count: masqueradeCharges, unit: "次")
@@ -3999,13 +4298,19 @@ extension MPCChapterOneEncounterSession {
             if active { result.append(.init(id, name, symbol, harmful: harmful, count: count, unit: unit)) }
         }
         if let state = foolStates[enemyID] {
-            add("illusion", "误认", "eye.trianglebadge.exclamationmark", state.illusionStacks > 0, harmful: true, count: state.illusionStacks)
-            add("misalignment", "错位", "arrow.triangle.swap", state.misalignmentStacks > 0, harmful: true, count: state.misalignmentStacks)
+            add("illusion", "误认", "eye.trianglebadge.exclamationmark", state.illusionStacks > 0 && now < state.illusionExpiresAt, harmful: true, count: state.illusionStacks)
+            add("misalignment", "错位", "arrow.triangle.swap", state.misalignmentStacks > 0 && now < state.misalignmentExpiresAt, harmful: true, count: state.misalignmentStacks)
+            add("armor-break", "破甲", "shield.slash.fill", now < state.armorBreakExpiresAt, harmful: true)
             add("evidence", "伪证", "doc.text.fill", state.fabricatedEvidenceCharges > 0, harmful: true, count: state.fabricatedEvidenceCharges, unit: "次")
             add("finale", "归结", "sparkles", state.finaleReady, harmful: true)
         }
+        if let stamp = orderedPending.first(where: { $0.target == enemyID && $0.skill == .delayedSignature }), case .signature(let hits) = stamp.kind {
+            add("signature", "落款", "envelope.fill", now < stamp.at, harmful: true, count: hits, unit: "次命中")
+        }
         let shield = enemyGiftShields[enemyID, default: 0]
         add("gift", "礼盾", "shield.fill", shield > 0, count: shield, unit: "护盾值")
+        let pressure = MPCOrderedSkillRules.pressureLayers(mission: chapterMissionNumber, at: now)
+        add("ordered-pressure", "追逼", "flame.fill", pressure > 0, count: pressure)
         let fortify = q12FortifyStacks[enemyID, default: 0]
         add("fortify", "固守", "shield.lefthalf.filled", fortify > 0, count: fortify)
         add("defense", "防御强化", "shield.fill", enemyDefenseBoosts[enemyID] != nil)

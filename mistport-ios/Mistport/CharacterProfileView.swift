@@ -586,18 +586,8 @@ struct CharacterProfileView: View {
     }
 
     private func skillUnlockDescription(_ id: FoolSkillID) -> String {
-        switch id {
-        case .sidestepStrike: "第1关教学获得"
-        case .maskedWhisper: "第3关战前获得"
-        case .identityDisplacement: "第8关战前获得"
-        case .fabricatedEvidence: "第9关通关获得"
-        case .mirrorPursuit: "第10关通关获得"
-        case .absurdFinale: "第11关通关获得"
-        case .turnTheTables: "第12关通关获得"
-        case .namelessStage: "第13关通关获得"
-        case .backstageChange: "后续篇章开放"
-        case .paperDouble: "已停用"
-        }
+        if let mission = MPCOrderedSkillRules.unlockMission(id) { return mission == 1 ? "第1关教学获得" : "第\(mission)关前获得" }
+        return id == .namelessStage ? "第13关通关获得" : "已转为遗落物"
     }
 
     private var chapterOneUnlockedSkills: [MPCSkillContent] {
@@ -630,7 +620,7 @@ struct CharacterProfileView: View {
                         .foregroundStyle(path.tint)
                 }
 
-                Text("这里只保存参考牌组。每场战前仍需手动点牌，按点击顺序执行；未点牌只普攻。")
+                Text("保存参考牌组。战前选四张，按左→右循环；战斗中换位会重置冷却。")
                     .font(.system(size: 9, weight: .medium))
                     .foregroundStyle(.white.opacity(0.64))
                     .lineLimit(2)
@@ -741,14 +731,11 @@ struct CharacterProfileView: View {
     }
 
     private func chapterOneSkillArtName(_ skillID: FoolSkillID) -> String {
-        switch skillID {
-        case .sidestepStrike: "IconSkillWeakness"
-        case .fabricatedEvidence: "IconSkillFabricatedEvidence20261012"
+        if skillID.isOrderedOrdinary { return skillID.orderedCardAssetName }
+        return switch skillID {
         case .maskedWhisper: "IconSkillDangerPremonition"
         case .paperDouble: "IconSkillPaperDouble"
-        case .identityDisplacement, .turnTheTables: "IconSkillDivination"
-        case .mirrorPursuit, .backstageChange: "IconSkillSpiritualDodge"
-        case .absurdFinale, .namelessStage: "IconSkillOmenRecord"
+        default: "IconSkillOmenRecord"
         }
     }
 

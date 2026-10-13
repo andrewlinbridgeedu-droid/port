@@ -35,9 +35,9 @@ public struct MPCBattleInput: Codable, Equatable, Sendable {
 /// What a client sends to have a battle settled: the rule version it played under and
 /// its inputs. Never the outcome, the loadout or the inventory; the server holds those.
 public struct MPCBattleInputLog: Codable, Equatable, Sendable {
-    public static let currentVersion = "church-battle-v3"
+    public static let currentVersion = "church-battle-v4"
     /// Chapter-one story battles (`MPCStoryBattleStepper`).
-    public static let storyVersion = "story-battle-v2"
+    public static let storyVersion = "story-battle-v3"
     public var version: String
     public var encounterID: String
     public var inputs: [MPCBattleInput]
@@ -151,6 +151,7 @@ public enum MPCChurchBattleDriver {
     /// contacts (the App's sealed-skill table uses the same values). nil is a basic attack.
     public static func playerContact(_ skill: FoolSkillID?) -> TimeInterval {
         switch skill {
+        case .stolenTempo?, .mirrorBarrage?, .delayedSignature?: 0.55
         case .sidestepStrike?: 0.6192
         case .maskedWhisper?: 0.38
         case .identityDisplacement?: 0.441
@@ -231,6 +232,7 @@ public struct MPCChurchBattleStepper: Sendable {
         public var cast: Cast?
         /// The player's cast that landed this step (its damage is now in the session).
         public var landed: Cast?
+        public var orderedImpacts: [MPCOrderedSkillImpact] = []
         /// Enemies that start an attack this step.
         public var enemyAttacks: [EnemyAttack] = []
         /// Enemies whose attack resolved this step.
@@ -260,7 +262,7 @@ public struct MPCChurchBattleStepper: Sendable {
     public private(set) var consumablesUsed: [String: Int] = [:]
     public private(set) var inputs: [MPCBattleInput] = []
 
-    private let sequence: [FoolSkillID]
+    private var sequence: [FoolSkillID]
     private var scheduler = ContinuousSkillScheduler()
     private var playerAt = 0.0, basicAt = 0.0
     private var hit: Events.Cast?
@@ -353,6 +355,7 @@ public struct MPCChurchBattleStepper: Sendable {
         var s = session
         let waveBefore = s.waveIndex
         _ = s.advanceEmeraldPoison(at: now)
+        events.orderedImpacts = s.drainOrderedSkillImpacts()
         guard s.outcome == .inProgress else {
             if !newInputs.isEmpty { throw Failure.refused(index: inputs.count, input: newInputs[0]) }
             session = s; tick += 1
@@ -388,7 +391,11 @@ public struct MPCChurchBattleStepper: Sendable {
             case .ultimate:
                 ok = loadout.isUltimateUnlocked && !ultimateRequested && s.canUseFoolSkill(.namelessStage)
                 if ok { ultimateRequested = true }
-            case .mask, .bell, .sequence:
+            case .sequence:
+                let skills = (input.itemID ?? "").split(separator: ",").compactMap { FoolSkillID(rawValue: String($0)) }
+                ok = !skills.isEmpty && skills.count <= 4 && Set(skills).count == skills.count && Set(skills).isSubset(of: Set(loadout.normalSkillIDs))
+                if ok { scheduler.didReorder(from: sequence, to: skills, at: now); sequence = skills; s.setContinuousSkillSequence(skills) }
+            case .mask, .bell:
                 // Story-battle inputs; church battles have none of these.
                 ok = false
             }
@@ -464,14 +471,14 @@ public struct MPCChurchBattleStepper: Sendable {
         self.target = target
         tick += 1
         guard s.outcome == .inProgress, let current = target, s.enemies.contains(where: { $0.id == current && $0.isAlive }),
-              now >= playerAt, hit == nil else { return events }
+              now >= playerAt, now >= session.orderedCastReadyAt, hit == nil else { return events }
         let chosen: FoolSkillID?
         if ultimateRequested && !ultimateCast && s.canUseFoolSkill(.namelessStage) {
             ultimateCast = true; chosen = .namelessStage; playerAt = now + skillRecovery + tuning.actionDelay
             hitAt = now + MPCChurchBattleDriver.playerContact(chosen)
         } else if let skill = scheduler.next(in: sequence, at: now) {
             scheduler.didCast(skill, at: now); chosen = skill
-            playerAt = now + skillRecovery + tuning.actionDelay + max(0, variation())
+            playerAt = now + (skill.isOrderedOrdinary ? 0 : skillRecovery) + tuning.actionDelay + max(0, variation())
             hitAt = now + max(0.15, MPCChurchBattleDriver.playerContact(chosen) + variation())
         } else if now >= basicAt {
             basicAt = now + (light?.tempo.basicInterval ?? 2.4); chosen = nil
@@ -482,6 +489,7 @@ public struct MPCChurchBattleStepper: Sendable {
         }
         // Rule 5.
         let sealed = chosen.map { s.willSealPreparedSkill($0, at: now) } ?? false
+        if let chosen, let timing = session.prepareOrderedSkill(chosen, targetID: current, at: now) { hitAt = timing.firstImpactAt }
         let cast = Events.Cast(skill: chosen, targetID: current, landsAtTick: Int((hitAt / step).rounded(.up)), sealed: sealed)
         hit = cast
         events.cast = cast

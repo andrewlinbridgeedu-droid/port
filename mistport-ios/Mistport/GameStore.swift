@@ -539,7 +539,11 @@ final class GameStore {
         }
         let migratedBell = chapterOneCampaign.migrateLegacyPaperRelicToEncoreBell()
         let migratedMask = chapterOneCampaign.migrateLegacyMaskCardToRelic()
-        if migratedBell || migratedMask { persistChapterProgress() }
+        let completedOrder = GameContent.chapterOneDistricts.flatMap(\.missions)
+            .filter { completedChapterMissionIDs.contains($0.id) }.map(\.globalOrder).max() ?? 0
+        let orderedBefore = chapterOneCampaign
+        chapterOneCampaign.unlockOrderedSkills(availableThrough: completedOrder + 1)
+        if migratedBell || migratedMask || orderedBefore != chapterOneCampaign { persistChapterProgress() }
 
         // After every progress load and reset argument above: old saves migrate once here.
         resolveDailyPacingStart()

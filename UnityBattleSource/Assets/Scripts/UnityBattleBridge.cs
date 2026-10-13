@@ -496,6 +496,8 @@ public sealed class UnityBattleBridge : MonoBehaviour
         if (action.StartsWith("wave-instances:")) { ChurchStatusPresentation20260917.Get(battle).Clear(); battle.RequestWaveInstances(action.Substring("wave-instances:".Length)); return; }
         if (action.StartsWith("archive-state:")) { battle.SetArchivePhase(action.Substring("archive-state:".Length)); return; }
         if (action.StartsWith("leech-charge:")) { battle.SetLeechCharge(action.Substring("leech-charge:".Length)); return; }
+        if (action.StartsWith("skill-timing:")) { battle.SetOrderedSkillTiming(action.Substring("skill-timing:".Length)); return; }
+        if (action.StartsWith("ordered-impact:")) { battle.PresentOrderedImpact(action.Substring("ordered-impact:".Length)); return; }
         if (action.StartsWith("skill-targets:")) { battle.SetSkillTargets(action.Substring("skill-targets:".Length)); return; }
         if (action.StartsWith("sidestep-secondary:")) { battle.SetSidestepSecondary(action.Substring("sidestep-secondary:".Length)); return; }
         if (action.StartsWith("enemy-heal:")) { battle.PresentEnemyHealing(action.Substring("enemy-heal:".Length)); return; }

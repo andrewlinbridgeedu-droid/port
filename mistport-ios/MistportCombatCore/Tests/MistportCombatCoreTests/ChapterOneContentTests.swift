@@ -10,7 +10,7 @@ struct ChapterOneContentTests {
             let encounter = try #require(MPCChapterOneCatalog.encounters.first { $0.id == mission.encounterID })
             campaign.claimVictory(for: encounter)
             #expect(campaign.loadout.normalSkillIDs.count <= campaign.loadoutSlotCapacity)
-            #expect(campaign.loadoutSlotCapacity == (mission.number < 3 ? 1 : mission.number < 10 ? 2 : 4))
+            #expect(campaign.loadoutSlotCapacity == (mission.number < 3 ? 2 : 4))
             for skill in mission.permanentSkillIDs {
                 #expect(campaign.unlockedSkillIDs.contains(skill))
             }
@@ -61,20 +61,20 @@ struct ChapterOneContentTests {
     @Test("The Fool test character exposes every frozen skill")
     func allFoolSkillsExist() {
         #expect(Set(MPCChapterOneCatalog.skills.map(\.id)) == Set(FoolSkillID.allCases.filter { $0 != .paperDouble }))
-        #expect(MPCChapterOneCatalog.skills.count == 9)
+        #expect(MPCChapterOneCatalog.skills.count == 12)
         #expect(MPCChapterOneCatalog.skills.filter(\.isUltimate).map(\.id) == [.namelessStage])
     }
 
-    @Test("Formal card and combo names match the v2.1 design pack")
-    func v21Names() {
+    @Test("Ten distinct ordinary cards plus separate mask and ultimate")
+    func orderedCardNames() {
         #expect(MPCChapterOneCatalog.skills.map(\.name) == [
-            "错步穿行", "假面谕令", "张冠李戴", "伪证烙印", "双影追猎",
-            "荒谬归结", "反客为主", "后手改写", "无名宣告"
+            "错步穿行", "伪证烙印", "抢拍开幕", "碎镜连弹", "后手改写", "反客为主",
+            "张冠李戴", "双影追猎", "荒谬归结", "延时落款", "假面谕令", "无名宣告"
         ])
-        #expect(MPCChapterOneCatalog.combos.count == 9)
+        #expect(MPCChapterOneCatalog.combos.count == 5)
         #expect(!MPCChapterOneCatalog.combos.contains { $0.id == "K07" })
-        #expect(MPCChapterOneCatalog.combos.first?.name == "假面试探")
-        #expect(MPCChapterOneCatalog.combos.last?.name == "无名开幕")
+        #expect(MPCChapterOneCatalog.combos.first?.name == "抢拍连射")
+        #expect(MPCChapterOneCatalog.combos.last?.name == "疾步扫场")
     }
 
     @Test("Q1–Q5 content is present alongside reusable prototype content")

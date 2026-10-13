@@ -1,0 +1,913 @@
+{
+  "scope": "Production MPCChapterOne runtime, sampled seven 4-card families with each distinct permutation; not exhaustive 5040 orders. Fixed earned gear/talents, no medicine. Reproduce via OrderedChapterBalanceAuditTests; Q1-13 v3 early + Q14-30 v2, both final source.",
+  "missions": [
+    {
+      "mission": 1,
+      "tested": 1,
+      "wins": 1,
+      "losses": 0,
+      "exampleWin": {
+        "hp": 800,
+        "order": [
+          "fool_skill_01"
+        ],
+        "remaining": 0,
+        "ticks": 310
+      },
+      "exampleLoss": null,
+      "familiesWithBothWinningAndLosingOrders": 0,
+      "winningFamilies": 1
+    },
+    {
+      "mission": 2,
+      "tested": 2,
+      "wins": 2,
+      "losses": 0,
+      "exampleWin": {
+        "hp": 283,
+        "order": [
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 618
+      },
+      "exampleLoss": null,
+      "familiesWithBothWinningAndLosingOrders": 0,
+      "winningFamilies": 1
+    },
+    {
+      "mission": 3,
+      "tested": 2,
+      "wins": 2,
+      "losses": 0,
+      "exampleWin": {
+        "hp": 208,
+        "order": [
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 756
+      },
+      "exampleLoss": null,
+      "familiesWithBothWinningAndLosingOrders": 0,
+      "winningFamilies": 1
+    },
+    {
+      "mission": 4,
+      "tested": 24,
+      "wins": 24,
+      "losses": 0,
+      "exampleWin": {
+        "hp": 840,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 621
+      },
+      "exampleLoss": null,
+      "familiesWithBothWinningAndLosingOrders": 0,
+      "winningFamilies": 1
+    },
+    {
+      "mission": 5,
+      "tested": 72,
+      "wins": 33,
+      "losses": 39,
+      "exampleWin": {
+        "hp": 305,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 481
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_12",
+          "fool_skill_11",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 339,
+        "ticks": 563
+      },
+      "familiesWithBothWinningAndLosingOrders": 1,
+      "winningFamilies": 2
+    },
+    {
+      "mission": 6,
+      "tested": 96,
+      "wins": 37,
+      "losses": 59,
+      "exampleWin": {
+        "hp": 157,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 769
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_12",
+          "fool_skill_11",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 177,
+        "ticks": 871
+      },
+      "familiesWithBothWinningAndLosingOrders": 3,
+      "winningFamilies": 3
+    },
+    {
+      "mission": 7,
+      "tested": 144,
+      "wins": 49,
+      "losses": 95,
+      "exampleWin": {
+        "hp": 444,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 560
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_12",
+          "fool_skill_11",
+          "fool_skill_05",
+          "fool_skill_01"
+        ],
+        "remaining": 0,
+        "ticks": 653
+      },
+      "familiesWithBothWinningAndLosingOrders": 4,
+      "winningFamilies": 4
+    },
+    {
+      "mission": 8,
+      "tested": 144,
+      "wins": 52,
+      "losses": 92,
+      "exampleWin": {
+        "hp": 105,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 463
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_12",
+          "fool_skill_11",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 190,
+        "ticks": 597
+      },
+      "familiesWithBothWinningAndLosingOrders": 5,
+      "winningFamilies": 5
+    },
+    {
+      "mission": 9,
+      "tested": 144,
+      "wins": 50,
+      "losses": 94,
+      "exampleWin": {
+        "hp": 394,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 481
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_12",
+          "fool_skill_11",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 426,
+        "ticks": 517
+      },
+      "familiesWithBothWinningAndLosingOrders": 5,
+      "winningFamilies": 5
+    },
+    {
+      "mission": 10,
+      "tested": 144,
+      "wins": 41,
+      "losses": 103,
+      "exampleWin": {
+        "hp": 714,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 485
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_12",
+          "fool_skill_11",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 257,
+        "ticks": 373
+      },
+      "familiesWithBothWinningAndLosingOrders": 6,
+      "winningFamilies": 6
+    },
+    {
+      "mission": 11,
+      "tested": 144,
+      "wins": 59,
+      "losses": 85,
+      "exampleWin": {
+        "hp": 568,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 445
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_11",
+          "fool_skill_05"
+        ],
+        "remaining": 678,
+        "ticks": 526
+      },
+      "familiesWithBothWinningAndLosingOrders": 5,
+      "winningFamilies": 5
+    },
+    {
+      "mission": 12,
+      "tested": 168,
+      "wins": 77,
+      "losses": 91,
+      "exampleWin": {
+        "hp": 24,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 609
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_12",
+          "fool_skill_11",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 617,
+        "ticks": 524
+      },
+      "familiesWithBothWinningAndLosingOrders": 7,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 13,
+      "tested": 168,
+      "wins": 71,
+      "losses": 97,
+      "exampleWin": {
+        "hp": 409,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 574
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_05",
+          "fool_skill_01"
+        ],
+        "remaining": 629,
+        "ticks": 410
+      },
+      "familiesWithBothWinningAndLosingOrders": 6,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 14,
+      "tested": 168,
+      "wins": 68,
+      "losses": 100,
+      "exampleWin": {
+        "hp": 280,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 624
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_05",
+          "fool_skill_12",
+          "fool_skill_01"
+        ],
+        "remaining": 42,
+        "ticks": 652
+      },
+      "familiesWithBothWinningAndLosingOrders": 7,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 15,
+      "tested": 168,
+      "wins": 60,
+      "losses": 108,
+      "exampleWin": {
+        "hp": 441,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_01",
+          "fool_skill_12",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 510
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 526,
+        "ticks": 603
+      },
+      "familiesWithBothWinningAndLosingOrders": 7,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 16,
+      "tested": 168,
+      "wins": 49,
+      "losses": 119,
+      "exampleWin": {
+        "hp": 797,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_04",
+          "fool_skill_07"
+        ],
+        "remaining": 0,
+        "ticks": 251
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 155,
+        "ticks": 393
+      },
+      "familiesWithBothWinningAndLosingOrders": 5,
+      "winningFamilies": 5
+    },
+    {
+      "mission": 17,
+      "tested": 168,
+      "wins": 79,
+      "losses": 89,
+      "exampleWin": {
+        "hp": 861,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 391
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_01",
+          "fool_skill_05",
+          "fool_skill_12"
+        ],
+        "remaining": 250,
+        "ticks": 411
+      },
+      "familiesWithBothWinningAndLosingOrders": 7,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 18,
+      "tested": 168,
+      "wins": 53,
+      "losses": 115,
+      "exampleWin": {
+        "hp": 926,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_04",
+          "fool_skill_07"
+        ],
+        "remaining": 0,
+        "ticks": 445
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 262,
+        "ticks": 727
+      },
+      "familiesWithBothWinningAndLosingOrders": 5,
+      "winningFamilies": 5
+    },
+    {
+      "mission": 19,
+      "tested": 168,
+      "wins": 70,
+      "losses": 98,
+      "exampleWin": {
+        "hp": 729,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 311
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_01",
+          "fool_skill_05",
+          "fool_skill_12"
+        ],
+        "remaining": 139,
+        "ticks": 333
+      },
+      "familiesWithBothWinningAndLosingOrders": 7,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 20,
+      "tested": 168,
+      "wins": 168,
+      "losses": 0,
+      "exampleWin": {
+        "hp": 1095,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 3200,
+        "ticks": 439
+      },
+      "exampleLoss": null,
+      "familiesWithBothWinningAndLosingOrders": 0,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 21,
+      "tested": 168,
+      "wins": 90,
+      "losses": 78,
+      "exampleWin": {
+        "hp": 915,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 390
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_01",
+          "fool_skill_05",
+          "fool_skill_12"
+        ],
+        "remaining": 0,
+        "ticks": 459
+      },
+      "familiesWithBothWinningAndLosingOrders": 7,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 22,
+      "tested": 168,
+      "wins": 84,
+      "losses": 84,
+      "exampleWin": {
+        "hp": 822,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 609
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_01",
+          "fool_skill_12",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 767
+      },
+      "familiesWithBothWinningAndLosingOrders": 7,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 23,
+      "tested": 168,
+      "wins": 89,
+      "losses": 79,
+      "exampleWin": {
+        "hp": 623,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 313
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_05",
+          "fool_skill_01"
+        ],
+        "remaining": 0,
+        "ticks": 391
+      },
+      "familiesWithBothWinningAndLosingOrders": 7,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 24,
+      "tested": 168,
+      "wins": 69,
+      "losses": 99,
+      "exampleWin": {
+        "hp": 790,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 419
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_12",
+          "fool_skill_11",
+          "fool_skill_05",
+          "fool_skill_01"
+        ],
+        "remaining": 204,
+        "ticks": 490
+      },
+      "familiesWithBothWinningAndLosingOrders": 7,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 25,
+      "tested": 168,
+      "wins": 109,
+      "losses": 59,
+      "exampleWin": {
+        "hp": 55,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 520,
+        "ticks": 397
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_01",
+          "fool_skill_12",
+          "fool_skill_11",
+          "fool_skill_05"
+        ],
+        "remaining": 520,
+        "ticks": 559
+      },
+      "familiesWithBothWinningAndLosingOrders": 7,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 26,
+      "tested": 168,
+      "wins": 45,
+      "losses": 123,
+      "exampleWin": {
+        "hp": 49,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_05",
+          "fool_skill_01"
+        ],
+        "remaining": 0,
+        "ticks": 751
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 90,
+        "ticks": 791
+      },
+      "familiesWithBothWinningAndLosingOrders": 7,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 27,
+      "tested": 168,
+      "wins": 71,
+      "losses": 97,
+      "exampleWin": {
+        "hp": 818,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_05",
+          "fool_skill_01"
+        ],
+        "remaining": 0,
+        "ticks": 430
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 0,
+        "ticks": 463
+      },
+      "familiesWithBothWinningAndLosingOrders": 6,
+      "winningFamilies": 6
+    },
+    {
+      "mission": 28,
+      "tested": 168,
+      "wins": 168,
+      "losses": 0,
+      "exampleWin": {
+        "hp": 907,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 5200,
+        "ticks": 1460
+      },
+      "exampleLoss": null,
+      "familiesWithBothWinningAndLosingOrders": 0,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 29,
+      "tested": 168,
+      "wins": 163,
+      "losses": 5,
+      "exampleWin": {
+        "hp": 593,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 5200,
+        "ticks": 1460
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_12",
+          "fool_skill_04",
+          "fool_skill_11",
+          "fool_skill_07"
+        ],
+        "remaining": 5861,
+        "ticks": 1346
+      },
+      "familiesWithBothWinningAndLosingOrders": 2,
+      "winningFamilies": 7
+    },
+    {
+      "mission": 30,
+      "tested": 168,
+      "wins": 48,
+      "losses": 120,
+      "exampleWin": {
+        "hp": 207,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_04",
+          "fool_skill_07"
+        ],
+        "remaining": 0,
+        "ticks": 1017
+      },
+      "exampleLoss": {
+        "hp": 0,
+        "order": [
+          "fool_skill_11",
+          "fool_skill_12",
+          "fool_skill_01",
+          "fool_skill_05"
+        ],
+        "remaining": 3975,
+        "ticks": 1902
+      },
+      "familiesWithBothWinningAndLosingOrders": 6,
+      "winningFamilies": 6
+    }
+  ],
+  "sampledOrdersWinningEveryMissionFrom12": [
+    [
+      "fool_skill_04",
+      "fool_skill_11",
+      "fool_skill_07",
+      "fool_skill_12"
+    ],
+    [
+      "fool_skill_05",
+      "fool_skill_04",
+      "fool_skill_07",
+      "fool_skill_06"
+    ],
+    [
+      "fool_skill_05",
+      "fool_skill_04",
+      "fool_skill_07",
+      "fool_skill_09"
+    ],
+    [
+      "fool_skill_05",
+      "fool_skill_04",
+      "fool_skill_09",
+      "fool_skill_07"
+    ],
+    [
+      "fool_skill_05",
+      "fool_skill_09",
+      "fool_skill_04",
+      "fool_skill_07"
+    ],
+    [
+      "fool_skill_06",
+      "fool_skill_05",
+      "fool_skill_04",
+      "fool_skill_07"
+    ],
+    [
+      "fool_skill_07",
+      "fool_skill_11",
+      "fool_skill_12",
+      "fool_skill_04"
+    ],
+    [
+      "fool_skill_09",
+      "fool_skill_05",
+      "fool_skill_04",
+      "fool_skill_07"
+    ],
+    [
+      "fool_skill_11",
+      "fool_skill_09",
+      "fool_skill_13",
+      "fool_skill_12"
+    ],
+    [
+      "fool_skill_11",
+      "fool_skill_12",
+      "fool_skill_04",
+      "fool_skill_07"
+    ],
+    [
+      "fool_skill_11",
+      "fool_skill_13",
+      "fool_skill_12",
+      "fool_skill_09"
+    ],
+    [
+      "fool_skill_12",
+      "fool_skill_04",
+      "fool_skill_07",
+      "fool_skill_11"
+    ]
+  ],
+  "limitation": "12 sampled orders still win every Q12-30 with the fixed earned loadout. This pass establishes strong order consequences, not a proof that every encounter requires a unique deck."
+}

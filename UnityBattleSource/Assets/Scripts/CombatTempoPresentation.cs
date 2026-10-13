@@ -308,7 +308,7 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         if (hero.ai ? !hero.ai.IsActing : !hero.body.IsActing) PlayHero("fool_skill_02",new[] { "CastMaskFlick", "CastMaskTurn" }[maskVariation++ % 2],.38f);
         // The native manual defence already settled. No player contact receipt.
     }
-    public void HeroCast(string skill) { if ((Enabled || HeroOnly) && hero != null) PlayHero(skill,skill == "basic" ? "Card" : "CastCardFan",skill == "basic" ? .58f : FoolSkillChoreography.ExpectedContact(skill)); }
+    public void HeroCast(string skill, float? contact = null) { if ((Enabled || HeroOnly) && hero != null) PlayHero(skill,skill == "basic" ? "Card" : "CastCardFan",contact ?? (skill == "basic" ? .58f : FoolSkillChoreography.ExpectedContact(skill))); }
     public bool EnemyHit(EnemyHandle h, string skill) {
         if (!(Enabled || HoundBodyOnly) || !enemies.TryGetValue(h.BattleEnemyId, out var e)) return false;
         e.body.ConfirmedHit(skill == "fool_skill_07" || skill == "fool_skill_10"); return true;

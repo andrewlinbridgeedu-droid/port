@@ -21,7 +21,7 @@ public enum MPCChurchTowerVerificationRunner {
         let q = mission(for: floor)
         let cards: [FoolSkillID]
         if route == .unprepared { cards = [] }
-        else if q < 8 { cards = [.sidestepStrike] }
+        else if q < 8 { cards = [.stolenTempo, .sidestepStrike, .backstageChange, .mirrorBarrage] }
         else if q < 11 { cards = [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .sidestepStrike] }
         else if route == .counter { cards = [.turnTheTables, .fabricatedEvidence, .identityDisplacement, .absurdFinale] }
         else { cards = [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .absurdFinale] }

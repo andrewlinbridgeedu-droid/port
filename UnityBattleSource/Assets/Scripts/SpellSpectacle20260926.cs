@@ -140,7 +140,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         if (!director || targets == null || targets.Count == 0) return;
         var profile = PlayerProfile(skillID);
         // 后手改写 works on the hero itself: its landing is on the hero, not the enemy.
-        if (profile.form == Form.Rewrite && caster != null) { targets = new List<Func<Vector3>> { caster }; targetSeeds = new List<int> { 9 }; }
+        if ((profile.form == Form.Rewrite || profile.id == "tempo") && caster != null) { targets = new List<Func<Vector3>> { caster }; targetSeeds = new List<int> { 9 }; }
         var cue = director.Register("player", profile, profile.style, caster, targets, targetSeeds);
         if (cue == null) return;
         cue.player = true;
@@ -149,6 +149,19 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
 
     /// True when the hero card has its own travelling form; the tempo samples then
     /// show only this layer for it, without the older full-stage theatre bodies.
+    // A delayed contract may explode during another cast. It never replaces that cast's cue.
+    public static void OrderedImpact(Component battle, string skillID, Func<Vector3> caster, IList<Func<Vector3>> targets)
+    {
+        var director = Ensure(battle);
+        if (!director || targets == null || targets.Count == 0 || Suppressed) return;
+        var profile = PlayerProfile(skillID);
+        var cue = director.Register("ordered-impact", profile, profile.style, caster, targets, null);
+        if (cue == null) return;
+        cue.player = true;
+        director.Burst(cue);
+        director.pending.Remove("ordered-impact");
+    }
+
     public static bool HasForm(string skillID) => PlayerProfile(skillID).form != Form.Bloom;
 
     /// Light coming off the hero while it casts (2026-10-03, user, with the reference
@@ -10989,6 +11002,10 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         ["defend"] = P("defend", Family.Rising, Family.Rising, Style.Support, new[] { "#0b5a8a", "#39c6ff", "#8ae0ff", "#ffd66b", "#ffffff" }, "#fff0b0", "#ffffff", "#2a9fe0", "#e6f8ff", Mote.Wisp, Mote.Spark, Matter.Water, Accent.None, false, 1f, 0.04f),
         ["declaration"] = P("declaration", Family.Rising, Family.Rising, Style.Heavy, new[] { "#2b1466", "#6a3cff", "#c07aff", "#ffcf6a", "#fff4dc" }, "#ffd76a", "#fffaf0", "#6f3cff", "#fff0cc", Mote.Card, Mote.Shard, Matter.Filigree, Accent.None, false, 1f, 0f, Form.Proclaim),
 
+        ["tempo"] = P("tempo", Family.Fan, Family.Rising, Style.Support, new[] { "#42220a", "#b76b0e", "#ffb52f", "#ffe190", "#fff2cb" }, "#ffcb59", "#fff1c2", "#a76a13", "#ffe7a0", Mote.Glint, Mote.Spark, Matter.Filigree, Accent.ClockHands, false, .75f, 0f),
+        ["barrage"] = P("barrage", Family.MirrorCut, Family.Fan, Style.Strike, new[] { "#103943", "#287484", "#91dce7", "#def8ff", "#ffffff" }, "#aef4ff", "#ffffff", "#448b9b", "#defbff", Mote.Shard, Mote.Glint, Matter.Crystal, Accent.Needles, false, .6f, 0f),
+        ["signature"] = P("signature", Family.Falling, Family.Surge, Style.Heavy, new[] { "#17151b", "#47414c", "#c9bc9b", "#f3e6c6", "#ffb760" }, "#e4c99b", "#fff0cb", "#5f4f48", "#ffc074", Mote.Ink, Mote.Ember, Matter.Ink, Accent.Cracks, false, .8f, 0f, Form.Flick),
+
         // Mainline enemies.
         ["guard"] = P("guard", Family.Twin, Family.Twin, Style.Strike, new[] { "#4a0610", "#c01a24", "#ff5a1e", "#ffc23a", "#fff0c0" }, "#ffcf6a", "#fff1d6", "#d8341c", "#ffd9a8", Mote.Spark, Mote.Ember, Matter.Flame, Accent.FlyingSwords),
         ["archivist"] = P("archivist", Family.Falling, Family.Twin, Style.Strike, new[] { "#081a3a", "#1a4fb8", "#2a9aff", "#ffb02a", "#fff0c0" }, "#ffd27a", "#f4fbff", "#2f86e0", "#dff4ff", Mote.Spark, Mote.Shard, Matter.Electric, Accent.Lightning),
@@ -11064,6 +11081,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             "fool_skill_08" => "reversal",
             "fool_skill_09" => "ward",
             "fool_skill_10" => "declaration",
+            "fool_skill_11" => "tempo",
+            "fool_skill_12" => "barrage",
+            "fool_skill_13" => "signature",
             _ => "paper",
         };
         return Profiles[key];
