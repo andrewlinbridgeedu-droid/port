@@ -19,14 +19,27 @@
 
 ## 构建与设备
 
-工作树 `/Volumes/andrew's SSD/Mistport-worktrees/main-9cab331-codex-01a12f14`，分支 `codex/playtest-ui-20261012`，上轮提交 `26170ed`。
+工作树 `/Volumes/andrew's SSD/Mistport-worktrees/main-9cab331-codex-01a12f14`，分支 `codex/playtest-ui-20261012`。本轮表现及导出校验提交 `06d5463da290619b586f813f359b909a984d2aa4` 已 push。
 
 实时手机版本 169.80；选择下一版 169.81。归档 `/Volumes/andrew's SSD/Mistport-archives/releases/Mistport-169.81-9cab331-hero-motion-20261012-codex-01a12f14`。用 `scripts/build_hero_v4.sh device 169.81`：Unity 导出 → 新鲜度检查 → 宿主构建。最新用户简化规则后的最终管线为 `pipeline-final.log`；此前中间包未安装。DerivedData 和日志全部在 SSD，上一包保持独立。
 
-最终 `pipeline-final.log` 确认新鲜度及宿主构建成功，169.81 深层签名检查通过。包尚未安装，手机仍为 169.80；镜像重新提示 iPhone 使用中，等待用户锁屏后进行最终安装和录像核验。连接恢复后的安装前备份已取得 266 个 Preferences 文件，安装前需确认期间未重新开游戏，否则再取最新快照。
+最终 `pipeline-final.log` 确认新鲜度及宿主构建成功，169.81 深层签名检查通过。用户锁屏后重新取得最新 Preferences，169.81 已安装；实时 `devicectl device info apps` 的 `bundleVersion` 为 169.81（`version` 是营销版本 0.1.0）。安装前后 266 文件逐项 SHA 核对完全一致。最后一条初次设备查询因 StreamingAction 连接中断失败，恢复镜像后复查成功，证据为 `apps-after-install-retry.json` 和 `installed-version-verification.json`。
+
+## 169.81 真机演练
+
+静音参数为 `-MistportCityMute YES --developer-tools`。隔离预览追加 `--player-test-audit --verify-p1-ui`，从合法解锁状态创建内存战斗，不修改玩家或盲玩进度。
+
+- Q5 单卡试演：错步与普攻实际轮换五套动作；完整运行日志有 25 次出手、1 次非致死受击，发生于指令弹指期间。
+- Q9 双卡试演：Q1–Q8 奖励在预览内存中解锁两张牌，选择错步与张冠李戴。完整日志有 19 次出手、五套动作均出现，相邻不重复；4 次非致死伤害均对应 `AI_HERO_HIT`，其中 3 次在出招中触发。最终致死伤害走原有倒地表现。双卡连续出手和原有技能命中已补真机记录，未领取正式奖励。
+- `device-evidence/q5-motion-sampled-mirror.mp4` 为 137 帧约 14 秒镜像采样；`q9-two-card-sampled-mirror.mp4` 为 112 帧约 22 秒镜像采样。帧文件与时间 JSON 保留。复看截图可见不同手势、侧身、受击及血量变化；录像采样间隔不能用来精确量出 0.1 秒，停帧时长由实际身体自动验证及真机触发日志支持，尚未取得用户视觉认可。
+- 对应 `q5-motion-runtime-verification.json`、`q9-motion-runtime-verification.json` 和 Q9 敌我接触记录均在归档。真机第九关证明已解锁双卡能连续播放；新档第五关仍只有一张普通卡，不宣称第五关天然已有两张。
+
+演练结束后已用 `--player-test` 静音恢复真实档至标题，截图为 `device-evidence/real-player-title-after-resume.png`。
 
 ## 测试范围和存档
 
 169.80 已安装，安装前后 266 个 Preferences 完全相同。第五关的隔离演练采用新档当时合法的一张错步卡和自动普攻；接触日志确认出招衔接已缩短。该演练后的 266 文件中仅隔离遥测 plist 有变化，真实档和盲玩档未变。双卡的 Q3／Q4／Q5 同节奏结论来自明确配置双卡的规则夹具，不能写成新档第五关自然已解锁第二张卡。
+
+169.81 安装与隔离演练期间，真实档和盲玩档均保持逐字节一致；演练后 266 文件仅 `mistport.p1-ui-verification.plist` 变化，见 `motion-test-preferences-verification.json`。恢复真实档后，正常前台启动触发新一天日账：新增 739902 的码头铺位／汤棚付款 12 铜，余额 330→318，并刷新满体力的结算时间；已有付款保留。遗落物数组顺序和 JSON 序列化顺序有变化，语义无增删。`real-resume-semantic-verification.json` 严格确认除此之外无变化，主线／物品／战斗权益不变，盲玩档仍逐字节一致。没有用备份恢复或覆盖真实档。所有三阶段快照及 SHA 差异报告保留，不能把最终启动后写成所有文件完全相同。
 
 盲玩仍按用户要求暂停：主线 Q12、B01 三证据、塔 14 已过。演练不操作真实进度，也不推进盲玩档。每轮安装前重新获取手机最新 Preferences，不能恢复旧档覆盖玩家亲测进度。
