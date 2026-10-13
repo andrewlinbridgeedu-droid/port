@@ -1,0 +1,1151 @@
+{
+  "candidateOnly": true,
+  "version": "2026-10-12",
+  "sourceModelSHA256": "4f7d9e9aff225df7defccd7427de53d4796e43b5a5958c7ac000d3084aceeb36",
+  "orders": 5040,
+  "profiles": [
+    {
+      "profile": "duel",
+      "total": 5040,
+      "wins": 59,
+      "winRate": 0.011706349206349206,
+      "viableDecks": 12,
+      "orderSensitiveDecks": 7,
+      "robustDecks": 6,
+      "losingOrderFractionAmongViableDecks": 0.7951388888888888,
+      "winCounts": [
+        1,
+        2,
+        2,
+        2,
+        3,
+        3,
+        4,
+        7,
+        7,
+        8,
+        9,
+        11
+      ],
+      "best": [
+        {
+          "order": [
+            "evidence",
+            "convert",
+            "mirror",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 26600,
+          "heroHP": 252,
+          "damage": 4100,
+          "remaining": 0,
+          "totalHits": 20,
+          "conversions": 4,
+          "empoweredFinales": 4,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "evidence": 72,
+            "convert": 388,
+            "mirror": 1392,
+            "finale": 2164,
+            "basic": 84
+          }
+        },
+        {
+          "order": [
+            "convert",
+            "mirror",
+            "finale",
+            "evidence"
+          ],
+          "cleared": true,
+          "ms": 30500,
+          "heroHP": 184,
+          "damage": 4100,
+          "remaining": 0,
+          "totalHits": 23,
+          "conversions": 4,
+          "empoweredFinales": 3,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "convert": 414,
+            "mirror": 1340,
+            "finale": 2162,
+            "evidence": 72,
+            "basic": 112
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "fuse",
+            "step",
+            "barrage"
+          ],
+          "cleared": true,
+          "ms": 31450,
+          "heroHP": 116,
+          "damage": 4100,
+          "remaining": 0,
+          "totalHits": 45,
+          "conversions": 0,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 30,
+          "explosions": 5,
+          "fusesHit": 35,
+          "damageByCard": {
+            "haste": 45,
+            "fuse": 2211,
+            "step": 660,
+            "barrage": 960,
+            "basic": 224
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "fuse",
+            "barrage",
+            "step"
+          ],
+          "cleared": true,
+          "ms": 31450,
+          "heroHP": 116,
+          "damage": 4100,
+          "remaining": 0,
+          "totalHits": 45,
+          "conversions": 0,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 30,
+          "explosions": 5,
+          "fusesHit": 35,
+          "damageByCard": {
+            "haste": 45,
+            "fuse": 2211,
+            "barrage": 960,
+            "step": 660,
+            "basic": 224
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "fuse",
+            "barrage",
+            "convert"
+          ],
+          "cleared": true,
+          "ms": 31450,
+          "heroHP": 116,
+          "damage": 4100,
+          "remaining": 0,
+          "totalHits": 45,
+          "conversions": 5,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 30,
+          "explosions": 5,
+          "fusesHit": 35,
+          "damageByCard": {
+            "haste": 45,
+            "fuse": 2362,
+            "barrage": 960,
+            "convert": 485,
+            "basic": 248
+          }
+        }
+      ],
+      "highestDamage": [
+        {
+          "order": [
+            "evidence",
+            "convert",
+            "mirror",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 26600,
+          "heroHP": 252,
+          "damage": 4100,
+          "remaining": 0,
+          "totalHits": 20,
+          "conversions": 4,
+          "empoweredFinales": 4,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "evidence": 72,
+            "convert": 388,
+            "mirror": 1392,
+            "finale": 2164,
+            "basic": 84
+          }
+        }
+      ]
+    },
+    {
+      "profile": "armor",
+      "total": 5040,
+      "wins": 25,
+      "winRate": 0.00496031746031746,
+      "viableDecks": 11,
+      "orderSensitiveDecks": 11,
+      "robustDecks": 7,
+      "losingOrderFractionAmongViableDecks": 0.9053030303030303,
+      "winCounts": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        3,
+        3,
+        5,
+        5
+      ],
+      "best": [
+        {
+          "order": [
+            "haste",
+            "counter",
+            "mirror",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 28900,
+          "heroHP": 398,
+          "damage": 3100,
+          "remaining": 0,
+          "totalHits": 14,
+          "conversions": 0,
+          "empoweredFinales": 4,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "haste": 0,
+            "counter": 651,
+            "mirror": 912,
+            "finale": 1446,
+            "basic": 91
+          }
+        },
+        {
+          "order": [
+            "counter",
+            "haste",
+            "mirror",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 35650,
+          "heroHP": 300,
+          "damage": 3100,
+          "remaining": 0,
+          "totalHits": 21,
+          "conversions": 0,
+          "empoweredFinales": 5,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "counter": 764,
+            "haste": 32,
+            "mirror": 912,
+            "finale": 1242,
+            "basic": 150
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "fuse",
+            "counter",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 36300,
+          "heroHP": 230,
+          "damage": 3100,
+          "remaining": 0,
+          "totalHits": 10,
+          "conversions": 0,
+          "empoweredFinales": 5,
+          "acceleratedPulses": 0,
+          "explosions": 5,
+          "fusesHit": 9,
+          "damageByCard": {
+            "haste": 0,
+            "fuse": 320,
+            "counter": 664,
+            "finale": 2008,
+            "basic": 108
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "counter",
+            "finale",
+            "step"
+          ],
+          "cleared": true,
+          "ms": 37000,
+          "heroHP": 230,
+          "damage": 3100,
+          "remaining": 0,
+          "totalHits": 12,
+          "conversions": 0,
+          "empoweredFinales": 6,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "haste": 0,
+            "counter": 792,
+            "finale": 2000,
+            "step": 254,
+            "basic": 54
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "counter",
+            "fuse",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 37400,
+          "heroHP": 230,
+          "damage": 3100,
+          "remaining": 0,
+          "totalHits": 15,
+          "conversions": 0,
+          "empoweredFinales": 6,
+          "acceleratedPulses": 0,
+          "explosions": 5,
+          "fusesHit": 3,
+          "damageByCard": {
+            "haste": 0,
+            "counter": 792,
+            "fuse": 186,
+            "finale": 2053,
+            "basic": 69
+          }
+        }
+      ],
+      "highestDamage": [
+        {
+          "order": [
+            "haste",
+            "counter",
+            "mirror",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 28900,
+          "heroHP": 398,
+          "damage": 3100,
+          "remaining": 0,
+          "totalHits": 14,
+          "conversions": 0,
+          "empoweredFinales": 4,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "haste": 0,
+            "counter": 651,
+            "mirror": 912,
+            "finale": 1446,
+            "basic": 91
+          }
+        }
+      ]
+    },
+    {
+      "profile": "swarm",
+      "total": 5040,
+      "wins": 21,
+      "winRate": 0.004166666666666667,
+      "viableDecks": 5,
+      "orderSensitiveDecks": 3,
+      "robustDecks": 3,
+      "losingOrderFractionAmongViableDecks": 0.825,
+      "winCounts": [
+        1,
+        2,
+        4,
+        7,
+        7
+      ],
+      "best": [
+        {
+          "order": [
+            "haste",
+            "fuse",
+            "step",
+            "barrage"
+          ],
+          "cleared": true,
+          "ms": 30475,
+          "heroHP": 225,
+          "damage": 5400,
+          "remaining": 0,
+          "totalHits": 48,
+          "conversions": 0,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 27,
+          "explosions": 3,
+          "fusesHit": 21,
+          "damageByCard": {
+            "haste": 45,
+            "fuse": 2821,
+            "step": 1434,
+            "barrage": 875,
+            "basic": 225
+          }
+        },
+        {
+          "order": [
+            "fuse",
+            "haste",
+            "barrage",
+            "step"
+          ],
+          "cleared": true,
+          "ms": 31150,
+          "heroHP": 101,
+          "damage": 5400,
+          "remaining": 0,
+          "totalHits": 49,
+          "conversions": 0,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 29,
+          "explosions": 4,
+          "fusesHit": 24,
+          "damageByCard": {
+            "fuse": 2845,
+            "haste": 45,
+            "barrage": 925,
+            "step": 1380,
+            "basic": 205
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "fuse",
+            "barrage",
+            "step"
+          ],
+          "cleared": true,
+          "ms": 31350,
+          "heroHP": 194,
+          "damage": 5400,
+          "remaining": 0,
+          "totalHits": 50,
+          "conversions": 0,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 30,
+          "explosions": 3,
+          "fusesHit": 21,
+          "damageByCard": {
+            "haste": 45,
+            "fuse": 2821,
+            "barrage": 978,
+            "step": 1331,
+            "basic": 225
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "fuse",
+            "barrage",
+            "convert"
+          ],
+          "cleared": true,
+          "ms": 31450,
+          "heroHP": 132,
+          "damage": 5400,
+          "remaining": 0,
+          "totalHits": 45,
+          "conversions": 5,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 30,
+          "explosions": 5,
+          "fusesHit": 35,
+          "damageByCard": {
+            "haste": 45,
+            "fuse": 3646,
+            "barrage": 990,
+            "convert": 505,
+            "basic": 214
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "step",
+            "fuse",
+            "barrage"
+          ],
+          "cleared": true,
+          "ms": 32050,
+          "heroHP": 132,
+          "damage": 5400,
+          "remaining": 0,
+          "totalHits": 52,
+          "conversions": 0,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 30,
+          "explosions": 4,
+          "fusesHit": 24,
+          "damageByCard": {
+            "haste": 45,
+            "step": 1603,
+            "fuse": 2517,
+            "barrage": 974,
+            "basic": 261
+          }
+        }
+      ],
+      "highestDamage": [
+        {
+          "order": [
+            "haste",
+            "fuse",
+            "step",
+            "barrage"
+          ],
+          "cleared": true,
+          "ms": 30475,
+          "heroHP": 225,
+          "damage": 5400,
+          "remaining": 0,
+          "totalHits": 48,
+          "conversions": 0,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 27,
+          "explosions": 3,
+          "fusesHit": 21,
+          "damageByCard": {
+            "haste": 45,
+            "fuse": 2821,
+            "step": 1434,
+            "barrage": 875,
+            "basic": 225
+          }
+        }
+      ]
+    },
+    {
+      "profile": "poison",
+      "total": 5040,
+      "wins": 23,
+      "winRate": 0.004563492063492064,
+      "viableDecks": 5,
+      "orderSensitiveDecks": 3,
+      "robustDecks": 3,
+      "losingOrderFractionAmongViableDecks": 0.8083333333333333,
+      "winCounts": [
+        1,
+        1,
+        2,
+        7,
+        12
+      ],
+      "best": [
+        {
+          "order": [
+            "evidence",
+            "convert",
+            "mirror",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 19600,
+          "heroHP": 344,
+          "damage": 3550,
+          "remaining": 0,
+          "totalHits": 15,
+          "conversions": 3,
+          "empoweredFinales": 3,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "evidence": 54,
+            "convert": 291,
+            "mirror": 1044,
+            "finale": 2105,
+            "basic": 56
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "fuse",
+            "barrage",
+            "convert"
+          ],
+          "cleared": true,
+          "ms": 24600,
+          "heroHP": 80,
+          "damage": 3550,
+          "remaining": 0,
+          "totalHits": 36,
+          "conversions": 4,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 24,
+          "explosions": 4,
+          "fusesHit": 28,
+          "damageByCard": {
+            "haste": 36,
+            "fuse": 2156,
+            "barrage": 768,
+            "convert": 388,
+            "basic": 202
+          }
+        },
+        {
+          "order": [
+            "convert",
+            "mirror",
+            "finale",
+            "evidence"
+          ],
+          "cleared": true,
+          "ms": 25700,
+          "heroHP": 40,
+          "damage": 3550,
+          "remaining": 0,
+          "totalHits": 19,
+          "conversions": 3,
+          "empoweredFinales": 3,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "convert": 317,
+            "mirror": 1114,
+            "finale": 1981,
+            "evidence": 54,
+            "basic": 84
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "fuse",
+            "rewrite",
+            "barrage"
+          ],
+          "cleared": true,
+          "ms": 31450,
+          "heroHP": 658,
+          "damage": 3550,
+          "remaining": 0,
+          "totalHits": 45,
+          "conversions": 0,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 30,
+          "explosions": 5,
+          "fusesHit": 35,
+          "damageByCard": {
+            "haste": 45,
+            "fuse": 2203,
+            "rewrite": 90,
+            "barrage": 960,
+            "basic": 252
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "fuse",
+            "barrage",
+            "rewrite"
+          ],
+          "cleared": true,
+          "ms": 31450,
+          "heroHP": 604,
+          "damage": 3550,
+          "remaining": 0,
+          "totalHits": 45,
+          "conversions": 0,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 30,
+          "explosions": 5,
+          "fusesHit": 35,
+          "damageByCard": {
+            "haste": 45,
+            "fuse": 2203,
+            "barrage": 960,
+            "rewrite": 90,
+            "basic": 252
+          }
+        }
+      ],
+      "highestDamage": [
+        {
+          "order": [
+            "evidence",
+            "convert",
+            "mirror",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 19600,
+          "heroHP": 344,
+          "damage": 3550,
+          "remaining": 0,
+          "totalHits": 15,
+          "conversions": 3,
+          "empoweredFinales": 3,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "evidence": 54,
+            "convert": 291,
+            "mirror": 1044,
+            "finale": 2105,
+            "basic": 56
+          }
+        }
+      ]
+    },
+    {
+      "profile": "heavy",
+      "total": 5040,
+      "wins": 51,
+      "winRate": 0.01011904761904762,
+      "viableDecks": 8,
+      "orderSensitiveDecks": 4,
+      "robustDecks": 7,
+      "losingOrderFractionAmongViableDecks": 0.734375,
+      "winCounts": [
+        1,
+        1,
+        2,
+        6,
+        8,
+        9,
+        12,
+        12
+      ],
+      "best": [
+        {
+          "order": [
+            "evidence",
+            "convert",
+            "mirror",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 19600,
+          "heroHP": 140,
+          "damage": 3200,
+          "remaining": 0,
+          "totalHits": 15,
+          "conversions": 3,
+          "empoweredFinales": 3,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "evidence": 48,
+            "convert": 264,
+            "mirror": 1014,
+            "finale": 1822,
+            "basic": 52
+          }
+        },
+        {
+          "order": [
+            "evidence",
+            "convert",
+            "counter",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 29850,
+          "heroHP": 97,
+          "damage": 3200,
+          "remaining": 0,
+          "totalHits": 18,
+          "conversions": 5,
+          "empoweredFinales": 4,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "evidence": 80,
+            "convert": 412,
+            "counter": 132,
+            "finale": 2456,
+            "basic": 120
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "fuse",
+            "rewrite",
+            "barrage"
+          ],
+          "cleared": true,
+          "ms": 31450,
+          "heroHP": 785,
+          "damage": 3200,
+          "remaining": 0,
+          "totalHits": 45,
+          "conversions": 0,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 30,
+          "explosions": 5,
+          "fusesHit": 35,
+          "damageByCard": {
+            "haste": 40,
+            "fuse": 1976,
+            "rewrite": 80,
+            "barrage": 870,
+            "basic": 234
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "fuse",
+            "barrage",
+            "rewrite"
+          ],
+          "cleared": true,
+          "ms": 31450,
+          "heroHP": 570,
+          "damage": 3200,
+          "remaining": 0,
+          "totalHits": 45,
+          "conversions": 0,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 30,
+          "explosions": 5,
+          "fusesHit": 35,
+          "damageByCard": {
+            "haste": 40,
+            "fuse": 1976,
+            "barrage": 870,
+            "rewrite": 80,
+            "basic": 234
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "fuse",
+            "counter",
+            "barrage"
+          ],
+          "cleared": true,
+          "ms": 31450,
+          "heroHP": 355,
+          "damage": 3200,
+          "remaining": 0,
+          "totalHits": 45,
+          "conversions": 0,
+          "empoweredFinales": 0,
+          "acceleratedPulses": 30,
+          "explosions": 5,
+          "fusesHit": 35,
+          "damageByCard": {
+            "haste": 40,
+            "fuse": 1942,
+            "counter": 140,
+            "barrage": 870,
+            "basic": 208
+          }
+        }
+      ],
+      "highestDamage": [
+        {
+          "order": [
+            "evidence",
+            "convert",
+            "mirror",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 19600,
+          "heroHP": 140,
+          "damage": 3200,
+          "remaining": 0,
+          "totalHits": 15,
+          "conversions": 3,
+          "empoweredFinales": 3,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "evidence": 48,
+            "convert": 264,
+            "mirror": 1014,
+            "finale": 1822,
+            "basic": 52
+          }
+        }
+      ]
+    },
+    {
+      "profile": "mixed",
+      "total": 5040,
+      "wins": 45,
+      "winRate": 0.008928571428571428,
+      "viableDecks": 17,
+      "orderSensitiveDecks": 17,
+      "robustDecks": 6,
+      "losingOrderFractionAmongViableDecks": 0.8897058823529411,
+      "winCounts": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        3,
+        3,
+        4,
+        4,
+        4,
+        4,
+        6,
+        6
+      ],
+      "best": [
+        {
+          "order": [
+            "haste",
+            "counter",
+            "mirror",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 30775,
+          "heroHP": 510,
+          "damage": 4100,
+          "remaining": 0,
+          "totalHits": 18,
+          "conversions": 0,
+          "empoweredFinales": 5,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "haste": 8,
+            "counter": 1045,
+            "mirror": 1169,
+            "finale": 1764,
+            "basic": 114
+          }
+        },
+        {
+          "order": [
+            "counter",
+            "haste",
+            "mirror",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 31300,
+          "heroHP": 491,
+          "damage": 4100,
+          "remaining": 0,
+          "totalHits": 20,
+          "conversions": 0,
+          "empoweredFinales": 5,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "counter": 1045,
+            "haste": 36,
+            "mirror": 1002,
+            "finale": 1903,
+            "basic": 114
+          }
+        },
+        {
+          "order": [
+            "fuse",
+            "counter",
+            "mirror",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 33200,
+          "heroHP": 463,
+          "damage": 4100,
+          "remaining": 0,
+          "totalHits": 16,
+          "conversions": 0,
+          "empoweredFinales": 4,
+          "acceleratedPulses": 0,
+          "explosions": 4,
+          "fusesHit": 9,
+          "damageByCard": {
+            "fuse": 482,
+            "counter": 1045,
+            "mirror": 1133,
+            "finale": 1392,
+            "basic": 48
+          }
+        },
+        {
+          "order": [
+            "rewrite",
+            "counter",
+            "mirror",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 33350,
+          "heroHP": 671,
+          "damage": 4100,
+          "remaining": 0,
+          "totalHits": 19,
+          "conversions": 0,
+          "empoweredFinales": 5,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "rewrite": 0,
+            "counter": 1045,
+            "mirror": 1503,
+            "finale": 1504,
+            "basic": 48
+          }
+        },
+        {
+          "order": [
+            "haste",
+            "counter",
+            "step",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 35900,
+          "heroHP": 416,
+          "damage": 4100,
+          "remaining": 0,
+          "totalHits": 16,
+          "conversions": 0,
+          "empoweredFinales": 5,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "haste": 8,
+            "counter": 1190,
+            "step": 556,
+            "finale": 2208,
+            "basic": 138
+          }
+        }
+      ],
+      "highestDamage": [
+        {
+          "order": [
+            "haste",
+            "counter",
+            "mirror",
+            "finale"
+          ],
+          "cleared": true,
+          "ms": 30775,
+          "heroHP": 510,
+          "damage": 4100,
+          "remaining": 0,
+          "totalHits": 18,
+          "conversions": 0,
+          "empoweredFinales": 5,
+          "acceleratedPulses": 0,
+          "explosions": 0,
+          "fusesHit": 0,
+          "damageByCard": {
+            "haste": 8,
+            "counter": 1045,
+            "mirror": 1169,
+            "finale": 1764,
+            "basic": 114
+          }
+        }
+      ]
+    }
+  ],
+  "maxProfileCoverage": 4,
+  "cardUsage": [
+    {
+      "id": "step",
+      "name": "错步穿行",
+      "winningOrders": 12
+    },
+    {
+      "id": "evidence",
+      "name": "伪证烙印",
+      "winningOrders": 37
+    },
+    {
+      "id": "haste",
+      "name": "抢拍开幕",
+      "winningOrders": 62
+    },
+    {
+      "id": "barrage",
+      "name": "碎镜连弹",
+      "winningOrders": 45
+    },
+    {
+      "id": "rewrite",
+      "name": "后手改写",
+      "winningOrders": 32
+    },
+    {
+      "id": "counter",
+      "name": "反客为主",
+      "winningOrders": 80
+    },
+    {
+      "id": "convert",
+      "name": "张冠李戴",
+      "winningOrders": 52
+    },
+    {
+      "id": "mirror",
+      "name": "双影追猎",
+      "winningOrders": 27
+    },
+    {
+      "id": "finale",
+      "name": "荒谬归结",
+      "winningOrders": 92
+    },
+    {
+      "id": "fuse",
+      "name": "延时落款",
+      "winningOrders": 41
+    }
+  ]
+}
