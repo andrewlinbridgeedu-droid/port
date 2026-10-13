@@ -71,3 +71,12 @@
 设备再次实查169.85，加一为169.86。归档 `Mistport-169.86-ordered-layout-20261012-codex-01a12f14`；Derived在SSD做APFS写时复制，保留169.85构建目录，继续完整标准脚本导出→新鲜度→宿主。标准构建与codesign深度校验通过，169.86安装成功；安装前后271个Preferences文件逐文件SHA-256完全一致（`preferences-install-comparison.json`）。最终隔离重试核验首次启动被iOS拒绝，返回Locked；用户解锁后于22:56成功静音启动，再锁屏恢复镜像。22:58实机完成四牌开打→跳过结算→重试；红边消失、血条回满、倒计时归16秒且停在战前。证据 `device-qa/16986-q12-skip-settlement.png` 与 `device-qa/16986-q12-clean-retry-settled.png`。
 
 测试结束已终止隔离进程。271个既有Preferences文件全部不变，仅新添2个daily-pacing临时验证文件（273总数），真实档与盲玩档SHA-256都不变，报告 `preferences-qa-comparison.json`。代码提交 `b9015a4` 已推送到 `origin/codex/playtest-ui-20261012`；本次补充交接提交只记录最终设备证据，不改构建源码。
+
+
+## 用户再次要求从头试玩（2026-10-12 23:52，覆盖此前存档进度描述）
+
+用户明确要求“你把进度重置到最初，我试玩”。设备实查仍为169.86，当前无游戏进程；完整备份273个Preferences后，仅真实试玩档`mistport.player-test-01-15.plist`写成开局，保留开发工具开关。旧档当时完成Q1–Q4。写入后读回一致；只该文件变化，其他272文件与盲玩档逐字节不变。
+
+备份与回执目录：`Mistport-169.86-ordered-layout-20261012-codex-01a12f14/user-reset-to-start-20261012-235234-codex-01a12f14`。`reset-result.json`记录逐文件核对；`preferences-before/mistport.player-test-01-15.plist`可恢复旧档，未经用户要求不得恢复。
+
+随后使用`--player-test -MistportCityMute YES --developer-tools`静音启动成功，无隔离预览或持续重置参数。启动后读回：已完成主线为空、路径未选、168铜、日历origin=newSave（第1天），见`fresh-launch-state.json`。当前是用户真实新档，留给用户亲自试玩；盲玩仍暂停，后续代理不得直接操作此档。此次只重置存档并记录，不修改App代码、不重构建。
