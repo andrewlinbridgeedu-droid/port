@@ -582,7 +582,8 @@ private enum CombatFloatingNumberKind {
         case .damage: .white
         case .critical: Color(red: 1, green: 0.83, blue: 0.3)
         case .parried: Color(white: 0.75)
-        case .bonus, .status: Color(red: 0.8, green: 0.57, blue: 1)
+        case .bonus: Color(red: 1, green: 0.87, blue: 0.42)
+        case .status: Color(red: 0.8, green: 0.57, blue: 1)
         case .defenseUp:
             Color(red: 0.74, green: 0.56, blue: 1.0)
         }
@@ -591,9 +592,10 @@ private enum CombatFloatingNumberKind {
     var verticalOffset: CGFloat {
         switch self {
         case .healing: -30
-        case .damage, .playerDamage, .parried, .critical, .bonus: 26
+        case .damage, .critical, .bonus: -36
+        case .playerDamage, .parried: 26
         case .defenseUp: -56
-        case .status: -40
+        case .status: -64
         }
     }
 
@@ -619,6 +621,9 @@ private struct CombatFloatingNumber: Identifiable {
     let kind: CombatFloatingNumberKind
     var sourceLabel: String? = nil
     var isFloating = false
+    /// Freeze the impact point before a kill removes/replaces the target's formation.
+    var normalizedAnchor: CGPoint? = nil
+    var lane = 0
 }
 
 private struct BattleDefeatSigil: View {
@@ -974,6 +979,8 @@ struct ChapterOneEncounterTestView: View {
     @State private var lastChurchBindingsPresentation: String?
     @State private var lastChurchEscortedPresentation: String?
     @State private var combatFloatingNumbers: [CombatFloatingNumber] = []
+    @State private var healthOverlaySize: CGSize = .zero
+    @State private var musicOwnerID = UUID()
     @State private var isResolvingEnemyTurn = false
     @State private var showsTutorial: Bool
     @State private var isFirstCardTutorial = false
@@ -1440,7 +1447,7 @@ struct ChapterOneEncounterTestView: View {
         // encounter changes. Key the setup task to the encounter so Q3 always
         // reconfigures Unity from the guard-only model to guard + clock core.
         .task(id: session.encounter.id) {
-            HomeMusicController.shared.setBattleActive(combatIsActive && session.outcome == .inProgress, encounterID: session.encounter.id)
+            synchronizeBattleMusic()
             visualScene.onEnemyTapped = { targetID in
                 handleEnemyTap(targetID)
             }
@@ -1541,7 +1548,7 @@ struct ChapterOneEncounterTestView: View {
             syncVisualHealth()
         }
         .onChange(of: combatIsActive) { _, isActive in
-            HomeMusicController.shared.setBattleActive(isActive && session.outcome == .inProgress, encounterID: session.encounter.id)
+            synchronizeBattleMusic()
             if !isActive {
                 pendingPlayerImpact = nil
                 pendingEnemyImpacts.removeAll()
@@ -1576,7 +1583,7 @@ struct ChapterOneEncounterTestView: View {
         .onDisappear {
             isFastForwardingBattle = false
             unityBattleRuntime.suppressesPresentation = false
-            HomeMusicController.shared.setBattleActive(false, encounterID: session.encounter.id)
+            HomeMusicController.shared.setBattleActive(false, encounterID: session.encounter.id, ownerID: musicOwnerID)
             _ = session.finishRelicBattle()
             CombatHaptics.shared.cancel()
             session.clearEmeraldPoison()
@@ -1623,7 +1630,9 @@ struct ChapterOneEncounterTestView: View {
         }
         .onChange(of: session.outcome) { _, outcome in
 
-            if outcome != .inProgress { HomeMusicController.shared.setBattleActive(false, encounterID: session.encounter.id) }
+            // A fresh attempt may arrive after the active flag. Reconcile both
+            // terminal and in-progress outcomes, not just stop on the old defeat.
+            synchronizeBattleMusic()
             if outcome == .defeat { CombatHaptics.shared.emit(.defeat); onDefeat() }
             if outcome != .inProgress && usesEncoreRevenant {
                 unityBattleRuntime.send(action: "encore-clear")
@@ -1666,6 +1675,11 @@ struct ChapterOneEncounterTestView: View {
                 }
             }
         }
+    }
+
+    private func synchronizeBattleMusic() {
+        HomeMusicController.shared.setBattleActive(combatIsActive && session.outcome == .inProgress,
+            encounterID: session.encounter.id, ownerID: musicOwnerID)
     }
 
     private var combatIsActive: Bool {
@@ -1907,6 +1921,8 @@ struct ChapterOneEncounterTestView: View {
     }
 
     private func advanceContinuousCombat(at now: TimeInterval) {
+        let damageFormationBeforeClock = session.enemies
+        let waveBeforeClock = session.waveIndex
         let relicTarget = selectedTargetID.flatMap { id in session.enemies.first { $0.id == id && $0.isAlive }?.id }
             ?? session.enemies.first(where: \.isAlive)?.id
         session.updateRelicTarget(relicTarget, at: now)
@@ -1981,9 +1997,18 @@ struct ChapterOneEncounterTestView: View {
         let healthBeforeRelicClock = session.playerHP
         let maximumBeforeRelicClock = session.playerMaxHP
         let intensityBeforeRelicClock = session.emeraldPoisonIntensity
-        let waveBeforeClock = session.waveIndex
         _ = session.advanceEmeraldPoison(at: now)
         syncChurchStatusPresentation()
+        let orderedHits = session.drainOrderedSkillImpacts()
+        for impact in orderedHits {
+            presentEnemyImpacts(skill: impact.skill, hits: impact.targets.map { ($0.targetID, $0.damage) }, enemies: damageFormationBeforeClock)
+            for hit in impact.targets { showCombatFloatingNumber(hit.damage, for: hit.targetID, kind: .damage, enemies: damageFormationBeforeClock) }
+            if usesUnityBattlefield, !isFastForwardingBattle {
+                let ids = impact.targets.compactMap { hit in damageFormationBeforeClock.first { $0.id == hit.targetID }.flatMap { MPCChapterOneBattleIdentity.battleID(for: $0.id, in: damageFormationBeforeClock) } }
+                unityBattleRuntime.send(action: "ordered-impact:\(impact.skill.rawValue):\(ids.joined(separator: "|"))")
+            }
+        }
+        if !orderedHits.isEmpty { syncVisualHealth() }
         if session.waveIndex != waveBeforeClock {
             pendingPlayerImpact = nil
             pendingEnemyImpacts.removeAll()
@@ -1997,16 +2022,6 @@ struct ChapterOneEncounterTestView: View {
             syncVisualHealth()
             return
         }
-        let orderedHits = session.drainOrderedSkillImpacts()
-        for impact in orderedHits {
-            presentEnemyImpacts(skill: impact.skill, hits: impact.targets.map { ($0.targetID, $0.damage) })
-            for hit in impact.targets { showCombatFloatingNumber(hit.damage, for: hit.targetID, kind: .damage) }
-            if usesUnityBattlefield, !isFastForwardingBattle {
-                let ids = impact.targets.compactMap { hit in session.enemies.first { $0.id == hit.targetID }.flatMap { unityBattleEnemyID(for: $0) } }
-                unityBattleRuntime.send(action: "ordered-impact:\(impact.skill.rawValue):\(ids.joined(separator: "|"))")
-            }
-        }
-        if !orderedHits.isEmpty { syncVisualHealth() }
         presentNewRelicEvents()
         // Ticks settled inside an enemy action count too (the clock call alone read 0 for those).
         let poisonDamage = session.takePendingPoisonHealthDamage()
@@ -2374,8 +2389,9 @@ struct ChapterOneEncounterTestView: View {
         // healer's revive channel runs here too (no-op outside Q28–Q30).
         let heroHPBeforeAllies = session.playerHP
         let reviveBeforeAllies = session.heroReviveAt
+        let allyFormation = session.enemies
         let allyActions = session.advanceCompanions(at: now, focusTargetID: selectedTargetID)
-        presentCompanionActions(allyActions)
+        presentCompanionActions(allyActions, enemies: allyFormation)
         // 奥黛尔 kneels to channel the hero's revive (2026-10-11): her rig casts as it begins.
         if reviveBeforeAllies == nil, session.heroReviveAt != nil, let healer = partyHealerID,
            let rig = Self.partyRigName(healer), usesUnityBattlefield {
@@ -2497,10 +2513,13 @@ struct ChapterOneEncounterTestView: View {
     }
 
     /// Each resolved ally action plays its take on that ally's rig.
-    private func presentCompanionActions(_ actions: [MPCCompanionActionResolution]) {
-        guard usesUnityBattlefield, session.isPartyBossEncounter else { return }
+    private func presentCompanionActions(_ actions: [MPCCompanionActionResolution], enemies: [MPCRuntimeEnemy]? = nil) {
+        guard !isFastForwardingBattle else { return }
         for action in actions {
-            guard let rig = Self.partyRigName(action.companionID) else { continue }
+            if let target = action.targetID, action.amount > 0, (enemies ?? session.enemies).contains(where: { $0.id == target }) {
+                showCombatFloatingNumber(action.amount, for: target, kind: .damage, enemies: enemies)
+            }
+            guard usesUnityBattlefield, session.isPartyBossEncounter, let rig = Self.partyRigName(action.companionID) else { continue }
             unityBattleRuntime.send(action: "ally:\(rig):\(Self.partyRigAction(skillID: action.skillID))")
         }
     }
@@ -3146,7 +3165,12 @@ struct ChapterOneEncounterTestView: View {
             if !maskIsTeachingLoan { maskCrackCount = min(10, maskCrackCount + 1) }
             presentEnemyImpacts(skill: .maskedWhisper, hits: result.targets.map { ($0.targetID, $0.damage) }, enemies: victimFormation)
             for hit in result.targets where hit.damage > 0 {
-                enqueueCombatFloatingNumber(CombatFloatingNumber(enemyID: hit.targetID, amount: hit.damage, kind: .damage, sourceLabel: "假面"))
+                var number = CombatFloatingNumber(enemyID: hit.targetID, amount: hit.damage, kind: .damage, sourceLabel: "假面")
+                if healthOverlaySize.width > 0, healthOverlaySize.height > 0,
+                   let anchor = combatFloatingNumberPosition(number, in: healthOverlaySize, enemies: victimFormation) {
+                    number.normalizedAnchor = CGPoint(x: anchor.x / healthOverlaySize.width, y: anchor.y / healthOverlaySize.height)
+                }
+                enqueueCombatFloatingNumber(number)
             }
             skillScheduler.didCast(.maskedWhisper, at: now)
             unityBattleRuntime.send(action: "masquerade:\(session.masqueradeCharges)")
@@ -3719,6 +3743,9 @@ struct ChapterOneEncounterTestView: View {
 
     private var combatantHealthOverlay: some View {
         GeometryReader { proxy in
+            Color.clear.frame(width: 0, height: 0)
+                .onAppear { healthOverlaySize = proxy.size }
+                .onChange(of: proxy.size) { _, size in healthOverlaySize = size }
             let aliveEnemies = session.enemies.filter { $0.isAlive && ($0.contentID != "enemy_resonant_clock_guard_q2_split" || revealedGhostIDs.contains($0.id)) }
             ForEach(Array(aliveEnemies.enumerated()), id: \.element.id) { index, enemy in
                 Group {
@@ -3807,12 +3834,12 @@ struct ChapterOneEncounterTestView: View {
                             .font(.system(size: number.kind != .healing && number.enemyID != nil && session.enemies.filter(\.isAlive).count >= 3 ? 19 : number.kind.fontSize, weight: .black, design: .rounded))
                     }
                         .foregroundStyle(number.kind.color)
+                        .padding(.horizontal, 3).padding(.vertical, 1)
+                        .background(.black.opacity(0.72), in: RoundedRectangle(cornerRadius: 4))
                         .shadow(color: .black.opacity(0.9), radius: 3, y: 2)
                         .shadow(color: number.kind.color.opacity(0.38), radius: 8)
                         .position(position)
-                        .offset(x: CGFloat(combatFloatingNumbers.filter { $0.enemyID == number.enemyID }.firstIndex(where: { $0.id == number.id }) ?? 0) * 12 - 18,
-                                y: number.isFloating ? -42 : 0)
-                        .opacity(number.isFloating ? 0.25 : 1)
+                        .offset(y: number.isFloating ? -32 : 0)
                         .transition(.opacity.combined(with: .scale(scale: 0.82)))
                 }
             }
@@ -3929,35 +3956,48 @@ struct ChapterOneEncounterTestView: View {
 
     private func combatFloatingNumberPosition(
         _ number: CombatFloatingNumber,
-        in size: CGSize
+        in size: CGSize,
+        enemies: [MPCRuntimeEnemy]? = nil
     ) -> CGPoint? {
+        let lane = CGFloat([0, 18, -18, 32][min(3, number.lane)])
+        if let anchor = number.normalizedAnchor {
+            return CGPoint(x: max(44, min(size.width - 44, anchor.x * size.width + lane)), y: anchor.y * size.height)
+        }
+        let formation = enemies ?? session.enemies
         guard let enemyID = number.enemyID else {
             let playerAnchor = playerHealthBarPosition(in: size)
             let playerHealthBarY = playerAnchor.y
             return CGPoint(
-                x: playerAnchor.x,
+                x: max(44, min(size.width - 44, playerAnchor.x + lane)),
                 y: min(
                     max(20, playerHealthBarY + number.kind.verticalOffset),
                     max(20, size.height - 20)
                 )
             )
         }
-        guard let enemy = session.enemies.first(where: { $0.id == enemyID }) else {
+        guard let enemy = formation.first(where: { $0.id == enemyID }) else {
             return nil
         }
-        let aliveEnemies = session.enemies.filter(\.isAlive)
+        let aliveEnemies = formation.filter(\.isAlive)
         // Keep lethal-hit numbers visible during the one-second death fade.
         // Unity retains the per-actor anchor while it disappears.
         let index = aliveEnemies.firstIndex(where: { $0.id == enemyID })
-            ?? session.enemies.firstIndex(where: { $0.id == enemyID }) ?? 0
-        let healthBar = enemyHealthBarPosition(
-            for: enemy,
-            index: index,
-            total: aliveEnemies.count,
-            in: size
-        )
+            ?? formation.firstIndex(where: { $0.id == enemyID }) ?? 0
+        let healthBar: CGPoint
+        if usesUnityBattlefield,
+           let id = MPCChapterOneBattleIdentity.battleID(for: enemy.id, in: formation),
+           let anchor = unityBattleRuntime.healthAnchor(for: id) {
+            healthBar = CGPoint(x: anchor.x * size.width, y: anchor.y * size.height + (usesEncoreRevenant ? 0 : 22))
+        } else {
+            healthBar = enemyHealthBarPosition(
+                for: enemy,
+                index: index,
+                total: aliveEnemies.count,
+                in: size
+            )
+        }
         return CGPoint(
-            x: healthBar.x,
+            x: max(44, min(size.width - 44, healthBar.x + lane)),
             y: min(
                 max(20, healthBar.y + number.kind.verticalOffset),
                 max(20, size.height - 20)
@@ -3969,10 +4009,15 @@ struct ChapterOneEncounterTestView: View {
     private func showCombatFloatingNumber(
         _ amount: Int,
         for enemyID: String,
-        kind: CombatFloatingNumberKind
+        kind: CombatFloatingNumberKind,
+        enemies: [MPCRuntimeEnemy]? = nil
     ) {
         guard amount > 0 else { return }
-        let number = CombatFloatingNumber(enemyID: enemyID, amount: amount, kind: kind)
+        var number = CombatFloatingNumber(enemyID: enemyID, amount: amount, kind: kind)
+        if healthOverlaySize.width > 0, healthOverlaySize.height > 0,
+           let anchor = combatFloatingNumberPosition(number, in: healthOverlaySize, enemies: enemies) {
+            number.normalizedAnchor = CGPoint(x: anchor.x / healthOverlaySize.width, y: anchor.y / healthOverlaySize.height)
+        }
         enqueueCombatFloatingNumber(number)
     }
 
@@ -3989,9 +4034,15 @@ struct ChapterOneEncounterTestView: View {
     }
 
     @MainActor
-    private func enqueueCombatFloatingNumber(_ number: CombatFloatingNumber) {
+    private func enqueueCombatFloatingNumber(_ input: CombatFloatingNumber) {
         guard !isFastForwardingBattle else { return }
-        let siblings = combatFloatingNumbers.filter { $0.enemyID == number.enemyID }
+        var number = input
+        if number.enemyID != nil, number.normalizedAnchor == nil,
+           healthOverlaySize.width > 0, healthOverlaySize.height > 0,
+           let anchor = combatFloatingNumberPosition(number, in: healthOverlaySize) {
+            number.normalizedAnchor = CGPoint(x: anchor.x / healthOverlaySize.width, y: anchor.y / healthOverlaySize.height)
+        }
+        let siblings = combatFloatingNumbers.filter { $0.enemyID == number.enemyID && ($0.kind == .status) == (number.kind == .status) }
         // Fade the oldest through the existing removal transition before a
         // fifth label is added. Slots offset the labels so simultaneous hits read.
         if siblings.count >= 4, let oldest = siblings.first {
@@ -3999,23 +4050,43 @@ struct ChapterOneEncounterTestView: View {
                 combatFloatingNumbers.removeAll { $0.id == oldest.id }
             }
         }
+        let occupied = Set(combatFloatingNumbers.filter { $0.enemyID == number.enemyID && ($0.kind == .status) == (number.kind == .status) }.map(\.lane))
+        number.lane = (0..<4).first { !occupied.contains($0) } ?? 0
         withAnimation(.easeOut(duration: 0.12)) {
             combatFloatingNumbers.append(number)
         }
+        #if DEBUG
+        recordFloatingNumberReview(number)
+        #endif
         Task { @MainActor [numberID = number.id] in
-            try? await Task.sleep(for: .milliseconds(40))
+            try? await Task.sleep(for: .milliseconds(120))
             guard !Task.isCancelled else { return }
-                withAnimation(.easeOut(duration: 0.68)) {
+                withAnimation(.easeOut(duration: 0.9)) {
                     guard let index = combatFloatingNumbers.firstIndex(where: { $0.id == numberID }) else { return }
                     combatFloatingNumbers[index].isFloating = true
             }
-            try? await Task.sleep(for: .milliseconds(number.kind == .healing ? 2400 : 770))
+            try? await Task.sleep(for: .milliseconds(number.kind == .healing ? 2400 : 1200))
             guard !Task.isCancelled else { return }
             withAnimation(.easeIn(duration: 0.16)) {
                 combatFloatingNumbers.removeAll { $0.id == numberID }
             }
         }
     }
+
+    #if DEBUG
+    @State private var floatingReviewEvents: [[String: Any]] = []
+    private func recordFloatingNumberReview(_ number: CombatFloatingNumber) {
+        guard ProcessInfo.processInfo.arguments.contains("--verify-battle-music") else { return }
+        floatingReviewEvents.append(["encounter": session.encounter.id, "wave": session.waveIndex,
+            "battleTime": battleTime, "target": number.enemyID ?? "player", "amount": number.amount,
+            "kind": String(describing: number.kind), "lane": number.lane,
+            "anchorAvailable": combatFloatingNumberPosition(number, in: healthOverlaySize) != nil,
+            "frozenAnchor": number.normalizedAnchor != nil])
+        guard let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first,
+              let data = try? JSONSerialization.data(withJSONObject: ["events": floatingReviewEvents], options: [.prettyPrinted, .sortedKeys]) else { return }
+        try? data.write(to: folder.appendingPathComponent("battle-hit-ui-review.json"))
+    }
+    #endif
 
     private func synchronizeBattlePresentationSettings() {
         // The Q30 intro plays at its own pace (its lines are timed in real seconds).
@@ -4755,6 +4826,7 @@ struct ChapterOneEncounterTestView: View {
         basicCooldownStarted = nil
         session = configuredSession
         waitsForPostInterventionStart = false
+        synchronizeBattleMusic()
         chosenLoopSkills = configuredSession.loadout.normalSkillIDs
         // Starting combat must preserve the target selected during setup.
         if !configuredSession.enemies.contains(where: { $0.id == selectedTargetID && $0.isAlive }) {
@@ -5426,6 +5498,7 @@ struct ChapterOneEncounterTestView: View {
                             let damage = try value.useBasicAction(.damage, targetID: targetID)
                             playerDamageDealt += damage
                             presentEnemyImpacts(skill: nil, hits: [(targetID, damage)])
+                            if usesUnityBattlefield { showCombatFloatingNumber(damage, for: targetID, kind: .damage) }
                             messages.append("普攻命中 · \(damage) 点伤害")
                             visualScene.presentChapterOneHitReaction(targetID: targetID, damage: damage)
                             selectedTargetID = targetID

@@ -175,7 +175,10 @@ struct MistportApp: App {
                 ContentView(game: game, storefront: storefront)
                     .defaultAppStorage(Self.playerDefaults)
                     .preferredColorScheme(.dark)
-                    .task { await storefront.prepare() }
+                    .task {
+                        await HomeMusicController.verifyAllBattleRoutes()
+                        await storefront.prepare()
+                    }
             }
             #else
             ContentView(game: game, storefront: storefront)

@@ -44,3 +44,34 @@ struct BattleMusicRouteTests {
         #expect(Set(MPCBattleMusicCue.allCases.map(\.assetName)).count == 4)
     }
 }
+
+@Suite struct BattleMusicOwnershipTests {
+    @Test func sameEncounterOldViewCannotStopTheNewView() {
+        var state = MPCBattleMusicOwnership(); let old = UUID(), fresh = UUID()
+        _ = state.setActive(true, encounterID: "chapter01_q03_encounter", ownerID: old)
+        _ = state.setActive(true, encounterID: "chapter01_q03_encounter", ownerID: fresh)
+        let accepted = state.setActive(false, encounterID: "chapter01_q03_encounter", ownerID: old)
+        #expect(!accepted && state.cue == .petals && state.ownerID == fresh)
+    }
+    @Test func everyEncounterRestartsAfterDefeatWithoutAParentPhaseChange() {
+        for mission in MPCChapterOneCatalog.missions {
+            var state = MPCBattleMusicOwnership(); let owner = UUID()
+            _ = state.setActive(true, encounterID: mission.encounterID, ownerID: owner)
+            _ = state.setActive(false, encounterID: mission.encounterID, ownerID: owner)
+            #expect(state.cue == nil)
+            _ = state.setActive(true, encounterID: mission.encounterID, ownerID: owner)
+            #expect(state.cue == MPCBattleMusicCue.forEncounterID(mission.encounterID))
+        }
+    }
+    @Test func outgoingDifferentBattleAndInactiveSetupCannotClaimMusic() {
+        var state = MPCBattleMusicOwnership(); let first = UUID(), later = UUID()
+        _ = state.setActive(true, encounterID: "chapter01_q03_encounter", ownerID: first)
+        _ = state.setActive(true, encounterID: "chapter01_q10_encounter", ownerID: later)
+        _ = state.setActive(false, encounterID: "chapter01_q03_encounter", ownerID: first)
+        #expect(state.cue == .gears)
+        _ = state.setActive(false, encounterID: "chapter01_q04_encounter", ownerID: UUID())
+        #expect(state.cue == .gears && state.ownerID == later)
+        _ = state.setActive(false, encounterID: "chapter01_q10_encounter", ownerID: later)
+        #expect(state.cue == nil)
+    }
+}

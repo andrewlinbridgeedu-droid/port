@@ -1,3 +1,5 @@
+import Foundation
+
 /// Stable battle-theme routing. Only the music changes; combat rules and saves do not.
 public enum MPCBattleMusicCue: String, CaseIterable, Sendable {
     case petals
@@ -47,5 +49,23 @@ public enum MPCBattleMusicCue: String, CaseIterable, Sendable {
             }
         }
         return .gears                         // An unknown battle still has a theme.
+    }
+}
+
+/// View ownership, rather than encounter ID alone, protects a new attempt from
+/// the outgoing view's late stop. Reconcile from the current combat/outcome pair.
+public struct MPCBattleMusicOwnership: Equatable, Sendable {
+    public private(set) var ownerID: UUID?
+    public private(set) var encounterID: String?
+    public var cue: MPCBattleMusicCue? { encounterID.map(MPCBattleMusicCue.forEncounterID) }
+    public init() {}
+    @discardableResult public mutating func setActive(_ active: Bool, encounterID: String, ownerID: UUID) -> Bool {
+        if active {
+            self.ownerID = ownerID; self.encounterID = encounterID
+            return true
+        }
+        guard self.ownerID == ownerID else { return false }
+        self.ownerID = nil; self.encounterID = nil
+        return true
     }
 }
