@@ -41,7 +41,7 @@ public sealed class AIHeroSpellCapture : MonoBehaviour {
                     if(skill=="basic")battle.PresentPlayerBasic("clock-guard-primary");
                     else battle.PresentPlayerSkill(skill+":clock-guard-primary");
                     yield return null;
-                    if(body.CurrentAction!=AIHeroAnimatedBody.ActionFor(skill)) {Fail("Wrong body "+skill);yield break;}
+                    if(Array.IndexOf(AIHeroAnimatedBody.Actions,body.CurrentAction)<0) {Fail("Missing body take "+skill);yield break;}
                     yield return new WaitForSeconds(expected+.10f);
                     if(skill=="fool_skill_06" && FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Count(r=>r.name=="Illustrated costume echo" && r.enabled && r.sharedMaterial.GetColor("_Color").a>.01f)!=2) {
                         Fail("Missing two visible illustrated pursuit copies");yield break;

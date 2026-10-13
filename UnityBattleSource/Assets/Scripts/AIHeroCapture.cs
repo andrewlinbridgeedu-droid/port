@@ -64,7 +64,7 @@ public sealed class AIHeroCapture : MonoBehaviour {
                     if(skill=="basic") battle.PresentPlayerBasic("clock-guard-primary");
                     else battle.PresentPlayerSkill(skill+":clock-guard-primary");
                     yield return null;
-                    if(body.CurrentAction!=AIHeroAnimatedBody.ActionFor(skill)) {Fail("Wrong animation mapping "+skill+" "+body.CurrentAction);yield break;}
+                    if(Array.IndexOf(AIHeroAnimatedBody.Actions,body.CurrentAction)<0) {Fail("Missing animation take "+skill+" "+body.CurrentAction);yield break;}
                     yield return new WaitForSeconds(2.5f);
                     if(contacts!=1 || completions!=1 || error!=null) {Fail("Callbacks "+outfit+" "+skill+" x"+speed+" = "+contacts+"/"+completions+" "+error);yield break;}
                     report.Add(outfit+" "+skill+" x"+speed+": one contact, one completion.");

@@ -20,10 +20,14 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
     public string CurrentAction { get; private set; }
     public bool IsActing => CurrentAction != null;
     public float ActionAge => age;
+    public const float HitPauseDuration = .10f;
+    public bool IsRecoiling => recoilAge >= 0;
+    public bool IsHitPausedAt(float unscaledTime) => unscaledTime < hitPauseUntil;
     public float DisplayFrame { get; private set; }
     public int LoadedAtlasCount => clips.Count;
     public Renderer Surface => surface;
     readonly Dictionary<string, Clip> clips = new Dictionary<string, Clip>();
+    readonly MotionSequence motionSequence = new MotionSequence();
     Material material;
     Mesh mesh;
     MeshRenderer surface;
@@ -33,6 +37,7 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
     public float Height => height;
     Vector3 home, homeScale = Vector3.one;
     bool initialized;
+    float hitPauseUntil = -1;
     const string Root = "CombatTempo/AIHero/";
 
     public static AIHeroAnimatedBody Install(Transform parent, Bounds original, string outfit) {
@@ -139,17 +144,21 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
         foreach (var c in values.Values) { if(c.atlas) Resources.UnloadAsset(c.atlas); if(c.idle) Resources.UnloadAsset(c.idle); }
         values.Clear();
     }
-    public static string ActionFor(string skill) {
-        switch (skill) {
-            case "basic": case "fool_skill_01": return Actions[0];
-            case "fool_skill_02": case "fool_skill_08": return Actions[1];
-            case "fool_skill_04": case "fool_skill_07": case "fool_skill_10": return Actions[2];
-            case "fool_skill_05": case "fool_skill_09": return Actions[3];
-            case "fool_skill_06": return Actions[4];
-            default: return Actions[1];
+    // Only presentation chooses variants. The card still owns its contact and
+    // cooldown; every take is retimed to the same release frame by PlayAction.
+    public sealed class MotionSequence {
+        int next;
+        public string Next() {
+            string action = Actions[next];
+            next = (next + 1) % Actions.Length;
+            return action;
         }
     }
-    public void PlaySkill(string skill, float contactAfter) => PlayAction(ActionFor(skill),contactAfter);
+    public void PlaySkill(string skill, float contactAfter) {
+        var action = motionSequence.Next();
+        PlayAction(action,contactAfter);
+        Debug.Log($"AI_HERO_CAST skill={skill} action={action} contact={contactAfter:F4} outfit={Outfit}");
+    }
     public void PlayAction(string action, float contactAfter) {
         if (!clips.TryGetValue(action,out current)) return;
         CurrentAction = action; age=0; contact=Mathf.Max(.08f,contactAfter);
@@ -161,11 +170,14 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
         material.SetVector("_Grid",new Vector4(current.info.columns,current.info.rows,0,0));
         if (!IsActing) material.SetFloat("_IdleBlend",1);
     }
-    void Update() {
+    void Update() => AdvancePresentation(Time.deltaTime, Time.unscaledTime);
+    public void AdvancePresentation(float scaledDelta, float unscaledNow) {
         if (!initialized) return;
-        if (IsActing) { age+=Time.deltaTime; Draw(); }
+        // Keep the release clock aligned with the rules while briefly holding
+        // the visible cast pose. The confirmed hit owns the body during this beat.
+        if (IsActing) { age += scaledDelta; if (!IsHitPausedAt(unscaledNow)) Draw(); }
         if (recoilAge >= 0) {
-            recoilAge += Time.deltaTime;
+            recoilAge += scaledDelta;
             if (recoilAge >= RecoilTime) recoilAge=-1;
         }
     }
@@ -179,7 +191,7 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
         // Short entry/exit blend uses the same costume's rest art; no backwards throw.
         float blend = age < .045f ? 1-age/.045f : Mathf.Clamp01((age-end)/current.info.recoverySeconds);
         material.SetFloat("_IdleBlend",blend);
-        if (age >= end+current.info.recoverySeconds) Cancel();
+        if (age >= end+current.info.recoverySeconds) FinishAction();
     }
     void LateUpdate() {
         if (!initialized) return;
@@ -207,16 +219,28 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
     public void ConfirmedHit(bool heavy) => ConfirmedHit(heavy ? 1.3f : 1f);
     public void ConfirmedHit(float strength) {
         recoilAge=0;
-        recoilStrength=Mathf.Clamp(strength,.3f,1.4f)*(SpellSpectacle20260926.ReducedMotion?.35f:1f);
+        hitPauseUntil=Time.unscaledTime+HitPauseDuration;
+        recoilStrength=Mathf.Clamp(strength,1f,1.4f)*(SpellSpectacle20260926.ReducedMotion?.35f:1f);
+        Debug.Log($"AI_HERO_HIT action={CurrentAction ?? "idle"} heldFrame={DisplayFrame:F2} pause={HitPauseDuration:F2}");
+    }
+    void FinishAction() {
+        CurrentAction=null; age=0; DisplayFrame=0;
+        if (material) material.SetFloat("_IdleBlend",1);
+        // Ending a cast cannot erase the hit that arrived on its final frame.
     }
     public void Cancel() {
-        CurrentAction=null; age=0; DisplayFrame=0; recoilAge=-1;
-        if (material) material.SetFloat("_IdleBlend",1);
+        FinishAction(); recoilAge=-1; hitPauseUntil=-1;
         transform.localPosition=home; transform.localScale=homeScale;
     }
     void OnDisable() => Cancel();
+    static void ReleaseObject(UnityEngine.Object value) {
+#if UNITY_EDITOR
+        if (!Application.isPlaying) { DestroyImmediate(value); return; }
+#endif
+        Destroy(value);
+    }
     void OnDestroy() {
         if (surface) surface.sharedMaterial=null;
-        if (material) Destroy(material); if(mesh) Destroy(mesh); ReleaseBank(Outfit);clips.Clear();
+        if (material) ReleaseObject(material); if(mesh) ReleaseObject(mesh); ReleaseBank(Outfit);clips.Clear();
     }
 }
