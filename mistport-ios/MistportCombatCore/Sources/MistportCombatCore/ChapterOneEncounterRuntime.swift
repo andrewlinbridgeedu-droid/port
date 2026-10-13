@@ -343,8 +343,7 @@ public struct MPCChapterOneCampaignState: Equatable, Sendable {
     @discardableResult
     public mutating func unlockOrderedSkills(availableThrough mission: Int) -> [FoolSkillID] {
         let old = unlockedSkillIDs
-        if mission >= 2 { loadoutSlotCapacity = max(loadoutSlotCapacity, 2) }
-        if mission >= 4 { loadoutSlotCapacity = 4 }
+        loadoutSlotCapacity = MPCOrderedSkillRules.slotCapacity(availableThrough: mission)
         for skill in MPCOrderedSkillRules.ordinarySkills {
             guard let gate = MPCOrderedSkillRules.unlockMission(skill), gate <= mission,
                   skill != .sidestepStrike || mission > 1 else { continue }
@@ -353,7 +352,7 @@ public struct MPCChapterOneCampaignState: Equatable, Sendable {
                 loadout.normalSkillIDs.append(skill)
             }
         }
-        loadout.normalSkillIDs = Array(loadout.normalSkillIDs.filter(\.isOrderedOrdinary).prefix(4))
+        loadout.normalSkillIDs = Array(loadout.normalSkillIDs.filter(\.isOrderedOrdinary).prefix(loadoutSlotCapacity))
         return MPCOrderedSkillRules.ordinarySkills.filter { !old.contains($0) && unlockedSkillIDs.contains($0) }
     }
 
@@ -418,7 +417,7 @@ public struct MPCChapterOneCampaignState: Equatable, Sendable {
 
     public var effectiveLoadout: MPCChapterOneLoadout {
         var result = loadout
-        result.normalSkillIDs.removeAll { $0 == .maskedWhisper }
+        result.normalSkillIDs = Array(result.normalSkillIDs.filter { $0 != .maskedWhisper }.prefix(loadoutSlotCapacity))
         var seenRelicIDs = Set<String>()
         result.relicIDs = result.relicIDs.filter {
             $0 != "relic_paper_raincoat" && MPCChapterOneCatalog.isRelicEnabled($0) && ownedRelicIDs.contains($0)
@@ -1435,6 +1434,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     /// Terminal cleanup restores sealed capacity without creating healing.
     public mutating func finishRelicBattle() {
         _ = settleUsurpedLifeMedal()
+        counter.clearWindow()
         saltBreathingBagStored = 0
         orderedPending.removeAll(); orderedPrepared = nil
         orderedShield = 0; orderedWardUntil = 0; orderedHasteUntil = 0
@@ -1484,6 +1484,23 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     private var encoreDebtEnemyID: String?
     private var encoreDebtWasMarked: Bool
     /// Q6: one punish opportunity, shared by all sources and consumed once.
+    public private(set) var counter = MPCCombatCounter()
+    public var canRequestCounter: Bool {
+        outcome == .inProgress && !playerIsDown && chapterMissionNumber >= 4
+            && loadout.normalSkillIDs.filter(\.isOrderedOrdinary).count >= 2 && counter.isAvailable(at: relicClock)
+    }
+    public var isCounterActive: Bool { outcome == .inProgress && counter.isActive(at: relicClock) }
+    @discardableResult public mutating func requestCounter(at now: TimeInterval) -> Bool {
+        advanceQ4Clock(at: now)
+        guard canRequestCounter else { return false }
+        return counter.request(at: now)
+    }
+    @discardableResult public mutating func activateCounter(at now: TimeInterval) -> Bool {
+        guard outcome == .inProgress, !playerIsDown, counter.activate(at: now) else { return false }
+        if chapterMissionNumber == 4 { q4OpeningUntil = now + MPCCombatCounter.window }
+        triggeredEffects.append("反击：普通牌冷却刷新，从第一张重启编排")
+        return true
+    }
     public private(set) var q4OpeningUntil: TimeInterval?
     private var q4Clock: TimeInterval = 0
     private var q4FirstFlameBlocked = false
@@ -1498,6 +1515,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     public mutating func clearQ4HoundState() {
         q4OpeningUntil = nil
         q4FirstFlameBlocked = false
+        counter.clearWindow()
     }
     public private(set) var houndOpeningReady = false
     private var houndPaperInterceptUsed = false
@@ -2306,7 +2324,9 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         if !resolvingDeferredDamage, enemies[index].contentID == "bounty_b09_contract_eater", enemies[index].currentIntent == "recover" {
             finalDamage = finalDamage * 150 / 100
         }
-        if !resolvingDeferredDamage, isQ4OpeningActive, enemies[index].contentID == "enemy_clockwork_hound" {
+        if !resolvingDeferredDamage, chapterMissionNumber == 4, enemies[index].contentID == "enemy_clockwork_hound" {
+            finalDamage = finalDamage * (isCounterActive ? 250 : 25) / 100
+        } else if !resolvingDeferredDamage, isCounterActive, !resolvingCompanionDamage {
             finalDamage = finalDamage * 150 / 100
         }
         if encounter.id == "chapter01_q06_encounter", enemies[index].contentID == "enemy_clockwork_hound",
@@ -2599,11 +2619,16 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 if intent == "q4_flame_first" { q4FirstFlameBlocked = redirectedByMasquerade }
                 if intent == "q4_flame_second" {
                     if q4FirstFlameBlocked && redirectedByMasquerade {
-                        q4OpeningUntil = now + 3
-                        triggeredEffects.append("猎犬认错名字：3秒内受到伤害提高50%")
+                        q4OpeningUntil = now + MPCCombatCounter.window
+                        if counter.offer(at: now) { triggeredEffects.append("双焰被承接：3秒内点击反击，刷新普通牌并重启编排") }
                     }
                     q4FirstFlameBlocked = false
                 }
+            }
+            if chapterMissionNumber > 4, MPCCombatCounter.isHeavy(intent), !appliesEmeraldPoison,
+               (redirectedByMasquerade || redirectedByPaperDouble || (response == .evasion && result.damage == 0)),
+               counter.offer(at: now) {
+                triggeredEffects.append("重招被化解：3秒内点击反击，刷新普通牌并重启编排")
             }
             if encounter.id == "chapter01_q06_encounter", intent == "name_hunt",
                redirectedByMasquerade || redirectedByPaperDouble {
@@ -2807,6 +2832,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
 
     private mutating func loadWave(_ index: Int) {
         orderedPending.removeAll(); orderedPrepared = nil
+        counter.clearWindow()
         let enemyIDs = encounter.waves[index].enemyIDs
         enemyDefenseBoosts.removeAll()
         committedRepairTargets.removeAll()
@@ -2864,9 +2890,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 content.intentPattern
             }
             let localHP: Int = switch encounter.id {
-            case "chapter01_q02_encounter": contentID == "enemy_resonant_clock_guard_q2" ? 300 : content.maxHP
             case "chapter01_q03_encounter": MPCProgressionWalls.q3HoundHP
-            case "chapter01_q05_encounter": 1600
+            case "chapter01_q05_encounter": 950
             case "chapter01_q04_encounter": 2200
             case "chapter01_q06_encounter": 1500
             case "chapter01_q07_encounter": 650
@@ -2890,6 +2915,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             default: content.maxHP
             }
             let localAttack: Int = switch encounter.id {
+            case "chapter01_q03_encounter": 110
             case "chapter01_q06_encounter": 200
             case "chapter01_q07_encounter": contentID == "enemy_memory_leech_node" ? 70 : 65
             case "chapter01_q08_encounter": MPCProgressionWalls.q8LeechAttack
@@ -3663,6 +3689,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     /// no revive left loses even while allies stand (2026-10-10). Only this battle's allies
     /// count, never leftover persistent entries.
     private mutating func settlePlayerDownIfNeeded() {
+        if playerHP <= 0 { counter.clearWindow() }
         if isPartyBossEncounter {
             // The party loses only when all three are down (2026-10-10, user); a fallen hero
             // waits for the healer's revive channel (`advanceCompanions`).
@@ -4251,6 +4278,7 @@ extension MPCChapterOneEncounterSession {
                  harmful: Bool = false, count: Int? = nil, unit: String = "层") {
             if active { result.append(.init(id, name, symbol, harmful: harmful, count: count, unit: unit)) }
         }
+        add("counter", "反击", "arrow.clockwise", counter.isActive(at: now), count: max(0, Int(ceil((counter.activeUntil ?? now) - now))), unit: "秒")
         add("haste", "抢拍", "hourglass", now < orderedHasteUntil, count: max(0, Int(ceil(orderedHasteUntil - now))), unit: "秒")
         add("ordered-shield", "改写护盾", "shield.fill", orderedShield > 0 && now < orderedShieldUntil, count: orderedShield, unit: "护盾值")
         add("ordered-ward", "反客减伤", "shield.lefthalf.filled", now < orderedWardUntil, count: 1, unit: "次")
@@ -4316,6 +4344,7 @@ extension MPCChapterOneEncounterSession {
         add("defense", "防御强化", "shield.fill", enemyDefenseBoosts[enemyID] != nil)
         add("immune", "免疫", "lock.shield.fill", isTrueImmune(enemy) || isProtectedSovereign(enemy))
         add("empower", "强化", "flame.fill", towerEmpowers[enemyID].map { effect in now < effect.expiresAt && enemies.contains(where: { $0.id == effect.sourceID && $0.isAlive }) } ?? false)
+        add("hound-guard", "护体", "shield.fill", chapterMissionNumber == 4 && !counter.isActive(at: now), count: 75, unit: "%减伤")
         add("opening", "破绽", "scope", isQ4OpeningActive && enemy.contentID == "enemy_clockwork_hound", harmful: true)
         add("hunt", "猎名", "pawprint.fill", enemy.contentID == "enemy_clockwork_hound" && houndNameHuntStacks > 0, count: houndNameHuntStacks)
         add("deferred", "迟付伤害", "clock.fill", sequenceNineRelics.deferredDamage?.targetID == enemyID, harmful: true)

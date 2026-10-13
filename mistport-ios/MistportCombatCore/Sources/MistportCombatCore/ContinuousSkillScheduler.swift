@@ -51,6 +51,16 @@ public struct ContinuousSkillScheduler: Sendable {
         return moved
     }
 
+    /// Counter opportunities refresh only ordinary cards. Manual relics and ultimate
+    /// keep their deadlines, and the existing left-to-right order starts at position one.
+    public mutating func restartForCounter(sequence: [FoolSkillID], at now: TimeInterval) {
+        guard now.isFinite else { return }
+        for skill in sequence where skill.isOrderedOrdinary {
+            used.remove(skill); startedAt[skill] = nil; readyAt[skill] = now
+        }
+        lastOrdinarySkill = nil
+    }
+
     public mutating func didCast(_ skill: FoolSkillID, at now: TimeInterval) {
         used.insert(skill)
         startedAt[skill] = now

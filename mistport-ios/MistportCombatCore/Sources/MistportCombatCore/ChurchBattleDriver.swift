@@ -17,6 +17,8 @@ public struct MPCBattleInput: Codable, Equatable, Sendable {
         case ultimate
         /// Story battles: raise the ownerless mask.
         case mask
+        /// Spend a defended heavy attack's opportunity to restart ordinary cards.
+        case counter
         /// Story battles: ring the encore bell during a charge.
         case bell
         /// Story battles: reorder the automatic loop; `itemID` lists skill IDs, comma-separated.
@@ -37,7 +39,7 @@ public struct MPCBattleInput: Codable, Equatable, Sendable {
 public struct MPCBattleInputLog: Codable, Equatable, Sendable {
     public static let currentVersion = "church-battle-v4"
     /// Chapter-one story battles (`MPCStoryBattleStepper`).
-    public static let storyVersion = "story-battle-v3"
+    public static let storyVersion = "story-battle-v4"
     public var version: String
     public var encounterID: String
     public var inputs: [MPCBattleInput]
@@ -395,7 +397,7 @@ public struct MPCChurchBattleStepper: Sendable {
                 let skills = (input.itemID ?? "").split(separator: ",").compactMap { FoolSkillID(rawValue: String($0)) }
                 ok = !skills.isEmpty && skills.count <= 4 && Set(skills).count == skills.count && Set(skills).isSubset(of: Set(loadout.normalSkillIDs))
                 if ok { scheduler.didReorder(from: sequence, to: skills, at: now); sequence = skills; s.setContinuousSkillSequence(skills) }
-            case .mask, .bell:
+            case .mask, .bell, .counter:
                 // Story-battle inputs; church battles have none of these.
                 ok = false
             }

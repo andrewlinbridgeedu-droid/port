@@ -33,13 +33,13 @@ struct CombatStatusPresentationTests {
         scheduler.didCast(.fabricatedEvidence, at: 0)
         let old: [FoolSkillID] = [.sidestepStrike, .identityDisplacement, .fabricatedEvidence]
         let new: [FoolSkillID] = [.identityDisplacement, .sidestepStrike, .fabricatedEvidence]
-        scheduler.didReorder(from: old, to: new, at: 3.95)
-        #expect(scheduler.readyAt[.sidestepStrike] == 7.95)
-        #expect(scheduler.readyAt[.identityDisplacement] == 11.95)
-        #expect(scheduler.readyAt[.fabricatedEvidence] == 6)
-        #expect(scheduler.next(in: new, at: 4) == nil)
+        scheduler.didReorder(from: old, to: new, at: 6.95)
+        #expect(scheduler.readyAt[.sidestepStrike] == 13.95)
+        #expect(scheduler.readyAt[.identityDisplacement] == 13.95)
+        #expect(scheduler.readyAt[.fabricatedEvidence] == 7)
+        #expect(scheduler.next(in: new, at: 7) == nil)
         let deadlines = scheduler.readyAt
-        scheduler.didReorder(from: new, to: new, at: 5)
+        scheduler.didReorder(from: new, to: new, at: 8)
         #expect(scheduler.readyAt == deadlines)
     }
 

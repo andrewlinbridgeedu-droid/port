@@ -1,0 +1,485 @@
+{
+  "date": "2026-10-13",
+  "build": "169.87",
+  "scope": "Q2-Q9 all legal orders; Q10-Q12 seven four-card families; earned fixture, mask/counter policy, no medicine",
+  "totalBattles": 870,
+  "missions": [
+    {
+      "mission": 2,
+      "tested": 2,
+      "wins": 1,
+      "losses": 1,
+      "fastestWins": [
+        {
+          "hp": 40,
+          "order": [
+            "fool_skill_05",
+            "fool_skill_01"
+          ],
+          "remaining": 0,
+          "ticks": 708
+        }
+      ],
+      "nearMisses": [
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_01",
+            "fool_skill_05"
+          ],
+          "remaining": 92,
+          "ticks": 730
+        }
+      ]
+    },
+    {
+      "mission": 3,
+      "tested": 2,
+      "wins": 1,
+      "losses": 1,
+      "fastestWins": [
+        {
+          "hp": 10,
+          "order": [
+            "fool_skill_05",
+            "fool_skill_01"
+          ],
+          "remaining": 0,
+          "ticks": 723
+        }
+      ],
+      "nearMisses": [
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_01",
+            "fool_skill_05"
+          ],
+          "remaining": 216,
+          "ticks": 783
+        }
+      ]
+    },
+    {
+      "mission": 4,
+      "tested": 2,
+      "wins": 2,
+      "losses": 0,
+      "fastestWins": [
+        {
+          "hp": 636,
+          "order": [
+            "fool_skill_05",
+            "fool_skill_01"
+          ],
+          "remaining": 0,
+          "ticks": 1584
+        },
+        {
+          "hp": 472,
+          "order": [
+            "fool_skill_01",
+            "fool_skill_05"
+          ],
+          "remaining": 0,
+          "ticks": 2215
+        }
+      ],
+      "nearMisses": []
+    },
+    {
+      "mission": 5,
+      "tested": 6,
+      "wins": 2,
+      "losses": 4,
+      "fastestWins": [
+        {
+          "hp": 310,
+          "order": [
+            "fool_skill_05",
+            "fool_skill_01"
+          ],
+          "remaining": 0,
+          "ticks": 641
+        },
+        {
+          "hp": 670,
+          "order": [
+            "fool_skill_09",
+            "fool_skill_01"
+          ],
+          "remaining": 0,
+          "ticks": 876
+        }
+      ],
+      "nearMisses": [
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_01",
+            "fool_skill_09"
+          ],
+          "remaining": 27,
+          "ticks": 923
+        },
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_05",
+            "fool_skill_09"
+          ],
+          "remaining": 238,
+          "ticks": 923
+        }
+      ]
+    },
+    {
+      "mission": 6,
+      "tested": 12,
+      "wins": 3,
+      "losses": 9,
+      "fastestWins": [
+        {
+          "hp": 500,
+          "order": [
+            "fool_skill_05",
+            "fool_skill_01"
+          ],
+          "remaining": 0,
+          "ticks": 769
+        },
+        {
+          "hp": 500,
+          "order": [
+            "fool_skill_01",
+            "fool_skill_05"
+          ],
+          "remaining": 0,
+          "ticks": 961
+        }
+      ],
+      "nearMisses": [
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_08",
+            "fool_skill_01"
+          ],
+          "remaining": 128,
+          "ticks": 1063
+        },
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_09",
+            "fool_skill_01"
+          ],
+          "remaining": 254,
+          "ticks": 1063
+        }
+      ]
+    },
+    {
+      "mission": 7,
+      "tested": 60,
+      "wins": 1,
+      "losses": 59,
+      "fastestWins": [
+        {
+          "hp": 210,
+          "order": [
+            "fool_skill_08",
+            "fool_skill_11",
+            "fool_skill_01"
+          ],
+          "remaining": 0,
+          "ticks": 859
+        }
+      ],
+      "nearMisses": [
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_11",
+            "fool_skill_01",
+            "fool_skill_08"
+          ],
+          "remaining": 96,
+          "ticks": 749
+        },
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_11",
+            "fool_skill_08",
+            "fool_skill_01"
+          ],
+          "remaining": 108,
+          "ticks": 749
+        }
+      ]
+    },
+    {
+      "mission": 8,
+      "tested": 120,
+      "wins": 4,
+      "losses": 116,
+      "fastestWins": [
+        {
+          "hp": 592,
+          "order": [
+            "fool_skill_05",
+            "fool_skill_01",
+            "fool_skill_08"
+          ],
+          "remaining": 0,
+          "ticks": 499
+        },
+        {
+          "hp": 592,
+          "order": [
+            "fool_skill_08",
+            "fool_skill_05",
+            "fool_skill_01"
+          ],
+          "remaining": 0,
+          "ticks": 499
+        }
+      ],
+      "nearMisses": [
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_05",
+            "fool_skill_04",
+            "fool_skill_08"
+          ],
+          "remaining": 12,
+          "ticks": 597
+        },
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_08",
+            "fool_skill_01",
+            "fool_skill_05"
+          ],
+          "remaining": 103,
+          "ticks": 597
+        }
+      ]
+    },
+    {
+      "mission": 9,
+      "tested": 210,
+      "wins": 46,
+      "losses": 164,
+      "fastestWins": [
+        {
+          "hp": 791,
+          "order": [
+            "fool_skill_11",
+            "fool_skill_01",
+            "fool_skill_12"
+          ],
+          "remaining": 0,
+          "ticks": 473
+        },
+        {
+          "hp": 791,
+          "order": [
+            "fool_skill_11",
+            "fool_skill_12",
+            "fool_skill_01"
+          ],
+          "remaining": 0,
+          "ticks": 494
+        }
+      ],
+      "nearMisses": [
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_04",
+            "fool_skill_01",
+            "fool_skill_12"
+          ],
+          "remaining": 79,
+          "ticks": 773
+        },
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_11",
+            "fool_skill_01",
+            "fool_skill_04"
+          ],
+          "remaining": 103,
+          "ticks": 775
+        }
+      ]
+    },
+    {
+      "mission": 10,
+      "tested": 144,
+      "wins": 33,
+      "losses": 111,
+      "fastestWins": [
+        {
+          "hp": 772,
+          "order": [
+            "fool_skill_05",
+            "fool_skill_04",
+            "fool_skill_06",
+            "fool_skill_01"
+          ],
+          "remaining": 0,
+          "ticks": 270
+        },
+        {
+          "hp": 772,
+          "order": [
+            "fool_skill_05",
+            "fool_skill_04",
+            "fool_skill_01",
+            "fool_skill_06"
+          ],
+          "remaining": 0,
+          "ticks": 270
+        }
+      ],
+      "nearMisses": [
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_05",
+            "fool_skill_11",
+            "fool_skill_12",
+            "fool_skill_01"
+          ],
+          "remaining": 0,
+          "ticks": 373
+        },
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_05",
+            "fool_skill_11",
+            "fool_skill_01",
+            "fool_skill_12"
+          ],
+          "remaining": 0,
+          "ticks": 373
+        }
+      ]
+    },
+    {
+      "mission": 11,
+      "tested": 144,
+      "wins": 59,
+      "losses": 85,
+      "fastestWins": [
+        {
+          "hp": 652,
+          "order": [
+            "fool_skill_11",
+            "fool_skill_01",
+            "fool_skill_12",
+            "fool_skill_05"
+          ],
+          "remaining": 0,
+          "ticks": 340
+        },
+        {
+          "hp": 618,
+          "order": [
+            "fool_skill_11",
+            "fool_skill_01",
+            "fool_skill_05",
+            "fool_skill_12"
+          ],
+          "remaining": 0,
+          "ticks": 340
+        }
+      ],
+      "nearMisses": [
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_01",
+            "fool_skill_05",
+            "fool_skill_11",
+            "fool_skill_12"
+          ],
+          "remaining": 0,
+          "ticks": 596
+        },
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_06",
+            "fool_skill_05",
+            "fool_skill_07",
+            "fool_skill_04"
+          ],
+          "remaining": 0,
+          "ticks": 596
+        }
+      ]
+    },
+    {
+      "mission": 12,
+      "tested": 168,
+      "wins": 77,
+      "losses": 91,
+      "fastestWins": [
+        {
+          "hp": 856,
+          "order": [
+            "fool_skill_04",
+            "fool_skill_11",
+            "fool_skill_07",
+            "fool_skill_12"
+          ],
+          "remaining": 0,
+          "ticks": 338
+        },
+        {
+          "hp": 953,
+          "order": [
+            "fool_skill_13",
+            "fool_skill_11",
+            "fool_skill_12",
+            "fool_skill_09"
+          ],
+          "remaining": 0,
+          "ticks": 348
+        }
+      ],
+      "nearMisses": [
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_08",
+            "fool_skill_06",
+            "fool_skill_09",
+            "fool_skill_07"
+          ],
+          "remaining": 0,
+          "ticks": 780
+        },
+        {
+          "hp": 0,
+          "order": [
+            "fool_skill_09",
+            "fool_skill_08",
+            "fool_skill_07",
+            "fool_skill_06"
+          ],
+          "remaining": 0,
+          "ticks": 780
+        }
+      ]
+    }
+  ]
+}

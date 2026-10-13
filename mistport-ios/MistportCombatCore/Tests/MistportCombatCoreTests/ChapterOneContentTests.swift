@@ -10,7 +10,7 @@ struct ChapterOneContentTests {
             let encounter = try #require(MPCChapterOneCatalog.encounters.first { $0.id == mission.encounterID })
             campaign.claimVictory(for: encounter)
             #expect(campaign.loadout.normalSkillIDs.count <= campaign.loadoutSlotCapacity)
-            #expect(campaign.loadoutSlotCapacity == (mission.number < 3 ? 2 : 4))
+            #expect(campaign.loadoutSlotCapacity == (mission.number < 6 ? 2 : mission.number < 9 ? 3 : 4))
             for skill in mission.permanentSkillIDs {
                 #expect(campaign.unlockedSkillIDs.contains(skill))
             }

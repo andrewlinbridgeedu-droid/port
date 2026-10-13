@@ -35,7 +35,7 @@ public enum MPCOrderedSkillRules {
     /// The enemy's visible escalating assault prevents indefinite sustain from erasing order choices.
     /// Tutorial breaths and the two survive-five-action encounters retain their authored rules.
     public static func pressureStart(mission: Int) -> TimeInterval? {
-        let deadlines: [Int: Double] = [5: 20, 6: 26, 7: 21, 8: 17, 9: 19, 10: 9,
+        let deadlines: [Int: Double] = [5: 30, 6: 26, 7: 25, 8: 17, 9: 19, 10: 9,
             11: 17, 12: 16, 13: 16, 14: 19, 15: 21, 16: 6, 17: 6, 18: 22,
             19: 6, 21: 4, 22: 18, 23: 5, 24: 8, 25: 6, 26: 21, 27: 10]
         return deadlines[mission]
@@ -46,17 +46,22 @@ public enum MPCOrderedSkillRules {
         return min(8, 1 + Int((now - start) / 4))
     }
 
+    public static func slotCapacity(availableThrough mission: Int) -> Int {
+        mission >= 10 ? 4 : mission >= 7 ? 3 : mission >= 2 ? 2 : 1
+    }
+
     /// Skill available before this mission; daily access remains a separate gate.
     public static func unlockMission(_ skill: FoolSkillID) -> Int? {
         switch skill {
         case .sidestepStrike: 1
         case .fabricatedEvidence: 2
-        case .stolenTempo, .mirrorBarrage: 4
+        case .stolenTempo: 7
+        case .mirrorBarrage: 9
         case .backstageChange: 5
         case .turnTheTables: 6
-        case .identityDisplacement: 7
-        case .mirrorPursuit: 8
-        case .absurdFinale: 10
+        case .identityDisplacement: 8
+        case .mirrorPursuit: 10
+        case .absurdFinale: 11
         case .delayedSignature: 12
         case .maskedWhisper, .paperDouble, .namelessStage: nil
         }

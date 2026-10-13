@@ -75,7 +75,7 @@ public struct MPCBountyRelicLedger: Codable, Equatable, Sendable {
 public enum MPCProgressionWalls {
     /// Q3 teaches the manual mask: two unblocked breaths defeat a fresh hero.
     nonisolated(unsafe) public static var q3BreathHealthPercent = 90
-    nonisolated(unsafe) public static var q3HoundHP = 1200
+    nonisolated(unsafe) public static var q3HoundHP = 1500
     /// Q10 is not a wall either. With the authored 150% breath and 1050/1200 health the
     /// three-card hand only won at the fastest cadence (1.75 s per card); Q9 still wins
     /// at 2.5 s. These values let a 3 s cadence with the mask and one salve finish

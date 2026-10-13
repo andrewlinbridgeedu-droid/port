@@ -65,48 +65,23 @@ struct Q3TwoBreathTests {
         #expect(zip(times.dropFirst(), times).allSatisfy { $0 - $1 <= 4.000001 })
     }
 
-    @Test("Fresh normal sequence cannot outrun the paired breaths", arguments: [false, true])
+    @Test("Actual two-card opening cannot outrun the paired breaths", arguments: [false, true])
     func freshAutomaticSequence(mask: Bool) throws {
-        var s = try freshSession(); let id = s.enemies[0].id
-        var scheduler = ContinuousSkillScheduler()
-        var playerReady = 0.0, basicReady = 0.0
-        var playerHit: (FoolSkillID?, Double)?, enemyHit: Double?
-        var maskedCycles = Set<Int>(), contacts = 0, elapsed = 0.0
-        for tick in 0..<2400 where s.outcome == .inProgress {
-            let now = Double(tick) * 0.05; elapsed = now
-            _ = s.advanceEmeraldPoison(at: now)
-            let cycle = Int(now / MPCQ3HoundTiming.cycle)
-            if mask && now >= Double(cycle) * MPCQ3HoundTiming.cycle + 2.1 && !maskedCycles.contains(cycle) {
-                #expect(try s.useOwnedManualMasquerade(targetID: id, isOwned: true, at: now) != nil)
-                maskedCycles.insert(cycle)
+        let loadout = MPCChapterOneLoadout(normalSkillIDs: [.fabricatedEvidence, .sidestepStrike])
+        var game = try MPCStoryBattleStepper(encounterID: "chapter01_q03_encounter", loadout: loadout,
+            mask: .init(owned: true, teachingLoan: true))
+        while !game.isFinished {
+            let view = game.view
+            let imminentBreath = view.session.enemies.contains { enemy in
+                guard enemy.currentIntent == "memory_breath", let deadline = view.incoming[enemy.id] else { return false }
+                return deadline - view.tick <= 6
             }
-            if let due = enemyHit, now + 0.000001 >= due {
-                enemyHit = nil; try s.endRound(actingEnemyID: id, at: now); contacts += 1
-            }
-            guard s.outcome == .inProgress else { break }
-            if let (skill, due) = playerHit, now + 0.000001 >= due {
-                playerHit = nil
-                if let skill { _ = try s.useFoolSkill(skill, targetID: id, usesRealtimeCooldown: true) }
-                else { _ = try s.useBasicAction(.damage, targetID: id) }
-            }
-            guard s.outcome == .inProgress else { break }
-            if enemyHit == nil && now + 0.000001 >= MPCQ3HoundTiming.castTime(start: 0, attackIndex: s.enemies[0].intentIndex) {
-                s.commitEnemyImpact(from: id)
-                enemyHit = now + MPCBattleContactTiming.enemyContact(contentID: "enemy_clockwork_hound", intent: s.enemies[0].currentIntent, encounterID: s.encounter.id)
-            }
-            if playerHit == nil && now >= playerReady {
-                if let skill = scheduler.next(in: [.sidestepStrike], at: now) {
-                    scheduler.didCast(skill, at: now)
-                    let duration = MPCBattleContactTiming.playerContact(skill)
-                    playerHit = (skill, now + duration); playerReady = now + MPCCombatTempo.standard.skillRecovery
-                } else if now >= basicReady {
-                    let duration = MPCBattleContactTiming.playerContact(nil)
-                    playerHit = (nil, now + duration); playerReady = now + MPCCombatTempo.standard.basicRecovery; basicReady = now + 2.4
-                }
-            }
+            let inputs: [MPCBattleInput] = mask && imminentBreath && game.maskIsReady(at: view.now)
+                ? [.init(tick: view.tick, kind: .mask)] : []
+            _ = try game.step(inputs)
         }
-        #expect(contacts >= 2)
-        #expect(s.outcome == (mask ? .victory : .defeat))
-        if !mask { #expect(elapsed < 4.6) }
+        #expect(game.session.outcome == (mask ? .victory : .defeat))
+        if !mask { #expect(game.now >= 4.5 && game.now < 4.7) }
+        print("Q3_EARLY mask=\(mask) result=\(game.session.outcome) seconds=\(game.now) hp=\(game.session.playerHP)")
     }
 }

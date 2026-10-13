@@ -7,11 +7,11 @@ struct Q4TwoFlameTests {
         var campaign = MPCChapterOneCampaignState.chapterStartState
         campaign.grantHoundTutorialCard()
         var loadout = campaign.loadout(forMissionID: "chapter01_q04")
-        loadout.normalSkillIDs = [.maskedWhisper, .sidestepStrike]
+        loadout.normalSkillIDs = [.maskedWhisper, .fabricatedEvidence, .sidestepStrike]
         return loadout
     }
 
-    @Test("Only two actual mask interceptions grant a timed 50 percent opening", arguments: [0, 1, 2])
+    @Test("Only two actual mask interceptions earn one manual counter", arguments: [0, 1, 2])
     func actualInterceptions(remaining: Int) throws {
         var s = try MPCChapterOneEncounterSession.start(encounterID: "chapter01_q04_encounter", companionIDs: [], loadout: tutorialLoadout)
         let id = s.enemies[0].id
@@ -34,10 +34,18 @@ struct Q4TwoFlameTests {
         }
         #expect(s.isQ4OpeningActive == (remaining == 2))
         let damage = try s.applyPartyDamage(20, to: id)
-        #expect(damage == (remaining == 2 ? 30 : 20))
-        s.advanceQ4Clock(at: 12.10)
-        #expect(!s.isQ4OpeningActive)
-        #expect(try s.applyPartyDamage(20, to: id) == 20)
+        #expect(damage == 5) // No automatic bonus: the player must tap.
+        #expect(s.canRequestCounter)
+        let counterCheck1 = s.requestCounter(at: 9.2)
+        #expect(counterCheck1)
+        let counterCheck2 = !s.requestCounter(at: 9.2)
+        #expect(counterCheck2)
+        let counterCheck3 = s.activateCounter(at: 9.3)
+        #expect(counterCheck3)
+        #expect(try s.applyPartyDamage(20, to: id) == 50)
+        s.advanceQ4Clock(at: 12.30)
+        #expect(!s.isQ4OpeningActive && !s.isCounterActive)
+        #expect(try s.applyPartyDamage(20, to: id) == 5)
     }
     @Test("Cleanup removes the Q4 opening; Q3 also requires its manual mask")
     func cleanupAndQ3() throws {
@@ -59,20 +67,24 @@ struct Q4TwoFlameTests {
         try q3.endRound(actingEnemyID: q3.enemies[0].id, at: 3.4)
         #expect(q3.outcome == .defeat)
     }
-    @Test("Three accurate manual masks win during the third opening", arguments: [6.2, 7.2, 8.4], [0.05, 1.0 / 30.0])
-    func threeRounds(maskOffset: Double, tickDuration: Double) throws {
-        let result = try simulate(maskOffset: maskOffset, tickDuration: tickDuration)
-        #expect(result.outcome == .victory)
-        #expect(result.heavyContacts == 6)
-        #expect(result.elapsed >= 49.1 && result.elapsed < 56.1)
-    }
-
-    @Test("Early, late or omitted mask in any round loses", arguments: [0, 1, 2], [0.0, 8.6, 1000.0])
-    func missedRound(round: Int, badOffset: Double) throws {
-        let result = try simulate(maskOffset: 6.2, badRound: round, badOffset: badOffset)
-        #expect(result.outcome == .defeat)
-        #expect(result.heavyContacts == round * 2 + 1)
-        #expect(result.elapsed < Double(round) * 20 + 9.2)
+    @Test("Actual two-card battle needs manual counter and rewards set-up first")
+    func twoCardCounter() throws {
+        let correct = try play([.fabricatedEvidence, .sidestepStrike], masks: true, counters: true)
+        let unattended = try play([.fabricatedEvidence, .sidestepStrike], masks: true, counters: false)
+        let reverse = try play([.sidestepStrike, .fabricatedEvidence], masks: true, counters: true)
+        let noMask = try play([.fabricatedEvidence, .sidestepStrike], masks: false, counters: true)
+        #expect(correct.session.outcome == .victory)
+        #expect(unattended.session.outcome == .defeat)
+        #expect(noMask.session.outcome == .defeat)
+        #expect(reverse.session.outcome == .defeat || correct.tick < reverse.tick)
+        #expect(correct.inputs.contains { $0.kind == .counter })
+        let result = try MPCChurchBattleDriver.replayStory(correct.log, loadout: correct.loadout,
+            mask: .init(owned: true, teachingLoan: true))
+        #expect(result.0.outcome == correct.session.outcome && result.0.ticks == correct.tick)
+        #expect(result.0.playerHP == correct.session.playerHP)
+        for (label, game) in [("counter", correct), ("maskOnly", unattended), ("reverse", reverse), ("noMask", noMask)] {
+            print("Q4_COUNTER \(label) outcome=\(game.session.outcome) seconds=\(game.now) hp=\(game.session.playerHP)")
+        }
     }
 
     @Test("A full heal plus 100 shield cannot absorb one missed large fireball")
@@ -90,56 +102,19 @@ struct Q4TwoFlameTests {
         #expect(s.outcome == .defeat)
     }
 
-    private func simulate(maskOffset: Double, badRound: Int? = nil, badOffset: Double = 0, tickDuration: Double = 0.05) throws
-        -> (outcome: MPCEncounterOutcome, heavyContacts: Int, elapsed: Double) {
-        var campaign = MPCChapterOneCampaignState.chapterStartState
-        campaign.grantHoundTutorialCard()
-        var loadout = campaign.loadout(forMissionID: "chapter01_q04")
-        loadout.normalSkillIDs = [.sidestepStrike]
-        var s = try MPCChapterOneEncounterSession.start(encounterID: "chapter01_q04_encounter", party: campaign.party, companionIDs: [], loadout: loadout)
-        let id = s.enemies[0].id
-        #expect(s.enemies[0].maxHP == 2200)
-        var scheduler = ContinuousSkillScheduler()
-        var ready = 0.0, basicReady = 0.0
-        var pending: (FoolSkillID?, Double)?
-        var cycle = 0.0, heavyContacts = 0, elapsed = 0.0
-        var usedRounds: Set<Int> = []
-        for tick in 0..<1600 {
-            let now = Double(tick) * tickDuration
-            elapsed = now
-            s.advanceQ4Clock(at: now)
-            if s.outcome != .inProgress { break }
-            let round = Int(cycle / 20)
-            let offset = badRound == round ? badOffset : maskOffset
-            if !usedRounds.contains(round), now >= cycle + offset {
-                let result = try s.useOwnedManualMasquerade(targetID: id, isOwned: true, at: now)
-                #expect((result != nil) == !(badRound == round && badOffset == 0 && round > 0))
-                #expect(s.loadout.normalSkillIDs == [.sidestepStrike])
-                usedRounds.insert(round)
-            }
-            if let impact = pending, now >= impact.1 {
-                pending = nil
-                if let skill = impact.0 { _ = try s.useFoolSkill(skill, targetID: id, usesRealtimeCooldown: true) }
-                else { _ = try s.useBasicAction(.damage, targetID: id) }
-            }
-            if s.outcome != .inProgress { break }
-            let intent = s.enemies[0].currentIntent
-            let deadline = cycle + (intent == "q4_probe" ? 2.45 : intent == "charge" ? 8 : intent == "q4_flame_first" ? 8.45 : 9.10)
-            if now >= deadline {
-                try s.endRound(actingEnemyID: id, at: now)
-                if intent.hasPrefix("q4_flame") { heavyContacts += 1 }
-                if intent == "q4_flame_second" { cycle += 20 }
-            }
-            if s.outcome != .inProgress { break }
-            if now >= ready && pending == nil {
-                if let skill = scheduler.next(in: [.sidestepStrike], at: now) {
-                    scheduler.didCast(skill, at: now); ready = now + 1.75; pending = (skill, now + 0.6192)
-                } else if now >= basicReady {
-                    basicReady = now + 2.4; ready = now + 1.65; pending = (nil, now + 0.58)
-                }
-            }
+    private func play(_ cards: [FoolSkillID], masks: Bool, counters: Bool) throws -> MPCStoryBattleStepper {
+        var game = try MPCStoryBattleStepper(encounterID: "chapter01_q04_encounter",
+            loadout: .init(normalSkillIDs: cards), mask: .init(owned: true, teachingLoan: true))
+        while !game.isFinished {
+            let view = game.view
+            var inputs: [MPCBattleInput] = []
+            if masks, game.maskIsReady(at: view.now), view.session.enemies.contains(where: { e in
+                (e.currentIntent == "q4_flame_first" || e.currentIntent == "q4_flame_second")
+                    && (view.incoming[e.id].map { $0 - view.tick <= 6 } ?? false)
+            }) { inputs.append(.init(tick: view.tick, kind: .mask)) }
+            if counters, view.session.canRequestCounter { inputs.append(.init(tick: view.tick, kind: .counter)) }
+            _ = try game.step(inputs)
         }
-        print("Q4 offset=\(maskOffset) badRound=\(String(describing: badRound)) badOffset=\(badOffset) duration=\(elapsed) hp=\(s.playerHP) contacts=\(heavyContacts)")
-        return (s.outcome, heavyContacts, elapsed)
+        return game
     }
 }

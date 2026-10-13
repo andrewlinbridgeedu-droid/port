@@ -159,3 +159,21 @@ struct OrderedSkillRulesTests {
     }
 
 }
+
+
+extension OrderedSkillRulesTests {
+    @Test("The stronger Q2 ghosts still reward the legal two-card set-up order")
+    func strongerGhostsRewardSetUpOrder() throws {
+        func play(_ order: [FoolSkillID]) throws -> MPCStoryBattleStepper {
+            var game = try MPCStoryBattleStepper(encounterID: "chapter01_q02_encounter",
+                loadout: .init(normalSkillIDs: order), mask: .init(owned: false))
+            while !game.isFinished { _ = try game.step() }
+            return game
+        }
+        let setUp = try play([.fabricatedEvidence, .sidestepStrike])
+        let reversed = try play([.sidestepStrike, .fabricatedEvidence])
+        #expect(setUp.session.outcome == .victory)
+        #expect(reversed.session.outcome == .defeat || setUp.tick < reversed.tick)
+        print("Q2_EARLY setUp=\(setUp.session.outcome) hp=\(setUp.session.playerHP) seconds=\(setUp.now); reversed=\(reversed.session.outcome) hp=\(reversed.session.playerHP) seconds=\(reversed.now)")
+    }
+}

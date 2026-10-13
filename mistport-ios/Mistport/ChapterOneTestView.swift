@@ -16,7 +16,7 @@ struct ChapterOneTestView: View {
     /// fully-unlocked combat sandbox used by the design catalog preview.
     private static func hellHoundTutorialCampaign(missionID: String) -> MPCChapterOneCampaignState {
         var campaign = MPCChapterOneCampaignState.chapterStartState
-        for missionNumber in 1...4 {
+        for missionNumber in 1..<Int(missionID.suffix(2))! {
             _ = campaign.applyChapterMissionProgress(
                 districtID: "old-clock",
                 missionNumber: missionNumber
@@ -28,7 +28,7 @@ struct ChapterOneTestView: View {
         campaign.unlockedSkillIDs.insert(.sidestepStrike)
         campaign.skillUnlockStates[.sidestepStrike] = .permanent
         campaign.grantHoundTutorialCard()
-        campaign.loadout.normalSkillIDs = [.sidestepStrike]
+        campaign.loadout.normalSkillIDs = [.fabricatedEvidence, .sidestepStrike]
         campaign.loadoutSlotCapacity = 2
         campaign.currentMissionID = missionID
         return campaign
@@ -49,10 +49,12 @@ struct ChapterOneTestView: View {
 
     private static func clockCoreTutorialCampaign() -> MPCChapterOneCampaignState {
         var campaign = MPCChapterOneCampaignState.chapterStartState
+        for q in 1...2 { _ = campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: q) }
         campaign.unlockedSkillIDs.insert(.sidestepStrike)
         campaign.skillUnlockStates[.sidestepStrike] = .permanent
         campaign.loadout.normalSkillIDs = [.sidestepStrike]
-        campaign.loadoutSlotCapacity = 1
+        campaign.loadout.normalSkillIDs = [.fabricatedEvidence, .sidestepStrike]
+        campaign.loadoutSlotCapacity = 2
         campaign.currentMissionID = "chapter01_q03"
         campaign.grantHoundTutorialCard()
         return campaign
@@ -1288,6 +1290,13 @@ struct ChapterOneEncounterTestView: View {
                             .allowsHitTesting(!showsQ30AngelIntro)
                             .zIndex(50)
 
+                        if combatIsActive && (session.canRequestCounter || session.counter.queued || session.isCounterActive) {
+                            GeometryReader { stage in
+                                counterControl
+                                    .position(x: stage.size.width * 0.5, y: stage.size.height * 0.56)
+                            }
+                            .zIndex(52)
+                        }
                         if combatSideRailItemCount > 0 && !showsQ30AngelIntro && !isFirstCardTutorial {
                             GeometryReader { stage in
                                 paperRelicDockSection
@@ -1309,7 +1318,7 @@ struct ChapterOneEncounterTestView: View {
                             startOpeningBattle()
                         }
                     } label: {
-                        Text(openingSequenceIsComplete ? "开始战斗" : "请选择4张技能")
+                        Text(openingSequenceIsComplete ? "开始战斗" : "请选择\(openingRequiredCardCount)张技能")
                             .font(.system(size: 30, weight: .black, design: .serif))
                             .foregroundStyle(.white)
                             .shadow(color: .black.opacity(0.6), radius: 3, y: 1)
@@ -1688,9 +1697,38 @@ struct ChapterOneEncounterTestView: View {
         !hasStartedOpeningBattle
     }
 
+    private var counterControl: some View {
+        VStack(spacing: 3) {
+            if session.canRequestCounter {
+                Button {
+                    if session.requestCounter(at: battleTime) { actionMessage = "反击准备 · 当前动作结束后重启编排" }
+                } label: {
+                    VStack(spacing: 2) {
+                        Text("反击").font(.system(size: 22, weight: .black))
+                        Text("刷新普通牌 · \(max(0, (session.counter.availableUntil ?? battleTime) - battleTime), specifier: "%.1f")秒")
+                            .font(.system(size: 10, weight: .semibold))
+                    }
+                    .foregroundStyle(Color(red: 1, green: 0.90, blue: 0.58))
+                    .frame(width: 140, height: 52)
+                    .background(Color(red: 0.10, green: 0.08, blue: 0.14), in: RoundedRectangle(cornerRadius: 12))
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.yellow.opacity(0.85), lineWidth: 1.5))
+                }
+                .buttonStyle(.plain).accessibilityIdentifier("chapter-one-counter")
+                .accessibilityHint("消耗本次反击机会，刷新普通牌并从第一张重新施放；不刷新遗落物和大招")
+            } else {
+                Text(session.counter.queued ? "反击准备中" : "反击连招")
+                    .font(.system(size: 16, weight: .bold)).foregroundStyle(.yellow)
+                    .padding(8).background(.black.opacity(0.65), in: Capsule())
+                    .allowsHitTesting(false)
+            }
+        }
+    }
+
+    private var openingRequiredCardCount: Int {
+        min(campaign.loadoutSlotCapacity, ownedBattleSkills.filter { !$0.isUltimate }.count)
+    }
     private var openingSequenceIsComplete: Bool {
-        ownedBattleSkills.filter { !$0.isUltimate }.count < 4
-            || (chosenLoopSkills ?? visibleBattleSkills.map(\.id)).count == 4
+        (chosenLoopSkills ?? visibleBattleSkills.map(\.id)).count == openingRequiredCardCount
     }
 
     private func startOpeningBattle() {
@@ -2142,7 +2180,7 @@ struct ChapterOneEncounterTestView: View {
                 if isQ4Hound, let resolved = value.lastEnemyActionResolutions.first {
                     if resolved.intent == "q4_flame_second" {
                         unityBattleRuntime.send(action: value.isQ4OpeningActive ? "q4-hound:opening" : "q4-hound:recover")
-                        if value.isQ4OpeningActive { actionMessage = "认错名字 · 3秒破绽 · 伤害提高50%" }
+                        if value.isQ4OpeningActive { actionMessage = "双焰被承接 · 点击反击重启编排" }
                         q4CycleStart = (q4CycleStart ?? now) + 20
                     }
                 }
@@ -2355,6 +2393,11 @@ struct ChapterOneEncounterTestView: View {
               let target = selectedTargetID.flatMap({ id in session.enemies.first { $0.id == id && $0.isAlive } })
                 ?? session.enemies.first(where: \.isAlive) else { return }
         let sequence = chosenLoopSkills ?? visibleBattleSkills.map(\.id)
+        if session.activateCounter(at: now) {
+            skillScheduler.restartForCounter(sequence: sequence, at: now)
+            actionMessage = "反击 · 普通牌刷新 · 从第一张重启"
+            if isQ4Hound && usesUnityBattlefield { unityBattleRuntime.send(action: "q4-hound:opening") }
+        }
         let automaticSequence = (usesEncoreBellPrototype || usesManualEmeraldMask) ? sequence.filter { $0 != .maskedWhisper } : sequence
         let requestedSkill: FoolSkillID? = requestedUltimate
             && session.loadout.isUltimateUnlocked && session.canUseFoolSkill(.namelessStage)
@@ -6773,9 +6816,8 @@ struct ChapterOneBattleSetupOverlay: View {
     private let selectedCardWidth: CGFloat = 72
     private let selectedCardSpacing: CGFloat = 12
 
-    private var startIsDisabled: Bool {
-        availableSkills.filter { !$0.isUltimate }.count >= 4 && selectedSkillIDs.count != 4
-    }
+    private var requiredCardCount: Int { min(slotCapacity, availableSkills.filter { !$0.isUltimate }.count) }
+    private var startIsDisabled: Bool { selectedSkillIDs.count != requiredCardCount }
 
     private var selectedSkills: [MPCSkillContent] {
         selectedSkillIDs.compactMap { id in
@@ -6792,7 +6834,7 @@ struct ChapterOneBattleSetupOverlay: View {
 
     private var earlyTutorialLayout: some View {
         ZStack {
-            Button(startIsDisabled ? "请选择4张技能" : "开始战斗") {
+            Button(startIsDisabled ? "请选择\(requiredCardCount)张技能" : "开始战斗") {
                 guard startButtonIsArmed else { return }
                 startFillingEmptySequence()
             }

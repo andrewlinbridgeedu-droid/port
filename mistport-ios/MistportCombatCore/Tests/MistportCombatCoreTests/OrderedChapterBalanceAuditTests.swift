@@ -10,6 +10,12 @@ struct OrderedChapterBalanceAuditTests {
             guard cards.count > 1 else { return [cards] }
             return cards.flatMap { first in permutations(cards.filter { $0 != first }).map { [first] + $0 } }
         }
+        func combinations(_ cards: [FoolSkillID], _ count: Int) -> [[FoolSkillID]] {
+            if count == 0 { return [[]] }
+            guard cards.count >= count, let first = cards.first else { return [] }
+            let rest = Array(cards.dropFirst())
+            return combinations(rest, count - 1).map { [first] + $0 } + combinations(rest, count)
+        }
         let families: [[FoolSkillID]] = [
             [.stolenTempo, .mirrorBarrage, .sidestepStrike, .fabricatedEvidence],
             [.stolenTempo, .mirrorBarrage, .identityDisplacement, .absurdFinale],
@@ -25,16 +31,17 @@ struct OrderedChapterBalanceAuditTests {
             let available = MPCOrderedSkillRules.ordinarySkills.filter { (MPCOrderedSkillRules.unlockMission($0) ?? 99) <= q }
             var tried = Set<String>()
             var wins: [[String: Any]] = [], losses: [[String: Any]] = []
-            for family in families {
-                var deck = family.filter { available.contains($0) }
-                deck += available.filter { !deck.contains($0) }.prefix(max(0, min(4, available.count) - deck.count))
+            let capacity = min(MPCOrderedSkillRules.slotCapacity(availableThrough: q), available.count)
+            for family in q < 10 ? combinations(available, capacity) : families {
+                var deck = Array(family.filter { available.contains($0) }.prefix(capacity))
+                deck += available.filter { !deck.contains($0) }.prefix(max(0, capacity - deck.count))
                 for order in permutations(deck) {
                     let key = order.map(\.rawValue).joined(separator: ",")
                     guard tried.insert(key).inserted else { continue }
                     var loadout = MPCChapterOneLoadout(normalSkillIDs: order, isUltimateUnlocked: q >= 14, passiveIDs: [], relicIDs: [])
                     loadout.churchGear = EarnedChapterAuditFixture.wallGear(beforeOrAt: q)
                     loadout.bountyRelicID = EarnedChapterAuditFixture.wallRelic(q)
-                    loadout.selectedActiveRelicID = q <= 4 ? MPCChapterOneCatalog.ownerlessMaskRelicID : MPCChapterOneCatalog.usurpedLifeMedalRelicID
+                    loadout.selectedActiveRelicID = q <= 9 ? MPCChapterOneCatalog.ownerlessMaskRelicID : MPCChapterOneCatalog.usurpedLifeMedalRelicID
                     if q >= 5 { loadout.relicIDs = [MPCChapterOneCatalog.returnGiftClaspRelicID] }
                     let budget = (1..<q).compactMap { MPCChapterOneThirtyMissionContract.firstClear(for: $0)?.talentPoints }.reduce(0, +)
                     loadout.talents = .restored((0...5).map { "trickery.\($0)" } + (0...5).map { "omen.\($0)" }, budget: budget)
@@ -50,12 +57,14 @@ struct OrderedChapterBalanceAuditTests {
                         let imminentHeavy = view.session.enemies.contains { enemy in
                             guard let deadline = view.incoming[enemy.id], deadline - view.tick <= 6 else { return false }
                             if q == 3 { return enemy.currentIntent == "memory_breath" }
-                            return q != 4 || enemy.currentIntent == "q4_flame_first" || enemy.currentIntent == "q4_flame_second"
+                            if q == 4 { return enemy.currentIntent == "q4_flame_first" || enemy.currentIntent == "q4_flame_second" }
+                            return MPCCombatCounter.isHeavy(enemy.currentIntent)
                         }
                         if !view.session.playerIsDown, view.session.outcome == .inProgress, game.maskIsReady(at: view.now), imminentHeavy {
                             inputs.append(.init(tick: view.tick, kind: .mask))
                         }
-                        if q >= 5, view.session.outcome == .inProgress, view.now >= 6,
+                        if view.session.canRequestCounter { inputs.append(.init(tick: view.tick, kind: .counter)) }
+                        if q >= 10, view.session.outcome == .inProgress, view.now >= 6,
                            trial.activateUsurpedLifeMedal(isOwned: true, at: view.now) { inputs.append(.init(tick: view.tick, kind: .medal)) }
                         if q >= 14, !requestedUltimate, view.session.outcome == .inProgress, !view.session.playerIsDown, !view.session.foolUltimateUsed, view.now >= 1 {
                             inputs.append(.init(tick: view.tick, kind: .ultimate)); requestedUltimate = true

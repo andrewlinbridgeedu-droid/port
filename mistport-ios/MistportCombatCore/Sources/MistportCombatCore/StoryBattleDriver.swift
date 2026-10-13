@@ -69,6 +69,7 @@ public struct MPCStoryBattleStepper: Sendable {
     private var revealed: Set<String> = []
     /// Q4's current 20-second hound cycle start, for policies that time the mask.
     public private(set) var q4CycleStart: TimeInterval?
+    private var q3HuntStart: TimeInterval?
     private var bell = MPCEncoreBellState()
     private var ultimateRequested = false
     private var preludeBasics = 0
@@ -148,6 +149,9 @@ public struct MPCStoryBattleStepper: Sendable {
     /// Enemy contact after an attack starts: Unity timings sampled 2026-09-15 at 30 fps.
     private func contact(_ enemy: MPCRuntimeEnemy, index: Int) -> TimeInterval {
         let q = mission
+        if (2...4).contains(q) {
+            return MPCBattleContactTiming.enemyContact(contentID: enemy.contentID, intent: enemy.currentIntent, encounterID: encounterID)
+        }
         let split = enemy.contentID == "enemy_resonant_clock_guard_q2_split"
         let ghost = enemy.contentID.contains("resonant_clock_guard_q2")
         let hound = ["enemy_clockwork_hound", "enemy_emerald_revenant"].contains(enemy.contentID)
@@ -167,7 +171,7 @@ public struct MPCStoryBattleStepper: Sendable {
     private mutating func beginWave(_ index: Int, into events: inout Events) {
         pending.removeAll(); ready.removeAll(); reveals.removeAll(); revealed.removeAll()
         light?.reset()
-        q4CycleStart = nil
+        q4CycleStart = nil; q3HuntStart = nil
         session.clearQ4HoundState()
         events.newWave = index
     }
@@ -243,6 +247,8 @@ public struct MPCStoryBattleStepper: Sendable {
                     maskUses += 1
                     ok = true
                 }
+            case .counter:
+                ok = s.requestCounter(at: now)
             case .bell:
                 if s.canUseEncoreBell, let id = bell.pendingEnemyID, s.enemies.contains(where: { $0.id == id && $0.isAlive }),
                    bell.phase == .windingUp {
@@ -371,6 +377,10 @@ public struct MPCStoryBattleStepper: Sendable {
                 if mission == 6 { self.ready[enemy.id] = now }
                 if mission == 8 { self.ready[enemy.id] = now + 2.9 }
             }
+            if mission == 3 {
+                if q3HuntStart == nil { q3HuntStart = now }
+                self.ready[enemy.id] = MPCQ3HoundTiming.castTime(start: q3HuntStart!, attackIndex: enemy.intentIndex)
+            }
             if mission == 4 {
                 if q4CycleStart == nil { q4CycleStart = now }
                 let offset: Double = switch enemy.currentIntent {
@@ -426,10 +436,11 @@ public struct MPCStoryBattleStepper: Sendable {
         guard reveals.isEmpty, now >= playerAt, now >= session.orderedCastReadyAt, hit == nil, !session.playerIsDown,
               let current = self.target.flatMap({ id in s.enemies.first { $0.id == id && $0.isAlive } }) ?? s.enemies.first(where: \.isAlive)
         else { return events }
+        if session.activateCounter(at: now) { self.scheduler.restartForCounter(sequence: self.loop, at: now) }
         let automatic = usesManualMask ? self.loop.filter { $0 != .maskedWhisper } : self.loop
         let chosen: FoolSkillID?
         let requested: FoolSkillID? = self.ultimateRequested && loadout.isUltimateUnlocked && s.canUseFoolSkill(.namelessStage) ? .namelessStage : nil
-        if !preludeActive, let skill = requested ?? scheduler.next(in: automatic, at: now, skipping: s.sealedFoolSkillIDs(at: now)) {
+        if !preludeActive, let skill = requested ?? self.scheduler.next(in: automatic, at: now, skipping: s.sealedFoolSkillIDs(at: now)) {
             if skill == .namelessStage { self.ultimateRequested = false }
             session.setContinuousSkillSequence(self.loop)
             self.scheduler.didCast(skill, at: now)

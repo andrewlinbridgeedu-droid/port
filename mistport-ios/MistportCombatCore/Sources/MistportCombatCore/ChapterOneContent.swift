@@ -308,14 +308,14 @@ public enum MPCChapterOneCatalog {
         .init(id: "chapter01_q01", number: 1, name: "雨夜醒来", location: "旧城区·紫藤街口", encounterID: "chapter01_q01_encounter", storyText: "你记得自己的名字，却在雨中的街口被空壳守卫拦下：“已认领人员，不得离开保管区域。”玛拉示意先观察它的出招；她递来的通行证，背面留着一栏旧签收。", trialSkillID: .sidestepStrike, permanentSkillIDs: [.sidestepStrike], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 1)!.itemIDs),
         .init(id: "chapter01_q02", number: 2, name: "雾都幽灵", location: "旧城区·紫藤街口", encounterID: "chapter01_q02_encounter", storyText: "两道幽灵围住一批退回的寻人信，反复说着“别送我回家”。被击散后，它们各裂成两只赤红子体。不同收件人的退信上，却盖着同一个理由：家属已领回。", permanentSkillIDs: [.fabricatedEvidence], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 2)!.itemIDs),
         .init(id: "chapter01_q03", number: 3, name: "循名而来的猎犬", location: "旧城区·失名档案街", encounterID: "chapter01_q03_encounter", storyText: "旧地狱犬循着你的名字追来。玛拉在战前交付无主假面。击退后，项圈露出你的名字、旧邮务追索号与一道格式不同的外部委托编号；迟秒怀表只是核对邮路的物证。", permanentSkillIDs: [], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 3)!.itemIDs),
-        .init(id: "chapter01_q04", number: 4, name: "猎犬试探", location: "旧城区·雾灯街", encounterID: "chapter01_q04_encounter", storyText: "同一只猎犬再次追来，喉间双焰引出两颗追索火球。让假面承接双焰，抓住三秒破绽。战后召回声带走猎犬，奥黛尔的诊所里，却仍留着失踪抄方员伊恩的一杯冷茶。", permanentSkillIDs: [.stolenTempo, .mirrorBarrage], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 4)!.itemIDs, requiredBehaviorTags: []),
+        .init(id: "chapter01_q04", number: 4, name: "猎犬试探", location: "旧城区·雾灯街", encounterID: "chapter01_q04_encounter", storyText: "同一只猎犬再次追来，喉间双焰引出两颗追索火球。让假面承接两颗火球，再点击反击，从第一张牌重新执行编排。战后召回声带走猎犬，奥黛尔的诊所里，却仍留着失踪抄方员伊恩的一杯冷茶。", permanentSkillIDs: [], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 4)!.itemIDs, requiredBehaviorTags: []),
         .init(id: "chapter01_q05", number: 5, name: "不肯落幕", location: "旧城区·雾灯街", encounterID: "chapter01_q05_encounter", storyText: "旧邮务间的翠焰执役者不停将退信盖成“已送达”。只要还有退件，它就不能结束执役。毒雾不断加浓，绿焰预示重击；你要终止这条把求救当成已送达邮件的流程。", permanentSkillIDs: [.backstageChange], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 5)!.itemIDs, requiredBehaviorTags: []),
         .init(id: "chapter01_q06", number: 6, name: "档案街入口", location: "旧城区·失名档案街", encounterID: "chapter01_q06_encounter", storyText: "注销底联没有家属签名，只有档案系统的接收章。白门卫承认通行证有效，却要求领回你的监护人提出查阅申请。它的真盾与出击后的校准破绽，挡在原始记录之前。", permanentSkillIDs: [.turnTheTables], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 6)!.itemIDs),
-        .init(id: "chapter01_q07", number: 7, name: "空白身份牌", location: "旧城区·失名档案街", encounterID: "chapter01_q07_encounter", storyText: "两具空壳守卫看守的空白身份牌并非废品，而是等待填写归属的成品。寄忆核心持续修复守卫；其中一张牌背面的领药编号，属于本来就有姓名和工作的伊恩。", permanentSkillIDs: [.identityDisplacement], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 7)!.itemIDs),
-        .init(id: "chapter01_q08", number: 8, name: "不属于我的名字", location: "旧城区·失名档案街", encounterID: "chapter01_q08_encounter", storyText: "补录台下的记忆蛭试着给你安上别人的名字。它抽出的记忆里，竟有刚在诊所见过的缺角茶杯。以四层误认转为错位，再让双影追猎兑现两次重击。", permanentSkillIDs: [.mirrorPursuit], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 8)!.itemIDs),
-        .init(id: "chapter01_q09", number: 9, name: "被改写的证词", location: "旧城区·齿轮工坊", encounterID: "chapter01_q09_encounter", storyText: "书记员正将奥黛尔的“伊恩没有回来”改为“因误会重复报案”，核心持续维护覆盖后的版本。保住前后两份证词，才能让这次失踪不再被一句手续完成抹掉。三教会存证页上留着伊莱娅的批注，错乱灯流在她经过后重新归正。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 9)!.itemIDs),
-        .init(id: "chapter01_q10", number: 10, name: "失踪者名单", location: "旧城区·齿轮工坊", encounterID: "chapter01_q10_encounter", storyText: "名单上的伊恩和其他失踪者，都被标记为“已领回”。你的名字也在其中，地址指向一个所谓的家。铠甲执行犬与白门卫守住原件；它们不是早先被召回的旧犬。赫斯认出名单上的旧地址：这是一条投递路线，不是找到家人的证明。", permanentSkillIDs: [.absurdFinale], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 10)!.itemIDs),
-        .init(id: "chapter01_q11", number: 11, name: "不属于我的家人", location: "旧城区·齿轮工坊", encounterID: "chapter01_q11_encounter", storyText: "门后的声音说，桌上的缺角茶杯是你从小用惯的。杯底却印着奥黛尔诊所的药柜编号。两只记忆蛭正用真实片段拼出假的亲情，空壳守卫等待完成接收。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 11)!.itemIDs),
+        .init(id: "chapter01_q07", number: 7, name: "空白身份牌", location: "旧城区·失名档案街", encounterID: "chapter01_q07_encounter", storyText: "两具空壳守卫看守的空白身份牌并非废品，而是等待填写归属的成品。寄忆核心持续修复守卫；其中一张牌背面的领药编号，属于本来就有姓名和工作的伊恩。", permanentSkillIDs: [.stolenTempo], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 7)!.itemIDs),
+        .init(id: "chapter01_q08", number: 8, name: "不属于我的名字", location: "旧城区·失名档案街", encounterID: "chapter01_q08_encounter", storyText: "补录台下的记忆蛭试着给你安上别人的名字。它抽出的记忆里，竟有刚在诊所见过的缺角茶杯。以四层误认转为错位，破解被强加的身份。", permanentSkillIDs: [.identityDisplacement], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 8)!.itemIDs),
+        .init(id: "chapter01_q09", number: 9, name: "被改写的证词", location: "旧城区·齿轮工坊", encounterID: "chapter01_q09_encounter", storyText: "书记员正将奥黛尔的“伊恩没有回来”改为“因误会重复报案”，核心持续维护覆盖后的版本。保住前后两份证词，才能让这次失踪不再被一句手续完成抹掉。三教会存证页上留着伊莱娅的批注，错乱灯流在她经过后重新归正。", permanentSkillIDs: [.mirrorBarrage], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 9)!.itemIDs),
+        .init(id: "chapter01_q10", number: 10, name: "失踪者名单", location: "旧城区·齿轮工坊", encounterID: "chapter01_q10_encounter", storyText: "名单上的伊恩和其他失踪者，都被标记为“已领回”。你的名字也在其中，地址指向一个所谓的家。铠甲执行犬与白门卫守住原件；它们不是早先被召回的旧犬。赫斯认出名单上的旧地址：这是一条投递路线，不是找到家人的证明。", permanentSkillIDs: [.mirrorPursuit], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 10)!.itemIDs),
+        .init(id: "chapter01_q11", number: 11, name: "不属于我的家人", location: "旧城区·齿轮工坊", encounterID: "chapter01_q11_encounter", storyText: "门后的声音说，桌上的缺角茶杯是你从小用惯的。杯底却印着奥黛尔诊所的药柜编号。两只记忆蛭正用真实片段拼出假的亲情，空壳守卫等待完成接收。", permanentSkillIDs: [.absurdFinale], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 11)!.itemIDs),
         .init(id: "chapter01_q12", number: 12, name: "强制校正", location: "旧城区·雨水排渠", encounterID: "chapter01_q12_encounter", storyText: "两名书记员轮番合账，试图将异常家庭档案重新编入调拨队列。调拨单显示：移出一个名字，就要从后面补上另一个。玛拉终于把旧通行证翻了过来。", permanentSkillIDs: [.delayedSignature], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 12)!.itemIDs),
         .init(id: "chapter01_q13", number: 13, name: "救援命令", location: "旧城区·雨水排渠", encounterID: "chapter01_q13_encounter", storyText: "救援者洛克接到的录音，本该在“安置完成”后允许人离开，却被改成等待调拨。摧毁转接核心、解除本地控制，让他活着说出背架根授权的去向。", permanentSkillIDs: [.namelessStage], rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 13)!.itemIDs),
         .init(id: "chapter01_q14", number: 14, name: "错误名牌", location: "旧城区·雨水排渠", encounterID: "chapter01_q14_encounter", storyText: "记忆蛭处理人的记忆，书记员处理外部文字。伊恩的名牌被挂进一个根本不认识他的家庭，背面牵着细红线。沿这条实物联系，寻找替所有家庭代签的人。", rewardItemIDs: MPCChapterOneThirtyMissionContract.firstClear(for: 14)!.itemIDs),
@@ -574,12 +574,12 @@ public enum MPCChapterOneCatalog {
             skills: clockGuardSkills
         ),
         enemy(
-            "enemy_resonant_clock_guard_q2", "雾都幽灵", .normal, 520, 42, 12,
+            "enemy_resonant_clock_guard_q2", "雾都幽灵", .normal, 450, 52, 12,
             ["strike", "strike"], "两只雾都幽灵以雾钟震魂与幽雾追魂独立施法",
             skills: fogGhostSkills
         ),
         enemy(
-            "enemy_resonant_clock_guard_q2_split", "赤怨幽灵", .normal, 260, 32, 12,
+            "enemy_resonant_clock_guard_q2_split", "赤怨幽灵", .normal, 325, 40, 12,
             ["strike", "strike"], "雾都幽灵被击散后分裂为两只赤红怨影，攻击频率提高50%，不再分裂",
             skills: fogGhostSkills
         ),
@@ -665,7 +665,7 @@ public enum MPCChapterOneCatalog {
         encounter("chapter01_q02_encounter", "雾都幽灵", "chapter01_q02", [[
             "enemy_resonant_clock_guard_q2",
             "enemy_resonant_clock_guard_q2"
-        ]], 0, MPCChapterOneThirtyMissionContract.firstClear(for: 2)!.itemIDs, nil, ["single_card_mastery", "dual_target"]),
+        ]], 0, MPCChapterOneThirtyMissionContract.firstClear(for: 2)!.itemIDs, nil, ["two_card_order", "dual_target"]),
         encounter("chapter01_q03_encounter", "循名而来的猎犬", "chapter01_q03", [["enemy_clockwork_hound"]], 0, MPCChapterOneThirtyMissionContract.firstClear(for: 3)!.itemIDs, nil, ["hell_hound", "stolen_name"]),
         encounter("chapter01_q04_encounter", "猎犬试探", "chapter01_q04", [["enemy_clockwork_hound"]], 0, MPCChapterOneThirtyMissionContract.firstClear(for: 4)!.itemIDs, nil, ["illusion_payoff", "hound_fireball", "K01"]),
         encounter("chapter01_q05_encounter", "不肯落幕", "chapter01_q05", [["enemy_emerald_revenant"]], 0, MPCChapterOneThirtyMissionContract.firstClear(for: 5)!.itemIDs, nil, ["emerald_revenant", "escalating_poison", "return_attack"]),
@@ -844,7 +844,7 @@ public enum MPCChapterOneCatalog {
 
     public static let investigations: [MPCInvestigationContent] = [
         investigation("chapter01_q01", "雨夜醒来", "旧城区·紫藤街口", ["chapter01_q01_encounter"], [.sidestepStrike], [], ["item_old_clock_pass", "consumable_pain_salve"], [], "完成错步穿行的契约，第一张技能牌正式归属玩家。"),
-        investigation("chapter01_q02", "雾都幽灵", "旧城区·紫藤街口", ["chapter01_q02_encounter"], [], [], ["item_memory_filament", "item_sealed_transfer"], [], "以单牌完成一次完整战斗，确认多目标技能仍按目标状态分别结算，并取回旧邮务间的移交条。"),
+        investigation("chapter01_q02", "雾都幽灵", "旧城区·紫藤街口", ["chapter01_q02_encounter"], [], [], ["item_memory_filament", "item_sealed_transfer"], [], "先以伪证烙印施加误认，再让错步穿行在四秒内命中；击散两道幽灵及其赤红子体，取回旧邮务间的移交条。"),
         investigation("chapter01_q03", "循名而来的猎犬", "旧城区·失名档案街", ["chapter01_q03_encounter"], [], [], ["item_late_second_watch"], [ownerlessMaskRelicID], "守钟人的记忆引来了循名猎犬。玛拉先交给你「无主假面」，再迎战猎犬，揭开项圈上的名字。"),
         investigation("chapter01_q04", "猎犬试探", "旧城区·雾灯街", ["chapter01_q04_encounter"], [], [], ["item_hound_trace"], [], "同一只猎犬留在远处蓄力，随后喷出冥火球；通过实战理解假面承接与误认反击。"),
         investigation("chapter01_q05", "不肯落幕", "旧城区·雾灯街", ["chapter01_q05_encounter"], [], [], [], [], "毒雾持续加浓直到战斗结束；绿焰预告强力返场。根据持续毒雾与直接重击选择遗落物，终止邮务执役。"),
