@@ -577,12 +577,9 @@ private enum CombatFloatingNumberKind {
         switch self {
         case .healing:
             Color(red: 0.28, green: 0.95, blue: 0.56)
-        case .playerDamage:
-            Color(red: 1.0, green: 0.32, blue: 0.27)
-        case .damage: .white
-        case .critical: Color(red: 1, green: 0.83, blue: 0.3)
+        case .playerDamage, .damage, .critical, .bonus:
+            Color(red: 1.0, green: 0.25, blue: 0.22)
         case .parried: Color(white: 0.75)
-        case .bonus: Color(red: 1, green: 0.87, blue: 0.42)
         case .status: Color(red: 0.8, green: 0.57, blue: 1)
         case .defenseUp:
             Color(red: 0.74, green: 0.56, blue: 1.0)
@@ -3167,7 +3164,7 @@ struct ChapterOneEncounterTestView: View {
             for hit in result.targets where hit.damage > 0 {
                 var number = CombatFloatingNumber(enemyID: hit.targetID, amount: hit.damage, kind: .damage, sourceLabel: "假面")
                 if healthOverlaySize.width > 0, healthOverlaySize.height > 0,
-                   let anchor = combatFloatingNumberPosition(number, in: healthOverlaySize, enemies: victimFormation) {
+                   let anchor = combatFloatingNumberPosition(number, in: healthOverlaySize, enemies: victimFormation, includesLane: false) {
                     number.normalizedAnchor = CGPoint(x: anchor.x / healthOverlaySize.width, y: anchor.y / healthOverlaySize.height)
                 }
                 enqueueCombatFloatingNumber(number)
@@ -3835,7 +3832,6 @@ struct ChapterOneEncounterTestView: View {
                     }
                         .foregroundStyle(number.kind.color)
                         .padding(.horizontal, 3).padding(.vertical, 1)
-                        .background(.black.opacity(0.72), in: RoundedRectangle(cornerRadius: 4))
                         .shadow(color: .black.opacity(0.9), radius: 3, y: 2)
                         .shadow(color: number.kind.color.opacity(0.38), radius: 8)
                         .position(position)
@@ -3957,20 +3953,26 @@ struct ChapterOneEncounterTestView: View {
     private func combatFloatingNumberPosition(
         _ number: CombatFloatingNumber,
         in size: CGSize,
-        enemies: [MPCRuntimeEnemy]? = nil
+        enemies: [MPCRuntimeEnemy]? = nil,
+        includesLane: Bool = true
     ) -> CGPoint? {
-        let lane = CGFloat([0, 18, -18, 32][min(3, number.lane)])
+        // Two columns and two rows leave enough room for four simultaneous
+        // values, including their 32-point upward travel. Freeze the base
+        // impact point without an offset so the lane is applied only once.
+        let slot = min(3, max(0, number.lane))
+        let laneX: CGFloat = includesLane ? [-46, 46, -46, 46][slot] : 0
+        let laneY: CGFloat = includesLane ? [0, 0, -76, -76][slot] : 0
         if let anchor = number.normalizedAnchor {
-            return CGPoint(x: max(44, min(size.width - 44, anchor.x * size.width + lane)), y: anchor.y * size.height)
+            return CGPoint(x: max(44, min(size.width - 44, anchor.x * size.width + laneX)), y: max(20, min(size.height - 20, anchor.y * size.height + laneY)))
         }
         let formation = enemies ?? session.enemies
         guard let enemyID = number.enemyID else {
             let playerAnchor = playerHealthBarPosition(in: size)
             let playerHealthBarY = playerAnchor.y
             return CGPoint(
-                x: max(44, min(size.width - 44, playerAnchor.x + lane)),
+                x: max(44, min(size.width - 44, playerAnchor.x + laneX)),
                 y: min(
-                    max(20, playerHealthBarY + number.kind.verticalOffset),
+                    max(20, playerHealthBarY + number.kind.verticalOffset + laneY),
                     max(20, size.height - 20)
                 )
             )
@@ -3997,9 +3999,9 @@ struct ChapterOneEncounterTestView: View {
             )
         }
         return CGPoint(
-            x: max(44, min(size.width - 44, healthBar.x + lane)),
+            x: max(44, min(size.width - 44, healthBar.x + laneX)),
             y: min(
-                max(20, healthBar.y + number.kind.verticalOffset),
+                max(20, healthBar.y + number.kind.verticalOffset + laneY),
                 max(20, size.height - 20)
             )
         )
@@ -4015,7 +4017,7 @@ struct ChapterOneEncounterTestView: View {
         guard amount > 0 else { return }
         var number = CombatFloatingNumber(enemyID: enemyID, amount: amount, kind: kind)
         if healthOverlaySize.width > 0, healthOverlaySize.height > 0,
-           let anchor = combatFloatingNumberPosition(number, in: healthOverlaySize, enemies: enemies) {
+           let anchor = combatFloatingNumberPosition(number, in: healthOverlaySize, enemies: enemies, includesLane: false) {
             number.normalizedAnchor = CGPoint(x: anchor.x / healthOverlaySize.width, y: anchor.y / healthOverlaySize.height)
         }
         enqueueCombatFloatingNumber(number)
@@ -4037,9 +4039,9 @@ struct ChapterOneEncounterTestView: View {
     private func enqueueCombatFloatingNumber(_ input: CombatFloatingNumber) {
         guard !isFastForwardingBattle else { return }
         var number = input
-        if number.enemyID != nil, number.normalizedAnchor == nil,
+        if number.normalizedAnchor == nil,
            healthOverlaySize.width > 0, healthOverlaySize.height > 0,
-           let anchor = combatFloatingNumberPosition(number, in: healthOverlaySize) {
+           let anchor = combatFloatingNumberPosition(number, in: healthOverlaySize, includesLane: false) {
             number.normalizedAnchor = CGPoint(x: anchor.x / healthOverlaySize.width, y: anchor.y / healthOverlaySize.height)
         }
         let siblings = combatFloatingNumbers.filter { $0.enemyID == number.enemyID && ($0.kind == .status) == (number.kind == .status) }
