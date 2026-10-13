@@ -655,6 +655,22 @@ final class GameStore {
         if launchArguments.contains("--verify-newspaper") { Task { await Self.verifyNewspaperIntegration() } }
         if launchArguments.contains("--verify-remnants") { Task { await Self.verifyRemnantsIntegration() } }
         if launchArguments.contains("--verify-neighbors") { Task { await Self.verifyNeighborsIntegration() } }
+        #if DEBUG
+        if launchArguments.contains("--baker-board-review") {
+            debugJumpToOldClockMission(6, enterImmediately: false)
+            debugSetPacingDay(3)
+            try? openNeighborDay()
+            chapterOneCampaign.inventory[MPCCraftingCatalog.salveID] = 2
+            persistChapterProgress()
+            markDailyNewspaperSeen()
+            selectedPathID = .fool
+            phase = .cityHub
+        }
+        #endif
+        if launchArguments.contains("--refresh-baker-errand") {
+            do { try refreshBakerErrandForReplay() }
+            catch { NSLog("BAKER_REPLAY_FAILED: %@", String(describing: error)) }
+        }
         if launchArguments.contains("--verify-city-events") { Task { await Self.verifyCityEventsIntegration() } }
         if launchArguments.contains("--verify-daily-workshop") { Task { await Self.verifyDailyWorkshopIntegration() } }
         if launchArguments.contains("--verify-p0") { Self.verifySettlementRecovery() }
@@ -4704,6 +4720,17 @@ extension GameStore {
         talkingNeighborID = id
     }
     func endNeighborConversation() { talkingNeighborID = nil }
+    /// Explicit user-authorized retry, not a new daily offer or a second reward.
+    private func refreshBakerErrandForReplay() throws {
+        var record = try readNeighbors()
+        guard let offer = record.ledger.offers.first(where: { $0.neighborID == "baker" && $0.day == pacingDay }) else {
+            throw MPCNeighborLedger.Failure.notOffered
+        }
+        guard try record.ledger.reopenCompletedOfferForReplay(offer.id) else { return }
+        record.heardMessages.remove(offer.id)
+        try updateChurchServices(neighbors: record) { _ in }
+        NSLog("BAKER_REPLAY_READY: %@; original reward preserved", offer.id)
+    }
     func canRelayNeighbor(_ offerID: String) -> Bool {
         (try? readNeighbors().heardMessages.contains(offerID)) == true
             && housingRecord?.stamina.receipts.contains("neighbor-" + offerID) == true
@@ -4762,7 +4789,7 @@ extension GameStore {
             state.loans.coins = coins
             try settleChurchGear(&state, battleID: ticket, outcome: session.outcome == .victory ? .victory : .defeat)
         }
-        if reward != nil { recordCityContribution(.errand, receipt: "errand-" + offerID) }
+        if let reward, reward.copper > 0 { recordCityContribution(.errand, receipt: "errand-" + offerID) }
         return reward
     }
     func abandonNeighborPest(offerID: String, ticket: String, defeated: Bool = false) throws {
@@ -5225,12 +5252,12 @@ extension GameStore {
     }
     func deliverNeighbor(_ offerID: String) async throws -> MPCNeighborLedger.Reward {
         let reward = try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try deliverNeighborBody(offerID) }
-        recordCityContribution(.errand, receipt: "errand-" + offerID)
+        if reward.copper > 0 { recordCityContribution(.errand, receipt: "errand-" + offerID) }
         return reward
     }
     func answerNeighbor(_ offerID: String, choiceID: String) async throws -> MPCNeighborLedger.Reward? {
         let reward = try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try answerNeighborBody(offerID, choiceID: choiceID) }
-        if reward != nil { recordCityContribution(.errand, receipt: "errand-" + offerID) }
+        if let reward, reward.copper > 0 { recordCityContribution(.errand, receipt: "errand-" + offerID) }
         return reward
     }
     func acceptNeighborMessage(_ offerID: String) async throws {
@@ -5242,7 +5269,7 @@ extension GameStore {
     }
     func relayNeighbor(_ offerID: String) async throws -> MPCNeighborLedger.Reward {
         let reward = try await housingAction(.errandThreeStep, receipt: "neighbor-" + offerID) { try relayNeighborBody(offerID) }
-        recordCityContribution(.errand, receipt: "errand-" + offerID)
+        if reward.copper > 0 { recordCityContribution(.errand, receipt: "errand-" + offerID) }
         return reward
     }
     func beginNeighborPest(offerID: String, ticket: String, skills: [FoolSkillID]) async throws -> MPCChapterOneEncounterSession {

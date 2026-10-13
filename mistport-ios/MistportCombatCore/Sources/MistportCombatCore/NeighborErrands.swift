@@ -463,6 +463,8 @@ public struct MPCNeighborLedger: Codable, Equatable, Sendable {
         public fileprivate(set) var activeTicket: String?
         public fileprivate(set) var settledTickets: Set<String> = []
         public fileprivate(set) var done = false
+        /// A user-requested retry of an already-paid offer; absent in older saves.
+        public fileprivate(set) var replayWithoutReward: Bool?
         public var errand: MPCNeighborErrand? { MPCNeighborCatalog.errand(errandID)?.errand }
     }
     public struct Reward: Codable, Equatable, Sendable {
@@ -510,9 +512,24 @@ public struct MPCNeighborLedger: Codable, Equatable, Sendable {
         return (i, errand)
     }
 
+    /// Reopens only this completed offer once, keeping its old payout and fight receipts.
+    @discardableResult
+    public mutating func reopenCompletedOfferForReplay(_ offerID: String) throws -> Bool {
+        guard let i = offers.firstIndex(where: { $0.id == offerID }) else { throw Failure.notOffered }
+        guard offers[i].activeTicket == nil else { throw Failure.pending }
+        guard offers[i].done, offers[i].replayWithoutReward != true else { return false }
+        offers[i].replayWithoutReward = true
+        offers[i].done = false
+        offers[i].excludedChoiceIDs = []
+        return true
+    }
+
     private mutating func complete(_ i: Int, _ errand: MPCNeighborErrand, coins: inout Int) -> Reward {
         offers[i].done = true
         let id = offers[i].neighborID
+        if offers[i].replayWithoutReward == true {
+            return .init(copper: 0, thanks: errand.thanks, affinity: affinity[id, default: 0], story: nil)
+        }
         affinity[id, default: 0] += 1
         completedErrands += 1
         let level = affinity[id]!

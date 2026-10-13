@@ -157,6 +157,7 @@ struct GameArtPage<Content: View>: View {
     var art: String? = nil
     var closeTitle = "返回"
     var onClose: (() -> Void)? = nil
+    var dismissOnClose = true
     @ViewBuilder let content: () -> Content
     @Environment(\.dismiss) private var dismiss
     var body: some View {
@@ -166,7 +167,7 @@ struct GameArtPage<Content: View>: View {
                     Text(subtitle).font(.caption).tracking(1).foregroundStyle(GameArt.gold)
                     Text(title).font(.title2.bold()).fontDesign(.serif).foregroundStyle(.white)
                 }.frame(maxWidth: .infinity, alignment: .leading)
-                GameArtReturnButton(title: closeTitle) { onClose?(); dismiss() }
+                GameArtReturnButton(title: closeTitle) { onClose?(); if dismissOnClose { dismiss() } }
             }.padding(18).background(GameArt.night)
             GameArtPaperScroll {
                 VStack(spacing: 0) {

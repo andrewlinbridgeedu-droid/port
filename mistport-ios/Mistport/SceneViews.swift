@@ -166,7 +166,8 @@ struct CityHubView: View {
         )
         .onChange(of: focusRevision) { _, _ in
             guard let id = focusID else { return }
-            if let target = streetTargets.first(where: { $0.id == id || $0.taskID == id }) {
+            if let target = streetTargets.first(where: { $0.id == id || $0.taskID == id || $0.personID == id }) {
+                trackedTargetID = target.id
                 center(HomeMapLayout.current.targetPoint(target)[0], in: viewport)
             } else if let building = HomeMapLayout.current.building(id) { center(building.at![0], in: viewport) }
         }

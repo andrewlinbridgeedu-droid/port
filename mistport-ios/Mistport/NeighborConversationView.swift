@@ -76,7 +76,7 @@ struct NeighborConversationView: View {
                 Text("这条请求已过期。")
             } else {
                 StaminaCostView(activity: game.staminaActivityForNeighbor(offer.id))
-                Text("完成得 \(errand.copper) 铜 · 好感 +1").font(.subheadline)
+                Text(offer.replayWithoutReward == true ? "这次是重试，原报酬与好感已领取。" : "完成得 \(errand.copper) 铜 · 好感 +1").font(.subheadline)
                 switch errand.kind {
                 case .deliver:
                     let stock = game.chapterOneCampaign.inventory[errand.itemID ?? "", default: 0]
@@ -107,7 +107,7 @@ struct NeighborConversationView: View {
     private func perform(_ action: @escaping () async throws -> MPCNeighborLedger.Reward?) {
         Task {
         do {
-            if let reward = try await action() { message = reward.thanks + "\n已收 \(reward.copper) 铜，好感 \(reward.affinity)。" + (reward.story.map { "\n" + $0 } ?? "") }
+            if let reward = try await action() { message = reward.thanks + (reward.copper == 0 ? "\n重试完成，原报酬与好感已领取。" : "\n已收 \(reward.copper) 铜，好感 \(reward.affinity)。") + (reward.story.map { "\n" + $0 } ?? "") }
             else { message = "这条线索对不上，已划掉该选项；没有扣铜。" }
         } catch { message = game.housingError(error) }
         }

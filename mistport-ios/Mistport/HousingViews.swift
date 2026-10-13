@@ -75,10 +75,12 @@ enum HousingAtlas {
 private struct HousingPage<Content: View>: View {
     let title: String
     var backTitle = "返回港城"
+    var onBack: (() -> Void)? = nil
     @ViewBuilder let content: () -> Content
     @Environment(\.dismiss) private var dismiss
     var body: some View {
-        GameArtPage(title: title, subtitle: "赁屋行 · 港城生活", closeTitle: backTitle) {
+        GameArtPage(title: title, subtitle: "赁屋行 · 港城生活", closeTitle: backTitle,
+                    onClose: onBack, dismissOnClose: onBack == nil) {
             content()
         }
     }
@@ -89,20 +91,34 @@ struct HousingAgencyView: View {
     @State private var choosing = false
     @State private var showingHome = false
     var body: some View {
+        Group {
+            if showingHome {
+                HousingResidenceView(game: game, onBack: { showingHome = false })
+            } else if choosing {
+                HousingSearchView(game: game, onBack: { choosing = false })
+            } else {
+                agencyCounter
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(GameArt.night.ignoresSafeArea())
+        .presentationDetents([.large])
+        .task { await game.openHousingDay() }
+    }
+    private var agencyCounter: some View {
         HomeCounterScene(title: "赁屋行", room: .rentalAgency, actorArt: "HousingAgencyClerk20260930") {
             Text("柜员 · 伊蕾娜").font(.headline)
             Text("先挑一条喜欢的街，再进屋看看。港区有船工的铺位，旧港那头也有安静的石宅。贵族区只给“雾港的帮手”开门。")
             Text(game.housingDailyNotice).font(.footnote)
             HomeCounterAction(title: "翻开住处册 · 看区选房") { choosing = true }
             HomeCounterAction(title: "我的住处与饮食") { showingHome = true }
-        }.task { await game.openHousingDay() }
-            .sheet(isPresented: $choosing) { HousingSearchView(game: game) }
-            .sheet(isPresented: $showingHome) { HousingResidenceView(game: game) }
+        }
     }
 }
 
 struct HousingSearchView: View {
     @Bindable var game: GameStore
+    var onBack: (() -> Void)? = nil
     private enum Step: Equatable { case districts, cards(MPCHousingCatalog.District), interior(String), lease(String), moving(String) }
     @State private var step: Step = .districts
     @State private var rooms: [HousingRoomAvailability] = []
@@ -113,7 +129,7 @@ struct HousingSearchView: View {
     @State private var stampFrame = 0
     @Environment(\.dismiss) private var dismiss
     var body: some View {
-        HousingPage(title: "赁屋行 · 找住处", backTitle: "返回") {
+        HousingPage(title: "赁屋行 · 找住处", backTitle: "返回", onBack: onBack) {
             switch step {
             case .districts: districts
             case .cards(let district): cards(district)
@@ -303,7 +319,7 @@ struct HousingSearchView: View {
             if let home = HousingArt.home(id) { Image(home.exterior).resizable().aspectRatio(1.5, contentMode: .fit).transition(.opacity) }
             HousingDoorplate(name: game.housingPlayerName)
             Text("门牌已经挂好。\(MPCHousingCatalog.lodging(id)?.name ?? "住处")等你回来。").font(.headline)
-            Button("收好门牌 · 返回") { dismiss() }.buttonStyle(GameArtButtonStyle(primary: true))
+            Button("收好门牌 · 返回") { if let onBack { onBack() } else { dismiss() } }.buttonStyle(GameArtButtonStyle(primary: true))
         }.animation(.easeInOut(duration: 0.6), value: game.housingHomeID)
     }
 }
@@ -359,10 +375,21 @@ private struct HousingInteriorArtwork: View {
 
 struct HousingResidenceView: View {
     @Bindable var game: GameStore
+    var onBack: (() -> Void)? = nil
     @State private var detail = ""
     @State private var finding = false
     var body: some View {
-        HousingPage(title: "我的住处", backTitle: "返回") {
+        Group {
+            if finding { HousingSearchView(game: game, onBack: { finding = false }) }
+            else { residencePage }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(GameArt.night.ignoresSafeArea())
+        .presentationDetents([.large])
+        .task { await game.openHousingDay() }
+    }
+    private var residencePage: some View {
+        HousingPage(title: "我的住处", backTitle: "返回", onBack: onBack) {
             HousingDoorplate(name: game.housingPlayerName)
             Text(MPCHousingCatalog.lodging(game.housingHomeID)?.name ?? "住处").font(.title2.bold())
             HousingInteriorArtwork(homeID: game.housingHomeID) { detail = $0 }
@@ -370,7 +397,7 @@ struct HousingResidenceView: View {
             Text(game.housingDailyNotice).font(.footnote)
             HousingMealChoices(game: game)
             Button("去赁屋行换住处") { finding = true }.buttonStyle(GameArtButtonStyle(primary: true))
-        }.task { await game.openHousingDay() }.sheet(isPresented: $finding) { HousingSearchView(game: game) }
+        }
     }
 }
 

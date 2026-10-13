@@ -120,6 +120,8 @@ struct HomeStreetScene: View {
     @State private var pausedAt: Date?
     @State private var pausedDuration: TimeInterval = 0
     @State private var summonStarts: [String: Double] = [:]
+    @State private var returnStarts: [String: Double] = [:]
+    @State private var returnPoints: [String: [Double]] = [:]
     @State private var greetingID: String?
     @State private var greetingPoint: [Double]?
     @State private var greetingText = ""
@@ -158,6 +160,16 @@ struct HomeStreetScene: View {
         }
         .onChange(of: targets.map(\.id), initial: true) { _, _ in
             let people = Set(targets.compactMap(\.personID))
+            let now = elapsed(Date())
+            for id in Set(summonStarts.keys).subtracting(people) {
+                let route = HomeMapLayout.current.approach(for: id)
+                let index = HomeCitizenCatalog.people.firstIndex { $0.id == id } ?? 0
+                let age = now - (summonStarts[id] ?? now)
+                returnPoints[id] = age < 7 ? Self.interpolate(route, fraction: max(0, age / 7)).point
+                    : Self.waitingPose(route, seconds: age - 7 + Double(index % 5) * 0.6).point
+                returnStarts[id] = now
+            }
+            for id in people { returnStarts[id] = nil; returnPoints[id] = nil }
             summonStarts = summonStarts.filter { people.contains($0.key) }
             for id in people where summonStarts[id] == nil { summonStarts[id] = elapsed(Date()) }
         }
@@ -225,10 +237,17 @@ struct HomeStreetScene: View {
                 point = frozen; moving = false; direction = 4
             } else if !tasks.isEmpty {
                 let route = layout.approach(for: person.id)
-                let progress = min(1, max(0, (time - (summonStarts[person.id] ?? 0)) / 7))
-                let pose = Self.interpolate(route, fraction: progress)
+                let age = max(0, time - (summonStarts[person.id] ?? 0))
+                let pose = age < 7 ? Self.interpolate(route, fraction: age / 7)
+                    : Self.waitingPose(route, seconds: age - 7 + Double(index % 5) * 0.6)
                 point = [pose.point[0] + (holdOffsets[person.id] ?? 0), pose.point[1]]
-                direction = progress < 1 ? pose.direction : 4; moving = progress < 1
+                direction = pose.direction
+                let phase = (age - 7 + Double(index % 5) * 0.6).truncatingRemainder(dividingBy: 24)
+                moving = age < 7 || (phase >= 4 && phase < 16)
+            } else if let start = returnStarts[person.id], let from = returnPoints[person.id], time - start < 8 {
+                let route = [from] + Array(layout.approach(for: person.id).dropLast().reversed())
+                let pose = Self.interpolate(route, fraction: max(0, time - start) / 8)
+                point = pose.point; direction = pose.direction; moving = true
             } else if person.id == "cafe_keeper" {
                 guard let outing = cafeOuting(time: personTime) else { continue }
                 point = outing.point; direction = outing.direction; moving = true
@@ -314,6 +333,18 @@ struct HomeStreetScene: View {
         if leg == 1 { route = [[1.52, 0.925], [1.465, 0.91]] + route.dropFirst() }
         route += Array(route.dropLast().reversed())
         return Self.interpolate(route, fraction: within / (legDuration - 2))
+    }
+    /// A few steps along the authored pavement edge, with rests; never an endless frozen pose.
+    static func waitingPose(_ route: [[Double]], seconds: Double) -> (point: [Double], direction: Int) {
+        let hold = route.last!
+        guard route.count > 1 else { return (hold, 4) }
+        let phase = max(0, seconds).truncatingRemainder(dividingBy: 24)
+        guard phase >= 4, phase < 16 else { return (hold, 4) }
+        let previous = route[route.count - 2]
+        let distance = hypot(previous[0] - hold[0], previous[1] - hold[1])
+        let fraction = min(1, 0.025 / max(0.0001, distance))
+        let back = zip(hold, previous).map { $0 + ($1 - $0) * fraction }
+        return interpolate([hold, back, hold], fraction: (phase - 4) / 12)
     }
     static func interpolate(_ route: [[Double]], fraction: Double) -> (point: [Double], direction: Int) {
         let lengths = zip(route, route.dropFirst()).map { hypot($0[0]-$1[0], $0[1]-$1[1]) }
@@ -666,12 +697,11 @@ struct HomeCounterView: View {
                     HomeCounterAction(title: target.title, detail: "通缉问话") { selectedTarget = target }
                 }
                 if buildingID == "board" {
-                    // The board posts the day's neighbour errands (design §2.3); they can
-                    // be taken here or from the neighbour on the street.
+                    // A poster is not a conversation with its absent author.
                     let offers = game.newspaperNeighborOffers.filter { !$0.done }
                     ForEach(offers) { offer in
                         let name = MPCNeighborCatalog.neighbor(offer.neighborID)?.name ?? "街坊"
-                        HomeCounterAction(title: "街坊委托 · \(name)", detail: (offer.errand?.request ?? "") + "\n→ 在这里接下，或到街上找\(name)") {
+                        HomeCounterAction(title: "街坊委托 · \(name)", detail: (offer.errand?.request ?? "") + "\n→ 查看委托，再到街上找\(name)") {
                             neighborVisit = .init(id: offer.neighborID)
                         }
                     }
@@ -688,7 +718,7 @@ struct HomeCounterView: View {
                     }
                 }
         }.sheet(item: $selectedTarget) { target in HomeBountyInteractionView(game: game, target: target) }
-        .sheet(item: $neighborVisit) { visit in HomeNeighborVisit(game: game, neighborID: visit.id) }
+        .sheet(item: $neighborVisit) { visit in HomeNeighborPosterView(game: game, neighborID: visit.id) }
         .sheet(item: $streetTarget) { target in HomeStreetTaskView(game: game, target: target) }
         #if DEBUG
         .task {
@@ -806,6 +836,34 @@ struct HomeBountyInteractionView: View {
     }
     private func perform(success: String = "已记录。", _ action: () throws -> Void) {
         do { try action(); notice = success } catch { notice = "这一步尚未成立，请核对已有材料与现场特征。" }
+    }
+}
+
+/// Board-only information. Opening it never establishes a conversation or pays an offer.
+struct HomeNeighborPosterView: View {
+    @Bindable var game: GameStore
+    let neighborID: String
+    var body: some View {
+        GameArtPage(title: "街坊委托", subtitle: "委托板 · 来访登记", closeTitle: "返回委托板") {
+            ForEach(game.neighbors.offers.filter { $0.neighborID == neighborID }) { offer in
+                if let errand = offer.errand {
+                    Text(MPCNeighborCatalog.neighbor(neighborID)?.name ?? "街坊").font(.headline)
+                    Text(errand.request)
+                    if offer.done {
+                        Text("已完成").foregroundStyle(.secondary)
+                    } else {
+                        if offer.replayWithoutReward == true { Text("这次是重试，原报酬已领取。").font(.footnote) }
+                        let target = MPCStreetTaskCatalog.neighborTargets(game.neighbors, heardMessages: game.neighborHeardMessages).first { $0.taskID == offer.id }
+                        let person = target?.personID ?? neighborID
+                        let name = MPCNeighborCatalog.neighbor(person)?.name ?? "委托人"
+                        Text("请到\(name)面前交谈；委托板不能代为交货或传话。").font(.footnote)
+                        Button("前往 · \(name)") {
+                            NotificationCenter.default.post(name: .homeQuestFocus, object: target?.id ?? person)
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -41,9 +41,16 @@ struct MistportApp: App {
     @UIApplicationDelegateAdaptor(MistportOrientationDelegate.self) private var orientationDelegate
     #if DEBUG
     private static let dailyWalkDefaults = GameStore.dailyPacingDeviceWalkDefaults()
+    private static let bakerReviewDefaults: UserDefaults = {
+        let suite = "mistport.baker-board-review.20261012"
+        let storage = UserDefaults(suiteName: suite)!
+        storage.removePersistentDomain(forName: suite)
+        return storage
+    }()
     #endif
     private static var playerDefaults: UserDefaults {
         #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--baker-board-review") { return bakerReviewDefaults }
         if CombatTempoReviewConfiguration.requested { return UserDefaults(suiteName: "mistport.combat-tempo-review.20261001")! }
         if ProcessInfo.processInfo.arguments.contains("--housing-device-walk") { return GameStore.housingDeviceWalkDefaults() }
         if ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--verify-") }) { return UserDefaults(suiteName: "mistport.housing-verification-shell.20260930")! }
