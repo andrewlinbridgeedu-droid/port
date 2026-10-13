@@ -660,6 +660,12 @@ final class GameStore {
         if launchArguments.contains("--verify-remnants") { Task { await Self.verifyRemnantsIntegration() } }
         if launchArguments.contains("--verify-neighbors") { Task { await Self.verifyNeighborsIntegration() } }
         #if DEBUG
+        if let argument = launchArguments.first(where: { $0.hasPrefix("--mainline-music-review=") }),
+           let number = Int(argument.dropFirst("--mainline-music-review=".count)), (1...3).contains(number) {
+            debugJumpToOldClockMission(number, enterImmediately: false)
+            markDailyNewspaperSeen()
+            phase = .cityHub
+        }
         if launchArguments.contains("--baker-board-review") {
             debugJumpToOldClockMission(6, enterImmediately: false)
             debugSetPacingDay(3)

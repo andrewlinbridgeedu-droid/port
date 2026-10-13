@@ -50,6 +50,7 @@ struct MistportApp: App {
     #endif
     private static var playerDefaults: UserDefaults {
         #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--mainline-music-review=") }) { return UserDefaults(suiteName: "mistport.mainline-music-review.20261013")! }
         if ProcessInfo.processInfo.arguments.contains("--baker-board-review") { return bakerReviewDefaults }
         if CombatTempoReviewConfiguration.requested { return UserDefaults(suiteName: "mistport.combat-tempo-review.20261001")! }
         if ProcessInfo.processInfo.arguments.contains("--housing-device-walk") { return GameStore.housingDeviceWalkDefaults() }

@@ -120,8 +120,8 @@ final class HomeMusicController {
         guard recordsPlaybackReview, ProcessInfo.processInfo.arguments.contains("--verify-battle-music") else { return }
         reviewEvents.append(["encounter": battleOwnership.encounterID ?? "none",
             "expected": battleOwnership.cue?.assetName ?? "scene", "actual": currentTrack ?? "none",
-            "playing": player?.isPlaying == true, "volume": player?.volume ?? -1, "error": lastPlaybackError ?? "none"])
-        Self.saveMusicReview(["silentAudit": true, "events": reviewEvents], name: "battle-music-live-review.json")
+            "playing": player?.isPlaying == true, "volume": player?.volume ?? -1, "error": lastPlaybackError ?? "none", "phase": String(describing: lastPhase), "at": Date().timeIntervalSince1970])
+        Self.saveMusicReview(["silentAudit": true, "build": Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "unknown", "launchArguments": ProcessInfo.processInfo.arguments, "events": reviewEvents], name: "battle-music-live-review.json")
     }
     private static func saveMusicReview(_ report: [String: Any], name: String) {
         guard let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first,
@@ -154,13 +154,13 @@ final class HomeMusicController {
         try? await Task.sleep(for: .milliseconds(120))
         audit.setBattleActive(true, encounterID: q3, ownerID: fresh)
         audit.setBattleActive(false, encounterID: q3, ownerID: old)
-        let lateStopIgnored = audit.currentTrack == MPCBattleMusicCue.petals.assetName && audit.player?.isPlaying == true
+        let lateStopIgnored = audit.currentTrack == MPCBattleMusicCue.forEncounterID(q3).assetName && audit.player?.isPlaying == true
         audit.setBattleActive(false, encounterID: q3, ownerID: fresh)
         try? await Task.sleep(for: .milliseconds(120))
         let returnedToHub = audit.currentTrack == "CharacterSelection"
         audit.setBattleActive(true, encounterID: q3, ownerID: fresh)
         try? await Task.sleep(for: .milliseconds(120))
-        let restarted = audit.currentTrack == MPCBattleMusicCue.petals.assetName && audit.player?.isPlaying == true
+        let restarted = audit.currentTrack == MPCBattleMusicCue.forEncounterID(q3).assetName && audit.player?.isPlaying == true
         audit.stop()
         saveMusicReview(["silentAudit": true, "routes": rows, "lateSameEncounterStopIgnored": lateStopIgnored,
                          "returnedToHub": returnedToHub, "retryRestartsBattle": restarted], name: "battle-music-route-review.json")

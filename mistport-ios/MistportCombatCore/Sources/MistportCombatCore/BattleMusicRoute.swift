@@ -19,8 +19,7 @@ public enum MPCBattleMusicCue: String, CaseIterable, Sendable {
     public static func forEncounterID(_ encounterID: String) -> Self {
         if let mission = MPCChapterOneCatalog.mission(forEncounterID: encounterID) {
             switch mission.number {
-            case 1...5: return .petals       // Rainy old-city streets and first encounters.
-            case 6...15: return .gears       // Archive and clockwork investigation.
+            case 1...15: return .gears       // Early fights need a driving battle theme (player review 2026-10-13).
             case 16...27: return .harbor     // Signing, convoy, and harbor rescue.
             default: return .brass          // The three Chronarch boss battles.
             }

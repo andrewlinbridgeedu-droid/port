@@ -7,7 +7,7 @@ struct BattleMusicRouteTests {
     @Test func allChapterBattlesHaveTheirChapterTheme() {
         for number in 1...30 {
             let encounterID = String(format: "chapter01_q%02d_encounter", number)
-            let expected: MPCBattleMusicCue = number <= 5 ? .petals : number <= 15 ? .gears : number <= 27 ? .harbor : .brass
+            let expected: MPCBattleMusicCue = number <= 15 ? .gears : number <= 27 ? .harbor : .brass
             #expect(MPCBattleMusicCue.forEncounterID(encounterID) == expected)
         }
     }
@@ -51,7 +51,7 @@ struct BattleMusicRouteTests {
         _ = state.setActive(true, encounterID: "chapter01_q03_encounter", ownerID: old)
         _ = state.setActive(true, encounterID: "chapter01_q03_encounter", ownerID: fresh)
         let accepted = state.setActive(false, encounterID: "chapter01_q03_encounter", ownerID: old)
-        #expect(!accepted && state.cue == .petals && state.ownerID == fresh)
+        #expect(!accepted && state.cue == .gears && state.ownerID == fresh)
     }
     @Test func everyEncounterRestartsAfterDefeatWithoutAParentPhaseChange() {
         for mission in MPCChapterOneCatalog.missions {
