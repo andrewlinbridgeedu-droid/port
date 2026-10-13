@@ -28,10 +28,24 @@
 
 本轮真正需要改变真实档的是用户明确要求的面包师重试，不能笼统写“存档完全不变”。安装仍应逐文件 SHA 相同；隔离 QA 的差异单独报告；刷新前再取最新真实档，仅允许目标 offer 的 done／重试标记改变，不能恢复早先 347 铜的只读快照覆盖后来游玩。盲玩按用户要求仍暂停，第一章未盲玩通关。
 
-## 当前交付状态
+## 首次 push 时的连接阻塞（已解除）
 
 - 安装前后全量 Preferences 各 266 个，逐文件 SHA-256 完全一致：无新增、删除或改变；真实 `mistport.player-test-01-15.plist` 与盲玩 `mistport.player-test-01-15.audit.plist` 均保持原字节。证据在归档 `preferences-install-report.json`。
 - 静音隔离启动使用 `-MistportCityMute YES --developer-tools --baker-board-review`，iOS 返回 `Locked`，未成功启动；没有执行隔离演练或真实任务刷新。镜像经过重连、重试与重开仍提示“未找到 iPhone”。已请用户在 Mac 附近解锁一次再锁屏、确认蓝牙／Wi-Fi，以恢复镜像。
-- **面包师任务尚未重开**；当前仍保留玩家已完成 `d3-baker` 的状态。不能把源码支持和规则测试写成真实档已刷新，更不能把住房导航源码修复写成新版真机视觉验收。
-- 下一步：恢复镜像，先在独立 review suite 实测委托板只读、前往实际面包师才能交付、待办慢走／完成离场，以及住房各页上下边界一致／无旧页露出；再逐文件检查真实与盲玩档未变。随后再次备份最新 Preferences，正常真实玩家模式静音启动 `--refresh-baker-errand`，确认 `BAKER_REPLAY_READY` 并读回目标任务仅 done=false、replayWithoutReward=true，保留原收益和其他进度。不要在真实档完成重试，留给用户测试。
+- 首次 push 时面包师任务尚未重开，仍保留玩家已完成 `d3-baker` 的状态；当时没有将源码支持／规则测试冒充真实档刷新或视觉验收。
+- 当时待办为：恢复镜像，先在独立 review suite 实测委托板只读、前往实际面包师才能交付、待办慢走／完成离场，以及住房各页上下边界一致／无旧页露出；核对真实与盲玩档未变后，再备份最新 Preferences 并刷新面包师。已完成，详情如下；重试交货留给用户。
 - 已建档 `build-manifest.json`，记录最终二进制 SHA-256、上轮提交、流水线、最终宿主日志和测试日志。首次发布时真机视觉核验／面包重试刷新仍待完成，盲玩仍暂停。
+
+## 恢复连接后的真机核验与最终状态
+
+用户确认解锁后，镜像重试恢复。以下均为已安装的 169.83 真机观察，修复源码已在 `3a9cdde2e7a0c486f6fde8f22f7e7b0b8528f8df` 推到 `codex/playtest-ui-20261012`。
+
+- 委托板的面包告示只有请求、说明和“前往”，没有交货按钮。查看并前往后读回，`d3-baker.done` 仍为 false，邻里记录和库存完全相同（两罐止痛膏）。点击地图上的面包师后才出现交付按钮，交货消耗一罐、发 29 铜、好感 0→1、完成计数 0→1；关闭对话后面包师沿路离开。证据：`board-readonly-audit.json`、`board-baker-readonly.png`、`actual-baker-delivery.png`、`baker-delivered-once.png`、`baker-depart-sampled-mirror.mp4`。
+- 东岸提灯人、咖啡馆跑堂在停靠点间歇走动；25 秒录制含走路和停歇。相邻上坡守灯人为蓝衣／皮围裙，东岸为橙衣。证据：`neighbors-wait-sampled-mirror.mp4`、`lamplighters-distinct-clothes.png`。录像为带时间记录的镜像截图采样编码，非原生 30 fps 屏幕录像。
+- 赁屋行 → 我的住处 → 返回 → 选房册 → 返回 → 返回港城均成功。三个住房页共用同一面板，上边界一致、底部填满，没有旧页露出；截图 `housing-agency-full-panel.png`、`housing-residence-same-panel.png`、`housing-search-same-panel.png` 及并排图 `housing-three-panels.png`。没有租房或切换饮食。
+- 隔离演练后 Preferences 为 267 个：仅新增 `mistport.baker-board-review.20261012.plist`，原 266 个全量文件逐字节未变，真实与盲玩档均未改。证据 `preferences-review-report.json`。
+- 随后停止隔离 App，再取最新 `preferences-before-baker-refresh`，在真实玩家模式静音执行 `--player-test --preview-city --refresh-baker-errand`，日志出现 `BAKER_REPLAY_READY: d3-baker; original reward preserved`。
+- 刷新后 267 个文件只有真实玩家 plist 改变，其余 266 个逐字节相同（含盲玩）。解码严格对照：仅 `d3-baker.done: true→false` 和新增 `replayWithoutReward: true`；主线、铜币、物品、好感、完成计数、贡献、其他委托及回执都保留。遗落物持有集合的数组序列化顺序变化，成员完全相同；这是 `Set` 写回次序，不是权益变化。证据 `preferences-baker-refresh-report.json`、`real-baker-refresh-audit.json`、`real-refresh-semantic-diff.json`。
+- 真实档余额仍为 347、面包师好感仍为 1、委托完成计数仍为 1。真实止痛膏库存原本为 0，仍为 0，没有退款或赠送；已告知用户重试交货需先到工坊制作一罐。任务保持待办，未替用户完成重试。真实告示明确显示“这次是重试，原报酬已领取”，证据 `real-baker-retry-poster.png`。
+- 手机保持真实玩家模式静音运行，面包重试可供用户继续。盲玩仍暂停；本轮未继续主线或宣称第一章通关。
+- 真实档查看重试告示、点击“前往”回到面包师街区后，最终全量 Preferences 与刷新后的快照 267/267 逐字节相同，没有追加奖励、交货或其他存档变化；证据 `preferences-final-report.json`、`real-final-baker-street-pending.png`。最终状态已复核并推送交接记录。
