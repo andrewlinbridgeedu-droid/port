@@ -1324,7 +1324,6 @@ struct ChapterOneEncounterTestView: View {
                     } label: {
                         Text(openingSequenceIsComplete ? "开始战斗" : "请选择\(openingRequiredCardCount)张技能")
                             .font(.system(size: 30, weight: .black, design: .serif))
-                            .foregroundStyle(.white)
                             .shadow(color: .black.opacity(0.6), radius: 3, y: 1)
                             .modifier(BattleStartButtonChrome())
                             .contentShape(Rectangle())
@@ -6914,7 +6913,6 @@ struct ChapterOneBattleSetupOverlay: View {
                 startFillingEmptySequence()
             }
             .font(.system(size: 32, weight: .black, design: .serif))
-            .foregroundStyle(.white)
             .shadow(color: .black.opacity(0.6), radius: 3, y: 1)
             .modifier(BattleStartButtonChrome())
             .buttonStyle(.plain)
@@ -10043,17 +10041,21 @@ func renderChurchDelivery(_ game: GameStore) {
 #endif
 
 
-/// Playtest 2026-10-04: the bare gold title did not read as tappable.
-/// A dark plaque, gold rim and a slow breathing glow mark it as the button.
+/// Shared gold title (restored 2026-10-14) over the breathing gold-violet haze.
 private struct BattleStartButtonChrome: ViewModifier {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var breathes = false
 
     func body(content: Content) -> some View {
         content
+            .foregroundStyle(LinearGradient(
+                colors: [Color(red: 1.00, green: 0.96, blue: 0.72),
+                         Color(red: 0.96, green: 0.72, blue: 0.22),
+                         Color(red: 0.72, green: 0.38, blue: 0.08)],
+                startPoint: .top, endPoint: .bottom))
             .padding(.horizontal, 30).padding(.vertical, 10)
             // No border and no regular pill: a faint, uneven gold-to-violet haze behind
-            // white lettering (user, 2026-10-07: 不要边框，金紫色渐变底，白色 / 是很淡的
+            // lettering (background request, 2026-10-07: 不要边框，金紫色渐变底，白色 / 是很淡的
             // 透明的背景 / 太规整 / 羽化要有一定的实体感，但又不能有明显的边缘感).
             .background(StartButtonHaze(breathes: breathes))
             .scaleEffect(breathes ? 1.03 : 1)
