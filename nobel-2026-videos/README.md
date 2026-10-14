@@ -12,6 +12,8 @@
 
 完整旁白见 [`NARRATION.md`](NARRATION.md)。
 
+经济学奖另有一版 **无配音节拍版**（`economics-silent`，4:37）：去掉旁白，只留屏幕文字与配乐，整片锁在 96 BPM 的节拍网格上。片头四小节一拍一刀（一个家庭 → 千家万户 → 定价 → 利率 → 滞胀 → 潮起潮落 → 万点归一），片名落在第五小节强拍；片尾把片头倒放一遍（利率 → 定价 → 千家万户 → 归一），一点升作明月，再落幕。片名前、片尾前各留一拍真正的静默。
+
 ## 制作流程
 
 1. **文稿** `scripts/<id>.json`：每段旁白分句；`t` 为字幕文字，`s` 为配音读法（数字写成汉字、多音字用同音字替换）。
@@ -19,6 +21,16 @@
 3. **画面** `engine/`：每集一个场景脚本（Canvas 2D，全部为时间的纯函数），`render.mjs` 用无头 Chromium 逐帧截图并编码。字幕、章节卡、片头片尾由 `engine/core.js` 统一处理。
 4. **配乐** `tools/audio.py`：程序合成的氛围音乐（和弦铺底、钟音、低频、转场音效），在旁白处自动压低，整体响度 −16 LUFS。
 5. **合成** `tools/make.sh <id>`（H.264 母版）与 `tools/deliver.sh <id>`（≤28 MiB 的 HEVC 分享版）。
+
+无配音节拍版不经过第 2 步：`tools/silent.py` 按阅读时间（字数 ÷ 4.5 + 1.5 秒）把每句字幕取整到半小节、每章对齐小节线，`tools/score.py` 在同一时间轴上合成配乐并做到 −14 LUFS。`web/economics-silent.html` 是同一套引擎的网页播放器：浏览器现场逐帧绘制，附源码查看器。
+
+```bash
+python3 tools/silent.py economics-silent && python3 tools/score.py economics-silent
+node render.mjs economics-silent --video build/economics-silent/v.mp4          # 或按 tools/make.sh 的方式分段并行
+ffmpeg -i build/economics-silent/v.mp4 -i build/economics-silent/mix.wav -map 0:v -map 1:a -c:v copy -c:a aac -b:a 192k out/economics-silent.mp4
+ffmpeg -i build/economics-silent/mix.wav -b:a 160k web/economics-silent.mp3     # 网页播放器的配乐
+python3 tools/webfonts.py web/economics-silent.html scripts/economics-silent.json engine/scenes/economics*.js engine/core.js
+```
 
 ```bash
 tools/setup.sh ~/.cache/nobel-2026        # 下载模型与字体，按提示 export TTS_DIR / ASR_DIR

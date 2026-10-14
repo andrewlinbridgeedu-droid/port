@@ -457,3 +457,4 @@ S.finale = (c, st, sp) => {
 };
 
 export default { palette: P, init, scenes: S };
+export { P, bg, tide, house, shop, dial, bolt, axes };

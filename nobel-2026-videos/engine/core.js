@@ -4,22 +4,30 @@ import * as L from './lib.js';
 const { W, H, clamp, ease, text, reveal, F, rgba, smooth } = L;
 
 const XF = 1.1;            // cross-fade between scenes (s)
-const CHAPTER_LEAD = 3.2;  // must match tools/tts.py
+let CHAPTER_LEAD = 3.2;    // must match tools/tts.py (a silent timeline sets its own)
+let FADE_IN = 1.2;
+const here = p => new URL(p, import.meta.url).href;
 
 export const G = { L, W, H, F };
-let S, TL, MOD, spans, ctx, off, octx, chunks, chapters;
+let S, TL, MOD, spans, ctx, off, octx, chunks, chapters, K = 1;
 
-export async function setup(id) {
-  S = await (await fetch(`../scripts/${id}.json`)).json();
-  TL = await (await fetch(`../build/${id}/timeline.json`)).json();
-  MOD = (await import(`./scenes/${id}.js`)).default;
-  const canvas = document.getElementById('c');
+export async function setup(id, opts = {}) {
+  S = opts.script ?? await (await fetch(opts.scriptUrl ?? here(`../scripts/${id}.json`))).json();
+  TL = opts.timeline ?? await (await fetch(opts.timelineUrl ?? here(`../build/${id}/timeline.json`))).json();
+  MOD = (await import(here(`./scenes/${id}.js`))).default;
+  CHAPTER_LEAD = TL.chapterLead ?? 3.2;
+  FADE_IN = TL.fadeIn ?? 1.2;
+  const canvas = opts.canvas ?? document.getElementById('c');
+  // scenes always draw in 1920×1080 units; opts.scale renders them at a smaller size (live playback in a browser)
+  K = opts.scale ?? 1;
+  if (K !== 1) { canvas.width = Math.round(W * K); canvas.height = Math.round(H * K); }
   ctx = canvas.getContext('2d');
-  off = document.createElement('canvas'); off.width = W; off.height = H; octx = off.getContext('2d');
+  off = document.createElement('canvas'); off.width = canvas.width; off.height = canvas.height; octx = off.getContext('2d');
   G.S = S; G.TL = TL; G.pal = MOD.palette || {};
 
   // load only the glyphs we use, for every face we use
-  const src = [JSON.stringify(S), JSON.stringify(TL), await (await fetch(`./scenes/${id}.js`)).text(), await (await fetch('./core.js')).text(), await (await fetch('./lib.js')).text()].join('');
+  const files = [`./scenes/${id}.js`, ...(MOD.sources || []).map(f => `./scenes/${f}`), './core.js', './lib.js'];
+  const src = [JSON.stringify(S), JSON.stringify(TL), ...(await Promise.all(files.map(async f => (await fetch(here(f))).text())))].join('');
   const chars = [...new Set([...src])].join('') + '0123456789０１２３４５６７８９ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   const faces = ['400 40px "Noto Serif SC"', '500 40px "Noto Serif SC"', '600 40px "Noto Serif SC"', '700 40px "Noto Serif SC"', '900 40px "Noto Serif SC"',
     '400 40px "LXGW WenKai"', '700 40px "LXGW WenKai"', '400 40px "Ma Shan Zheng"', '400 40px "ZCOOL XiaoWei"',
@@ -89,7 +97,8 @@ function drawSubs(t) {
   const c = chunks.find(c => t >= c.t0 - 0.05 && t < c.t1 + 0.18);
   if (!c) return;
   const a = smooth(c.t0 - 0.05, c.t0 + 0.12, t) * (1 - smooth(c.t1 + 0.02, c.t1 + 0.18, t));
-  text(ctx, c.s, W / 2, H - 92, { size: 46, weight: 600, color: '#f6f2e8', alpha: a, spacing: 2, stroke: 7, strokeColor: 'rgba(0,0,0,0.55)', glow: 18, glowColor: 'rgba(0,0,0,0.9)' });
+  const big = TL.captions === 'silent';
+  text(ctx, c.s, W / 2, H - (big ? 96 : 92), { size: big ? 50 : 46, weight: 600, color: '#f6f2e8', alpha: a, spacing: 2, stroke: 7, strokeColor: 'rgba(0,0,0,0.55)', glow: 18, glowColor: 'rgba(0,0,0,0.9)' });
 }
 
 // --- chapter cards -------------------------------------------------------------
@@ -137,7 +146,7 @@ export function drawTitle(c, st, o = {}) {
 function drawClosing(t) {
   const sp = spans[spans.length - 1];
   if (sp.scene !== 'finale') return;
-  const k = t - (sp.t0 + sp.speechEnd + 0.5);
+  const k = t - (TL.closingAt ?? sp.t0 + sp.speechEnd + 0.5);
   if (k < 0) return;
   const gold = G.pal.gold || '#e8c477';
   ctx.save(); ctx.globalAlpha = smooth(0, 1.2, k) * 0.5; ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H); ctx.restore();
@@ -157,14 +166,16 @@ function drawSpan(c, sp, t) {
   c.restore();
 }
 export function renderAt(t) {
+  ctx.setTransform(K, 0, 0, K, 0, 0);
   let i = spans.findIndex(sp => t >= sp.t0 && t < sp.t1);
   if (i < 0) i = t < 0 ? 0 : spans.length - 1;
   const sp = spans[i], st = t - sp.t0;
-  if (i > 0 && st < XF) {
+  if (i > 0 && st < XF && !sp.beats[0].cut) {
     drawSpan(ctx, spans[i - 1], t);
+    octx.setTransform(K, 0, 0, K, 0, 0);
     octx.clearRect(0, 0, W, H);
     drawSpan(octx, sp, t);
-    ctx.save(); ctx.globalAlpha = ease.inOut(st / XF); ctx.drawImage(off, 0, 0); ctx.restore();
+    ctx.save(); ctx.globalAlpha = ease.inOut(st / XF); ctx.drawImage(off, 0, 0, W, H); ctx.restore();
   } else drawSpan(ctx, sp, t);
 
   if (MOD.post) MOD.post(ctx, t, G);
@@ -174,11 +185,12 @@ export function renderAt(t) {
   ctx.fillStyle = band; ctx.fillRect(0, H - 230, W, 230);
   drawChapter(t);
   // prize tag
-  const tagA = smooth(spans[1].t0 + 1, spans[1].t0 + 2, t) * (finaleSpan(t) ? 1 - smooth(spans[spans.length - 1].t0, spans[spans.length - 1].t0 + 1, t) : 1);
+  const first = (spans.find(sp => sp.chapter) ?? spans[1]).t0;
+  const tagA = smooth(first + 1, first + 2, t) * (finaleSpan(t) ? (spans[spans.length - 1].beats[0].cut ? 0 : 1 - smooth(spans[spans.length - 1].t0, spans[spans.length - 1].t0 + 1, t)) : 1);
   text(ctx, S.prize, W - 72, 70, { size: 26, weight: 600, color: G.pal.gold || '#e8c477', align: 'right', alpha: tagA * 0.62, spacing: 4, glow: 10, glowColor: 'rgba(0,0,0,0.9)' });
   drawClosing(t);
   drawSubs(t);
   // fade from / to black
-  const fa = Math.max(1 - smooth(0, 1.2, t), smooth(TL.duration - 2.0, TL.duration - 0.1, t));
+  const fa = Math.max(1 - smooth(0, FADE_IN, t), smooth(TL.duration - 2.0, TL.duration - 0.1, t));
   if (fa > 0) { ctx.save(); ctx.globalAlpha = fa; ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H); ctx.restore(); }
 }
