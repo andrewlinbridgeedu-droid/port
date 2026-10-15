@@ -14,6 +14,12 @@ Takes (output/party-video-20261014/takes, copied from the user's Downloads):
                                 spins round to face the camera (dropped) and stands from 3.5 s
   odelle-down    10-14 3:13 PM  knees give and she goes down on her hands (0.85-3.19 s), stays,
                                 and from 6.8 s gets back up (the revive)
+  norn-hit       10-14 8:07 PM  (Gemini, 1280x720) the blow at 1.3 s, doubled over at 1.8, back by 2.9
+  norn-down      10-14 8:03 PM  (Gemini, 720x1280) collapses 1.3-3.0 s onto his side, lies still,
+                                pushes himself up 6.2-7.7 s (the revive)
+  Both Gemini takes put the lantern in his other hand: they are mirrored (mirror=True) so it
+  stays on the screen-right side as in the reference and the lantern take (the shoulder strap
+  then runs the other way, a smaller change than the lantern jumping hands).
 
 usage: <media-venv>/bin/python tools/animation/prepare_party_video_body.py [preset ...]
        (all presets by default; media-venv = /Volumes/andrew's SSD/Mistport-hero-v2/media-venv)
@@ -46,6 +52,10 @@ PRESETS = {
     'norn-guard': dict(src='norn-lantern', times=lin(.6, 2.77, 16) + lin(2.77, .6, 17)[1:], release=15),
     # His standing stretch after the lantern, forward then back: a seamless loop.
     'norn-idle': dict(src='norn-lantern', times=lin(5.6, 7.8, 24) + lin(7.8, 5.6, 24)[1:-1], release=0),
+    # From 1.4 s: the take smears blood on his coat at the blow (1.25-1.38 s) despite the prompt.
+    'norn-hit': dict(src='norn-hit', mirror=True, times=lin(1.4, 1.8, 10) + lin(1.8, 2.9, 13)[1:], release=9),
+    'norn-down': dict(src='norn-down', mirror=True, times=lin(1.3, 3.0, 28), release=27, held=True),
+    'norn-revive': dict(src='norn-down', mirror=True, times=lin(6.2, 7.7, 16), release=15),
     'odelle-attack': dict(src='odelle-throw', times=lin(.8, 2.67, 20) + lin(2.67, 3.17, 7)[1:] + lin(3.17, 4.6, 15)[1:], release=23),
     'odelle-cast': dict(src='odelle-heal', times=lin(.8, 3.6, 14) + lin(3.6, 4.6, 9)[1:] + lin(4.6, 6.4, 9)[1:] + lin(6.4, 7.7, 11)[1:], release=21),
     'odelle-hit': dict(src='odelle-hit', times=lin(.7, 1.53, 12) + lin(1.53, .7, 13)[1:], release=11),
@@ -55,18 +65,34 @@ PRESETS = {
     'odelle-idle': dict(src='odelle-hit', times=lin(3.6, 7.8, 24) + lin(7.8, 3.6, 24)[1:-1], release=0),
 }
 
-def matte(rgb):
+def matte(rgb, floor=False):
     a = np.asarray(rgb).astype(np.float32)
     edge = np.concatenate([a[:8].reshape(-1,3), a[-8:].reshape(-1,3), a[:,:8].reshape(-1,3), a[:,-8:].reshape(-1,3)])
     bg = np.median(edge, axis=0)
+    if floor:
+        # The Gemini takes have a lit floor under a darker wall and a soft contact shadow: the
+        # background is taken row by row from the side columns, and a neutral, only slightly
+        # darker patch joined to the border (the floor shadow) counts as background too.
+        sides = np.concatenate([a[:, :12], a[:, -12:]], axis=1)
+        rows = ndi.median_filter(np.median(sides, axis=1), size=(31, 1))
+        bg = rows[:, None, :]
     distance = np.max(np.abs(a-bg), axis=2)
     near = distance < 22
+    if floor:
+        v = a.max(axis=2); bv = np.broadcast_to(bg, a.shape).max(axis=2)
+        sat = (v - a.min(axis=2)) / np.maximum(v, 1)
+        near |= (sat < .12) & (v > .58 * bv) & (v < bv + 10)
     seeds = np.zeros(near.shape, bool); seeds[0,:]=near[0,:]; seeds[-1,:]=near[-1,:]; seeds[:,0]=near[:,0]; seeds[:,-1]=near[:,-1]
     connected = ndi.binary_propagation(seeds, mask=near)
     islands, n = ndi.label((distance < 6) & ~connected)
     counts = np.bincount(islands.ravel()); counts[0] = 0
     enclosed = np.isin(islands, np.where(counts > 500)[0])
     connected |= ndi.binary_propagation(enclosed, mask=distance < 14)
+    if floor:
+        # Floor seen between the legs or under an arm: enclosed patches of the floor-ish mask.
+        holes, n = ndi.label(near & ~connected)
+        sizes = np.bincount(holes.ravel()); sizes[0] = 0
+        connected |= np.isin(holes, np.where(sizes > 250)[0])
     solid = ~connected
     # Only what joins the body (dilated, so hair strands and fingers stay): no sparkles, no
     # smoke, no vial in flight, no flask on the floor.
@@ -88,14 +114,17 @@ def fit(im, box):
     canvas.alpha_composite(scaled, (round(W*.5-(x0+x1)*.5*scale), round(FEET-y1*scale)))
     return canvas
 
-def read(src, times):
+def read(src, times, mirror=False):
     """The take's first frame and the frames nearest the requested times (4K read at half size)."""
     reader = imageio_ffmpeg.read_frames(str(takes/f'{src}.mp4'), pix_fmt='rgb24')
     meta = next(reader); w, h = meta['size']; fps = meta['fps']
     shrink = 2 if w * h > 4_000_000 else 1
     want = {0} | {min(round(t * fps), 10**6) for t in times}
     kept, total, last = {}, 0, None
-    grab = lambda buf: (lambda im: im.resize((w // shrink, h // shrink), Image.Resampling.LANCZOS) if shrink > 1 else im)(Image.frombytes('RGB', (w, h), buf))
+    def grab(buf):
+        im = Image.frombytes('RGB', (w, h), buf)
+        if shrink > 1: im = im.resize((w // shrink, h // shrink), Image.Resampling.LANCZOS)
+        return im.transpose(Image.Transpose.FLIP_LEFT_RIGHT) if mirror else im
     for total, buf in enumerate(reader, 1):
         if total - 1 in want: kept[total - 1] = grab(buf)
         last = buf
@@ -106,11 +135,12 @@ def read(src, times):
 
 def build(name, p):
     times = p['times']; n = len(times); rows = (n + COLS - 1) // COLS
-    at, fps = read(p['src'], times)
-    initial = matte(at(0)); box = initial.getbbox()
+    at, fps = read(p['src'], times, p.get('mirror', False))
+    fl = p.get('mirror', False)   # the Gemini takes (mirrored) have the lit floor
+    initial = matte(at(0), fl); box = initial.getbbox()
     atlas = Image.new('RGBA', (W*COLS, H*rows)); clipped = 0; shots = []
     for i, t in enumerate(times):
-        fitted = fit(matte(at(t)), box)
+        fitted = fit(matte(at(t), fl), box)
         a = np.asarray(fitted)[..., 3]
         if a[0].max() > 8 or a[:,0].max() > 8 or a[:,-1].max() > 8: clipped += 1
         atlas.alpha_composite(fitted, ((i % COLS)*W, (i//COLS)*H))
