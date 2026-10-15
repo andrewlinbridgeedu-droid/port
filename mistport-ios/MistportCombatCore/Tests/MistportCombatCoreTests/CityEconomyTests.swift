@@ -49,8 +49,17 @@ struct CityEconomyTests {
         }
         try ledger.openProject(kind: kind, amount: kind.minimum, completed: Set(1...kind.mission), reputation: kind.reputation, day: 1, now: 0, coins: &cash)
         let project = try #require(ledger.projects.first)
-        try ledger.inspectProject(project.id, originalSeal: true, now: 1)
-        try ledger.deliverProject(project.id, now: 2)
+        if kind == .bicycle {
+            let slip = try #require(project.bicycle?.correctSlip)
+            try ledger.bicycleIssueParts(project.id, slip: slip, now: 1)
+            try ledger.bicycleSourceHub(project.id, hireRunner: false, now: 1, coins: &cash)
+            try ledger.bicycleTestRide(project.id, replaceRivets: false, now: 1, coins: &cash)
+            try ledger.bicycleAnswerExpansion(project.id, accept: false, completed: Set(1...kind.mission), now: 1, coins: &cash)
+            try ledger.bicycleDeliver(project.id, now: 2)
+        } else {
+            try ledger.inspectProject(project.id, originalSeal: true, now: 1)
+            try ledger.deliverProject(project.id, now: 2)
+        }
         ledger.settle(now: Double(kind.days) * 86_400 - 1, coins: &cash)
         #expect(cash == 1_000 - kind.minimum)
         ledger.settle(now: Double(kind.days) * 86_400, coins: &cash)
@@ -171,5 +180,114 @@ struct CityEconomyTests {
                 inventory: Dictionary(uniqueKeysWithValues: MPCSequenceEightRitual.proofIDs.map { ($0, 1) }), existing: nil)
         }
         #expect(materials.count == 3 && cash == 299)
+    }
+
+    // MARK: 自行车厂首批订单
+
+    private func signedBicycle(_ cash: inout Int, amount: Int = 60) throws -> (MPCCityEconomy, String, Int) {
+        var ledger = MPCCityEconomy()
+        try ledger.openProject(kind: .bicycle, amount: amount, completed: Set(1...16), reputation: 120, day: 1, now: 0, coins: &cash)
+        let project = try #require(ledger.projects.first)
+        return (ledger, project.id, try #require(project.bicycle?.correctSlip))
+    }
+
+    @Test("bicycle order: three bikes, right slip, fetched hub, tightened brakes -> 69 at term")
+    func bicycleHappyPath() throws {
+        var cash = 1_000
+        var (ledger, id, slip) = try signedBicycle(&cash)
+        #expect(ledger.projects[0].bicycle?.bikes == 3 && ledger.outstanding == 60)
+        #expect(throws: MPCCityEconomy.Failure.stage) { try ledger.inspectProject(id, originalSeal: true, now: 1) }
+        #expect(throws: MPCCityEconomy.Failure.stage) { try ledger.bicycleDeliver(id, now: 1) }
+        try ledger.bicycleIssueParts(id, slip: slip, now: 1)
+        try ledger.bicycleSourceHub(id, hireRunner: false, now: 1, coins: &cash)
+        #expect(try ledger.bicycleTestRide(id, replaceRivets: false, now: 1, coins: &cash))
+        #expect(throws: MPCCityEconomy.Failure.terms) { try ledger.bicycleDeliver(id, now: 1) }
+        try ledger.bicycleAnswerExpansion(id, accept: false, completed: Set(1...16), now: 1, coins: &cash)
+        #expect(throws: MPCCityEconomy.Failure.duplicate) { try ledger.bicycleAnswerExpansion(id, accept: true, completed: Set(1...16), now: 1, coins: &cash) }
+        try ledger.bicycleDeliver(id, now: 2)
+        ledger = try JSONDecoder().decode(MPCCityEconomy.self, from: JSONEncoder().encode(ledger))
+        ledger.settle(now: 10 * 86_400 - 1, coins: &cash); #expect(cash == 940)
+        ledger.settle(now: 10 * 86_400, coins: &cash); ledger.settle(now: 11 * 86_400, coins: &cash)
+        #expect(cash == 1_009 && ledger.outstanding == 0)
+        #expect(ledger.customerBudget + ledger.contractPaid == 2_400)
+    }
+
+    @Test("bicycle order: the wrong slip's iron rivets fail every test until replaced (6 copper)")
+    func bicycleWrongSlip() throws {
+        var cash = 1_000
+        var (ledger, id, slip) = try signedBicycle(&cash)
+        try ledger.bicycleIssueParts(id, slip: 1 - slip, now: 1)
+        try ledger.bicycleSourceHub(id, hireRunner: true, now: 1, coins: &cash)
+        #expect(cash == 936)
+        #expect(try ledger.bicycleTestRide(id, replaceRivets: false, now: 1, coins: &cash) == false)
+        #expect(try ledger.bicycleTestRide(id, replaceRivets: false, now: 1, coins: &cash) == false)
+        #expect(ledger.projects[0].bicycle?.stage == .testing && ledger.projects[0].bicycle?.failedTests == 2)
+        #expect(try ledger.bicycleTestRide(id, replaceRivets: true, now: 1, coins: &cash))
+        try ledger.bicycleAnswerExpansion(id, accept: false, completed: Set(1...16), now: 1, coins: &cash)
+        try ledger.bicycleDeliver(id, now: 1)
+        ledger.settle(now: 10 * 86_400, coins: &cash)
+        // 60 + 4 runner + 6 rivets spent, 69 back: three copper left of the nine.
+        #expect(cash == 1_000 - 70 + 69 && ledger.projects[0].bicycle?.extraCosts == 10)
+        #expect(ledger.supplierReceipts == 10 && ledger.customerBudget + ledger.contractPaid == 2_400)
+    }
+
+    @Test("bicycle expansion: a fourth bike, 20 more in, 23 more escrowed -> 92 for 80")
+    func bicycleExpansion() throws {
+        var cash = 1_000
+        var (ledger, id, slip) = try signedBicycle(&cash)
+        try ledger.bicycleIssueParts(id, slip: slip, now: 1)
+        try ledger.bicycleSourceHub(id, hireRunner: false, now: 1, coins: &cash)
+        try ledger.bicycleTestRide(id, replaceRivets: false, now: 1, coins: &cash)
+        try ledger.bicycleAnswerExpansion(id, accept: true, completed: Set(1...16), now: 1, coins: &cash)
+        #expect(cash == 920 && ledger.outstanding == 80 && ledger.projects[0].bicycle?.bikes == 4)
+        #expect(throws: MPCCityEconomy.Failure.stage) { try ledger.bicycleDeliver(id, now: 1) }
+        try ledger.bicycleAssembleExtra(id, now: 1)
+        try ledger.bicycleDeliver(id, now: 1)
+        ledger.settle(now: 10 * 86_400, coins: &cash)
+        #expect(cash == 1_012 && ledger.customerBudget + ledger.contractPaid == 2_400)
+    }
+
+    @Test("bicycle expansion respects the outstanding limit; refused offers change nothing")
+    func bicycleExpansionLimit() throws {
+        var cash = 1_000
+        var (ledger, id, slip) = try signedBicycle(&cash, amount: 100)
+        try ledger.bicycleIssueParts(id, slip: slip, now: 1)
+        try ledger.bicycleSourceHub(id, hireRunner: false, now: 1, coins: &cash)
+        try ledger.bicycleTestRide(id, replaceRivets: false, now: 1, coins: &cash)
+        // Before Q16 the limit is 100: no room for another 20.
+        #expect(throws: MPCCityEconomy.Failure.limit) {
+            try ledger.bicycleAnswerExpansion(id, accept: true, completed: Set(1...13), now: 1, coins: &cash)
+        }
+        #expect(cash == 900 && ledger.projects[0].bicycle?.expansion == .open && ledger.outstanding == 100)
+    }
+
+    @Test("bicycle order missed past its three-day grace: committed capital lost, escrow back to the buyer")
+    func bicycleMissed() throws {
+        var cash = 1_000
+        var (ledger, id, slip) = try signedBicycle(&cash)
+        try ledger.bicycleIssueParts(id, slip: slip, now: 1)
+        #expect(throws: MPCCityEconomy.Failure.deadline) {
+            try ledger.bicycleSourceHub(id, hireRunner: false, now: 13 * 86_400 + 1, coins: &cash)
+        }
+        ledger.settle(now: 13 * 86_400 + 1, coins: &cash)
+        #expect(cash == 940 && ledger.projects[0].settled && ledger.outstanding == 0)
+        #expect(ledger.customerBudget == 2_400)
+    }
+
+    @Test("bicycle orders signed before the fulfilment flow keep inspect-and-deliver")
+    func bicycleLegacyOrder() throws {
+        var cash = 1_000
+        var (ledger, _, _) = try signedBicycle(&cash)
+        var object = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(ledger)) as? [String: Any])
+        var projects = try #require(object["projects"] as? [[String: Any]])
+        projects[0].removeValue(forKey: "bicycle")
+        object["projects"] = projects
+        ledger = try JSONDecoder().decode(MPCCityEconomy.self, from: JSONSerialization.data(withJSONObject: object))
+        let id = ledger.projects[0].id
+        #expect(ledger.projects[0].bicycle == nil)
+        try ledger.inspectProject(id, originalSeal: true, now: 1)
+        try ledger.deliverProject(id, now: 2)
+        ledger.settle(now: 10 * 86_400, coins: &cash)
+        #expect(cash == 1_009)
     }
 }

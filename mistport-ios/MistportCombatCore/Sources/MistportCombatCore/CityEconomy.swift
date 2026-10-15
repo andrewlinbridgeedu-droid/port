@@ -69,9 +69,33 @@ public struct MPCCityEconomy: Codable, Equatable, Sendable {
         public var damaged = false
         public var settled = false
         public var repayment = 0
+        /// The bicycle order's own fulfilment (2026-10-14); nil on orders signed before it
+        /// existed, which keep the original inspect-and-deliver flow.
+        public var bicycle: BicycleOrder?
+        /// Capital added after signing (the buyer's expansion); nil before any.
+        public var extraPrincipal: Int?
         public var dueAt: TimeInterval { openedAt + Double(kind.days) * 86_400 }
         public var deadline: TimeInterval { dueAt + 3 * 86_400 }
         public var fullRepayment: Int { kind.repayment(principal) }
+        public var committed: Int { principal + (extraPrincipal ?? 0) }
+    }
+    /// 自行车厂首批订单 (INVESTMENT_QUESTS_AND_CAPITAL_CALLS_20261014): every 20 copper builds one
+    /// bike that sells for 23. The player issues the parts against the original purchase order,
+    /// gets the missing hub, has the bikes test-ridden, answers the buyer's one expansion offer
+    /// and delivers to her shop; the escrow pays only for a delivered, tested order.
+    public struct BicycleOrder: Codable, Equatable, Sendable {
+        public enum Stage: String, Codable, Sendable { case parts, sourcing, testing, ready, assembling, delivered }
+        public enum Expansion: String, Codable, Sendable { case open, accepted, declined }
+        public var stage = Stage.parts
+        public var bikes: Int
+        /// Which of the warehouse's two requisition slips matches the original order (0 or 1).
+        public let correctSlip: Int
+        public var wrongRivets = false
+        public var failedTests = 0
+        public var extraCosts = 0
+        public var expansion = Expansion.open
+        public static let costPerBike = 20, pricePerBike = 23, courierFee = 4, rivetFee = 6
+        public static let errandStamina = 10, assemblyStamina = 5, deliveryStamina = 10
     }
     public enum MeetingStage: String, Codable, Sendable { case invited, verified, contracted, collected, sealed, delivered, paid, failed, cancelled }
     public struct Meeting: Codable, Equatable, Sendable, Identifiable {
@@ -116,7 +140,7 @@ public struct MPCCityEconomy: Codable, Equatable, Sendable {
     public var outstanding: Int {
         (deposit.map { $0.closed ? 0 : $0.principal } ?? 0)
             + (termDeposit.map { $0.closed ? 0 : $0.principal } ?? 0)
-            + projects.filter { !$0.settled }.map(\.principal).reduce(0, +)
+            + projects.filter { !$0.settled }.map(\.committed).reduce(0, +)
     }
     public static func limit(completed: Set<Int>) -> Int { completed.contains(16) ? 160 : completed.contains(5) ? 100 : 60 }
     /// Suggested liquid reserve; the player can consciously choose otherwise.
@@ -186,7 +210,11 @@ public struct MPCCityEconomy: Codable, Equatable, Sendable {
         let batch = (day - 1) / 7
         guard !projects.contains(where: { $0.kind == kind && (!$0.settled || $0.batch == batch) }) else { throw Failure.limit }
         guard coins >= amount else { throw Failure.funds }
-        let project = Project(id: UUID().uuidString, kind: kind, principal: amount, openedAt: now, batch: batch)
+        var project = Project(id: UUID().uuidString, kind: kind, principal: amount, openedAt: now, batch: batch)
+        if kind == .bicycle {
+            project.bicycle = BicycleOrder(bikes: amount / BicycleOrder.costPerBike,
+                                           correctSlip: Int(project.id.unicodeScalars.reduce(0) { $0 + $1.value } % 2))
+        }
         guard customerBudget >= project.fullRepayment else { throw Failure.budget }
         customerBudget -= project.fullRepayment
         projectCustomerEscrow[project.id] = project.fullRepayment
@@ -194,14 +222,89 @@ public struct MPCCityEconomy: Codable, Equatable, Sendable {
         coins -= amount; projectInputs += amount; projects.append(project)
     }
     public mutating func inspectProject(_ id: String, originalSeal: Bool, now: TimeInterval) throws {
-        guard let index = projects.firstIndex(where: { $0.id == id }), !projects[index].settled else { throw Failure.stage }
+        guard let index = projects.firstIndex(where: { $0.id == id }), !projects[index].settled, projects[index].bicycle == nil else { throw Failure.stage }
         guard now <= projects[index].deadline else { throw Failure.deadline }
         projects[index].inspected = true
         if !originalSeal { projects[index].damaged = true }
     }
     public mutating func deliverProject(_ id: String, now: TimeInterval) throws {
-        guard let index = projects.firstIndex(where: { $0.id == id }), projects[index].inspected, !projects[index].settled else { throw Failure.stage }
+        guard let index = projects.firstIndex(where: { $0.id == id }), projects[index].inspected, !projects[index].settled, projects[index].bicycle == nil else { throw Failure.stage }
         guard now <= projects[index].deadline else { throw Failure.deadline }
+        projects[index].delivered = true
+    }
+
+    // MARK: 自行车厂首批订单
+
+    private func bicycleIndex(_ id: String, _ stage: BicycleOrder.Stage, now: TimeInterval) throws -> Int {
+        guard let index = projects.firstIndex(where: { $0.id == id }), !projects[index].settled,
+              projects[index].bicycle?.stage == stage else { throw Failure.stage }
+        guard now <= projects[index].deadline else { throw Failure.deadline }
+        return index
+    }
+    /// 帕维's two requisition slips: issuing parts by the one that disagrees with the original
+    /// order puts iron rivets in the frames (found at the test ride).
+    public mutating func bicycleIssueParts(_ id: String, slip: Int, now: TimeInterval) throws {
+        let index = try bicycleIndex(id, .parts, now: now)
+        projects[index].bicycle!.wrongRivets = slip != projects[index].bicycle!.correctSlip
+        projects[index].bicycle!.stage = .sourcing
+        projects[index].inspected = true
+    }
+    /// The missing rear hub: fetched in person (the host spends the errand's stamina) or by a
+    /// paid runner.
+    public mutating func bicycleSourceHub(_ id: String, hireRunner: Bool, now: TimeInterval, coins: inout Int) throws {
+        let index = try bicycleIndex(id, .sourcing, now: now)
+        if hireRunner {
+            guard coins >= BicycleOrder.courierFee else { throw Failure.funds }
+            coins -= BicycleOrder.courierFee; supplierReceipts += BicycleOrder.courierFee
+            projects[index].bicycle!.extraCosts += BicycleOrder.courierFee
+        }
+        projects[index].bicycle!.stage = .testing
+    }
+    /// 乔里's test ride. Tightening fixes the brakes and steering of a correctly built batch;
+    /// iron rivets shear and fail it until they are replaced (paid). Returns whether it passed.
+    @discardableResult
+    public mutating func bicycleTestRide(_ id: String, replaceRivets: Bool, now: TimeInterval, coins: inout Int) throws -> Bool {
+        let index = try bicycleIndex(id, .testing, now: now)
+        if replaceRivets {
+            guard coins >= BicycleOrder.rivetFee else { throw Failure.funds }
+            coins -= BicycleOrder.rivetFee; supplierReceipts += BicycleOrder.rivetFee
+            projects[index].bicycle!.extraCosts += BicycleOrder.rivetFee
+            projects[index].bicycle!.wrongRivets = false
+        }
+        guard !projects[index].bicycle!.wrongRivets else {
+            projects[index].bicycle!.failedTests += 1
+            return false
+        }
+        projects[index].bicycle!.stage = .ready
+        return true
+    }
+    /// 米拉's one expansion offer: one more bike for 20 copper more, against 23 more in her
+    /// escrow. Declining keeps the original order.
+    public mutating func bicycleAnswerExpansion(_ id: String, accept: Bool, completed: Set<Int>, now: TimeInterval, coins: inout Int) throws {
+        let index = try bicycleIndex(id, .ready, now: now)
+        guard projects[index].bicycle!.expansion == .open else { throw Failure.duplicate }
+        guard accept else { projects[index].bicycle!.expansion = .declined; return }
+        let cost = BicycleOrder.costPerBike, escrow = BicycleOrder.pricePerBike
+        guard outstanding + cost <= Self.limit(completed: completed) else { throw Failure.limit }
+        guard coins >= cost else { throw Failure.funds }
+        guard customerBudget >= escrow else { throw Failure.budget }
+        coins -= cost; projectInputs += cost
+        customerBudget -= escrow; projectCustomerEscrow[id, default: 0] += escrow
+        projects[index].extraPrincipal = (projects[index].extraPrincipal ?? 0) + cost
+        projects[index].bicycle!.bikes += 1
+        projects[index].bicycle!.expansion = .accepted
+        projects[index].bicycle!.stage = .assembling
+    }
+    /// Overseeing the added bike's assembly (the host spends the stamina).
+    public mutating func bicycleAssembleExtra(_ id: String, now: TimeInterval) throws {
+        let index = try bicycleIndex(id, .assembling, now: now)
+        projects[index].bicycle!.stage = .ready
+    }
+    /// Riding the bikes to 米拉's shop and getting her receipt; paid at the contract's term.
+    public mutating func bicycleDeliver(_ id: String, now: TimeInterval) throws {
+        let index = try bicycleIndex(id, .ready, now: now)
+        guard projects[index].bicycle!.expansion != .open else { throw Failure.terms }
+        projects[index].bicycle!.stage = .delivered
         projects[index].delivered = true
     }
     public mutating func invite(privateRoom: Bool, lodgingID: String, completed: Set<Int>, now: TimeInterval, coins: inout Int) throws {
@@ -269,7 +372,7 @@ public struct MPCCityEconomy: Codable, Equatable, Sendable {
             let payout = project.delivered && !project.damaged ? escrow : 0
             customerBudget += escrow - payout; coins += payout
             projects[index].settled = true; projects[index].repayment = payout; contractPaid += payout
-            addNotice(payout > 0 ? "项目已验收，本息\(payout)铜入账。" : "项目未通过验收，投入\(project.principal)铜损失；不追加追索。")
+            addNotice(payout > 0 ? "项目已验收，本息\(payout)铜入账。" : "项目未通过验收，投入\(project.committed)铜损失；不追加追索。")
         }
         if let item = meeting {
             if item.stage == .delivered, now >= (item.dueAt ?? .infinity) {

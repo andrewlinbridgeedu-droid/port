@@ -5583,6 +5583,17 @@ extension GameStore {
                 now: self.housingNow.timeIntervalSince1970, coins: &coins)
         }
     }
+    /// One step of the bicycle order (CityBicycleOrderView): journaled with the wallet like every
+    /// bank command; a step's stamina is charged once per receipt.
+    @discardableResult
+    func bicycleOrderStep(_ id: String, step: String, stamina: Int = 0,
+                          _ change: (inout MPCCityEconomy, inout Int, TimeInterval) throws -> Bool) async throws -> Bool {
+        var result = true
+        try await cityEconomyAction(stamina: stamina, receipt: "bicycle-\(step)-\(id)") { economy, coins in
+            result = try change(&economy, &coins, housingNow.timeIntervalSince1970)
+        }
+        return result
+    }
     var restReserve: Int { Int(housingRecord?.stamina.reserve(at: housingNow.timeIntervalSince1970) ?? 0) }
     /// Uses the housing command gate so rents, task starts and bank commands cannot
     /// debit independent copies of the same wallet around asynchronous preparation.
@@ -5667,6 +5678,39 @@ extension GameStore {
 
 #if DEBUG
 extension GameStore {
+    /// `--review-bicycle-order[=parts|sourcing|testing|failed|expansion|assembling|delivered]`: a
+    /// throwaway Q16 store holding one bicycle order at the asked step, for looking at
+    /// CityBicycleOrderView. Its own suite is wiped first; no playtest or player data is touched.
+    static func bicycleOrderReview(stage: String) async -> (GameStore, String)? {
+        let suite = "mistport.institutions.review.bicycle"
+        UserDefaults(suiteName: suite)!.removePersistentDomain(forName: suite)
+        let storage = UserDefaults(suiteName: suite)!
+        let now = Date()
+        let store = GameStore(launchArguments: [], defaults: storage)
+        store.debugJumpToOldClockMission(17, enterImmediately: false)
+        store.pacingClock = { now }; store.venueCoins = 1_000; store.persistChapterProgress()
+        await store.openHousingDay()
+        for index in 0..<24 { store.recordCityContribution(.eventSuccess, receipt: "bicycle-review-\(index)") }
+        guard (try? await store.signBankProject(kind: .bicycle, amount: 60)) != nil,
+              let order = store.cityEconomy.projects.last, let slip = order.bicycle?.correctSlip else { return nil }
+        let id = order.id
+        func step(_ name: String, _ change: (inout MPCCityEconomy, inout Int, TimeInterval) throws -> Bool) async {
+            _ = try? await store.bicycleOrderStep(id, step: name, change)
+        }
+        let order_ = ["parts", "sourcing", "testing", "failed", "expansion", "assembling", "delivered"]
+        let target = order_.firstIndex(of: stage) ?? 0
+        if target >= 1 { await step("parts") { e, _, t in try e.bicycleIssueParts(id, slip: stage == "failed" ? 1 - slip : slip, now: t); return true } }
+        if target >= 2 { await step("hub") { e, c, t in try e.bicycleSourceHub(id, hireRunner: true, now: t, coins: &c); return true } }
+        if target == 3 { await step("test-0") { e, c, t in try e.bicycleTestRide(id, replaceRivets: false, now: t, coins: &c) } }
+        if target >= 4 { await step("test-0") { e, c, t in try e.bicycleTestRide(id, replaceRivets: false, now: t, coins: &c) } }
+        if target >= 5 { await step("expand") { e, c, t in try e.bicycleAnswerExpansion(id, accept: true, completed: store.churchTowerMissionNumbers, now: t, coins: &c); return true } }
+        if target >= 6 {
+            await step("assemble") { e, _, t in try e.bicycleAssembleExtra(id, now: t); return true }
+            await step("deliver") { e, _, t in try e.bicycleDeliver(id, now: t); return true }
+        }
+        return (store, id)
+    }
+
     static func verifyInstitutionIntegration() async {
         let suite = "mistport.institutions.integration." + UUID().uuidString
         let storage = UserDefaults(suiteName: suite)!
@@ -5792,6 +5836,28 @@ extension GameStore {
         for index in 0..<24 { bankReload.recordCityContribution(.eventSuccess, receipt: "bank-review-\(index)") }
         try! await bankReload.signBankProject(kind: .bicycle, amount: 60)
         housingAssert(bankReload.cityEconomy.projects.last?.kind == .bicycle && bankReload.venueCoins == maturedCash - 60)
+        // 自行车厂首批订单 through the store (2026-10-14): wrong-free path, errand in person,
+        // tightened at the test ride, expansion declined, delivered; reopened between steps.
+        let bike = bankReload.cityEconomy.projects.last!, bikeID = bike.id, slip = bike.bicycle!.correctSlip
+        try! await bankReload.bicycleOrderStep(bikeID, step: "parts") { e, _, t in try e.bicycleIssueParts(bikeID, slip: slip, now: t); return true }
+        try! await bankReload.bicycleOrderStep(bikeID, step: "hub", stamina: MPCCityEconomy.BicycleOrder.errandStamina) { e, c, t in
+            try e.bicycleSourceHub(bikeID, hireRunner: false, now: t, coins: &c); return true }
+        let bikeReload = GameStore(launchArguments: [], defaults: bankDefaults); bikeReload.pacingClock = { now }
+        housingAssert(bikeReload.cityEconomy.projects.last?.bicycle?.stage == .testing && bikeReload.venueCoins == maturedCash - 60)
+        let passed = try! await bikeReload.bicycleOrderStep(bikeID, step: "test-0") { e, c, t in try e.bicycleTestRide(bikeID, replaceRivets: false, now: t, coins: &c) }
+        housingAssert(passed)
+        try! await bikeReload.bicycleOrderStep(bikeID, step: "expand") { e, c, t in
+            try e.bicycleAnswerExpansion(bikeID, accept: false, completed: bikeReload.churchTowerMissionNumbers, now: t, coins: &c); return true }
+        try! await bikeReload.bicycleOrderStep(bikeID, step: "deliver", stamina: MPCCityEconomy.BicycleOrder.deliveryStamina) { e, _, t in
+            try e.bicycleDeliver(bikeID, now: t); return true }
+        do { try await bikeReload.bicycleOrderStep(bikeID, step: "deliver") { e, _, t in try e.bicycleDeliver(bikeID, now: t); return true }
+             preconditionFailure("bicycle delivered twice") } catch {}
+        let deliveredCash = bikeReload.venueCoins
+        housingAssert(deliveredCash == maturedCash - 60 && bikeReload.cityEconomy.projects.last?.delivered == true)
+        now = now.addingTimeInterval(10 * 86_400)
+        try! await bikeReload.cityEconomyAction { _, _ in }
+        housingAssert(bikeReload.cityEconomy.projects.last?.settled == true && bikeReload.cityEconomy.projects.last?.repayment == 69)
+        NSLog("BICYCLE_ORDER_VERIFY_PASS: slip checked, hub fetched with stamina, test ride, expansion answered, delivered once, reopened mid-order, 69 paid at term")
         NSLog("BANK_REPEAT_VERIFY_PASS: protected reserve, persisted receipt, seven-day payout once, repeat signing, principal exit, reputation gate, industry subscription")
         UserDefaults.standard.set("PASS: native same-wallet integration, reopen, duplicate, private contract, next-day rents, rest consumed, journal recovery, corrupt refusal", forKey: "institution.integration-result")
         NSLog("INSTITUTIONS_VERIFY_PASS: same wallet, maturity once, no offline rent, lease receipt immutable, meeting and delivery stamina once, contract escrow, next-day payment, rest consumed once, reopen, journal recovery, corrupt ledger refusal")

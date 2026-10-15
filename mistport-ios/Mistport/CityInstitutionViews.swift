@@ -170,11 +170,17 @@ private struct CityProjectCard: View {
     let project: MPCCityEconomy.Project
     @State private var busy = false
     @State private var message = ""
+    @State private var workshopOpen = false
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(project.kind.title).font(.headline)
-            Text("本金\(project.principal)铜 · 客户托管\(project.fullRepayment)铜 · 到期\(Date(timeIntervalSince1970: project.dueAt).formatted(date: .abbreviated, time: .shortened))")
+            Text("本金\(project.committed)铜 · 到期\(Date(timeIntervalSince1970: project.dueAt).formatted(date: .abbreviated, time: .shortened))")
             if project.settled { Text("已结算\(project.repayment)铜" + (project.repayment == 0 ? " · 本金损失" : "")) }
+            else if let order = project.bicycle {
+                Text(CityBicycleOrderView.summary(order))
+                Button(order.stage == .delivered ? "查看车厂订单" : "前往赫伯特车厂") { workshopOpen = true }
+                    .accessibilityIdentifier("bicycle-order-open")
+            }
             else if !project.inspected {
                 Text(project.kind == .bicycle ? "车架订单B-04：蓝蜡原件要求铜铆钉，转抄便条却写成铁钉。"
                     : project.kind == .shipping ? "货运订单H-09：蓝蜡原件写明四箱帆布，转抄便条却写成六箱。"
@@ -188,10 +194,141 @@ private struct CityProjectCard: View {
             if !message.isEmpty { Text(message).font(.footnote).foregroundStyle(.orange) }
         }.padding(14).background(.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 12))
             .buttonStyle(GameArtButtonStyle()).disabled(busy)
+            .sheet(isPresented: $workshopOpen) { CityBicycleOrderView(game: game, projectID: project.id) }
     }
     private func command(stamina: Int = 0, _ action: @escaping (inout MPCCityEconomy) throws -> Void) {
         busy = true
         Task { defer { busy = false }; do { try await game.cityEconomyAction(stamina: stamina, receipt: "project-deliver-" + project.id) { economy, _ in try action(&economy) }; message = "手续已记录。" } catch { message = error.localizedDescription } }
+    }
+}
+
+/// 自行车厂首批订单 (2026-10-14, INVESTMENT_QUESTS_AND_CAPITAL_CALLS_20261014): 赫伯特's workshop.
+/// 帕维 hands over two requisition slips to check against the original order, a hub is short,
+/// 乔里 test-rides the bikes, 米拉 the buyer offers one more bike, and the bikes go to her shop.
+/// Every step goes through the bank journal (GameStore.bicycleOrderStep); stand-in portraits
+/// from the existing counters until the order's own characters are painted.
+struct CityBicycleOrderView: View {
+    @Bindable var game: GameStore
+    let projectID: String
+    @State private var busy = false
+    @State private var message = ""
+    typealias Order = MPCCityEconomy.BicycleOrder
+
+    private var project: MPCCityEconomy.Project? { game.cityEconomy.projects.first { $0.id == projectID } }
+    private static let originalOrder = "原始采购单（黛娜签核，蓝蜡封）：车架铜铆钉60枚，36辐后轮毂若干。"
+    private static let rightSlip = "领料单：车架铜铆钉60枚，36辐后轮毂——库存缺一只。"
+    private static let wrongSlip = "领料单：车架铁铆钉60枚，36辐后轮毂——库存缺一只。"
+
+    static func summary(_ order: Order) -> String {
+        switch order.stage {
+        case .parts: "\(order.bikes)辆车待发料：先对照原始采购单核对领料单。"
+        case .sourcing: "车架已发料，还缺一只后轮毂。"
+        case .testing: order.failedTests > 0 ? "试车未过（\(order.failedTests)次），需处理后重试。" : "零件齐了，等乔里试车。"
+        case .ready: order.expansion == .open ? "试车通过；买家米拉有话要说。" : "\(order.bikes)辆车可以送去米拉的车行。"
+        case .assembling: "第四辆车等待装配。"
+        case .delivered: "\(order.bikes)辆车已交付，米拉已签收；合同到期付款。"
+        }
+    }
+
+    private func actor(_ stage: Order.Stage) -> String {
+        switch stage {
+        case .parts, .sourcing: "HomeLaborClerk20260929"
+        case .testing, .assembling: "HomeCarpenter20260929"
+        case .ready, .delivered: "HomePhotographer20260929"   // 米拉 (stand-in until her portrait)
+        }
+    }
+
+    var body: some View {
+        let stage = project?.bicycle?.stage ?? .delivered
+        HomeCounterScene(title: "赫伯特车厂 · 首批订单", room: .counter("oldstreet"), actorArt: actor(stage), returnTitle: "返回经理室") {
+            if let project, let order = project.bicycle {
+                Text("\(order.bikes)辆车 · 已投入\(project.committed + order.extraCosts)铜 · 买家托管\(order.bikes * Order.pricePerBike)铜")
+                    .font(.headline.monospacedDigit())
+                if project.settled {
+                    Text(project.repayment > 0 ? "合同已结清，\(project.repayment)铜入账。" : "订单未能按时交付，投入的本金已经损失。")
+                } else {
+                    // Wrap every line: the slips' last words (the missing hub) were cut off.
+                    Group { steps(project, order) }.fixedSize(horizontal: false, vertical: true)
+                }
+                if !message.isEmpty { Text(message).foregroundStyle(.orange) }
+                DisclosureGroup("订单与条款") {
+                    Text("每辆车成本\(Order.costPerBike)铜、售价\(Order.pricePerBike)铜。款项先投入采购与装配；米拉签收后，合同到期由她的托管付款。没试过车的货她不收；超过到期后三天仍未交付，本金损失，不追加欠款。").font(.footnote)
+                    Text("到期\(Date(timeIntervalSince1970: project.dueAt).formatted(date: .abbreviated, time: .shortened))").font(.footnote)
+                }
+            } else {
+                Text("这份订单已不在账上。")
+            }
+        }
+        .buttonStyle(GameArtButtonStyle()).disabled(busy)
+        .task { await game.openHousingDay() }
+    }
+
+    @ViewBuilder private func steps(_ project: MPCCityEconomy.Project, _ order: Order) -> some View {
+        switch order.stage {
+        case .parts:
+            Text("赫伯特：车架都焊好了，就等铆钉和轮毂。帕维手上有两张领料单，您核一下。")
+            Text("黛娜：照原单发料，别照抄本。").font(.subheadline)
+            Text(Self.originalOrder).font(.footnote).padding(8).background(.blue.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+            ForEach(0..<2, id: \.self) { slip in
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("帕维的第\(slip == 0 ? "一" : "二")张：" + (slip == order.correctSlip ? Self.rightSlip : Self.wrongSlip)).font(.footnote)
+                    Button("按这张发料") { step(project.id, "parts") { economy, _, now in try economy.bicycleIssueParts(project.id, slip: slip, now: now); return true } }
+                        .accessibilityIdentifier("bicycle-slip-\(slip)")
+                }.padding(8).background(.black.opacity(0.05), in: RoundedRectangle(cornerRadius: 8))
+            }
+        case .sourcing:
+            Text("帕维：库里真少一只后轮毂。码头仓还压着一批，要么您自己跑一趟，要么花钱叫个跑腿。")
+            Button("自己去码头仓取 · \(Order.errandStamina)体力") {
+                step(project.id, "hub", stamina: Order.errandStamina) { economy, coins, now in try economy.bicycleSourceHub(project.id, hireRunner: false, now: now, coins: &coins); return true }
+            }.accessibilityIdentifier("bicycle-hub-self")
+            Button("雇跑腿送来 · \(Order.courierFee)铜") {
+                step(project.id, "hub") { economy, coins, now in try economy.bicycleSourceHub(project.id, hireRunner: true, now: now, coins: &coins); return true }
+            }.accessibilityIdentifier("bicycle-hub-runner")
+        case .testing:
+            Text(order.failedTests > 0
+                 ? "乔里：车架上的铆钉又被剪断了——这不是铜的。拧得再紧也撑不住。"
+                 : "乔里：我骑一圈。刹车发尖，车把往左偏。")
+            Button("紧固刹车、校正车把再试") {
+                step(project.id, "test-\(order.failedTests)") { economy, coins, now in try economy.bicycleTestRide(project.id, replaceRivets: false, now: now, coins: &coins) }
+            }.accessibilityIdentifier("bicycle-test-tighten")
+            Button("换上铜铆钉再试 · \(Order.rivetFee)铜") {
+                step(project.id, "rivets") { economy, coins, now in try economy.bicycleTestRide(project.id, replaceRivets: true, now: now, coins: &coins) }
+            }.accessibilityIdentifier("bicycle-test-rivets")
+        case .ready where order.expansion == .open:
+            Text("米拉：车我试过了，不错。我店里又有人要一辆。您再投\(Order.costPerBike)铜做第四辆，我另托管\(Order.pricePerBike)铜。")
+            let spent = project.committed + order.extraCosts
+            Text("扩单：总投入\(spent + Order.costPerBike)铜，回款\((order.bikes + 1) * Order.pricePerBike)铜。不扩：投入\(spent)铜，回款\(order.bikes * Order.pricePerBike)铜。")
+                .font(.footnote.monospacedDigit())
+            Button("扩单，再投\(Order.costPerBike)铜") {
+                step(project.id, "expand") { economy, coins, now in try economy.bicycleAnswerExpansion(project.id, accept: true, completed: game.churchTowerMissionNumbers, now: now, coins: &coins); return true }
+            }.accessibilityIdentifier("bicycle-expand-accept")
+            Button("按原订单交货") {
+                step(project.id, "expand") { economy, coins, now in try economy.bicycleAnswerExpansion(project.id, accept: false, completed: game.churchTowerMissionNumbers, now: now, coins: &coins); return true }
+            }.accessibilityIdentifier("bicycle-expand-decline")
+        case .assembling:
+            Text("赫伯特：第四副车架今天就能装。您在旁边盯着，别再出铆钉的岔子。")
+            Button("监督装配第四辆 · \(Order.assemblyStamina)体力") {
+                step(project.id, "assemble", stamina: Order.assemblyStamina) { economy, _, now in try economy.bicycleAssembleExtra(project.id, now: now); return true }
+            }.accessibilityIdentifier("bicycle-assemble")
+        case .ready:
+            Text("米拉：车骑到我店里来，我当面验收、签收条。")
+            Button("把\(order.bikes)辆车送到米拉车行 · \(Order.deliveryStamina)体力") {
+                step(project.id, "deliver", stamina: Order.deliveryStamina) { economy, _, now in try economy.bicycleDeliver(project.id, now: now); return true }
+            }.accessibilityIdentifier("bicycle-deliver")
+        case .delivered:
+            Text("米拉：收条给您。合同到期那天，托管的\(order.bikes * Order.pricePerBike)铜就付过去。")
+        }
+    }
+
+    private func step(_ id: String, _ name: String, stamina: Int = 0,
+                      _ change: @escaping (inout MPCCityEconomy, inout Int, TimeInterval) throws -> Bool) {
+        busy = true
+        Task { defer { busy = false }
+            do {
+                let passed = try await game.bicycleOrderStep(id, step: name, stamina: stamina, change)
+                message = passed ? "" : "试车没过。"
+            } catch { message = error.localizedDescription }
+        }
     }
 }
 
@@ -334,6 +471,7 @@ struct InstitutionPlaytestRoot: View {
     @State private var settings = false
     @State private var busy = false
     @State private var message = ""
+    @State private var bicycleReview: (GameStore, String)?
     private var profile: String { UserDefaults.standard.string(forKey: "institution.profile") ?? "fresh" }
     var body: some View {
         ContentView(game: game, storefront: storefront)
@@ -363,6 +501,12 @@ struct InstitutionPlaytestRoot: View {
                 if profile == "housing" { await game.prepareInstitutionHousingFixtureIfNeeded() }
                 await storefront.prepare()
                 if ProcessInfo.processInfo.arguments.contains("--verify-institutions") { await GameStore.verifyInstitutionIntegration() }
+                if let flag = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--review-bicycle-order") }) {
+                    bicycleReview = await GameStore.bicycleOrderReview(stage: flag.split(separator: "=").last.map(String.init) ?? "parts")
+                }
+            }
+            .fullScreenCover(isPresented: Binding(get: { bicycleReview != nil }, set: { if !$0 { bicycleReview = nil } })) {
+                if let (store, id) = bicycleReview { CityBicycleOrderView(game: store, projectID: id) }
             }
     }
     private func switchProfile(_ id: String) {
