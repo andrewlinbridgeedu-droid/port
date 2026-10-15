@@ -18,6 +18,22 @@ public sealed partial class SpellSpectacle20260926
 {
     static bool IsOrderedCard(string id) => id is "tempo" or "barrage" or "signature";
 
+    float hasteUntil = -1f;
+    /// The rules' haste, seconds left from now (UnityBattleBridge "hero-haste:<s>", sent whenever
+    /// 抢拍开幕 starts it or 后手改写 extends it): the hourglass beside the hero stays exactly that
+    /// long. Before the card's contact has drawn the hourglass, the value waits for it.
+    public static void HeroHaste(float seconds)
+    {
+        if (!instance) return;
+        instance.hasteUntil = Time.time + Mathf.Max(0f, seconds);
+        var aura = instance.tempoAura;
+        if (aura && aura.MarkLive)
+        {
+            if (seconds > aura.Remaining + .2f) aura.Extended();
+            aura.SetRemaining(seconds);
+        }
+    }
+
     readonly List<Ink2D> fuses = new List<Ink2D>();
     Texture2D paintAtlas4; Material paintFlipMaterial6;
     /// Cells of SpectaclePaint4 (tools/vfx-spectacle-20260926/paint_atlas.py CELLS4).
@@ -33,35 +49,55 @@ public sealed partial class SpellSpectacle20260926
     }
 
     /// 抢拍开幕 in the user's paintings: the golden hourglass rises beside the hero's left shoulder
-    /// and spins over twice, fast (the stolen beat), then flows into him - it shrinks toward his
-    /// chest and melts into light while its gold sand streams into him after it (user 10-14:
-    /// 为什么要散开呢沙漏 - the haste is time taken for himself, not time destroyed). Beside him,
-    /// not above: with the low camera anything over his head lands on the enemy row. Times in
-    /// HitPace (PaintSprite's clock).
-    void TempoPaint(Camera cam, Vector3 chest, float s, int seed)
+    /// and spins over twice (the stolen beat), then settles small on his shoulder and stays for
+    /// the whole haste - the rules' 3.2 s, or 4.5 s when 后手改写 extends it (it spins once more
+    /// then) - its gold sand trickling into him (the aura, Ink2D "tempoaura"). In the last second
+    /// it pulses quicker; when the haste ends it tips over and flows into him, melting into light
+    /// (user 10-14: 要有加速的提示持续3.2或者4.5秒，现在是沙漏一会就没了). Beside him, not above: with
+    /// the low camera anything over his head lands on the enemy row. Times in HitPace.
+    void TempoPaint(Camera cam, Vector3 chest, float s, int seed, Ink2D aura)
     {
         var at = new Vector2(-.62f * s, .22f * s);
         var into = new Vector2(.02f * s, -.05f * s);
-        float sign = (seed & 1) == 0 ? 1f : -1f, size = .75f * s;
-        const float Spun = .3f, Gone = .5f;
-        PaintSprite.Create(root, paintFlipMaterial, this, chest, 0f, Gone + .02f, CellHourglass, t =>
+        float sign = (seed & 1) == 0 ? 1f : -1f, size = .75f * s, small = .42f * s;
+        const float Spun = .3f, Settled = .42f, FlowOut = .3f;
+        float endT = -1f, extraSpin = 0f, spinFrom = -1f; int seenExtensions = 0;
+        PaintSprite.Create(root, paintFlipMaterial, this, chest, 0f, 60f, CellHourglass, t =>
         {
-            float rise = EoutSmooth(Iv(0f, .08f, t)), spin = Smooth01(Iv(.06f, Spun, t)), go = Smooth01(Iv(Spun, Gone, t));
-            var pos = Vector2.Lerp(at + new Vector2(.25f * s * (1f - rise), -.2f * s * (1f - rise)), into, go * go);
-            // Melts into light as it goes (_Erode wisps), never fading as one picture.
-            return new Pose2 { off = pos, roll = sign * 720f * spin, scale = size * (.55f + .45f * rise) * (1f - .7f * go),
-                alpha = Iv(0f, .02f, t) * (1f - go), tint = Color.white, soft = go <= 0f };
+            if (!aura) return new Pose2 { scale = -1f };
+            if (endT < 0f && !aura.MarkLive) endT = t;
+            if (endT >= 0f && t > endT + FlowOut) return new Pose2 { scale = -1f };
+            if (aura.Extensions != seenExtensions) { seenExtensions = aura.Extensions; spinFrom = t; }
+            float rise = EoutSmooth(Iv(0f, .08f, t)), spin = Smooth01(Iv(.06f, Spun, t)), settle = Smooth01(Iv(Spun, Settled, t));
+            float extra = spinFrom >= 0f ? Smooth01(Iv(spinFrom, spinFrom + .2f, t)) : 0f;
+            if (spinFrom >= 0f && extra >= 1f) { extraSpin += 360f; spinFrom = -1f; extra = 0f; }
+            var start = at + new Vector2(.25f * s * (1f - rise), -.2f * s * (1f - rise));
+            var bob = new Vector2(0f, .03f * s * Mathf.Sin(t * 4f)) * settle;
+            var pos = Vector2.Lerp(start, at + new Vector2(0f, .1f * s), settle) + bob;
+            float scale = Mathf.Lerp(size * (.55f + .45f * rise), small, settle);
+            float roll = sign * (720f * spin + extraSpin + 360f * extra) + 6f * Mathf.Sin(t * 2.6f) * settle;
+            float alpha = Iv(0f, .02f, t);
+            // The last second: it pulses quicker (real seconds left, not HitPace).
+            float left = aura.Remaining;
+            if (endT < 0f && settle >= 1f && left < 1f) scale *= 1f + .12f * Mathf.Abs(Mathf.Sin(t * (10f + 14f * (1f - left))));
+            bool soft = true;
+            if (endT >= 0f)
+            {
+                float go = Smooth01(Iv(endT, endT + FlowOut, t));
+                pos = Vector2.Lerp(pos, into, go * go); roll += sign * 180f * go; scale *= 1f - .7f * go; alpha *= 1f - go; soft = go <= 0f;
+            }
+            return new Pose2 { off = pos, roll = roll, scale = scale, alpha = alpha, tint = Color.white, soft = soft };
         });
-        // The sand streams from the hourglass into the hero: the painting's spray turned to run
-        // from where the hourglass was toward his chest, drawn in and thinning away.
+        // At the spin the sand pours out of it into the hero once (the painted spray), then the
+        // aura keeps it trickling.
         var d = into - at; float aim = Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg;
-        float roll = aim - 45f, sz = .85f * s;
-        var corner = Rot2(new Vector2(-.42f, -.42f) * sz, roll * Mathf.Deg2Rad);
+        float roll0 = aim - 45f, sz = .85f * s;
+        var corner = Rot2(new Vector2(-.42f, -.42f) * sz, roll0 * Mathf.Deg2Rad);
         PaintSprite.Create(root, paintFlipMaterial, this, chest, Spun / HitPace, .4f, CellGoldSand, t =>
         {
             float g = EoutSmooth(Iv(0f, .12f, t)), pull = Smooth01(Iv(.1f, .4f, t));
             var source = Vector2.Lerp(at, into, pull * .8f);
-            return new Pose2 { off = source - corner * (.6f + .4f * g) * (1f - .5f * pull), roll = roll, scale = sz * (.6f + .4f * g) * (1f - .5f * pull),
+            return new Pose2 { off = source - corner * (.6f + .4f * g) * (1f - .5f * pull), roll = roll0, scale = sz * (.6f + .4f * g) * (1f - .5f * pull),
                 alpha = Iv(0f, .03f, t) * (1f - Smooth01(Iv(.18f, .4f, t))), tint = Color.white };
         });
     }
@@ -135,9 +171,11 @@ public sealed partial class SpellSpectacle20260926
                 var chest = points[0];
                 float s = Half(chest) * .28f;
                 Ink2D.Create(root, inkMaterial, this, cam, chest - cam.transform.forward, chest, s, 0f, Seed(0), "tempo");
-                if (HasCardArt) TempoPaint(cam, chest, s, Seed(0));
                 if (tempoAura) tempoAura.EndMark();
                 tempoAura = Ink2D.CreateMark(root, inkMaterial, this, cam, cue.caster, s, Seed(0) + 3, "tempoaura", Ink2D.TempoLife);
+                // The rules may already have said how long this haste lasts (HeroHaste).
+                if (hasteUntil > Time.time) tempoAura.SetRemaining(hasteUntil - Time.time);
+                if (HasCardArt) TempoPaint(cam, chest, s, Seed(0), tempoAura);
                 for (int i = 1; i < points.Count; i++)
                     Ink2D.Create(root, inkMaterial, this, cam, caster, points[i], Half(points[i]) * .16f, .03f * i, Seed(i), "tempotick");
                 break;
@@ -321,6 +359,13 @@ public sealed partial class SpellSpectacle20260926
         public bool MarkLive => mark && markEnd < 0f;
         /// How far the fuse has burnt, 0..1 over its life.
         public float Burnt => markLife > 0f ? Mathf.Clamp01(age / markLife) : 0f;
+        /// Seconds of the mark left (game time); 0 once ended.
+        public float Remaining => markEnd >= 0f ? 0f : Mathf.Max(0f, markLife - age);
+        /// Sets the time left (the rules' haste, HeroHaste).
+        public void SetRemaining(float seconds) { if (MarkLive) markLife = age + Mathf.Max(0f, seconds); }
+        /// How many times the haste was extended (the hourglass spins once more each time).
+        public int Extensions { get; private set; }
+        public void Extended() => Extensions++;
 
         /// A mark that stays on a moving anchor for real seconds (the haste, the fuse).
         public static Ink2D CreateMark(Transform parent, Material material, SpellSpectacle20260926 owner, Camera cam, Func<Vector3> follow, float size, int seed, string kind, float life)
@@ -375,6 +420,7 @@ public sealed partial class SpellSpectacle20260926
             float end = markEnd >= 0f ? markEnd : markLife + (kind == "fuse" ? .6f : 0f);
             float tail = markBlast ? 0f : .35f;
             if (age > end + tail) { Destroy(gameObject); return; }
+            if (kind == "tempoaura" && markEnd < 0f && age >= markLife) markEnd = age;   // the hourglass watches MarkLive
             if (follow != null) { try { at = follow(); } catch { follow = null; } }
             vs.Clear(); cs.Clear(); u0.Clear(); u1.Clear(); u2.Clear(); u3.Clear(); tris.Clear();
             now = age;
@@ -595,6 +641,17 @@ public sealed partial class SpellSpectacle20260926
             int beat = Mathf.FloorToInt(t / .3f); float bt = (t - beat * .3f) / .3f;
             float pulse = 1f - Smooth(bt);
             Glow(new Vector2(0f, -1.15f * s), 1f * s, band2, (.04f + .04f * pulse) * vis);
+            // A thin stream of gold sand from the hourglass on his shoulder (TempoPaint's perch,
+            // -.62 s, .32 s) curving down into his chest, thinning as the haste runs out.
+            var perch = new Vector2(-.62f * s, .2f * s);
+            float flow = t < end ? Mathf.Clamp01((end - t) / 1.2f) * .6f + .4f : 0f;
+            for (int i = 0; i < 18; i++)
+            {
+                float period = .45f + .2f * J(i + 60), u = Mathf.Repeat(t / period + J(i + 61), 1f);
+                if (J(i + 62) > flow) continue;
+                var p = Vector2.Lerp(perch, new Vector2(-.05f * s, -.05f * s), u) + new Vector2((J(i + 63) - .5f) * .06f * s, -.12f * s * Mathf.Sin(u * Mathf.PI));
+                Dot(p, s * (.014f + .012f * J(i + 64)), i % 3 == 0 ? core : band3, 3f, vis * Mathf.Sin(u * Mathf.PI), u * 3f, .05f);
+            }
             for (int i = 0; i < 44; i++)
             {
                 float period = .7f + .5f * J(i), ph = J(i + 1) * period;

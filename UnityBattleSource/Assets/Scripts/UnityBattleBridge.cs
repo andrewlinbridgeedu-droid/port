@@ -497,6 +497,12 @@ public sealed class UnityBattleBridge : MonoBehaviour
         if (action.StartsWith("archive-state:")) { battle.SetArchivePhase(action.Substring("archive-state:".Length)); return; }
         if (action.StartsWith("leech-charge:")) { battle.SetLeechCharge(action.Substring("leech-charge:".Length)); return; }
         if (action.StartsWith("skill-timing:")) { battle.SetOrderedSkillTiming(action.Substring("skill-timing:".Length)); return; }
+        // 抢拍开幕's haste, seconds left (2026-10-15): the hourglass beside the hero lasts exactly that.
+        if (action.StartsWith("hero-haste:")) {
+            if (float.TryParse(action.Substring("hero-haste:".Length), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var haste))
+                SpellSpectacle20260926.HeroHaste(haste);
+            return;
+        }
         if (action.StartsWith("ordered-impact:")) { battle.PresentOrderedImpact(action.Substring("ordered-impact:".Length)); return; }
         if (action.StartsWith("skill-targets:")) { battle.SetSkillTargets(action.Substring("skill-targets:".Length)); return; }
         if (action.StartsWith("sidestep-secondary:")) { battle.SetSidestepSecondary(action.Substring("sidestep-secondary:".Length)); return; }
