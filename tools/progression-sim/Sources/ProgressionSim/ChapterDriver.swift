@@ -31,6 +31,7 @@ enum ChapterDriver {
         if medalOffset != nil { loadout.selectedActiveRelicID = MPCChapterOneCatalog.usurpedLifeMedalRelicID }
         let encounterID = String(format: "chapter01_q%02d_encounter", q)
         var stepper = try MPCStoryBattleStepper(encounterID: encounterID, loadout: loadout, consumables: consumables, party: party,
+                                                companionIDs: q >= 28 ? MPCChapterOneCatalog.finalBossPartyIDs : [],
                                                 mask: mask ? .init(owned: true, teachingLoan: q == 3 || q == 4) : nil,
                                                 tuning: .init(actionDelay: actionDelay)) { $0.relicBalance = relicBalance }
         var used = 0, ultimateAsked = false
@@ -42,7 +43,7 @@ enum ChapterDriver {
             let now = view.now
             var out: [MPCBattleInput] = []
             let alive = trial.enemies.filter(\.isAlive)
-            if let target = (priorityCore ? alive.first { $0.contentID == "enemy_memory_leech_node" } : nil)
+            if let target = (priorityCore && q != 8 ? alive.first { $0.contentID == "enemy_memory_leech_node" } : nil)
                 ?? (q == 27 ? alive.first { $0.contentID == "enemy_clockwork_hound" } : nil)
                 ?? (q == 29 ? alive.first { $0.contentID != "boss_chronarch_sovereign" } : nil) ?? alive.first {
                 if target.id != view.target { out.append(.init(tick: view.tick, kind: .target, enemyID: target.id)) }
@@ -51,17 +52,27 @@ enum ChapterDriver {
                 }
                 if mask, q >= 3, stepper.maskIsReady(at: now) {
                     let wants: Bool
-                    if q == 4, let cycle = stepper.q4CycleStart { wants = now >= cycle + 7.8 && now < cycle + 8.4 && skipQ4Cycle != Int(cycle / 20) }
-                    else if q == 5 { wants = alive.contains { $0.currentIntent == "emerald_burst" || ($0.currentIntent == "charge" && $0.intentIndex % 4 == 2) } }
+                    if q == 3 || q == 4 || q == 5 {
+                        wants = view.incoming.contains { id, landsAt in
+                            guard let enemy = alive.first(where: { $0.id == id }) else { return false }
+                            let left = Double(landsAt - view.tick) * MPCChurchBattleDriver.step
+                            let heavy = q == 3 ? enemy.currentIntent == "memory_breath"
+                                : q == 4 ? enemy.currentIntent == "q4_flame_first" || enemy.currentIntent == "q4_flame_second"
+                                : enemy.currentIntent == "emerald_burst"
+                            return heavy && left <= 0.3 && left >= 0
+                        }
+                    }
                     else if precise {
                         wants = view.incoming.contains { id, landsAt in
                             let left = Double(landsAt - view.tick) * MPCChurchBattleDriver.step
-                            return left <= 0.3 && left >= 0 && !quiet.contains(trial.enemies.first { $0.id == id }?.currentIntent ?? "")
+                            let intent = trial.enemies.first { $0.id == id }?.currentIntent ?? ""
+                            return left <= 0.3 && left >= 0 && MPCCombatCounter.isHeavy(intent) && !quiet.contains(intent)
                         }
                     } else { wants = now >= maskOffset }
                     if wants { out.append(.init(tick: view.tick, kind: .mask)) }
                 }
             }
+            if trial.canRequestCounter { out.append(.init(tick: view.tick, kind: .counter)) }
             if trial.playerHP <= 400, trial.consumables["consumable_pain_salve", default: 0] > 0, (try? trial.useConsumable("consumable_pain_salve")) != nil {
                 out.append(.init(tick: view.tick, kind: .consumable, itemID: "consumable_pain_salve")); used += 1
             }

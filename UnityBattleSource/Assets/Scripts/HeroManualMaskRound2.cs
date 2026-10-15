@@ -13,6 +13,7 @@ public sealed class HeroManualMaskRound2 : MonoBehaviour
     readonly List<Color> colors=new List<Color>();
     readonly List<Transform> chips=new List<Transform>();
     readonly List<Mesh> chipMeshes=new List<Mesh>();
+    AIHeroAnimatedBody.VisualEcho illustratedEcho;
     GameObject root;
     Transform actor;
     HeroPorcelainRound2 mask;
@@ -35,8 +36,10 @@ public sealed class HeroManualMaskRound2 : MonoBehaviour
         root.transform.SetParent(transform,false);
         choreography=FoolSkillChoreography.Install(source);
         // A manual defence must not replace a currently striking arm action.
-        if(choreography&&!choreography.IsPlaying)choreography.Begin(FoolSkillChoreography.ManualMaskID);
+        if(!source.GetComponentInChildren<CombatTempoAnimatedBody>()&&!source.GetComponentInChildren<AIHeroAnimatedBody>()&&choreography&&!choreography.IsPlaying)choreography.Begin(FoolSkillChoreography.ManualMaskID);
         mask=new HeroPorcelainRound2(root.transform,.68f,new Color(1,.72f,.34f));
+        var illustrated=source.GetComponentInChildren<AIHeroAnimatedBody>();
+        if(illustrated) {illustratedEcho=illustrated.CreateEcho(root.transform,Vector3.zero,new Color(.48f,.27f,.72f));return;}
         foreach(var renderer in source.GetComponentsInChildren<SkinnedMeshRenderer>())
         {
             if(!renderer.enabled||!renderer.sharedMesh||renderer.name.StartsWith("FoolRibbon"))continue;
@@ -57,6 +60,8 @@ public sealed class HeroManualMaskRound2 : MonoBehaviour
             parts.Add(new Part{source=renderer,copy=go.transform,mesh=mesh});
         }
     }
+
+    public void Parry() { if (root && !fading) hitAt = Time.time; }
 
     public void Hit(int remaining)
     {
@@ -96,6 +101,9 @@ public sealed class HeroManualMaskRound2 : MonoBehaviour
             Color color=colors[i];color.a*=fade*.48f;materials[i].color=color;
             materials[i].SetColor("_RimColor",Color.Lerp(new Color(.65f,.37f,.95f),new Color(1,.73f,.28f),response));
             materials[i].SetFloat("_RimStrength",.85f+response*.72f);
+        }
+        if(illustratedEcho!=null && illustratedEcho.Capture(Vector3.zero)) {
+            illustratedEcho.Root.transform.position=shift;illustratedEcho.SetOpacity(fade*.48f);
         }
         foreach(var part in parts)
         {
@@ -156,6 +164,7 @@ public sealed class HeroManualMaskRound2 : MonoBehaviour
     public void Clear()
     {
         if(choreography&&choreography.CurrentSkill==FoolSkillChoreography.ManualMaskID)choreography.Clear();choreography=null;
+        illustratedEcho?.Dispose();illustratedEcho=null;
         ClearChips();mask?.Dispose();mask=null;
         if(root){root.SetActive(false);Destroy(root);}root=null;
         foreach(var part in parts)if(part.mesh)Destroy(part.mesh);parts.Clear();

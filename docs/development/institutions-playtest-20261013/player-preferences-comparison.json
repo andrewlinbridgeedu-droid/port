@@ -1,0 +1,12 @@
+{
+  "source": "physical iPhone original com.yourcompany.mistport Preferences",
+  "before_copied_local": "2026-10-13 23:09",
+  "after_copied_local": "2026-10-14 00:01",
+  "before_files": 276,
+  "after_files": 276,
+  "added": [],
+  "missing": [],
+  "changed": [],
+  "all_identical": true,
+  "final_reread": "2026-10-14 00:20 and 00:21 failed: ContainerLookupErrorDomain; original app not returned by final developer-app inventory; no restore or modification attempted"
+}

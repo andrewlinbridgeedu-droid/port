@@ -39,19 +39,7 @@ struct VenueView: View {
 
     private var venueHeader: some View {
         HStack(spacing: 10) {
-            Button(action: dismiss.callAsFunction) {
-                ZStack {
-                    VenuePlateShape(cut: 10)
-                        .fill(.black.opacity(0.72))
-                    VenuePlateShape(cut: 10)
-                        .stroke(.white.opacity(0.22), lineWidth: 1)
-                    Image(systemName: "chevron.left")
-                        .font(.headline.bold())
-                }
-                .frame(width: 44, height: 44)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("离开店铺")
+            GameArtReturnButton { dismiss() }
 
             VStack(alignment: .leading, spacing: 1) {
                 Text(venue.name)

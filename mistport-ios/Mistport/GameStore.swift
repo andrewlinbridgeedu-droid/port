@@ -236,8 +236,10 @@ final class GameStore {
     private(set) var latestResult = ""
     private(set) var selectedChapterDistrictID = "old-clock"
     private(set) var activeChapterMissionID: String?
+    @ObservationIgnored private var pendingCityEconomy: MPCCityEconomy?
     @ObservationIgnored private var preparedChapterOneMissionID: String?
     var churchServicesRevision = 0
+    @ObservationIgnored fileprivate var churchServicesCache: (data: Data?, state: GameStore.ChurchServicesState)?
     @ObservationIgnored private var preparedChapterOneSession: MPCChapterOneEncounterSession?
     private(set) var isTeamExpeditionActive = false
     private(set) var completedChapterMissionIDs: Set<String> = []
@@ -538,7 +540,11 @@ final class GameStore {
         }
         let migratedBell = chapterOneCampaign.migrateLegacyPaperRelicToEncoreBell()
         let migratedMask = chapterOneCampaign.migrateLegacyMaskCardToRelic()
-        if migratedBell || migratedMask { persistChapterProgress() }
+        let completedOrder = GameContent.chapterOneDistricts.flatMap(\.missions)
+            .filter { completedChapterMissionIDs.contains($0.id) }.map(\.globalOrder).max() ?? 0
+        let orderedBefore = chapterOneCampaign
+        chapterOneCampaign.unlockOrderedSkills(availableThrough: completedOrder + 1)
+        if migratedBell || migratedMask || orderedBefore != chapterOneCampaign { persistChapterProgress() }
 
         // After every progress load and reset argument above: old saves migrate once here.
         resolveDailyPacingStart()
@@ -654,6 +660,28 @@ final class GameStore {
         if launchArguments.contains("--verify-newspaper") { Task { await Self.verifyNewspaperIntegration() } }
         if launchArguments.contains("--verify-remnants") { Task { await Self.verifyRemnantsIntegration() } }
         if launchArguments.contains("--verify-neighbors") { Task { await Self.verifyNeighborsIntegration() } }
+        #if DEBUG
+        if let argument = launchArguments.first(where: { $0.hasPrefix("--mainline-music-review=") }),
+           let number = Int(argument.dropFirst("--mainline-music-review=".count)), (1...3).contains(number) {
+            debugJumpToOldClockMission(number, enterImmediately: false)
+            markDailyNewspaperSeen()
+            phase = .cityHub
+        }
+        if launchArguments.contains("--baker-board-review") {
+            debugJumpToOldClockMission(6, enterImmediately: false)
+            debugSetPacingDay(3)
+            try? openNeighborDay()
+            chapterOneCampaign.inventory[MPCCraftingCatalog.salveID] = 2
+            persistChapterProgress()
+            markDailyNewspaperSeen()
+            selectedPathID = .fool
+            phase = .cityHub
+        }
+        #endif
+        if launchArguments.contains("--refresh-baker-errand") {
+            do { try refreshBakerErrandForReplay() }
+            catch { NSLog("BAKER_REPLAY_FAILED: %@", String(describing: error)) }
+        }
         if launchArguments.contains("--verify-city-events") { Task { await Self.verifyCityEventsIntegration() } }
         if launchArguments.contains("--verify-daily-workshop") { Task { await Self.verifyDailyWorkshopIntegration() } }
         if launchArguments.contains("--verify-p0") { Self.verifySettlementRecovery() }
@@ -845,8 +873,20 @@ final class GameStore {
         fresh.completedChapterMissionIDs = Set((1...3).map { "old-clock-\($0)" })
         assert(!fresh.missionIsAvailable(all[3]) && fresh.missionLockText(all[3]) == "第 4 关明天开放")
         assert(fresh.missionIsAvailable(all[0]) && fresh.missionLockText(all[0]) == nil)
+        fresh.selectedPathID = .fool
+        fresh.phase = .cityHub
+        assert(!fresh.canEnterStoryMission)
+        fresh.enterDistrictMap()
+        fresh.beginMission(all[3])
+        assert(fresh.phase == .cityHub && fresh.activeChapterMissionID == nil)
         fresh.pacingClock = { Date().addingTimeInterval(86_400) }
         assert(fresh.pacingDay == 2 && fresh.missionIsAvailable(all[3]))
+        assert(fresh.canEnterStoryMission)
+        fresh.enterDistrictMap()
+        assert(fresh.phase == .dungeon && fresh.activeChapterMissionID == all[3].id)
+        fresh.returnToCity()
+        fresh.completedChapterMissionIDs = Set(all.map(\.id))
+        assert(fresh.canEnterStoryMission && fresh.storyEntryMission?.id == all.last?.id)
         let reopened = GameStore(launchArguments: [], defaults: storage)
         assert(reopened.dailyPacingStart == fresh.dailyPacingStart)
         // The church opens after Q7; the day-1 allowance of four new floors still applies.
@@ -868,7 +908,7 @@ final class GameStore {
         assert(again.dailyPacingStart == migrated.dailyPacingStart)
         migrated.restart()
         assert(migrated.dailyPacingStart?.origin == .newSave && migrated.pacingDay == 1)
-        NSLog("DAILY_PACING_VERIFY_PASS: new save day 1, Q4 tomorrow, replay open, next day, reopen, church after Q7, tower 4/day, migration once, restart")
+        NSLog("DAILY_PACING_VERIFY_PASS: new save day 1, Q4 tomorrow blocks entry, replay open, next day enters Q4, completed chapter replay, reopen, church after Q7, tower 4/day, migration once, restart")
     }
 
     /// Explicit DEBUG walk only. Never seed or reset either player-owned suite.
@@ -1142,6 +1182,15 @@ final class GameStore {
         playerTestMissions.first { !completedChapterMissionIDs.contains($0.id) }
     }
 
+    private var storyEntryMission: DistrictMission? {
+        if let next = nextChapterMission {
+            return missionIsAvailable(next) ? next : nil
+        }
+        return playerTestMissions.last(where: missionIsAvailable)
+    }
+
+    var canEnterStoryMission: Bool { storyEntryMission != nil }
+
     var currentTeamExpedition: ExpeditionDefinition {
         selectedChapterDistrict.teamExpedition
     }
@@ -1384,12 +1433,9 @@ final class GameStore {
             phase = .pathSelection
             return
         }
-        // The intermediate street screen is no longer part of mission entry.
-        guard let mission = nextChapterMission.flatMap({ missionIsAvailable($0) ? $0 : nil })
-            ?? playerTestMissions.last(where: { missionIsAvailable($0) }) else {
-            returnToCity()
-            return
-        }
+        // A future mission's plaque must not silently enter a cleared mission.
+        // Re-evaluate daily pacing here even when the caller showed an enabled button.
+        guard let mission = storyEntryMission else { return }
         completeChapterOneTutorial(.mapEntry)
         prepareChapterOneMission(mission)
         beginMission(mission)
@@ -1650,7 +1696,7 @@ final class GameStore {
     }
 
     var sequenceEightRitualStatus: String {
-        if sequenceEightRitual != nil { return "已完成：三份主材与\(MPCSequenceEightRitual.fee)铜币已交付，记为序列 8。新能力随后续剧情开放。" }
+        if let ritual = sequenceEightRitual { return "已完成：三份主材与\(ritual.fee)铜币已交付，记为序列 8。新能力随后续剧情开放。" }
         if currentSequence <= 8 { return "已是序列 8，原有权益保留。" }
         guard churchTowerMissionNumbers.contains(MPCSequenceEightRitual.storyMission) else {
             return "第30关后抵达黑盐岸举行。需三份主材、个人演证、悖论见证、无主回响，提交时扣\(MPCSequenceEightRitual.fee)铜币。"
@@ -1771,6 +1817,7 @@ final class GameStore {
         completedChapterMissionIDs.insert(mission.id)
         venueCoins += earnedCoins
         if wasNewCompletion {
+            recordCityContribution(.mission, receipt: "mission-" + mission.id)
             acting += 1
             grantFirstClearAdvancementIngredient(for: mission)
             _ = chapterOneCampaign.applyChapterMissionProgress(
@@ -1862,6 +1909,7 @@ final class GameStore {
     }
 
     func beginMission(_ mission: DistrictMission) {
+        // Check the current MPCDailyPacing allowance again at the final entry boundary.
         guard missionIsAvailable(mission) else { return }
         settledMissionReward = nil
         selectedChapterDistrictID = mission.districtID
@@ -1911,13 +1959,21 @@ final class GameStore {
                 missionNumber: mission.number
             )
             ?? "encounter_rain_01"
+        // This runs from a view initializer, i.e. during a parent's body.
+        // Writing the observed campaign there, even with an identical value,
+        // invalidated ContentView and re-ran this forever: the 99% CPU freeze
+        // on the Q6/Q8 pages (playtest 2026-10-04). Write only real changes.
+        var campaign = chapterOneCampaign
         if mission.districtID == "old-clock", mission.number >= 3 {
-            let alreadyOwnedMask = chapterOneCampaign.ownsManualMask
-            chapterOneCampaign.grantHoundTutorialCard()
-            if !alreadyOwnedMask { persistChapterProgress() }
+            campaign.grantHoundTutorialCard()
         }
         if hasSeenChapterOneTutorial(.q8Prelude) {
-            _ = chapterOneCampaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: 8)
+            _ = campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: 8)
+        }
+        if campaign != chapterOneCampaign {
+            let alreadyOwnedMask = chapterOneCampaign.ownsManualMask
+            chapterOneCampaign = campaign
+            if !alreadyOwnedMask && campaign.ownsManualMask { persistChapterProgress() }
         }
         var loadout = chapterOneCampaign.loadout(forMissionID: chapterMission?.id ?? encounterID)
         loadout.talents = hermitTalents
@@ -1926,12 +1982,16 @@ final class GameStore {
         if let trialSkillID = chapterMission?.trialSkillID {
             permittedSkills.insert(trialSkillID)
         }
-        loadout.normalSkillIDs = loadout.normalSkillIDs.filter(permittedSkills.contains)
+        // Chapter one battles show at most four ordinary cards. A fifth card can
+        // reach the saved loadout through the legacy five-slot capacity when a
+        // first clear appends its permanent skill (playtest 2026-10-05, Q12).
+        loadout.normalSkillIDs = Array(loadout.normalSkillIDs.filter(permittedSkills.contains).prefix(chapterOneLoadoutSlotCapacity))
         if mission.districtID == "old-clock", mission.number == 1 {
             loadout.normalSkillIDs = [.sidestepStrike]
         }
         loadout.passiveIDs = loadout.passiveIDs.filter(chapterOneCampaign.unlockedPassiveIDs.contains)
         loadout.relicIDs = loadout.relicIDs.filter(chapterOneCampaign.ownedRelicIDs.contains)
+        loadout.housingRestBP = cityEconomy.restBonus(day: HousingServerDay.number(housingNow))
         loadout.churchGear = churchServices.gear.stats
         loadout.bountyRelicID = churchServices.bountyRelics.equippedID
         loadout.outfit = MPCOutfit(rawValue: equippedOutfitID) ?? .mistportNight
@@ -2405,6 +2465,10 @@ final class GameStore {
         guard let data = try? JSONEncoder().encode(purchase) else { return }
         defaults.set(data, forKey: Self.earlyRelicPurchaseKey)
         recoverEarlyRelicPurchase()
+        // Keep the campaign's copper mirror in step with the purse; it drifted
+        // by every salve purchase (playtest 2026-10-05: 680 vs 610).
+        chapterOneCampaign.inventory["currency_copper"] = max(0, chapterOneCampaign.inventory["currency_copper", default: 0] - painSalvePrice)
+        persistChapterProgress()
         preparedChapterOneSession = nil
         preparedChapterOneMissionID = nil
         featureMessage = "已购入止痛膏，战斗中使用可恢复25%生命。"
@@ -2801,6 +2865,7 @@ extension GameStore {
         var neighbors: NeighborRecord? = nil
         var remnants: RemnantRecord? = nil
         var housing: HousingRecord? = nil
+        var cityEconomy: MPCCityEconomy? = nil
         let coins: Int
         let lifetime: Int
         let available: Int
@@ -2811,7 +2876,15 @@ extension GameStore {
     }
     var churchServices: ChurchServicesState {
         _ = churchServicesRevision
-        return defaults.data(forKey: "mistport.church.services.v1").flatMap { try? JSONDecoder().decode(ChurchServicesState.self, from: $0) } ?? .init()
+        // SwiftUI bodies read this many times per frame; decoding the whole
+        // ledger each time saturated the main thread (playtest 2026-10-04).
+        // Cache by the stored bytes so any writer, bumped revision or not,
+        // still invalidates it.
+        let data = defaults.data(forKey: "mistport.church.services.v1")
+        if let cached = churchServicesCache, cached.data == data { return cached.state }
+        let state = data.flatMap { try? JSONDecoder().decode(ChurchServicesState.self, from: $0) } ?? .init()
+        churchServicesCache = (data, state)
+        return state
     }
     /// Tower floors pay gear; closed bounty cases pay relics (bounty gear was
     /// retired on 2026-09-28 by a one-time migration recorded in the ledger).
@@ -2860,6 +2933,7 @@ extension GameStore {
             guard (try? housingService.commit(housing)) != nil else { return }
         }
         venueCoins = receipt.coins
+        if let economy = receipt.cityEconomy { defaults.set(try? JSONEncoder().encode(economy), forKey: Self.cityEconomyKey) }
         if let work = receipt.dailyWork { persistDailyWork(work) }
         if let workshop = receipt.dailyWorkshop { persistDailyWorkshop(workshop) }
         if let events = receipt.cityEvents { defaults.set(try? JSONEncoder().encode(events), forKey: PersistenceKey.cityEvents) }
@@ -2882,18 +2956,20 @@ extension GameStore {
         defaults.removeObject(forKey: "mistport.church.services.pending.v1")
         churchServicesRevision += 1
     }
-    private func updateChurchServices(dailyWork: DailyWorkRecord? = nil, remnants: RemnantRecord? = nil, neighbors: NeighborRecord? = nil, cityEvents: CityEventRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil, _ change: (inout ChurchServicesState) throws -> Void) throws {
+    private func updateChurchServices(cityEconomy: MPCCityEconomy? = nil, dailyWork: DailyWorkRecord? = nil, remnants: RemnantRecord? = nil, neighbors: NeighborRecord? = nil, cityEvents: CityEventRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil, _ change: (inout ChurchServicesState) throws -> Void) throws {
         // Never replace an unreadable financial ledger with the default empty state.
-        guard workshopLedgerIsReadable, housingService.isReadable else { throw MPCLocalWorkshopLedger.Failure.locked }
+        guard workshopLedgerIsReadable, housingService.isReadable, cityEconomyIsReadable else { throw MPCLocalWorkshopLedger.Failure.locked }
+        pendingCityEconomy = nil
+        defer { pendingCityEconomy = nil }
         var state = churchServices
         state.loans.coins = venueCoins
         state.loans.lifetimeMerit = chapterOneCampaign.lifetimeChurchMerit
         state.loans.availableMerit = chapterOneCampaign.spendableChurchMerit
         try change(&state)
-        try commitChurchServices(state, remnants: remnants, dailyWork: dailyWork, neighbors: neighbors, cityEvents: cityEvents, dailyWorkshop: dailyWorkshop, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
+        try commitChurchServices(state, cityEconomy: cityEconomy ?? pendingCityEconomy, remnants: remnants, dailyWork: dailyWork, neighbors: neighbors, cityEvents: cityEvents, dailyWorkshop: dailyWorkshop, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
     }
-    private func commitChurchServices(_ state: ChurchServicesState, housing: HousingRecord? = nil, remnants: RemnantRecord? = nil, dailyWork: DailyWorkRecord? = nil, neighbors: NeighborRecord? = nil, cityEvents: CityEventRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil) throws {
-        let receipt = ChurchServicesReceipt(state: state, dailyWork: dailyWork, dailyWorkshop: dailyWorkshop, cityEvents: cityEvents, neighbors: neighbors, remnants: remnants, housing: housing ?? pendingHousingRecord, coins: state.loans.coins, lifetime: state.loans.lifetimeMerit, available: state.loans.availableMerit, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
+    private func commitChurchServices(_ state: ChurchServicesState, cityEconomy: MPCCityEconomy? = nil, housing: HousingRecord? = nil, remnants: RemnantRecord? = nil, dailyWork: DailyWorkRecord? = nil, neighbors: NeighborRecord? = nil, cityEvents: CityEventRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil) throws {
+        let receipt = ChurchServicesReceipt(state: state, dailyWork: dailyWork, dailyWorkshop: dailyWorkshop, cityEvents: cityEvents, neighbors: neighbors, remnants: remnants, housing: housing ?? pendingHousingRecord, cityEconomy: cityEconomy ?? pendingCityEconomy, coins: state.loans.coins, lifetime: state.loans.lifetimeMerit, available: state.loans.availableMerit, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
         defaults.set(try JSONEncoder().encode(receipt), forKey: "mistport.church.services.pending.v1")
         recoverChurchServices()
         preparedChapterOneSession = nil
@@ -2939,6 +3015,11 @@ extension GameStore {
         let borrowedRelics = Set(borrowed.compactMap { state.loans.effectiveRelicID(loanID: $0) })
         _ = try state.loans.beginBattle(battleID: battleID, equippedLoanIDs: borrowed)
         _ = try state.ownedCondition.beginBattle(battleID: battleID, equippedRelicIDs: Array(actual), ownedRelicIDs: chapterOneCampaign.ownedRelicIDs, borrowedRelicIDs: borrowedRelics)
+        if loadout.housingRestBP > 0 {
+            var economy = cityEconomy
+            _ = economy.consumeRest(battleID: battleID, day: HousingServerDay.number(housingNow))
+            pendingCityEconomy = economy
+        }
     }
     private func settleChurchGear(_ state: inout ChurchServicesState, battleID: String, outcome: MPCChurchBattleOutcome) throws {
         _ = state.gear.wear(battleID: battleID, outcome: outcome)
@@ -2956,10 +3037,22 @@ extension GameStore {
             if outcome != .victory { state.workshop.abandonTower(id: battleID) }
         }
     }
+    func ownedRelicRepairQuote(_ relicID: String) -> Int {
+        let fee = (try? churchServices.ownedCondition.repairCost(relicID, ownedRelicIDs: chapterOneCampaign.ownedRelicIDs)) ?? 0
+        var economy = cityEconomy
+        return fee - economy.maintenanceCredit(day: HousingServerDay.number(housingNow),
+            lodgingID: housingPayment?.lodgingID ?? "dock_bunk", fee: fee)
+    }
     func repairOwnedChurchRelic(_ relicID: String) throws {
+        var economy = cityEconomy
         try updateChurchServices { state in
-            let receipt = try state.ownedCondition.repair(relicID, ownedRelicIDs: chapterOneCampaign.ownedRelicIDs, availableCoins: state.loans.coins)
-            state.loans.coins -= receipt.copperCost
+            let fee = try state.ownedCondition.repairCost(relicID, ownedRelicIDs: chapterOneCampaign.ownedRelicIDs)
+            let discount = economy.maintenanceCredit(day: HousingServerDay.number(housingNow),
+                lodgingID: housingPayment?.lodgingID ?? "dock_bunk", fee: fee)
+            let receipt = try state.ownedCondition.repair(relicID, ownedRelicIDs: chapterOneCampaign.ownedRelicIDs,
+                availableCoins: state.loans.coins + discount)
+            state.loans.coins -= receipt.copperCost - discount
+            pendingCityEconomy = economy
         }
     }
     func previewChurchBountyIssue(asOf date: Date = Date()) -> MPCDailyBountyIssue {
@@ -3242,12 +3335,14 @@ extension GameStore {
                 state.bountyRelics.grant(caseID: id)
             }
         }
+        if churchServices.bounties.cases[id]?.claimed == true { recordCityContribution(.bounty, receipt: "bounty-" + id) }
     }
 }
 
 extension GameStore {
     func applyingChurchLoans(to source: MPCChapterOneLoadout, allowsActive: Bool = true) -> MPCChapterOneLoadout {
         var loadout = source
+        loadout.housingRestBP = cityEconomy.restBonus(day: HousingServerDay.number(housingNow))
         loadout.churchGear = churchServices.gear.stats
         loadout.bountyRelicID = churchServices.bountyRelics.equippedID
         loadout.outfit = MPCOutfit(rawValue: equippedOutfitID) ?? .mistportNight
@@ -4533,6 +4628,12 @@ extension GameStore {
             state.loans.coins = coins
             try settleChurchGear(&state, battleID: ticket, outcome: session.outcome == .victory ? .victory : .defeat)
         }
+        if session.outcome == .victory {
+            recordCityContribution(.eventBattle, receipt: "event-battle-" + ticket)
+            if let event = MPCCityEventCatalog.running(day: pacingDay), cityEvents.status(event.id, day: pacingDay) == .succeeded {
+                recordCityContribution(.eventSuccess, receipt: "event-success-" + event.id)
+            }
+        }
     }
     func abandonCityEvent(ticket: String, defeated: Bool = false) throws {
         var record = try readCityEvents()
@@ -4628,6 +4729,11 @@ extension GameStore {
         _ = churchServicesRevision
         return (try? readNeighbors().ledger) ?? .init()
     }
+    /// Message errands whose asker has been heard; the recipient is lit on the street.
+    var neighborHeardMessages: Set<String> {
+        _ = churchServicesRevision
+        return (try? readNeighbors().heardMessages) ?? []
+    }
     func openNeighborDay() throws {
         var record = try readNeighbors()
         let old = record.ledger
@@ -4648,6 +4754,17 @@ extension GameStore {
         talkingNeighborID = id
     }
     func endNeighborConversation() { talkingNeighborID = nil }
+    /// Explicit user-authorized retry, not a new daily offer or a second reward.
+    private func refreshBakerErrandForReplay() throws {
+        var record = try readNeighbors()
+        guard let offer = record.ledger.offers.first(where: { $0.neighborID == "baker" && $0.day == pacingDay }) else {
+            throw MPCNeighborLedger.Failure.notOffered
+        }
+        guard try record.ledger.reopenCompletedOfferForReplay(offer.id) else { return }
+        record.heardMessages.remove(offer.id)
+        try updateChurchServices(neighbors: record) { _ in }
+        NSLog("BAKER_REPLAY_READY: %@; original reward preserved", offer.id)
+    }
     func canRelayNeighbor(_ offerID: String) -> Bool {
         (try? readNeighbors().heardMessages.contains(offerID)) == true
             && housingRecord?.stamina.receipts.contains("neighbor-" + offerID) == true
@@ -4706,6 +4823,7 @@ extension GameStore {
             state.loans.coins = coins
             try settleChurchGear(&state, battleID: ticket, outcome: session.outcome == .victory ? .victory : .defeat)
         }
+        if let reward, reward.copper > 0 { recordCityContribution(.errand, receipt: "errand-" + offerID) }
         return reward
     }
     func abandonNeighborPest(offerID: String, ticket: String, defeated: Bool = false) throws {
@@ -4888,6 +5006,7 @@ extension GameStore {
         let payout = try record.ledger.claim(day: day, today: pacingDay, work: &work.ledger, coins: &coins, inventory: &inventory, usesStamina: true)
         guard let payout else { return nil }
         try updateChurchServices(dailyWork: work, remnants: record, inventory: inventory) { $0.loans.coins = coins }
+        recordCityContribution(.remnant, receipt: "remnant-\(day)")
         return payout
     }
 }
@@ -5081,7 +5200,7 @@ extension GameStore {
         housingHomeID == MPCHousingCatalog.highlandLodgingID && housingRecord?.ledger.canTakeHighlandErrands(day: HousingServerDay.number(housingNow)) == true
     }
     private func ensureHousingDay() async throws {
-        guard workshopLedgerIsReadable, housingService.isReadable else { throw HousingServiceFailure.unreadable }
+        guard workshopLedgerIsReadable, housingService.isReadable, cityEconomyIsReadable else { throw HousingServiceFailure.unreadable }
         if housingPayment != nil { return }
         let update = try await housingService.prepareDay(cash: venueCoins, completedMissions: churchTowerMissionNumbers.count, at: housingNow)
         var state = churchServices
@@ -5092,7 +5211,17 @@ extension GameStore {
     }
     func openHousingDay() async {
         await housingGate.acquire(); defer { housingGate.release() }
-        do { try await ensureHousingDay(); housingDisplayTick += 1 } catch { featureMessage = housingError(error) }
+        do {
+            guard cityEconomyIsReadable else { throw HousingServiceFailure.unreadable }
+            var economy = cityEconomy, coins = venueCoins
+            economy.settle(now: housingNow.timeIntervalSince1970, coins: &coins)
+            let update = try await housingService.prepareDay(cash: coins, completedMissions: churchTowerMissionNumbers.count, at: housingNow)
+            var state = churchServices; state.loans.coins = update.cash
+            state.loans.lifetimeMerit = chapterOneCampaign.lifetimeChurchMerit
+            state.loans.availableMerit = chapterOneCampaign.spendableChurchMerit
+            try commitChurchServices(state, cityEconomy: economy, housing: update.record)
+            housingDisplayTick += 1
+        } catch { featureMessage = housingError(error) }
     }
     func housingRooms() async throws -> [HousingRoomAvailability] { try await housingService.rooms() }
     func signHousing(lodgingID: String, mealID: String) async throws {
@@ -5118,7 +5247,8 @@ extension GameStore {
         try await ensureHousingDay()
         guard MPCHousingCatalog.lodging(lodgingID) != nil, var r = housingRecord else { throw HousingServiceFailure.unavailable }
         r.queuedLodgingIDs.insert(lodgingID)
-        try commitChurchServices(churchServices, housing: r)
+        var state = churchServices; state.loans.coins = venueCoins
+        try commitChurchServices(state, housing: r)
     }
     func housingError(_ error: Error) -> String {
         if case MPCStaminaState.Failure.notEnough(let needed, _) = error {
@@ -5166,10 +5296,14 @@ extension GameStore {
         try await housingAction(.eventBattle, receipt: "event-battle-" + ticket) { try beginCityEventBody(eventID: eventID, ticket: ticket, skills: skills) }
     }
     func deliverNeighbor(_ offerID: String) async throws -> MPCNeighborLedger.Reward {
-        try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try deliverNeighborBody(offerID) }
+        let reward = try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try deliverNeighborBody(offerID) }
+        if reward.copper > 0 { recordCityContribution(.errand, receipt: "errand-" + offerID) }
+        return reward
     }
     func answerNeighbor(_ offerID: String, choiceID: String) async throws -> MPCNeighborLedger.Reward? {
-        try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try answerNeighborBody(offerID, choiceID: choiceID) }
+        let reward = try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try answerNeighborBody(offerID, choiceID: choiceID) }
+        if let reward, reward.copper > 0 { recordCityContribution(.errand, receipt: "errand-" + offerID) }
+        return reward
     }
     func acceptNeighborMessage(_ offerID: String) async throws {
         try await housingAction(.errandThreeStep, receipt: "neighbor-" + offerID) {
@@ -5179,7 +5313,9 @@ extension GameStore {
         }
     }
     func relayNeighbor(_ offerID: String) async throws -> MPCNeighborLedger.Reward {
-        try await housingAction(.errandThreeStep, receipt: "neighbor-" + offerID) { try relayNeighborBody(offerID) }
+        let reward = try await housingAction(.errandThreeStep, receipt: "neighbor-" + offerID) { try relayNeighborBody(offerID) }
+        if reward.copper > 0 { recordCityContribution(.errand, receipt: "errand-" + offerID) }
+        return reward
     }
     func beginNeighborPest(offerID: String, ticket: String, skills: [FoolSkillID]) async throws -> MPCChapterOneEncounterSession {
         try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try beginNeighborPestBody(offerID: offerID, ticket: ticket, skills: skills) }
@@ -5404,3 +5540,406 @@ extension GameStore {
     }
 }
 #endif
+
+// MARK: Chapter-one institutions: one wallet, one durable transaction journal
+extension GameStore {
+    private static let cityEconomyKey = "mistport.city-economy.v1"
+    var cityEconomy: MPCCityEconomy {
+        _ = churchServicesRevision
+        return defaults.data(forKey: Self.cityEconomyKey).flatMap { try? JSONDecoder().decode(MPCCityEconomy.self, from: $0) } ?? .init()
+    }
+    var cityEconomyIsReadable: Bool {
+        guard let data = defaults.data(forKey: Self.cityEconomyKey) else { return true }
+        return (try? JSONDecoder().decode(MPCCityEconomy.self, from: data)) != nil
+    }
+    var cityBudgetReserve: Int {
+        sequenceEightQualified ? 36 + painSalvePrice : MPCCityEconomy.reserve(completed: churchTowerMissionNumbers,
+            ownedMaterials: Set(advancementIngredients.map(\.rawValue)), ownedRelics: chapterOneCampaign.ownedRelicIDs,
+            salve: painSalveStock > 0 ? 0 : painSalvePrice)
+    }
+    var bankLiquidReserve: Int {
+        let lodging = housingPayment?.lodgingID ?? housingHomeID
+        let meal = housingPayment?.mealID ?? "soup"
+        let daily = max(12, (MPCHousingCatalog.lodging(lodging)?.copperPerDay ?? 0)
+            + (MPCHousingCatalog.meal(meal)?.copperPerDay ?? 0))
+        return cityBudgetReserve + max(0, daily * 3 - 36)
+    }
+    func signBankDeposit(amount: Int, ordinary: Bool) async throws {
+        try await cityEconomyAction { economy, coins in
+            if ordinary {
+                try economy.openTermDeposit(amount, completed: self.churchTowerMissionNumbers,
+                    liquidReserve: self.bankLiquidReserve, now: self.housingNow.timeIntervalSince1970, coins: &coins)
+            } else {
+                try economy.openDeposit(amount, completed: self.churchTowerMissionNumbers,
+                    liquidReserve: self.bankLiquidReserve, now: self.housingNow.timeIntervalSince1970, coins: &coins)
+            }
+        }
+    }
+    func signBankProject(kind: MPCCityEconomy.ProjectKind, amount: Int) async throws {
+        try await cityEconomyAction { economy, coins in
+            guard coins - amount >= self.bankLiquidReserve else { throw MPCCityEconomy.Failure.funds }
+            try economy.openProject(kind: kind, amount: amount, completed: self.churchTowerMissionNumbers,
+                reputation: self.cityContribution.points, day: self.pacingDay,
+                now: self.housingNow.timeIntervalSince1970, coins: &coins)
+        }
+    }
+    var restReserve: Int { Int(housingRecord?.stamina.reserve(at: housingNow.timeIntervalSince1970) ?? 0) }
+    /// Uses the housing command gate so rents, task starts and bank commands cannot
+    /// debit independent copies of the same wallet around asynchronous preparation.
+    func cityEconomyAction(stamina: Int = 0, receipt: String? = nil,
+                           _ change: (inout MPCCityEconomy, inout Int) throws -> Void) async throws {
+        await housingGate.acquire(); defer { housingGate.release() }
+        guard cityEconomyIsReadable else { throw HousingServiceFailure.unreadable }
+        try await ensureHousingDay()
+        var economy = cityEconomy, coins = venueCoins
+        let now = housingNow.timeIntervalSince1970
+        economy.settle(now: now, coins: &coins)
+        var housing = housingRecord ?? HousingRecord(at: housingNow)
+        if stamina > 0 { try housing.stamina.spend(points: stamina, receiptID: receipt ?? UUID().uuidString, at: now) }
+        try change(&economy, &coins)
+        var state = churchServices; state.loans.coins = coins
+        state.loans.lifetimeMerit = chapterOneCampaign.lifetimeChurchMerit
+        state.loans.availableMerit = chapterOneCampaign.spendableChurchMerit
+        try commitChurchServices(state, cityEconomy: economy, housing: housing)
+        housingDisplayTick += 1
+    }
+    func returnHomeRest(prepareBattle: Bool) async throws {
+        await housingGate.acquire(); defer { housingGate.release() }
+        try await ensureHousingDay()
+        var housing = housingRecord ?? HousingRecord(at: housingNow), economy = cityEconomy
+        _ = housing.stamina.returnHome(at: housingNow.timeIntervalSince1970)
+        if prepareBattle { try economy.prepareRest(day: HousingServerDay.number(housingNow), lodgingID: housingPayment?.lodgingID ?? "dock_bunk") }
+        var state = churchServices; state.loans.coins = venueCoins
+        try commitChurchServices(state, cityEconomy: economy, housing: housing)
+        housingDisplayTick += 1
+    }
+    func inviteDyeBookkeeper(privateRoom: Bool) async throws {
+        try await cityEconomyAction(stamina: 10) { economy, coins in
+            try economy.invite(privateRoom: privateRoom, lodgingID: housingPayment?.lodgingID ?? "dock_bunk",
+                completed: churchTowerMissionNumbers, now: housingNow.timeIntervalSince1970, coins: &coins)
+        }
+    }
+    func deliverMeetingGoods() async throws {
+        let item = cityEconomy.meeting
+        try await cityEconomyAction(stamina: item?.deliveryStamina ?? 15, receipt: "meeting-delivery-" + (item?.id ?? "none")) { economy, _ in
+            try economy.deliverGoods(now: housingNow.timeIntervalSince1970)
+        }
+    }
+}
+
+#if DEBUG
+extension GameStore {
+    func configureInstitutionClock() {
+        guard Bundle.main.bundleIdentifier == "local.mistport.institutions" else { return }
+        let store = defaults
+        pacingClock = { Date().addingTimeInterval(store.double(forKey: "institution.clock-offset")) }
+    }
+    func advanceInstitutionClock() async {
+        guard Bundle.main.bundleIdentifier == "local.mistport.institutions" else { return }
+        defaults.set(defaults.double(forKey: "institution.clock-offset") + 86_400, forKey: "institution.clock-offset")
+        await openHousingDay()
+    }
+    func prepareInstitutionHousingFixtureIfNeeded() async {
+        guard Bundle.main.bundleIdentifier == "local.mistport.institutions" else { return }
+        defaults.set(Pathway.ID.fool.rawValue, forKey: PersistenceKey.selectedPathID)
+        if defaults.bool(forKey: "institution.housing-fixture-created") {
+            selectedPathID = .fool
+            if phase == .title { returnToCity() }
+            return
+        }
+        debugJumpToOldClockMission(14, enterImmediately: false)
+        venueCoins = 1_200; persistChapterProgress(); returnToCity()
+        chapterOneTutorialFlags = Set(ChapterOneTutorialCue.allCases.map(\.persistenceKey))
+        defaults.set(Array(chapterOneTutorialFlags), forKey: PersistenceKey.chapterOneTutorialFlags)
+        var record = HousingRecord(at: housingNow)
+        try? record.ledger.sign(lodgingID: "canal_house", mealID: "cafe", day: HousingServerDay.number(housingNow), roomsLeft: 1)
+        var coins = venueCoins
+        _ = record.ledger.payDay(HousingServerDay.number(housingNow), cash: &coins, completedMissions: 13)
+        record.homeLodgingID = "canal_house"
+        record.stamina.setRecovery(perDay: 111, at: housingNow.timeIntervalSince1970)
+        record.bonusExpiresAt = HousingServerDay.nextBoundary(housingNow)
+        var state = churchServices; state.loans.coins = coins
+        try? commitChurchServices(state, housing: record)
+        defaults.set(true, forKey: "institution.housing-fixture-created")
+    }
+}
+#endif
+
+#if DEBUG
+extension GameStore {
+    static func verifyInstitutionIntegration() async {
+        let suite = "mistport.institutions.integration." + UUID().uuidString
+        let storage = UserDefaults(suiteName: suite)!
+        defer { storage.removePersistentDomain(forName: suite) }
+        var now = Date(timeIntervalSince1970: 1_800_000_000)
+        let store = GameStore(launchArguments: [], defaults: storage)
+        store.debugJumpToOldClockMission(14, enterImmediately: false)
+        store.pacingClock = { now }; store.venueCoins = 1_200; store.persistChapterProgress()
+        await store.openHousingDay()
+        let initial = store.venueCoins
+        try! await store.cityEconomyAction { try $0.openDeposit(60, completed: store.churchTowerMissionNumbers, now: now.timeIntervalSince1970, coins: &$1) }
+        housingAssert(store.venueCoins == initial - 60)
+        let reopened = GameStore(launchArguments: [], defaults: storage); reopened.pacingClock = { now }
+        housingAssert(reopened.cityEconomy.deposit?.principal == 60 && reopened.venueCoins == initial - 60)
+        now = now.addingTimeInterval(72 * 3_600)
+        await reopened.openHousingDay()
+        housingAssert(reopened.cityEconomy.deposit?.closed == true && reopened.venueCoins == initial + 12 - 12)
+        let once = reopened.venueCoins
+        await reopened.openHousingDay(); housingAssert(reopened.venueCoins == once)
+        try! await reopened.signHousing(lodgingID: "canal_house", mealID: "cafe")
+        // Changing rooms doesn't replace today's paid basic receipt.
+        housingAssert(reopened.housingPayment?.lodgingID == "dock_bunk")
+        now = now.addingTimeInterval(86_400)
+        await reopened.openHousingDay(); housingAssert(reopened.housingPayment?.copper == 22)
+        let beforeMeeting = reopened.venueCoins
+        try! await reopened.inviteDyeBookkeeper(privateRoom: true)
+        housingAssert(reopened.venueCoins == beforeMeeting - 4 && reopened.currentStamina == 90)
+        do { try await reopened.inviteDyeBookkeeper(privateRoom: true); preconditionFailure("duplicate invite") } catch {}
+        housingAssert(reopened.venueCoins == beforeMeeting - 4 && reopened.currentStamina == 90)
+        try! await reopened.cityEconomyAction { economy, _ in try economy.verifyMeeting(evidence: ["delivery_receipt", "original_seal"]) }
+        try! await reopened.cityEconomyAction { try $0.contract(inspectFirst: true, payOnDelivery: true, limitedLiability: true, now: now.timeIntervalSince1970, coins: &$1) }
+        let mid = GameStore(launchArguments: [], defaults: storage); mid.pacingClock = { now }
+        housingAssert(mid.cityEconomy.meeting?.stage == .contracted && mid.venueCoins == beforeMeeting - 34)
+        try! await mid.cityEconomyAction { economy, _ in try economy.collectGoods(now: now.timeIntervalSince1970) }
+        try! await mid.cityEconomyAction { economy, _ in try economy.sealGoods(original: true, now: now.timeIntervalSince1970) }
+        try! await mid.deliverMeetingGoods(); housingAssert(mid.currentStamina == 70)
+        now = now.addingTimeInterval(86_400)
+        await mid.openHousingDay()
+        housingAssert(mid.cityEconomy.meeting?.stage == .paid && mid.venueCoins == beforeMeeting - 34 + 60 - 22)
+        let paid = mid.venueCoins
+        await mid.openHousingDay(); housingAssert(mid.venueCoins == paid)
+        try! await mid.returnHomeRest(prepareBattle: true)
+        var loadout = mid.applyingChurchLoans(to: mid.chapterOneCampaign.loadout)
+        housingAssert(loadout.housingRestBP == 300)
+        try! mid.beginChurchLoanBattle("housing-rest-test", loadout: loadout)
+        housingAssert(mid.cityEconomy.restBonus(day: HousingServerDay.number(now)) == 0)
+        loadout = mid.applyingChurchLoans(to: mid.chapterOneCampaign.loadout)
+        housingAssert(loadout.housingRestBP == 0)
+        do { try await mid.returnHomeRest(prepareBattle: true); preconditionFailure("rest reset") } catch {}
+        // A housing-only transaction cannot restore the pre-purchase wallet.
+        let beforePurchase = mid.venueCoins
+        mid.purchaseEarlyRelic(EarlyRelicShop.salt)
+        try! await mid.queueHousing("bell_loft")
+        housingAssert(mid.venueCoins == beforePurchase - 120)
+        var repairLoadout = mid.applyingChurchLoans(to: mid.chapterOneCampaign.loadout)
+        repairLoadout.relicIDs = [EarlyRelicShop.salt]
+        try! mid.beginChurchLoanBattle("repair-discount", loadout: repairLoadout)
+        mid.finishChurchLoanBattle("repair-discount", outcome: .retreat)
+        let ordinaryFee = try! mid.churchServices.ownedCondition.repairCost(EarlyRelicShop.salt, ownedRelicIDs: mid.chapterOneCampaign.ownedRelicIDs)
+        let quote = mid.ownedRelicRepairQuote(EarlyRelicShop.salt)
+        housingAssert(quote < ordinaryFee && quote > 0)
+        mid.venueCoins = quote; mid.persistChapterProgress()
+        try! mid.repairOwnedChurchRelic(EarlyRelicShop.salt)
+        housingAssert(mid.venueCoins == 0 && mid.churchServices.ownedCondition.currentDurability(EarlyRelicShop.salt) == 100)
+        mid.venueCoins = 100; mid.persistChapterProgress()
+        // Crash recovery uses an absolute journal, not an extra additive credit.
+        var economy = mid.cityEconomy, coins = mid.venueCoins
+        try! economy.save(20, coins: &coins)
+        var state = mid.churchServices; state.loans.coins = coins
+        let receipt = ChurchServicesReceipt(state: state, cityEconomy: economy, coins: coins, lifetime: state.loans.lifetimeMerit, available: state.loans.availableMerit)
+        storage.set(try! JSONEncoder().encode(receipt), forKey: "mistport.church.services.pending.v1")
+        let recovered = GameStore(launchArguments: [], defaults: storage)
+        housingAssert(recovered.venueCoins == coins && recovered.cityEconomy.savings == 20)
+        let recoveredTwice = GameStore(launchArguments: [], defaults: storage)
+        housingAssert(recoveredTwice.venueCoins == coins && recoveredTwice.cityEconomy.savings == 20)
+        storage.set(Data("bad ledger".utf8), forKey: cityEconomyKey)
+        do { try await recoveredTwice.cityEconomyAction { try $0.withdraw(20, coins: &$1) }; preconditionFailure("corrupt financial ledger replaced") } catch {}
+        housingAssert(recoveredTwice.venueCoins == coins)
+        // The paid calendar day earns its bonus while resting; whole offline
+        // days earn only base recovery and never charge rent retroactively.
+        let paidSuite = suite + ".paid-window"
+        let paidDefaults = UserDefaults(suiteName: paidSuite)!
+        defer { paidDefaults.removePersistentDomain(forName: paidSuite) }
+        let paidStart = HousingServerDay.calendar.startOfDay(for: now)
+        let housingService = RulesHousingService(defaults: paidDefaults)
+        var paidRecord = HousingRecord(at: paidStart)
+        try! paidRecord.ledger.sign(lodgingID: "canal_house", mealID: "cafe", day: HousingServerDay.number(paidStart), roomsLeft: 1)
+        try! housingService.commit(paidRecord)
+        let firstPaid = try! await housingService.prepareDay(cash: 1_000, completedMissions: 13, at: paidStart)
+        try! housingService.commit(firstPaid.record)
+        let skip = HousingServerDay.calendar.date(byAdding: .day, value: 3, to: paidStart)!
+        let afterOffline = try! await housingService.prepareDay(cash: firstPaid.cash, completedMissions: 13, at: skip)
+        housingAssert(afterOffline.cash == 956 && afterOffline.record.ledger.payments.count == 2)
+        housingAssert(abs(afterOffline.record.stamina.restReserve - 11) < 0.0001)
+        let bankSuite = suite + ".repeat-bank"
+        let bankDefaults = UserDefaults(suiteName: bankSuite)!
+        defer { bankDefaults.removePersistentDomain(forName: bankSuite) }
+        let bank = GameStore(launchArguments: [], defaults: bankDefaults)
+        bank.debugJumpToOldClockMission(17, enterImmediately: false)
+        bank.pacingClock = { now }; bank.venueCoins = 5_000; bank.persistChapterProgress()
+        await bank.openHousingDay()
+        let bankStart = bank.venueCoins
+        bank.venueCoins = bank.bankLiquidReserve + 59
+        let protectedCash = bank.venueCoins
+        do { try await bank.signBankDeposit(amount: 60, ordinary: true); preconditionFailure("term used growth reserve") } catch {}
+        housingAssert(bank.venueCoins == protectedCash && bank.cityEconomy.termDeposit == nil)
+        bank.venueCoins = bankStart
+        try! await bank.signBankDeposit(amount: 60, ordinary: true)
+        let termID = bank.cityEconomy.termDeposit!.id
+        let bankReload = GameStore(launchArguments: [], defaults: bankDefaults); bankReload.pacingClock = { now }
+        housingAssert(bankReload.cityEconomy.termDeposit?.id == termID && bankReload.venueCoins == bankStart - 60)
+        now = now.addingTimeInterval(7 * 86_400)
+        await bankReload.openHousingDay()
+        housingAssert(bankReload.venueCoins == bankStart + 1 - 12 && bankReload.cityEconomy.termDeposit!.closed)
+        let maturedCash = bankReload.venueCoins
+        await bankReload.openHousingDay(); housingAssert(bankReload.venueCoins == maturedCash)
+        try! await bankReload.signBankDeposit(amount: 60, ordinary: true)
+        housingAssert(bankReload.cityEconomy.termDeposit?.id != termID)
+        try! await bankReload.cityEconomyAction { try $0.redeemTermDeposit(now: now.timeIntervalSince1970, coins: &$1) }
+        housingAssert(bankReload.venueCoins == maturedCash && bankReload.cityEconomy.bankBonusPaid == 1)
+        do { try await bankReload.signBankProject(kind: .bicycle, amount: 60); preconditionFailure("industry bypassed reputation") } catch {}
+        housingAssert(bankReload.venueCoins == maturedCash && bankReload.cityEconomy.projects.isEmpty)
+        for index in 0..<24 { bankReload.recordCityContribution(.eventSuccess, receipt: "bank-review-\(index)") }
+        try! await bankReload.signBankProject(kind: .bicycle, amount: 60)
+        housingAssert(bankReload.cityEconomy.projects.last?.kind == .bicycle && bankReload.venueCoins == maturedCash - 60)
+        NSLog("BANK_REPEAT_VERIFY_PASS: protected reserve, persisted receipt, seven-day payout once, repeat signing, principal exit, reputation gate, industry subscription")
+        UserDefaults.standard.set("PASS: native same-wallet integration, reopen, duplicate, private contract, next-day rents, rest consumed, journal recovery, corrupt refusal", forKey: "institution.integration-result")
+        NSLog("INSTITUTIONS_VERIFY_PASS: same wallet, maturity once, no offline rent, lease receipt immutable, meeting and delivery stamina once, contract escrow, next-day payment, rest consumed once, reopen, journal recovery, corrupt ledger refusal")
+    }
+}
+#endif
+
+
+// MARK: City contribution and street tasks (HOME_MAP_STREET_TASKS_20260929.md §2, §6).
+// The rules in StreetTasks.swift / CityContribution.swift had no App side until
+// 2026-10-04; the home street, the board counters and the newspaper read these.
+extension GameStore {
+    private static let streetTasksKey = "mistport.street-tasks.v1"
+    private static let contributionKey = "mistport.city-contribution.v1"
+    private struct StreetTaskRecord: Codable { var ledger = MPCStreetTaskLedger() }
+    private struct ContributionRecord: Codable { var ledger = MPCCityContributionLedger() }
+
+    private func readStreetTasks() -> StreetTaskRecord {
+        defaults.data(forKey: Self.streetTasksKey).flatMap { try? JSONDecoder().decode(StreetTaskRecord.self, from: $0) } ?? .init()
+    }
+    private func persistStreetTasks(_ record: StreetTaskRecord) {
+        defaults.set(try? JSONEncoder().encode(record), forKey: Self.streetTasksKey)
+        churchServicesRevision += 1
+    }
+    private func readContribution() -> ContributionRecord {
+        defaults.data(forKey: Self.contributionKey).flatMap { try? JSONDecoder().decode(ContributionRecord.self, from: $0) } ?? .init()
+    }
+    private func persistContribution(_ record: ContributionRecord) {
+        defaults.set(try? JSONEncoder().encode(record), forKey: Self.contributionKey)
+        churchServicesRevision += 1
+    }
+
+    var streetTasks: MPCStreetTaskLedger { _ = churchServicesRevision; return readStreetTasks().ledger }
+    var cityContribution: MPCCityContributionLedger { _ = churchServicesRevision; return readContribution().ledger }
+    var cityContributionText: String { MPCCityContribution.progressText(points: cityContribution.points) }
+    /// Short form for the home HUD: tier name, and the next threshold while there is one.
+    var cityContributionLabel: String {
+        let points = cityContribution.points
+        let tier = MPCCityContribution.tier(points: points)
+        return MPCCityContribution.nextTier(points: points).map { "\(tier.name) · 下档\($0.threshold)" } ?? tier.name
+    }
+
+    /// Opens the day's street tasks. A save from before contribution existed converts
+    /// its first clears, closed cases and finished errands once.
+    func openStreetDay() {
+        var contribution = readContribution()
+        if contribution.ledger.migrate(completedMissions: churchTowerMissionNumbers.count, closedBounties: closedBountyIDs.count,
+                                       completedErrands: neighbors.completedErrands) {
+            persistContribution(contribution)
+        }
+        var record = readStreetTasks()
+        let before = record.ledger
+        record.ledger.open(day: pacingDay, contributionPoints: contribution.ledger.points)
+        if record.ledger != before { persistStreetTasks(record) }
+    }
+
+    /// Awards a source once per receipt (the ledger keeps the receipts and the daily caps).
+    @discardableResult
+    func recordCityContribution(_ source: MPCCityContribution.Source, receipt: String) -> Int {
+        var record = readContribution()
+        let added = record.ledger.record(receiptID: receipt, source: source, day: pacingDay)
+        if added > 0 { persistContribution(record) }
+        return added
+    }
+
+    func acceptStreetTask(_ offerID: String) throws {
+        var record = readStreetTasks()
+        try record.ledger.accept(offerID: offerID)
+        persistStreetTasks(record)
+    }
+    private func grantStreetReward(_ reward: MPCStreetTaskLedger.Reward?) throws {
+        guard let reward else { return }
+        if !reward.neighbors.isEmpty {
+            var neighborsRecord = try readNeighbors()
+            for id in reward.neighbors { _ = neighborsRecord.ledger.raiseAffinity(id) }
+            try updateChurchServices(neighbors: neighborsRecord) { _ in }
+        }
+        if let receipt = reward.contributionReceipt { recordCityContribution(.errand, receipt: receipt) }
+    }
+    /// Stamina is charged once per task, on its first step (one receipt per offer).
+    func streetTalk(_ offerID: String, at target: String) async throws -> MPCStreetTaskLedger.Progress {
+        try await housingAction(.errandThreeStep, receipt: "street-" + offerID) {
+            var record = readStreetTasks(), coins = venueCoins
+            let progress = try record.ledger.talk(offerID: offerID, at: target, coins: &coins)
+            persistStreetTasks(record)
+            try updateChurchServices { $0.loans.coins = coins }
+            try grantStreetReward(progress.reward)
+            return progress
+        }
+    }
+    func streetHandOver(_ offerID: String, at target: String) async throws -> MPCStreetTaskLedger.Progress {
+        try await housingAction(.errandThreeStep, receipt: "street-" + offerID) {
+            var record = readStreetTasks(), coins = venueCoins, inventory = chapterOneCampaign.inventory
+            let progress = try record.ledger.handOver(offerID: offerID, at: target, coins: &coins, inventory: &inventory)
+            persistStreetTasks(record)
+            try updateChurchServices(inventory: inventory) { $0.loans.coins = coins }
+            try grantStreetReward(progress.reward)
+            return progress
+        }
+    }
+    /// nil until the right choice; a wrong one is struck out at no cost.
+    func streetAnswer(_ offerID: String, at target: String, choiceID: String) async throws -> MPCStreetTaskLedger.Progress? {
+        try await housingAction(.errandThreeStep, receipt: "street-" + offerID) {
+            var record = readStreetTasks(), coins = venueCoins
+            let progress = try record.ledger.answer(offerID: offerID, at: target, choiceID: choiceID, coins: &coins)
+            persistStreetTasks(record)
+            try updateChurchServices { $0.loans.coins = coins }
+            try grantStreetReward(progress?.reward)
+            return progress
+        }
+    }
+    func streetBattlePreview(offerID: String, ticket: String) throws -> MPCChapterOneEncounterSession {
+        guard let offer = streetTasks.offers.first(where: { $0.id == offerID }) else { throw MPCStreetTaskLedger.Failure.notOffered }
+        let id = MPCStreetTaskCatalog.streetEncounterID(taskID: offer.taskID, step: offer.stepIndex, ticket: ticket)
+        return try MPCChapterOneEncounterSession.start(encounterID: id, party: chapterOneCampaign.party,
+            consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: churchBattleCampaign.loadout)
+    }
+    func beginStreetBattle(offerID: String, ticket: String, skills: [FoolSkillID]) async throws -> MPCChapterOneEncounterSession {
+        try await housingAction(.errandThreeStep, receipt: "street-" + offerID) {
+            var record = readStreetTasks(), loadout = churchBattleCampaign.loadout
+            var legal: [FoolSkillID] = []
+            for skill in skills where skill != .maskedWhisper && chapterOneCampaign.unlockedSkillIDs.contains(skill) && !legal.contains(skill) { legal.append(skill) }
+            loadout.normalSkillIDs = Array(legal.prefix(chapterOneLoadoutSlotCapacity))
+            loadout.talents = hermitTalents; loadout.skillLevels = foolSkillLevels
+            let id = try record.ledger.beginBattle(offerID: offerID, ticket: ticket)
+            let session = try MPCChapterOneEncounterSession.start(encounterID: id, party: chapterOneCampaign.party,
+                consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: loadout)
+            persistStreetTasks(record)
+            try updateChurchServices { try beginChurchGear(&$0, battleID: ticket, loadout: loadout) }
+            return session
+        }
+    }
+    func settleStreetBattle(offerID: String, ticket: String, session: MPCChapterOneEncounterSession) throws -> MPCStreetTaskLedger.Progress? {
+        var record = readStreetTasks(), coins = venueCoins
+        let progress = try record.ledger.settleBattle(offerID: offerID, ticket: ticket, session: session, coins: &coins)
+        persistStreetTasks(record)
+        try updateChurchServices { state in
+            state.loans.coins = coins
+            try settleChurchGear(&state, battleID: ticket, outcome: session.outcome == .victory ? .victory : .defeat)
+        }
+        try grantStreetReward(progress?.reward)
+        return progress
+    }
+    func abandonStreetBattle(offerID: String, ticket: String, defeated: Bool = false) throws {
+        var record = readStreetTasks()
+        guard record.ledger.offers.first(where: { $0.id == offerID })?.activeTicket == ticket else { return }
+        record.ledger.abandonBattle(offerID: offerID, ticket: ticket)
+        persistStreetTasks(record)
+        try updateChurchServices { try settleChurchGear(&$0, battleID: ticket, outcome: defeated ? .defeat : .retreat) }
+    }
+}

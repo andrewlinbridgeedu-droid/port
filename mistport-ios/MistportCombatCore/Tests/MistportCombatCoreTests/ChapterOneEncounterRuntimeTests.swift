@@ -459,20 +459,30 @@ struct ChapterOneEncounterRuntimeTests {
 
     @Test("A living AI automatically spends the shared revive on a downed player")
     func sharedRevive() throws {
-        let party = MPCPartyPersistentState(
-            playerHP: 50,
-            playerMaxHP: 50,
-            allyHP: ["allyA": 800],
-            allyMaxHP: ["allyA": 800],
-            sharedReviveCharges: 1
-        )
+        let party = MPCPartyPersistentState(playerHP: 40, playerMaxHP: 40, sharedReviveCharges: 1)
         var session = try MPCChapterOneEncounterSession.start(
-            encounterID: "encounter_rain_01", party: party,
+            encounterID: "encounter_stolen_01", party: party, companionIDs: ["ally_norn_kade"],
+            loadout: MPCChapterOneLoadout(passiveIDs: [], relicIDs: [])
+        )
+        #expect(session.activeCompanionIDs == ["ally_norn_kade"])
+        try session.endRound()
+        #expect(session.playerHP == 12)
+        #expect(session.sharedReviveCharges == 0)
+        #expect(session.outcome == .inProgress)
+    }
+
+    @Test("Only this battle's allies can revive: a leftover persistent ally entry cannot")
+    func staleAllyCannotRevive() throws {
+        let party = MPCPartyPersistentState(playerHP: 40, playerMaxHP: 40, allyHP: ["allyA": 800],
+                                            allyMaxHP: ["allyA": 800], sharedReviveCharges: 1)
+        var session = try MPCChapterOneEncounterSession.start(
+            encounterID: "encounter_stolen_01", party: party, companionIDs: [],
             loadout: MPCChapterOneLoadout(passiveIDs: [], relicIDs: [])
         )
         try session.endRound()
-        #expect(session.playerHP == 15)
-        #expect(session.sharedReviveCharges == 0)
+        #expect(session.playerHP == 0)
+        #expect(session.outcome == .defeat)
+        #expect(session.sharedReviveCharges == 1)
     }
 
     @Test("Encounter skill execution preserves the Fool combo state")
@@ -664,20 +674,16 @@ struct ChapterOneEncounterRuntimeTests {
 
     @Test("Mist anchor shard adds shield after shared revive", .enabled(if: MPCChapterOneCatalog.relicsEnabled))
     func mistAnchorRevive() throws {
-        let party = MPCPartyPersistentState(
-            playerHP: 50, playerMaxHP: 50,
-            allyHP: ["allyA": 800], allyMaxHP: ["allyA": 800], sharedReviveCharges: 1
-        )
+        let party = MPCPartyPersistentState(playerHP: 50, playerMaxHP: 50, sharedReviveCharges: 1)
         var session = try MPCChapterOneEncounterSession.start(
-            encounterID: "encounter_rain_01", party: party,
+            encounterID: "encounter_stolen_01", party: party, companionIDs: ["ally_norn_kade"],
             loadout: MPCChapterOneLoadout(passiveIDs: [], relicIDs: ["relic_mist_anchor_shard"])
         )
         try session.endRound()
         #expect(session.playerHP == 15)
         #expect(session.playerShield == 5)
         #expect(session.mistAnchorWasConsumed)
-        let enemy = try #require(session.enemies.first(where: { $0.isAlive }))
-        try session.applyPartyDamage(99_999, to: enemy.id)
+        for enemy in session.enemies where enemy.isAlive { try session.applyPartyDamage(99_999, to: enemy.id) }
 
         var campaign = MPCChapterOneCampaignState.fullyUnlockedTestState
         campaign.loadout = MPCChapterOneLoadout(

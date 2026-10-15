@@ -1,0 +1,977 @@
+{
+  "old_backups_with_current_counterpart": [
+    {
+      "path": "backups/hound-foot-fire-20260914/HoundGroundFracture.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/HoundGroundFracture.shader",
+      "size": 2036,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-foot-fire-20260914/HoundVolumetricInferno.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/HoundVolumetricInferno.shader",
+      "size": 3588,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hero-premium-20260917/root/HeroFacePaint.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/RuntimeModels/Fool/HeroFacePaint.png",
+      "size": 189989,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hero-premium-20260917/root/HeroTailoredPBR.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/HeroTailoredPBR.shader",
+      "size": 5757,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hero-reference-vfx-20260913/SignatureSprite.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/SignatureSprite.shader",
+      "size": 1499,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/sidestep-cinematic-20260915/FoolSidestepRift.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Effects/Fool/FoolSidestepRift.shader",
+      "size": 10761,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/phoenix-wave-20260921/PhoenixWing.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Shaders/PhoenixWing.shader",
+      "size": 1369,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/phoenix-wave-20260921/IceThunderBolt.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Scripts/IceThunderBolt.shader",
+      "size": 1183,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/phoenix-wave-20260921/GoldenRiftArt.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Scripts/GoldenRiftArt.shader",
+      "size": 1223,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-painted-ground-20260914/HoundGroundFracture.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/HoundGroundFracture.shader",
+      "size": 1429,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/MainlineInlaidVolumeRound2.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/MainlineInlaidVolumeRound2.shader",
+      "size": 4055,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/SpellImpact20260925/CrimsonCurtain.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/SpellImpact20260925/CrimsonCurtain.shader",
+      "size": 1597,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/SpellImpact20260925/GoldContractInk.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/SpellImpact20260925/GoldContractInk.png",
+      "size": 2212294,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/SpellImpact20260925/AuthoredNeedle.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/SpellImpact20260925/AuthoredNeedle.shader",
+      "size": 1550,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/SpellImpact20260925/SilverNeedleSilk.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/SpellImpact20260925/SilverNeedleSilk.png",
+      "size": 2061915,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/ChurchSpellArt/venom.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/ChurchSpellArt/venom.png",
+      "size": 522555,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/ChurchSpellArt/BountyEffekseer/Texture/CrimsonSilk.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/ChurchSpellArt/BountyEffekseer/Texture/CrimsonSilk.png",
+      "size": 929287,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/ChurchSpellArt/BindingAuthored/GoldFiligree.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/ChurchSpellArt/BindingAuthored/GoldFiligree.png",
+      "size": 1581748,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/EnemySignature/MainlineSilkRound2.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/MainlineSilkRound2.shader",
+      "size": 2079,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/EnemySignature/MainlineInlaidVolumeRound2.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/MainlineInlaidVolumeRound2.shader",
+      "size": 5594,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "size": 13154,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/Effects/Fool/CurtainRift.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Effects/Fool/CurtainRift.png",
+      "size": 1987514,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/Effects/Fool/HeavyTarotFace.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Effects/Fool/HeavyTarotFace.png",
+      "size": 4011341,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/church-demon-grotesque-20260917/ChurchArcane.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/ChurchArcane.shader",
+      "size": 1618,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/surface-audit-20260916/CharacterSurfaceRefinement20260916.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/CharacterSurfaceRefinement20260916.shader",
+      "size": 3704,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/surface-audit-20260916/CharacterSurfaceRefinement20260916Fade.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/CharacterSurfaceRefinement20260916Fade.shader",
+      "size": 3729,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/infernal-warhound-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/HellhoundSentinel_Combat.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/HellhoundSentinel_Combat.fbx",
+      "size": 1318748,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/infernal-warhound-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Body.mat",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Body.mat",
+      "size": 2402,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/infernal-warhound-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_2.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_2.png",
+      "size": 1280540,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/infernal-warhound-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_0.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_0.png",
+      "size": 2681481,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/infernal-warhound-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/MetallicSmoothness.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/MetallicSmoothness.png",
+      "size": 3760959,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/rift-relief-20260921/GoldenRiftArt.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Scripts/GoldenRiftArt.shader",
+      "size": 1572,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/bounty-size-spell-overhaul-20260923/source/BindingRibbon20260921.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/BindingRibbon20260921.shader",
+      "size": 2211,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/bounty-size-spell-overhaul-20260923/source/BountyMatterRound2.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/BountyMatterRound2.shader",
+      "size": 2825,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/bounty-weapon-scale-20260923/ArtSource/BountyCombat20260923/b01/B01_Combat.blend",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/ArtSource/BountyCombat20260923/b01/B01_Combat.blend",
+      "size": 12136195,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/bounty-weapon-scale-20260923/ArtSource/BountyCombat20260923/b01/B01_Combat.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/ArtSource/BountyCombat20260923/b01/B01_Combat.fbx",
+      "size": 3361884,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-subtle-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/HellhoundSentinel_Combat.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/HellhoundSentinel_Combat.fbx",
+      "size": 1292972,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-subtle-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Body.mat",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Body.mat",
+      "size": 2402,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-subtle-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_2.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_2.png",
+      "size": 1280540,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-subtle-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_0.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_0.png",
+      "size": 2681481,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-subtle-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/MetallicSmoothness.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/MetallicSmoothness.png",
+      "size": 3760959,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-reference-grade-20260923/bounty/BindingRibbon20260921.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/BindingRibbon20260921.shader",
+      "size": 2426,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-reference-grade-20260923/bounty/BountyMatterRound2.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/BountyMatterRound2.shader",
+      "size": 4249,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/m12-armor-20260926/original/ArchiveAegis.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/ArchiveAegis.shader",
+      "size": 1870,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/trials/phoenix-reference-addition/Shaders/PhoenixWing.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Shaders/PhoenixWing.shader",
+      "size": 2816,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/trials/Scripts/IceThunderBolt.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Scripts/IceThunderBolt.shader",
+      "size": 1284,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/trials/Scripts/GoldenRiftArt.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Scripts/GoldenRiftArt.shader",
+      "size": 2599,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/trials/Shaders/PhoenixWing.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Shaders/PhoenixWing.shader",
+      "size": 1883,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/trials/Shaders/RiftImpact.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Shaders/RiftImpact.shader",
+      "size": 805,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/trials/Shaders/SpellContact.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Shaders/SpellContact.shader",
+      "size": 897,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/trials/Shaders/IceCrystal.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Shaders/IceCrystal.shader",
+      "size": 1203,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/tower/UnityBattleSource/Assets/Resources/Shaders/ChurchFragments.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/ChurchFragments.shader",
+      "size": 874,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/tower/UnityBattleSource/Assets/Resources/Shaders/BonePattern20260920.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/BonePattern20260920.shader",
+      "size": 1951,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/hero/h07-after-fix/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "size": 12834,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/hero/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "size": 12437,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/hero/UnityBattleSource/Assets/Resources/Effects/Fool/HeroHuntingEcho.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Effects/Fool/HeroHuntingEcho.shader",
+      "size": 3382,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/hero/UnityBattleSource/Assets/Resources/Effects/Fool/TarotNova.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Effects/Fool/TarotNova.shader",
+      "size": 3813,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/hero/identity-after-fix/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "size": 12371,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/hero/identity-after-fix/UnityBattleSource/Assets/Resources/Effects/Fool/HeroPorcelainRound2.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Effects/Fool/HeroPorcelainRound2.shader",
+      "size": 2791,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/main/Assets/Resources/Shaders/MinionSurface20260921.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/MinionSurface20260921.shader",
+      "size": 1366,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/hardfix-final/UnityBattleSource/Assets/Resources/EnemySignature/MainlineSilkRound2.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/MainlineSilkRound2.shader",
+      "size": 1718,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/UnityBattleSource/Assets/Resources/EnemySignature/EmeraldPoisonFog.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/EmeraldPoisonFog.shader",
+      "size": 1507,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/UnityBattleSource/Assets/Resources/EnemySignature/ArchiveAegis.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/ArchiveAegis.shader",
+      "size": 1353,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/UnityBattleSource/Assets/Resources/EnemySignature/CrimsonStageProjection.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/CrimsonStageProjection.shader",
+      "size": 2123,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/UnityBattleSource/Assets/Resources/EnemySignature/AuthoredBurstTier.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/AuthoredBurstTier.shader",
+      "size": 1823,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/UnityBattleSource/Assets/Resources/EnemySignature/Q4PursuitFlame.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/Q4PursuitFlame.shader",
+      "size": 1698,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/UnityBattleSource/Assets/Resources/EnemySignature/HoundVolumetricInferno.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/HoundVolumetricInferno.shader",
+      "size": 3654,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/m20-calibration/UnityBattleSource/Assets/Resources/EnemySignature/MainlineInlaidVolumeRound2.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/MainlineInlaidVolumeRound2.shader",
+      "size": 2541,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/church-organic-20260918/ChurchDetonation.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/ChurchDetonation.shader",
+      "size": 1204,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/two-spells-impact-20260921/PhoenixWing.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Shaders/PhoenixWing.shader",
+      "size": 1701,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-spectacle-20260926/original/FoolSidestepRift.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Effects/Fool/FoolSidestepRift.shader",
+      "size": 12191,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/enemy-final-energy-20260914/SignatureSprite.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/SignatureSprite.shader",
+      "size": 1790,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/d02-editor-polish-20260920/SaltSpikeMesh.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/ChurchSpellArt/SaltSpikeMesh.fbx",
+      "size": 7972284,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/d02-editor-polish-20260920/SaltSpike.mat",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/ChurchSpellArt/SaltSpike.mat",
+      "size": 2324,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/d02-editor-polish-20260920/SaltmawEffekseer/Texture/Crystal.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/ChurchSpellArt/SaltmawEffekseer/Texture/Crystal.png",
+      "size": 7454,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/d02-editor-polish-20260920/SaltmawEffekseer/Texture/Mist.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/ChurchSpellArt/SaltmawEffekseer/Texture/Mist.png",
+      "size": 208912,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/character-art-upgrade-20260916/story-detail/RescueBearer_Combat.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/RescueBearer/RescueBearer_Combat.fbx",
+      "size": 2340844,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/character-art-upgrade-20260916/story-detail/TranscriptionScribe_Combat.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/TranscriptionScribe/TranscriptionScribe_Combat.fbx",
+      "size": 2392012,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/character-art-upgrade-20260916/surfaces/CharacterSurfaceRefinement20260916.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/CharacterSurfaceRefinement20260916.shader",
+      "size": 4531,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/character-art-upgrade-20260916/surfaces/CharacterSurfaceRefinement20260916Fade.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/CharacterSurfaceRefinement20260916Fade.shader",
+      "size": 4556,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/character-art-upgrade-20260916/hero/Resources/Shaders/HeroTailoredPBR.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/HeroTailoredPBR.shader",
+      "size": 3605,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/character-art-upgrade-20260916/hero/Models/Meshy_AI_battle_magician_rig_biped_Animation_Combat_Stance_frame_rate_60.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Models/Fool/Meshy_AI_battle_magician_rig_biped_Animation_Combat_Stance_frame_rate_60.fbx",
+      "size": 29760268,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/rift-depth-20260921/GoldenRiftArt.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Scripts/GoldenRiftArt.shader",
+      "size": 2052,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-device-20260925/before-refinement/Resources/EnemySignature/ArchiveAegis.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/ArchiveAegis.shader",
+      "size": 1353,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-device-20260925/before-refinement/Resources/EnemySignature/MainlineInlaidVolumeRound2.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/MainlineInlaidVolumeRound2.shader",
+      "size": 5594,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-device-20260925/final-build126/UnityBattleSource/Assets/Resources/SpellImpact20260925/MemoryFolio.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/SpellImpact20260925/MemoryFolio.png",
+      "size": 2220681,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-device-20260925/final-build126/UnityBattleSource/Assets/Resources/EnemySignature/ArchiveAegis.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/ArchiveAegis.shader",
+      "size": 1593,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-device-20260925/final-build126/UnityBattleSource/Assets/Resources/EnemySignature/MainlineInlaidVolumeRound2.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/MainlineInlaidVolumeRound2.shader",
+      "size": 6221,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/story-model-integration-20260916/unused-resources/Rescue_BaseColor.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/RescueBearer/Rescue_BaseColor.png",
+      "size": 7804550,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/emerald-fog-art-20260915/EmeraldPoisonFog.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/EmeraldPoisonFog.shader",
+      "size": 1196,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/emerald-fog-art-20260915/EmeraldToxicVolume.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/EmeraldToxicVolume.shader",
+      "size": 2382,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/guard-silk-refinement-20260914/ArchivistMechanicalSpell.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/ArchivistMechanicalSpell.shader",
+      "size": 1248,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/d06-silhouette-20260920/BonePattern20260920.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/BonePattern20260920.shader",
+      "size": 1378,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/EmeraldRevenant.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/EmeraldRevenant.fbx",
+      "size": 21237804,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/EmeraldRevenantMaterial.mat",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/EmeraldRevenantMaterial.mat",
+      "size": 2343,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/Textures/texture_0.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/Textures/texture_0.png",
+      "size": 7170156,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/Textures/texture_0_metallic-texture_0_roughness.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/Textures/texture_0_metallic-texture_0_roughness.png",
+      "size": 10776040,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/Textures/texture_0_normal.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/Textures/texture_0_normal.png",
+      "size": 6012064,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/animations/EmeraldRevenant_Running.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/animations/EmeraldRevenant_Running.fbx",
+      "size": 20768828,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/HellhoundSentinel_Combat.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/HellhoundSentinel_Combat.fbx",
+      "size": 1329084,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Body.mat",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Body.mat",
+      "size": 2402,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_2.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_2.png",
+      "size": 20857796,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_0.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_0.png",
+      "size": 80106471,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/MetallicSmoothness.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/MetallicSmoothness.png",
+      "size": 9375106,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Body.mat",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Body.mat",
+      "size": 2402,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Image_2.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Image_2.png",
+      "size": 404711,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Image_0.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Image_0.png",
+      "size": 839259,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/MetallicSmoothness.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/MetallicSmoothness.png",
+      "size": 4483874,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/ArchivistSentinel_Combat.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/ArchivistSentinel_Combat.fbx",
+      "size": 988924,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/ClockworkVeilMatriarch_Combat.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/ClockworkVeilMatriarch_Combat.fbx",
+      "size": 1488860,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Body.mat",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Body.mat",
+      "size": 2402,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Image_2.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Image_2.png",
+      "size": 318211,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Image_0.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Image_0.png",
+      "size": 679558,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/MetallicSmoothness.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/MetallicSmoothness.png",
+      "size": 3077480,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/d06-tail-irregular-20260920/BonePattern20260920.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/BonePattern20260920.shader",
+      "size": 1794,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/binding-authored-20260921/BindingRibbon20260921.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/BindingRibbon20260921.shader",
+      "size": 1128,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/binding-detail-20260921/BindingRibbon20260921.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/BindingRibbon20260921.shader",
+      "size": 1963,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crater-fault-20260914/HoundVolumetricInferno.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/HoundVolumetricInferno.shader",
+      "size": 3081,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-20260919/enemy/AuthoredBurstTier.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/AuthoredBurstTier.shader",
+      "size": 1712,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-20260919/hero/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "size": 7878,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-impact-20260919/hero/UnityBattleSource/Assets/Resources/Effects/Fool/FoolSidestepRift.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Effects/Fool/FoolSidestepRift.shader",
+      "size": 11064,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-spiral-polish-20260914/HoundVolumetricInferno.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/HoundVolumetricInferno.shader",
+      "size": 3502,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/rift-flow-20260921/GoldenRiftArt.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Scripts/GoldenRiftArt.shader",
+      "size": 1571,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/archive-shimmer-20260921/ArchiveAegis.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/ArchiveAegis.shader",
+      "size": 694,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/all-spells-polish-20260921/hero/FoolSidestepRift.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Effects/Fool/FoolSidestepRift.shader",
+      "size": 11987,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/all-spells-polish-20260921/hero/TarotNova.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Effects/Fool/TarotNova.shader",
+      "size": 3729,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/HellhoundSentinel_Combat.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/HellhoundSentinel_Combat.fbx",
+      "size": 1292972,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Body.mat",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Body.mat",
+      "size": 2402,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_2.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_2.png",
+      "size": 1280540,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_0.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_0.png",
+      "size": 2681481,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/MetallicSmoothness.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/MetallicSmoothness.png",
+      "size": 3760959,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Body.mat",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Body.mat",
+      "size": 2402,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Image_2.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Image_2.png",
+      "size": 404711,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Image_0.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Image_0.png",
+      "size": 839259,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/MetallicSmoothness.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/MetallicSmoothness.png",
+      "size": 4483874,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/ArchivistSentinel_Combat.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/ArchivistSentinel_Combat.fbx",
+      "size": 988924,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/ClockworkVeilMatriarch_Combat.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/ClockworkVeilMatriarch_Combat.fbx",
+      "size": 1488860,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Body.mat",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Body.mat",
+      "size": 2402,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Image_2.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Image_2.png",
+      "size": 318211,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Image_0.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Image_0.png",
+      "size": 679558,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/MetallicSmoothness.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/MetallicSmoothness.png",
+      "size": 3077480,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/character-outfit-bonus-20260925/prechange/CharacterFoolCarnival.imageset/character-fool-carnival.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/mistport-ios/Mistport/Assets.xcassets/CharacterFoolCarnival.imageset/character-fool-carnival.png",
+      "size": 1616740,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/character-outfit-bonus-20260925/prechange/CharacterFoolStarlight.imageset/character-fool-starlight.png",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/mistport-ios/Mistport/Assets.xcassets/CharacterFoolStarlight.imageset/character-fool-starlight.png",
+      "size": 1461635,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/all-spells-tier-20260919/church/ChurchLivingSurface.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/ChurchLivingSurface.shader",
+      "size": 954,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/all-spells-tier-20260919/church/ChurchArcane.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/ChurchArcane.shader",
+      "size": 2022,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/all-spells-tier-20260919/hero/UnityBattleSource/Assets/Resources/Mindstone/VFXV1/MasqueradeGhost.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Mindstone/VFXV1/MasqueradeGhost.shader",
+      "size": 873,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/all-spells-tier-20260919/hero/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "size": 7711,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/all-spells-tier-20260919/hero/UnityBattleSource/Assets/Resources/Effects/Fool/FoolSidestepRift.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Effects/Fool/FoolSidestepRift.shader",
+      "size": 11063,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/model-optimization-20260916/story-meshes/RescueBearer_Combat.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/RescueBearer/RescueBearer_Combat.fbx",
+      "size": 3605276,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/model-optimization-20260916/story-meshes/TranscriptionScribe_Combat.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Enemies/Signature/TranscriptionScribe/TranscriptionScribe_Combat.fbx",
+      "size": 2392012,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/model-optimization-20260916/UnityBattleSource/Assets/Resources/Shaders/CharacterSurfaceRefinement20260916.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/CharacterSurfaceRefinement20260916.shader",
+      "size": 4195,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/model-optimization-20260916/UnityBattleSource/Assets/Resources/Shaders/HeroTailoredPBR.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/HeroTailoredPBR.shader",
+      "size": 3226,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/model-optimization-20260916/UnityBattleSource/Assets/Resources/Shaders/CharacterSurfaceRefinement20260916Fade.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/CharacterSurfaceRefinement20260916Fade.shader",
+      "size": 4220,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/reference-detail-20260921/PhoenixWing.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Shaders/PhoenixWing.shader",
+      "size": 1572,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/reference-detail-20260921/IceThunderBolt.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Scripts/IceThunderBolt.shader",
+      "size": 1183,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/reference-detail-20260921/GoldenRiftArt.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Scripts/GoldenRiftArt.shader",
+      "size": 1571,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/reference-detail-20260921/IceCrystal.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Shaders/IceCrystal.shader",
+      "size": 915,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/binding-impact-20260921/BindingRibbon20260921.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/BindingRibbon20260921.shader",
+      "size": 1963,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/rift-impact-20260921/GoldenRiftArt.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/VFX_Trials/Scripts/GoldenRiftArt.shader",
+      "size": 2596,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hero-quality-sample-20260916/mesh/Meshy_AI_battle_magician_rig_biped_Animation_Combat_Stance_frame_rate_60.fbx",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Models/Fool/Meshy_AI_battle_magician_rig_biped_Animation_Combat_Stance_frame_rate_60.fbx",
+      "size": 29895916,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/hero-quality-sample-20260916/root/HeroTailoredPBR.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/Shaders/HeroTailoredPBR.shader",
+      "size": 4646,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    },
+    {
+      "path": "backups/spell-distinct-20260925/MainlineInlaidVolumeRound2.shader",
+      "current_counterpart": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device/UnityBattleSource/Assets/Resources/EnemySignature/MainlineInlaidVolumeRound2.shader",
+      "size": 3289,
+      "reason": "historical backup with current replacement at same asset path or unique asset filename"
+    }
+  ],
+  "unmatched_not_deleted": 149
+}

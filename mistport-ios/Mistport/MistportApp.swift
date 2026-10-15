@@ -41,9 +41,22 @@ struct MistportApp: App {
     @UIApplicationDelegateAdaptor(MistportOrientationDelegate.self) private var orientationDelegate
     #if DEBUG
     private static let dailyWalkDefaults = GameStore.dailyPacingDeviceWalkDefaults()
+    private static let bakerReviewDefaults: UserDefaults = {
+        let suite = "mistport.baker-board-review.20261012"
+        let storage = UserDefaults(suiteName: suite)!
+        storage.removePersistentDomain(forName: suite)
+        return storage
+    }()
     #endif
     private static var playerDefaults: UserDefaults {
         #if DEBUG
+        if Bundle.main.bundleIdentifier == "local.mistport.institutions" {
+            let profile = UserDefaults.standard.string(forKey: "institution.profile") ?? "fresh"
+            return UserDefaults(suiteName: "mistport.institutions.playtest.20261013." + profile)!
+        }
+        if ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--mainline-music-review=") }) { return UserDefaults(suiteName: "mistport.mainline-music-review.20261013")! }
+        if ProcessInfo.processInfo.arguments.contains("--baker-board-review") { return bakerReviewDefaults }
+        if CombatTempoReviewConfiguration.requested { return UserDefaults(suiteName: "mistport.combat-tempo-review.20261001")! }
         if ProcessInfo.processInfo.arguments.contains("--housing-device-walk") { return GameStore.housingDeviceWalkDefaults() }
         if ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--verify-") }) { return UserDefaults(suiteName: "mistport.housing-verification-shell.20260930")! }
         if ProcessInfo.processInfo.arguments.contains("--daily-pacing-device-walk") {
@@ -95,7 +108,13 @@ struct MistportApp: App {
     var body: some Scene {
         WindowGroup {
             #if DEBUG
-            if ProcessInfo.processInfo.arguments.contains("--housing-device-walk") {
+            if Bundle.main.bundleIdentifier == "local.mistport.institutions" {
+                InstitutionPlaytestRoot(game: $game, storefront: storefront)
+                    .preferredColorScheme(.dark)
+            } else if CombatTempoReviewConfiguration.requested {
+                CombatTempoDeviceReviewRoot(game: game, storefront: storefront)
+                    .defaultAppStorage(Self.playerDefaults)
+            } else if ProcessInfo.processInfo.arguments.contains("--housing-device-walk") {
                 HousingDeviceReviewRoot(game: game, storefront: storefront)
                     .defaultAppStorage(Self.playerDefaults)
                     .task {
@@ -164,7 +183,10 @@ struct MistportApp: App {
                 ContentView(game: game, storefront: storefront)
                     .defaultAppStorage(Self.playerDefaults)
                     .preferredColorScheme(.dark)
-                    .task { await storefront.prepare() }
+                    .task {
+                        await HomeMusicController.verifyAllBattleRoutes()
+                        await storefront.prepare()
+                    }
             }
             #else
             ContentView(game: game, storefront: storefront)

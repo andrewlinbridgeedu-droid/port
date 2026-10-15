@@ -103,6 +103,7 @@ final class RulesHousingService: HousingService {
                       completedMissions: Int) async throws -> HousingUpdate {
         var update = try await prepareDay(cash: cash, completedMissions: completedMissions, at: date)
         guard let lodging = MPCHousingCatalog.lodging(lodgingID) else { throw MPCHousingLedger.Failure.unknown }
+        guard completedMissions >= MPCHousingCatalog.unlockMission(lodgingID) else { throw MPCCityEconomy.Failure.locked }
         guard !lodging.belowRecoveryLineOnly else { throw HousingServiceFailure.shelterAutomatic }
         let availability = try await rooms().first { $0.id == lodgingID }
         try update.record.ledger.sign(lodgingID: lodgingID, mealID: mealID,

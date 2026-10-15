@@ -78,6 +78,7 @@ public sealed class ChurchFinalVfx20260917:MonoBehaviour {
   }
   color.a=Mathf.Clamp01(opacity)*intensity;l.material.SetColor("_Color",color);l.material.SetFloat("_Dissolve",dissolve);}
  void Ribbon(int i,Func<float,Vector3> curve,float width,Color color,float opacity){
+  curve=StraightLines20261003.Flatten(curve);
   const int n=32;var l=layers[i];var v=l.vertices;var uv=l.uvs;var tr=l.triangles;
   for(int j=0;j<=n;j++){float q=j/(float)n;Vector3 p=curve(q),tangent=curve(Mathf.Min(1,q+.01f))-curve(Mathf.Max(0,q-.01f));Vector3 normal=Vector3.Cross(tangent,Camera.main?Camera.main.transform.forward:Vector3.forward).normalized;float w=width*Mathf.Pow(Mathf.Max(0,Mathf.Sin(q*Mathf.PI)),.6f);v[j*2]=p-normal*w;v[j*2+1]=p+normal*w;uv[j*2]=new Vector2(0,q);uv[j*2+1]=new Vector2(1,q);if(j<n){int k=j*6,a=j*2;tr[k]=a;tr[k+1]=a+2;tr[k+2]=a+1;tr[k+3]=a+1;tr[k+4]=a+2;tr[k+5]=a+3;}}
   l.mesh.Clear();l.mesh.vertices=v;l.mesh.uv=uv;l.mesh.triangles=tr;l.mesh.RecalculateBounds();l.t.SetPositionAndRotation(Vector3.zero,Quaternion.identity);l.t.localScale=Vector3.one;color.a=opacity*intensity;l.material.SetColor("_Color",color);

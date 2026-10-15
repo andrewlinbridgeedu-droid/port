@@ -54,11 +54,11 @@ struct HousingStaminaTests {
         try h.sign(lodgingID: "canal_house", mealID: "cafe", day: 1, roomsLeft: 3)
         var cash = 1_000
         let full = h.payDay(1, cash: &cash, completedMissions: 5)
-        #expect(full.copper == 26 && !full.downgraded && cash == 974)
-        #expect(h.payDay(1, cash: &cash, completedMissions: 5).copper == 26 && cash == 974, "one payment a day")
+        #expect(full.copper == 22 && !full.downgraded && cash == 978)
+        #expect(h.payDay(1, cash: &cash, completedMissions: 5).copper == 22 && cash == 978, "one payment a day")
         // 200 cash, recovery line 180: keeps 90; 26 fits.
         cash = 200
-        #expect(h.payDay(2, cash: &cash, completedMissions: 5).copper == 26)
+        #expect(h.payDay(2, cash: &cash, completedMissions: 5).copper == 22)
         // Below the recovery line: the basic basket if it leaves half the line, else the free shelter.
         cash = 120
         let basic = h.payDay(3, cash: &cash, completedMissions: 5)
@@ -78,10 +78,31 @@ struct HousingStaminaTests {
         var cash = 2_000
         #expect(!h.canTakeHighlandErrands(day: 30))
         h.payDay(30, cash: &cash, completedMissions: 30)
-        #expect(h.canTakeHighlandErrands(day: 30) && cash == 1_950)
+        #expect(h.canTakeHighlandErrands(day: 30) && cash == 1_958)
         var poor = 150
         h.payDay(31, cash: &poor, completedMissions: 30)
         #expect(!h.canTakeHighlandErrands(day: 31), "a day that could not pay the house loses highland access")
+    }
+
+    @Test("the noble quarter opens only at the fourth city contribution tier")
+    func nobleQuarterNeedsContribution() throws {
+        var h = MPCHousingLedger()
+        #expect(throws: MPCHousingLedger.Failure.notAllowed) {
+            try h.sign(lodgingID: "noble_suite", mealID: "noble_dining", day: 20, roomsLeft: 5)
+        }
+        #expect(throws: MPCHousingLedger.Failure.notAllowed) {
+            try h.sign(lodgingID: "noble_suite", mealID: "noble_dining", day: 20, roomsLeft: 5, contributionPoints: 299)
+        }
+        #expect(throws: MPCHousingLedger.Failure.notAllowed, "the noble kitchen goes with the noble suite") {
+            try h.sign(lodgingID: "highland_house", mealID: "noble_dining", day: 20, roomsLeft: 5, contributionPoints: 300)
+        }
+        try h.sign(lodgingID: "noble_suite", mealID: "noble_dining", day: 20, roomsLeft: 5, contributionPoints: 300)
+        var cash = 2_000
+        let paid = h.payDay(20, cash: &cash, completedMissions: 20)
+        #expect(paid.lodgingID == "noble_suite" && paid.copper == 60 && cash == 1_940)
+        #expect(paid.recoveryPerDay == MPCHousingCatalog.recoveryPerDay(lodgingID: "highland_house", mealID: "house_kitchen"))
+        #expect(!h.canTakeHighlandErrands(day: 20), "highland-board errands stay with the highland house")
+        #expect(MPCHousingCatalog.lodgings.allSatisfy { $0.district != .noble || $0.requiredContributionTier == 4 })
     }
 
     @Test("changing meals preserves lease dates and today's paid receipt")
@@ -93,10 +114,10 @@ struct HousingStaminaTests {
         let expiry = ledger.leaseEndsDay
         try ledger.chooseMeal("cafe")
         #expect(ledger.leaseEndsDay == expiry && ledger.mealID == "cafe")
-        #expect(ledger.payDay(4, cash: &cash, completedMissions: 5) == payment && cash == 976)
+        #expect(ledger.payDay(4, cash: &cash, completedMissions: 5) == payment && cash == 980)
         #expect(throws: MPCHousingLedger.Failure.notAllowed) { try ledger.chooseMeal("house_kitchen") }
         #expect(ledger.mealID == "cafe")
-        #expect(ledger.payDay(5, cash: &cash, completedMissions: 5).copper == 26)
+        #expect(ledger.payDay(5, cash: &cash, completedMissions: 5).copper == 22)
     }
 
     @Test("stamina replaces count-based copper decay, preserving merit and receipt limits")

@@ -294,14 +294,7 @@ private struct StageMapHeader: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack(spacing: 10) {
-                Button(action: onExit) {
-                    Image(systemName: "chevron.left")
-                        .font(.headline.bold())
-                        .frame(width: 36, height: 36)
-                        .background(.black.opacity(0.72), in: Circle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("返回城市大厅")
+                GameArtReturnButton(action: onExit)
                 .accessibilityHint("离开旧城区任务地图，回到雾岬港主城")
             
                 VStack(alignment: .leading, spacing: 1) {
@@ -1266,14 +1259,7 @@ private struct DistrictLocationHeader: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack(spacing: 10) {
-                Button(action: onExit) {
-                    Image(systemName: "chevron.left")
-                        .font(.headline.bold())
-                        .frame(width: 36, height: 36)
-                        .background(.black.opacity(0.70), in: Circle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("返回城市大厅")
+                GameArtReturnButton(action: onExit)
                 .accessibilityHint("离开旧城区任务地图，回到雾岬港主城")
 
                 VStack(alignment: .leading, spacing: 1) {
@@ -1479,8 +1465,7 @@ struct MissionBoardView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("完成", systemImage: "xmark") { dismiss() }
-                        .labelStyle(.iconOnly)
+                    GameArtReturnButton(title: "完成") { dismiss() }
                 }
             }
         }

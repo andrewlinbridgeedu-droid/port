@@ -1,0 +1,8 @@
+{
+  "source": "mistport-ios/UnityBuild/Data",
+  "compiled_app": ".build/institutions-device/Build/Products/Debug-iphoneos/Mistport.app/Data",
+  "matching_files": 17,
+  "missing": [],
+  "different": [],
+  "all_identical": true
+}

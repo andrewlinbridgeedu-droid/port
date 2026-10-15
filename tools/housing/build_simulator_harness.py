@@ -7,6 +7,7 @@ root=Path(__file__).resolve().parents[2]
 source=root/'mistport-ios'
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--output', required=True, type=Path, help='Scratch project and DerivedData folder on the external SSD')
+parser.add_argument("--bundle-id", default="local.mistport.housing-integration")
 args=parser.parse_args()
 out=args.output.resolve()
 project=out/'WorkshopIntegration.xcodeproj'
@@ -38,7 +39,7 @@ for obj in objects.values():
   settings['CODE_SIGNING_ALLOWED']='NO'
   settings['SUPPORTED_PLATFORMS']='iphonesimulator'
   settings['SDKROOT']='iphonesimulator'
-  settings['PRODUCT_BUNDLE_IDENTIFIER']='local.mistport.housing-integration'
+  settings['PRODUCT_BUNDLE_IDENTIFIER']=args.bundle_id
   settings.pop('DEVELOPMENT_TEAM',None)
   settings['ASSETCATALOG_COMPILER_APPICON_NAME']='AppIcon'
 (project/'project.pbxproj').write_bytes(plistlib.dumps(pbx))

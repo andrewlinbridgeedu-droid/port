@@ -123,8 +123,15 @@ struct CharacterProfileView: View {
                     sectionRibbon
                         .fixedSize(horizontal: false, vertical: true)
                         .layoutPriority(2)
-                    sectionDetail
+                    // The detail band keeps its 184 pt so the portrait stays visible, but
+                    // its content (relic shop, ritual, postal work) is taller than that
+                    // and was simply cut off (playtest 2026-10-05): scroll inside it.
+                    ScrollView(showsIndicators: false) { sectionDetail.padding(.bottom, 10) }
                         .frame(height: 184, alignment: .top)
+                        // A solid backdrop: the grey detail text sat straight on the portrait's
+                        // black boots and was unreadable (playtest 2026-10-05).
+                        .background(Color(red: 0.055, green: 0.035, blue: 0.10).opacity(0.92),
+                                    in: UnevenRoundedRectangle(bottomLeadingRadius: 18, bottomTrailingRadius: 18))
                         .clipped()
                 }
                 .padding(.horizontal, 14)
@@ -246,15 +253,7 @@ struct CharacterProfileView: View {
 
     private var characterHeader: some View {
         HStack(alignment: .center) {
-            Button(action: { dismiss() }) {
-                Image(systemName: "chevron.left")
-                    .font(.title3.bold())
-                    .foregroundStyle(.white)
-                    .frame(width: 42, height: 42)
-                    .background(.black.opacity(0.38), in: Circle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("返回主城")
+            GameArtReturnButton { dismiss() }
 
             VStack(alignment: .leading, spacing: 1) {
                 Text("角色")
@@ -417,7 +416,7 @@ struct CharacterProfileView: View {
             }
             ForEach(owned.filter { ownedRelicIsDepleted($0.id) }) { relic in
                 if let offer = MPCChurchLoanOffer.all.first(where: { $0.relicID == relic.id }) {
-                    let price = MPCChurchLoanLedger.ownedRepairPrice(value: offer.value, durability: 0)
+                    let price = game.ownedRelicRepairQuote(relic.id)
                     HStack {
                         Text("\(relic.name) · 已失效（0%）")
                             .font(.caption.bold())
@@ -511,10 +510,12 @@ struct CharacterProfileView: View {
                         .font(.subheadline).padding(8)
                         .background(.secondary.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
                     Text(["请选择收件人", "请选择投递街道", "请选择封记"][game.postalJobStep]).font(.caption.bold())
-                    HStack {
+                    // One option per row: three side by side wrapped their titles and the band's
+                    // bottom edge cut them in half (playtest 2026-10-05).
+                    VStack(alignment: .leading, spacing: 6) {
+                        StaminaCostView(activity: .post)
                         ForEach(game.postalJobOptions, id: \.self) { answer in
-                            StaminaCostView(activity: .post)
-            let serial = game.postalJobSerial
+                            let serial = game.postalJobSerial
                             let step = game.postalJobStep
                             Button(answer) { Task { await game.verifyPostalField(answer, serial: serial, step: step) } }
                                 .buttonStyle(GameArtButtonStyle(compact: true))
@@ -585,18 +586,8 @@ struct CharacterProfileView: View {
     }
 
     private func skillUnlockDescription(_ id: FoolSkillID) -> String {
-        switch id {
-        case .sidestepStrike: "第1关教学获得"
-        case .maskedWhisper: "第3关战前获得"
-        case .identityDisplacement: "第8关战前获得"
-        case .fabricatedEvidence: "第9关通关获得"
-        case .mirrorPursuit: "第10关通关获得"
-        case .absurdFinale: "第11关通关获得"
-        case .turnTheTables: "第12关通关获得"
-        case .namelessStage: "第13关通关获得"
-        case .backstageChange: "后续篇章开放"
-        case .paperDouble: "已停用"
-        }
+        if let mission = MPCOrderedSkillRules.unlockMission(id) { return mission == 1 ? "第1关教学获得" : "第\(mission)关前获得" }
+        return id == .namelessStage ? "第13关通关获得" : "已转为遗落物"
     }
 
     private var chapterOneUnlockedSkills: [MPCSkillContent] {
@@ -629,7 +620,7 @@ struct CharacterProfileView: View {
                         .foregroundStyle(path.tint)
                 }
 
-                Text("这里只保存参考牌组。每场战前仍需手动点牌，按点击顺序执行；未点牌只普攻。")
+                Text("保存参考牌组。战前选四张，按左→右循环；战斗中换位会重置冷却。")
                     .font(.system(size: 9, weight: .medium))
                     .foregroundStyle(.white.opacity(0.64))
                     .lineLimit(2)
@@ -740,13 +731,11 @@ struct CharacterProfileView: View {
     }
 
     private func chapterOneSkillArtName(_ skillID: FoolSkillID) -> String {
-        switch skillID {
-        case .sidestepStrike, .fabricatedEvidence: "IconSkillWeakness"
+        if skillID.isOrderedOrdinary { return skillID.orderedCardAssetName }
+        return switch skillID {
         case .maskedWhisper: "IconSkillDangerPremonition"
         case .paperDouble: "IconSkillPaperDouble"
-        case .identityDisplacement, .turnTheTables: "IconSkillDivination"
-        case .mirrorPursuit, .backstageChange: "IconSkillSpiritualDodge"
-        case .absurdFinale, .namelessStage: "IconSkillOmenRecord"
+        default: "IconSkillOmenRecord"
         }
     }
 
@@ -1160,7 +1149,7 @@ struct LegacyHermitTalentTreeView: View {
             ScrollView {
                 VStack(spacing: 18) {
                     HStack {
-                        Button { dismiss() } label: { Image(systemName: "chevron.left").frame(width: 44, height: 44) }.accessibilityLabel("返回角色")
+                        GameArtReturnButton(title: "返回角色") { dismiss() }
                         VStack(alignment: .leading, spacing: 4) {
                             Text("愚者 · 天赋星图").font(.system(size: 23, weight: .bold, design: .serif))
                             Text("以不同的选择，成为不同的自己").font(.caption).foregroundStyle(.white.opacity(0.5))
@@ -1426,9 +1415,7 @@ struct HermitTalentTreeView: View {
             }.ignoresSafeArea()
             VStack(spacing: 8) {
                 HStack {
-                    Button { dismiss() } label: {
-                        Image(systemName: "chevron.left").frame(width: 48, height: 48)
-                    }.accessibilityLabel("返回角色")
+                    GameArtReturnButton(title: "返回角色") { dismiss() }
                     VStack(alignment: .leading, spacing: 3) {
                         Text("愚者 · 序列9").font(.system(size: 22, weight: .bold, design: .serif))
                         Text("开发预览 · 战斗效果未接入").font(.caption).foregroundStyle(gold)
@@ -1489,7 +1476,7 @@ struct HermitTalentTreeView: View {
                     if rank > 0 {
                         Button("退还一级") { perform { removal = try draft?.removal(node.id) }; details = false }.frame(minHeight: 48)
                     }
-                    Button("返回星图") { details = false }.buttonStyle(FantasyTalentButton(tint: tint))
+                    GameArtReturnButton(title: "返回星图") { details = false }
                 }
             }
         }.foregroundStyle(Color(red: 0.18, green: 0.25, blue: 0.34))

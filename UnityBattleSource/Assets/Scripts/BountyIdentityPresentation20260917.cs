@@ -101,7 +101,8 @@ public sealed class BountyIdentityPresentation20260917:MonoBehaviour {
   bool prepared=body&&body.IsPreparing;Cancel();int token=epoch;
   const float contactTime=.65f;
   body.Begin(intent,contactTime,false,strikeVariation++,prepared);
-  var a=body.Animator;if(a){a.speed=1;if(a.HasState(0,Animator.StringToHash("Cast")))a.CrossFadeInFixedTime("Cast",.08f,0,0);else a.SetTrigger("Attack");}actor.GetComponentInChildren<FogGhostActor>()?.Cast();
+  // Alternate the authored Cast / Cast2 takes (2026-10-09: every strike was the same Cast).
+  var a=body.Animator;if(a){a.speed=1;string take=(strikeVariation&1)==0&&a.HasState(0,Animator.StringToHash("Cast2"))?"Cast2":"Cast";if(a.HasState(0,Animator.StringToHash(take)))a.CrossFadeInFixedTime(take,.08f,0,0);else a.SetTrigger("Attack");}actor.GetComponentInChildren<FogGhostActor>()?.Cast();
   attackFx=new GameObject("Bounty attack "+bountyID);var ownedFx=attackFx;
   Func<Vector3> spellTarget=victim;
   if(bountyID=="b10-vessel"){

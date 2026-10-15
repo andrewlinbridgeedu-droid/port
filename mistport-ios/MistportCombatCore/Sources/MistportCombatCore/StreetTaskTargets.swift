@@ -2,7 +2,7 @@ import Foundation
 
 /// Rules publish targets; the home map owns placement and animation only.
 public struct MPCStreetTaskTarget: Equatable, Sendable, Identifiable {
-    public enum Kind: String, Codable, Sendable { case postal, neighbor, bounty, remnant }
+    public enum Kind: String, Codable, Sendable { case postal, neighbor, bounty, remnant, urgentErrand, jointErrand, commission }
     public let id: String
     public let taskID: String
     public let kind: Kind
@@ -32,8 +32,27 @@ public enum MPCStreetTaskCatalog {
                 return .init(id: bounty.id + ":" + node.id, taskID: bounty.id, kind: .bounty,
                              personID: node.id == "identity" ? nil : person,
                              placeID: node.id == "identity" ? bounty.id : (person == nil ? placeID(location: node.location) : nil),
-                             title: bounty.title + " · " + node.location)
+                             // Name the person to find: the location alone ("封锁公告处")
+                             // is not a map label (playtest 2026-10-04).
+                             title: bounty.title + " · " + node.location
+                                + (person == nil || node.id == "identity" ? "" : "，找" + node.speaker))
             }
+        }
+    }
+    /// Today's neighbour errands on the home map: the asker, or for a message already heard,
+    /// the recipient. The App keeps which messages were heard (`heardMessages`); finished
+    /// errands and fights carried over from an earlier day are not lit.
+    public static func neighborTargets(_ ledger: MPCNeighborLedger, heardMessages: Set<String> = []) -> [MPCStreetTaskTarget] {
+        ledger.offers.compactMap { offer -> MPCStreetTaskTarget? in
+            guard !offer.done, offer.day == ledger.day, let errand = offer.errand,
+                  let asker = MPCNeighborCatalog.neighbor(offer.neighborID) else { return nil }
+            if errand.kind == .message, heardMessages.contains(offer.id), let recipientID = errand.recipientID,
+               let recipient = MPCNeighborCatalog.neighbor(recipientID) {
+                return .init(id: offer.id + ":recipient", taskID: offer.id, kind: .neighbor,
+                             personID: recipientID, title: asker.name + "的口信 · 带给" + recipient.name)
+            }
+            return .init(id: offer.id + ":asker", taskID: offer.id, kind: .neighbor,
+                         personID: offer.neighborID, title: asker.name + "的委托")
         }
     }
     private static func personID(speaker: String) -> String? {

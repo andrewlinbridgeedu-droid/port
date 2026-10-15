@@ -1,0 +1,4 @@
+PASS continuous recovery, 100-point ceiling, only paid bonus overflow stored, no duplicate accrual or unpaid accumulation
+PASS next battle HP applied through actual loadout once/day, including losses; no tower or repeated-rest stacking
+PASS second-session offset resets before next-day bank maturity; no 12-hour early payment
+PASS public meeting alternative, failed talk yields no money, finite client escrow, input cost and once-only next-day delivery

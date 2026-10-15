@@ -58,7 +58,12 @@ private struct ChapterOneTutorialPage {
             let breakIndex = proposed.indices.reversed().first { index in
                 String(proposed[index]).rangeOfCharacter(from: preferredBreaks) != nil
             }
-            let end = breakIndex.map { remainder.index(after: $0) } ?? proposedEnd
+            var end = breakIndex.map { remainder.index(after: $0) } ?? proposedEnd
+            // Keep closing quotes with their sentence; a lone ” used to open
+            // the next page (playtest 2026-10-04, Q4 aftermath).
+            while end < remainder.endIndex, "”’」』）》".contains(remainder[end]) {
+                end = remainder.index(after: end)
+            }
             result.append(String(remainder[..<end]).trimmingCharacters(in: .whitespacesAndNewlines))
             remainder = remainder[end...].drop { $0.isWhitespace }
         }
@@ -70,7 +75,7 @@ private struct ChapterOneTutorialPage {
     }
 }
 
-enum ChapterOneTutorialCue: String {
+enum ChapterOneTutorialCue: String, CaseIterable {
     case opening
     case cityMission
     case mapEntry
@@ -192,7 +197,7 @@ enum ChapterOneTutorialCue: String {
         case .q7Prelude:
             "补录处的两具空壳守卫共用一份指令，后方寄忆核心不断修复它们。\n台上露出伊恩的领药号，正要被覆盖成另一个人的编号。必须停下写入，保住这条属于诊所的线索。"
         case .q8Prelude:
-            "记忆蛭张开口器，一段你刚经历过的片段被扯出：诊所的桌面，还有那只缺角茶杯。\n玛拉错开牌上重叠的名字：“让错误彼此争抢，它就会迟疑。”\n你习得『身份错置』：误认不足四层时仍会造成伤害并增加一层；满四层再释放，才会转成错位、延迟目标行动。战斗按点击的编排顺序自动出牌。"
+            "记忆蛭张开口器，一段你刚经历过的片段被扯出：诊所的桌面，还有那只缺角茶杯。\n玛拉错开牌上重叠的名字：“让错误彼此争抢，它就会迟疑。”\n你习得『张冠李戴』：误认不足四层时仍会造成伤害并增加一层；满四层再释放，才会转成错位、延迟目标行动。战斗按点击的编排顺序自动出牌。"
         case .q5Aftermath:
             "翠焰亡灵退入雨幕，毒雾散去。柜台下压着一批根本没有送出的寻人信，却封着同样的“已送达”印记。\n伊恩的回执也在里面，去向写着档案街监护登记处。玛拉收好原件：“有人替收件人作了答复。”"
         case .q6Aftermath:
@@ -210,13 +215,13 @@ enum ChapterOneTutorialCue: String {
         case .firstBattle:
             "第三次了。你留下的伤口正在按某种记录复原。\n不是你没有击中，也不是它无法被杀死——有人不允许它在这里倒下。\n玛拉交给你『错步穿行』。教学战会从头重开；请手动点这张牌，重新编排后再开始。"
         case .rainFirstAftermath:
-            "你记得自己的名字。空壳守卫却坚持记录上写着“已认领”，不许你自行离开。\n契约完成，『错步穿行』属于你。目前只能装备这一张技能牌。玛拉递来临时通行证和一罐止痛膏：“先活着走出这条街，再问是谁替你签了字。”"
+            "你记得自己的名字。空壳守卫却坚持记录上写着“已认领”，不许你自行离开。\n契约完成，『错步穿行』属于你。下一关会获得第二张技能牌。玛拉递来临时通行证和一罐止痛膏：“先活着走出这条街，再问是谁替你签了字。”"
         case .fogGhostPrelude:
             "两道幽灵守着被退回的寻人信，不肯离开。\n信页翻动时，一个声音反复说：“别送我回家。”"
         case .houndPrelude:
             "寻人信上的追索记录惊动了猎犬。它从雾里走来，径直盯住你。"
         case .secondBattle:
-            "猎犬喉间两团火一起亮起时，使用遗落物『假面谕令』，让幻影接住两发追索火球。\n它认错名字后的三秒，就是反击的机会。假面不占技能编排，每隔十八秒可以再次手动使用，幻影只维持四秒。"
+            "猎犬喉间两团火一起亮起时，使用遗落物『无主假面』，让幻影接住两发追索火球。\n挡住两颗火球后，三秒内点击『反击』：普通牌冷却刷新，从编排第一张重新出手。常态护体会削弱你的输出，反击时才能打开缺口。先伪证、后错步，连招会更有力。假面不占技能编排，每隔十八秒可以再次手动使用，幻影只维持四秒。反击不刷新假面和大招，也不会额外收费。之后防住精英与强敌的重招，同样能获得反击机会。"
         case .rainInterlude:
             "残影平息，被退回的寻人信落在地上。纸上仍留下那句请求：“别送我回家。”\n玛拉收好信：“旧邮务间应该能查到它为什么被退回。”雾里响起犬吠，追索者已经找来了。"
         case .q3Aftermath:
@@ -224,7 +229,7 @@ enum ChapterOneTutorialCue: String {
         case .q4Aftermath:
             "召回信号响起，旧犬停止追索，撤入雾里。玛拉带你去诊所，奥黛尔将一枚旧铜勋章交给你。\n“僭命勋章。借你八秒强盛，期限一到，收走你尚存生命的一半。它不会替你挡毒与刀。上路前，在它与假面之间选一个。”\n桌上留着一只缺角茶杯，茶已经凉了。奥黛尔：“伊恩去送药，一直没回来。他每次回来，都嫌我留的茶凉。”\n她没有倒掉冷茶，只把被退回的寻人信交给你。信上竟写着“已送达”。去旧邮务间查清这份答复。"
         case .q5PaperDoubleIntervention:
-            "看它身上的绿焰。\n那是重击将至的信号。\n现在手动施放『假面谕令』，让幻影接下这一击。\n毒雾仍会加浓，必须尽快结束战斗。"
+            "看它身上的绿焰。\n那是重击将至的信号。\n现在手动使用『无主假面』，让幻影接下这一击。\n重击被接住后，三秒内点击『反击』，重启普通牌的编排。毒雾仍会加浓，必须尽快结束战斗。"
         }
     }
 
@@ -277,7 +282,7 @@ enum ChapterOneTutorialCue: String {
         case .q19Aftermath: "外海收件人 · 事后"
         case .q20Aftermath: "押运中的活档案 · 事后"
         case .q7Prelude: "补录处 · 寄忆核心"
-        case .q8Prelude: "不属于我的名字 · 身份错置"
+        case .q8Prelude: "不属于我的名字 · 张冠李戴"
         case .q5Aftermath: "虚假签收 · 档案街回执"
         case .q6Aftermath: "监护登记 · 没有本人签名"
         case .q7Aftermath: "调查物证 · 空白身份牌"
@@ -335,8 +340,8 @@ enum ChapterOneTutorialCue: String {
         if self == .houndPrelude {
             return [
                 .init(kicker: "循名而来的猎犬", message: "寻人信上的追索记录惊动了猎犬。\n它从雾里走来，径直盯住你。", actionTitle: "继续聆听"),
-                .init(kicker: "玛拉的赠予", message: "玛拉从衣袋里取出一张旧假面，递到你手中。\n“这件遗落物叫『假面谕令』。让追猎者相信，站在你身旁的幻影才是真正的你。”", actionTitle: "接过假面谕令"),
-                .init(kicker: "以假乱真", message: "假面不需要编入技能。开战后，由你点击使用。\n它唤出的幻影只维持四秒，最多承受两次直接攻击；十八秒后才能再次使用，持续伤害无法阻挡。眼前两场猎犬教学不损耗假面。之后每次使用都会留一道永久紫裂纹，十道后失效。留意猎犬的动作。", actionTitle: "继续聆听"),
+                .init(kicker: "玛拉的赠予", message: "玛拉从衣袋里取出一张旧假面，递到你手中。\n“这件遗落物叫『无主假面』。让追猎者相信，站在你身旁的幻影才是真正的你。”", actionTitle: "接过无主假面"),
+                .init(kicker: "以假乱真", message: "假面不需要编入技能。开战后，由你点击使用。\n它唤出的幻影只维持四秒，最多承受两次直接攻击；十八秒后才能再次使用，持续伤害无法阻挡。眼前两场猎犬教学不损耗假面。之后每次使用都会留一道永久紫裂纹，十道后失效。\n猎犬喉间两团火一起亮起，就是连续两次喷吐的信号——立刻点假面。硬扛两次喷吐会倒下，一次假面可以全部承接。双喷之间它仍会咬击，下一轮喷吐前，假面的冷却会结束。", actionTitle: "继续聆听"),
                 .init(kicker: "烧不掉的记录", message: "打断它的追猎，留下项圈。\n我想知道，究竟是谁命令它来找你。", actionTitle: "准备迎战")
             ]
         }
@@ -755,91 +760,111 @@ struct ChapterOneTutorialOverlay: View {
     }
 
     private var guideContent: some View {
-        ZStack(alignment: .bottom) {
-            MirielStardustAura()
-                .frame(width: 450, height: 610)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .padding(.top, 208)
-                .offset(x: 38)
-                .accessibilityHidden(true)
+        GeometryReader { proxy in
+            // Reserve the nameplate and its bottom inset even on shorter screens.
+            let portraitTop: CGFloat = 188
+            let nameplateClearance: CGFloat = 132
+            let portraitHeight = min(500, max(0, proxy.size.height - portraitTop - nameplateClearance))
 
-            GuideMirielPortrait()
-                .frame(width: 270, height: 500, alignment: .bottom)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                // Keep her centered slightly to the right, but let the full
-                // silhouette sit lower in the composition so the upper-left
-                // remains available for the guide's spoken line.
-                .padding(.top, 236)
-                .offset(x: 40)
-                .zIndex(2)
-                .accessibilityHidden(true)
+            ZStack(alignment: .bottom) {
+                MirielStardustAura()
+                    .frame(width: 450, height: 610)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .padding(.top, 160)
+                    .offset(x: 38)
+                    .accessibilityHidden(true)
 
-            MirielFireAura()
-                .frame(width: 225.5, height: 270)
-                .mask {
-                    LinearGradient(stops: [
-                        .init(color: .clear, location: 0),
-                        .init(color: .white, location: 0.18),
-                        .init(color: .white, location: 0.82),
-                        .init(color: .clear, location: 1)
-                    ], startPoint: .leading, endPoint: .trailing)
-                }
-                .mask {
-                    LinearGradient(stops: [
-                        .init(color: .clear, location: 0),
-                        .init(color: .white, location: 0.12),
-                        .init(color: .white, location: 0.55),
-                        .init(color: .clear, location: 0.90)
-                    ], startPoint: .top, endPoint: .bottom)
-                }
-                .blendMode(.screen)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .padding(.top, 215)
-                .offset(x: 40)
-                .zIndex(1)
-                .allowsHitTesting(false)
-                .accessibilityHidden(true)
+                GuideMirielPortrait()
+                    .frame(width: 270, height: portraitHeight, alignment: .bottom)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    // Lift the full silhouette above the reserved nameplate area.
+                    .padding(.top, portraitTop)
+                    .offset(x: 40)
+                    .zIndex(2)
+                    .accessibilityHidden(true)
 
-            MirielGoldenNameplate()
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                .padding(.horizontal, 48)
-                .padding(.bottom, 48)
-                .offset(x: 22)
-                .zIndex(0.5)
+                MirielFireAura()
+                    .frame(width: 225.5, height: 270)
+                    .mask {
+                        LinearGradient(stops: [
+                            .init(color: .clear, location: 0),
+                            .init(color: .white, location: 0.18),
+                            .init(color: .white, location: 0.82),
+                            .init(color: .clear, location: 1)
+                        ], startPoint: .leading, endPoint: .trailing)
+                    }
+                    .mask {
+                        LinearGradient(stops: [
+                            .init(color: .clear, location: 0),
+                            .init(color: .white, location: 0.12),
+                            .init(color: .white, location: 0.55),
+                            .init(color: .clear, location: 0.90)
+                        ], startPoint: .top, endPoint: .bottom)
+                    }
+                    .blendMode(.screen)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .padding(.top, 167)
+                    .offset(x: 40)
+                    .zIndex(1)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
 
-            dialogueBubble
-                .frame(maxWidth: .infinity, alignment: .leading)
-                // The physical iPhone viewport clips the old cloud at x = 0.
-                // Give the irregular silhouette a generous leading safe lane.
-                .padding(.leading, 10)
-                .padding(.trailing, 18)
-                .padding(.top, 30)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .zIndex(1)
+                MirielGoldenNameplate()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                    .padding(.horizontal, 48)
+                    .padding(.bottom, 48)
+                    .offset(x: 22)
+                    .zIndex(0.5)
+
+                dialogueBubble
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    // The physical iPhone viewport clips the old cloud at x = 0.
+                    // Give the irregular silhouette a generous leading safe lane.
+                    .padding(.leading, 10)
+                    .padding(.trailing, 18)
+                    .padding(.top, 30)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .zIndex(1)
+
+                // The only skip control lives in the bubble footer (user, 2026-10-05:
+                // two skip buttons on one page is one too many).
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     }
 
     private var dialogueBubble: some View {
-        Button(action: advanceDialogue) {
-            VStack(alignment: .leading, spacing: 7) {
-                dialogueHeader
-                dialogueMessage
-                dialogueFooter
-            }
-            // The cloud silhouette has deep inward curves. Keep every text
-            // row and the next control inside a conservative safe rectangle.
-            .padding(.horizontal, 38)
-            .padding(.top, 24)
-            .padding(.bottom, 12)
-            .frame(width: 326, height: 216, alignment: .topLeading)
-            // Keep the tappable region aligned with the fixed cloud frame.
-            // The action label must not render below the button's hit area.
-            .contentShape(Rectangle())
+        // The bubble itself advances on tap; the footer holds real buttons so
+        // "跳过对白" also lives inside the bubble. The bottom-left skip capsule
+        // never received taps after a battle (playtest 2026-10-05, Q10–Q13),
+        // while the bubble always did.
+        VStack(alignment: .leading, spacing: 7) {
+            dialogueHeader
+            dialogueMessage
+            dialogueFooter
         }
-        .buttonStyle(.plain)
+        // The cloud silhouette has deep inward curves. Keep every text
+        // row and the next control inside a conservative safe rectangle.
+        .padding(.horizontal, 38)
+        .padding(.top, 24)
+        .padding(.bottom, 12)
+        .frame(width: 326, height: 216, alignment: .topLeading)
+        // Keep the tappable region aligned with the fixed cloud frame.
+        // The action label must not render below the button's hit area.
+        .contentShape(Rectangle())
+        .onTapGesture(perform: advanceDialogue)
         .background(dialogueBubbleBackground)
+        .accessibilityAddTraits(.isButton)
         .accessibilityHint(isComplete ? "继续" : "显示完整文字")
+    }
+
+    private func skipDialogue() {
+        #if DEBUG
+        NSLog("[MistportGuide] skip tapped cue=%@ page=%d accepts=%d", cue.rawValue, pageIndex, acceptsPageAdvance ? 1 : 0)
+        #endif
+        guard acceptsPageAdvance else { return }
+        acceptsPageAdvance = false
+        onDismiss()
     }
 
     private var dialogueHeader: some View {
@@ -866,8 +891,23 @@ struct ChapterOneTutorialOverlay: View {
     }
 
     private var dialogueFooter: some View {
-        Group {
+        HStack(spacing: 8) {
+            if isComplete, !isLastPage {
+                Button(action: skipDialogue) {
+                    Text("跳过对白 ›")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color(red: 1.0, green: 0.86, blue: 0.55).opacity(0.9))
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 5)
+                        .background(Capsule().fill(Color.black.opacity(0.35)))
+                        .overlay(Capsule().stroke(Color(red: 1.0, green: 0.75, blue: 0.24).opacity(0.4), lineWidth: 1))
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("chapter-one-guide-skip")
+            }
+            Spacer(minLength: 0)
             if isComplete {
+                Button(action: advanceDialogue) {
                 Text(page.actionTitle)
                     .font(.system(size: isLastPage ? 12 : 11, weight: .bold, design: .rounded))
                     .foregroundStyle(
@@ -889,6 +929,8 @@ struct ChapterOneTutorialOverlay: View {
                         color: Color(red: 1.0, green: 0.62, blue: 0.12).opacity(0.32),
                         radius: 7
                     )
+                }
+                .buttonStyle(.plain)
             } else {
                 Color.clear.frame(height: 1)
             }
@@ -934,7 +976,7 @@ struct ChapterOneTutorialOverlay: View {
         }
         for index in characters.indices {
             guard !Task.isCancelled else { return }
-            try? await Task.sleep(for: .milliseconds(24))
+            try? await Task.sleep(for: .milliseconds(12))
             guard !Task.isCancelled else { return }
             visibleCharacterCount = index + 1
         }

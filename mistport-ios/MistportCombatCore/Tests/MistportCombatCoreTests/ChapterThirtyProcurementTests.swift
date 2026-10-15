@@ -3,11 +3,11 @@ import Testing
 
 @Suite("Chapter thirty authored procurement")
 struct ChapterThirtyProcurementTests {
-    @Test func exactLegacyIDsPricesAndUnlocks() {
+    @Test func stableIDsRetunedPricesAndUnlocks() {
         #expect(MPCAdvancementMaterialMarket.offers.map(\.id) == ["mirrorMothScale", "reverseClockEssence", "ownerlessMaskWax"])
-        #expect(MPCAdvancementMaterialMarket.offers.map(\.price) == [260, 340, 480])
+        #expect(MPCAdvancementMaterialMarket.offers.map(\.price) == [500, 650, 950])
         #expect(MPCAdvancementMaterialMarket.offers.map(\.unlockMission) == [17, 20, 23])
-        #expect(MPCAdvancementMaterialMarket.offers.reduce(0) { $0 + $1.price } == 1080)
+        #expect(MPCAdvancementMaterialMarket.offers.reduce(0) { $0 + $1.price } == 2100)
     }
     @Test func EachOfferRequiresActualAuthoredMissionAndEnoughMoney() throws {
         for offer in MPCAdvancementMaterialMarket.offers {
@@ -21,8 +21,8 @@ struct ChapterThirtyProcurementTests {
     }
     @Test func oldEntitlementsReducePriceWithoutRemovingAnyOwnership() throws {
         let old: Set<String> = ["mirrorMothScale", "reverseClockEssence"]
-        #expect(MPCAdvancementMaterialMarket.purchase("mirrorMothScale", completedMissionNumbers: [17], coins: 480, ownedIDs: old) == nil)
-        let final = try #require(MPCAdvancementMaterialMarket.purchase("ownerlessMaskWax", completedMissionNumbers: [23], coins: 480, ownedIDs: old))
+        #expect(MPCAdvancementMaterialMarket.purchase("mirrorMothScale", completedMissionNumbers: [17], coins: 950, ownedIDs: old) == nil)
+        let final = try #require(MPCAdvancementMaterialMarket.purchase("ownerlessMaskWax", completedMissionNumbers: [23], coins: 950, ownedIDs: old))
         #expect(final.coins == 0)
         #expect(final.ownedIDs == Set(MPCAdvancementMaterialMarket.offers.map(\.id)))
         #expect(MPCAdvancementMaterialMarket.purchase("unknown", completedMissionNumbers: Set(1...30), coins: 10000, ownedIDs: []) == nil)

@@ -425,10 +425,19 @@ public enum MPCNeighborCatalog {
 
     /// Who asks on a pacing day: the next neighbours in `rotation`, so everyone takes turns.
     public static func askers(day: Int) -> [MPCNeighbor] {
+        // Playtest 2026-10-04: day one had nothing to do after Q3. Two
+        // neighbours from the far end of the rotation ask once on day one,
+        // leaving the day-two-onward rotation exactly as designed.
+        if day == 1 { return Array(all.suffix(2)) }
         let count = askerCount(day: day)
         guard count > 0 else { return [] }
-        let start = (firstDay..<day).reduce(0) { $0 + askerCount(day: $1) }
+        let start = rotationStart(day: day)
         return (0..<count).map { all[(start + $0) % all.count] }
+    }
+
+    /// Position in `rotation` of the day's first asker.
+    public static func rotationStart(day: Int) -> Int {
+        day <= firstDay ? 0 : (firstDay..<day).reduce(0) { $0 + askerCount(day: $1) } % all.count
     }
 
     public static func encounterID(errandID: String, ticket: String) -> String { prefix + errandID + "_" + ticket }
@@ -454,6 +463,8 @@ public struct MPCNeighborLedger: Codable, Equatable, Sendable {
         public fileprivate(set) var activeTicket: String?
         public fileprivate(set) var settledTickets: Set<String> = []
         public fileprivate(set) var done = false
+        /// A user-requested retry of an already-paid offer; absent in older saves.
+        public fileprivate(set) var replayWithoutReward: Bool?
         public var errand: MPCNeighborErrand? { MPCNeighborCatalog.errand(errandID)?.errand }
     }
     public struct Reward: Codable, Equatable, Sendable {
@@ -501,9 +512,24 @@ public struct MPCNeighborLedger: Codable, Equatable, Sendable {
         return (i, errand)
     }
 
+    /// Reopens only this completed offer once, keeping its old payout and fight receipts.
+    @discardableResult
+    public mutating func reopenCompletedOfferForReplay(_ offerID: String) throws -> Bool {
+        guard let i = offers.firstIndex(where: { $0.id == offerID }) else { throw Failure.notOffered }
+        guard offers[i].activeTicket == nil else { throw Failure.pending }
+        guard offers[i].done, offers[i].replayWithoutReward != true else { return false }
+        offers[i].replayWithoutReward = true
+        offers[i].done = false
+        offers[i].excludedChoiceIDs = []
+        return true
+    }
+
     private mutating func complete(_ i: Int, _ errand: MPCNeighborErrand, coins: inout Int) -> Reward {
         offers[i].done = true
         let id = offers[i].neighborID
+        if offers[i].replayWithoutReward == true {
+            return .init(copper: 0, thanks: errand.thanks, affinity: affinity[id, default: 0], story: nil)
+        }
         affinity[id, default: 0] += 1
         completedErrands += 1
         let level = affinity[id]!
@@ -528,6 +554,17 @@ public struct MPCNeighborLedger: Codable, Equatable, Sendable {
         }
         guard choiceID == errand.correctChoiceID else { offers[i].excludedChoiceIDs.insert(choiceID); return nil }
         return complete(i, errand, coins: &coins)
+    }
+
+    /// Street tasks (urgent errands, joint errands) raise a neighbour's affinity too. The
+    /// street task ledger pays each finished task once, so this is called once per task.
+    /// Returns the story unlocked at the new level, if any.
+    @discardableResult
+    public mutating func raiseAffinity(_ neighborID: String) -> String? {
+        guard let neighbor = MPCNeighborCatalog.neighbor(neighborID) else { return nil }
+        affinity[neighborID, default: 0] += 1
+        let level = affinity[neighborID]!
+        return zip(MPCNeighborCatalog.storyAffinity, neighbor.stories).first { $0.0 == level }?.1
     }
 
     /// Called when the player talks to `recipientID` with the message in hand.

@@ -62,7 +62,7 @@ public enum MPCChurchTowerCatalog {
         }
         public func enemyID(slot: Int) -> String { enemyID(wave: 0, slot: slot) }
         public func enemyID(wave: Int, slot: Int) -> String {
-            waves[wave][slot].species.rawValue + (number <= 10 ? String(format: "_f%02d_s%d", number, slot) : String(format: "_f%03d_w%d_s%d", number, wave, slot))
+            waves[wave][slot].species.rawValue + (number <= 10 && wave == 0 ? String(format: "_f%02d_s%d", number, slot) : String(format: "_f%03d_w%d_s%d", number, wave, slot))
         }
         public var encounter: MPCEncounterContent {
             MPCEncounterContent(id: id, name: title, investigationID: "church_tower", waves: waves.indices.map { w in .init(enemyIDs: waves[w].indices.map { enemyID(wave: w, slot: $0) }) }, companionSlots: 0, fixedRewardItemIDs: [], firstClearRelicID: nil, recommendedTags: ["church_tower"])
@@ -79,7 +79,9 @@ public enum MPCChurchTowerCatalog {
     }
     public static let lockText = "完成第 \(unlockMission) 关后开放教会（深井、通缉与教会工作）"
     public static func floor(number: Int) -> Floor? { floors.first { $0.number == number } }
-    public static func encounter(id: String) -> MPCEncounterContent? { floors.first { $0.id == id }?.encounter }
+    public static func encounter(id: String) -> MPCEncounterContent? { encountersByID[id] }
+    // Views ask this per frame; a linear scan formatting 100 ids each time was a hot spot.
+    private static let encountersByID: [String: MPCEncounterContent] = Dictionary(uniqueKeysWithValues: floors.map { ($0.id, $0.encounter) })
     private static let configurations: [String: Enemy] = {
         var result: [String: Enemy] = [:]
         for floor in floors { for wave in floor.waves.indices { for slot in floor.waves[wave].indices {
@@ -145,26 +147,69 @@ public enum MPCChurchTowerCatalog {
     private static func sac(_ hp: Int, _ attack: Int, _ delay: Double = 4) -> Enemy {
         Enemy(species: .saltSac, hp: hp, attack: attack, interval: 11, initialDelay: delay)
     }
-    private static func small(_ species: Species, _ hp: Int, _ attack: Int, _ delay: Double) -> Enemy {
-        Enemy(species: species, hp: hp, attack: attack, interval: 13, initialDelay: delay)
+    /// Minion pack (2026-10-03): more, smaller D07–D11 small monsters that walk in from
+    /// the back of the arena, so group cards have several bodies to hit. Each keeps 55%
+    /// of the old escort HP and 60% of its attack. Its first action waits until it has
+    /// walked to its slot: Unity walks minion k in over 3.2 + 0.45k s, the rules start
+    /// it no earlier than 6 + 0.9k s, so arrivals and first attacks trickle in.
+    public static let minionHPPercent = 55
+    public static let minionAttackPercent = 60
+    public static let maxWaveSize = 8
+    public static func minionPackSize(floor: Int) -> Int {
+        floor <= 1 ? 0 : floor <= 7 ? 4 : floor <= 10 ? 5 : floor <= 40 ? 4 : floor <= 70 ? 5 : 6
+    }
+    public static func minionArrival(_ index: Int) -> Double { 6 + 0.9 * Double(index) }
+    static let minionSpecies: Set<Species> = [.copperback, .goldenThroat, .moonfang, .crimsonBrute, .veilOracle]
+    private static func minion(_ species: Species, baseHP: Int, baseAttack: Int, index: Int) -> Enemy {
+        Enemy(species: species, hp: baseHP * minionHPPercent / 100, attack: max(1, baseAttack * minionAttackPercent / 100),
+              interval: 13, initialDelay: minionArrival(index))
+    }
+    /// Old escort budget (base HP/attack) spread over the floor's pack size, species alternating.
+    private static func pack(_ floor: Int, _ species: [Species], _ baseHP: Int, _ baseAttack: Int) -> [Enemy] {
+        (0..<minionPackSize(floor: floor)).map { minion(species[$0 % species.count], baseHP: baseHP, baseAttack: baseAttack, index: $0) }
     }
     /// Entry stays open. First five teach shield openings; six introduces finite
     /// poison. No borrowed mask or unearned Q8 card is silently supplied.
     private static let openingFloors: [Floor] = [
         Floor(number: 1, title: "石颚初醒", enemies: [jaw(620, 65, 3)]),
-        Floor(number: 2, title: "石颚闭合", enemies: [jaw(750, 80), small(.copperback, 180, 18, 8), small(.copperback, 180, 18, 11)]),
-        Floor(number: 3, title: "双颚错拍", enemies: [jaw(450, 45, 3), jaw(450, 45, 8), small(.copperback, 190, 19, 10), small(.copperback, 190, 19, 13)]),
-        Floor(number: 4, title: "松甲时分", enemies: [jaw(950, 95), small(.goldenThroat, 195, 19, 8), small(.copperback, 195, 19, 12)]),
-        Floor(number: 5, title: "第一道封线", enemies: [jaw(600, 55, 3), jaw(650, 60, 8), small(.goldenThroat, 200, 20, 10), small(.copperback, 200, 20, 13)]),
-        Floor(number: 6, title: "盐囊初裂", enemies: [sac(850, 75), small(.moonfang, 205, 20, 8), small(.goldenThroat, 205, 20, 12)]),
-        Floor(number: 7, title: "瘴息余痕", enemies: [sac(1050, 85), small(.moonfang, 210, 21, 8), small(.copperback, 210, 21, 12)]),
-        Floor(number: 8, title: "瘴后石颚", enemies: [sac(550, 55, 3), jaw(650, 60, 8), small(.crimsonBrute, 220, 22, 10), small(.moonfang, 220, 22, 13)]),
-        Floor(number: 9, title: "断续封锚", enemies: [sac(650, 60, 3), jaw(800, 75, 8), small(.crimsonBrute, 225, 22, 10), small(.goldenThroat, 225, 22, 13)]),
-        Floor(number: 10, title: "守住井口", enemies: [sac(850, 65, 3), jaw(900, 80, 8, elite: true), small(.veilOracle, 235, 23, 10), small(.crimsonBrute, 235, 23, 13)])
+        Floor(number: 2, title: "石颚闭合", enemies: [jaw(750, 80)] + pack(2, [.copperback], 180, 18)),
+        Floor(number: 3, title: "双颚错拍", enemies: [jaw(450, 45, 3), jaw(450, 45, 8)] + pack(3, [.copperback], 190, 19)),
+        Floor(number: 4, title: "松甲时分", enemies: [jaw(950, 95)] + pack(4, [.goldenThroat, .copperback], 195, 19)),
+        Floor(number: 5, title: "第一道封线", enemies: [jaw(600, 55, 3), jaw(650, 60, 8)] + pack(5, [.goldenThroat, .copperback], 200, 20)),
+        Floor(number: 6, title: "盐囊初裂", enemies: [sac(850, 75)] + pack(6, [.moonfang, .goldenThroat], 205, 20)),
+        Floor(number: 7, title: "瘴息余痕", enemies: [sac(1050, 85)] + pack(7, [.moonfang, .copperback], 210, 21)),
+        Floor(number: 8, title: "瘴后石颚", enemies: [sac(550, 55, 3), jaw(650, 60, 8)] + pack(8, [.crimsonBrute, .moonfang], 220, 22)),
+        Floor(number: 9, title: "断续封锚", enemies: [sac(650, 60, 3), jaw(800, 75, 8)] + pack(9, [.crimsonBrute, .goldenThroat], 225, 22)),
+        Floor(number: 10, title: "守住井口", enemies: [sac(850, 65, 3), jaw(900, 80, 8, elite: true)] + pack(10, [.veilOracle, .crimsonBrute], 235, 23))
     ]
     /// Explicit wave compositions, not one roster with a floor-number HP multiplier.
     /// Each decade changes target order, attack timing and between-wave resources.
-    public static let floors: [Floor] = openingFloors + laterFloors
+    public static let floors: [Floor] = (openingFloors + laterFloors).map(sequentialMinionWaves)
+
+    /// Ordinary packs arrive in 3–5 cleared waves. Redistribute the authored
+    /// roster instead of multiplying its HP, attack or first-clear reward budget.
+    /// Floor 1 remains a single-enemy introduction; majors close the later waves.
+    private static func sequentialMinionWaves(_ floor: Floor) -> Floor {
+        let roster = floor.waves.flatMap { $0 }
+        let small = roster.filter { minionSpecies.contains($0.species) }
+        guard !small.isEmpty else { return floor }
+        let majorGroups = floor.waves.map { $0.filter { !minionSpecies.contains($0.species) } }.filter { !$0.isEmpty }
+        let count = min(floor.number <= 10 ? 3 : floor.number <= 40 ? 4 : 5, roster.count)
+        var waves = Array(repeating: [Enemy](), count: count)
+        // Keep original support/major groups together so crown buffs and
+        // escorted threats still have their intended targets in the later waves.
+        let smallWaveCount = count
+        for (index, enemy) in small.enumerated() {
+            let wave = index % smallWaveCount
+            waves[wave].append(Enemy(species: enemy.species, hp: enemy.hp, attack: enemy.attack,
+                                     interval: enemy.interval, initialDelay: minionArrival(waves[wave].count), elite: enemy.elite))
+        }
+        for (index, group) in majorGroups.enumerated() {
+            let wave = count - majorGroups.count + index
+            waves[wave].append(contentsOf: group)
+        }
+        return Floor(number: floor.number, title: floor.title, waves: waves.filter { !$0.isEmpty })
+    }
     private static let laterFloors: [Floor] = {
         typealias S = Species
         // Both legacy layout symbols now resolve to D01; no D00 can spawn.
@@ -209,18 +254,21 @@ public enum MPCChurchTowerCatalog {
                         precondition(selected == kind || (kind == .shieldJaw && !elite), "Minions must replace ordinary shield-jaw slots")
                         return Enemy(species: selected, hp: hp, attack: attack + (elite ? 8 : 0), interval: 10, initialDelay: 3 + Double(slot) * 3.5, elite: elite)
                     }
-                    // Keep the authored major threats, then form a readable
-                    // escort group of two actual D07–D11 small-monster models.
+                    // Keep the authored major threats, then form a minion pack of actual
+                    // D07–D11 small-monster models that walk in from the back. An authored
+                    // replacement keeps its body budget but also waits until it has arrived.
                     let escortSpecies: [Species] = [.copperback, .goldenThroat, .moonfang, .crimsonBrute, .veilOracle]
-                    var majors = authored.filter { ![S.copperback, .goldenThroat, .moonfang, .crimsonBrute, .veilOracle].contains($0.species) }
-                    var escorts = authored.filter { [S.copperback, .goldenThroat, .moonfang, .crimsonBrute, .veilOracle].contains($0.species) }
-                    if majors.count > 2 { majors = Array(majors.prefix(2)) }
-                    while escorts.count < 2 {
-                        let kind = escortSpecies[(band + offset + wave + escorts.count) % escortSpecies.count]
-                        escorts.append(small(kind, 210 + band * 19, 20 + band * 2,
-                            8 + Double(escorts.count) * 3))
+                    var majors = authored.filter { !minionSpecies.contains($0.species) }
+                    var escorts = authored.filter { minionSpecies.contains($0.species) }.enumerated().map { k, e in
+                        Enemy(species: e.species, hp: e.hp, attack: e.attack, interval: e.interval,
+                              initialDelay: max(e.initialDelay, minionArrival(k)), elite: e.elite)
                     }
-                    return Array((majors + escorts).prefix(4))
+                    if majors.count > 2 { majors = Array(majors.prefix(2)) }
+                    while escorts.count < minionPackSize(floor: number) {
+                        let kind = escortSpecies[(band + offset + wave + escorts.count) % escortSpecies.count]
+                        escorts.append(minion(kind, baseHP: 210 + band * 19, baseAttack: 20 + band * 2, index: escorts.count))
+                    }
+                    return Array((majors + escorts).prefix(maxWaveSize))
                 }
                 return Floor(number: number, title: titles[band] + " · " + String(offset + 1), waves: waves)
             }

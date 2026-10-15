@@ -30,6 +30,27 @@ struct EmeraldPoisonTests {
         #expect(battle.emeraldPoisonDamagePerTick == 40)
     }
 
+    @Test func ticksSettledInsideAnEnemyActionAreStillReportedForDisplay() throws {
+        var battle = try session()
+        try battle.endRound(at: 10)
+        #expect(battle.takePendingPoisonHealthDamage() == 0)
+        // The enemy's next action settles the 13 s tick before the App's clock reaches it.
+        let hp = battle.playerHP
+        try battle.endRound(at: 13.5)
+        #expect(battle.playerHP == hp - 20)
+        #expect(battle.advanceEmeraldPoison(at: 13.5) == 0)
+        #expect(battle.lastPoisonHealthDamage == 0)
+        #expect(battle.takePendingPoisonHealthDamage() == 20)
+        #expect(battle.takePendingPoisonHealthDamage() == 0)
+        // The App's frame: advanceQ4Clock settles the tick, then its own poison call reads 0.
+        battle.advanceQ4Clock(at: 16)
+        #expect(battle.advanceEmeraldPoison(at: 16) == 0)
+        #expect(battle.takePendingPoisonHealthDamage() == 25)
+        // Ticks the App's own clock settles are reported the same way.
+        _ = battle.advanceEmeraldPoison(at: 19)
+        #expect(battle.takePendingPoisonHealthDamage() == 30)
+    }
+
     @Test func mistAndTicksPreserveMaskForHeavyBurst() throws {
         var battle = try session()
         _ = try battle.useFoolSkill(.maskedWhisper, targetID: battle.enemies[0].id, usesRealtimeCooldown: true)

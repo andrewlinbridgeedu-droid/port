@@ -21,6 +21,9 @@ public sealed class BountyEffekseerTravel20260921 : MonoBehaviour
     public void Draw(Vector3 from, Vector3 to, float age, float contact)
     {
         if (age < 0 || (!guard && !charge && age >= contact)) { Stop(); volume.Clear(); return; }
+        // B04's quill and B06's anchor are drawn by the hit layer's painted props now
+        // (2026-10-09); their old travelling ink beam / azure lightning would show under them.
+        if (!guard && !charge && SpellSpectacle20260926.EnemyInkActive) { Stop(); volume.Clear(); return; }
         bool held = guard || charge;
         float progress = Mathf.Clamp01(age / Mathf.Max(.01f, contact));
         float flight = Mathf.SmoothStep(0, 1, (progress - .24f) / .76f);

@@ -49,7 +49,11 @@ struct ChurchTowerTests {
         #expect(floors.map(\.number) == Array(1...10))
         #expect(Set(floors.map(\.id)).count == 10)
         #expect(floors[0].enemies.count == 1)
-        #expect(floors.dropFirst().allSatisfy { (3...4).contains($0.enemies.count) })
+        // One or two majors plus the floor's walking minion pack.
+        #expect(floors.dropFirst().allSatisfy { floor in
+            let pack = MPCChurchTowerCatalog.minionPackSize(floor: floor.number)
+            return (pack + 1...pack + 2).contains(floor.enemies.count)
+        })
         #expect(floors.dropFirst().allSatisfy { $0.enemies.filter { [.copperback, .crimsonBrute, .veilOracle, .goldenThroat, .moonfang].contains($0.species) }.count >= 2 })
         #expect(floors.flatMap(\.enemies).allSatisfy { $0.hp > 0 && $0.attack > 0 && $0.interval > 0 })
         #expect(floors.last?.enemies[1].elite == true)

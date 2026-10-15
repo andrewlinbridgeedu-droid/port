@@ -28,14 +28,21 @@ public sealed class MainlineSpellMeshRound2 : MonoBehaviour
     Vector3 Local(Vector3 point)=>transform.InverseTransformPoint(spatialCenter+(point-spatialCenter)*spatialScale);
     public void Begin(float age,float impact=0,float motif=0){spatialScale=1;vertices.Clear();colors.Clear();uv.Clear();triangles.Clear();material.SetFloat("_Age",age);material.SetFloat("_Impact",impact);material.SetFloat("_Motif",motif);}
     static Vector3 Bezier(Vector3 a,Vector3 b,Vector3 c,Vector3 d,float u){float q=1-u;return a*q*q*q+b*3*q*q*u+c*3*q*u*u+d*u*u*u;}
-    static float Width(float u,float seed){return Mathf.Pow(Mathf.Max(0,Mathf.Sin(u*Mathf.PI)),.7f)*(.78f+.16f*Mathf.Sin(u*19+seed)+.08f*Mathf.Sin(u*43-seed));}
+    // 2026-10-03, user on the phone: 你很多都设置成这样弯弯的，都改掉吧. Every ribbon keeps
+    // only 30% of its authored bend (its control points are pulled toward the chord), and its
+    // width no longer ripples, so the curls of the mainline spells read as straight streaks.
+    const float KeptBend=.3f;
+    static void Straighten(Vector3 a,ref Vector3 b,ref Vector3 c,Vector3 d){
+        b=Vector3.Lerp(Vector3.Lerp(a,d,1f/3f),b,KeptBend);c=Vector3.Lerp(Vector3.Lerp(a,d,2f/3f),c,KeptBend);
+    }
+    static float Width(float u,float seed){return Mathf.Pow(Mathf.Max(0,Mathf.Sin(u*Mathf.PI)),.7f)*.86f;}
     void Quad(Vector3 a,Vector3 b,Vector3 c,Vector3 d,Color tint,float x0,float x1,float u0,float u1){
         int n=vertices.Count;vertices.Add(Local(a));vertices.Add(Local(b));vertices.Add(Local(c));vertices.Add(Local(d));
         for(int k=0;k<4;k++)colors.Add(tint);uv.Add(new Vector2(x0,u0));uv.Add(new Vector2(x0,u1));uv.Add(new Vector2(x1,u1));uv.Add(new Vector2(x1,u0));
         triangles.Add(n);triangles.Add(n+1);triangles.Add(n+2);triangles.Add(n);triangles.Add(n+2);triangles.Add(n+3);
     }
     public void Ribbon(Vector3 a,Vector3 b,Vector3 c,Vector3 d,Vector3 across,float width,Color tint,float seed=0){
-        across.Normalize();const int steps=24;
+        Straighten(a,ref b,ref c,d);across.Normalize();const int steps=24;
         for(int j=0;j<steps;j++){
             float u0=j/(float)steps,u1=(j+1f)/steps;
             Vector3 p0=Bezier(a,b,c,d,u0),p1=Bezier(a,b,c,d,u1);
@@ -54,7 +61,7 @@ public sealed class MainlineSpellMeshRound2 : MonoBehaviour
     // neighbouring quads reuse it instead of opening a wedge at every segment.
     // The default Ribbon path above is deliberately unchanged for other spells.
     public void RibbonContinuous(Vector3 a,Vector3 b,Vector3 c,Vector3 d,Vector3 across,float width,Color tint,float seed=0){
-        across.Normalize();const int steps=48;
+        Straighten(a,ref b,ref c,d);across.Normalize();const int steps=48;
         Vector3 previousLeft=Vector3.zero,previousRight=Vector3.zero,previousCrest=Vector3.zero,previousLateral=Vector3.zero;
         var shade=tint;shade.r*=.82f;shade.g*=.87f;shade.b*=.92f;
         for(int j=0;j<=steps;j++){
@@ -70,7 +77,7 @@ public sealed class MainlineSpellMeshRound2 : MonoBehaviour
             lateral.Normalize();
             if(j>0&&Vector3.Dot(lateral,previousLateral)<0)lateral=-lateral;
             Vector3 normal=Vector3.Cross(tangent,lateral).normalized;
-            float w=width*Mathf.Pow(Mathf.Max(0,Mathf.Sin(u*Mathf.PI)),.7f)*(.78f+.13f*Mathf.Sin(u*6.7f+seed)+.07f*Mathf.Sin(u*11.2f-seed*.4f));
+            float w=width*Mathf.Pow(Mathf.Max(0,Mathf.Sin(u*Mathf.PI)),.7f)*.86f;
             Vector3 left=point-lateral*w,right=point+lateral*w*.74f,crest=point+normal*w*.5f;
             if(j>0){
                 float previousU=(j-1f)/steps;
@@ -83,7 +90,7 @@ public sealed class MainlineSpellMeshRound2 : MonoBehaviour
     // Opt-in physical patches for the September 25 identity pass. Existing
     // users retain their material, shape and lifetime.
     public void AuthoredRibbon(Vector3 a,Vector3 b,Vector3 c,Vector3 d,Vector3 across,float width,Color tint,int seed){
-        across.Normalize();
+        Straighten(a,ref b,ref c,d);across.Normalize();
         Patch((u,v)=>{
             float q=1-u;Vector3 point=Bezier(a,b,c,d,u);
             Vector3 tangent=3*q*q*(b-a)+6*q*u*(c-b)+3*u*u*(d-c);
@@ -92,9 +99,10 @@ public sealed class MainlineSpellMeshRound2 : MonoBehaviour
             tangent.Normalize();Vector3 lateral=Vector3.ProjectOnPlane(across,tangent);
             if(lateral.sqrMagnitude<.0001f)lateral=Vector3.Cross(tangent,Mathf.Abs(tangent.y)<.9f?Vector3.up:Vector3.right);
             lateral.Normalize();Vector3 normal=Vector3.Cross(tangent,lateral).normalized;
-            float pressure=Mathf.Pow(Mathf.Max(0,Mathf.Sin(u*Mathf.PI)),.63f)*(.77f+.17f*Mathf.Sin(u*9.3f+seed)+.08f*Mathf.Sin(u*23.7f-seed));
-            float x=(v-.5f)*2,twist=.35f*Mathf.Sin(u*7+seed)+.13f*Mathf.Sin(u*15-seed);
-            return point+lateral*(x*width*pressure)+normal*width*pressure*(.29f*Mathf.Sin(v*Mathf.PI)+x*twist+.12f*Mathf.Sin(v*4.2f+u*9));
+            // Smooth along its length: no rippling width, rolling twist or travelling wave.
+            float pressure=Mathf.Pow(Mathf.Max(0,Mathf.Sin(u*Mathf.PI)),.63f)*.86f;
+            float x=(v-.5f)*2;
+            return point+lateral*(x*width*pressure)+normal*width*pressure*(.29f*Mathf.Sin(v*Mathf.PI));
         },tint,seed);
     }
     public void Triangle(Vector3 a,Vector3 b,Vector3 c,Color tint){

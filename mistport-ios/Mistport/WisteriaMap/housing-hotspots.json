@@ -1,6 +1,6 @@
 {
   "coordinateUnit": "image-normalized-top-left",
-  "note": "三点均按当前原图目视定位；App aspectFit 绘制后须转换到同一个图框。未做真机验收。",
+  "note": "2026-10-12 用户要求：普通租房内外图按房型向下一档移动；热点随原图迁移。港区使用新廉价木屋图；免费教会救济铺位保持独立。新图热点待真机核对。",
   "homes": [
     {
       "id": "shelter",
@@ -45,6 +45,45 @@
       "id": "dock_bunk",
       "name": "码头铺位",
       "district": "harbor",
+      "exterior": "HousingDockBunkExterior20261012",
+      "interior": "HousingDockBunkInterior20261012",
+      "hotspots": [
+        {
+          "id": "bed",
+          "title": "薄铺",
+          "at": [
+            0.26,
+            0.55
+          ],
+          "hitRadius": 0.09,
+          "description": "窄木床上铺着薄褥和补过的旧毯，好歹能挡住夜里的凉气。"
+        },
+        {
+          "id": "hooks",
+          "title": "旧衣钩",
+          "at": [
+            0.49,
+            0.43
+          ],
+          "hitRadius": 0.09,
+          "description": "衣物挂得高些，免得挨着潮湿的地板。"
+        },
+        {
+          "id": "lamp",
+          "title": "短蜡烛",
+          "at": [
+            0.9,
+            0.5
+          ],
+          "hitRadius": 0.09,
+          "description": "蜡烛只照亮窗边一小块地方，墙脚偶尔传来细碎脚步声。"
+        }
+      ]
+    },
+    {
+      "id": "arcade_room",
+      "name": "拱廊合租间",
+      "district": "oldArcade",
       "exterior": "HousingDockBunkExterior20260930",
       "interior": "HousingDockBunkInterior20260930",
       "hotspots": [
@@ -81,9 +120,9 @@
       ]
     },
     {
-      "id": "arcade_room",
-      "name": "拱廊合租间",
-      "district": "oldArcade",
+      "id": "canal_house",
+      "name": "运河联排屋",
+      "district": "canal",
       "exterior": "HousingArcadeRoomExterior20260930",
       "interior": "HousingArcadeRoomInterior20260930",
       "hotspots": [
@@ -120,9 +159,9 @@
       ]
     },
     {
-      "id": "canal_house",
-      "name": "运河联排屋",
-      "district": "canal",
+      "id": "bell_loft",
+      "name": "钟楼阁楼",
+      "district": "church",
       "exterior": "HousingCanalHouseExterior20260930",
       "interior": "HousingCanalHouseInterior20260930",
       "hotspots": [
@@ -159,9 +198,9 @@
       ]
     },
     {
-      "id": "bell_loft",
-      "name": "钟楼阁楼",
-      "district": "church",
+      "id": "highland_house",
+      "name": "高地石宅",
+      "district": "highland",
       "exterior": "HousingBellLoftExterior20260930",
       "interior": "HousingBellLoftInterior20260930",
       "hotspots": [
@@ -198,9 +237,9 @@
       ]
     },
     {
-      "id": "highland_house",
-      "name": "高地石宅",
-      "district": "highland",
+      "id": "noble_suite",
+      "name": "公馆客房",
+      "district": "noble",
       "exterior": "HousingHighlandHouseExterior20260930",
       "interior": "HousingHighlandHouseInterior20260930",
       "hotspots": [

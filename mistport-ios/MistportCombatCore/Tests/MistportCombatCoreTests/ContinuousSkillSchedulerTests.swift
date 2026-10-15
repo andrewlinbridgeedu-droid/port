@@ -4,7 +4,7 @@ import Testing
 struct ContinuousSkillSchedulerTests {
     @Test func openingPassDoesNotRepeatFastSkill() {
         var scheduler = ContinuousSkillScheduler()
-        let sequence: [FoolSkillID] = [.sidestepStrike, .maskedWhisper, .identityDisplacement, .turnTheTables, .absurdFinale]
+        let sequence: [FoolSkillID] = [.sidestepStrike, .fabricatedEvidence, .identityDisplacement, .absurdFinale]
         for (index, skill) in sequence.enumerated() {
             let time = Double(index * 10)
             #expect(scheduler.next(in: sequence, at: time) == skill)
@@ -12,22 +12,22 @@ struct ContinuousSkillSchedulerTests {
         }
         #expect(scheduler.next(in: sequence, at: 50) == .sidestepStrike)
     }
-    @Test func earliestDeadlineWinsOverSlotOrder() {
+    @Test func slotOrderWinsEvenWhenAnotherCardIsReady() {
         var scheduler = ContinuousSkillScheduler()
         let sequence: [FoolSkillID] = [.absurdFinale, .sidestepStrike]
         scheduler.didCast(.absurdFinale, at: 0)
         scheduler.didCast(.sidestepStrike, at: 1)
         #expect(scheduler.next(in: sequence, at: 4) == nil)
-        #expect(scheduler.next(in: sequence, at: 12) == .sidestepStrike)
-        scheduler.didCast(.sidestepStrike, at: 12)
         #expect(scheduler.next(in: sequence, at: 12) == .absurdFinale)
+        scheduler.didCast(.absurdFinale, at: 12)
+        #expect(scheduler.next(in: sequence, at: 12) == .sidestepStrike)
     }
     @Test func tiesUseOrderAndRemovedSkillsAreIgnored() {
         var scheduler = ContinuousSkillScheduler()
         scheduler.didCast(.sidestepStrike, at: 8)
         scheduler.didCast(.maskedWhisper, at: 0)
         #expect(scheduler.next(in: [.maskedWhisper, .sidestepStrike], at: 12) == .maskedWhisper)
-        #expect(scheduler.next(in: [.sidestepStrike], at: 12) == .sidestepStrike)
+        #expect(scheduler.next(in: [.sidestepStrike], at: 12) == nil)
     }
     @Test func oneEnemyDeadlineDoesNotAdvanceOtherEnemies() throws {
         var session = try MPCChapterOneEncounterSession.start(encounterID: "chapter01_q02_encounter", companionIDs: [])

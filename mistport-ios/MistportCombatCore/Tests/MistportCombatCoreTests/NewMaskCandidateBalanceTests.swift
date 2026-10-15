@@ -35,7 +35,10 @@ enum NewMaskBalanceSimulator {
         loadout.talents = talents
         if let suppliedLoadout { loadout = suppliedLoadout }
         if medalOffset != nil { loadout.selectedActiveRelicID = MPCChapterOneCatalog.usurpedLifeMedalRelicID }
-        var s = try MPCChapterOneEncounterSession.start(encounterID: String(format: "chapter01_q%02d_encounter", q), party: party, consumables: consumables, companionIDs: [], loadout: loadout)
+        // Q28–Q30 are party fights (2026-10-10): the mission's allies join, as in the App.
+        let encounterID = String(format: "chapter01_q%02d_encounter", q)
+        var s = try MPCChapterOneEncounterSession.start(encounterID: encounterID, party: party, consumables: consumables,
+                                                        companionIDs: MPCChapterOneCatalog.mission(forEncounterID: encounterID)?.companionIDs ?? [], loadout: loadout)
         s.relicBalance = relicBalance
         var scheduler = ContinuousSkillScheduler()
         var ready: [String:Double] = [:], pending: [String:Double] = [:], born: [String:Double] = [:]
@@ -62,17 +65,18 @@ enum NewMaskBalanceSimulator {
                 else { wants = now >= maskOffset }
                 if wants { if try s.useOwnedManualMasquerade(targetID: target.id, isOwned: true, at: now) != nil { maskUses += 1 }; maskReady = now + 18 }
             }
-            if s.playerHP <= 400, s.consumables["consumable_pain_salve", default: 0] > 0 {
+            if s.playerHP <= 400, !s.playerIsDown, s.consumables["consumable_pain_salve", default: 0] > 0 {
                 try s.useConsumable("consumable_pain_salve"); used += 1
             }
-            if s.playerHP <= 300, s.consumables["consumable_mirror_salve", default: 0] > 0 {
+            if s.playerHP <= 300, !s.playerIsDown, s.consumables["consumable_mirror_salve", default: 0] > 0 {
                 try s.useConsumable("consumable_mirror_salve"); used += 1
             }
             if let p = hit, now >= p.2 {
                 hit = nil
-                if s.enemies.contains(where: { $0.id == p.1 && $0.isAlive }) {
+                if !s.playerIsDown, s.enemies.contains(where: { $0.id == p.1 && $0.isAlive }) {
                     if let skill = p.0 { _ = try s.useFoolSkill(skill, targetID: p.1, usesRealtimeCooldown: true) }
                     else { _ = try s.useBasicAction(.damage, targetID: p.1); tutorialBasics += 1 }
+                    if s.outcome == .inProgress { _ = s.performCompanionActions(focusTargetID: p.1) }
                 }
             }
             guard s.outcome == .inProgress else { break }
@@ -113,10 +117,13 @@ enum NewMaskBalanceSimulator {
                 if let authored = s.authoredPreparationDuration(for: e.id) { duration = authored }
                 s.commitEnemyImpact(from: e.id); pending[e.id] = now + duration
             }
+            // Final-boss party allies act on combat time, also while the hero is down.
+            _ = s.advanceCompanions(at: now, focusTargetID: target.id)
+            guard s.outcome == .inProgress else { break }
             let revealingGhost = s.enemies.contains { $0.isAlive && $0.contentID == "enemy_resonant_clock_guard_q2_split" && now < born[$0.id,default:now] + 1 }
-            guard !revealingGhost, target.isAlive, now >= playerReady, hit == nil else { continue }
+            guard !revealingGhost, target.isAlive, now >= playerReady, hit == nil, !s.playerIsDown else { continue }
             if ultimate && !usedUltimate { usedUltimate = true; scheduler.didCast(.namelessStage, at:now); playerReady=now+1.75; hit=(.namelessStage,target.id,now+playerContact(.namelessStage)) }
-            else if (q != 1 || tutorialBasics >= 3), let skill = scheduler.next(in: sequence, at: now) { scheduler.didCast(skill,at:now); playerReady=now+1.75; hit=(skill,target.id,now+playerContact(skill)) }
+            else if (q != 1 || tutorialBasics >= 3), let skill = scheduler.next(in: sequence, at: now, skipping: s.sealedFoolSkillIDs(at: now)) { scheduler.didCast(skill,at:now); playerReady=now+1.75; hit=(skill,target.id,now+playerContact(skill)) }
             else if now >= basicReady { basicReady=now+2.4; playerReady=now+1.65; hit=(nil,target.id,now+0.58) }
         }
         return .init(session:s,seconds:time,medicinesUsed:used,maskUses:maskUses)

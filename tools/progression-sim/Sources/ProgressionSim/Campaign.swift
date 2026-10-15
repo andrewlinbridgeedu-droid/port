@@ -84,16 +84,44 @@ enum Shop {
     static func value(_ id: String) -> Int { passives.first { $0.id == id }?.price ?? 0 }
 }
 
-/// Cards available for the next story mission, as in the 2026-09-25 audit.
+/// Legal decks under current ordered-card unlocks. Early preferred orders come
+/// from the 169.87 production audit; no gear or rewards are copied from it.
 func cards(forMission q: Int) -> [[FoolSkillID]] {
-    switch q {
-    case ...7: return [[.sidestepStrike]]
-    case 8...9: return [[.identityDisplacement, .sidestepStrike], [.sidestepStrike, .identityDisplacement]]
-    case 10: return [[.fabricatedEvidence, .sidestepStrike], [.identityDisplacement, .sidestepStrike]]
-    case 11: return [[.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .sidestepStrike]]
-    default: return [[.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .absurdFinale],
-                     [.sidestepStrike, .fabricatedEvidence, .mirrorPursuit, .absurdFinale]]
+    let available = MPCOrderedSkillRules.ordinarySkills.filter { (MPCOrderedSkillRules.unlockMission($0) ?? 99) <= q }
+    let cap = min(available.count, MPCOrderedSkillRules.slotCapacity(availableThrough: q))
+    let early: [Int: [FoolSkillID]] = [
+        1: [.sidestepStrike], 2: [.fabricatedEvidence, .sidestepStrike], 3: [.fabricatedEvidence, .sidestepStrike],
+        4: [.fabricatedEvidence, .sidestepStrike], 5: [.fabricatedEvidence, .sidestepStrike], 6: [.fabricatedEvidence, .sidestepStrike],
+        7: [.turnTheTables, .stolenTempo, .sidestepStrike], 8: [.fabricatedEvidence, .sidestepStrike, .turnTheTables],
+        9: [.stolenTempo, .sidestepStrike, .mirrorBarrage],
+        10: [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .sidestepStrike],
+        11: [.stolenTempo, .sidestepStrike, .mirrorBarrage, .fabricatedEvidence],
+        12: [.identityDisplacement, .stolenTempo, .absurdFinale, .mirrorBarrage]]
+    let families: [[FoolSkillID]] = [
+        [.stolenTempo, .mirrorBarrage, .sidestepStrike, .fabricatedEvidence],
+        [.stolenTempo, .mirrorBarrage, .identityDisplacement, .absurdFinale],
+        [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .absurdFinale],
+        [.stolenTempo, .delayedSignature, .mirrorBarrage, .backstageChange],
+        [.turnTheTables, .mirrorPursuit, .absurdFinale, .backstageChange],
+        [.stolenTempo, .sidestepStrike, .backstageChange, .mirrorBarrage],
+        [.fabricatedEvidence, .identityDisplacement, .absurdFinale, .backstageChange]]
+    func permutations(_ cards: [FoolSkillID]) -> [[FoolSkillID]] {
+        if cards.count < 2 { return [cards] }
+        return cards.flatMap { first in permutations(cards.filter { $0 != first }).map { [first] + $0 } }
     }
+    // Later preferred orders were learned by the actual-driver trace retained
+    // in the bank audit. They affect agent decisions, not battle rules or gear.
+    let learned: [FoolSkillID]? = q >= 13
+        ? (q == 18 || q == 30 ? [.stolenTempo, .mirrorBarrage, .identityDisplacement, .absurdFinale]
+            : q == 16 ? [.stolenTempo, .sidestepStrike, .mirrorBarrage, .fabricatedEvidence]
+            : [.stolenTempo, .mirrorBarrage, .sidestepStrike, .fabricatedEvidence]) : nil
+    var output = (early[q] ?? learned).map { [$0] } ?? []
+    for family in families {
+        var deck = Array(family.filter { available.contains($0) }.prefix(cap))
+        deck += available.filter { !deck.contains($0) }.prefix(max(0, cap - deck.count))
+        for order in permutations(deck) where !output.contains(order) { output.append(order) }
+    }
+    return output
 }
 
 func talentBudget(completed: Int) -> Int {
@@ -110,7 +138,8 @@ func loadout(mission q: Int, gear: MPCChurchGearStats, passive: String?, sequenc
                           budget: talentBudget(completed: q - 1))
     if q >= 10 { l.skillLevels[.sidestepStrike] = 2 }
     if q >= 15 { l.skillLevels[.mirrorPursuit] = 2 }
-    if q >= 5 { l.selectedActiveRelicID = MPCChapterOneCatalog.usurpedLifeMedalRelicID }
+    if q >= 10 { l.selectedActiveRelicID = MPCChapterOneCatalog.usurpedLifeMedalRelicID }
+    else if q >= 3 { l.selectedActiveRelicID = MPCChapterOneCatalog.ownerlessMaskRelicID }
     l.churchGear = gear
     l.outfit = .mistportNight
     return l
@@ -152,6 +181,8 @@ struct Milestone: Codable {
 }
 
 struct RunResult: Codable {
+    var bankExperiment: BankRunSummary? = nil
+    var housingExperiment: HousingSummary? = nil
     let policy: String
     let profile: String
     let startOffset: Int
@@ -234,10 +265,19 @@ final class Campaign {
     var cleared = Set<String>(), accepted = Set<String>()
     var gear = MPCChurchGearLedger()
     var relics = MPCBountyRelicLedger()
-    var copper = 180, merit = 0, salve = 0
+    var copper = 180 {
+        didSet { if bankScenario != nil { bankMinimumCash = min(bankMinimumCash, copper); precondition(copper >= 0) } }
+    }
+    var merit = 0, salve = 0
+    // Experimental bank runs only. Shipping rules and legacy runs do not use these fields.
+    let bankScenario: BankScenario?
+    var bankState = BankSimulationState()
+    var housingState = HousingState()
+    var bankMinimumCash = 180
     var passives: [String] = []
     var seconds: [String: Double] = [:], battles: [String: Int] = [:], losses: [String: Int] = [:]
     var salvesUsed = 0, postalJobs = 0, repairCopper = 0, defeatCopperLost = 0, serial = 0
+    var earningPostalByDay: [Int: Int] = [:]
     var relicsLost: [String] = []
     var visits: [Visit] = [], milestones: [Milestone] = []
     /// Repeatable pay taper, workshop and its orders (MPCDailyWorkLedger, MPCCraftingLedger, MPCWorkshopOrderBoard).
@@ -268,7 +308,9 @@ final class Campaign {
     var housingDays: [String: Int] = [:]
     var staminaLeft = 100, staminaShort = 0
     func useStamina(_ cost: Int) -> Bool {
+        guard bankHasTime else { return false }
         guard assumptions.stamina else { return true }
+        if housingEnabled { return housingSpend(cost) }
         guard staminaLeft >= cost else { staminaShort += 1; return false }
         staminaLeft -= cost
         return true
@@ -289,9 +331,12 @@ final class Campaign {
     /// States already known to lose a target; the bots are deterministic.
     var failed: [String: Set<String>] = [:]
 
-    init(policy: Policy, profile: Profile, assumptions: Assumptions, startDate: Date, startOffset: Int) {
+    init(policy: Policy, profile: Profile, assumptions: Assumptions, startDate: Date, startOffset: Int,
+         bankScenario: BankScenario? = nil) {
         self.policy = policy; self.profile = profile; self.assumptions = assumptions
         self.startDate = startDate; self.startOffset = startOffset
+        self.bankScenario = bankScenario
+        if let h = bankScenario?.housing { housingState.customerRemaining = h.customerBudget }
     }
 
     /// The church (tower, bounties) opens after Q7 (MPCChurchTowerCatalog, user decision 2026-09-29).
@@ -301,11 +346,12 @@ final class Campaign {
     var storyOpen: Bool { MPCDailyPacing.isMissionOpen(q + 1, day: dayNumber) }
     var stats: MPCChurchGearStats { gear.stats }
     var signature: String {
-        "\(stats.attackBP)/\(stats.maxHP)/\(stats.damageReductionBP)|\(passives.sorted().joined(separator: ","))|\(relics.ownedIDs.sorted().joined(separator: ","))|\(q)|\(salve)|\(rotation)"
+        "\(housingEnabled ? housingState.tier : 0)/\(housingEnabled && housingState.restDay != dayNumber)|\(stats.attackBP)/\(stats.maxHP)/\(stats.damageReductionBP)|\(passives.sorted().joined(separator: ","))|\(relics.ownedIDs.sorted().joined(separator: ","))|\(q)|\(salve)|\(rotation)"
     }
     /// A story retry leads with a different plan (and a tower or case retry with a
     /// different relic), as a player changing plan would.
     var rotation = 0
+    var mainPlanCursors: [String: Int] = [:]
     var passiveCandidates: [String?] {
         guard !passives.isEmpty else { return [nil] }
         let shift = rotation % passives.count
@@ -345,16 +391,20 @@ final class Campaign {
     func wear(_ passive: String?, won: Bool) {
         guard let passive else { return }
         let cost = min(max(0, copper), (Shop.value(passive) * (won ? 2 : 5) + 199) / 200)
-        copper -= cost; repairCopper += cost
+        let paid = cost - housingRepairSaving(cost)
+        copper -= paid; repairCopper += paid
     }
 
     func shop() {
         guard q >= 4 else { return }
+        if bankScenario != nil { bankTick(); bankRedeemIfNeeded(salvePrice); bankBuyAdvancement() }
         if salve == 0, inventory[MPCCraftingCatalog.salveID, default: 0] > 0 {
             inventory[MPCCraftingCatalog.salveID, default: 0] -= 1; salve = 1; salvesFromStock += 1
         }
         if salve == 0 && copper >= salvePrice { copper -= salvePrice; salve = 1 }
         for relic in Shop.passives where q >= relic.unlock && !passives.contains(relic.id) && copper - relic.price >= salvePrice {
+            if let scenario = bankScenario, scenario.protectBudget, relic.unlock > 4,
+               copper - relic.price < bankReserve { continue }
             copper -= relic.price; passives.append(relic.id)
         }
     }
@@ -392,16 +442,33 @@ final class Campaign {
     }
 
     /// RECOVERY_PRE17 overrides the first line (180) to test candidates.
-    var recoveryLine: Int { q >= 30 ? 400 : q >= 23 ? 600 : q >= 20 ? 460 : q >= 17 ? 380
+    var recoveryLine: Int { q >= 30 ? (bankScenario?.protectBudget == true && bankRemainingAdvancement > 0 ? 600 : 400) : q >= 23 ? 600 : q >= 20 ? 460 : q >= 17 ? 380
         : Int(ProcessInfo.processInfo.environment["RECOVERY_PRE17"] ?? "") ?? 180 }
 
     @discardableResult func postal(upTo target: Int) -> Bool {
+        if bankScenario?.cashRecovery == false {
+            // Current native postal counter: verify three fields, 40 copper,
+            // 10 stamina. This is labour, never a means-tested cash grant.
+            // The model chooses at most two orders per active day.
+            while q >= 4 && copper < target && bankHasTime && earningPostalByDay[dayNumber, default: 0] < 2 && useStamina(10) {
+                postalJobs += 1; earningPostalByDay[dayNumber, default: 0] += 1
+                let pay = work.settle(receiptID: "postal-\(postalJobs)", day: dayNumber, copper: 40, merit: 0, usesStamina: true)
+                copper += pay.copper; earned["postal", default: 0] += pay.copper
+                contribute("postal-\(postalJobs)", .post)
+                busy("postal", model.map { total($0.postal) } ?? assumptions.postalSeconds)
+            }
+            if copper < target { copperShort = true }
+            return copper >= target
+        }
         while copper < target && work.preview(day: dayNumber, copper: Shop.postalPay) * 2 >= Shop.postalPay
-                && (!assumptions.sharedJ0 || (copper < recoveryLine && sharedJ0Today(counting: false) < sharedJ0PerDay))
+                && (!assumptions.sharedJ0 || (bankEligibleAssets < recoveryLine + (bankScenario?.protectBudget == true ? 40 : 0) && sharedJ0Today(counting: false) < sharedJ0PerDay))
                 && useStamina(10) {
             if assumptions.sharedJ0 { _ = sharedJ0Today(counting: true) }
             postalJobs += 1
-            let pay = work.settle(receiptID: "postal-\(postalJobs)", day: dayNumber, copper: Shop.postalPay, merit: 0)
+            let scheduledPay = assumptions.sharedJ0 && bankScenario?.protectBudget == true
+                ? min(Shop.postalPay, max(0, recoveryLine + 40 - bankEligibleAssets)) : Shop.postalPay
+            let pay = work.settle(receiptID: "postal-\(postalJobs)", day: dayNumber, copper: scheduledPay, merit: 0,
+                                  usesStamina: bankScenario != nil && assumptions.stamina)
             if assumptions.sharedJ0 { copper += pay.copper; earned["postal", default: 0] += pay.copper }
             else { loopIncome("postal") { copper += pay.copper; earned["postal", default: 0] += pay.copper } }
             contribute("postal-\(postalJobs)", .post)
@@ -413,7 +480,9 @@ final class Campaign {
 
     func nextDay() {
         var bonus = 0
-        if assumptions.housing {
+        if bankScenario != nil {
+            // Bank mode pays once at the START of every active day, including the final day.
+        } else if assumptions.housing {
             let tier = Self.housingTiers.first { copper >= recoveryLine + 14 * $0.cost } ?? Self.housingTiers.last!
             if copper >= tier.cost { copper -= tier.cost; basketsBought += 1; bonus = tier.bonus } else { basketsMissed += 1 }
             housingDays["\(tier.cost)", default: 0] += 1
@@ -422,11 +491,14 @@ final class Campaign {
         }
         if let m = model { busy("newspaper", total(m.newspaper)) }
         if usesDailyContent { neighbors.open(day: dayNumber, completedMissions: completedMissions) }
+        housingSecondSession()
         workshopSession()
         dailyContent()
         missedErrands += neighbors.offers.filter { $0.day == dayNumber && !$0.done }.map(\.errandID)
+        if bankScenario != nil { bankEndDay() }
         day += 1; dayMinutes.append(0)
         staminaLeft = 100 + bonus
+        if bankScenario != nil { bankBeginDay() }
         if churchOpen { refreshBoard() }
     }
 
@@ -437,7 +509,8 @@ final class Campaign {
         guard usesWorkshop, MPCCraftingCatalog.isUnlocked(completedMissions: completedMissions) else { return }
         let effects = city
         if let m = model { busy("workshop", total(m.workshopVisit)) }
-        orders.open(day: dayNumber, bonus: effects.orderBudgetBonus)
+        let orderBonus = bankScenario == nil ? effects.orderBudgetBonus : -51 + Int((Double(effects.orderBudgetBonus) * assumptions.loopScale).rounded())
+        orders.open(day: dayNumber, bonus: orderBonus)
         func craft(_ recipeID: String) -> Bool {
             let cost = MPCCraftingCatalog.baseStock(MPCCraftingCatalog.recipe(recipeID)!, surcharge: effects.craftSurcharge)
             guard copper - cost >= salvePrice, useStamina(5) else { return false }
@@ -445,20 +518,22 @@ final class Campaign {
                                             completedMissions: completedMissions, coins: &copper,
                                             inventory: &inventory, gear: &gear, surcharge: effects.craftSurcharge)) == true
             if made { crafts += 1; baseStockCopper += cost; busy("workshop", model.map { total($0.craft) } ?? assumptions.craftSeconds) }
-            else if assumptions.stamina { staminaLeft += 5 }
+            else if assumptions.stamina { housingRefund(5) }
             return made
         }
         func sell(_ item: String, keeping keep: Int) -> Bool {
             let spare = inventory[item, default: 0] - keep
             guard spare > 0 else { return false }
             var units = 0
-            loopIncome("workshop") {
+            let before = copper
+            let sale = { [self] in
                 units = (try? orders.sell(receiptID: "sale-\(unitsSold)-\(item)", itemID: item, count: spare,
-                                          day: dayNumber, coins: &copper, inventory: &inventory, bonus: effects.orderBudgetBonus)) ?? 0
+                                          day: dayNumber, coins: &self.copper, inventory: &self.inventory, bonus: orderBonus)) ?? 0
             }
+            if bankScenario != nil { sale() } else { loopIncome("workshop", sale) }
             guard units > 0 else { return false }
             unitsSold += units
-            earned["workshop", default: 0] += units * MPCWorkshopOrderBoard.prices[item]!
+            earned["workshop", default: 0] += bankScenario == nil ? units * MPCWorkshopOrderBoard.prices[item]! : copper - before
             busy("workshop", model.map { total($0.sale) } ?? assumptions.saleSeconds)
             return true
         }
@@ -524,7 +599,7 @@ final class Campaign {
     /// Street fights of the daily content, on the shipping combat core like every other battle.
     func streetFight(_ encounterID: String, kind: String) -> TowerDriver.Report {
         let l = loadout(mission: q + 1, gear: stats, passive: passives.last, sequence: cards(forMission: q + 1)[0], bountyRelic: worn)
-        let report = try! TowerDriver.run(number: 1, medalOffset: 6, suppliedLoadout: l, actionDelay: profile.actionDelay,
+        let report = try! CampaignFights.tower(number: 1, medalOffset: 6, suppliedLoadout: l, actionDelay: profile.actionDelay,
                                           encounterID: encounterID)
         spend(kind, report.seconds)
         let won = report.session.outcome == .victory
@@ -594,7 +669,8 @@ final class Campaign {
                 if events.status(event.id, day: dayNumber) == .succeeded { contribute("event-success-\(event.id)", .eventSuccess) }
             }
         }
-        if assumptions.stamina ? staminaLeft >= 20 : true,
+        if housingEnabled { housingAccrue(to: housingClock) }
+        if assumptions.stamina ? (staminaLeft + (housingEnabled ? Int(housingState.reserve) : 0)) >= 20 : true,
            let job = try? remnants.accept(day: dayNumber, closedCaseIDs: cleared, highestTowerFloor: tower), !job.claimed, useStamina(20) {
             busy("remnant", model.map { total($0.remnant(job.remnant!, lead: job.lead)) } ?? assumptions.remnantInvestigationSeconds)
             _ = try? remnants.answer(day: dayNumber, choiceID: job.remnant!.leads[job.lead].correctChoiceID)
@@ -616,9 +692,10 @@ final class Campaign {
 
     /// Replays the richest low floor already cleared for materials (no first-clear reward).
     func replayForMaterials() {
+        guard bankHasTime else { return }
         let floor = min(tower, 10)
         let l = loadout(mission: q + 1, gear: stats, passive: passives.last, sequence: cards(forMission: q + 1)[0], bountyRelic: worn)
-        guard let report = try? TowerDriver.run(number: floor, medalOffset: 6, suppliedLoadout: l, actionDelay: profile.actionDelay) else { return }
+        guard let report = try? CampaignFights.tower(number: floor, medalOffset: 6, suppliedLoadout: l, actionDelay: profile.actionDelay) else { return }
         spend("workshop", report.seconds); replays += 1
         guard report.session.outcome == .victory else { return }
         for (id, n) in MPCTowerMaterials.drops(floor: floor) { inventory[id, default: 0] += n }
@@ -628,7 +705,10 @@ final class Campaign {
     func refreshBoard() {
         let date = calendar.date(byAdding: .day, value: startOffset + day, to: startDate)!
         let ordinal = MPCDailyBountyRotation.dayOrdinal(for: date, calendar: calendar)
-        let eligible = MPCChurchBountyCatalog.all.map(\.id).filter { !accepted.contains($0) && !cleared.contains($0) }
+        let eligible = MPCChurchBountyCatalog.all.map(\.id).filter {
+            !accepted.contains($0) && !cleared.contains($0)
+                && (bankScenario == nil || (($0 != "b02" || q >= 13) && ($0 != "b05" || q >= 25)))
+        }
         let guaranteed = MPCProgressionWalls.guaranteedCase(nextMission: q + 1, ownedRelicIDs: relics.ownedIDs)
         accepted.formUnion(MPCDailyBountyRotation.issue(dayOrdinal: ordinal, eligibleIDs: eligible).guaranteeing(guaranteed).offerIDs)
     }
@@ -643,6 +723,7 @@ final class Campaign {
     // MARK: Battles
 
     func attemptMain(stopAfterSalve: Bool = false) -> Bool {
+        guard bankHasTime else { towerGated = true; return false }
         shop()
         let mission = q + 1, key = "main-\(mission)"
         guard storyOpen, !knownLoss(key) else { return false }
@@ -653,13 +734,19 @@ final class Campaign {
         let plans = cards(forMission: mission).flatMap { sequence in
             bountyRelicCandidates(mission: mission, owned: relics.ownedIDs).flatMap { bountyRelic in
                 (mission >= 5 && !passives.isEmpty ? passives.map { Optional($0) } : [nil]).flatMap { passive in
-                    (mission >= 5 ? [6.0, 14.0] as [Double?] : [nil]).map { (sequence, bountyRelic, passive, $0) } } } }
+                    (mission >= 10 ? [6.0, 14.0] as [Double?] : [nil]).map { (sequence, bountyRelic, passive, $0) } } } }
         let shift = plans.isEmpty ? 0 : rotation % plans.count
-        for (sequence, bountyRelic, passive, offset) in plans[shift...] + plans[..<shift] {
+        let orderedPlans = Array(plans[shift...] + plans[..<shift])
+        let planKey = "\(key)|\(stats.attackBP)|\(stats.maxHP)|\(stats.damageReductionBP)|\(passives.sorted())|\(relics.ownedIDs.sorted())|\(rotation)"
+        let resume = min(mainPlanCursors[planKey, default: 0], orderedPlans.count)
+        for index in resume..<orderedPlans.count {
+            guard bankHasTime else { towerGated = true; return false }
+            let (sequence, bountyRelic, passive, offset) = orderedPlans[index]
+            mainPlanCursors[planKey] = index + 1
             attempts += 1
             let consumables = mission >= 5 && salve > 0 ? ["consumable_pain_salve": 1] : [:]
-            let l = loadout(mission: mission, gear: stats, passive: passive, sequence: sequence, bountyRelic: bountyRelic)
-            let report = try! ChapterDriver.run(q: mission, sequence: sequence, mask: mission == 3 || mission == 4,
+            let l = housingBattleLoadout(loadout(mission: mission, gear: stats, passive: passive, sequence: sequence, bountyRelic: bountyRelic), target: "main")
+            let report = try! CampaignFights.story(q: mission, sequence: sequence, mask: (3...9).contains(mission),
                                                 consumables: consumables, priorityCore: profile.priorityCore,
                                                 ultimate: mission >= 14, loadout: l, medalOffset: offset,
                                                 precise: true, actionDelay: profile.actionDelay)
@@ -668,12 +755,21 @@ final class Campaign {
             let won = report.session.outcome == .victory
             wear(passive, won: won)
             if won {
+                mainPlanCursors.removeValue(forKey: planKey)
+                if ProcessInfo.processInfo.environment["BANK_TRACE_WINS"] == "1" {
+                    print("SIM_WIN Q\(mission) order=\(sequence.map(\.rawValue).joined(separator: ",")) passive=\(passive ?? "-") medal=\(offset ?? -1) attempts=\(attempts)")
+                }
                 let reward = MPCChapterOneThirtyMissionContract.firstClear(for: mission)!
                 // EARLY_SHIFT=n: n more copper on Q3 and on Q5, 2n less on Q30 (same chapter total).
                 let shift = Int(ProcessInfo.processInfo.environment["EARLY_SHIFT"] ?? "") ?? 0
-                let paid = reward.copper + ([3, 5].contains(mission) ? shift : mission == 30 ? -2 * shift : 0)
+                let paid = reward.copper + ([3, 5].contains(mission) ? shift
+                    : bankScenario != nil ? (mission >= 26 ? -2 * shift / 5 : 0) : mission == 30 ? -2 * shift : 0)
                 copper += paid; merit += reward.merit; earned["main", default: 0] += paid
                 q = mission
+                if bankScenario != nil {
+                    for item in reward.itemIDs { inventory[item, default: 0] += 1 }
+                    bankAfterMission()
+                }
                 contribute("mission-\(mission)", .mission)
                 visit("main", key, won: true, attempts: attempts, seconds: total)
                 milestones.append(.init(mission: q, day: day, minutes: seconds.values.reduce(0, +) / 60,
@@ -692,6 +788,7 @@ final class Campaign {
     }
 
     func attemptTower() -> Bool {
+        guard bankHasTime else { towerGated = true; return false }
         let floor = tower + 1, key = "tower-\(floor)"
         guard churchOpen, floor <= towerLimit(completed: q), !knownLoss(key) else { return false }
         guard MPCDailyPacing.canFirstClearTower(clearedFloors: tower, day: dayNumber) else { towerGated = true; return false }
@@ -701,8 +798,8 @@ final class Campaign {
         for passive in passiveCandidates {
             for offset in [6.0, 14.0, 22.0] {
                 attempts += 1
-                let l = loadout(mission: mission, gear: stats, passive: passive, sequence: cards(forMission: mission)[0], bountyRelic: worn)
-                let report = try! TowerDriver.run(number: floor, medalOffset: offset, suppliedLoadout: l, actionDelay: profile.actionDelay)
+                let l = housingBattleLoadout(loadout(mission: mission, gear: stats, passive: passive, sequence: cards(forMission: mission)[0], bountyRelic: worn), target: key.hasPrefix("bounty") ? "bounty" : "tower")
+                let report = try! CampaignFights.tower(number: floor, medalOffset: offset, suppliedLoadout: l, actionDelay: profile.actionDelay)
                 spend("tower", report.seconds); total += report.seconds
                 let won = report.session.outcome == .victory
                 wear(passive, won: won)
@@ -724,6 +821,7 @@ final class Campaign {
     }
 
     func attemptBounty(_ id: String) -> Bool {
+        guard bankHasTime else { towerGated = true; return false }
         let key = "bounty-\(id)"
         guard churchOpen, accepted.contains(id), !cleared.contains(id), !knownLoss(key),
               let bounty = MPCChurchBountyCatalog.all.first(where: { $0.id == id }) else { return false }
@@ -733,8 +831,8 @@ final class Campaign {
         for passive in passiveCandidates {
             for offset in [6.0, 14.0, 22.0] {
                 attempts += 1
-                let l = loadout(mission: mission, gear: stats, passive: passive, sequence: cards(forMission: mission)[0], bountyRelic: worn)
-                let report = try! TowerDriver.run(number: 1, medalOffset: offset, suppliedLoadout: l,
+                let l = housingBattleLoadout(loadout(mission: mission, gear: stats, passive: passive, sequence: cards(forMission: mission)[0], bountyRelic: worn), target: key.hasPrefix("bounty") ? "bounty" : "tower")
+                let report = try! CampaignFights.tower(number: 1, medalOffset: offset, suppliedLoadout: l,
                                                   actionDelay: profile.actionDelay, encounterID: bounty.encounterID)
                 spend("bounty", report.seconds); total += report.seconds
                 let won = report.session.outcome == .victory
@@ -804,7 +902,8 @@ final class Campaign {
         guard churchOpen, let wall = MPCProgressionWalls.wall(mission: q + 1) else { return false }
         if let floor = wall.towerFloor, tower < floor {
             while tower < floor && attemptTower() {}
-            if tower >= floor && attemptMain() { return true }
+            let caseMissing = wall.caseID.map { !cleared.contains($0) } ?? false
+            if tower >= floor && !(bankScenario?.protectBudget == true && caseMissing) && attemptMain() { return true }
         }
         if let caseID = wall.caseID, let relic = MPCBountyRelicCatalog.relic(forCase: caseID),
            !relics.ownedIDs.contains(relic.id) {
@@ -842,12 +941,14 @@ final class Campaign {
 
     func run() -> RunResult {
         var stuckAt: Int?
+        if bankScenario != nil { bankBeginDay() }
         // Days waited for J0 pay since the story last moved; three in a row with nothing new is stuck.
         var copperWaits = 0, lastMission = q
         while q < 30 {
             if q != lastMission { lastMission = q; copperWaits = 0 }
             if dayNumber > assumptions.maxDays { stuckAt = q + 1; break }
             towerGated = false; copperShort = false
+            if !bankHasTime { nextDay(); continue }
             if policy == .completionist { clearAvailableSide() }
             // The next mission opens on a later day: today's usual side content, then tomorrow.
             if !storyOpen {
@@ -859,6 +960,13 @@ final class Campaign {
                 }
                 nextDay()
                 continue
+            }
+            if policy == .hinted, bankScenario?.protectBudget == true,
+               let wall = MPCProgressionWalls.wall(mission: q + 1),
+               (wall.towerFloor.map { tower < $0 } ?? false) || (wall.caseID.map { !cleared.contains($0) } ?? false) {
+                // Explain known wall requirements before spending eight salves on retries.
+                if followWallHint() { continue }
+                if towerGated { nextDay(); continue }
             }
             if attemptMain() { continue }
             var advanced = false
@@ -891,10 +999,13 @@ final class Campaign {
             // Side content may have made a plan winnable that only works with the salve.
             if !advanced { advanced = retryWithFreshSalves() }
             // Out of today's J0 work before the copper was there: tomorrow pays in full again.
-            if !advanced && copperShort && copperWaits < (Int(ProcessInfo.processInfo.environment["COPPER_WAITS"] ?? "") ?? 3) { copperWaits += 1; nextDay(); continue }
+            let waitLimit = bankScenario != nil ? 30 : (Int(ProcessInfo.processInfo.environment["COPPER_WAITS"] ?? "") ?? 3)
+            if !advanced && copperShort && copperWaits < waitLimit { copperWaits += 1; nextDay(); continue }
             if !advanced { stuckAt = q + 1; break }
         }
-        return RunResult(policy: policy.rawValue, profile: profile.name, startOffset: startOffset, assumptions: assumptions,
+        if bankScenario != nil { bankFinish() }
+        housingFinish()
+        var result = RunResult(policy: policy.rawValue, profile: profile.name, startOffset: startOffset, assumptions: assumptions,
                          finalMission: q, stuckAt: stuckAt, days: dayNumber,
                          minutes: seconds.mapValues { ($0 / 60 * 10).rounded() / 10 },
                          battleSecondsByKind: battleOnly.mapValues { ($0 * 10).rounded() / 10 },
@@ -916,5 +1027,8 @@ final class Campaign {
                                       housingDays: housingDays, staminaShort: staminaShort),
                          merit: merit, towerFloor: tower, bountiesCleared: cleared.sorted(),
                          passives: passives, bountyRelics: relics.ownedIDs.sorted(), milestones: milestones, visits: visits)
+        if bankScenario != nil { result.bankExperiment = bankSummary }
+        if housingEnabled { result.housingExperiment = housingSummary }
+        return result
     }
 }

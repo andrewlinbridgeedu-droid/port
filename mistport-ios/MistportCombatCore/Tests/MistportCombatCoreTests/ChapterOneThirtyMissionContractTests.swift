@@ -9,7 +9,10 @@ struct ChapterOneThirtyMissionContractTests {
         for mission in MPCChapterOneCatalog.missions {
             let encounter = try #require(MPCChapterOneCatalog.encounters.first { $0.id == mission.encounterID })
             #expect(encounter.name == mission.name)
-            #expect(encounter.companionSlots == 0)
+            // Q28–Q30: the hero plus 诺恩 and 奥黛尔 (2026-10-10); every other mission is solo.
+            let party = (28...30).contains(mission.number)
+            #expect(encounter.companionSlots == (party ? 2 : 0))
+            #expect(mission.companionIDs == (party ? ["ally_norn_kade", "ally_odelle_finn"] : []))
             #expect(MPCChapterOneThirtyMissionContract.actors(for: mission.number).map(\.contentID) == encounter.waves.first?.enemyIDs)
             #expect(encounter.fixedRewardItemIDs == mission.rewardItemIDs)
             #expect(mission.rewardItemIDs == MPCChapterOneThirtyMissionContract.firstClear(for: mission.number)?.itemIDs)

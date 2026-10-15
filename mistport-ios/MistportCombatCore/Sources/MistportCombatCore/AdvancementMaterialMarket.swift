@@ -13,9 +13,9 @@ public enum MPCAdvancementMaterialMarket {
         public let ownedIDs: Set<String>
     }
     public static let offers: [Offer] = [
-        .init(id: "mirrorMothScale", unlockMission: 17, price: 260),
-        .init(id: "reverseClockEssence", unlockMission: 20, price: 340),
-        .init(id: "ownerlessMaskWax", unlockMission: 23, price: 480)
+        .init(id: "mirrorMothScale", unlockMission: 17, price: 500),
+        .init(id: "reverseClockEssence", unlockMission: 20, price: 650),
+        .init(id: "ownerlessMaskWax", unlockMission: 23, price: 950)
     ]
     public static func purchase(_ id: String, completedMissionNumbers: Set<Int>, coins: Int,
                                 ownedIDs: Set<String>) -> Receipt? {

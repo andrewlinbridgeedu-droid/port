@@ -16,6 +16,9 @@ public sealed class EnemyPresentationRequest
 
 public static class EnemyPresenter
 {
+    public const float BattleScale = 0.8f;
+    public static readonly Vector3 BattleRetreat = new Vector3(0f, 0f, 0.9f);
+
     const float BoundsEpsilon = 0.0001f;
 
     public static EnemyHandle Present(EnemyPresentationRequest request)
@@ -77,7 +80,8 @@ public static class EnemyPresenter
             return false;
         }
 
-        root.position = slot.WorldPosition + request.Profile.SlotOffset;
+        root.localScale = Vector3.one * BattleScale;
+        root.position = slot.WorldPosition + request.Profile.SlotOffset + BattleRetreat;
         root.rotation = Quaternion.identity;
 
         var anchors = request.Profile.Anchors ?? new EnemyAnchorConfiguration();
@@ -167,8 +171,9 @@ public static class EnemyPresenter
 
         var hover = handle.HoverMotion;
         if (hover != null) hover.StopAndReset();
+        handle.EnemyRoot.localScale = Vector3.one * BattleScale;
         handle.EnemyRoot.SetPositionAndRotation(
-            slot.WorldPosition + handle.Profile.SlotOffset,
+            slot.WorldPosition + handle.Profile.SlotOffset + BattleRetreat,
             Quaternion.identity);
         if (handle.MotionRoot != null)
         {

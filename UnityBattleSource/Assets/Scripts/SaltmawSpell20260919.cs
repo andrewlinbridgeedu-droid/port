@@ -75,10 +75,12 @@ public sealed class SaltmawSpell20260919 : MonoBehaviour
         if(radiance)radiance.Draw(mouth,tipPoint,endPoint,age,contact,held,poison);
         if(folded)folded.Draw(mouth,tipPoint,endPoint,age,contact,held,poison);
         if(held){pulse+=Time.deltaTime;if(pulse>.48f){pulse=0;gather.Stop();gather=Play("Gather",mouth,.75f);}return;}
-        if(!released&&age>=.24f){released=true;launch=mouth;gather.Stop();travel=Play(poison?"CorrosiveMist":"Gather",mouth,poison?1.45f:.55f);}
+        // The painted spit / salt spikes of the hit layer replace the travelling mist and the
+        // impact puff (2026-10-09: the dark green blob landed on the hero before the spit).
+        if(!released&&age>=.24f){released=true;launch=mouth;gather.Stop();travel=Play(poison?"CorrosiveMist":"Gather",mouth,poison?1.45f:.55f);if(SpellSpectacle20260926.EnemyInkActive)travel.Stop();}
         if(released){float q=Mathf.Clamp01((age-.24f)/Mathf.Max(.01f,contact-.24f));var end=target();var p=Vector3.Lerp(launch,end,q)+Vector3.up*Mathf.Sin(q*Mathf.PI)*.20f;travel.SetLocation(p);
             if(spike){spike.gameObject.SetActive(age<contact);spike.position=p;float turn=25+245*Mathf.SmoothStep(0,1,q);spike.rotation=Quaternion.FromToRotation(Vector3.up,(end-launch).normalized)*Quaternion.Euler(0,turn,Mathf.Lerp(12,2,q));spike.localScale=new Vector3(.52f,.92f,.49f);float glint=Mathf.Pow(Mathf.Sin(q*Mathf.PI),3);foreach(var m in ownedMaterials)m.SetColor("_EmissionColor",new Color(.018f,.07f,.06f)+new Color(.035f,.13f,.11f)*glint);}
-            if(!impacted&&age>=contact){impacted=true;travel.Stop();Play(poison?"CorrosiveMist":"CrystalImpact",end,poison?1.9f:1.4f);}
+            if(!impacted&&age>=contact){impacted=true;travel.Stop();if(!SpellSpectacle20260926.EnemyInkActive)Play(poison?"CorrosiveMist":"CrystalImpact",end,poison?1.9f:1.4f);}
         }
     }
     void Pose(string n,Vector3 e){rig.Rotate(n,e);}

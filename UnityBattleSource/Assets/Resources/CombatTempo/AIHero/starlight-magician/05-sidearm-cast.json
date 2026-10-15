@@ -1,0 +1,13 @@
+{
+  "id": "05-sidearm-cast",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 31.46044624746451,
+  "sourceStart": 0.9,
+  "sourceRelease": 4.2,
+  "sourceEnd": 5.83,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}

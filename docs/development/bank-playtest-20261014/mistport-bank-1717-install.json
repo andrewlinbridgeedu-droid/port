@@ -1,0 +1,39 @@
+{
+  "info" : {
+    "arguments" : [
+      "devicectl",
+      "device",
+      "install",
+      "app",
+      "--device",
+      "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+      ".build/institutions-device/Build/Products/Debug-iphoneos/Mistport.app",
+      "--json-output",
+      "/private/tmp/mistport-bank-1717-install.json",
+      "--timeout",
+      "120"
+    ],
+    "commandType" : "devicectl.device.install.app",
+    "environment" : {
+      "TERM" : "dumb"
+    },
+    "jsonVersion" : 3,
+    "outcome" : "success",
+    "version" : "518.33"
+  },
+  "result" : {
+    "deviceIdentifier" : "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+    "installedApplications" : [
+      {
+        "bundleID" : "local.mistport.institutions",
+        "databaseSequenceNumber" : 4608,
+        "databaseUUID" : "1D3F58AF-7B21-4B37-9E40-0678366C3D09",
+        "installationURL" : "file:///private/var/containers/Bundle/Application/65BFD22E-A296-4CD4-9822-FFA23D427A55/Mistport.app/",
+        "launchServicesIdentifier" : "unknown",
+        "options" : {
+
+        }
+      }
+    ]
+  }
+}

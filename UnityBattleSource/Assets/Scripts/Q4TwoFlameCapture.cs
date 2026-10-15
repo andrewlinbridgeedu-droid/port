@@ -14,7 +14,7 @@ public sealed class Q4TwoFlameCapture:MonoBehaviour
   dir=Environment.GetEnvironmentVariable("MISTPORT_Q4_CAPTURE")??"/tmp/q4-two-flame";Directory.CreateDirectory(dir);File.Delete(Path.Combine(dir,"passed.txt"));
   Screen.SetResolution(720,1280,false);Application.logMessageReceived+=Count;Time.captureFramerate=30;
   yield return new WaitForSeconds(2);
-  var b=FindFirstObjectByType<BattlePrototype>();b.SetNativeCombatEnabled(false);b.UseEarlyHellHoundModel();b.SetNativeCombatEnabled(true);
+  var b=FindFirstObjectByType<BattlePrototype>();b.SetNativeCombatEnabled(false);b.UseEarlyHellHoundModel();b.SetEarlyBattlePresence("4");b.SetTempoSample("chapter01_q04_encounter");b.SetNativeCombatEnabled(true);
   b.SetQ4HoundPhase("probe");b.PresentEnemyAttack("hell-hound-primary");yield return new WaitForSeconds(.25f);yield return new WaitForEndOfFrame();Shot("01-probe");yield return new WaitForSeconds(.8f);
   if(contacts!=1)throw new Exception("Probe contact count "+contacts);
   b.SetQ4HoundPhase("charge");yield return new WaitForSeconds(1.7f);yield return new WaitForEndOfFrame();Shot("02-paired-charge");

@@ -135,7 +135,7 @@
     },
     {
       "id": "fool_skill_04",
-      "name": "身份错置",
+      "name": "张冠李戴",
       "unlock_step": 8,
       "target": "SINGLE_ENEMY",
       "base_coefficient_bp": 8000,

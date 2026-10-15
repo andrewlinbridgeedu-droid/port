@@ -35,18 +35,9 @@ public enum MPCTavernPrizeRotation {
                 guard let relic = MPCChapterOneCatalog.relics.first(where: { $0.id == offer.relicID }) else { return nil }
                 return .init(dayOrdinal: dayOrdinal, kind: .relic, itemID: offer.relicID, name: relic.name)
             }
-        let materialNames = [
-            "mirrorMothScale": "星纹镜蛾鳞粉",
-            "reverseClockEssence": "逆走钟芯髓液",
-            "ownerlessMaskWax": "无主面蜡"
-        ]
-        let materials = MPCAdvancementMaterialMarket.offers
-            .filter { completedMissions.contains($0.unlockMission) && !ownedMaterialIDs.contains($0.id) }
-            .compactMap { offer -> MPCTavernPrize? in
-                guard let name = materialNames[offer.id] else { return nil }
-                return .init(dayOrdinal: dayOrdinal, kind: .advancementMaterial, itemID: offer.id, name: name)
-            }
-        let choices = relics + materials
+        // New wagers never grant advancement materials. Old photographed stakes
+        // remain decodable and earned entitlements remain untouched.
+        let choices = relics
         guard !choices.isEmpty else { return nil }
         return choices[(dayOrdinal / 3) % choices.count]
     }

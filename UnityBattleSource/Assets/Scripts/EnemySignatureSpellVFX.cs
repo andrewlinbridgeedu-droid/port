@@ -113,6 +113,9 @@ public sealed partial class EnemySignatureSpellVFX : MonoBehaviour
             if (id != generation) yield break;
             onRelease?.Invoke();
             if (id != generation) yield break;
+            // The spell layer paints the hound's breath (2026-10-10): it leaves the jaw now.
+            if (kind == Kind.Hound && SpellSpectacle20260926.DrawsBreath)
+                SpellSpectacle20260926.EnemyBreath(GetComponentInParent<EnemyHandle>(), source, target, TravelDuration);
             if (launchArm != null && !launchArm.Release(target()))
             { launchArm.Dispose(); launchArm = null; }
             t = 0;
@@ -160,6 +163,7 @@ public sealed partial class EnemySignatureSpellVFX : MonoBehaviour
     Vector3 Radial(float angle) { return right * Mathf.Cos(angle) + up * Mathf.Sin(angle); }
     void Draw(Kind kind, int variant, int phase, float p, Vector3 source, Vector3 target)
     {
+        if (kind == Kind.Hound && SpellSpectacle20260926.DrawsBreath) return;   // painted by the spell layer
         float rawPhaseProgress=p;
         if (phase == 2) p = EnemyImpactEnvelope20260921.Sample(p);
         archiveShield?.Clear(); glow.Clear(); ink.Clear(); flames.Clear(); smoke.Clear(); bloom.Clear(); parchment.Clear();
@@ -571,8 +575,10 @@ public sealed partial class EnemySignatureSpellVFX : MonoBehaviour
     }
     void Stroke(Layer layer, int count, float width, Color color, bool taper = false)
     {
+        // Straightened (2026-10-03: 你很多都设置成这样弯弯的，都改掉吧); rings shrink to a knot.
+        var points = StraightLines20261003.Flattened(curve, count);
         for (int i = 1; i < count; i++)
-            Line(layer, curve[i-1], curve[i], width * (taper ? Mathf.Sin(Mathf.PI * (i-.5f)/(count-1)) : 1), color);
+            Line(layer, points[i-1], points[i], width * (taper ? Mathf.Sin(Mathf.PI * (i-.5f)/(count-1)) : 1), color);
     }
     void Spark(Vector3 c, Vector3 direction, float length, Color color)
     {

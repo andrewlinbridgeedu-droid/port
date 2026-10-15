@@ -79,7 +79,7 @@ public sealed class EncoreBellPresentation : MonoBehaviour
         if (handle == null || handle.VisualRoot == null) return;
         bellRoot = CreateRipple(handle.VisualRoot);
         bellRoutine = StartCoroutine(PlayRipple());
-        EnsureAudio().PlayOneShot(GetBellClip());
+        var bell = EnsureAudio(); bell.volume = SpellAudioDirector20260924.Scaled(.42f); bell.PlayOneShot(GetBellClip());
     }
 
     public void Release() { Clear(); }

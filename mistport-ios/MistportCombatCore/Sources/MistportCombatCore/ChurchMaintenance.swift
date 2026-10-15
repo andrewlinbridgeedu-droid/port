@@ -98,7 +98,7 @@ public enum MPCChurchMaintenanceCatalog {
         let waves = baseWaves.enumerated().map { wave, ids in
             MPCEncounterWave(enemyIDs: ids.enumerated().map { slot, source in source + "~maintenance-s\(d.site)-w\(wave)-p\(slot)" })
         }
-        let title = (d.patrol ? "封口巡检" : "塔内维护 · 第\(max(1, d.floor - 9))–\(d.floor)层段") + " · 第\(d.site)/3处"
+        let title = (d.patrol ? "巡检" : "维护\(max(1, d.floor - 9))–\(d.floor)层") + " \(d.site)/3"
         return .init(id:id,name:title,investigationID:"church_maintenance",waves:waves,companionSlots:0,fixedRewardItemIDs:[],firstClearRelicID:nil,recommendedTags:["church_maintenance"])
     }
     static func validJobID(_ id: String) -> Bool {

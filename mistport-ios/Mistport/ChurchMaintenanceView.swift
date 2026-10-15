@@ -60,7 +60,8 @@ struct ChurchMaintenanceView: View {
                             Text(job.kind == .patrol ? "封口巡检" : "第\(max(1,job.floor-9))–\(job.floor)层维护")
                             Spacer()
                             Text(job.activeBattleID == nil ? "继续核验" : "中断待结")
-                        }.padding(.vertical,13).overlay(alignment:.bottom) { Rectangle().fill(maintenanceGold.opacity(0.5)).frame(height:1) }
+                        }.padding(.vertical,13).contentShape(Rectangle())
+                            .overlay(alignment:.bottom) { Rectangle().fill(maintenanceGold.opacity(0.5)).frame(height:1) }
                     }.buttonStyle(.plain)
                 }
             }
@@ -119,7 +120,8 @@ struct ChurchMaintenanceView: View {
                                 HStack(alignment:.top) {
                                     Text(excluded ? "×" : "◇").foregroundStyle(maintenanceGold)
                                     Text(choice.text).multilineTextAlignment(.leading)
-                                }.frame(maxWidth:.infinity,alignment:.leading).padding(.vertical,10)
+                                }.frame(maxWidth:.infinity,alignment:.leading).padding(.vertical,12)
+                                    .contentShape(Rectangle()) // the whole row answers, not just the glyphs (playtest 2026-10-04)
                                     .overlay(alignment:.bottom) { Rectangle().fill(maintenanceGold.opacity(0.35)).frame(height:1) }
                             }.buttonStyle(.plain).disabled(excluded).opacity(excluded ? 0.5 : 1)
                         }
@@ -181,7 +183,9 @@ private struct ChurchMaintenanceBattleView: View {
                         do { session=try game.beginChurchMaintenance(jobID:job.id,battleID:battleID,skills:skills); started=true }
                         catch { notice="无法进入清剿，请检查工单或借物未结记录。" }
                     })
-                VStack { HStack { Button("返回工单",action:onExit).padding(16); Spacer() }; Spacer() }
+                if session == nil {
+                    VStack { HStack { GameArtReturnButton(title: "返回工单", action: onExit).padding(16); Spacer() }; Spacer() }
+                }
             }
             if victory {
                 Color.black.opacity(0.85).ignoresSafeArea()

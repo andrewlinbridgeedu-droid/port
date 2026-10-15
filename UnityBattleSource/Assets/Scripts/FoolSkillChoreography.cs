@@ -371,9 +371,11 @@ public sealed class FoolSkillChoreography : MonoBehaviour
     static Vector3 V(float x,float y,float z) => new Vector3(x,y,z);
     static float Smooth(float value) { value = Mathf.Clamp01(value); return value * value * (3f - 2f * value); }
 
-    float ExpectedContact()
+    float ExpectedContact() => ExpectedContact(CurrentSkill);
+
+    public static float ExpectedContact(string skill)
     {
-        switch (CurrentSkill)
+        switch (skill)
         {
             case "fool_skill_01": return .6192f;
             case "fool_skill_02": return .38f;

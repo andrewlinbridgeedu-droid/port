@@ -16,6 +16,18 @@ public sealed class UnityBattleBridge : MonoBehaviour
     readonly Dictionary<Transform, Quaternion> originalRotations = new Dictionary<Transform, Quaternion>();
     readonly Queue<string> pendingActions = new Queue<string>();
     public bool IsEnemyExiting(EnemyHandle actor) => actor && actor.EnemyRoot && exits.ContainsKey(actor.EnemyRoot);
+
+    /// A body reused for a later wave must not stay "exiting": the first wave uses the
+    /// family template itself, and after its death every later wave with the same id
+    /// re-enabled a body the bridge still treated as leaving (church maintenance, 2026-10-04).
+    public void ForgetExit(Transform root)
+    {
+        if (!root) return;
+        if (exits.TryGetValue(root, out var exit)) { if (exit != null) StopCoroutine(exit); exits.Remove(root); }
+        RestoreExitMaterials(root);
+        if (originalRotations.TryGetValue(root, out var rotation)) root.localRotation = rotation;
+        RestoreEnemyIdle(root);
+    }
     string pendingTargetPayload;
     string pendingVisibilityPayload;
     const float AnchorReportInterval = 0.12f;
@@ -456,7 +468,12 @@ public sealed class UnityBattleBridge : MonoBehaviour
         if (action.StartsWith("player-impact:", StringComparison.Ordinal)) { battle.PresentPlayerImpact(action.Substring("player-impact:".Length)); return; }
         if (action.StartsWith("audio-volume:", StringComparison.Ordinal)) {
             if (float.TryParse(action.Substring("audio-volume:".Length), NumberStyles.Float, CultureInfo.InvariantCulture, out var volume))
+            {
                 SpellAudioDirector20260924.SetVolume(volume);
+                // Zero means silent everywhere: enemy, hit and Effekseer sounds do not
+                // go through the spell director (a muted review still played them).
+                AudioListener.volume = volume <= 0f ? 0f : 1f;
+            }
             return;
         }
         if(action.StartsWith("church-status:")){ChurchStatusPresentation20260917.Get(battle).Apply(action.Substring("church-status:".Length));return;}
@@ -479,11 +496,20 @@ public sealed class UnityBattleBridge : MonoBehaviour
         if (action.StartsWith("wave-instances:")) { ChurchStatusPresentation20260917.Get(battle).Clear(); battle.RequestWaveInstances(action.Substring("wave-instances:".Length)); return; }
         if (action.StartsWith("archive-state:")) { battle.SetArchivePhase(action.Substring("archive-state:".Length)); return; }
         if (action.StartsWith("leech-charge:")) { battle.SetLeechCharge(action.Substring("leech-charge:".Length)); return; }
+        if (action.StartsWith("skill-timing:")) { battle.SetOrderedSkillTiming(action.Substring("skill-timing:".Length)); return; }
+        if (action.StartsWith("ordered-impact:")) { battle.PresentOrderedImpact(action.Substring("ordered-impact:".Length)); return; }
         if (action.StartsWith("skill-targets:")) { battle.SetSkillTargets(action.Substring("skill-targets:".Length)); return; }
         if (action.StartsWith("sidestep-secondary:")) { battle.SetSidestepSecondary(action.Substring("sidestep-secondary:".Length)); return; }
         if (action.StartsWith("enemy-heal:")) { battle.PresentEnemyHealing(action.Substring("enemy-heal:".Length)); return; }
         if (action.StartsWith("enemy-impact:")) { battle.PresentEnemyImpact(action.Substring("enemy-impact:".Length)); return; }
         if (action.StartsWith("q4-hound:")) { battle.SetQ4HoundPhase(action.Substring("q4-hound:".Length)); return; }
+        if (action == "tempo-mask") { CombatTempoPresentation.Get(battle).MaskCast(); return; }
+        if (action.StartsWith("combat-speed:")) { battle.SetCombatSpeed(action.Substring("combat-speed:".Length)); return; }
+        if (action.StartsWith("tempo-sample:")) { battle.SetTempoSample(action.Substring("tempo-sample:".Length)); return; }
+        if (action.StartsWith("hero-outfit:")) { CombatTempoPresentation.Get(battle).SetOutfit(action.Substring("hero-outfit:".Length)); return; }
+        if (action.StartsWith("enemy-light:")) { CombatTempoPresentation.Get(battle).Light(action.Substring("enemy-light:".Length)); return; }
+        if (action.StartsWith("light-contact:")) { CombatTempoPresentation.Get(battle).LightContact(action.Substring("light-contact:".Length)); return; }
+        if (action.StartsWith("light-cancel:")) { CombatTempoPresentation.Get(battle).CancelLight(action.Substring("light-cancel:".Length)); return; }
         if (action == "combat-start") { battle.SetNativeCombatEnabled(true); return; }
         if (action == "combat-stop") { ChurchStatusPresentation20260917.Get(battle).Clear(); battle.SetNativeCombatEnabled(false); return; }
         if (!battle.NativeCombatEnabled &&
@@ -555,6 +581,18 @@ public sealed class UnityBattleBridge : MonoBehaviour
             case "encore-charge":
                 battle.PresentEncoreCharge();
                 break;
+            case "angel-intro":
+                battle.RequestAngelIntro();
+                break;
+            case "angel-intro-skip":   // the app's 跳过 (2026-10-11): the whole cutscene goes at once
+                SpellSpectacle20260926.SkipAngelIntro();
+                break;
+            case "party-show":
+                battle.RequestParty();
+                break;
+            case "party-clear":
+                battle.ClearPartyRigs();
+                break;
             case "encore-bell":
                 battle.PresentEncoreBell();
                 break;
@@ -566,6 +604,8 @@ public sealed class UnityBattleBridge : MonoBehaviour
                 break;
             default:
                 if(action.StartsWith("emerald-spell:", StringComparison.Ordinal)) { battle.SetEmeraldSpell(action.Substring(14)); break; }
+                // ally:<norn|odelle>:<attack|cast|guard|hit|down|revive> (2026-10-10, the final-boss party)
+                if(action.StartsWith("ally:", StringComparison.Ordinal)) { var ap=action.Split(':'); if(ap.Length==3) battle.PresentPartyAction(ap[1],ap[2]); break; }
                 if(action.StartsWith("emerald-poison:", StringComparison.Ordinal) && int.TryParse(action.Substring(15), out var poisonRemaining)) { battle.SetEmeraldPoison(poisonRemaining); break; }
                 if (action.StartsWith("masquerade:", StringComparison.Ordinal) && int.TryParse(action.Substring(11), out var charges)) {
                     battle.SetMasquerade(charges, false); break;

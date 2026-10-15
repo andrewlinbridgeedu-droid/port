@@ -38,6 +38,8 @@ public sealed class EnemyHandle : MonoBehaviour
     public Transform MotionRoot => motionRoot;
     public Transform VisualRoot => visualRoot;
     public Transform Model => model;
+    // Presentation swap only. Formation and gameplay identity remain stable.
+    internal void SetTempoPresentationModel(Transform value) => model = value;
     public Transform ShieldAnchor => shieldAnchor;
     public Transform TargetAnchor => targetAnchor;
     public Transform HealthBarAnchor => healthBarAnchor;

@@ -43,7 +43,8 @@ struct NeighborErrandTests {
 
     @Test func twoOrThreeRequestsADayFromDayTwo() {
         var ledger = MPCNeighborLedger()
-        #expect(ledger.open(day: 1, completedMissions: [1, 2, 3]).isEmpty)
+        let day1 = ledger.open(day: 1, completedMissions: [1, 2, 3])
+        #expect(day1.count == 2 && day1.allSatisfy { $0.errand!.kind != .deliver })
         let day2 = ledger.open(day: 2, completedMissions: [1, 2, 3])
         #expect(day2.count == 2 && day2.allSatisfy { $0.errand!.kind != .deliver })
         let day3 = ledger.open(day: 3, completedMissions: workshop)

@@ -85,11 +85,7 @@ struct TavernInteriorView: View {
                     .allowsHitTesting(false)
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 12) {
-                        Button(action: onBack) {
-                            Image(systemName: "chevron.left").font(.system(size: 18, weight: .bold))
-                                .frame(width: 44, height: 44)
-                                .background(.black.opacity(0.5), in: Circle())
-                        }.accessibilityLabel("返回港城")
+                        GameArtReturnButton(action: onBack)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("暮钟酒馆").font(.system(size: 26, weight: .heavy, design: .serif))
                             Text("左右拖动看酒馆 · 灰筹的牌桌")
@@ -305,14 +301,7 @@ struct BountyPokerRound: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel("查看两种牌局玩法")
-            Button { dismiss() } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 13, weight: .bold))
-                    .frame(width: 44, height: 44)
-                    .modifier(GameArtControlSurface())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("暂离牌局")
+            GameArtReturnButton(title: "暂离牌局") { dismiss() }
         }
     }
 
@@ -337,13 +326,7 @@ struct BountyPokerRound: View {
                         .modifier(GameArtControlSurface())
                 }
                 .accessibilityLabel("查看两种牌局玩法")
-                Button { dismiss() } label: {
-                    Image(systemName: "xmark").font(.system(size: 16, weight: .bold))
-                        .frame(width: 44, height: 44).foregroundStyle(gold)
-                        .modifier(GameArtControlSurface())
-                }
-                .accessibilityLabel("暂离牌局")
-                .buttonStyle(.plain)
+                GameArtReturnButton(title: "暂离牌局") { dismiss() }
             }
             .frame(height: 44)
             if let douGame {
@@ -1019,8 +1002,7 @@ struct BountyPokerRound: View {
                     Text("牌桌玩法")
                         .font(.system(size: 26, weight: .bold, design: .serif)).foregroundStyle(gold)
                     Spacer()
-                    Button("完成") { showsHelp = false }
-                        .font(.system(size: 14, weight: .bold)).foregroundStyle(gold)
+                    GameArtReturnButton(title: "返回牌桌") { showsHelp = false }
                 }
                 helpSection("五张换牌 · 轻松", text: "一副52张牌，各拿5张；你可换0–3张，按整手牌型比较：同花顺＞四条＞葫芦＞同花＞顺子＞三条＞两对＞一对＞高牌。同型再比点数。平局退注，败局失注。通缉线索局若前四局未赢，第五局保底取口供；酒馆常驻局没有保底。")
                 helpSection("雾港斗地主 · 牌技", text: "这是三人两副牌的雾港变体，共108张，各34张、留6张底牌。轮流叫0–3分，最高者为地主，拿底牌并先出；其余两人合作。单张、对子、三张、三带一／二、顺子、连对、飞机及带翼、四带二均可出。同型同张数才能压；4–8张同点炸弹压普通牌，较长炸弹更大；四张王是最大的天王炸。连过两家，牌权回到上一位出牌者。地主先出完则地主胜，任一农民先出完则农民方胜。每局真随机洗牌，没有保底。")
@@ -1034,6 +1016,10 @@ struct BountyPokerRound: View {
         .background(Color(red: 0.025, green: 0.055, blue: 0.10).ignoresSafeArea())
         .preferredColorScheme(.dark)
     }
+
+    #if DEBUG
+    var returnButtonHelpReview: some View { helpSheet }
+    #endif
 
     private func helpSection(_ title: String, text: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {

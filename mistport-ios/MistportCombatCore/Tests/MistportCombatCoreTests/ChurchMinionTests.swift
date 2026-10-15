@@ -19,13 +19,15 @@ struct ChurchMinionTests {
                     for slot in floor.waves[wave].indices where floor.waves[wave][slot].species == species {
                         let enemy = floor.waves[wave][slot]
                         #expect(!enemy.elite)
+                        // Minion packs (2026-10-03) keep 55% of the old escort HP and 60% of its attack.
+                        let hpShare = MPCChurchTowerCatalog.minionHPPercent, attackShare = MPCChurchTowerCatalog.minionAttackPercent
                         if floor.number <= 10 {
-                            #expect((180...235).contains(enemy.hp))
-                            #expect((18...23).contains(enemy.attack))
+                            #expect((180 * hpShare / 100...235 * hpShare / 100).contains(enemy.hp))
+                            #expect((18 * attackShare / 100...23 * attackShare / 100).contains(enemy.attack))
                         } else {
                             let band = (floor.number - 11) / 10
                             let authoredReplacement = enemy.hp == 600 + (floor.waves.count == 1 ? 140 : 0) && enemy.attack == 45
-                            let smallEscort = enemy.hp == 210 + band * 19 && enemy.attack == 20 + band * 2
+                            let smallEscort = enemy.hp == (210 + band * 19) * hpShare / 100 && enemy.attack == (20 + band * 2) * attackShare / 100
                             #expect(authoredReplacement || smallEscort)
                         }
                         let id = floor.enemyID(wave: wave, slot: slot)

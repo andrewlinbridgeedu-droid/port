@@ -19,7 +19,7 @@ struct SequenceEightRitualTests {
 
     @Test(arguments: ["material", "proof", "copper"])
     func anyShortfallSpendsNothing(missing: String) {
-        var coins = missing == "copper" ? 279 : 1000
+        var coins = missing == "copper" ? 299 : 1000
         var ingredients = missing == "material" ? materials.subtracting(["ownerlessMaskWax"]) : materials
         let before = (coins, ingredients)
         var inventory = proofs
@@ -36,14 +36,14 @@ struct SequenceEightRitualTests {
         var coins = 1000, ingredients = materials.union(["unrelated_material"])
         let receipt = try MPCSequenceEightRitual.perform(id: "ritual", completedMissions: story, coins: &coins,
                                                          ingredients: &ingredients, inventory: proofs, existing: nil)
-        #expect(coins == 720 && ingredients == ["unrelated_material"])
-        #expect(receipt.fee == 280 && receipt.coinsBefore == 1000 && receipt.coinsAfter == 720)
+        #expect(coins == 700 && ingredients == ["unrelated_material"])
+        #expect(receipt.fee == 300 && receipt.coinsBefore == 1000 && receipt.coinsAfter == 700)
         #expect(Set(receipt.consumedIngredientIDs) == materials && receipt.verifiedProofIDs == MPCSequenceEightRitual.proofIDs)
         #expect(throws: MPCSequenceEightRitual.Failure.completed) {
             try MPCSequenceEightRitual.perform(id: "again", completedMissions: story, coins: &coins,
                                                ingredients: &ingredients, inventory: proofs, existing: receipt)
         }
-        #expect(coins == 720)
+        #expect(coins == 700)
         let decoded = try JSONDecoder().decode(MPCSequenceEightRitual.Receipt.self, from: JSONEncoder().encode(receipt))
         #expect(decoded == receipt)
     }

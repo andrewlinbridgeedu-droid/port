@@ -18,8 +18,8 @@ struct SkillGrowthTests {
         #expect(MPCSkillGrowth.upgradeCost(from: 5) == nil)
         #expect(MPCSkillGrowth.multiplierBasisPoints(for: 5) == 14_000)
         #expect(!MPCSkillGrowth.canUpgrade(.namelessStage))
-        #expect(!MPCSkillGrowth.canUpgrade(.turnTheTables))
-        #expect(!MPCSkillGrowth.canUpgrade(.backstageChange))
+        #expect(MPCSkillGrowth.canUpgrade(.turnTheTables))
+        #expect(MPCSkillGrowth.canUpgrade(.backstageChange))
     }
 
     @Test(arguments: [FoolSkillID.sidestepStrike, .maskedWhisper, .identityDisplacement, .fabricatedEvidence, .mirrorPursuit, .absurdFinale])

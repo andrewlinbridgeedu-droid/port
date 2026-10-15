@@ -1,0 +1,8 @@
+PASS full 72-hour term, three denominations, idempotent maturity and lifetime limit
+PASS free early redemption consumes the single welcome offer
+PASS reserve protection, locked assets in aid test, total loss and once-daily recovery
+PASS recovery taper: earning another copper never removes an entire 40-copper payment
+PASS the deposit and risk investment share the stage exposure ceiling
+PASS actual three material purchases and qualification ritual, no duplicate fee, correct recovery transition
+PASS zero-copper in-kind shelter/food, one charge per active day and stamina cap
+PASS candidate 2400-copper price adapter, real proof/material consumption, no cash relief and no duplicate charge

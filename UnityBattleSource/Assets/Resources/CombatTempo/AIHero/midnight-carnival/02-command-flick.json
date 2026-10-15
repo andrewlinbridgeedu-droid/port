@@ -1,0 +1,13 @@
+{
+  "id": "02-command-flick",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 26.27329192546584,
+  "sourceStart": 1.0,
+  "sourceRelease": 3.7,
+  "sourceEnd": 5.83,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}

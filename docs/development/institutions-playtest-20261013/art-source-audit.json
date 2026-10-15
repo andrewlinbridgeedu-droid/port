@@ -1,0 +1,54 @@
+{
+  "status": "171.4 uses root art; latest hero-v4-device art has not been integrated",
+  "latest_art_worktree": "/Volumes/andrew's SSD/Mistport-worktrees/hero-v4-device",
+  "specific_files": [
+    {
+      "path": "UnityBattleSource/Assets/Scripts/AIHeroAnimatedBody.cs",
+      "playtest_source_present": false,
+      "latest_art_worktree_present": true,
+      "playtest_source_sha256": null,
+      "latest_art_worktree_sha256": "ff3fb99d0f50d0227ad2179972a458cbc84a65499f131b522a700209dbdd5fcf",
+      "same": false
+    },
+    {
+      "path": "UnityBattleSource/Assets/Scripts/SpellSpectacle20260926.cs",
+      "playtest_source_present": true,
+      "latest_art_worktree_present": true,
+      "playtest_source_sha256": "733d99a5c5bdf442b58224bd2d2539bb41b3f3a8ff089884ae707f37c63fd24a",
+      "latest_art_worktree_sha256": "ae392e4888c1ea31f8edbaaf815b5c15b7686ec0547a765b6b422a3b87e40bc9",
+      "same": false
+    },
+    {
+      "path": "UnityBattleSource/Assets/Resources/SpellSpectacle20260926/SpectacleInk20261008.shader",
+      "playtest_source_present": false,
+      "latest_art_worktree_present": true,
+      "playtest_source_sha256": null,
+      "latest_art_worktree_sha256": "b530e60e19cc11ff75a6e85f52a611c31f8f9d5c0209b6a4efa9298571ddd4f9",
+      "same": false
+    },
+    {
+      "path": "UnityBattleSource/Assets/Resources/SpellSpectacle20260926/SpectaclePieces20261009.shader",
+      "playtest_source_present": false,
+      "latest_art_worktree_present": true,
+      "playtest_source_sha256": null,
+      "latest_art_worktree_sha256": "c7b76d7aa263cfbfa634fbbb7293873f1382053d8b8a02a6b7c78aa0bdae71d7",
+      "same": false
+    },
+    {
+      "path": "UnityBattleSource/Assets/Resources/CombatTempo/AIHero/mistport-night/01-diagonal-cut.png",
+      "playtest_source_present": false,
+      "latest_art_worktree_present": true,
+      "playtest_source_sha256": null,
+      "latest_art_worktree_sha256": "da6fc38cb33112604b8a902a762a29dbe6afefc6c83143f02b2dd0d2b6f87fe0",
+      "same": false
+    },
+    {
+      "path": "mistport-ios/Mistport/CombatHaptics.swift",
+      "playtest_source_present": true,
+      "latest_art_worktree_present": true,
+      "playtest_source_sha256": "2e5f45f16d4f78840dc8a0c9fc4b3bb79f4c662e0ee16d97e4a92a4d6bb7b2cb",
+      "latest_art_worktree_sha256": "a92ea7feac51c86a5ef26b82a0a472dda6540fe4dc91fb5f3b51c99176347087",
+      "same": false
+    }
+  ]
+}

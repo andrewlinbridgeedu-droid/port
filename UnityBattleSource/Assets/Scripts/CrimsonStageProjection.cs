@@ -169,6 +169,7 @@ public sealed class CrimsonStageProjection : MonoBehaviour
     }
     void Tube(Vector3[] points,int count,float radius,Color color,bool bright)
     {
+        points=StraightLines20261003.Flattened(points,count);
         // Eight-sided tubes, shared frame buffer; no GameObjects per filament.
         const int sides=6;
         for(int j=1;j<count;j++)
@@ -191,6 +192,7 @@ public sealed class CrimsonStageProjection : MonoBehaviour
     }
     void Ribbon(Vector3[] points,int count,float width,Color color,float motion)
     {
+        points=StraightLines20261003.Flattened(points,count);
         for(int j=1;j<count;j++)
         {
             float u=(j-.5f)/(count-1);

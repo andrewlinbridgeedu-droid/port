@@ -35,22 +35,40 @@ struct ChapterThirtyBalanceTests {
         let talents = HermitTalentAllocation.restored(
             (0...3).map { "trickery.\($0)" }, budget: 4
         )
-        for q in 27...30 {
+        // Q30 (2026-10-10, user): the three-person finale is won only with a good relic, and
+        // the return-gift clasp alone does not carry a four-talent build at either medal time;
+        // spending the chapter's talent points on the same cards, relic and gear opens a route.
+        let fullTalents = HermitTalentAllocation.restored(
+            (0...5).map { "trickery.\($0)" } + (0...5).map { "omen.\($0)" },
+            budget: (1..<30).compactMap { MPCChapterOneThirtyMissionContract.firstClear(for: $0)?.talentPoints }.reduce(0, +)
+        )
+        enum Expect { case everyMedalTime, someMedalTime, never }
+        let routes: [(Int, HermitTalentAllocation, Expect)] = [(27, talents, .everyMedalTime), (28, talents, .everyMedalTime),
+                                                               (29, talents, .everyMedalTime), (30, talents, .never), (30, fullTalents, .someMedalTime)]
+        for (q, talents, expect) in routes {
             var loadout = MPCChapterOneLoadout(normalSkillIDs: sequence, isUltimateUnlocked: true,
                                                passiveIDs: [], relicIDs: ["relic_return_gift_clasp"])
             loadout.talents = talents
             loadout.churchGear = EarnedChapterAuditFixture.wallGear(beforeOrAt: q)
             loadout.bountyRelicID = EarnedChapterAuditFixture.wallRelic(q)
+            var victories = 0
             for offset in [6.0, 14.0] {
                 let result = try NewMaskBalanceSimulator.run(
                     q: q, sequence: sequence, mask: false,
                     consumables: ["consumable_pain_salve": 1], loadout: loadout,
                     medalOffset: offset
                 )
-                print("CH30_AUDIT_BUILD Q\(q) medal=\(offset) outcome=\(result.session.outcome) HP=\(result.session.playerHP) cycles=\(result.session.completedBossCycles) time=\(result.seconds)")
-                #expect(result.session.outcome == .victory)
-                #expect(result.session.playerHP >= 100)
+                print("CH30_AUDIT_BUILD Q\(q) talents=\(talents.learned.count) medal=\(offset) outcome=\(result.session.outcome) HP=\(result.session.playerHP) cycles=\(result.session.completedBossCycles) time=\(result.seconds)")
+                if result.session.outcome == .victory {
+                    victories += 1
+                    #expect(result.session.playerHP >= 100)
+                }
                 if q == 28 || q == 29 { #expect(result.session.completedBossCycles == 5) }
+            }
+            switch expect {
+            case .everyMedalTime: #expect(victories == 2, "Q\(q)")
+            case .someMedalTime: #expect(victories >= 1, "Q\(q)")
+            case .never: #expect(victories == 0, "Q\(q)")
             }
         }
     }
@@ -66,7 +84,9 @@ struct ChapterThirtyBalanceTests {
             var loadout = MPCChapterOneLoadout(normalSkillIDs: sequence, isUltimateUnlocked: true,
                                                passiveIDs: [], relicIDs: ["relic_return_gift_clasp"])
             loadout.talents = talents
-            loadout.churchGear = firstTenTowerGear
+            // Q29 is a party fight with real blows (2026-10-10): the F70 gear the Q26 wall
+            // already guarantees, not the first ten floors.
+            loadout.churchGear = q == 29 ? EarnedChapterAuditFixture.wallGear(beforeOrAt: q) : firstTenTowerGear
             let result = try NewMaskBalanceSimulator.run(
                 q: q, sequence: sequence, mask: false,
                 consumables: ["consumable_pain_salve": 1], loadout: loadout, medalOffset: 6

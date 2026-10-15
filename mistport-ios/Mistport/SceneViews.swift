@@ -3,7 +3,6 @@ import MistportCombatCore
 
 struct CityHubView: View {
     @State private var panoramaOffset: CGFloat = 0
-    @State private var tasksExpanded = false
     @State private var trackedTargetID: String?
     /// Height of the bottom bar; the harbour painting ends at its top edge.
     @State private var bottomBarHeight: CGFloat = 0
@@ -12,8 +11,10 @@ struct CityHubView: View {
     let sequence: Int
     let districtName: String
     let nextMissionTitle: String
+    let storyIsAvailable: Bool
     let missionProgress: Int
-    let reputation: Int
+    let contributionPoints: Int
+    let contributionLabel: String
     let coins: Int
     let materials: Int
     let clues: Int
@@ -42,6 +43,8 @@ struct CityHubView: View {
     var onHousing: () -> Void = {}
     var homeIsActive = true
     var streetTargets: [MPCStreetTaskTarget] = []
+    /// Scenes earned by finished city commissions (MPCStreetTaskLedger.scenes); drawn on the painting.
+    var commissionScenes: [String] = []
     var focusID: String?
     var focusRevision = 0
     private var trackedTarget: MPCStreetTaskTarget? { streetTargets.first { $0.id == trackedTargetID } ?? streetTargets.first }
@@ -71,7 +74,7 @@ struct CityHubView: View {
                 .allowsHitTesting(false)
 
                 VStack(spacing: 0) {
-                    CityStatusHUD(path: path, sequence: sequence, districtName: districtName, reputation: reputation,
+                    CityStatusHUD(path: path, sequence: sequence, districtName: districtName, contributionPoints: contributionPoints, contributionLabel: contributionLabel,
                                   coins: coins, materials: materials, clues: clues, ingredientCount: ingredientCount,
                                   onSettings: onSettings, onTest: onTest)
                         .padding(.horizontal, 18)
@@ -93,6 +96,7 @@ struct CityHubView: View {
                         .padding(.top, 8)
                     CityBottomBar(
                         bottomInset: max(geometry.safeAreaInsets.bottom, 8),
+                        workshopUnlocked: serviceIsUnlocked(.workshop),
                         churchUnlocked: serviceIsUnlocked(.church),
                         storeUnlocked: serviceIsUnlocked(.store),
                         onWork: onBuild,
@@ -130,6 +134,7 @@ struct CityHubView: View {
                 .frame(width: panoramaWidth, height: viewport.height)
 
             let painting = HarborPainting.rect(in: CGSize(width: panoramaWidth, height: viewport.height))
+            CommissionDecalLayer(scenes: commissionScenes, painting: painting, active: homeIsActive)
             let offset = boundedPanoramaOffset(panoramaOffset + panoramaDrag, in: viewport)
             let left = (panoramaWidth / 2 - viewport.width / 2 - offset - painting.minX) / painting.height
             HomeStreetScene(painting: painting, visibleRange: Double(left - 0.035)...Double(left + viewport.width / painting.height + 0.035),
@@ -161,7 +166,8 @@ struct CityHubView: View {
         )
         .onChange(of: focusRevision) { _, _ in
             guard let id = focusID else { return }
-            if let target = streetTargets.first(where: { $0.id == id || $0.taskID == id }) {
+            if let target = streetTargets.first(where: { $0.id == id || $0.taskID == id || $0.personID == id }) {
+                trackedTargetID = target.id
                 center(HomeMapLayout.current.targetPoint(target)[0], in: viewport)
             } else if let building = HomeMapLayout.current.building(id) { center(building.at![0], in: viewport) }
         }
@@ -180,7 +186,6 @@ struct CityHubView: View {
     /// on screen; -MistportHubSnapshot saves the window and its layout to Documents.
     private func debugLabelCheck(in viewport: CGSize) async {
         let arguments = UserDefaults.standard
-        tasksExpanded = arguments.bool(forKey: "MistportHubTasksExpanded")
         let width = panoramaWidth(for: viewport)
         let painting = HarborPainting.rect(in: CGSize(width: width, height: viewport.height))
         if let x = arguments.string(forKey: "MistportHubPanX").flatMap(Double.init) {
@@ -281,7 +286,7 @@ struct CityHubView: View {
         case "tavern": serviceIsUnlocked(.church) && path?.id == .fool ? onBountyTavern : nil
         case "industry": onBuild
         case "newspaper": onNewspaper
-        case "housing", "highland-board", "cityhall", "police", "post", "clinic", "harbor", "oldstreet", "board", "cafe": { onCounter(id) }
+        case "bank", "science", "palace", "housing", "highland-board", "cityhall", "police", "post", "clinic", "harbor", "oldstreet", "board", "cafe": { onCounter(id) }
         default: nil
         }
     }
@@ -289,39 +294,68 @@ struct CityHubView: View {
         let width = panoramaWidth(for: viewport)
         withAnimation(.easeOut(duration: 0.4)) { panoramaOffset = boundedPanoramaOffset(width / 2 - x * viewport.height, in: viewport) }
     }
+    /// A person who keeps a post inside a building can be met at that counter
+    /// too; say so, because the case location ("封锁公告处") is not a map label.
+    private func targetCaption(_ target: MPCStreetTaskTarget) -> String {
+        // The caption sits under the main-mission title, so name the kind of
+        // street task first; "婚礼的花篮" alone read like the mission's subtitle
+        // (playtest 2026-10-05, shots 488/495).
+        let kind: String = switch target.kind {
+        case .postal: "送信"
+        case .neighbor: "邻里"
+        case .bounty: "通缉"
+        case .remnant: "遗落案卷"
+        case .urgentErrand: "街头急件"
+        case .jointErrand: "合力差事"
+        case .commission: "市政委托"
+        }
+        guard let personID = target.personID,
+              let name = HomeCitizenCatalog.people.first(where: { $0.id == personID })?.name,
+              let buildingID = HomeMapLayout.current.namedPosts.first(where: { $0.who == name })?.building,
+              let building = HomeMapLayout.current.building(buildingID)?.name else { return kind + "·" + target.title }
+        return kind + "·" + target.title + "（\(building)）"
+    }
+    /// One plaque, one tap: anywhere on it enters the main mission. The
+    /// expandable target list and its chevron were too small to hit
+    /// (user, 2026-10-04); street tasks stay on the map and in the caption.
+    /// " · 在右侧 →" when the tracked target is outside the visible strip of the painting.
+    private func offscreenHint(_ target: MPCStreetTaskTarget, in viewport: CGSize) -> String {
+        let x = HomeMapLayout.current.targetPoint(target)[0]
+        let width = panoramaWidth(for: viewport)
+        let screen = viewport.width / 2 - width / 2 + boundedPanoramaOffset(panoramaOffset + panoramaDrag, in: viewport) + x * viewport.height
+        return screen < 0 ? " · 在左侧 ←" : screen > viewport.width ? " · 在右侧 →" : ""
+    }
     private func taskStrip(in viewport: CGSize) -> some View {
-        VStack(alignment: .leading, spacing: 5) {
-            HStack {
-                Button(trackedTarget?.title ?? nextMissionTitle) {
-                    if let target = trackedTarget { center(HomeMapLayout.current.targetPoint(target)[0], in: viewport) }
-                    else { onStory() }
-                }.lineLimit(1).frame(maxWidth: .infinity, alignment: .leading)
-                Button(action: onStamina) {
-                    HStack(spacing: 3) {
-                        HousingLanternIcon(value: staminaValue).frame(width: 24, height: 28)
-                        Text("\(staminaValue)").font(HousingAtlas.digits(12))
-                            .contentTransition(.numericText()).animation(.easeOut(duration: 0.4), value: staminaValue)
-                    }.frame(minHeight: 36)
-                }.accessibilityLabel(HousingAtlas.staminaCaption(staminaValue) + "，体力\(staminaValue)，看看灯火")
-                Button { tasksExpanded.toggle() } label: { Image(systemName: tasksExpanded ? "chevron.up" : "chevron.down").frame(width: 44, height: 36) }
-                    .accessibilityLabel(tasksExpanded ? "收起当前任务" : "展开当前任务，\(streetTargets.count)个目标")
-            }
-            if tasksExpanded {
-                Button("主线 · " + nextMissionTitle, action: onStory)
-                ForEach(streetTargets) { target in
-                    Button(target.title) { trackedTargetID = target.id; center(HomeMapLayout.current.targetPoint(target)[0], in: viewport) }
+        HStack(spacing: 10) {
+            Button(action: onStory) {
+                HStack(spacing: 10) {
+                    Image("CityMissionWaxSeal")
+                        .resizable().scaledToFit().frame(width: 34, height: 34)
+                        .saturation(0.75).shadow(color: .black.opacity(0.6), radius: 1.5, y: 1)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(nextMissionTitle).font(.callout.weight(.semibold)).lineLimit(1)
+                        if let target = trackedTarget {
+                            Text(targetCaption(target) + offscreenHint(target, in: viewport)).font(.caption2).foregroundStyle(.white.opacity(0.78)).lineLimit(1)
+                        }
+                    }
+                    Spacer(minLength: 0)
                 }
+                .frame(maxWidth: .infinity, minHeight: 52, alignment: .leading)
+                .contentShape(Rectangle())
             }
-            if let target = trackedTarget {
-                let x = HomeMapLayout.current.targetPoint(target)[0]
-                let width = panoramaWidth(for: viewport)
-                let screen = viewport.width / 2 - width / 2 + boundedPanoramaOffset(panoramaOffset + panoramaDrag, in: viewport) + x * viewport.height
-                if screen < 0 || screen > viewport.width {
-                    Button { center(x, in: viewport) } label: { Label("任务目标在\(screen < 0 ? "左" : "右")侧", systemImage: screen < 0 ? "arrow.left" : "arrow.right") }
-                }
-            }
-        }.font(.caption).foregroundStyle(.white).padding(.horizontal, 10)
-            .background(.black.opacity(0.68), in: RoundedRectangle(cornerRadius: 10))
+            .buttonStyle(.plain)
+            .disabled(!storyIsAvailable)
+            .accessibilityLabel("主线 \(nextMissionTitle)" + (storyIsAvailable ? "，进入" : ""))
+            Button(action: onStamina) {
+                HStack(spacing: 3) {
+                    HousingLanternIcon(value: staminaValue).frame(width: 24, height: 28)
+                    Text("\(staminaValue)").font(HousingAtlas.digits(12))
+                        .contentTransition(.numericText()).animation(.easeOut(duration: 0.4), value: staminaValue)
+                }.frame(minWidth: 56, minHeight: 44)
+            }.accessibilityLabel(HousingAtlas.staminaCaption(staminaValue) + "，体力\(staminaValue)，看看灯火")
+        }
+        .font(.caption).foregroundStyle(.white).padding(.horizontal, 12).padding(.vertical, 4)
+        .background(.black.opacity(0.68), in: RoundedRectangle(cornerRadius: 10))
     }
 
 }
@@ -332,7 +366,8 @@ private struct CityStatusHUD: View {
     let path: Pathway?
     let sequence: Int
     let districtName: String
-    let reputation: Int
+    let contributionPoints: Int
+    let contributionLabel: String
     let coins: Int
     let materials: Int
     let clues: Int
@@ -430,10 +465,11 @@ private struct CityStatusHUD: View {
                 WalletChip(asset: "RewardReputation", label: "线索", value: clues)
                 WalletChip(asset: "GameNavChurch", label: "演证", value: ingredientCount)
                 VStack(spacing: 2) {
-                    Text("声望").font(.system(size: 9))
-                    Text("\(reputation) · 门槛100").font(.system(size: 11, weight: .bold).monospacedDigit())
+                    Text("贡献").font(.system(size: 9))
+                    Text("\(contributionPoints) · \(contributionLabel)").font(.system(size: 11, weight: .bold).monospacedDigit())
                         .lineLimit(1).minimumScaleFactor(0.7)
                 }.frame(maxWidth: .infinity).foregroundStyle(.yellow)
+                .accessibilityLabel("城市贡献 \(contributionPoints)，\(contributionLabel)")
             }
         }
         .buttonStyle(.plain)
@@ -532,6 +568,7 @@ private struct CityBottomBar: View {
     /// Scale the whole navigation content while keeping the device's safe area intact.
     static let contentScale: CGFloat = 0.9
     var bottomInset: CGFloat = 8
+    var workshopUnlocked = true
     var churchUnlocked = false
     var storeUnlocked = false
     let onWork: () -> Void
@@ -544,7 +581,7 @@ private struct CityBottomBar: View {
         HStack(alignment: .center, spacing: 0) {
             CityBarButton(title: "角色", artName: "GameNavProfile", artScale: 0.88, contentScale: Self.contentScale, action: onProfile)
             // The workbench art is a dense, square object; shown at full size it reads larger than its neighbours.
-            CityBarButton(title: "百工坊", artName: "GameNavWorkshop", artScale: 0.84, contentScale: Self.contentScale, action: onWork)
+            CityBarButton(title: "百工坊", artName: "GameNavWorkshop", isLocked: !workshopUnlocked, artScale: 0.84, contentScale: Self.contentScale, action: onWork)
             CityBarButton(title: "教会", artName: "GameNavChurch", isLocked: !churchUnlocked, artScale: 0.88, contentScale: Self.contentScale, action: onChurch)
             CityBarButton(title: "商店", artName: "GameNavStore", isLocked: !storeUnlocked, artScale: 0.88, contentScale: Self.contentScale, action: onStore)
             CityBarButton(title: "行囊", artName: "GameNavInventory", artScale: 0.88, contentScale: Self.contentScale, action: onInventory)
@@ -577,9 +614,7 @@ struct ChurchPlaceholderView: View {
             VStack(spacing: 18) {
                 HStack {
                     Spacer()
-                    Button("关闭", action: { dismiss() })
-                        .buttonStyle(.plain)
-                        .foregroundStyle(.white.opacity(0.68))
+                    GameArtReturnButton { dismiss() }
                 }
 
                 Spacer()
@@ -803,8 +838,9 @@ struct HubFeatureView: View {
             Spacer()
             if kind == .build {
                 Button(action: { showsFoolGuide = true }) {
-                    Text("🔍 愚者攻略")
+                    Text("愚者攻略")
                         .font(.system(size: 11, weight: .bold))
+                        .lineLimit(1).fixedSize(horizontal: true, vertical: false)
                         .foregroundStyle(.white)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 8)
@@ -812,7 +848,7 @@ struct HubFeatureView: View {
                 }
                 .buttonStyle(.plain)
             }
-            MistportPlaqueButton(title: "返回", compact: true, expands: false, action: { dismiss() })
+            GameArtReturnButton { dismiss() }
         }
         .padding(12)
         .foregroundStyle(kind == .inventory ? InventoryPalette.ink : .white)
@@ -1111,7 +1147,9 @@ struct HubFeatureView: View {
                 $0.rewardItemIDs.contains(id)
                     && game.completedChapterMissionIDs.contains("old-clock-\($0.number)")
             }
-            let source = missions.isEmpty ? "已收入行囊" : missions.map {
+            // Tower materials drop from a species; say which instead of "已收入行囊".
+            let towerSource = MPCTowerMaterials.species(for: id).map { "深井掉落 · " + $0.name }
+            let source = missions.isEmpty ? (towerSource ?? (category == .material ? "深井掉落" : "已收入行囊")) : missions.map {
                 "第\($0.number)关 · \($0.name)"
             }.joined(separator: "；")
             let usage = id == "consumable_pain_salve" ? "\n进入战斗后，受伤时点击面板中的止痛膏使用。" : ""
@@ -1267,6 +1305,9 @@ func chapterOneInventoryArtName(_ id: String) -> String? {
         case "campaign-item-material_clock_bronze": "ItemOwnerlessSpring"
         case "campaign-item-material_skill_dust": "RewardMaterial"
         case "campaign-item-material_shield_jaw_hide": "ItemShieldJawHide"
+        case "campaign-item-material_demon_scale": "ItemDemonScale"
+        case "campaign-item-material_salt_sac_gland": "ItemSaltSacGland"
+        case "campaign-item-material_throat_fiber": "ItemThroatFiber"
         case "campaign-item-crafted_repair_strap": "ItemRepairStrap"
         case "clock-coffee": "ItemClockCoffee"
         case "fog-sugar": "ItemFogSugar"
@@ -1878,11 +1919,11 @@ private struct FoolPathGuideView: View {
                             Text("序列 9 · 街头戏法师").foregroundStyle(.cyan)
                         }
                         Spacer()
-                        MistportPlaqueButton(title: "关闭", compact: true, expands: false, action: { dismiss() })
+                        GameArtReturnButton(title: "返回构筑") { dismiss() }
                     }
 
                     GuidePlate(title: "战斗定位", text: "愚者通过叠加误认、转成错位、延迟敌人行动，再在破绽窗口完成爆发。", tint: .purple)
-                    GuidePlate(title: "战前编排", text: "普通技能按战前排列顺序自动循环。遗落物假面由你手动使用，不占技能槽；用它与伪证烙印铺垫误认，再用身份错置转成错位，最后用双影追猎或荒谬归结兑现。", tint: .cyan)
+                    GuidePlate(title: "战前编排", text: "普通技能按战前排列顺序自动循环。遗落物假面由你手动使用，不占技能槽；用它与伪证烙印铺垫误认，再用张冠李戴转成错位，最后用双影追猎或荒谬归结兑现。", tint: .cyan)
                     GuidePlate(title: "自动战斗如何选择", text: "系统从左到右扫描技能序列；当前不可用的技能跳过，继续寻找下一张可用技能。技能都不可用时才进行普攻。", tint: .yellow)
                     GuidePlate(title: "推荐入门配置", text: "偏差透镜强化4层误认目标的终结，纸月筹码保留控制方向；优先把铺垫、转化和终结技能排成稳定循环。", tint: .mint)
                     GuidePlate(title: "第一章首领要点", text: "先处理寄忆核心，再观察空壳守卫的蓄力意图。归名执事·赫恩代表归一系统的唯一身份逻辑，保留错位给荒谬归结完成终结。", tint: .orange)
@@ -2348,15 +2389,21 @@ struct MistportPlaqueButton: View {
                     .padding(.horizontal, horizontalInset ?? 4)
                     .background(RoundedRectangle(cornerRadius: 12).fill(Color.black.opacity(0.72)).overlay(RoundedRectangle(cornerRadius: 12).stroke(.yellow.opacity(0.72), lineWidth: 1)))
                 } else {
+                    // The art's top 23% is a transparent band holding the quill above the plaque.
+                    // Stretched with 25 pt caps the plaque sank to the lower half and the title sat
+                    // across its top edge, half on the dark page (2026-10-03, user: 这些btn似乎都被挡住了).
+                    // Now the whole art scales to a 74 pt frame (close to its own 4.5:1 shape at full
+                    // width, as GameArtButtonStyle does) and the title is centred on the plaque.
                     Text(title)
                         .font(.system(size: 18, weight: .bold, design: .serif))
                         .tracking(1)
                         .foregroundStyle(Color(red: 0.14, green: 0.12, blue: 0.16))
-                        .frame(maxWidth: expands ? .infinity : nil, minHeight: 62)
+                        .padding(.top, 17)
+                        .frame(maxWidth: expands ? .infinity : nil, minHeight: 74)
                         .padding(.horizontal, horizontalInset ?? 20)
                         .background {
                             Image("ButtonArt25MainAction")
-                                .resizable(capInsets: EdgeInsets(top: 25, leading: 120, bottom: 25, trailing: 120), resizingMode: .stretch)
+                                .resizable()
                                 .accessibilityHidden(true)
                         }
                 }
@@ -2526,6 +2573,37 @@ private struct AmbientLightLayer: View {
             .frame(width: 360, height: 360)
             .offset(y: 75)
             .blendMode(.screen)
+        }
+    }
+}
+
+
+/// A finished city commission leaves a permanent scene on the home painting
+/// (HOME_MAP_STREET_TASKS_20260929.md §0; decals approved 2026-10-01). The variant
+/// follows the harbour's light and lying snow; coordinates are painting-height units.
+private struct CommissionDecalLayer: View {
+    let scenes: [String]
+    let painting: CGRect
+    let active: Bool
+    private struct Decal { let scene: String; let at: CGPoint; let size: CGFloat; let prefix: String; let hasSnow: Bool }
+    private static let decals = [
+        Decal(scene: "fountain", at: CGPoint(x: 1.05639913, y: 0.5835141), size: 0.29934924, prefix: "CommissionFountainV3", hasSnow: true),
+        Decal(scene: "yard", at: CGPoint(x: 1.56, y: 0.70), size: 0.26, prefix: "CommissionYardV3", hasSnow: false),
+    ]
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: active ? 30 : 3600)) { timeline in
+            let hours = HarborClock.gameHours(at: timeline.date)
+            let light = HarborLight(hour: HarborClock.hour(at: timeline.date))
+            let snow = HarborSnowCover.at(gameHours: hours) > 0.35
+            ForEach(Self.decals.filter { scenes.contains($0.scene) }, id: \.scene) { decal in
+                let time = light.dark > 0.5 ? "Night" : light.sunset > 0.5 ? "Sunset" : "Day"
+                let name = decal.prefix + (snow && decal.hasSnow ? "Snow" : "") + time
+                Image(UIImage(named: name) != nil ? name : decal.prefix + "Day")
+                    .resizable().scaledToFit()
+                    .frame(width: decal.size * painting.height, height: decal.size * painting.height)
+                    .position(x: painting.minX + decal.at.x * painting.height, y: painting.minY + decal.at.y * painting.height)
+                    .allowsHitTesting(false)
+            }
         }
     }
 }

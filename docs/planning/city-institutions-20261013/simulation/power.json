@@ -1,0 +1,1004 @@
+[
+  {
+    "floor" : 0,
+    "hpPercent" : 7,
+    "mission" : 5,
+    "price" : 0,
+    "profile" : "high",
+    "seconds" : 34.35,
+    "won" : true
+  },
+  {
+    "floor" : 0,
+    "hpPercent" : 25,
+    "mission" : 5,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "high",
+    "seconds" : 34.35,
+    "won" : true
+  },
+  {
+    "floor" : 0,
+    "hpPercent" : 0,
+    "mission" : 5,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "high",
+    "seconds" : 49.10000000000001,
+    "won" : false
+  },
+  {
+    "floor" : 0,
+    "hpPercent" : 7,
+    "mission" : 5,
+    "price" : 0,
+    "profile" : "medium",
+    "seconds" : 34.6,
+    "won" : true
+  },
+  {
+    "floor" : 0,
+    "hpPercent" : 25,
+    "mission" : 5,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "medium",
+    "seconds" : 34.6,
+    "won" : true
+  },
+  {
+    "floor" : 0,
+    "hpPercent" : 0,
+    "mission" : 5,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "medium",
+    "seconds" : 49.10000000000001,
+    "won" : false
+  },
+  {
+    "floor" : 0,
+    "hpPercent" : 0,
+    "mission" : 5,
+    "price" : 0,
+    "profile" : "low",
+    "seconds" : 40.10000000000001,
+    "won" : false
+  },
+  {
+    "floor" : 0,
+    "hpPercent" : 0,
+    "mission" : 5,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "low",
+    "seconds" : 40.300000000000004,
+    "won" : false
+  },
+  {
+    "floor" : 0,
+    "hpPercent" : 0,
+    "mission" : 5,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "low",
+    "seconds" : 40.300000000000004,
+    "won" : false
+  },
+  {
+    "floor" : 10,
+    "hpPercent" : 29,
+    "mission" : 12,
+    "price" : 0,
+    "profile" : "high",
+    "seconds" : 36.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 10,
+    "hpPercent" : 29,
+    "mission" : 12,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "high",
+    "seconds" : 36.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 10,
+    "hpPercent" : 53,
+    "mission" : 12,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "high",
+    "seconds" : 41.95,
+    "won" : true
+  },
+  {
+    "floor" : 10,
+    "hpPercent" : 29,
+    "mission" : 12,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "high",
+    "seconds" : 36.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 10,
+    "hpPercent" : 41,
+    "mission" : 12,
+    "price" : 0,
+    "profile" : "medium",
+    "seconds" : 42.45,
+    "won" : true
+  },
+  {
+    "floor" : 10,
+    "hpPercent" : 41,
+    "mission" : 12,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "medium",
+    "seconds" : 42.45,
+    "won" : true
+  },
+  {
+    "floor" : 10,
+    "hpPercent" : 53,
+    "mission" : 12,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "medium",
+    "seconds" : 42.45,
+    "won" : true
+  },
+  {
+    "floor" : 10,
+    "hpPercent" : 41,
+    "mission" : 12,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "medium",
+    "seconds" : 41.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 10,
+    "hpPercent" : 34,
+    "mission" : 12,
+    "price" : 0,
+    "profile" : "low",
+    "seconds" : 46.650000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 10,
+    "hpPercent" : 34,
+    "mission" : 12,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "low",
+    "seconds" : 46.650000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 10,
+    "hpPercent" : 46,
+    "mission" : 12,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "low",
+    "seconds" : 51.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 10,
+    "hpPercent" : 41,
+    "mission" : 12,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "low",
+    "seconds" : 46.650000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 30,
+    "mission" : 18,
+    "price" : 0,
+    "profile" : "high",
+    "seconds" : 38.50000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 30,
+    "mission" : 18,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "high",
+    "seconds" : 38.50000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 43,
+    "mission" : 18,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "high",
+    "seconds" : 39.50000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 30,
+    "mission" : 18,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "high",
+    "seconds" : 33.6,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 30,
+    "mission" : 18,
+    "passive" : "relic_reflecting_ink_mirror",
+    "price" : 520,
+    "profile" : "high",
+    "seconds" : 38.50000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 15,
+    "mission" : 18,
+    "price" : 0,
+    "profile" : "medium",
+    "seconds" : 40.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 15,
+    "mission" : 18,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "medium",
+    "seconds" : 40.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 36,
+    "mission" : 18,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "medium",
+    "seconds" : 44.45,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 15,
+    "mission" : 18,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "medium",
+    "seconds" : 39.50000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 15,
+    "mission" : 18,
+    "passive" : "relic_reflecting_ink_mirror",
+    "price" : 520,
+    "profile" : "medium",
+    "seconds" : 40.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 0,
+    "mission" : 18,
+    "price" : 0,
+    "profile" : "low",
+    "seconds" : 49.550000000000004,
+    "won" : false
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 0,
+    "mission" : 18,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "low",
+    "seconds" : 49.550000000000004,
+    "won" : false
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 38,
+    "mission" : 18,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "low",
+    "seconds" : 58.550000000000004,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 13,
+    "mission" : 18,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "low",
+    "seconds" : 48.550000000000004,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 0,
+    "mission" : 18,
+    "passive" : "relic_reflecting_ink_mirror",
+    "price" : 520,
+    "profile" : "low",
+    "seconds" : 49.550000000000004,
+    "won" : false
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 45,
+    "mission" : 22,
+    "price" : 0,
+    "profile" : "high",
+    "seconds" : 34.50000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 49,
+    "mission" : 22,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "high",
+    "seconds" : 34.50000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 50,
+    "mission" : 22,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "high",
+    "seconds" : 34.50000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 45,
+    "mission" : 22,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "high",
+    "seconds" : 30,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 45,
+    "mission" : 22,
+    "passive" : "relic_reflecting_ink_mirror",
+    "price" : 520,
+    "profile" : "high",
+    "seconds" : 34.50000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 45,
+    "mission" : 22,
+    "passive" : "relic_sealed_paperweight",
+    "price" : 400,
+    "profile" : "high",
+    "seconds" : 35.50000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 41,
+    "mission" : 22,
+    "passive" : "relic_countertide_anchor",
+    "price" : 640,
+    "profile" : "high",
+    "seconds" : 34.50000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 45,
+    "mission" : 22,
+    "price" : 0,
+    "profile" : "medium",
+    "seconds" : 36.45,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 49,
+    "mission" : 22,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "medium",
+    "seconds" : 36.45,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 50,
+    "mission" : 22,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "medium",
+    "seconds" : 36.45,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 45,
+    "mission" : 22,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "medium",
+    "seconds" : 34.50000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 45,
+    "mission" : 22,
+    "passive" : "relic_reflecting_ink_mirror",
+    "price" : 520,
+    "profile" : "medium",
+    "seconds" : 36.45,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 45,
+    "mission" : 22,
+    "passive" : "relic_sealed_paperweight",
+    "price" : 400,
+    "profile" : "medium",
+    "seconds" : 38.75000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 40,
+    "mission" : 22,
+    "passive" : "relic_countertide_anchor",
+    "price" : 640,
+    "profile" : "medium",
+    "seconds" : 36.45,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 36,
+    "mission" : 22,
+    "price" : 0,
+    "profile" : "low",
+    "seconds" : 47.7,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 45,
+    "mission" : 22,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "low",
+    "seconds" : 47.7,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 41,
+    "mission" : 22,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "low",
+    "seconds" : 47.7,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 36,
+    "mission" : 22,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "low",
+    "seconds" : 47.7,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 36,
+    "mission" : 22,
+    "passive" : "relic_reflecting_ink_mirror",
+    "price" : 520,
+    "profile" : "low",
+    "seconds" : 47.7,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 34,
+    "mission" : 22,
+    "passive" : "relic_sealed_paperweight",
+    "price" : 400,
+    "profile" : "low",
+    "seconds" : 47.7,
+    "won" : true
+  },
+  {
+    "floor" : 50,
+    "hpPercent" : 32,
+    "mission" : 22,
+    "passive" : "relic_countertide_anchor",
+    "price" : 640,
+    "profile" : "low",
+    "seconds" : 47.7,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 26,
+    "mission" : 26,
+    "price" : 0,
+    "profile" : "high",
+    "seconds" : 37.25000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 26,
+    "mission" : 26,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "high",
+    "seconds" : 37.25000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 38,
+    "mission" : 26,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "high",
+    "seconds" : 40.95,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 26,
+    "mission" : 26,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "high",
+    "seconds" : 37.25000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 26,
+    "mission" : 26,
+    "passive" : "relic_reflecting_ink_mirror",
+    "price" : 520,
+    "profile" : "high",
+    "seconds" : 37.25000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 29,
+    "mission" : 26,
+    "passive" : "relic_sealed_paperweight",
+    "price" : 400,
+    "profile" : "high",
+    "seconds" : 40.95,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 43,
+    "mission" : 26,
+    "passive" : "relic_countertide_anchor",
+    "price" : 640,
+    "profile" : "high",
+    "seconds" : 37.25000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 25,
+    "mission" : 26,
+    "price" : 0,
+    "profile" : "medium",
+    "seconds" : 44.150000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 25,
+    "mission" : 26,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "medium",
+    "seconds" : 44.150000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 37,
+    "mission" : 26,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "medium",
+    "seconds" : 47.150000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 25,
+    "mission" : 26,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "medium",
+    "seconds" : 44.150000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 25,
+    "mission" : 26,
+    "passive" : "relic_reflecting_ink_mirror",
+    "price" : 520,
+    "profile" : "medium",
+    "seconds" : 44.150000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 38,
+    "mission" : 26,
+    "passive" : "relic_sealed_paperweight",
+    "price" : 400,
+    "profile" : "medium",
+    "seconds" : 50.60000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 43,
+    "mission" : 26,
+    "passive" : "relic_countertide_anchor",
+    "price" : 640,
+    "profile" : "medium",
+    "seconds" : 44.150000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 23,
+    "mission" : 26,
+    "price" : 0,
+    "profile" : "low",
+    "seconds" : 54.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 23,
+    "mission" : 26,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "low",
+    "seconds" : 54.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 19,
+    "mission" : 26,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "low",
+    "seconds" : 54.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 31,
+    "mission" : 26,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "low",
+    "seconds" : 49.2,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 23,
+    "mission" : 26,
+    "passive" : "relic_reflecting_ink_mirror",
+    "price" : 520,
+    "profile" : "low",
+    "seconds" : 54.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 27,
+    "mission" : 26,
+    "passive" : "relic_sealed_paperweight",
+    "price" : 400,
+    "profile" : "low",
+    "seconds" : 57.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 70,
+    "hpPercent" : 21,
+    "mission" : 26,
+    "passive" : "relic_countertide_anchor",
+    "price" : 640,
+    "profile" : "low",
+    "seconds" : 54.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 54,
+    "mission" : 30,
+    "price" : 0,
+    "profile" : "high",
+    "seconds" : 35.050000000000004,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 54,
+    "mission" : 30,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "high",
+    "seconds" : 35.050000000000004,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 61,
+    "mission" : 30,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "high",
+    "seconds" : 35.050000000000004,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 54,
+    "mission" : 30,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "high",
+    "seconds" : 35.050000000000004,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 54,
+    "mission" : 30,
+    "passive" : "relic_reflecting_ink_mirror",
+    "price" : 520,
+    "profile" : "high",
+    "seconds" : 35.050000000000004,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 58,
+    "mission" : 30,
+    "passive" : "relic_sealed_paperweight",
+    "price" : 400,
+    "profile" : "high",
+    "seconds" : 37.25000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 50,
+    "mission" : 30,
+    "passive" : "relic_countertide_anchor",
+    "price" : 640,
+    "profile" : "high",
+    "seconds" : 35.050000000000004,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 54,
+    "mission" : 30,
+    "passive" : "relic_ownership_severing_needle",
+    "price" : 720,
+    "profile" : "high",
+    "seconds" : 35.050000000000004,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 52,
+    "mission" : 30,
+    "price" : 0,
+    "profile" : "medium",
+    "seconds" : 38.75000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 52,
+    "mission" : 30,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "medium",
+    "seconds" : 38.75000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 59,
+    "mission" : 30,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "medium",
+    "seconds" : 40.900000000000006,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 52,
+    "mission" : 30,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "medium",
+    "seconds" : 36.45,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 52,
+    "mission" : 30,
+    "passive" : "relic_reflecting_ink_mirror",
+    "price" : 520,
+    "profile" : "medium",
+    "seconds" : 38.75000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 51,
+    "mission" : 30,
+    "passive" : "relic_sealed_paperweight",
+    "price" : 400,
+    "profile" : "medium",
+    "seconds" : 42.550000000000004,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 46,
+    "mission" : 30,
+    "passive" : "relic_countertide_anchor",
+    "price" : 640,
+    "profile" : "medium",
+    "seconds" : 38.75000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 52,
+    "mission" : 30,
+    "passive" : "relic_ownership_severing_needle",
+    "price" : 720,
+    "profile" : "medium",
+    "seconds" : 38.75000000000001,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 51,
+    "mission" : 30,
+    "price" : 0,
+    "profile" : "low",
+    "seconds" : 48.300000000000004,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 51,
+    "mission" : 30,
+    "passive" : "relic_salt_sealed_breathing_bag",
+    "price" : 120,
+    "profile" : "low",
+    "seconds" : 48.300000000000004,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 58,
+    "mission" : 30,
+    "passive" : "relic_return_gift_clasp",
+    "price" : 160,
+    "profile" : "low",
+    "seconds" : 49.2,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 46,
+    "mission" : 30,
+    "passive" : "relic_deferred_stamp",
+    "price" : 360,
+    "profile" : "low",
+    "seconds" : 44.7,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 51,
+    "mission" : 30,
+    "passive" : "relic_reflecting_ink_mirror",
+    "price" : 520,
+    "profile" : "low",
+    "seconds" : 48.300000000000004,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 39,
+    "mission" : 30,
+    "passive" : "relic_sealed_paperweight",
+    "price" : 400,
+    "profile" : "low",
+    "seconds" : 54.45,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 45,
+    "mission" : 30,
+    "passive" : "relic_countertide_anchor",
+    "price" : 640,
+    "profile" : "low",
+    "seconds" : 48.300000000000004,
+    "won" : true
+  },
+  {
+    "floor" : 90,
+    "hpPercent" : 51,
+    "mission" : 30,
+    "passive" : "relic_ownership_severing_needle",
+    "price" : 720,
+    "profile" : "low",
+    "seconds" : 48.300000000000004,
+    "won" : true
+  }
+]

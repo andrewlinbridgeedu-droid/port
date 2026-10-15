@@ -229,7 +229,9 @@ struct FoolSpellVFXSkill {
         case .paperDouble: .ward
         case .identityDisplacement, .turnTheTables: .control
         case .mirrorPursuit, .backstageChange: .mobility
-        case .absurdFinale, .namelessStage: .ultimate
+        case .absurdFinale, .namelessStage, .delayedSignature: .ultimate
+        case .stolenTempo: .ward
+        case .mirrorBarrage: .strike
         }
         return FoolSpellVFXSkill(id: id, presentationID: presentationID)
     }

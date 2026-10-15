@@ -48,8 +48,12 @@ struct ChapterThirtyRuntimeTests {
         #expect(s.enemies[0].hp == s.enemies[0].maxHP)
     }
     @Test func fifthReturnCannotWinAfterItsLastAttackDefeatsThePlayer() throws {
+        // Health for exactly the five loops' blows (four strikes, three thirteenth blows, two
+        // slams): the last slam lands the defeat before the fifth loop completes.
+        let blows = MPCProgressionWalls.finalBossEarlyBlows
+        let total = 4 * blows["strike"]! + 3 * blows["thirteenth_charge"]! + 2 * blows["slam"]!
         var s = try MPCChapterOneEncounterSession.start(
-            encounterID: "chapter01_q28_encounter", party: .init(playerMaxHP: 735),
+            encounterID: "chapter01_q28_encounter", party: .init(playerMaxHP: total),
             companionIDs: [], loadout: .init(normalSkillIDs: [], isUltimateUnlocked: false,
                                               passiveIDs: [], relicIDs: [])
         )
@@ -62,8 +66,12 @@ struct ChapterThirtyRuntimeTests {
         #expect(s.completedBossCycles == 4)
     }
     @Test func trueDeathWaitsForLaunchedAttackAndMutualDeathFails() throws {
-        var s = try MPCChapterOneEncounterSession.start(encounterID:"chapter01_q30_encounter",party:.init(playerMaxHP:1),companionIDs:[],loadout:.init(normalSkillIDs:[],isUltimateUnlocked:false,passiveIDs:[],relicIDs:[]))
+        // Q30 blows are shares of the hero's health: two strikes wear the hero down, then the
+        // launched thirteenth blow lands after its caster's death.
+        var s = try MPCChapterOneEncounterSession.start(encounterID:"chapter01_q30_encounter",party:.init(playerMaxHP:1000),companionIDs:[],loadout:.init(normalSkillIDs:[],isUltimateUnlocked:false,passiveIDs:[],relicIDs:[]))
         let boss = s.enemies[0].id
+        for i in 0..<2 { s.commitEnemyImpact(from: boss); try s.endRound(actingEnemyID: boss, at: Double(i)) }
+        #expect(s.enemies[0].currentIntent == "thirteenth_charge" && s.outcome == .inProgress)
         s.commitEnemyImpact(from:boss)
         _ = try s.applyPartyDamage(100000,to:boss)
         #expect(s.outcome == .inProgress)

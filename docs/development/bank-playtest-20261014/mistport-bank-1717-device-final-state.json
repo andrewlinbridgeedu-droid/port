@@ -1,0 +1,103 @@
+{
+  "info" : {
+    "arguments" : [
+      "devicectl",
+      "list",
+      "devices",
+      "--timeout",
+      "10",
+      "--json-output",
+      "/private/tmp/mistport-bank-1717-device-final-state.json"
+    ],
+    "commandType" : "devicectl.list.devices",
+    "environment" : {
+      "TERM" : "dumb"
+    },
+    "jsonVersion" : 3,
+    "outcome" : "success",
+    "version" : "518.33"
+  },
+  "result" : {
+    "devices" : [
+      {
+        "capabilities" : [
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.tags",
+            "name" : "Modify Tags"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.default.user.credentials",
+            "name" : "Modify credentials for default users for a device"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.unpairdevice",
+            "name" : "Unpair Device"
+          }
+        ],
+        "connectionProperties" : {
+          "authenticationType" : "manualPairing",
+          "isMobileDeviceOnly" : false,
+          "lastConnectionDate" : "2026-10-14T10:39:00.000Z",
+          "pairingState" : "paired",
+          "potentialHostnames" : [
+            "iPhone.coredevice.local",
+            "2A835FEC-7B6D-513B-AF8F-B5A84B673035.coredevice.local",
+            "00008110-001E20641AD3A01E.coredevice.local"
+          ],
+          "tunnelState" : "unavailable"
+        },
+        "deviceProperties" : {
+          "bootedFromSnapshot" : true,
+          "bootedSnapshotName" : "com.apple.os.update-E9D360983724BBF4DBCF3C278C6DFB7338D5C0D121BC511EE595071C082CDE18",
+          "ddiServicesAvailable" : false,
+          "developerModeStatus" : "enabled",
+          "hasInternalOSBuild" : false,
+          "name" : "iPhone",
+          "osBuildUpdate" : "23G71",
+          "osVersionNumber" : "26.6",
+          "rootFileSystemIsWritable" : false,
+          "supportsCheckedAllocations" : false
+        },
+        "hardwareProperties" : {
+          "cpuType" : {
+            "name" : "arm64e",
+            "subType" : 2,
+            "type" : 16777228
+          },
+          "deviceType" : "iPhone",
+          "ecid" : 8479863620214814,
+          "hardwareModel" : "D17AP",
+          "internalStorageCapacity" : 128000000000,
+          "isProductionFused" : true,
+          "marketingName" : "iPhone 13",
+          "platform" : "iOS",
+          "productType" : "iPhone14,5",
+          "reality" : "physical",
+          "serialNumber" : "CK2X0P6QY9",
+          "supportedCPUTypes" : [
+            {
+              "name" : "arm64e",
+              "subType" : 2,
+              "type" : 16777228
+            },
+            {
+              "name" : "arm64",
+              "subType" : 0,
+              "type" : 16777228
+            }
+          ],
+          "supportedDeviceFamilies" : [
+            1
+          ],
+          "thinningProductType" : "iPhone14,5",
+          "udid" : "00008110-001E20641AD3A01E"
+        },
+        "identifier" : "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+        "tags" : [
+
+        ],
+        "visibilityClass" : "default"
+      }
+    ]
+  }
+}

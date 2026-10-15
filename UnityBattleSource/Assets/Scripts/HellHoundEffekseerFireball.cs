@@ -36,6 +36,8 @@ public sealed class HellHoundEffekseerFireball : MonoBehaviour
         System.Func<Vector3> source,
         System.Func<Vector3> target)
     {
+        // Keep the mouth charge and travelling fireball visible alongside the
+        // painted breath. Only the terminal blast is delegated to the spell layer.
         if (!IsReady) yield break;
 
         var launch = source();
@@ -67,6 +69,7 @@ public sealed class HellHoundEffekseerFireball : MonoBehaviour
 
     public IEnumerator Fly(System.Func<Vector3> source, System.Func<Vector3> target)
     {
+        if (SpellSpectacle20260926.DrawsBreath) { yield return new WaitForSeconds(.78f); yield break; }
         if (!IsReady) yield break;
 
         // Reuse the authored flame mesh/particles, including their location curve.
@@ -102,6 +105,7 @@ public sealed class HellHoundEffekseerFireball : MonoBehaviour
 
     public IEnumerator PlayImpact(System.Func<Vector3> target, System.Action onContact = null)
     {
+        if (SpellSpectacle20260926.DrawsBreath) { onContact?.Invoke(); yield return new WaitForSeconds(0.20f); yield break; }
         if (!IsReady) yield break;
 
         var parameters = EffekseerPlayEffectParameters.Create(target());

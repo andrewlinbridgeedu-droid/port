@@ -31,7 +31,7 @@ public sealed class FoolDistinctSkillVFX : MonoBehaviour
 
     IEnumerator IdentityDisplacement(int token, Vector3 point, System.Action onContact)
     {
-        var root = Root("VFX · 身份错置");
+        var root = Root("VFX · 张冠李戴");
         var eyeA = SpriteLayer(root.transform, "Effects/Fool/MaskedEye", "误认影 · 蓝");
         var eyeB = SpriteLayer(root.transform, "Effects/Fool/MaskedEye", "误认影 · 紫");
         var rift = SpriteLayer(root.transform, "Effects/Fool/CurtainRift", "身份断裂");

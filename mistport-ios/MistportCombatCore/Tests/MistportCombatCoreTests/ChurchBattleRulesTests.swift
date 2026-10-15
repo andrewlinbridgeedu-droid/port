@@ -41,9 +41,9 @@ private func aggressive(_ view: MPCChurchBattleDriver.View) -> [MPCBattleInput] 
 struct ChurchBattleRulesTests {
     @Test("the log carries the new rule version and old logs are refused")
     func version() throws {
-        #expect(MPCBattleInputLog.currentVersion == "church-battle-v2")
-        let old = MPCBattleInputLog(version: "church-battle-v1", encounterID: MPCChurchTowerCatalog.floor(number: 5)!.id, inputs: [])
-        #expect(throws: MPCChurchBattleDriver.Failure.version("church-battle-v1")) { try MPCChurchBattleDriver.replay(old, loadout: floorLoadout(5)) }
+        #expect(MPCBattleInputLog.currentVersion == "church-battle-v4")
+        let old = MPCBattleInputLog(version: "church-battle-v2", encounterID: MPCChurchTowerCatalog.floor(number: 5)!.id, inputs: [])
+        #expect(throws: MPCChurchBattleDriver.Failure.version("church-battle-v2")) { try MPCChurchBattleDriver.replay(old, loadout: floorLoadout(5)) }
     }
 
     @Test("rule 1: a dead enemy's attack never resolves; it is cancelled", arguments: [12, 30, 55, 80])
@@ -107,8 +107,15 @@ struct ChurchBattleRulesTests {
         var immediateRepeat = false
         for step in trace.steps {
             if let cast = step.events.cast {
-                let expected = Int(((Double(step.tick) * MPCChurchBattleDriver.step + MPCChurchBattleDriver.playerContact(cast.skill))
-                                    / MPCChurchBattleDriver.step).rounded(.up))
+                let start = Double(step.tick) * MPCChurchBattleDriver.step
+                let contact: Double
+                if let skill = cast.skill, skill.isOrderedOrdinary {
+                    let work = MPCOrderedSkillRules.timing(skill).cast
+                    contact = MPCOrderedSkillRules.finishWork(start: start,
+                        work: skill == .mirrorBarrage ? 0.6 : skill == .mirrorPursuit ? work / 2 : work,
+                        hasteUntil: step.session.orderedHasteUntil)
+                } else { contact = start + MPCChurchBattleDriver.playerContact(cast.skill) }
+                let expected = Int((contact / MPCChurchBattleDriver.step).rounded(.up))
                 #expect(cast.landsAtTick == expected)
             }
             if !Set(step.events.enemyResolved).isDisjoint(with: step.events.enemyAttacks.map(\.enemyID)) { immediateRepeat = true }

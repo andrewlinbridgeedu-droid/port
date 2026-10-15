@@ -14816,7 +14816,7 @@
     {
       "id": "upper-road",
       "name": "上坡守灯人",
-      "atlasName": "HarborLamplighterWalkAtlas",
+      "atlasName": "HarborResidentClockmakerWalkAtlas",
       "dialogue": "晚些时候，港灯就要亮了。",
       "pixelsPerSecond": 16.8,
       "frameDuration": 0.18,

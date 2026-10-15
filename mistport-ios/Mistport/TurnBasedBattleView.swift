@@ -50,13 +50,7 @@ struct TurnBasedBattleView: View {
 
     private var battleHeader: some View {
         HStack(spacing: 12) {
-            Button(action: onExit) {
-                Image(systemName: "chevron.left")
-                    .font(.headline.bold())
-                    .frame(width: 38, height: 38)
-                    .background(.black.opacity(0.54), in: .circle)
-            }
-            .tint(.white)
+            GameArtReturnButton(title: "退出", action: onExit)
             .accessibilityLabel("退出战斗")
 
             VStack(alignment: .leading, spacing: 2) {

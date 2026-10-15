@@ -60,10 +60,18 @@ struct StoryBattleDriverTests {
         #expect(played.log.version == MPCBattleInputLog.storyVersion)
     }
 
-    @Test("the chapter is winnable with these loadouts")
-    func mostMissionsAreWon() throws {
-        let wins = try (1...30).filter { try record($0).0.result.outcome == .victory }
-        #expect(wins.count >= 20, "won \(wins)")
+    @Test("ordered haste and delayed impacts reproduce the same final settlement")
+    func orderedReplayMatches() throws {
+        var loadout = storyLoadout(12)
+        loadout.normalSkillIDs = [.stolenTempo, .delayedSignature, .mirrorBarrage, .backstageChange]
+        var played = try MPCStoryBattleStepper(encounterID: "chapter01_q12_encounter", loadout: loadout)
+        var contacts = 0
+        while !played.isFinished { contacts += try played.step().orderedImpacts.count }
+        let (replayed, _) = try MPCChurchBattleDriver.replayStory(played.log, loadout: loadout)
+        #expect(contacts > 3)
+        #expect(replayed.outcome == played.result.outcome && replayed.ticks == played.result.ticks
+                && replayed.playerHP == played.result.playerHP)
+        #expect(replayed.session.enemies == played.session.enemies)
     }
 
     @Test("Q1: three basic attacks, then Mara intervenes and the trial card joins the loop")

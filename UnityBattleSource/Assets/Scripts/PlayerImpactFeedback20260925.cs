@@ -31,6 +31,14 @@ public sealed class PlayerImpactFeedback20260925 : MonoBehaviour
     public float LastPoseWeight { get; private set; }
     public float PeakAppliedDegrees { get; private set; }
     public bool LastWasShieldOnly { get; private set; }
+    /// The last accepted packet was the defeat cue: Present cleared and returned true, but
+    /// no strength was computed, so callers must not trigger a hit reaction from it.
+    public bool LastWasDefeat { get; private set; }
+    /// Strength of the last accepted hit (about .3-1.15), for the illustrated hero's shake.
+    public float LastStrength => strength;
+    /// Same, before the reduced-motion ×.35. Hand this to AIHeroAnimatedBody.ConfirmedHit,
+    /// which applies that reduction itself (otherwise it was applied twice).
+    public float LastStrengthUnreduced { get; private set; }
     public long LastSequence => lastSequence;
 
     public static PlayerImpactFeedback20260925 Install(GameObject actor, BattlePrototype owner)
@@ -83,6 +91,7 @@ public sealed class PlayerImpactFeedback20260925 : MonoBehaviour
     // Sequence belongs to a visual context; retries/waves cannot accept its old packets.
     public bool Present(string payload)
     {
+        LastWasDefeat = false;
         var fields = (payload ?? "").Split(';');
         if (fields.Length != 7 || string.IsNullOrEmpty(context) || fields[0] != context
             || !long.TryParse(fields[1], NumberStyles.None, CultureInfo.InvariantCulture, out var sequence)
@@ -99,12 +108,13 @@ public sealed class PlayerImpactFeedback20260925 : MonoBehaviour
         SpellSpectacle20260926.ReducedMotion = fields[6] == "1";
         // The authoritative defeat cue takes ownership immediately. Never fight
         // paper/shatter presentation with a late recoil, even in the same frame.
-        if (fields[5] == "1") { Clear(true); return true; }
+        if (fields[5] == "1") { LastWasDefeat = true; Clear(true); return true; }
         Clear(false);
         LastWasShieldOnly = hpLoss == 0;
         float fraction = Mathf.Clamp01(((float)hpLoss + shieldLoss * .45f) / maxHP);
         strength = Mathf.Lerp(.65f, 1.15f, Mathf.Clamp01(fraction / .22f));
         if (LastWasShieldOnly) strength *= .50f;
+        LastStrengthUnreduced = strength;
         if (fields[6] == "1") strength *= .35f;
         started = Time.time;
         playing = true;

@@ -42,7 +42,7 @@ struct UsurpedLifeMedalTests {
         let a = try plain.useFoolSkill(.sidestepStrike, targetID: target, usesRealtimeCooldown: true)
         let b = try boosted.useFoolSkill(.sidestepStrike, targetID: target, usesRealtimeCooldown: true)
         #expect(b.damage > a.damage)
-        #expect(b.targets.count == 2)
+        #expect(b.targets.count == 3)
         #expect(boosted.foolStates[target]?.attack == 100)
         _ = boosted.settleUsurpedLifeMedal()
         #expect(boosted.foolStates[target]?.attack == 100)

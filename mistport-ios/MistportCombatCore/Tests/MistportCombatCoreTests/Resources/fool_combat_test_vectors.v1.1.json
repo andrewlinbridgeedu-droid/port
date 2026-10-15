@@ -37,7 +37,7 @@
     },
     {
       "id": "T03",
-      "description": "4层误认和伪证下身份错置",
+      "description": "4层误认和伪证下张冠李戴",
       "input": {
         "attack": 100,
         "skill": "fool_skill_04",

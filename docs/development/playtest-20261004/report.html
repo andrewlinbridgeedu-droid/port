@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>雾港新手试玩测评</title>
+<style>
+:root{--bg:#f6f3ec;--fg:#222;--muted:#666;--card:#fff;--line:#ddd;--p0:#c0392b;--p1:#d68910;--p2:#2e86c1;--ok:#1e8449}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16151a;--fg:#e8e6e1;--muted:#9a978f;--card:#211f26;--line:#34313b}}
+body{background:var(--bg);color:var(--fg);font:15px/1.65 -apple-system,"PingFang SC",sans-serif;margin:0;padding:0 16px 60px}
+main{max-width:920px;margin:auto}h1{margin:28px 0 4px}h2{margin-top:36px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.meta{color:var(--muted);font-size:13px}.tag{display:inline-block;font-size:12px;font-weight:600;padding:1px 7px;border-radius:4px;color:#fff;margin-right:6px}
+.p0{background:var(--p0)}.p1{background:var(--p1)}.p2{background:var(--p2)}.ok{background:var(--ok)}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.shots{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}.shots figure{margin:0;width:170px}.shots img{width:170px;border-radius:8px;border:1px solid var(--line)}
+figcaption{font-size:12px;color:var(--muted)}li{margin:4px 0}code{font-size:13px}
+</style></head><body><main>
+<h1>雾港新手试玩测评</h1>
+<p class="meta">2026-10-04 · 模拟器（iPhone，静音）· Build 169.75 → 169.99（分支 claude/ai-hero-integration-20261003）· 全新安装，从标题页开始 · 时长约 45 分钟 · 作弊：改存档日期跳天、开发者面板跳关</p>
+<p class="meta">说明：模拟器里截图→点击有 5–10 秒延迟，凡需半秒内反应的操作（假面）我无法公平测试，已单独标出。未在真机上玩，未听音效。</p>
+
+<h2>一句话结论</h2>
+<p>开场画面、战斗特效和教会/深井/通缉的结构都很有质感；但<b>有一个阻塞性卡死（P0）会让玩家卡在主线</b>，另外新手前 3 关对白过长、Q3 假面教学不足、第 1 天打完 3 关后无事可做。</p>
+
+<h2>第二轮：修复后从新存档重玩（169.79 → 169.80）</h2>
+<p class="meta">第一轮的问题已修复并合入 main（5fbc35c）。第二轮从全新存档玩到第 4 天：Q1–Q5 正常通过；Q6、Q7 未能通过，用开发者面板跳到 Q8。后半段整机负载升到 100–366（其他程序占满资源，外接 SSD 短暂掉线一次），每次点击要等 5–15 秒，Q6 之后的手动时机测试不可靠。</p>
+<table>
+<tr><th>关卡</th><th>结果</th><th>观察</th></tr>
+<tr><td>Q1–Q3</td><td><span class="tag ok">通过</span></td><td>跳过对白、空编排自动装卡、委托板第 1 天有 2 条、百工坊锁标都生效。Q3 自动装上错步后一次过。</td></tr>
+<tr><td>Q4 猎犬试探</td><td><span class="tag ok">第 5 次通过</span></td><td>设计要求每 20 秒一轮、在第一发火球前约 3 秒的窗口里开假面（太早会被试探攻击吃掉一层，太晚第一发已到；每发火球 110% 生命）。<b>我加的提示冷却好就亮，第二、三轮比窗口早约 2 秒，照着按会输</b>——已改为只在窗口内亮。</td></tr>
+<tr><td>Q5 不肯落幕</td><td><span class="tag ok">第 3 次通过</span></td><td>毒雾才是主要威胁：第二次打到 1550/1600 被毒雾磨死。约 20 秒用止痛膏、绿焰时开假面后通过。节奏紧张但公平。前往时约 5 秒纯黑屏；止痛膏图标点击区偏小。</td></tr>
+<tr><td>Q6 档案街入口</td><td><span class="tag p1">未通过</span></td><td>门卫举盾 3 秒完全免伤，序章说"抓住收盾后的空隙"，但技能自动出、玩家无从掌握时机，错步大多打在盾上（868/1500）。改成"举盾时压住卡牌"后提高到 1026，仍输（这时机器已很卡）。</td></tr>
+<tr><td>Q7 空白身份牌</td><td><span class="tag p1">未通过</span></td><td>两具守卫 + 会回血的核心；核心藏在"开始战斗"按钮后面，开打后才看得到。2710 伤害仍输。</td></tr>
+</table>
+<h3>第三轮：深井 1–10 层、Q8、通缉（模拟器重启后，存档被清空，新存档 + 跳天 + 跳关到 Q8）</h3>
+<ul>
+<li><span class="tag ok">好</span>深井 F1–F10 一次连打全过（错步 + 张冠李戴，自动出牌），只在 F10（7 个敌人）用了一次止痛膏。F2/F4/F6/F8/F10 各掉一件装备，每层 +8 铜 +2 功勋。连打节奏顺："准备下一层"一键接下一层。</li>
+<li><span class="tag ok">好</span>F10 后回到深井，自动选中第 11 层，并正确提示"完成主线第 10 关后取得下井许可"（上轮的修复生效）。</li>
+<li><span class="tag ok">好</span>拿到 10 层装备后，之前打不过的 Q8 一次通过（1900 伤害，三种出招都计入）。"去深井打装备再回来"的设计成立；战力 435 → 735。</li>
+<li><span class="tag p1">P1</span>通缉 B01 调查卡在"封锁公告处"。查明原因：证人诺恩是街上的人物，接案后会走到离他岗位最近的停留点 H6；同案的奥黛尔也走到 H6，两人叠在同一个点，只看得到、点得到上面那个。第 4 步的维拉同样被站在同一停留点的商人盖住。另外"封锁公告处"不是地图地名，它在警察厅里（警察厅柜台能问话，但没有任何提示指向那里）。<b>已修</b>：同一停留点的人物左右错开；任务条和目标列表写成"第七号空壳 · 封锁公告处，找诺恩（警察厅）"；问话页打开时不再误显示"已记录"。修复后 5 条线索全部走通（见下）。</li>
+<li><span class="tag ok">撤回</span>上一版写的"日刊深井'前往'无效"是我点错位置（点在说明文字上）；点准后正常进入深井。</li>
+<li><span class="tag p2">P2</span>任务条左侧原来的红蜡封图不见了：2026-09-29 改街道任务条时整条换掉了，只剩第二章黑盐岸那条还在用。<b>已修</b>：蜡封加回任务条。</li>
+<li><span class="tag ok">好</span>修复后（169.82）通缉 B01 完整走通：诺恩 → 奥黛尔 → 巡逻值房 → 维拉（三选一证据）→ 废岗亭（核对外观/行为、选嫌疑人、勾证据、出示通缉令）→ 战斗一次获胜，"现场已收押"；任务条变成"回教会交案"，教会下方的红蜡封一点进去就能"交案并领取报酬"，铜币 500 → 560。调查环节的推理题设计得好：错误选项（"所有空壳守卫都长得一样""依照街头传闻先抓最可疑的人"）都在教玩家别凭外貌和传闻定罪。</li>
+<li><span class="tag p1">P1</span><b>街坊委托在正式流程里接不到。</b>能和街坊对话的页面（<code>NeighborConversationView</code>）只从 <code>MissionBoardView</code> 的步行街打开，而那个页面挂在一个没有任何按钮会打开的 sheet 下；港城街道上街坊也不是任务目标，点他们只会打招呼。日刊和委托板却都写着"到街上找 X 交谈"。连带后果：第 1 天我加的两条委托、以及体力的主要消耗点都不可达——这就是"体力 100 从没扣过"的原因。另外日刊显示的当天委托只是在一份副本上开出来的，没有写进存档。<b>修法</b>：街坊有委托时出现在港城街道上并带铃铛任务标，点他进入现有的对话页；城市主循环每天同时开启街坊委托（169.85，验证见下）。</li>
+<li><span class="tag p2">P2</span>通缉收尾两处弱：战后"回到城图"回到的是废岗亭问话页，还停在"出示通缉令"的旧状态，没提示去教会；结案后页面只剩一行灰字"已记录。"，不显示报酬和结案说明。<b>已改</b>（169.84，仅编译验证，未能再跑一个案子复看）：收押后问话页改为提示去教会柜台；结案后显示结案文字 + "已结案 · 报酬 60 铜币 / 12 功勋"。</li>
+<li><span class="tag p2">P2</span>模拟器重启后存档丢失（模拟器问题，不是游戏问题；真机不受影响）。</li>
+</ul>
+<div class="shots">
+<figure><img src="shots/r3-204-f10setup.jpg"><figcaption>F10 守住井口</figcaption></figure>
+<figure><img src="shots/r3-206-f10b.jpg"><figcaption>F10 通过，掉首锚断刃</figcaption></figure>
+<figure><img src="shots/r3-207-well.jpg"><figcaption>自动选中 F11 + 正确锁提示</figcaption></figure>
+<figure><img src="shots/r3-210-q8b.jpg"><figcaption>Q8 通过</figcaption></figure>
+<figure><img src="shots/r3-212-b01.jpg"><figcaption>B01 战力 735</figcaption></figure>
+<figure><img src="shots/r3-219.jpg"><figcaption>修前：找不到封锁公告处</figcaption></figure>
+<figure><img src="shots/r3-228-list.jpg"><figcaption>修后：蜡封回归，诺恩/奥黛尔并排</figcaption></figure>
+<figure><img src="shots/r3-238-vera-tap.jpg"><figcaption>修前：点维拉打开的是商人</figcaption></figure>
+<figure><img src="shots/r3-239-vera2.jpg"><figcaption>修后：维拉与商人并排</figcaption></figure>
+<figure><img src="shots/r3-247-warrant.jpg"><figcaption>废岗亭：出示通缉令</figcaption></figure>
+<figure><img src="shots/r3-250-b01-result.jpg"><figcaption>B01 现场已收押</figcaption></figure>
+<figure><img src="shots/r3-252-turnin.jpg"><figcaption>回教会交案（蜡封在教会下）</figcaption></figure>
+<figure><img src="shots/r3-254-claimed.jpg"><figcaption>修前：结案只剩"已记录。"</figcaption></figure>
+</div>
+
+<h3>第四轮：把所有玩法都走一遍（10-04 晚 → 10-05 凌晨，169.85 → 169.89，第 7–10 天）</h3>
+<p class="meta">用户要求"所有任务都要走一次，确保能走通，尽量丰富"。这一轮发现三块玩法在正式流程里根本到不了或走不完，都已修并合入 main；其余玩法逐项实走。作弊：改存档把城市贡献设为 320（否则街头任务要第 6–7 天才开）、补体力。</p>
+<table>
+<tr><th>级别</th><th>发现</th><th>结果</th></tr>
+<tr><td><span class="tag p1">P1</span></td><td><b>街坊委托接不到。</b>能和街坊对话的页面只从一个没有任何按钮会打开的 sheet 进入；港城街道上街坊不是任务目标，点他们只会打招呼。日刊和委托板却写"到街上找 X 交谈"。连带体力从未扣过。</td><td><b>已修（169.85）</b>：街坊有委托时出现在街上并带铃铛标，点他进入对话页；委托板也能直接接。四种街坊委托（传话、找答案、交货、赶塔怪）各实走一条，报酬、好感、体力扣减全部到账。</td></tr>
+<tr><td><span class="tag p1">P1</span></td><td><b>街头任务和城市贡献没有 App 侧。</b>规则库里的急件/联合委托/市政委托和贡献度分档全部写好了，但没有存档、没有页面、没有入口；首页 HUD 显示的还是旧的"声望 · 门槛100"。</td><td><b>已修（169.86）</b>：新增存档和 <code>HomeStreetTaskView</code>（接单、交谈、交货、答题、街头小仗），街上海报红印、委托板/柜台行、日刊行、HUD"贡献"。实走联合委托 4 步（+30 铜 · 三人好感 +1）和急件 3 步（+15 铜）；六类贡献来源挂钩（主线首通、委托、通缉结案、余案、事件战、事件成功），HUD 从 320 涨到 333。</td></tr>
+<tr><td><span class="tag p1">P1</span></td><td><b>多波战卡死。</b>塔内维护第 1 处清剿打到第 3 波，远处只剩一条无身体的细血条，主角不出手，战斗永不结束。根因：第一波直接用模板身体，它死后被标为"退场中"；第 2/3 波重新启用同一具身体，退场标记没清，出招表现全跳过并空引用，Swift 侧又只认 Unity 回执、没有超时。深井 11 层以上、巡检封口、联合委托小仗都可能中招。</td><td><b>已修（169.87/169.88）</b>：复用身体时清退场标记；身体缺失时直接回执；原生侧命中回执 2.5 秒兜底。余案两波战、维护三处九波、事件战、街坊赶塔怪全部打通，控制台 NullReference 0 次。</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td><b>战斗页左上角两个按钮叠在一起</b>（用户从截图指出）：余案/维护/事件/街坊/街头任务的战斗页在布阵阶段又叠了一个"返回案卷/返回工单/返回事件板…"，压在标题和"退出"上。我在 6 张截图里都看到了却没记。</td><td><b>已修（169.89）</b>：有战斗页时只用它自带的"退出"。已把"截图里看到的 UI 问题一律记录"写进长期记忆。</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>任务条太小难点，右侧折叠箭头和展开列表多余（用户反馈）。</td><td><b>已修</b>：整条可点进入主线，街头任务作第二行小字并带"在右侧 →"屏外提示，蜡封保留。</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>塔内维护核验题：选项收起动画中点第 3 题会点错项；之后正确项要点在行的上半部分才生效。未结工单行只有文字可点。</td><td><b>已修</b>：两处补整行点击区域。</td></tr>
+</table>
+<p><b>实走通过的玩法</b>（都在 169.87–169.89，控制台无异常）</p>
+<ul>
+<li>教会封线值务「维护已封层段 1–10」：三道核验题 → 三处各三波清剿 → "值务完成 +80 铜 · +8 功勋"。巡检封口要 Q9 才开。</li>
+<li>无名残余案「第七号空壳」（B01 结案后每日一案）：线索题答对 → 两波战 → "领取 30 铜币 + 韧皮 ×2"。</li>
+<li>封存借物处：签契约（押金 80 + 租金 12，铜币 735→643）→ 装备 → 卸下；归还结清和战斗磨损未测。</li>
+<li>百工坊：制作维修绑带 ×3、铆皮护甲 ×1，熟练 0→2/20，材料和铜币扣减核对无误；拿绑带去交给咖啡馆店主 → 好感 2 解锁"街坊往事 · 1"。</li>
+<li>城市事件「伤患潮」：事件战一场获胜"记 1 场事件胜利，已付 10 铜"，页面回到"还需 5 场 · 今天已记 1/2"。交付项因背包无货未测。</li>
+<li>封线装备页：深井掉落自动穿戴，候选装备标"比当前 -11%"和来源层。</li>
+<li>体力：各类委托按 10/15/20 扣减；不足时提示"灯火不够支撑这趟奔忙了。先歇一歇，约到 02:44 再来"（有情境、有时间，好）。</li>
+</ul>
+<p><b>记下未改的</b></p>
+<ul>
+<li>日刊"通缉日刊"列出还没到解锁关卡的案子（溺钟海盗、赤丝裁衣人、借脸人…），点进去不能接；应标"未解锁"或不列。</li>
+<li>封线装备页"首锚断刃"图标是空框，缺美术。</li>
+<li>街坊对话页：传话完成后页头"好感 0"不刷新；完成态里请求和回复被截成"…"。</li>
+<li>维护清剿战斗页标题"塔内维护 · 第 1–10 层段 · 第 1/3 处"折成三行。</li>
+<li>日刊各行的"前往"按钮点击区偏小，要点在按钮正中。港城面板左右箭头点了没反应。</li>
+<li>停在战败页时 App 仍占约 60% CPU。</li>
+<li>没走到：市政委托（喷泉广场的花与旗，5–6 步，正在走）、酒馆牌局（B08 结案后）、B02 以后的通缉（各有解锁关卡）、今日工作里的邮务、赁屋行。</li>
+</ul>
+<div class="shots">
+<figure><img src="shots/r4-258-musician2.jpg"><figcaption>街坊带铃铛标，可接委托</figcaption></figure>
+<figure><img src="shots/r4-283-board-street.jpg"><figcaption>委托板红印：联合委托海报</figcaption></figure>
+<figure><img src="shots/r4-298-cafe-page.jpg"><figcaption>一人两件事：二选一</figcaption></figure>
+<figure><img src="shots/r4-304-joint-done.jpg"><figcaption>联合委托完成 +30 铜</figcaption></figure>
+<figure><img src="shots/r4-328-urgent-done.jpg"><figcaption>急件完成 +15 铜</figcaption></figure>
+<figure><img src="shots/r4-305-hud.jpg"><figcaption>HUD：贡献 322 · 雾港的帮手</figcaption></figure>
+<figure><img src="shots/r4-367-cafe-delivered.jpg"><figcaption>交货 → 好感 2 → 街坊往事</figcaption></figure>
+<figure><img src="shots/r4-270-maint-fight.jpg"><figcaption>修前：第 3 波只剩细血条</figcaption></figure>
+<figure><img src="shots/r4-355-maint-site3-end.jpg"><figcaption>修后：维护 3/3 值务完成</figcaption></figure>
+<figure><img src="shots/r4-346-remnant-claim.jpg"><figcaption>余案领奖</figcaption></figure>
+<figure><img src="shots/r4-359-loan-signed.jpg"><figcaption>借物契约</figcaption></figure>
+<figure><img src="shots/r4-364-crafted-armor.jpg"><figcaption>百工坊制作</figcaption></figure>
+<figure><img src="shots/r4-371-event-battle-try.jpg"><figcaption>修前：返回事件板压在标题上</figcaption></figure>
+<figure><img src="shots/r4-378-event-setup89.jpg"><figcaption>修后：只剩退出</figcaption></figure>
+<figure><img src="shots/r4-372-event-stamina.jpg"><figcaption>体力不足提示</figcaption></figure>
+<figure><img src="shots/r4-357-gear.jpg"><figcaption>装备页：首锚断刃图标空框</figcaption></figure>
+</div>
+
+<h3>第五轮：剩下的玩法（10-05 凌晨，第 10 天，169.89 → 169.91）</h3>
+<p class="meta">会话中断后重启 App 续玩（存档保留）。走完市政委托、住宿、角色页、背包；酒馆牌局（要 B08 结案）、B02 以后的通缉、深井 11 层以上（要 Q10）仍受解锁限制没到。</p>
+<table>
+<tr><th>级别</th><th>发现</th><th>结果</th></tr>
+<tr><td><span class="tag ok">通过</span></td><td><b>市政委托「喷泉广场的花与旗」6 步全部走通</b>：市政厅领工单 → 工坊区订石料 → 花商挑花 → 给咖啡馆店主 2 块过滤布（先去百工坊织造页用喉纤维做）→ 委托板清池底塔怪（金喉树蛙 ×2）→ 回市政厅交工 +60 铜。</td><td>工单文案把后续去向都写清了，好。</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>同一地点挂两件事只能开一件：委托板下急件海报和市政委托第 5 步两个红印重叠，点开永远是急件；要从委托板柜台里才能选到另一件。</td><td><b>已修</b>：地点目标也走"选择要办的事"二选一（人物目标原本就有）。</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>街头小仗页面露出内部 id："一场街头小仗：church_d10_golden_throat、church_d10_golden_throat"。</td><td><b>已修</b>：显示物种中文名。</td></tr>
+<tr><td><span class="tag p1">P1</span></td><td><b>角色页下方面板被截断、不能滚动</b>：遗落物页签只露出"工坊装备保养"一块，遗落物商店、晋阶主材、序列仪式、邮务核对（送信工作）全藏在屏幕底边之下，玩家到不了。</td><td><b>已修（169.91 验证）</b>：面板内可滚动。遗留：面板内容直接叠在立绘黑靴子上，灰色小字几乎看不见。</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>赁屋行·看房页：三个"旧事"热点被页面级按钮样式渲染成整宽黑色金属板，盖住房间照片。</td><td><b>已修</b>：热点改为普通小圆标（169.92）。</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>赁屋行·贵族区：写"贡献度 300、雾港的帮手才开门"，我 333 已是雾港的帮手仍锁着——代码里是"贡献未接入所以先硬锁"的遗留。</td><td><b>已修</b>：按贡献档开门（169.92）。</td></tr>
+<tr><td><span class="tag p1">P1</span></td><td>贵族区解锁后暴露：区名显示英文 "noble"，看房页"进屋看看"整页空白、无返回按钮——公馆客房没有外景/室内/热点美术，地名表也没有它。</td><td><b>已修（169.93/169.94 验证）</b>：区名在代码里给"贵族区"（往 housing-geography.json 加条目会让整个文件解码失败——该文件标注不可改，我第一次就踩了这坑，已撤回）；无美术时页面仍有返回/房名/说明/选租约。公馆客房的外景/室内/热点美术待补。</td></tr>
+<tr><td><span class="tag ok">通过</span></td><td>"今日工作"里的邮务核对（角色页遗落物页签最底部）：三项核对（收件人/街道/封记，各 10 体力）→ +40 铜，第 2 单立即接上。</td><td>入口藏太深；面板底边把三列按钮切掉一半，按钮文字折行。</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>赁屋行街区示意图上五个街区标签叠在一起互相遮挡；"贵族区 · 城市贡献度 300 开放"小字压在"高级住宅区"上。</td><td>未改。</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>背包三件素材无图标显示"原画待补"（杂鳞、盐囊腺、蛙喉丝）；同一物品工坊叫"喉纤维"、背包叫"蛙喉丝"；素材来源写"已收入行囊"而不是掉落层。</td><td>未改（美术/文案）。</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>设计稿说市政委托完成后首页画上永久加一景（喷泉），JSON 里有坐标，App 没有任何代码读它。</td><td>未实现。</td></tr>
+</table>
+<p><b>住宿线走通</b>：赁屋行 → 看区选房（六个街区 3–30 铜/日）→ 老城拱廊·拱廊合租间 → 进屋看看（热点有旧事文案）→ 七日租约选餐（汤棚 9 / 面包坊 12 / 咖啡馆 14）→ 签约并搬家 → "你的新门牌 · 愚者"；我的住处页可换饮食。高地告示处只给石宅住户。</p>
+<p><b>我的失误</b>：一度把百工坊"织造/药剂/金属"页签判成点不动，其实是截图坐标（460×1000）与设备点（440×956）的 4% 偏差，30pt 高的分段控件会点空；换算后正常。已撤回。</p>
+<div class="shots">
+<figure><img src="shots/r5-390-commission-step1.jpg"><figcaption>市政委托工单</figcaption></figure>
+<figure><img src="shots/r5-411-cloth-made.jpg"><figcaption>织造：过滤布</figcaption></figure>
+<figure><img src="shots/r5-416-board-fight-page.jpg"><figcaption>红印重叠：只开了急件</figcaption></figure>
+<figure><img src="shots/r5-418-step5-page.jpg"><figcaption>露出内部 id</figcaption></figure>
+<figure><img src="shots/r5-425-commission-done.jpg"><figcaption>交工 +60 铜</figcaption></figure>
+<figure><img src="shots/r5-431-relics-scroll.jpg"><figcaption>修前：角色页面板截断</figcaption></figure>
+<figure><img src="shots/r5-447-profile-scroll91.jpg"><figcaption>修后可滚，但字叠在靴子上</figcaption></figure>
+<figure><img src="shots/r5-433-inventory.jpg"><figcaption>背包：三件"原画待补"</figcaption></figure>
+<figure><img src="shots/r5-437-housing-districts.jpg"><figcaption>街区标签重叠、贵族区锁</figcaption></figure>
+<figure><img src="shots/r5-439-room-inside.jpg"><figcaption>热点变黑板</figcaption></figure>
+<figure><img src="shots/r5-441-lease.jpg"><figcaption>七日租约</figcaption></figure>
+<figure><img src="shots/r5-442-lease-signed.jpg"><figcaption>新门牌</figcaption></figure>
+</div>
+
+<p><b>新发现并已修复（已合入 main，72f2115）</b></p>
+<ul>
+<li><span class="tag p1">P1</span>百工坊 Q5 开放，但"前往教会塔取材"会直接打开 Q7 才解锁的教会（绕过锁）；深井第 1 层按钮灰着，提示却写"先封堵上一层"。现在取材按钮在教会未开时换成说明文字，深井提示优先显示教会锁。</li>
+<li><span class="tag p1">P1</span>Q4 假面提示时机错误（见上表）。</li>
+<li><span class="tag p2">P2</span>Q5 的 Boss 很高，敌方台词条压在它的血条上；Q3–Q8 的敌方台词改为并入顶部提示面板。</li>
+<li><span class="tag p2">P2</span>对白分页把右引号"”"单独甩到下一页第一行。</li>
+</ul>
+<p><b>只在分支上、未合入 main（edf41cb，平衡改动，等你决定）</b>：目标举盾完全免伤时，自动编排先压住卡牌、盾放下再出，普攻照常；没选目标时优先打没举盾的敌人。影响 Q6、深井盾颚层、通缉 B06，会变容易。</p>
+<p><b>记下未改的</b></p>
+<ul>
+<li>Q1–Q7 主角只有「错步穿行」一张卡（Q8 才给张冠李戴），Q4 起每关都靠假面/止痛膏的手动时机，难度坡度偏陡；Q6、Q7 是否需要调整，建议真机上由人来试。</li>
+<li>第 2–4 天每天只开一关主线，十来分钟就打完。</li>
+<li>委托板三行文字把按钮撑满，标题贴着上边框。</li>
+<li>布阵页用"补给 30 铜"买止痛膏后，底栏补给区不刷新，开打后才出现。</li>
+<li>战败后点"返回主界面"，底部任务条前两次点击没反应。</li>
+<li>重试回到布阵页时，主角血条先显示残血再动画回满，容易误以为没回满。</li>
+<li>停在战败页时 App 仍占约 60% CPU（Unity 战场还在渲染），真机上可能耗电发热。</li>
+</ul>
+<div class="shots">
+<figure><img src="shots/r2-q4b-timeline.jpg"><figcaption>Q4 连拍：假面开早，第二发火球打中本体</figcaption></figure>
+<figure><img src="shots/r2-113-q4-r2.jpg"><figcaption>Q4 第二轮假面接住</figcaption></figure>
+<figure><img src="shots/r2-117.jpg"><figcaption>右引号被甩到下一页</figcaption></figure>
+<figure><img src="shots/r2-123-q5setup.jpg"><figcaption>Q5 台词条压在 Boss 血条上</figcaption></figure>
+<figure><img src="shots/r2-131-q5-glow2.jpg"><figcaption>Q5 毒雾</figcaption></figure>
+<figure><img src="shots/r2-138-q5r-mask.jpg"><figcaption>Q5 通过</figcaption></figure>
+<figure><img src="shots/r2-143-workshop-tower.jpg"><figcaption>百工坊直接进了未解锁的教会</figcaption></figure>
+<figure><img src="shots/r2-144-well-locked.jpg"><figcaption>深井提示原因写错</figcaption></figure>
+<figure><img src="shots/r2-q6-timeline.jpg"><figcaption>Q6 错步打在蓝色护盾上</figcaption></figure>
+<figure><img src="shots/r2-155.jpg"><figcaption>台词并入顶部面板</figcaption></figure>
+<figure><img src="shots/r2-170-q7target.jpg"><figcaption>Q7 核心与回血</figcaption></figure>
+<figure><img src="shots/r2-128.jpg"><figcaption>委托板按钮文字太挤</figcaption></figure>
+</div>
+
+<h3>第六轮：清掉"记下未改"（10-05 凌晨，169.93 → 169.95）</h3>
+<p class="meta">把第四、五轮里"记下未改"的项逐条修掉并验证：首页市政委托贴图（喷泉/货场按昼夜与积雪选图）、素材三件补占位图标并统一命名、日刊未解锁通缉标"（第 N 关后）"、角色页面板加底色、邮务选项一行一个。提交 3abecd0 已合入 main。</p>
+<div class="shots">
+<figure><img src="shots/r6-464-city95.jpg"><figcaption>464 广场喷泉委托贴图（夜）</figcaption></figure>
+<figure><img src="shots/r6-465-profile95.jpg"><figcaption>465 角色页面板有底色</figcaption></figure>
+<figure><img src="shots/r6-466-postal95.jpg"><figcaption>466 邮务选项不再被切</figcaption></figure>
+</div>
+
+<h3>第七轮：推进主线 Q9–Q12（10-05 上午，第 10–13 天，169.95 → 169.98）</h3>
+<p class="meta">Q9 一次过；Q10 在 169.95 连输三次后用战斗核心仿真复核，判定数值过严并下调（6e9c66c 已合入 main），169.96 首通；Q11 第二次过；Q12（设计硬墙，已装断剑）第二次过。假面裂纹用到 4/10。</p>
+<table>
+<tr><th>关卡</th><th>结果</th><th>观察</th></tr>
+<tr><td>Q9 被改写的证词</td><td><span class="tag ok">一次过</span></td><td>2270 伤害，习得伪证烙印；傀儡举盾阶段要等。</td></tr>
+<tr><td>Q10 失踪者名单</td><td><span class="tag ok">第 4 次过（下调后）</span></td><td>原值（猎犬喷吐 150%、猎犬 1050 / 傀儡 1200 血）仿真只有 1.75 秒一张卡的最快节奏能赢；Q9 在 2.5 秒节奏能赢。Q10 不在硬墙名单，按"其余关卡不设硬性要求"下调为喷吐 100%、800 / 900 血，3 秒节奏可赢。169.96 实打 1700 伤害通过。</td></tr>
+<tr><td>Q11 不属于我的家人</td><td><span class="tag ok">第 2 次过</span></td><td>敌方总血 3000，第一次 2987 差 13 点；第二次用假面通过。战前"补给 30 铜"买止痛膏可用。</td></tr>
+<tr><td>Q12 强制校正</td><td><span class="tag ok">第 2 次过</span></td><td>两名傀儡各 1300 血，叠甲后单下只有 20 左右；开场巨大晶体护层盖满上半屏。</td></tr>
+<tr><td>Q13 救援命令</td><td><span class="tag ok">一次过</span></td><td>169.97：2673 伤害，习得无名宣告；胜利页这次完整看到（继续按钮延迟 1.1 秒生效）。</td></tr>
+<tr><td>Q14 错误名牌</td><td><span class="tag p1">未通过</span></td><td>169.98 两次失败：记忆蛭 1200 + 傀儡 1600，攻 90/115，吃药 + 勋章仍约 40 秒被打空。建议下一轮用 Q10 同样的仿真口径核一下 Q14。</td></tr>
+</table>
+<p><b>这一轮新发现</b></p>
+<ul>
+<li><span class="tag p2">P3</span><b>止痛膏"点不动"已撤回</b>：169.98 加触摸日志后确认，点在图标正中心就生效（hp 554→880），之前是我点在图标边缘或旁边的勋章文字上。真正的改进点：补给按钮只有 40pt 图标加小字可点，建议整块 46pt 高区域可点。</li>
+<li><span class="tag p2">P2</span><b>"开始战斗"偶发不响应</b>：Q11、Q12 跳过对白后 6–7 秒内点无效（卡牌却能排队），等 15 秒再点第一下就开打（509、513→514）；169.97/169.98 的 Q13、Q14 在 6 秒时点又正常（日志 phase=setup）。未定位，保留观察。</li>
+<li><span class="tag p2">P2</span><b>胜利结算被连点按过去</b>：Q11、Q12 都没看到结算/奖励/战后对白，战斗末尾的连点直接把"继续"按掉了。169.97 起"继续"出现 1.1 秒后才可点。</li>
+<li><span class="tag p2">P2</span><b>战后对白"跳过对白"无响应</b>（492、493、516、526）：169.97 日志证实触摸没到左下角按钮，"下一页"可用。169.98 把"跳过对白 ›"放进气泡脚部（与"下一页"同一触摸路径），战前已验证有效（530），战后待下次胜利确认。</li>
+<li><span class="tag p2">P3</span><b>"Q12 战前 5 张卡"撤回</b>（508）：下方卡牌排是全部已解锁技能（Q13 起 6 张带左右箭头），编排队列只有 4 格；建议未入队的卡标"未编入"。169.97 加的四格截断保留，无副作用。</li>
+<li><span class="tag p2">P3</span><b>"重新挑战回主城"撤回</b>（501、511）：日志记录的都是 exit-button；Q14 复现时确认是我在没看到失败页的情况下连点，落在了左侧"返回主界面"上。</li>
+<li><span class="tag p2">P2</span>Q12 傀儡"加固"晶体护层比本体大数倍、盖住上半屏（514）——华彩层尺寸问题，未改。</li>
+<li><span class="tag p2">P2</span>任务条副标题显示当天街头任务名"婚礼的花篮"，像主线描述（488、495）；169.97 起前缀任务类型"街头急件·"。</li>
+<li>P3：买完补给后战前遗落物条不显示止痛膏（500）；画面右缘人名牌被裁半（506）；战役背包 currency_copper 与 HUD 铜币不一致（580 vs 550）；僧命勋章开打后从遗落物条消失、变成左下按钮，不易对应。</li>
+<li>已查清、不改：跳关后铜币 751→490 是开发面板按"180 + 已通关奖励"重算，玩家不会遇到。</li>
+</ul>
+<div class="shots">
+<figure><img src="shots/r7-484-q10-result.jpg"><figcaption>484 Q10 第三次失败（169.95）</figcaption></figure>
+<figure><img src="shots/r7-490-q10-result.jpg"><figcaption>490 Q10 首通（169.96）</figcaption></figure>
+<figure><img src="shots/r7-492-after-q10-skip.jpg"><figcaption>492 战后对白跳过无响应</figcaption></figure>
+<figure><img src="shots/r7-499-q11-pre.jpg"><figcaption>499 Q11 战前四张卡、可买补给</figcaption></figure>
+<figure><img src="shots/r7-501-q11-retry.jpg"><figcaption>501 点"重新挑战"后回到主城</figcaption></figure>
+<figure><img src="shots/r7-508-q12-pre.jpg"><figcaption>508 Q12 战前 5 张卡</figcaption></figure>
+<figure><img src="shots/r7-509-q12-start-ignored.jpg"><figcaption>509 开始战斗两下无效、卡牌已排队</figcaption></figure>
+<figure><img src="shots/r7-510-q12-defeat.jpg"><figcaption>510 Q12 失败，止痛膏仍剩 1</figcaption></figure>
+<figure><img src="shots/r7-514-q12-crystal.jpg"><figcaption>514 晶体护层盖满上半屏</figcaption></figure>
+<figure><img src="shots/r7-517-city-after-q12.jpg"><figcaption>517 Q12 通关后，第 13 关明天开放</figcaption></figure>
+<figure><img src="shots/r7-524-q13-victory.jpg"><figcaption>524 Q13 胜利页完整显示</figcaption></figure>
+<figure><img src="shots/r7-527-city-after-q13.jpg"><figcaption>527 任务条前缀"邻里·"</figcaption></figure>
+<figure><img src="shots/r7-530-q14-bubble-skip.jpg"><figcaption>530 气泡内的跳过对白</figcaption></figure>
+<figure><img src="shots/r7-538-q14-salve.jpg"><figcaption>538 止痛膏点中心生效</figcaption></figure>
+</div>
+
+<h3>第八轮：收尾修复（10-05 下午，169.99）</h3>
+<p class="meta">用户要求"修复"。提交已合入 main：开打点击在入场帷幕未收完时直接收幕开打；补给按钮整格可点；右缘人名牌向内收；买止痛膏同步扣战役背包铜币。169.99 验证：跳过对白 6 秒后一下开打、右缘无裁半名牌、"重新挑战"正确回战前页（日志 retry-button）。Q14 第三次仍败（2800 伤害，记忆蛭吞名回血）；简仿真对 Q11 以后偏严，不再用它调数值，Q14 难度留真机判断。未改：Q12 晶体护层尺寸（Unity 华彩层）；战后气泡内"跳过对白"待一次胜利实测。</p>
+<div class="shots">
+<figure><img src="shots/r8-541-city-edge.jpg"><figcaption>541 右缘不再有裁半名牌</figcaption></figure>
+<figure><img src="shots/r8-546-q14-defeat3.jpg"><figcaption>546 Q14 第三次失败</figcaption></figure>
+<figure><img src="shots/r8-547-retry-ok.jpg"><figcaption>547 重新挑战回到战前页</figcaption></figure>
+</div>
+
+<h2>问题清单</h2>
+<table>
+<tr><th>级别</th><th>问题</th><th>证据</th></tr>
+<tr><td><span class="tag p0">P0</span></td><td><b>主线页面整页冻结</b>：Q6、Q8 剧情页"下一页"点不动；重启后 Q8 剧情页可翻，但到布阵页点"开始战斗"又冻结。主线程 CPU 99.9% 持续 2 分钟以上。采样显示 <code>ChapterOneMissionBridgeView.body</code> 在无限重算，每次都经 <code>GameStore.churchServices</code> 现场 JSON 解码教会存档（<code>presentingChurchLoans</code> 一次 body 内多次调用）。推测是视图失效循环加上过重的计算把主线程打满，触摸全被饿死。打过深井之后更容易出现。</td><td>22, 44, sample.txt</td></tr>
+<tr><td><span class="tag p1">P1</span></td><td>Q3 猎犬约 6 秒秒杀新手，"喉间双焰亮起时用假面"这句提示只出现在 Q4 简报，Q3 只说"留意猎犬的动作"。第一次死亡原因不明。</td><td>13, 14</td></tr>
+<tr><td><span class="tag p1">P1</span></td><td>第 1 天只有 3 关主线（约 20 分钟），委托板空白，百工坊锁住；之后无事可做，像功能坏了。</td><td>18, 19</td></tr>
+<tr><td><span class="tag p1">P1</span></td><td>对白过长：Q1 实战不到 20 秒，其余全是对话；Q1→Q2、Q2→Q3 之间各约 5–8 页，每页约 1 秒才能点，有一页按钮要 3 秒才出现。</td><td>—</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>"开始战斗"像标题字不像按钮；首次点卡、首次点"进入雾港"、"继续聆听"常需点两次（动画期间吞点击）。</td><td>05</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>战斗顶部提示条与下面的街区字幕两层文字叠在一起（Q3、Q8 都有）。</td><td>13, 41</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>Q3 伤害统计 100% 普攻，按过的错步没被计入。</td><td>16</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>百工坊底栏图标没有锁标（教会、商店有）；深井打完返回后选中仍停在已通关层，不自动指向下一层。</td><td>19, 35</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>选途径时点卡面即确定，无确认步骤，卡片下方大片空白。</td><td>03</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>Q4 主角出手光（紫焰）在手机比例下铺得很大，两侧都被盖住。</td><td>21</td></tr>
+</table>
+
+<h2>做得好的</h2>
+<ul>
+<li><span class="tag ok">好</span>战斗特效辨识度高：Q1 守卫的飞剑、Q2 错步一刀打两只幽灵、幽灵分裂成赤红残影，都与简报一致。</li>
+<li><span class="tag ok">好</span>结算页清楚：伤害、出招占比、铜币和物品一屏看完；修过的米色按钮文字正常。</li>
+<li><span class="tag ok">好</span>日刊作为每日入口很好：主线进度、深井剩余层数、通缉都在一页，"按天放开"的节奏一眼可见。</li>
+<li><span class="tag ok">好</span>深井 F2 有 4 只小怪围攻 1 只石颚，场面比 F1 丰富；通关有铜币、功勋和装备掉落。</li>
+<li><span class="tag ok">好</span>通缉卡片写明招式和读招提示（"别在它举剑时交掉全部防御"），失败惩罚说清楚。</li>
+</ul>
+
+<h2>数值观察</h2>
+<ul>
+<li>Q1–Q3 各 +30 铜；每天住宿 −12 铜。第 1 天净 +78 铜。</li>
+<li>深井 F1/F2 各 +8 铜 +2 功勋。我因跳关只有 1 张卡（错步），仍一次过 F1–F2，前两层偏易。</li>
+<li>通缉 B01 奖励 60 铜 + 12 功勋，目标生命 1400 / 攻击 100，我战力 435；需先接案、去城内取证再开打（未实打）。</li>
+</ul>
+
+<h2>流程与截图</h2>
+<div class="shots">
+<figure><img src="shots/03-path-select.jpg"><figcaption>03 选途径：点卡即定</figcaption></figure>
+<figure><img src="shots/05-q1-start.jpg"><figcaption>05 Q1"开始战斗"不像按钮</figcaption></figure>
+<figure><img src="shots/06-q1-flying-swords.jpg"><figcaption>06 守卫飞剑</figcaption></figure>
+<figure><img src="shots/08-q1-victory.jpg"><figcaption>08 Q1 结算</figcaption></figure>
+<figure><img src="shots/10-q2-sidestep-cast.jpg"><figcaption>10 Q2 错步打两只</figcaption></figure>
+<figure><img src="shots/11-q2-split-ghosts.jpg"><figcaption>11 幽灵分裂</figcaption></figure>
+<figure><img src="shots/13-q3-start.jpg"><figcaption>13 Q3 顶部文字重叠</figcaption></figure>
+<figure><img src="shots/14-q3-defeat.jpg"><figcaption>14 Q3 6 秒阵亡</figcaption></figure>
+<figure><img src="shots/16-q3-victory.jpg"><figcaption>16 Q3 预按假面后通过</figcaption></figure>
+<figure><img src="shots/18-board-empty.jpg"><figcaption>18 委托板空白</figcaption></figure>
+<figure><img src="shots/19-workshop-locked.jpg"><figcaption>19 百工坊无锁标</figcaption></figure>
+<figure><img src="shots/20-day2-paper.jpg"><figcaption>20 第 2 天日刊</figcaption></figure>
+<figure><img src="shots/21-q4-castlight.jpg"><figcaption>21 Q4 出手光偏大</figcaption></figure>
+<figure><img src="shots/22-q6-stuck.jpg"><figcaption>22 Q6 剧情页冻结</figcaption></figure>
+<figure><img src="shots/26-well.jpg"><figcaption>26 联封深井</figcaption></figure>
+<figure><img src="shots/31-f2.jpg"><figcaption>31 F2 小怪围攻</figcaption></figure>
+<figure><img src="shots/34-f2-result.jpg"><figcaption>34 F2 掉装备</figcaption></figure>
+<figure><img src="shots/35-back.jpg"><figcaption>35 选中停在第 2 层</figcaption></figure>
+<figure><img src="shots/41-q8-setup.jpg"><figcaption>41 Q8 布阵</figcaption></figure>
+<figure><img src="shots/44-q8-fight.jpg"><figcaption>44 开始战斗后冻结</figcaption></figure>
+<figure><img src="shots/47-church.jpg"><figcaption>47 教会圣所</figcaption></figure>
+<figure><img src="shots/48-bounty.jpg"><figcaption>48 今日悬赏</figcaption></figure>
+<figure><img src="shots/49-b01.jpg"><figcaption>49 B01 详情</figcaption></figure>
+</div>
+
+<h2>建议优先级</h2>
+<ol>
+<li>修 P0 卡死：把 <code>churchServices</code> 解码结果缓存到 revision 上，<code>presentingChurchLoans</code> 只读一次；查清 MissionBridge 的失效循环。修完重测 Q6/Q8。</li>
+<li>Q3 开战直接提示"猎犬喉间发光时点假面"，第一次扑杀前慢放。</li>
+<li>第 1 天给委托板至少 1–2 个可做的小委托。</li>
+<li>压缩 Q1–Q3 之间的对白，或允许长按快进。</li>
+</ol>
+<p class="meta">完整逐条记录见同目录 log.md；CPU 采样见 sample.txt。未完成：Q5–Q7 正常流程、深井 F3 以后、通缉实打、商店。</p>
+</main></body></html>

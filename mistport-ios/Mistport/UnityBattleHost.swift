@@ -79,6 +79,7 @@ final class UnityBattleRuntime: NSObject, ObservableObject, UnityFrameworkListen
 
     @Published private(set) var combatContactToken = 0
     private var combatContacts: [String: Int] = [:]
+    var suppressesPresentation = false
     fileprivate var playerImpactChannel = UnityPlayerImpactChannel()
     func consumeCombatContact(_ key: String) -> Bool {
         guard combatContacts[key, default: 0] > 0 else { return false }
@@ -151,6 +152,7 @@ final class UnityBattleRuntime: NSObject, ObservableObject, UnityFrameworkListen
     }
 
     func send(action: String) {
+        guard !suppressesPresentation else { return }
         let changesImpactContext = action == "combat-start" || action == "combat-stop" || action == "player-reset"
         let impactContextAction = changesImpactContext ? playerImpactChannel.reset() : nil
         if action == "combat-start" || action == "combat-stop" { combatContacts.removeAll() }
@@ -165,6 +167,7 @@ final class UnityBattleRuntime: NSObject, ObservableObject, UnityFrameworkListen
     }
 
     func configureEncounter(_ presentation: UnityBattleEncounterPresentation) {
+        guard !suppressesPresentation else { return }
         let impactContextAction = playerImpactChannel.reset()
         pendingEncounterPresentation = presentation
         pendingEnemyVisibilityPayload = ""
@@ -432,6 +435,7 @@ final class UnityBattleRuntime: NSObject, ObservableObject {
 
     @Published private(set) var combatContactToken = 0
     private var combatContacts: [String: Int] = [:]
+    var suppressesPresentation = false
     fileprivate var playerImpactChannel = UnityPlayerImpactChannel()
     func consumeCombatContact(_ key: String) -> Bool {
         guard combatContacts[key, default: 0] > 0 else { return false }
@@ -465,6 +469,7 @@ final class UnityBattleRuntime: NSObject, ObservableObject {
     }
 
     func send(action: String) {
+        guard !suppressesPresentation else { return }
         let changesImpactContext = action == "combat-start" || action == "combat-stop" || action == "player-reset"
         let impactContextAction = changesImpactContext ? playerImpactChannel.reset() : nil
         if action == "combat-start" || action == "combat-stop" { combatContacts.removeAll() }
@@ -473,6 +478,7 @@ final class UnityBattleRuntime: NSObject, ObservableObject {
     }
 
     func configureEncounter(_ presentation: UnityBattleEncounterPresentation) {
+        guard !suppressesPresentation else { return }
         _ = presentation
         _ = playerImpactChannel.reset()
     }

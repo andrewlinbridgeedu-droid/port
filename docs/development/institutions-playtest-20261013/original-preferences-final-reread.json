@@ -1,0 +1,49 @@
+{
+  "error" : {
+    "code" : -1,
+    "domain" : "com.apple.dt.CoreDeviceError",
+    "userInfo" : {
+      "NSLocalizedDescription" : {
+        "string" : "An unknown error occurred."
+      },
+      "NSUnderlyingError" : {
+        "error" : {
+          "code" : -1,
+          "domain" : "ContainerLookupErrorDomain",
+          "userInfo" : {
+
+          }
+        }
+      }
+    }
+  },
+  "info" : {
+    "arguments" : [
+      "devicectl",
+      "device",
+      "copy",
+      "from",
+      "--device",
+      "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+      "--domain-type",
+      "appDataContainer",
+      "--domain-identifier",
+      "com.yourcompany.mistport",
+      "--source",
+      "Library/Preferences",
+      "--destination",
+      ".build/institutions-playtest-evidence/player-preferences-after-final",
+      "--timeout",
+      "20",
+      "--json-output",
+      "/private/tmp/mistport-original-preferences-after-final-retry.json"
+    ],
+    "commandType" : "devicectl.device.copy.from",
+    "environment" : {
+      "TERM" : "dumb"
+    },
+    "jsonVersion" : 3,
+    "outcome" : "failed",
+    "version" : "518.33"
+  }
+}

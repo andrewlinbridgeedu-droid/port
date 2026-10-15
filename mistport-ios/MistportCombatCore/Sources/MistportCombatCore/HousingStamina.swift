@@ -38,7 +38,7 @@ public enum MPCStamina {
 }
 
 /// A player's stamina on the server clock. It recovers continuously and stops at the maximum,
-/// so it cannot be banked. Spending carries a receipt, so a retried request spends once.
+/// paid bonus overflow may enter a separate rest reserve. Spending carries a receipt.
 public struct MPCStaminaState: Codable, Equatable, Sendable {
     public enum Failure: Error, Equatable, Sendable { case notEnough(needed: Int, available: Int) }
     /// Stamina at `settledAt` (seconds on the server clock), with fractions kept.
@@ -46,6 +46,34 @@ public struct MPCStaminaState: Codable, Equatable, Sendable {
     public private(set) var settledAt: TimeInterval
     public private(set) var recoveryPerDay: Int
     public private(set) var receipts: Set<String> = []
+    public private(set) var restReserve: Double = 0
+
+    private enum CodingKeys: String, CodingKey { case value, settledAt, recoveryPerDay, receipts, restReserve }
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        value = try c.decode(Double.self, forKey: .value)
+        settledAt = try c.decode(Double.self, forKey: .settledAt)
+        recoveryPerDay = try c.decode(Int.self, forKey: .recoveryPerDay)
+        receipts = try c.decodeIfPresent(Set<String>.self, forKey: .receipts) ?? []
+        restReserve = min(20, max(0, try c.decodeIfPresent(Double.self, forKey: .restReserve) ?? 0))
+    }
+
+    public func reserve(at now: TimeInterval) -> Double {
+        let bonus = max(0, recoveryPerDay - MPCStamina.baseRecoveryPerDay)
+        guard bonus > 0 else { return restReserve }
+        let elapsed = max(0, now - settledAt)
+        let untilFull = max(0, Double(MPCStamina.maximum) - value) / Double(recoveryPerDay) * 86_400
+        let extra = max(0, elapsed - untilFull) / 86_400 * Double(bonus)
+        return max(restReserve, min(Double(min(20, bonus)), restReserve + extra))
+    }
+    /// Transfer only previously earned overflow; ordinary recovery never earns reserve.
+    @discardableResult
+    public mutating func returnHome(at now: TimeInterval) -> Int {
+        settle(at: now)
+        let transfer = min(restReserve, Double(MPCStamina.maximum) - value)
+        value += transfer; restReserve -= transfer
+        return Int(transfer.rounded(.down))
+    }
 
     public init(at now: TimeInterval, recoveryPerDay: Int = MPCStamina.baseRecoveryPerDay) {
         value = Double(MPCStamina.maximum); settledAt = now; self.recoveryPerDay = recoveryPerDay
@@ -65,14 +93,19 @@ public struct MPCStaminaState: Codable, Equatable, Sendable {
     }
 
     private mutating func settle(at now: TimeInterval) {
-        value = current(at: now); settledAt = max(settledAt, now)
+        restReserve = reserve(at: now); value = current(at: now); settledAt = max(settledAt, now)
     }
 
     /// Spends stamina when an activity starts. Returns false for a receipt already spent.
     @discardableResult
     public mutating func spend(_ activity: MPCStamina.Activity, receiptID: String, at now: TimeInterval) throws -> Bool {
+        try spend(points: MPCStamina.cost(activity), receiptID: receiptID, at: now)
+    }
+
+    @discardableResult
+    public mutating func spend(points cost: Int, receiptID: String, at now: TimeInterval) throws -> Bool {
         guard !receipts.contains(receiptID) else { return false }
-        let cost = MPCStamina.cost(activity)
+        guard cost >= 0 else { throw Failure.notEnough(needed: cost, available: 0) }
         let have = available(at: now)
         guard have >= cost else { throw Failure.notEnough(needed: cost, available: have) }
         settle(at: now)
@@ -88,7 +121,7 @@ public struct MPCStaminaState: Codable, Equatable, Sendable {
 }
 
 public enum MPCHousingCatalog {
-    public enum District: String, Codable, Sendable { case harbor, oldArcade, canal, church, highland }
+    public enum District: String, Codable, Sendable { case harbor, oldArcade, canal, church, highland, noble }
 
     public struct Lodging: Equatable, Sendable, Identifiable {
         public let id: String
@@ -100,6 +133,8 @@ public enum MPCHousingCatalog {
         public let rooms: Int?
         /// The church shelter: only while the player holds less than their recovery line.
         public let belowRecoveryLineOnly: Bool
+        /// City contribution tier needed to sign; nil is open to everyone.
+        public var requiredContributionTier: Int? = nil
     }
 
     public struct Meal: Equatable, Sendable, Identifiable {
@@ -114,28 +149,43 @@ public enum MPCHousingCatalog {
     public static let lodgings: [Lodging] = [
         .init(id: "shelter", name: "教会避难屋", district: .church, copperPerDay: 0, staminaBonus: 0, rooms: nil, belowRecoveryLineOnly: true),
         .init(id: "dock_bunk", name: "码头铺位", district: .harbor, copperPerDay: 3, staminaBonus: 0, rooms: nil, belowRecoveryLineOnly: false),
-        .init(id: "arcade_room", name: "拱廊合租间", district: .oldArcade, copperPerDay: 6, staminaBonus: 3, rooms: 1_200, belowRecoveryLineOnly: false),
-        .init(id: "canal_house", name: "运河联排屋", district: .canal, copperPerDay: 12, staminaBonus: 6, rooms: 600, belowRecoveryLineOnly: false),
-        .init(id: "bell_loft", name: "钟楼阁楼", district: .church, copperPerDay: 16, staminaBonus: 10, rooms: 200, belowRecoveryLineOnly: false),
-        .init(id: "highland_house", name: "高地石宅", district: .highland, copperPerDay: 30, staminaBonus: 12, rooms: 80, belowRecoveryLineOnly: false),
+        .init(id: "arcade_room", name: "拱廊合租间", district: .oldArcade, copperPerDay: 5, staminaBonus: 3, rooms: 1_200, belowRecoveryLineOnly: false),
+        .init(id: "canal_house", name: "运河联排屋", district: .canal, copperPerDay: 9, staminaBonus: 6, rooms: 600, belowRecoveryLineOnly: false),
+        .init(id: "bell_loft", name: "钟楼阁楼", district: .church, copperPerDay: 13, staminaBonus: 10, rooms: 200, belowRecoveryLineOnly: false),
+        .init(id: "highland_house", name: "高地石宅", district: .highland, copperPerDay: 26, staminaBonus: 12, rooms: 80, belowRecoveryLineOnly: false),
+        // The noble quarter lets in only a 雾港的帮手 (user decision 2026-10-01). Status housing:
+        // the same recovery as the highland house, no highland-board errands.
+        .init(id: "noble_suite", name: "公馆客房", district: .noble, copperPerDay: 40, staminaBonus: 12, rooms: 20, belowRecoveryLineOnly: false,
+              requiredContributionTier: 4),
     ]
 
     public static let meals: [Meal] = [
         .init(id: "church_soup", name: "教会施粥", copperPerDay: 0, staminaBonus: 0, requiresLodgingID: "shelter"),
         .init(id: "soup_shed", name: "汤棚", copperPerDay: 9, staminaBonus: 0, requiresLodgingID: nil),
-        .init(id: "bakery", name: "面包坊", copperPerDay: 12, staminaBonus: 3, requiresLodgingID: nil),
-        .init(id: "cafe", name: "咖啡馆", copperPerDay: 14, staminaBonus: 5, requiresLodgingID: nil),
-        .init(id: "house_kitchen", name: "宅内厨房", copperPerDay: 20, staminaBonus: 8, requiresLodgingID: "highland_house"),
+        .init(id: "bakery", name: "面包坊", copperPerDay: 11, staminaBonus: 3, requiresLodgingID: nil),
+        .init(id: "cafe", name: "咖啡馆", copperPerDay: 13, staminaBonus: 5, requiresLodgingID: nil),
+        .init(id: "house_kitchen", name: "宅内厨房", copperPerDay: 16, staminaBonus: 8, requiresLodgingID: "highland_house"),
+        .init(id: "noble_dining", name: "公馆膳房", copperPerDay: 20, staminaBonus: 8, requiresLodgingID: "noble_suite"),
     ]
 
     public static let basicLodgingID = "dock_bunk", basicMealID = "soup_shed"
     public static let shelterID = "shelter", shelterMealID = "church_soup"
     /// Only a highland resident can take highland-board errands (user decision 2026-09-30).
     public static let highlandLodgingID = "highland_house"
+    public static let nobleLodgingID = "noble_suite"
     public static let leaseDays = 7
 
+    public static func unlockMission(_ id: String) -> Int {
+        ["dock_bunk": 1, "arcade_room": 5, "canal_house": 13, "bell_loft": 20, "highland_house": 30][id] ?? 0
+    }
     public static func lodging(_ id: String) -> Lodging? { lodgings.first { $0.id == id } }
     public static func meal(_ id: String) -> Meal? { meals.first { $0.id == id } }
+
+    /// Whether the player's city contribution lets them sign this lodging.
+    public static func isOpen(_ lodging: Lodging, contributionPoints: Int) -> Bool {
+        guard let level = lodging.requiredContributionTier else { return true }
+        return MPCCityContribution.tier(points: contributionPoints).level >= level
+    }
 
     public static func recoveryPerDay(lodgingID: String, mealID: String) -> Int {
         let bonus = (lodging(lodgingID)?.staminaBonus ?? 0) + (meal(mealID)?.staminaBonus ?? 0)
@@ -180,9 +230,11 @@ public struct MPCHousingLedger: Codable, Equatable, Sendable {
 
     /// Signs a lease of `leaseDays` from `day`. `roomsLeft` is the server's count for that
     /// lodging (nil for unlimited). Paying is daily; signing costs nothing by itself.
-    public mutating func sign(lodgingID: String, mealID: String, day: Int, roomsLeft: Int?) throws {
+    /// `contributionPoints` is the player's city contribution; without it the noble quarter stays shut.
+    public mutating func sign(lodgingID: String, mealID: String, day: Int, roomsLeft: Int?, contributionPoints: Int = 0) throws {
         guard let lodging = MPCHousingCatalog.lodging(lodgingID), let meal = MPCHousingCatalog.meal(mealID) else { throw Failure.unknown }
-        guard !lodging.belowRecoveryLineOnly, meal.requiresLodgingID == nil || meal.requiresLodgingID == lodgingID else { throw Failure.notAllowed }
+        guard !lodging.belowRecoveryLineOnly, meal.requiresLodgingID == nil || meal.requiresLodgingID == lodgingID,
+              MPCHousingCatalog.isOpen(lodging, contributionPoints: contributionPoints) else { throw Failure.notAllowed }
         if lodging.rooms != nil, lodgingID != self.lodgingID || day > leaseEndsDay { guard (roomsLeft ?? 0) > 0 else { throw Failure.noRoom } }
         self.lodgingID = lodgingID; self.mealID = mealID
         leaseEndsDay = day + MPCHousingCatalog.leaseDays - 1

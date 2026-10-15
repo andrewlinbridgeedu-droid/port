@@ -322,6 +322,7 @@ public sealed class BattlePrototype : MonoBehaviour
         return !string.IsNullOrEmpty(GetBuiltInVFXBoardPreviewEffect())
             || System.Array.Exists(arguments, value =>
             value == "--verify-hero-anatomy" || value == "--verify-hero-quality" || value == "--capture-character-closeups" || value == "--verify-story-models" || value == "--verify-character-polish" || value == "--verify-progression-rosters" || value == "--verify-q678-redesign" || value == "--verify-hero-choreography" || value == "--verify-enemy-impact" || value == "--verify-enemy-idle" || value == "--verify-hero-back-art" || value == "--verify-q4-two-flame" || value == "--verify-sidestep-cinematic" || value == "--verify-q2-split" || value == "--verify-enemy-death-fade" || value == "--verify-emerald-escalation" || value == "--verify-early-battle" || value == "--verify-sidestep-hounds" || value == "--preview-hero-spells" || value == "--preview-signatures" || value == "--preview-hound-fire" || value == "--preview-clock-core"
+            || value == "--verify-refined-hero" || value == "--verify-ai-hero"
             || value == "--preview-dual-clock-guard"
             || value == "--preview-reverse-tide"
             || value == "--preview-defense"
@@ -763,6 +764,7 @@ public sealed class BattlePrototype : MonoBehaviour
         // the authored background covering the current camera viewport rather
         // than preserving the old launch-time portrait rectangle.
         FitRuntimeBackground(Camera.main);
+        ServePartyRequests();
 
         for (var i = 0; i < rings.Count; i++)
             rings[i].Rotate(Vector3.up, (i % 2 == 0 ? 1f : -1f) * (8f + i * 5f) * Time.deltaTime, Space.World);
@@ -1078,7 +1080,24 @@ public sealed class BattlePrototype : MonoBehaviour
         && !playerDefeatPresentationActive && !playerHiddenByPaper;
     public PlayerImpactFeedback20260925 PlayerImpactFeedback => playerImpactFeedback;
     public void BeginPlayerImpactContext(string token) => playerImpactFeedback?.BeginContext(token);
-    public void PresentPlayerImpact(string payload) => playerImpactFeedback?.Present(payload);
+    public void PresentPlayerImpact(string payload)
+    {
+        // A defeat packet is accepted (Clear) but carries no strength of its own; the hero is
+        // about to go down, so no extra shake from the stale LastStrength. The unreduced value
+        // goes out because AIHeroAnimatedBody.ConfirmedHit applies the reduced-motion ×.35 itself.
+        if (playerImpactFeedback?.Present(payload) != true || playerImpactFeedback.LastWasDefeat) return;
+        GetComponent<CombatTempoPresentation>()?.PlayerHit(playerImpactFeedback.LastStrengthUnreduced);
+    }
+
+    /// How hard a hero card shakes the body it hits: the flicked basic least, the finishers most.
+    static float HitWeight(string skillID) => skillID switch
+    {
+        "basic" => .55f,
+        "fool_skill_07" or "fool_skill_10" => 1.45f,
+        "fool_skill_05" or "fool_skill_08" => 1.15f,
+        "fool_skill_02" => .7f,
+        _ => 1f,
+    };
     public void ClearPlayerImpact(bool invalidateContext = false) => playerImpactFeedback?.Clear(invalidateContext);
 
     public void PresentEnemyImpact(string payload)
@@ -1093,12 +1112,28 @@ public sealed class BattlePrototype : MonoBehaviour
             EnemyHandle victim = null;
             foreach (var candidate in encounterRoster)
                 if (candidate && candidate.BattleEnemyId == id && candidate.gameObject.activeInHierarchy) { victim = candidate; break; }
-            if (victim) EnemyImpactFeedback.Install(victim).Play(parts[0]);
+            if (victim && !(GetComponent<CombatTempoPresentation>()?.EnemyHit(victim, parts[0]) ?? false)) EnemyImpactFeedback.Install(victim).Play(parts[0]);
+            // The body that is hit shakes (2026-10-07, user: 关键是手机震动，以及角色摇晃).
+            // Same actor choice as EnemyImpactFeedback.Play: fog ghosts / emerald revenants keep
+            // handle.Model on the hidden old model (SetFogGhostModel, EarlyEnemyIdlePresence.
+            // ResolveVisibleActor), and a component on an inactive object never runs.
+            if (victim)
+            {
+                var presence = victim.GetComponent<EarlyEnemyIdlePresence>();
+                var visible = presence ? presence.VisibleActor : null;
+                var shaken = visible ? visible : (victim.Model ? victim.Model : victim.EnemyRoot);
+                HitShake20261007.Hit(shaken, player ? player.transform.position : victim.transform.position + Vector3.back, HitWeight(parts[0]));
+            }
         }
     }
 
+    public IEnumerable<EnemyHandle> TempoSampleEnemies => encounterRoster;
+    public Transform TempoSamplePlayer => player ? player.transform : null;
+    public void SetCombatSpeed(string value) { Time.timeScale = value == "2" ? 2 : 1; }
+    public bool CanTempoEnemyAct(EnemyHandle value) => CanPresentEnemy(value);
+    public void SetTempoSample(string value) => CombatTempoPresentation.Get(this).Configure(value);
     public void PresentPlayerBasic() => StartPresentation(PlayerAction.Basic);
-    public void PresentPlayerBasic(string targetID) { if(NativeCombatEnabled)StartCoroutine(PresentPlayerAction(PlayerAction.Basic,targetID)); }
+    public void PresentPlayerBasic(string targetID) { if(NativeCombatEnabled) StartCoroutine(PresentPlayerAction(PlayerAction.Basic,targetID)); }
     public void PresentPlayerSkill() => StartPresentation(PlayerAction.Skill);
     string pendingSidestepSecondary;
     string[] pendingSkillTargets;
@@ -1133,9 +1168,10 @@ public sealed class BattlePrototype : MonoBehaviour
 
     public void SetQ4HoundPhase(string phase)
     {
+        GetComponent<CombatTempoPresentation>()?.Q4Phase(phase);
         var idle = hellHoundHandle ? hellHoundHandle.GetComponent<EarlyEnemyIdlePresence>() : null;
         if (idle) {
-            if (phase == "charge" || phase == "first" || phase == "second" || phase == "opening") idle.SuspendForAction();
+            if (phase == "probe" || phase == "charge" || phase == "first" || phase == "second" || phase == "opening" || (GetComponent<CombatTempoPresentation>()?.Enabled ?? false)) idle.SuspendForAction();
             else idle.ResumeIdle();
         }
         if (!q4Hound) q4Hound = gameObject.AddComponent<Q4HoundPresentation>();
@@ -1176,6 +1212,7 @@ public sealed class BattlePrototype : MonoBehaviour
     public void PresentEnemyAttack(string battleEnemyId)
     {
         if (!NativeCombatEnabled || player == null) return;
+        if (GetComponent<CombatTempoPresentation>()?.EnemyAction(battleEnemyId) ?? false) return;
         var intentParts = battleEnemyId.Split(':');
         bool nameDevour = intentParts.Length == 2 && intentParts[1] == "name_devour";
         var actingHandle = FindInstalledEnemyHandle(intentParts[0]);
@@ -1239,8 +1276,17 @@ public sealed class BattlePrototype : MonoBehaviour
         if(intentParts.Length==2 && (intentParts[1]=="archive_slam" || intentParts[1]=="name_devour")) {
             archivePresentation?.Clear(); battleEnemyId=intentParts[0];
         }
+        // 瑟维安's party-fight moves (2026-10-10) play his strike turn with the move's own video and hit.
+        if(intentParts.Length==2 && (intentParts[1]=="slam" || intentParts[1]=="name_seal")) {
+            var boss=FindInstalledEnemyHandle(intentParts[0]);
+            var chronarchMove=boss?boss.GetComponent<ChronarchPresentation20260916>():null;
+            if(chronarchMove)chronarchMove.NextMove=intentParts[1];
+            battleEnemyId=intentParts[0];
+        }
         if(intentParts.Length==2 && intentParts[1]=="thirteenth_charge") {
             var elite=FindInstalledEnemyHandle(intentParts[0]);
+            // 瑟维安: the palm-thrust clip spans the 1.1 s wind-up glow and the strike's 1 s to contact.
+            if(IsActiveEnemyHandle(elite))elite.GetComponent<ChronarchPresentation20260916>()?.PlayChargeWindup(2.1f);
             if(IsActiveEnemyHandle(elite))StartCoroutine(PresentEliteChargedStrike(elite));
             return;
         }
@@ -1278,6 +1324,9 @@ public sealed class BattlePrototype : MonoBehaviour
             StartCoroutine(RotateClockCoreCast(instance)); return;
         }
         if (IsActiveEnemyHandle(instance) && battleEnemyId.StartsWith("clock-guard-")) {
+            // A missing or exiting body must not start the generic turn (NullReference) and
+            // leave the rules waiting for a contact that never comes: acknowledge at once.
+            if (!IsActiveEnemyHandle(instance)) { if (NativeCombatEnabled) UnityBattleBridge.ReportCombatContact("enemy:" + intentParts[0]); return; }
             StartCoroutine(PresentSingleClockGuardTurn(instance)); return;
         }
         if (battleEnemyId == "hell-hound-primary:bite") { StartCoroutine(PresentHellHoundPounceTurn()); return; }
@@ -1288,10 +1337,13 @@ public sealed class BattlePrototype : MonoBehaviour
         if (battleEnemyId == "memory-leech-primary") {
             StartCoroutine(PresentMemoryLeechCast(memoryLeechHandle,nameDevour)); return;
         }
-        if (battleEnemyId == EnemyBattleIds.ClockGuardPrimary)
-            StartCoroutine(PresentSingleClockGuardTurn(clockGuardHandle));
-        else if (battleEnemyId == EnemyBattleIds.ClockGuardSecondary)
-            StartCoroutine(PresentSingleClockGuardTurn(secondaryClockGuardHandle));
+        if (battleEnemyId == EnemyBattleIds.ClockGuardPrimary || battleEnemyId == EnemyBattleIds.ClockGuardSecondary) {
+            var legacy = battleEnemyId == EnemyBattleIds.ClockGuardPrimary ? clockGuardHandle : secondaryClockGuardHandle;
+            // Same rule as above: a missing or exiting body acknowledges at once instead of
+            // starting the generic turn on it (NullReference, playtest 2026-10-04).
+            if (!IsActiveEnemyHandle(legacy)) { if (NativeCombatEnabled) UnityBattleBridge.ReportCombatContact("enemy:" + intentParts[0]); return; }
+            StartCoroutine(PresentSingleClockGuardTurn(legacy));
+        }
         else
             PresentEnemyAttack();
     }
@@ -1333,7 +1385,12 @@ public sealed class BattlePrototype : MonoBehaviour
         SelectHellHoundVariant(payload.Contains("@early-hell-hound"));
         var descriptors = payload.Split(',');
         var ids = Array.ConvertAll(descriptors, d => d.Split('@')[0]);
-        if (ids.Length == 0 || ids.Length > 4) throw new System.ArgumentException("Wave must contain 1–4 enemies.");
+        // Tower minion packs (2026-10-03) bring up to eight bodies; elsewhere a wave keeps four.
+        int waveLimit = churchTowerFormation ? 8 : 4;
+        if (ids.Length == 0 || ids.Length > waveLimit) throw new System.ArgumentException($"Wave must contain 1–{waveLimit} enemies.");
+        int towerMinions = churchTowerFormation ? Array.FindAll(descriptors, IsTowerMinionDescriptor).Length : 0;
+        int towerMajors = ids.Length - towerMinions, majorIndex = 0, minionIndex = 0;
+        var walkers = new List<(EnemyHandle handle, int index, Vector3 home, bool quadruped)>();
         var unique = new HashSet<string>();
         var sources = new List<EnemyHandle>();
         for (int sourceIndex = 0; sourceIndex < ids.Length; sourceIndex++) {
@@ -1393,28 +1450,31 @@ public sealed class BattlePrototype : MonoBehaviour
             var handle = source.BattleEnemyId == ids[index] && !isolatedBounty ? source : source.CloneForBattle(ids[index]);
             if (handle != source) additionalWaveEnemies.Add(handle);
             if (index == 0) primaryPresented = handle;
-            if (handle.GetComponent<SignatureEnemyPresentation>()) handle.EnemyRoot.localScale = Vector3.one;
+            if (handle.GetComponent<SignatureEnemyPresentation>()) handle.EnemyRoot.localScale = Vector3.one * EnemyPresenter.BattleScale;
             handle.gameObject.SetActive(true);
+            if (!enemyLifeBridge) enemyLifeBridge = FindFirstObjectByType<UnityBattleBridge>();
+            if (enemyLifeBridge) enemyLifeBridge.ForgetExit(handle.EnemyRoot);
             var slot = ids.Length == 1 ? EnemyFormationSlotIds.FrontCenter
                 : index == 0 ? EnemyFormationSlotIds.FrontLeft
                 : index == 1 ? EnemyFormationSlotIds.FrontRight : ids.Length==4 ? (index==2?EnemyFormationSlotIds.RearLeft:EnemyFormationSlotIds.RearRight) : EnemyFormationSlotIds.RearCenter;
             EnemyPresenter.Reposition(handle, slot, ids[index].StartsWith("clock-core-"));
             // Four large silhouettes: front inside, rear outside so perspective does not stack pairs.
-            if(ids.Length==4)handle.EnemyRoot.position=new Vector3(index==0?-1.05f:index==1?1.05f:index==2?-2.65f:2.65f,0,index<2?11.6f:15.5f);
+            if(ids.Length==4)handle.EnemyRoot.position=new Vector3(index==0?-1.05f:index==1?1.05f:index==2?-2.65f:2.65f,0,index<2?11.6f:15.5f) + EnemyPresenter.BattleRetreat;
             // Keep the tower formation in the marked upper arena, opposite the
             // hero's lower mark. The attendants flank rather than hide the boss.
             // Absolute scale prevents repeated waves and retries shrinking it.
             var churchDemon = handle.GetComponent<ChurchDemonPresentation20260917>();
             if (handle.GetComponent<StonehidePresentation20260917>() || churchDemon) {
                 bool isTowerMinion = churchDemon && ChurchMinionVfx20260921.Handles(churchDemon.species);
-                handle.EnemyRoot.localScale = Vector3.one * (churchTowerFormation
+                handle.EnemyRoot.localScale = Vector3.one * EnemyPresenter.BattleScale * (churchTowerFormation
                     ? (isTowerMinion ? ChurchTowerMinionScale : ChurchTowerMajorScale) : 1f);
                 if (churchTowerFormation) {
-                    float x = ids.Length == 1 ? 0f : ids.Length == 3
-                        ? (index == 0 ? 0f : index == 1 ? -1.55f : 1.55f)
-                        : (index == 0 ? -.75f : index == 1 ? .75f : index == 2 ? -1.75f : 1.75f);
-                    bool escort = ids.Length == 3 ? index > 0 : ids.Length == 4 && index > 1;
-                    handle.EnemyRoot.position = new Vector3(x, 0f, escort ? 8.9f : 8.1f);
+                    handle.EnemyRoot.position = isTowerMinion
+                        ? TowerMinionSlot(minionIndex, towerMinions) + EnemyPresenter.BattleRetreat
+                        : TowerMajorSlot(majorIndex++, towerMajors) + EnemyPresenter.BattleRetreat;
+                    if (isTowerMinion)
+                        walkers.Add((handle, minionIndex++, handle.EnemyRoot.position,
+                            churchDemon.species == "copperback" || churchDemon.species == "moonfang"));
                 }
             }
             handle.GetComponent<SignatureEnemyPresentation>()?.CalibrateRestPose();
@@ -1428,8 +1488,33 @@ public sealed class BattlePrototype : MonoBehaviour
         enemy = primaryPresented.EnemyRoot.gameObject;
         enemyAnimator = enemy.GetComponentInChildren<Animator>(true);
         enemyHome = enemy.transform.position;
-
+        // The pack walks in from the back after every slot and rest pose is settled.
+        foreach (var walker in walkers)
+            TowerMinionApproach20261003.Begin(walker.handle, walker.index, walker.home, walker.quadruped);
     }
+
+    static bool IsTowerMinionDescriptor(string descriptor) =>
+        descriptor.EndsWith("@copperback") || descriptor.EndsWith("@crimson-brute") || descriptor.EndsWith("@veil-oracle")
+        || descriptor.EndsWith("@golden-throat") || descriptor.EndsWith("@moonfang");
+
+    /// Tower majors hold the front of the marked upper arena, opposite the hero's mark.
+    static Vector3 TowerMajorSlot(int index, int count) => count <= 1 ? new Vector3(0f, 0f, 8.1f)
+        : count == 2 ? new Vector3(index == 0 ? -.75f : .75f, 0f, 8.1f)
+        : new Vector3(Mathf.Lerp(-1.5f, 1.5f, index / (count - 1f)), 0f, 8.1f);
+
+    // The pack ends between the hero and the majors, on both sides of a clear centre
+    // lane that the hero's spells travel to the majors: it has walked up from beside
+    // the majors (TowerMinionApproach20261003). The outer pair stays inside the
+    // portrait view (about ±2.6 m wide at this depth). The floor is painted into the
+    // backdrop, so the pack never starts deeper than the wall line behind the majors.
+    static readonly Vector3[] TowerMinionSlots = {
+        new Vector3(-1.0f, 0f, 5.6f), new Vector3(1.0f, 0f, 5.6f),
+        new Vector3(-1.95f, 0f, 5.9f), new Vector3(1.95f, 0f, 5.9f),
+        new Vector3(-1.5f, 0f, 6.9f), new Vector3(1.5f, 0f, 6.9f),
+    };
+    static Vector3 TowerMinionSlot(int index, int count) => index < TowerMinionSlots.Length
+        ? TowerMinionSlots[index]
+        : new Vector3((index % 2 == 0 ? -1 : 1) * 2.1f, 0f, 7.2f + .4f * (index - TowerMinionSlots.Length));
 
     EnemyHandle ResolveChapterThirtyTemplate(ref EnemyHandle cache, string identity, string folder)
     {
@@ -1508,7 +1593,7 @@ public sealed class BattlePrototype : MonoBehaviour
             EnemyPresenter.Reposition(left, EnemyFormationSlotIds.FrontLeft, false);
             EnemyPresenter.Reposition(right, EnemyFormationSlotIds.FrontRight, false);
             // The leader keeps the central silhouette; escorts screen either side.
-            boss.EnemyRoot.localScale = Vector3.one * 1.13f;
+            boss.EnemyRoot.localScale = Vector3.one * (1.13f * EnemyPresenter.BattleScale);
             left.EnemyRoot.position += Vector3.back * .18f;
             right.EnemyRoot.position += Vector3.forward * .15f;
             enemyHome = boss.EnemyRoot.position;
@@ -1557,11 +1642,14 @@ public sealed class BattlePrototype : MonoBehaviour
     IEnumerator PresentEliteChargedStrike(EnemyHandle handle) {
         var light=handle.GetComponent<SpellSceneLighting>();if(!light)light=handle.gameObject.AddComponent<SpellSceneLighting>();
         var round2=MainlineStateRound2.Attach(handle,"thirteenth_charge",1.1f);
+        // 瑟维安's video body: the heat and the light follow its raised gauntlet (2026-10-11).
+        var videoHand=handle.GetComponent<ChronarchPresentation20260916>()?.VideoHand();
+        round2.Hand=videoHand;
         try {
             for(float t=0;t<1.1f;t+=Time.deltaTime){
                 if(!CanPresentEnemy(handle))yield break;
                 round2.Sample(t);
-                light.Draw(handle.EnemyRoot.position+Vector3.up*1.8f,new Color(1,.55f,.16f),1.2f+t*3,3);
+                light.Draw(videoHand!=null?videoHand():handle.EnemyRoot.position+Vector3.up*1.8f,new Color(1,.55f,.16f),1.2f+t*3,3);
                 yield return null;
             }
             light.Clear();
@@ -1963,7 +2051,7 @@ public sealed class BattlePrototype : MonoBehaviour
             ApplyHellHoundRagePresentation();
             // Keep the quadruped readable in the portrait camera without
             // changing its combat reach or restoring the old red rage tint.
-            hellHoundHandle.EnemyRoot.localScale = Vector3.one * (hellHoundHandle == earlyHellHoundHandle ? 1f : 1.32f);
+            hellHoundHandle.EnemyRoot.localScale = Vector3.one * EnemyPresenter.BattleScale * (hellHoundHandle == earlyHellHoundHandle ? 1f : 1.32f);
             hellHoundHandle.GetComponent<SignatureEnemyPresentation>()?.CalibrateRestPose();
             var fill = hellHoundHandle.EnemyRoot.Find("PortraitFill");
             if (fill == null) {
@@ -2239,12 +2327,16 @@ public sealed class BattlePrototype : MonoBehaviour
     int emeraldRequestedVariant;
     EmeraldPoisonField emeraldPoisonField;
     public void SetEmeraldSpell(string value) { emeraldRequestedVariant = value == "burst" ? 1 : 0; }
+    /// 0 翠毒漫天 (mist), 1 返场毒爆 (burst): the revenant's next breath.
+    public int EmeraldVariant => emeraldRequestedVariant;
     public void SetEmeraldPoison(int remaining) {
-        if (remaining <= 0) { if(emeraldPoisonField) emeraldPoisonField.Clear(); return; }
+        if (remaining <= 0) { if(emeraldPoisonField) emeraldPoisonField.Clear(); SpellSpectacle20260926.PoisonPool(this, null, 0); return; }
         if (!NativeCombatEnabled || !player) return;
         if(!emeraldPoisonField) emeraldPoisonField = gameObject.AddComponent<EmeraldPoisonField>();
         // Ambient mist remains on the battlefield; a phantom redirects only the heavy attack.
         emeraldPoisonField.SetIntensity(remaining, () => playerHome + Vector3.up * .85f);
+        // Poison bubbles lie round the hero's feet for as long as the fog lasts (2026-10-10).
+        SpellSpectacle20260926.PoisonPool(this, () => playerHome, remaining);
         // Visible toxic uprising on each authoritative poison update; no explosion.
         SpellSpectacle20260926.PlayState(this, "poison-field", () => playerHome + Vector3.up * .85f, remaining);
     }
@@ -2262,10 +2354,85 @@ public sealed class BattlePrototype : MonoBehaviour
         emeraldRevenant.Install(hellHoundHandle);
         if (emeraldSpell == null) emeraldSpell = gameObject.AddComponent<EmeraldRevenantSpell>();
     }
+    /// The final-boss party's AI companions as painted cutout rigs (2026-10-10): 诺恩 on the hero's
+    /// left, 奥黛尔 on the right, a little behind him, facing the boss.
+    readonly Dictionary<string, CutoutRig20261010> partyRigs = new Dictionary<string, CutoutRig20261010>();
+    public CutoutRig20261010 PartyRig(string ally)
+    {
+        if (partyRigs.TryGetValue(ally, out var rig) && rig) return rig;
+        var cam = Camera.main; if (!cam || !player) return null;
+        var right = cam.transform.right; right.y = 0f; right.Normalize();
+        var ahead = cam.transform.forward; ahead.y = 0f; ahead.Normalize();
+        bool norn = ally == "norn";
+        var heroBody = player.GetComponentInChildren<AIHeroAnimatedBody>();
+        float heroH = heroBody ? heroBody.Height : 2.2f;
+        // Beside him, nearly level (a little ahead so the hero stays nearest the camera); about his
+        // size on screen (user 10-10 of v1: 比例不对 - they stood ahead yet looked a third bigger).
+        var feet = playerHome + right * ((norn ? -.74f : .74f) * heroH) + ahead * (.18f * heroH);
+        ApplyPartyFormation(heroH);
+        // Back views: the battle camera looks over the hero's shoulder at the boss (2026-10-10).
+        rig = CutoutRig20261010.Create(norn ? "norn_back" : "odelle_back", feet, transform);
+        if (!rig) return null;
+        // Sized against the video hero (the in-game body; the editor's 3D stand-in misled v2).
+        rig.SetHeight(heroH * (norn ? .96f : .89f));
+        rig.FallSide = norn ? 1f : -1f;   // falls away from the hero
+        var boss = FindInstalledEnemyHandle(EnemyBattleIds.ClockGuardPrimary);
+        rig.Face(boss ? boss.EnemyRoot.position : feet + cam.transform.forward * 5f);
+        partyRigs[ally] = rig;
+        return rig;
+    }
+    public void PresentPartyAction(string ally, string action) => PartyRig(ally)?.Play(action);
+    /// The app sends party-show and angel-intro as a Q28-Q30 battle opens (2026-10-11), possibly
+    /// before the hero and the boss are installed: both are held and served once they are, the
+    /// allies first so the intro plays round the party's formation.
+    bool partyRequested, angelIntroRequested;
+    public void RequestParty() { partyRequested = true; ServePartyRequests(); }
+    public void RequestAngelIntro() { angelIntroRequested = true; ServePartyRequests(); }
+    void ServePartyRequests()
+    {
+        if (!partyRequested && !angelIntroRequested) return;
+        var boss = FindInstalledEnemyHandle(EnemyBattleIds.ClockGuardPrimary);
+        if (!player || !IsActiveEnemyHandle(boss)) return;
+        if (partyRequested && (partyRigs.Count < 2 || !partyBoss)) { PartyRig("norn"); PartyRig("odelle"); }
+        if (angelIntroRequested && (!partyRequested || partyRigs.Count == 2)) { angelIntroRequested = false; PresentAngelIntro(); }
+    }
+    public void ClearPartyRigs()
+    {
+        partyRequested = angelIntroRequested = false;
+        foreach (var r in partyRigs.Values) if (r) Destroy(r.gameObject);
+        partyRigs.Clear();
+        if (partyBoss && partyBoss.EnemyRoot) { partyBoss.EnemyRoot.position = partyBossHome; partyBoss.EnemyRoot.localScale = partyBossScale; partyBoss.GetComponent<ChronarchPresentation20260916>()?.SetVideoSize(1f); }
+        partyBoss = null;
+    }
+    // The boss further off and smaller in the party fight (user 10-10: 敌人也要小一些远一些).
+    EnemyHandle partyBoss; Vector3 partyBossHome, partyBossScale;
+    void ApplyPartyFormation(float heroH)
+    {
+        if (partyBoss) return;
+        var boss = FindInstalledEnemyHandle(EnemyBattleIds.ClockGuardPrimary);
+        var cam = Camera.main;
+        if (!IsActiveEnemyHandle(boss) || !boss.EnemyRoot || !cam) return;
+        partyBoss = boss; partyBossHome = boss.EnemyRoot.position; partyBossScale = boss.EnemyRoot.localScale;
+        var ahead = cam.transform.forward; ahead.y = 0f; ahead.Normalize();
+        boss.EnemyRoot.position += ahead * (1.1f * heroH);
+        boss.EnemyRoot.localScale = partyBossScale * .82f;
+        boss.GetComponent<ChronarchPresentation20260916>()?.SetVideoSize(.82f);
+    }
+
+    /// Q30 opening (2026-10-10): the church's angel takes the stronger pursuer away (SpellSpectacle20260926.AngelIntro).
+    public void PresentAngelIntro()
+    {
+        var boss = FindInstalledEnemyHandle(EnemyBattleIds.ClockGuardPrimary);
+        if (!IsActiveEnemyHandle(boss) || !player) return;
+        boss.GetComponent<ChronarchPresentation20260916>()?.PlayIntroSeal();
+        SpellSpectacle20260926.AngelIntro(this, boss.EnemyRoot.position, () => PlayerFireBreathImpactAnchor,
+            // His chest on the illustrated body (the 3D body's anchors sit at its hips, angel14).
+            () => { if (!boss) return Vector3.zero; var body = boss.GetComponentInChildren<SevianVideoBody20261009>(); return boss.EnemyRoot.position + Vector3.up * ((body ? body.FigureHeight : 2.6f) * .64f); });
+    }
     public void PresentEncoreCharge() { EncoreBell.Charge(hellHoundHandle); emeraldRevenant?.Charge(); }
     public void PresentEncoreBell() { EncoreBell.Bell(hellHoundHandle); }
     public void PresentEncoreRelease() { encoreBellPresentation?.Release(); emeraldRevenant?.Release(); }
-    public void ClearEncorePresentation() { emeraldPoisonField?.Clear(); encoreBellPresentation?.Clear(); emeraldRevenant?.Release(); emeraldSpell?.StopRoot(); }
+    public void ClearEncorePresentation() { emeraldPoisonField?.Clear(); SpellSpectacle20260926.PoisonPool(this, null, 0); encoreBellPresentation?.Clear(); emeraldRevenant?.Release(); emeraldSpell?.StopRoot(); }
 
     int earlyPresenceMission;
     public void SetEarlyBattlePresence(string value)
@@ -2281,6 +2448,7 @@ public sealed class BattlePrototype : MonoBehaviour
             var idle = handle.GetComponent<EarlyEnemyIdlePresence>();
             if (encounterRoster.Contains(handle))
             {
+                if (handle.GetComponentInChildren<CombatTempoAnimatedBody>()) continue;
                 if (idle == null || !idle.IsConfigured) idle = EarlyEnemyIdlePresence.Install(handle);
                 idle.SetMission(earlyPresenceMission);
                 CharacterSurfaceRefinement20260916.Install(handle);
@@ -2297,6 +2465,8 @@ public sealed class BattlePrototype : MonoBehaviour
         ClearPlayerImpact(true);
         NativeCombatEnabled = enabled;
         if (!enabled) {
+            GetComponent<CombatTempoPresentation>()?.Cancel();
+            Time.timeScale = 1;
             SpellAudioDirector20260924.StopAll();
             SpellSpectacle20260926.StopAll();
             archivePresentation?.Clear(); ClearRepairPresentations();
@@ -2356,10 +2526,14 @@ public sealed class BattlePrototype : MonoBehaviour
                 SetStatus("愚者 · 秘仪飞牌");
                 SpellAudioDirector20260924.BeginPlayer(this, "basic");
                 BeginPlayerSpectacle("basic", basicHandle != null ? new List<EnemyHandle> { basicHandle } : null, basicTarget);
-                PrepareCompactPlayerBasic();
+                var tempo = GetComponent<CombatTempoPresentation>();
+                // The illustrated hero plays its own basic action in every battle.
+                if (tempo && tempo.HasHero) tempo.HeroCast("basic");
+                else PrepareCompactPlayerBasic();
                 foolBasicTarotVFX.Play(Camera.main, player.transform, basicTarget);
                 basicTarget.GetComponentInChildren<Mindstone.VFXV1.GuardianWard>()?.ImpactAfter(.58f);
                 yield return new WaitForSeconds(0.58f);
+                if (tempo && tempo.Enabled) UnityBattleBridge.ReportPresentationComplete("basic");
                 break;
             case PlayerAction.Skill:
                 SetStatus("愚者 · 错步穿行");
@@ -2413,6 +2587,7 @@ public sealed class BattlePrototype : MonoBehaviour
 
     void BeginDistinctPlayerCast(string skillID)
     {
+        if (GetComponent<CombatTempoPresentation>()?.HasHero ?? false) { GetComponent<CombatTempoPresentation>().HeroCast(skillID); return; }
         if (!player || !playerAnimator) return;
         // Every official skill uses its own authored pose, including the quick wrist cast.
         playerChoreography = FoolSkillChoreography.Install(player.transform);
@@ -2425,10 +2600,24 @@ public sealed class BattlePrototype : MonoBehaviour
         playerChoreography.Begin(skillID);
     }
 
+    /// Contact time of each hero card in the standard presentation, where its theatre
+    /// (or, for a card with a travelling form, a timer) reports the contact receipt.
+    static float StandardContactTime(string skillID) => skillID switch
+    {
+        "fool_skill_01" => FoolTarotStrikeVFX.ContactTime,
+        "fool_skill_02" => .38f,
+        "fool_skill_04" => .441f,
+        "fool_skill_05" => HeroIdentityTheatreVFX.EvidenceContactTime,
+        "fool_skill_07" => .885f,
+        "fool_skill_08" => .63f,
+        "fool_skill_10" => .96f,
+        _ => .705f,
+    };
+
     // Registers the contact spectacle for the hero cast. Each recipient keeps
     // its own last-known point so a target that exits before contact never
     // redirects the burst onto another enemy or the hero.
-    void BeginPlayerSpectacle(string skillID, List<EnemyHandle> handles, Transform legacyTarget)
+    void BeginPlayerSpectacle(string skillID, List<EnemyHandle> handles, Transform legacyTarget, float expectedContact = -1f)
     {
         var points = new List<System.Func<Vector3>>();
         var seeds = new List<int>();
@@ -2446,7 +2635,65 @@ public sealed class BattlePrototype : MonoBehaviour
             points.Add(() => { if (t) last = t.position + Vector3.up * 1.05f; return last; });
             seeds.Add(SpellSpectacle20260926.StableHash(t.name));
         }
-        SpellSpectacle20260926.BeginPlayer(this, skillID, () => player ? player.transform.position + Vector3.up * 1.15f : Vector3.zero, points, seeds);
+        if (SpellSpectacle20260926.Diagnostics && player && SpellSpectacle20260926.HasForm(skillID))
+        {
+            // Where the hero is drawn versus the root the spells leave from (Simulator review).
+            var drawn = new Bounds(); bool any = false;
+            foreach (var skin in player.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+            {
+                if (!skin.enabled) continue;
+                if (!any) { drawn = skin.bounds; any = true; } else drawn.Encapsulate(skin.bounds);
+            }
+            Debug.Log($"SPELLFORM hero {skillID} root={player.transform.position:F2} drawn={(any ? drawn.center.ToString("F2") : "none")} size={(any ? drawn.size.ToString("F2") : "-")} target={(points.Count > 0 ? points[0]().ToString("F2") : "none")}");
+        }
+        // Travelling forms leave from the chest of the hero as drawn: the tempo hero is
+        // about 1 m tall, so root + 1.15 m sits above its head, and with the low camera
+        // far behind, anything that high projects onto the enemy instead of the hero.
+        System.Func<Vector3> caster = SpellSpectacle20260926.HasForm(skillID)
+            ? HeroChestPoint
+            : () => player ? player.transform.position + Vector3.up * 1.15f : Vector3.zero;
+        SpellSpectacle20260926.BeginPlayer(this, skillID, caster, points, seeds, expectedContact);
+        // Light comes off the hero itself while it casts (aura, glints, a sigil at its feet).
+        if (points.Count > 0) SpellSpectacle20260926.CastLight(this, skillID, HeroChestPoint, HeroFeetPoint, expectedContact);
+    }
+
+    /// Feet of the hero as currently drawn: the illustrated frame's foot line (50 px above
+    /// the bottom of the plane), else the root.
+    Vector3 HeroFeetPoint()
+    {
+        if (!player) return Vector3.zero;
+        var illustrated = player.GetComponentInChildren<AIHeroAnimatedBody>();
+        if (illustrated && illustrated.Surface && illustrated.Surface.enabled)
+        {
+            var frame = illustrated.Surface.bounds;
+            float unit = frame.size.y / 640f;
+            if (unit > 1e-4f) return new Vector3(frame.center.x, frame.min.y + 50f * unit, frame.center.z);
+        }
+        return player.transform.position;
+    }
+
+    /// Chest of the hero as currently drawn: the illustrated (video) hero's frame, else
+    /// the skinned body bounds, else root + 1.15 m.
+    Vector3 HeroChestPoint()
+    {
+        if (!player) return Vector3.zero;
+        // The illustrated frame is a fixed-foot plane from 50 px below the feet to 590 px
+        // above them, with a 520 px figure (AIHeroAnimatedBody.Install); chest at 62% of it.
+        var illustrated = player.GetComponentInChildren<AIHeroAnimatedBody>();
+        if (illustrated && illustrated.Surface && illustrated.Surface.enabled)
+        {
+            var frame = illustrated.Surface.bounds;
+            float unit = frame.size.y / 640f;
+            if (unit > 1e-4f) return new Vector3(frame.center.x, frame.min.y + (50f + .62f * 520f) * unit, frame.center.z);
+        }
+        var drawn = new Bounds(); bool any = false;
+        foreach (var skin in player.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+        {
+            if (!skin.enabled) continue;
+            if (!any) { drawn = skin.bounds; any = true; } else drawn.Encapsulate(skin.bounds);
+        }
+        if (!any || drawn.size.y < .2f) return player.transform.position + Vector3.up * 1.15f;
+        return new Vector3(drawn.center.x, drawn.min.y + drawn.size.y * .62f, drawn.center.z);
     }
 
     static bool IsActiveEnemyHandle(EnemyHandle handle) =>
@@ -2466,6 +2713,7 @@ public sealed class BattlePrototype : MonoBehaviour
     public void CancelDepartingEnemy(EnemyHandle handle)
     {
         if(!handle)return;
+        GetComponent<CombatTempoPresentation>()?.CancelActor(handle);
         handle.GetComponent<MainlineBodyRound2>()?.Stop();
         handle.GetComponent<MainlineGhostRound2>()?.Cancel();
         if(handle==hellHoundHandle){hellHoundFireball?.Clear();q4Hound?.Clear();}
@@ -2532,8 +2780,54 @@ public sealed class BattlePrototype : MonoBehaviour
             : Vector3.zero;
     }
 
+    readonly Dictionary<string, (float first, float last)> orderedTimings = new();
+    public void SetOrderedSkillTiming(string payload)
+    {
+        var parts = payload.Split(':');
+        if (parts.Length == 3 && float.TryParse(parts[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var first)
+            && float.TryParse(parts[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var last)
+            && first > 0f && last >= first && last < 10f) orderedTimings[parts[0]] = (first, last);
+    }
+
+    public void PresentOrderedImpact(string payload)
+    {
+        var parts = payload.Split(':');
+        if (parts.Length != 2 || !NativeCombatEnabled) return;
+        var points = new List<System.Func<Vector3>>();
+        foreach (var id in parts[1].Split('|')) {
+            var handle = FindInstalledEnemyHandle(id);
+            if (IsActiveEnemyHandle(handle)) points.Add(() => PlayerSkillTargetPoint(handle));
+        }
+        SpellSpectacle20260926.OrderedImpact(this, parts[0], HeroChestPoint, points);
+    }
+
+    IEnumerator PresentOrderedSkill(string skillID, string targetID, string[] targetIDs, float first, float last)
+    {
+        actionRunning = true; playerDefending = false;
+        SetStatus($"愚者 · {FoolEffekseerSkillVFX.DisplayName(skillID)}");
+        var handles = new List<EnemyHandle>();
+        foreach (var id in targetIDs ?? new[] { targetID }) {
+            var handle = ResolvePlayerSkillTarget(id);
+            if (IsActiveEnemyHandle(handle) && !handles.Contains(handle)) handles.Add(handle);
+        }
+        if (GetComponent<CombatTempoPresentation>()?.HasHero ?? false) GetComponent<CombatTempoPresentation>().HeroCast(skillID, first);
+        else BeginDistinctPlayerCast(skillID);
+        BeginPlayerSpectacle(skillID, handles, null, first);
+        SpellAudioDirector20260924.BeginPlayer(this, skillID);
+        yield return new WaitForSeconds(first);
+        playerChoreography?.Contact(); UnityBattleBridge.ReportCombatContact("player");
+        if (last > first) yield return new WaitForSeconds(last - first);
+        playerChoreography?.Finish(); actionRunning = false;
+        UnityBattleBridge.ReportPresentationComplete(skillID);
+    }
+
     IEnumerator PresentPlayerSkillAction(string skillID, string targetBattleEnemyID, string secondaryID = null, string[] resolvedTargetIDs = null)
     {
+        if (orderedTimings.TryGetValue(skillID, out var timing)) {
+            orderedTimings.Remove(skillID);
+            yield return PresentOrderedSkill(skillID, targetBattleEnemyID, resolvedTargetIDs, timing.first, timing.last);
+            yield break;
+        }
         var requestedSkillID = skillID;
         actionRunning = true;
         playerDefending = false;
@@ -2545,11 +2839,21 @@ public sealed class BattlePrototype : MonoBehaviour
         var targetHandle = ResolvePlayerSkillTarget(targetBattleEnemyID);
         var secondaryHandle = !string.IsNullOrEmpty(secondaryID) ? FindInstalledEnemyHandle(secondaryID) : null;
         if (!IsActiveEnemyHandle(secondaryHandle) || secondaryHandle == targetHandle) secondaryHandle = null;
+        // 错步 and the ultimate register their recipients below; registering twice would
+        // launch a travelling form twice.
+        if (skillID is not ("fool_skill_01" or "fool_skill_10"))
         {
             var spectacleTargets = new List<EnemyHandle>();
             if (IsActiveEnemyHandle(targetHandle)) spectacleTargets.Add(targetHandle);
             if (IsActiveEnemyHandle(secondaryHandle)) spectacleTargets.Add(secondaryHandle);
-            BeginPlayerSpectacle(skillID, spectacleTargets, null);
+            // 荒谬归结's tower volley also lands on the bystanders the rules hit.
+            if (skillID == "fool_skill_07" && resolvedTargetIDs != null)
+                foreach (var id in resolvedTargetIDs) {
+                    var bystander = FindInstalledEnemyHandle(id);
+                    if (IsActiveEnemyHandle(bystander) && !spectacleTargets.Contains(bystander)) spectacleTargets.Add(bystander);
+                }
+            // A travelling form lands on the card's own contact receipt.
+            BeginPlayerSpectacle(skillID, spectacleTargets, null, StandardContactTime(skillID));
         }
         var targetAnimator = targetHandle != null && targetHandle.EnemyRoot != null
             ? targetHandle.EnemyRoot.GetComponentInChildren<Animator>(true)
@@ -2568,8 +2872,10 @@ public sealed class BattlePrototype : MonoBehaviour
             } else {
                 AddRecipient(targetHandle); AddRecipient(secondaryHandle);
             }
-            if (skillID == "fool_skill_01" && recipients.Count > 2) recipients.RemoveRange(2, recipients.Count - 2);
-            BeginPlayerSpectacle(skillID, recipients, null);
+            // 错步穿行 cuts through three in the tower's minion packs, two elsewhere.
+            int sidestepReach = churchTowerFormation ? 3 : 2;
+            if (skillID == "fool_skill_01" && recipients.Count > sidestepReach) recipients.RemoveRange(sidestepReach, recipients.Count - sidestepReach);
+            BeginPlayerSpectacle(skillID, recipients, null, skillID == "fool_skill_01" ? FoolTarotStrikeVFX.ContactTime : StandardContactTime(skillID));
             BeginDistinctPlayerCast(skillID);
             foolSkillVFX.HeroActor = player.transform;
             yield return foolSkillVFX.PlayTargetInstances(skillID,
@@ -2618,7 +2924,8 @@ public sealed class BattlePrototype : MonoBehaviour
         BeginDistinctPlayerCast(skillID);
         if (heroDustRoutine != null) StopCoroutine(heroDustRoutine);
         heroDust?.Clear();heroDustRoutine=null;
-        if (requestedSkillID == "fool_skill_10") {
+        // With its form the ultimate's light is the decree itself; the old dust stream is not drawn.
+        if (requestedSkillID == "fool_skill_10" && !SpellSpectacle20260926.HasForm(requestedSkillID)) {
             if (!heroDust) heroDust = gameObject.AddComponent<ArcaneDustFlow>();
             heroDustRoutine = StartCoroutine(PresentHeroDust(requestedSkillID, targetPoint));
         }
@@ -2907,6 +3214,9 @@ public sealed class BattlePrototype : MonoBehaviour
         // fireball instead of leaving a static model beside the VFX.
         animator?.ResetTrigger("Attack");
         animator?.SetTrigger("Attack");
+        // The early hound's replacement body lunges forward and breathes (HeavyRelease), its
+        // release timed to the native 1.1 s contact; the old model only had a walk cycle.
+        if (!isRevenant) CombatTempoPresentation.Get(this).PlayEnemyClip(committedHound, "HeavyRelease", 1.0f);
         FaceHellHoundAt(player.transform.position);
         yield return new WaitForSeconds(0.08f);
 
@@ -2920,6 +3230,8 @@ public sealed class BattlePrototype : MonoBehaviour
             () => PlayerFireBreathImpactAnchor);
         if(!CanPresentEnemy(committedHound))yield break;
         UnityBattleBridge.ReportPresentationPhase("hell-hound-breath");
+        // The painted breath leaves the mouth now and reaches the victim at the contact (2026-10-10).
+        SpellSpectacle20260926.EnemyBreath(committedHound, () => HellHoundFireBreathSourceAnchor, () => PlayerFireBreathImpactAnchor, .78f);
         yield return isRevenant ? emeraldSpell.Fly(
             () => HellHoundFireBreathSourceAnchor,
             () => PlayerFireBreathImpactAnchor) : hellHoundFireball.Fly(
@@ -2976,6 +3288,8 @@ public sealed class BattlePrototype : MonoBehaviour
         var home = actor.position;
         var animator = actor.GetComponentInChildren<Animator>(true);
         animator?.SetTrigger("Attack");
+        // A real pounce on the replacement body, its bite on the 1.1 s contact (it used to walk).
+        CombatTempoPresentation.Get(this).PlayEnemyClip(hellHoundHandle, "Pounce", 1.1f);
         var target = Vector3.Lerp(home, player.transform.position, .65f);
         float elapsed = 0;
         while (elapsed < 1.1f) {

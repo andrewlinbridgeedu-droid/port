@@ -6,6 +6,23 @@ import MistportCombatCore
 WallTuning.apply(ProcessInfo.processInfo.environment["WALLS"])
 PacingTuning.apply(ProcessInfo.processInfo.environment["PACING"])
 var arguments = CommandLine.arguments
+if arguments.count > 2 && arguments[1] == "housing-power" { try HousingPower.run(URL(fileURLWithPath:arguments[2])); exit(0) }
+if arguments.count > 1 && arguments[1] == "housing-check" { HousingChecks.run(); exit(0) }
+if arguments.count > 2 && arguments[1] == "housing" {
+    let destination = URL(fileURLWithPath:arguments[2]); try FileManager.default.createDirectory(at:destination,withIntermediateDirectories:true)
+    let offsets = arguments.count > 3 ? arguments[3].split(separator:",").compactMap { Int($0) } : [0,30,90]
+    try HousingReport.run(destination:destination,offsets:offsets,version:arguments.count > 4 ? arguments[4] : "draft")
+    exit(0)
+}
+if arguments.count > 2 && arguments[1] == "bank-power" { try BankPowerProbe.run(to: URL(fileURLWithPath: arguments[2])); exit(0) }
+if arguments.count > 1 && arguments[1] == "bank-check" { BankChecks.run(); exit(0) }
+if arguments.count > 2 && arguments[1] == "bank" {
+    let destination = URL(fileURLWithPath: arguments[2])
+    try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
+    let offsets = arguments.count > 3 ? arguments[3].split(separator: ",").compactMap { Int($0) } : [0, 30, 90]
+    try BankReport.run(destination: destination, offsets: offsets, version: arguments.count > 4 ? arguments[4] : "original")
+    exit(0)
+}
 if arguments.count > 5 && arguments[1] == "fight" {
     // fight <mission> <profile> <floor> <bounty relic id or -> : every shop relic, medal time and salve choice.
     let q = Int(arguments[2])!, profile = (Profile.all + HumanPace.all.map(\.profile)).first { $0.name == arguments[3] } ?? Profile(name: "delay", actionDelay: Double(arguments[3]) ?? 0, priorityCore: true), floor = Int(arguments[4])!

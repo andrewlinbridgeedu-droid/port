@@ -61,8 +61,8 @@ struct SequenceNineRelicIntegrationTests {
         let before = s.enemies[0].hp
         let accepted3 = try s.useBasicAction(.damage, targetID: recipient) == 0
         #expect(accepted3)
-        #expect(s.enemies[0].hp == before + 60)
-        #expect(s.relicHealingEvents.last?.damage == 60)
+        #expect(s.enemies[0].hp == before + 32)
+        #expect(s.relicHealingEvents.last?.damage == 32)
         let playerBefore = s.playerHP, targetBefore = s.enemies[0].hp
         try s.endRound(actingEnemyID: attacker, at: 2.1)
         let event = try #require(s.relicDamageEvents.last)

@@ -118,6 +118,8 @@ public sealed class HeroIdentityTheatreVFX : MonoBehaviour
         }
         if(token==generation)Clear();
     }
+    /// 伪证烙印's authored contact (about .546 s), for presentations that keep its timing.
+    public static float EvidenceContactTime => EvidenceContact();
     static float EvidenceContact(){float lo=0,hi=1;for(int i=0;i<24;i++){float m=(lo+hi)*.5f;if(m*m*(3-2*m)<.86f)lo=m;else hi=m;}return .95f*(.38f+.25f*(lo+hi)*.5f);}
     static Quaternion PortraitFacing(Camera camera,Vector3 point,Vector3 up,Quaternion fallback)
         =>camera?Quaternion.LookRotation(camera.transform.position-point,up):fallback*Quaternion.Euler(0,180,0);

@@ -27,7 +27,8 @@ public enum MPCSkillGrowth {
         switch skillID {
         case .sidestepStrike, .maskedWhisper, .identityDisplacement,
              .fabricatedEvidence, .mirrorPursuit, .absurdFinale: true
-        case .paperDouble, .turnTheTables, .backstageChange, .namelessStage: false
+        case .turnTheTables, .backstageChange, .stolenTempo, .mirrorBarrage, .delayedSignature: true
+        case .paperDouble, .namelessStage: false
         }
     }
 }

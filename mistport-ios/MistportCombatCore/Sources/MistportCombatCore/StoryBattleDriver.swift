@@ -5,7 +5,7 @@ import Foundation
 /// replays church battles (user decision 2026-09-30: there is only the shared server).
 ///
 /// Rules follow the App's `tickContinuousCombat()` story path (story-battle-v1):
-/// - the automatic skill loop, the 2.4 s basic attack, 1.75 s / 1.65 s player recovery;
+/// - the automatic skill loop, the 2.4 s basic attack, shared 1.1 s / 0.8 s player recovery;
 ///   each cast re-applies the chosen loop (`setContinuousSkillSequence`), as the App does;
 /// - player casts land at the authored Unity contacts (`MPCChurchBattleDriver.playerContact`),
 ///   sealed-paperweight casts included;
@@ -23,7 +23,11 @@ import Foundation
 ///   (`Events.intervention`; she appears only in the early tutorials and major events),
 ///   the attacks in flight are dropped, the trial card is granted and the battle goes on;
 /// - a new wave drops every enemy attack and clock; one opened by the poison clock also drops
-///   the player's cast in flight and resets the target.
+///   the player's cast in flight and resets the target;
+/// - Q28–Q30 bring the mission's two allies (pass `companionIDs`); they act on combat time
+///   (`advanceCompanions`) as well as after landed casts, the loop passes over a card under
+///   夺名代签, and a fallen hero's cast in flight is lost and no new one starts until the
+///   healer's revive (2026-10-10).
 /// Inputs add three kinds to the church set: `mask` (the ownerless mask, with its lifetime
 /// cracks), `bell` (ring the encore bell during a charge) and `sequence` (reorder the loop).
 public struct MPCStoryBattleStepper: Sendable {
@@ -65,12 +69,14 @@ public struct MPCStoryBattleStepper: Sendable {
     private var revealed: Set<String> = []
     /// Q4's current 20-second hound cycle start, for policies that time the mask.
     public private(set) var q4CycleStart: TimeInterval?
+    private var q3HuntStart: TimeInterval?
     private var bell = MPCEncoreBellState()
     private var ultimateRequested = false
     private var preludeBasics = 0
     private var preludeRevealAt: TimeInterval?
     private var preludeActive: Bool
     private var random: UInt64
+    private var light: MPCLightAttackClock?
 
     public init(encounterID: String, loadout: MPCChapterOneLoadout, consumables: [String: Int] = [:],
                 party: MPCPartyPersistentState = .init(), companionIDs: [String] = [], mask: Mask? = nil,
@@ -86,6 +92,9 @@ public struct MPCStoryBattleStepper: Sendable {
         var session = try MPCChapterOneEncounterSession.start(encounterID: encounterID, party: party, consumables: consumables,
                                                               companionIDs: companionIDs, loadout: loadout)
         configure?(&session)
+        let tempo = tuning.tempo.resolve(encounterID: encounterID)
+        session.adoptTempo(tempo)
+        light = tempo.map(MPCLightAttackClock.init)
         self.session = session
         loop = session.loadout.normalSkillIDs
         preludeActive = mission == 1
@@ -140,6 +149,9 @@ public struct MPCStoryBattleStepper: Sendable {
     /// Enemy contact after an attack starts: Unity timings sampled 2026-09-15 at 30 fps.
     private func contact(_ enemy: MPCRuntimeEnemy, index: Int) -> TimeInterval {
         let q = mission
+        if (2...4).contains(q) {
+            return MPCBattleContactTiming.enemyContact(contentID: enemy.contentID, intent: enemy.currentIntent, encounterID: encounterID)
+        }
         let split = enemy.contentID == "enemy_resonant_clock_guard_q2_split"
         let ghost = enemy.contentID.contains("resonant_clock_guard_q2")
         let hound = ["enemy_clockwork_hound", "enemy_emerald_revenant"].contains(enemy.contentID)
@@ -158,7 +170,8 @@ public struct MPCStoryBattleStepper: Sendable {
 
     private mutating func beginWave(_ index: Int, into events: inout Events) {
         pending.removeAll(); ready.removeAll(); reveals.removeAll(); revealed.removeAll()
-        q4CycleStart = nil
+        light?.reset()
+        q4CycleStart = nil; q3HuntStart = nil
         session.clearQ4HoundState()
         events.newWave = index
     }
@@ -188,6 +201,7 @@ public struct MPCStoryBattleStepper: Sendable {
         _ = s.expireOwnedManualMasquerade(at: now)
         s.advanceQ4Clock(at: now)
         _ = s.advanceEmeraldPoison(at: now)
+        events.orderedImpacts = s.drainOrderedSkillImpacts()
         guard s.outcome == .inProgress else {
             if !newInputs.isEmpty { throw Failure.refused(index: inputs.count, input: newInputs[0]) }
             session = s; tick += 1
@@ -233,6 +247,8 @@ public struct MPCStoryBattleStepper: Sendable {
                     maskUses += 1
                     ok = true
                 }
+            case .counter:
+                ok = s.requestCounter(at: now)
             case .bell:
                 if s.canUseEncoreBell, let id = bell.pendingEnemyID, s.enemies.contains(where: { $0.id == id && $0.isAlive }),
                    bell.phase == .windingUp {
@@ -247,9 +263,9 @@ public struct MPCStoryBattleStepper: Sendable {
             case .sequence:
                 let skills = (input.itemID ?? "").split(separator: ",").compactMap { FoolSkillID(rawValue: String($0)) }
                 let allowed = Set(self.loadout.normalSkillIDs + (mission == 1 ? [.sidestepStrike] : []))
-                ok = skills.count <= 5 && Set(skills).count == skills.count && !skills.contains(.namelessStage)
+                ok = !skills.isEmpty && skills.count <= 4 && Set(skills).count == skills.count && !skills.contains(.namelessStage)
                     && Set(skills).isSubset(of: allowed)
-                if ok { loop = skills; s.setContinuousSkillSequence(skills) }
+                if ok { scheduler.didReorder(from: loop, to: skills, at: now); loop = skills; s.setContinuousSkillSequence(skills) }
             }
             guard ok else { throw Failure.refused(index: inputs.count + applied.count, input: input) }
             applied.append(input)
@@ -278,6 +294,8 @@ public struct MPCStoryBattleStepper: Sendable {
         if usesBellTiming, let id = self.bell.pendingEnemyID, !s.enemies.contains(where: { $0.id == id && $0.isAlive }) {
             _ = self.bell.enemyDied(id)
             self.pending[id] = nil
+            s.releaseDeadCharger(enemyID: id)
+            if s.outcome != .inProgress { session = s; tick += 1; return events }
         }
 
         // Q1: after three basic attacks Mara intervenes; the battle then goes on
@@ -297,13 +315,13 @@ public struct MPCStoryBattleStepper: Sendable {
             return events
         }
 
-        // The player's cast lands.
+        // The player's cast lands (a fallen hero's cast in flight is lost).
         if let p = hit, now >= hitAt {
             hit = nil
-            if s.enemies.contains(where: { $0.id == p.targetID && $0.isAlive }) {
+            if !s.playerIsDown, s.enemies.contains(where: { $0.id == p.targetID && $0.isAlive }) {
                 let wave = s.waveIndex
                 if let skill = p.skill {
-                    if !s.loadout.normalSkillIDs.contains(skill) { s.setContinuousSkillSequence([skill] + self.loop) }
+                    if skill != .namelessStage, !s.loadout.normalSkillIDs.contains(skill) { s.setContinuousSkillSequence([skill] + self.loop) }
                     _ = try s.useFoolSkill(skill, targetID: p.targetID, usesRealtimeCooldown: true, sealedByPaperweight: p.sealed)
                     s.setContinuousSkillSequence(self.loop)
                 } else {
@@ -343,6 +361,10 @@ public struct MPCStoryBattleStepper: Sendable {
         }
         guard s.outcome == .inProgress else { session = s; tick += 1; return events }
 
+        // Final-boss party allies act on combat time, including while the hero is down.
+        _ = s.advanceCompanions(at: now, focusTargetID: self.target)
+        guard s.outcome == .inProgress else { session = s; tick += 1; return events }
+
         // Enemies start attacks, independently of the player.
         for (index, enemy) in s.enemies.enumerated() where enemy.isAlive {
             let split = enemy.contentID == "enemy_resonant_clock_guard_q2_split"
@@ -354,6 +376,10 @@ public struct MPCStoryBattleStepper: Sendable {
                 self.ready[enemy.id] = hound ? now : now + (split ? 0.5 + Double(index % 2) * 0.25 : 2.4 + Double(index) * 0.35)
                 if mission == 6 { self.ready[enemy.id] = now }
                 if mission == 8 { self.ready[enemy.id] = now + 2.9 }
+            }
+            if mission == 3 {
+                if q3HuntStart == nil { q3HuntStart = now }
+                self.ready[enemy.id] = MPCQ3HoundTiming.castTime(start: q3HuntStart!, attackIndex: enemy.intentIndex)
             }
             if mission == 4 {
                 if q4CycleStart == nil { q4CycleStart = now }
@@ -391,31 +417,45 @@ public struct MPCStoryBattleStepper: Sendable {
             self.pending[enemy.id] = lands
             events.enemyAttacks.append(.init(enemyID: enemy.id, intent: enemy.currentIntent, landsAtTick: Int((lands / step).rounded(.up))))
         }
+        if s.outcome == .inProgress, var clock = light {
+            // No light bites while the hound stands open after its twin flames (the mask's
+            // payoff), nor from a delayed or unrevealed enemy.
+            let q4Open = (s.q4OpeningUntil ?? -1) > now
+            let revealed = self.revealed
+            clock.advance(&s, now: now, step: step, authoredPending: pending, authoredReady: ready,
+                          blocked: { enemy in
+                              q4Open || enemy.delayedRounds > 0
+                                  || (enemy.contentID == "enemy_resonant_clock_guard_q2_split" && !revealed.contains(enemy.id))
+                          }, into: &events)
+            light = clock
+        }
         session = s
         tick += 1
 
         // The player's next action.
-        guard reveals.isEmpty, now >= playerAt, hit == nil,
+        guard reveals.isEmpty, now >= playerAt, now >= session.orderedCastReadyAt, hit == nil, !session.playerIsDown,
               let current = self.target.flatMap({ id in s.enemies.first { $0.id == id && $0.isAlive } }) ?? s.enemies.first(where: \.isAlive)
         else { return events }
+        if session.activateCounter(at: now) { self.scheduler.restartForCounter(sequence: self.loop, at: now) }
         let automatic = usesManualMask ? self.loop.filter { $0 != .maskedWhisper } : self.loop
         let chosen: FoolSkillID?
         let requested: FoolSkillID? = self.ultimateRequested && loadout.isUltimateUnlocked && s.canUseFoolSkill(.namelessStage) ? .namelessStage : nil
-        if !preludeActive, let skill = requested ?? scheduler.next(in: automatic, at: now) {
+        if !preludeActive, let skill = requested ?? self.scheduler.next(in: automatic, at: now, skipping: s.sealedFoolSkillIDs(at: now)) {
             if skill == .namelessStage { self.ultimateRequested = false }
             session.setContinuousSkillSequence(self.loop)
             self.scheduler.didCast(skill, at: now)
-            playerAt = now + 1.75 + tuning.actionDelay + (skill == .namelessStage ? 0 : max(0, variation()))
+            playerAt = now + (skill.isOrderedOrdinary ? 0 : (light?.tempo.skillRecovery ?? MPCCombatTempo.standard.skillRecovery)) + tuning.actionDelay + (skill == .namelessStage ? 0 : max(0, variation()))
             chosen = skill
-        } else if now >= basicAt + 2.4 {
+        } else if now >= basicAt + (light?.tempo.basicInterval ?? 2.4) {
             basicAt = now
-            playerAt = now + 1.65 + tuning.actionDelay + max(0, variation())
+            playerAt = now + (light?.tempo.basicRecovery ?? MPCCombatTempo.standard.basicRecovery) + tuning.actionDelay + max(0, variation())
             chosen = nil
         } else {
             return events
         }
         let sealed = chosen.map { session.willSealPreparedSkill($0, at: now) } ?? false
         hitAt = now + (chosen == .namelessStage ? MPCChurchBattleDriver.playerContact(chosen) : max(0.15, MPCChurchBattleDriver.playerContact(chosen) + variation()))
+        if let chosen, let timing = session.prepareOrderedSkill(chosen, targetID: current.id, at: now) { hitAt = timing.firstImpactAt }
         let cast = Events.Cast(skill: chosen, targetID: current.id, landsAtTick: Int((hitAt / step).rounded(.up)), sealed: sealed)
         hit = cast
         events.cast = cast

@@ -12,6 +12,8 @@ public sealed class MainlineStateRound2 : IDisposable
     EnemyHandle actor;GameObject root;MainlineSpellMeshRound2 surface;MainlineBodyRound2 body;
     Transform chest,leftWrist,rightWrist,pen;float frontOffset=.34f;
     string intent;float duration;
+    /// The hand the charge's heat folds into when the body on screen is not the rigged one (瑟维安's video, 2026-10-11).
+    public Func<Vector3> Hand;
     public static MainlineStateRound2 Attach(EnemyHandle handle,string state,float seconds){
         var value=new MainlineStateRound2();value.actor=handle;value.intent=state;value.duration=seconds;
         if(!handle||!handle.EnemyRoot)return value;
@@ -69,7 +71,7 @@ public sealed class MainlineStateRound2 : IDisposable
         }
         if(charge){
             // The elite folds gold heat into the sword hand, not a chest halo.
-            Vector3 hand=(rightWrist?rightWrist.position:center)+front*.20f;
+            Vector3 hand=(Hand!=null?Hand():rightWrist?rightWrist.position:center)+front*.20f;
             surface.RibbonContinuous(hand-right*.47f-up*.19f,
                 hand-right*.58f+up*.59f,hand+right*.22f+up*1.38f,
                 hand+right*.56f+up*1.03f,right+front*.22f,.43f,color,1.1f);

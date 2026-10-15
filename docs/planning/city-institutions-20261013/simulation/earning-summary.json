@@ -1,0 +1,4113 @@
+{
+  "rules": {
+    "materials": [
+      500,
+      650,
+      950
+    ],
+    "ritual": 300,
+    "total": 2400,
+    "minimum_nonstory_income": 556,
+    "cash_recovery": false
+  },
+  "checks": {
+    "campaign_runs": 486,
+    "completed": 486,
+    "cached_vs_uncached": 18,
+    "server_final_runs": 24,
+    "server_final_days": 8760,
+    "server_additional_budget_comparison": 3
+  },
+  "scenarios": {
+    "earning_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        100,
+        595
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_deposit20": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        124,
+        597
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        4
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_deposit60": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        126,
+        600
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_early_exit": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        100,
+        595
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_risk80_profit": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        131,
+        622
+      ],
+      "risk_subscribed": 24,
+      "actual_risk_principal": [
+        0,
+        80
+      ],
+      "risk_profit": [
+        0,
+        4
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_risk80_delay": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        131,
+        622
+      ],
+      "risk_subscribed": 24,
+      "actual_risk_principal": [
+        0,
+        80
+      ],
+      "risk_profit": [
+        0,
+        4
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_risk80_loss20pct": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        97,
+        602
+      ],
+      "risk_subscribed": 24,
+      "actual_risk_principal": [
+        0,
+        80
+      ],
+      "risk_profit": [
+        -16,
+        0
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_risk80_total_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        179,
+        666
+      ],
+      "risk_subscribed": 24,
+      "actual_risk_principal": [
+        0,
+        80
+      ],
+      "risk_profit": [
+        -80,
+        0
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_risk160_total_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        125,
+        669
+      ],
+      "risk_subscribed": 21,
+      "actual_risk_principal": [
+        0,
+        160
+      ],
+      "risk_profit": [
+        -160,
+        0
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_unsafe160_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        103,
+        669
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        160
+      ],
+      "risk_profit": [
+        -160
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_shock_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        156,
+        643
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_shock_risk80_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        146,
+        633
+      ],
+      "risk_subscribed": 21,
+      "actual_risk_principal": [
+        0,
+        80
+      ],
+      "risk_profit": [
+        -80,
+        0
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_intermittent_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        29,
+        29
+      ],
+      "cash": [
+        158,
+        618
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_intermittent_risk80_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        29,
+        29
+      ],
+      "cash": [
+        89,
+        654
+      ],
+      "risk_subscribed": 21,
+      "actual_risk_principal": [
+        0,
+        80
+      ],
+      "risk_profit": [
+        -80,
+        0
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_time45_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        100,
+        595
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 52.8
+    },
+    "earning_time45_risk80_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        179,
+        666
+      ],
+      "risk_subscribed": 24,
+      "actual_risk_principal": [
+        0,
+        80
+      ],
+      "risk_profit": [
+        -80,
+        0
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 53.2
+    },
+    "earning_time120_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        100,
+        595
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "earning_time120_risk80_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        179,
+        666
+      ],
+      "risk_subscribed": 24,
+      "actual_risk_principal": [
+        0,
+        80
+      ],
+      "risk_profit": [
+        -80,
+        0
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    }
+  },
+  "price_sweeps": {
+    "2200": {
+      "n": 27,
+      "completed": 27
+    },
+    "2400": {
+      "n": 27,
+      "completed": 27
+    },
+    "2600": {
+      "n": 27,
+      "completed": 25
+    },
+    "3200": {
+      "n": 27,
+      "completed": 0
+    }
+  },
+  "representative": [
+    {
+      "scenario": "earning_none",
+      "policy": "all",
+      "cash": 377,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_none",
+      "policy": "completionist",
+      "cash": 534,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_none",
+      "policy": "hinted",
+      "cash": 510,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_deposit20",
+      "policy": "all",
+      "cash": 377,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_deposit20",
+      "policy": "completionist",
+      "cash": 538,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_deposit20",
+      "policy": "hinted",
+      "cash": 514,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_deposit60",
+      "policy": "all",
+      "cash": 379,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_deposit60",
+      "policy": "completionist",
+      "cash": 544,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_deposit60",
+      "policy": "hinted",
+      "cash": 522,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_early_exit",
+      "policy": "all",
+      "cash": 377,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_early_exit",
+      "policy": "completionist",
+      "cash": 534,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_early_exit",
+      "policy": "hinted",
+      "cash": 510,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_risk80_profit",
+      "policy": "all",
+      "cash": 446,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_risk80_profit",
+      "policy": "completionist",
+      "cash": 567,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_risk80_profit",
+      "policy": "hinted",
+      "cash": 526,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_risk80_delay",
+      "policy": "all",
+      "cash": 446,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_risk80_delay",
+      "policy": "completionist",
+      "cash": 567,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_risk80_delay",
+      "policy": "hinted",
+      "cash": 526,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_risk80_loss20pct",
+      "policy": "all",
+      "cash": 426,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_risk80_loss20pct",
+      "policy": "completionist",
+      "cash": 547,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_risk80_loss20pct",
+      "policy": "hinted",
+      "cash": 506,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_risk80_total_loss",
+      "policy": "all",
+      "cash": 362,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_risk80_total_loss",
+      "policy": "completionist",
+      "cash": 483,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_risk80_total_loss",
+      "policy": "hinted",
+      "cash": 442,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_risk160_total_loss",
+      "policy": "all",
+      "cash": 221,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 160
+    },
+    {
+      "scenario": "earning_risk160_total_loss",
+      "policy": "completionist",
+      "cash": 384,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 160
+    },
+    {
+      "scenario": "earning_risk160_total_loss",
+      "policy": "hinted",
+      "cash": 522,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_unsafe160_loss",
+      "policy": "all",
+      "cash": 221,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 160
+    },
+    {
+      "scenario": "earning_unsafe160_loss",
+      "policy": "completionist",
+      "cash": 384,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 160
+    },
+    {
+      "scenario": "earning_unsafe160_loss",
+      "policy": "hinted",
+      "cash": 362,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 160
+    },
+    {
+      "scenario": "earning_shock_none",
+      "policy": "all",
+      "cash": 317,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_shock_none",
+      "policy": "completionist",
+      "cash": 474,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_shock_none",
+      "policy": "hinted",
+      "cash": 450,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_shock_risk80_loss",
+      "policy": "all",
+      "cash": 302,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_shock_risk80_loss",
+      "policy": "completionist",
+      "cash": 423,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_shock_risk80_loss",
+      "policy": "hinted",
+      "cash": 462,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_intermittent_none",
+      "policy": "all",
+      "cash": 385,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 103,
+        "event": 97,
+        "main": 2280,
+        "remnant": 65,
+        "tower": 1700,
+        "workshop": 267
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_intermittent_none",
+      "policy": "completionist",
+      "cash": 568,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 103,
+        "event": 97,
+        "main": 2280,
+        "remnant": 65,
+        "tower": 1700,
+        "workshop": 267
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_intermittent_none",
+      "policy": "hinted",
+      "cash": 582,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_intermittent_risk80_loss",
+      "policy": "all",
+      "cash": 368,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 103,
+        "event": 97,
+        "main": 2280,
+        "remnant": 65,
+        "tower": 1700,
+        "workshop": 267
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_intermittent_risk80_loss",
+      "policy": "completionist",
+      "cash": 513,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 103,
+        "event": 97,
+        "main": 2280,
+        "remnant": 65,
+        "tower": 1700,
+        "workshop": 267
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_intermittent_risk80_loss",
+      "policy": "hinted",
+      "cash": 514,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_time45_none",
+      "policy": "all",
+      "cash": 377,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_time45_none",
+      "policy": "completionist",
+      "cash": 534,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_time45_none",
+      "policy": "hinted",
+      "cash": 510,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_time45_risk80_loss",
+      "policy": "all",
+      "cash": 362,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_time45_risk80_loss",
+      "policy": "completionist",
+      "cash": 483,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_time45_risk80_loss",
+      "policy": "hinted",
+      "cash": 442,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_time120_none",
+      "policy": "all",
+      "cash": 377,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_time120_none",
+      "policy": "completionist",
+      "cash": 534,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_time120_none",
+      "policy": "hinted",
+      "cash": 510,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 0
+    },
+    {
+      "scenario": "earning_time120_risk80_loss",
+      "policy": "all",
+      "cash": 362,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_time120_risk80_loss",
+      "policy": "completionist",
+      "cash": 483,
+      "relics": 3,
+      "sources": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "risk": 80
+    },
+    {
+      "scenario": "earning_time120_risk80_loss",
+      "policy": "hinted",
+      "cash": 442,
+      "relics": 2,
+      "sources": {
+        "bounty": 330,
+        "main": 2280,
+        "tower": 1440
+      },
+      "risk": 80
+    }
+  ],
+  "server": [
+    {
+      "ext": {
+        "name": "none",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7401160.0,
+      "money_end": 18764664.0,
+      "money_growth": 1.5353679693453457,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 335,
+      "player_cash_median": 505,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7605391,
+      "recycled": 2213370,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3027550,
+        "combat_cost_paid": 8678919,
+        "combat_cost_due": 8684361.142893529,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "none",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402540.0,
+      "money_end": 18744361.0,
+      "money_growth": 1.5321526124816618,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 335,
+      "player_cash_median": 505,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7606173,
+      "recycled": 2212203,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2911750,
+        "combat_cost_paid": 8774754,
+        "combat_cost_due": 8780141.714320706,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "none",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402360.0,
+      "money_end": 18803573.0,
+      "money_growth": 1.5402132563128514,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 292,
+      "player_cash_median": 497,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7607788,
+      "recycled": 2198391,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3007550,
+        "combat_cost_paid": 8760443,
+        "combat_cost_due": 8765842.285749486,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "coupon12",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7401160.0,
+      "money_end": 18679741.0,
+      "money_growth": 1.5238936869355615,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 319,
+      "player_cash_median": 517,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7605464,
+      "recycled": 2213443,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3564,
+        "budget": 111600,
+        "custody": 3360,
+        "buyer_escrow": 0,
+        "deposit_paid": 108036,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 543540,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3027550,
+        "combat_cost_paid": 8678919,
+        "combat_cost_due": 8684361.142893529,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 9003,
+        "deposit_accounts": 9059,
+        "risk_accounts": 0,
+        "open_contracts": 56,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "coupon12",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402540.0,
+      "money_end": 18659312.0,
+      "money_growth": 1.520663447951649,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 335,
+      "player_cash_median": 517,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7606237,
+      "recycled": 2212267,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3516,
+        "budget": 111600,
+        "custody": 3180,
+        "buyer_escrow": 0,
+        "deposit_paid": 108084,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2911750,
+        "combat_cost_paid": 8774754,
+        "combat_cost_due": 8780141.714320706,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 9007,
+        "deposit_accounts": 9060,
+        "risk_accounts": 0,
+        "open_contracts": 53,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "coupon12",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402360.0,
+      "money_end": 18718545.0,
+      "money_growth": 1.5287266493388594,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 290,
+      "player_cash_median": 509,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7607842,
+      "recycled": 2198445,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3492,
+        "budget": 111600,
+        "custody": 3060,
+        "buyer_escrow": 0,
+        "deposit_paid": 108108,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3007550,
+        "combat_cost_paid": 8760443,
+        "combat_cost_due": 8765842.285749486,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 9009,
+        "deposit_accounts": 9060,
+        "risk_accounts": 0,
+        "open_contracts": 51,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "risk80_total_loss",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7401160.0,
+      "money_end": 19200211.0,
+      "money_growth": 1.5942164471515277,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 273,
+      "player_cash_median": 437,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7603886,
+      "recycled": 2211865,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3564,
+        "budget": 111600,
+        "custody": 3360,
+        "buyer_escrow": 12788,
+        "deposit_paid": 108036,
+        "risk_principal": 673440,
+        "risk_returned": 0,
+        "deposit_principal": 543540,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 1124,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3027550,
+        "combat_cost_paid": 8678919,
+        "combat_cost_due": 8684361.142893529,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 17282,
+        "deposit_accounts": 9059,
+        "risk_accounts": 8418,
+        "open_contracts": 195,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "risk80_total_loss",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402540.0,
+      "money_end": 19180841.0,
+      "money_growth": 1.5911161574270452,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 273,
+      "player_cash_median": 437,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7604722,
+      "recycled": 2210752,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3516,
+        "budget": 111600,
+        "custody": 3180,
+        "buyer_escrow": 12604,
+        "deposit_paid": 108084,
+        "risk_principal": 674000,
+        "risk_returned": 0,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 1080,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2911750,
+        "combat_cost_paid": 8774754,
+        "combat_cost_due": 8780141.714320706,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 17295,
+        "deposit_accounts": 9060,
+        "risk_accounts": 8425,
+        "open_contracts": 190,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "risk80_total_loss",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402360.0,
+      "money_end": 19238255.0,
+      "money_growth": 1.598935339540363,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 227,
+      "player_cash_median": 429,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7606310,
+      "recycled": 2196913,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3492,
+        "budget": 111600,
+        "custody": 3060,
+        "buyer_escrow": 13432,
+        "deposit_paid": 108108,
+        "risk_principal": 673200,
+        "risk_returned": 0,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 1098,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3007550,
+        "combat_cost_paid": 8760443,
+        "combat_cost_due": 8765842.285749486,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 17278,
+        "deposit_accounts": 9060,
+        "risk_accounts": 8415,
+        "open_contracts": 197,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "risk160_total_loss",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7401160.0,
+      "money_end": 18939905.0,
+      "money_growth": 1.5590454739527315,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 220,
+      "player_cash_median": 484,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7599870,
+      "recycled": 2207849,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3564,
+        "budget": 111600,
+        "custody": 3360,
+        "buyer_escrow": 10120,
+        "deposit_paid": 108036,
+        "risk_principal": 410880,
+        "risk_returned": 0,
+        "deposit_principal": 543540,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 166620,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3002850,
+        "combat_cost_paid": 8678919,
+        "combat_cost_due": 8684361.142893529,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 11516,
+        "deposit_accounts": 9059,
+        "risk_accounts": 2568,
+        "open_contracts": 111,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "risk160_total_loss",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402540.0,
+      "money_end": 18925676.0,
+      "money_growth": 1.5566462322392045,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 220,
+      "player_cash_median": 484,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7600658,
+      "recycled": 2206688,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3516,
+        "budget": 111600,
+        "custody": 3180,
+        "buyer_escrow": 9568,
+        "deposit_paid": 108084,
+        "risk_principal": 421760,
+        "risk_returned": 0,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 170034,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2883250,
+        "combat_cost_paid": 8774754,
+        "combat_cost_due": 8780141.714320706,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 11591,
+        "deposit_accounts": 9060,
+        "risk_accounts": 2636,
+        "open_contracts": 105,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "risk160_total_loss",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402360.0,
+      "money_end": 18999100.0,
+      "money_growth": 1.566627399910299,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 187,
+      "player_cash_median": 484,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7602171,
+      "recycled": 2192774,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3492,
+        "budget": 111600,
+        "custody": 3060,
+        "buyer_escrow": 9752,
+        "deposit_paid": 108108,
+        "risk_principal": 427520,
+        "risk_returned": 0,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 168549,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2986650,
+        "combat_cost_paid": 8760443,
+        "combat_cost_due": 8765842.285749486,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 11628,
+        "deposit_accounts": 9060,
+        "risk_accounts": 2672,
+        "open_contracts": 104,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "repair2000",
+        "family": "bank",
+        "base": "supply_half_90_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": true,
+      "recovery_days": 1,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.4777777777777778,
+      "money_start": 7401160.0,
+      "money_end": 18446953.0,
+      "money_growth": 1.4924407795534753,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 323,
+      "player_cash_median": 517,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7605465,
+      "recycled": 2213444,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3564,
+        "budget": 111600,
+        "custody": 3360,
+        "buyer_escrow": 6992,
+        "deposit_paid": 108036,
+        "risk_principal": 563600,
+        "risk_returned": 585396,
+        "deposit_principal": 543540,
+        "redeemed": 0,
+        "denied_budget": 26631,
+        "denied_reserve": 1124,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3027550,
+        "combat_cost_paid": 8678919,
+        "combat_cost_due": 8684361.142893529,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 15972,
+        "deposit_accounts": 9059,
+        "risk_accounts": 7045,
+        "open_contracts": 132,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "repair2000",
+        "family": "bank",
+        "base": "supply_half_90_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": true,
+      "recovery_days": 1,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.4777777777777778,
+      "money_start": 7402540.0,
+      "money_end": 18426148.0,
+      "money_growth": 1.489165610722806,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 339,
+      "player_cash_median": 509,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7606238,
+      "recycled": 2212268,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3516,
+        "budget": 111600,
+        "custody": 3180,
+        "buyer_escrow": 6992,
+        "deposit_paid": 108084,
+        "risk_principal": 562240,
+        "risk_returned": 583968,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 28379,
+        "denied_reserve": 1080,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2911750,
+        "combat_cost_paid": 8774754,
+        "combat_cost_due": 8780141.714320706,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 15959,
+        "deposit_accounts": 9060,
+        "risk_accounts": 7028,
+        "open_contracts": 129,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "repair2000",
+        "family": "bank",
+        "base": "supply_half_90_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": true,
+      "recovery_days": 1,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.4777777777777778,
+      "money_start": 7402360.0,
+      "money_end": 18485397.0,
+      "money_growth": 1.497230207663502,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 294,
+      "player_cash_median": 509,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7607845,
+      "recycled": 2198448,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3492,
+        "budget": 111600,
+        "custody": 3060,
+        "buyer_escrow": 6992,
+        "deposit_paid": 108108,
+        "risk_principal": 560800,
+        "risk_returned": 582456,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 28139,
+        "denied_reserve": 1098,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3007550,
+        "combat_cost_paid": 8760443,
+        "combat_cost_due": 8765842.285749486,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 15943,
+        "deposit_accounts": 9060,
+        "risk_accounts": 7010,
+        "open_contracts": 127,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "supply_half_unrepaired",
+        "family": "bank",
+        "base": "supply_half_90_no_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 0.6567958357432042,
+      "fill_share_99": 0.8904109589041096,
+      "shock": true,
+      "recovery_days": 2,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.9222222222222223,
+      "money_start": 7401160.0,
+      "money_end": 18446953.0,
+      "money_growth": 1.4924407795534753,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 323,
+      "player_cash_median": 517,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7328612,
+      "recycled": 1936591,
+      "stock_paid": 1256753,
+      "L1": false,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3564,
+        "budget": 111600,
+        "custody": 3360,
+        "buyer_escrow": 6992,
+        "deposit_paid": 108036,
+        "risk_principal": 563600,
+        "risk_returned": 585396,
+        "deposit_principal": 543540,
+        "redeemed": 0,
+        "denied_budget": 26631,
+        "denied_reserve": 1124,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3027550,
+        "combat_cost_paid": 8678919,
+        "combat_cost_due": 8684361.142893529,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 15972,
+        "deposit_accounts": 9059,
+        "risk_accounts": 7045,
+        "open_contracts": 132,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "supply_half_unrepaired",
+        "family": "bank",
+        "base": "supply_half_90_no_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 0.6573378050190818,
+      "fill_share_99": 0.8904109589041096,
+      "shock": true,
+      "recovery_days": 2,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.9222222222222223,
+      "money_start": 7402540.0,
+      "money_end": 18426148.0,
+      "money_growth": 1.489165610722806,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 339,
+      "player_cash_median": 509,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7329347,
+      "recycled": 1935377,
+      "stock_paid": 1260692,
+      "L1": false,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3516,
+        "budget": 111600,
+        "custody": 3180,
+        "buyer_escrow": 6992,
+        "deposit_paid": 108084,
+        "risk_principal": 562240,
+        "risk_returned": 583968,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 28379,
+        "denied_reserve": 1080,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2911750,
+        "combat_cost_paid": 8774754,
+        "combat_cost_due": 8780141.714320706,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 15959,
+        "deposit_accounts": 9060,
+        "risk_accounts": 7028,
+        "open_contracts": 129,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "supply_half_unrepaired",
+        "family": "bank",
+        "base": "supply_half_90_no_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 0.6583082967413912,
+      "fill_share_99": 0.8904109589041096,
+      "shock": true,
+      "recovery_days": 2,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.9222222222222223,
+      "money_start": 7402360.0,
+      "money_end": 18485397.0,
+      "money_growth": 1.497230207663502,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 294,
+      "player_cash_median": 509,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7330286,
+      "recycled": 1920889,
+      "stock_paid": 1262821,
+      "L1": false,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3492,
+        "budget": 111600,
+        "custody": 3060,
+        "buyer_escrow": 6992,
+        "deposit_paid": 108108,
+        "risk_principal": 560800,
+        "risk_returned": 582456,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 28139,
+        "denied_reserve": 1098,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3007550,
+        "combat_cost_paid": 8760443,
+        "combat_cost_due": 8765842.285749486,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 15943,
+        "deposit_accounts": 9060,
+        "risk_accounts": 7010,
+        "open_contracts": 127,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "negative_unbacked_coupon",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7401160.0,
+      "money_end": 18787777.0,
+      "money_growth": 1.5384908581897974,
+      "mint_cum": 15601868.0,
+      "player_cash_p10": 319,
+      "player_cash_median": 517,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7605464,
+      "recycled": 2213443,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 111600,
+        "budget": 111600,
+        "custody": 3360,
+        "buyer_escrow": 0,
+        "deposit_paid": 108036,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 543540,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3027550,
+        "combat_cost_paid": 8678919,
+        "combat_cost_due": 8684361.142893529,
+        "j0_avoided": 0,
+        "minted_bonus": 108036,
+        "settled": 9003,
+        "deposit_accounts": 9059,
+        "risk_accounts": 0,
+        "open_contracts": 56,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": false
+    },
+    {
+      "ext": {
+        "name": "negative_unbacked_coupon",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402540.0,
+      "money_end": 18767396.0,
+      "money_growth": 1.5352643822255603,
+      "mint_cum": 15639066.0,
+      "player_cash_p10": 335,
+      "player_cash_median": 517,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7606237,
+      "recycled": 2212267,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 111600,
+        "budget": 111600,
+        "custody": 3180,
+        "buyer_escrow": 0,
+        "deposit_paid": 108084,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2911750,
+        "combat_cost_paid": 8774754,
+        "combat_cost_due": 8780141.714320706,
+        "j0_avoided": 0,
+        "minted_bonus": 108084,
+        "settled": 9007,
+        "deposit_accounts": 9060,
+        "risk_accounts": 0,
+        "open_contracts": 53,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": false
+    },
+    {
+      "ext": {
+        "name": "negative_unbacked_coupon",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402360.0,
+      "money_end": 18826653.0,
+      "money_growth": 1.5433311808666423,
+      "mint_cum": 15680672.0,
+      "player_cash_p10": 290,
+      "player_cash_median": 509,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7607842,
+      "recycled": 2198445,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 111600,
+        "budget": 111600,
+        "custody": 3060,
+        "buyer_escrow": 0,
+        "deposit_paid": 108108,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3007550,
+        "combat_cost_paid": 8760443,
+        "combat_cost_due": 8765842.285749486,
+        "j0_avoided": 0,
+        "minted_bonus": 108108,
+        "settled": 9009,
+        "deposit_accounts": 9060,
+        "risk_accounts": 0,
+        "open_contracts": 51,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": false
+    },
+    {
+      "ext": {
+        "name": "combined_loss_and_supply",
+        "family": "bank",
+        "base": "supply_half_90_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": true,
+      "recovery_days": 1,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.4777777777777778,
+      "money_start": 7401160.0,
+      "money_end": 18990211.0,
+      "money_growth": 1.5658425165784822,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 273,
+      "player_cash_median": 437,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7603886,
+      "recycled": 2211865,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3564,
+        "budget": 111600,
+        "custody": 3360,
+        "buyer_escrow": 12788,
+        "deposit_paid": 108036,
+        "risk_principal": 673440,
+        "risk_returned": 0,
+        "deposit_principal": 543540,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 1124,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3027550,
+        "combat_cost_paid": 8678919,
+        "combat_cost_due": 8684361.142893529,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 17282,
+        "deposit_accounts": 9059,
+        "risk_accounts": 8418,
+        "open_contracts": 195,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "combined_loss_and_supply",
+        "family": "bank",
+        "base": "supply_half_90_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": true,
+      "recovery_days": 1,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.4777777777777778,
+      "money_start": 7402540.0,
+      "money_end": 18970841.0,
+      "money_growth": 1.562747516393022,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 273,
+      "player_cash_median": 437,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7604722,
+      "recycled": 2210752,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3516,
+        "budget": 111600,
+        "custody": 3180,
+        "buyer_escrow": 12604,
+        "deposit_paid": 108084,
+        "risk_principal": 674000,
+        "risk_returned": 0,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 1080,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2911750,
+        "combat_cost_paid": 8774754,
+        "combat_cost_due": 8780141.714320706,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 17295,
+        "deposit_accounts": 9060,
+        "risk_accounts": 8425,
+        "open_contracts": 190,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    },
+    {
+      "ext": {
+        "name": "combined_loss_and_supply",
+        "family": "bank",
+        "base": "supply_half_90_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": true,
+      "recovery_days": 1,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.4777777777777778,
+      "money_start": 7402360.0,
+      "money_end": 19028255.0,
+      "money_growth": 1.5705660086783135,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 227,
+      "player_cash_median": 429,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7606310,
+      "recycled": 2196913,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3492,
+        "budget": 111600,
+        "custody": 3060,
+        "buyer_escrow": 13432,
+        "deposit_paid": 108108,
+        "risk_principal": 673200,
+        "risk_returned": 0,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 1098,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3007550,
+        "combat_cost_paid": 8760443,
+        "combat_cost_due": 8765842.285749486,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 17278,
+        "deposit_accounts": 9060,
+        "risk_accounts": 8415,
+        "open_contracts": 197,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true
+    }
+  ]
+}

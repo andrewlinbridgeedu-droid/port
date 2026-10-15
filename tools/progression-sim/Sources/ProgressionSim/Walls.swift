@@ -143,7 +143,8 @@ enum WallTuning {
             let kv = pair.split(separator: "="); guard kv.count == 2, let v = Int(kv[1]) else { continue }
             typealias W = MPCProgressionWalls
             switch kv[0] {
-            case "q3Breath": W.q3BreathDamage = v
+            case "q3BreathPercent": W.q3BreathHealthPercent = v
+            case "q3Breath": preconditionFailure("q3Breath flat damage is retired; use q3BreathPercent")
             case "q8LeechHP": W.q8LeechHP = v
             case "q8LeechAttack": W.q8LeechAttack = v
             case "q8ParasiteDamage": W.q8ParasiteDamage = v

@@ -1,0 +1,13 @@
+{
+  "id": "03-overarm-throw",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 37.91744840525328,
+  "sourceStart": 0.5,
+  "sourceRelease": 4.8,
+  "sourceEnd": 5.83,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}

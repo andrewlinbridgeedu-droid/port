@@ -85,6 +85,25 @@ public sealed class FoolEffekseerSkillVFX : MonoBehaviour
         // authored lifetime alone is not a safe cleanup boundary.
         StopActiveEffects();
 
+        // Hero cards with a travelling form (SpellSpectacle20260926, 2026-10-03) show that
+        // form instead of the older stage theatre and its screen-wide volume; 双影 keeps its
+        // two hero afterimages. The contact keeps the theatre's authored time.
+        if (SpellSpectacle20260926.HasForm(skillID) && skillID is "fool_skill_05" or "fool_skill_06" or "fool_skill_07")
+        {
+            if (skillID == "fool_skill_06") yield return heroArcana.Play(skillID, HeroActor, caster, target, onContact, ghostsOnly: true);
+            else yield return TimedContact(skillID == "fool_skill_05" ? HeroIdentityTheatreVFX.EvidenceContactTime : .885f, skillID == "fool_skill_05" ? 1.5f : 1.6f, onContact);
+            yield break;
+        }
+        // The other cards with a form (2026-10-03, the user's taste carried to every card): the
+        // form replaces the stage theatre and its screen-wide volume; contact and end keep the
+        // theatre's authored times (02 .38/1.45, 04 .441/1.25, 08 .63/1.9, 09 .705/1.9).
+        if (SpellSpectacle20260926.HasForm(skillID) && skillID is "fool_skill_02" or "fool_skill_04" or "fool_skill_08" or "fool_skill_09")
+        {
+            float contact = skillID switch { "fool_skill_02" => .38f, "fool_skill_04" => .441f, "fool_skill_08" => .63f, _ => .705f };
+            float end = skillID switch { "fool_skill_02" => 1.45f, "fool_skill_04" => 1.25f, _ => 1.9f };
+            yield return TimedContact(contact, end, onContact);
+            yield break;
+        }
         if (skillID == "fool_skill_01") { yield return tarotStrike.Play(()=>caster()-Vector3.up*1.15f,()=>target()-Vector3.up*1.05f,onContact, secondary == null ? null : () => secondary()-Vector3.up*1.05f, HeroActor); yield break; }
         if (skillID is "fool_skill_02" or "fool_skill_04" or "fool_skill_05")
         { yield return identityTheatre.Play(skillID, caster, target, onContact, HeroActor); yield break; }
@@ -137,13 +156,43 @@ public sealed class FoolEffekseerSkillVFX : MonoBehaviour
     int targetGeneration;
 
     // One visual owner per resolved recipient; combat still has one cast contact.
+    /// Reports the contact at the theatre's time when no theatre is shown; a new action
+    /// (StopActiveEffects) cancels it before contact, as it cancels a theatre.
+    IEnumerator TimedContact(float contact, float end, System.Action onContact)
+    {
+        int run = targetGeneration;
+        float elapsed = 0; bool contacted = false;
+        while (run == targetGeneration && elapsed < end)
+        {
+            if (!contacted && elapsed >= contact) { contacted = true; onContact?.Invoke(); if (run != targetGeneration) yield break; }
+            yield return null; elapsed += Time.deltaTime;
+        }
+    }
+
     public IEnumerator PlayTargetInstances(string skillID, Func<Vector3> caster,
         IReadOnlyList<EnemyHandle> targets, Action onContact)
     {
         StopActiveEffects();
         int run = targetGeneration;
+        // 错步穿行 with a travelling form (2026-10-03): the hero's afterimage dashes at the
+        // first target, while SpellSpectacle draws the footprints and the cut through the
+        // others. The screen-wide offset rift is not played. Contact timing below is unchanged.
+        bool dashForm = skillID == "fool_skill_01" && SpellSpectacle20260926.HasForm(skillID);
+        if (dashForm && heroArcana && HeroActor)
+            foreach (var first in targets)
+            {
+                if (first == null || first.EnemyRoot == null || !first.gameObject.activeInHierarchy) continue;
+                var lead = first;
+                Func<Vector3> leadPoint = () => lead && lead.EffectAnchor ? lead.EffectAnchor.position : lead ? lead.EnemyRoot.position + Vector3.up * 1.05f : caster();
+                StartCoroutine(heroArcana.Play("fool_skill_06", HeroActor, caster, leadPoint, null, true, FoolTarotStrikeVFX.ContactTime, dash: true));
+                break;
+            }
+        // 无名宣告 with a form: SpellSpectacle draws the decree on every recipient; the per-target
+        // nameless theatres (masks and a screen-wide volume each) are not played.
+        bool proclaimForm = skillID == "fool_skill_10" && SpellSpectacle20260926.HasForm(skillID);
         foreach (var target in targets)
         {
+            if (dashForm || proclaimForm) break;
             if (target == null || target.EnemyRoot == null || !target.gameObject.activeInHierarchy) continue;
             var bound = target;
             Func<bool> valid = () => bound != null && bound.EnemyRoot != null && bound.gameObject.activeInHierarchy;
@@ -716,13 +765,16 @@ public sealed class FoolEffekseerSkillVFX : MonoBehaviour
         "fool_skill_01" => "错步穿行",
         "fool_skill_02" => "假面谕令",
         "fool_skill_03" => "纸人代身（遗落物）",
-        "fool_skill_04" => "身份错置",
+        "fool_skill_04" => "张冠李戴",
         "fool_skill_05" => "伪证烙印",
         "fool_skill_06" => "错影追猎",
         "fool_skill_07" => "荒谬归结",
         "fool_skill_08" => "反客为主",
         "fool_skill_09" => "后手改写",
         "fool_skill_10" => "无名宣告",
+        "fool_skill_11" => "抢拍开幕",
+        "fool_skill_12" => "碎镜连弹",
+        "fool_skill_13" => "延时落款",
         _ => "帷幕技能"
     };
 }

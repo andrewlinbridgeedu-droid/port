@@ -56,6 +56,7 @@ public sealed class BountySurfaceRound2 : MonoBehaviour
         Silhouette silhouette = Silhouette.Fold)
     {
         if (color.a <= .002f || width <= .0001f) return;
+        path = StraightLines20261003.Flatten(path);
         int first = vertices.Count;
         for (int j = 0; j <= segments; j++)
         {
