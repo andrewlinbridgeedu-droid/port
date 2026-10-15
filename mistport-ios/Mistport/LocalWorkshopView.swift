@@ -80,6 +80,10 @@ struct LocalWorkshopView: View {
     @State private var showsTower = false
     @State private var message = ""
     @State private var selectedCraft: MPCCraftRecipe.Craft = .leather
+    /// The workshop's five parts as tabs (2026-10-15, user: 尽量一页展示所有内容，不需要翻页):
+    /// each fits a screen; stacked they took several screens of scrolling.
+    private enum Section: String, CaseIterable { case gather = "取材", craft = "制作", orders = "每日订单", care = "装备保养", rack = "检修架" }
+    @State private var section: Section = .craft
 
     /// Card colour; the step illustrations fade to exactly this at their edges.
     private static let card = Color(red: 0.149, green: 0.153, blue: 0.169)
@@ -90,30 +94,29 @@ struct LocalWorkshopView: View {
                 Text("百工坊").font(.title2.bold()).fontDesign(.serif)
                 Spacer()
                 GameArtReturnButton(title: "返回") { dismiss() }
-            }.foregroundStyle(GameArt.gold).padding(18).background(GameArt.night)
+            }.foregroundStyle(GameArt.gold).padding(.horizontal, 18).padding(.vertical, 12).background(GameArt.night)
+            HStack(spacing: 14) {
+                stock("RewardCoin", "\(game.venueCoins) 铜")
+                stock("ItemShieldJawHide", "韧皮 \(game.workshopHideCount)")
+                stock("ItemRepairStrap", "绑带 \(game.workshopStrapCount)")
+                Spacer(minLength: 0)
+            }.font(.subheadline.bold()).monospacedDigit().foregroundStyle(.white)
+                .padding(.horizontal, 18).padding(.vertical, 8)
+                .accessibilityElement(children: .combine)
+                .accessibilityIdentifier("workshop.inventory")
+            HStack(spacing: 6) {
+                ForEach(Section.allCases, id: \.self) { item in
+                    Button { GameInterfaceSound.shared.playClick(); section = item } label: {
+                        Text(item.rawValue).font(.subheadline.weight(.semibold)).lineLimit(1).minimumScaleFactor(0.75)
+                            .frame(maxWidth: .infinity, minHeight: 38)
+                            .foregroundStyle(section == item ? GameArt.gold : .white.opacity(0.72))
+                            .background(section == item ? GameArt.gold.opacity(0.14) : Color.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
+                            .overlay { RoundedRectangle(cornerRadius: 8).strokeBorder(section == item ? GameArt.gold.opacity(0.6) : .white.opacity(0.08)) }
+                    }.buttonStyle(.plain).accessibilityIdentifier("workshop.section.\(item.rawValue)")
+                }
+            }.padding(.horizontal, 12).padding(.bottom, 8)
             ScrollView {
-                VStack(alignment: .leading, spacing: 22) {
-                    HStack(spacing: 16) {
-                        Image("GameNavWorkshopAnime")
-                            .resizable().scaledToFit().frame(width: 84, height: 84)
-                            .accessibilityHidden(true)
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("凭手艺赚铜币").font(.title2.bold())
-                            Text("取材 · 制作 · 交货")
-                                .font(.subheadline).foregroundStyle(.secondary)
-                        }
-                    }
-                    HStack {
-                        stock("RewardCoin", "\(game.venueCoins) 铜")
-                        Spacer()
-                        Text("皮革熟练 \(game.craftingLedger.points(.leather))/20")
-                    }.font(.headline).monospacedDigit()
-                    HStack(spacing: 18) {
-                        stock("ItemShieldJawHide", "韧皮 \(game.workshopHideCount)")
-                        stock("ItemRepairStrap", "维修绑带 \(game.workshopStrapCount)")
-                    }
-                    .accessibilityElement(children: .combine)
-                    .accessibilityIdentifier("workshop.inventory")
+                VStack(alignment: .leading, spacing: 14) {
                     if !game.cityServiceIsUnlocked(.workshop) {
                         Text("通过第 5 关后开放。")
                     } else if !game.workshopLedgerIsReadable {
@@ -121,16 +124,18 @@ struct LocalWorkshopView: View {
                     } else if !game.churchMistportFieldworkAvailable {
                         Text("你已离开雾港，这里的工坊先关着，东西都给你留着。")
                     } else {
-                        gathering
-                        recipe
-                        dailyOrders
-                        WorkshopGearCareSection(game: game)
-                        order
+                        switch section {
+                        case .gather: gathering
+                        case .craft: recipe
+                        case .orders: dailyOrders
+                        case .care: WorkshopGearCareSection(game: game)
+                        case .rack: order
+                        }
                     }
                     if !message.isEmpty {
                         Text(message).foregroundStyle(.yellow).accessibilityIdentifier("workshop.message")
                     }
-                }.padding(20)
+                }.padding(.horizontal, 14).padding(.vertical, 10)
             }
             .background(Color(red: 0.055, green: 0.08, blue: 0.12))
         }
@@ -150,8 +155,10 @@ struct LocalWorkshopView: View {
     /// A step card: its illustration with the step name in the dark left band, then the content.
     private func step<Content: View>(_ number: String, _ title: String, art: String,
                                      @ViewBuilder _ content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Image(decorative: art).resizable().scaledToFit()
+        VStack(alignment: .leading, spacing: 10) {
+            // A short banner: the full illustration was a third of the screen.
+            Image(decorative: art).resizable().scaledToFill()
+                .frame(height: 96).frame(maxWidth: .infinity).clipped()
                 .overlay(alignment: .leading) {
                     VStack(alignment: .leading, spacing: 3) {
                         Text(number).font(.caption.bold()).foregroundStyle(.secondary)
@@ -203,9 +210,12 @@ struct LocalWorkshopView: View {
             .padding(.bottom, 4)
             StaminaCostView(activity: .craft)
                     Text(game.workshopProficiencyNotice).font(.caption).foregroundStyle(.secondary)
-            ForEach(MPCCraftingCatalog.all.filter { $0.craft == selectedCraft }) { recipe in
-                WorkshopRecipeRow(game: game, recipe: recipe) { recipeID in
-                    Task { do { try await game.craftDailyWorkshop(recipeID: recipeID); message = "制作完成。" } catch { message = game.housingError(error) } }
+            // Recipes two to a row (2026-10-15: one page).
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], alignment: .leading, spacing: 8) {
+                ForEach(MPCCraftingCatalog.all.filter { $0.craft == selectedCraft }) { recipe in
+                    WorkshopRecipeRow(game: game, recipe: recipe) { recipeID in
+                        Task { do { try await game.craftDailyWorkshop(recipeID: recipeID); message = "制作完成。" } catch { message = game.housingError(error) } }
+                    }
                 }
             }
         }
@@ -322,22 +332,22 @@ private struct WorkshopRecipeRow: View {
     let recipe: MPCCraftRecipe
     let craft: (String) -> Void
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("\(recipe.name) ×\(recipe.outputCount)").font(.headline)
+        VStack(alignment: .leading, spacing: 5) {
+            Text("\(recipe.name) ×\(recipe.outputCount)").font(.subheadline.bold())
             Text(recipe.inputs.sorted(by: { $0.key < $1.key }).map {
                 "\(GameStore.workshopItemName($0.key)) \(game.chapterOneCampaign.inventory[$0.key, default: 0])/\($0.value)"
             }.joined(separator: " · ")).font(.caption)
-            Text("底料 \(MPCCraftingCatalog.baseStock(recipe, surcharge: game.dailyCityEffects.craftSurcharge)) 铜")
+            Text("底料 \(MPCCraftingCatalog.baseStock(recipe, surcharge: game.dailyCityEffects.craftSurcharge)) 铜").font(.caption)
             if let tier = MPCChurchGearCatalog.item(recipe.output)?.craftTier {
-                Text("F\(tier) 档 · 封堵第 \(tier) 层后可穿戴；制作后需手动装备。")
-                    .font(.caption).foregroundStyle(.secondary)
+                Text("F\(tier) 档 · 封堵第\(tier)层后可穿戴").font(.caption2).foregroundStyle(.secondary)
             }
             if let reason = game.workshopRecipeLock(recipe) {
-                Text(reason).font(.caption).foregroundStyle(.yellow)
+                Text(reason).font(.caption2).foregroundStyle(.yellow).lineLimit(2)
             }
-            PlateButton(title: "制作 · \(recipe.name)", plate: .workshopPrimary,
-                        enabled: game.workshopRecipeLock(recipe) == nil) { craft(recipe.id) }
-        }.padding(.vertical, 10)
+            Spacer(minLength: 0)
+            PlateButton(title: "制作", plate: .workshopPrimary, enabled: game.workshopRecipeLock(recipe) == nil, height: 38) { craft(recipe.id) }
+        }.frame(maxWidth: .infinity, alignment: .topLeading).padding(8)
+            .background(.black.opacity(0.18), in: RoundedRectangle(cornerRadius: 8))
     }
 }
 
@@ -371,6 +381,8 @@ struct WorkshopGearCareSection: View {
                 }
                 if !message.isEmpty { Text(message).font(.caption).foregroundStyle(.yellow) }
             }
+        } else {
+            Text("还没有工坊制作的装备。封堵深井取得锻造配方后，在这里穿戴和修理。").foregroundStyle(.white.opacity(0.85))
         }
     }
     private func perform(_ action: () throws -> Void) {

@@ -439,12 +439,25 @@ struct ContentView: View {
                 newspaperPresented = false
             }
         }
+        #if DEBUG
+        // Panel review (2026-10-15): --review-panel=<home destination | sheet:<AppSheet>> opens one
+        // panel straight away for screenshots; the institutions playtest's profile supplies the data.
+        .task {
+            guard let flag = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--review-panel=") }) else { return }
+            let value = String(flag.dropFirst("--review-panel=".count))
+            try? await Task.sleep(for: .milliseconds(900))
+            newspaperPresented = false
+            try? await Task.sleep(for: .milliseconds(500))
+            if value.hasPrefix("sheet:"), let sheet = AppSheet(rawValue: String(value.dropFirst(6))) { presentedSheet = sheet }
+            else { homeDestination = .init(id: value) }
+        }
+        #endif
         .onReceive(NotificationCenter.default.publisher(for: .homeQuestFocus)) { event in
             homeFocusID = event.object as? String; homeFocusRevision += 1
             presentedSheet = nil; churchPresented = false; tavernBountyPresented = false
             newspaperPresented = false; homeDestination = nil
         }
-        .sheet(item: $homeDestination) { destination in
+        .fullScreenCover(item: $homeDestination) { destination in
             if let target = destination.target {
                 let matching = destination.choices.isEmpty ? [target] : destination.choices
                 if matching.count > 1 { HomeTaskChoicesView(game: game, targets: matching) }
@@ -459,6 +472,7 @@ struct ContentView: View {
             else if ["housing-soup", "housing-bakery", "housing-cafe"].contains(destination.id) { HousingMealCounterView(game: game, venue: String(destination.id.dropFirst(8))) }
             else if destination.id == "postal-work" { CityPostalWorkView(game: game) }
             else if destination.id == "bank" { CityBankView(game: game) }
+            else if destination.id == "bank-manager" { CityBankManagerView(game: game) }
             else if destination.id == "meeting" { CityPrivateMeetingView(game: game) }
             else if destination.id == "workshop" { LocalWorkshopView(game: game) }
             else if destination.id == "church" { ChurchSanctuaryView(game: game) }
@@ -480,7 +494,7 @@ struct ContentView: View {
         .fullScreenCover(isPresented: $tavernBountyPresented) {
             TavernInteriorView(game: game, onBack: { tavernBountyPresented = false })
         }
-        .sheet(item: $presentedSheet) { sheet in
+        .fullScreenCover(item: $presentedSheet) { sheet in
             switch sheet {
             case .institutions:
                 CityInstitutionsView(game: game) { destination in
@@ -496,13 +510,13 @@ struct ContentView: View {
                 if game.cityServiceIsUnlocked(.store) {
                     StoreView(storefront: storefront)
                 } else {
-                    Text("商店尚未开放 · 随主线推进解锁").padding()
+                    GameArtPage(title: "商店", subtitle: "随主线推进解锁") { Text("商店尚未开放 · 随主线推进解锁") }
                 }
             case .church:
                 if game.cityServiceIsUnlocked(.church) {
                     ChurchSanctuaryView(game: game)
                 } else {
-                    Text("教会尚未开放 · \(MPCChurchTowerCatalog.lockText)").padding()
+                    GameArtPage(title: "联合教会", subtitle: "尚未开放") { Text("教会尚未开放 · \(MPCChurchTowerCatalog.lockText)") }
                 }
             case .dailyTower:
                 ChurchTowerView(game: game)

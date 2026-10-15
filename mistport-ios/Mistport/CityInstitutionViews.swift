@@ -16,64 +16,87 @@ struct CityBankView: View {
     }
     var body: some View {
         HomeCounterScene(title: "雾港银行", room: .counter("cityhall"), actorArt: "HomeCivilClerk20260929") {
-            Text("可用\(game.venueCoins)铜 · 可存余钱\(surplus)铜").font(.headline.monospacedDigit())
-            Text("柜员：先留好生活和晋阶的钱，再选一张存单。").font(.subheadline)
+            Text("可用\(game.venueCoins)铜 · 可存余钱\(surplus)铜 · 在途\(game.cityEconomy.outstanding)铜").font(.headline.monospacedDigit())
+            // The investment counter first (2026-10-15, user: 银行投资藏在下面就很难发现).
+            investmentCard
             if !game.churchTowerMissionNumbers.contains(1) {
                 Text("完成第1关后，可开零钱账户与新客存单。")
             } else {
-                welcomeDeposit
-                Divider()
-                ordinaryDeposit
+                HStack(alignment: .top, spacing: 8) {
+                    depositCard { welcomeDeposit }
+                    depositCard { ordinaryDeposit }
+                }
             }
-            HomeCounterAction(title: "见投资经理", detail: "自行车厂 · 航运 · 商户订单") { managerPresented = true }
-                .accessibilityIdentifier("bank-manager-entry")
-            DisclosureGroup("预算与取款") { budgetTools }
             if !message.isEmpty { Text(message).foregroundStyle(.orange) }
             if let notice = game.cityEconomy.notices.last { Text(notice).font(.footnote) }
+            DisclosureGroup("预算、零钱保管与条款") { budgetTools }
         }.task { await game.openHousingDay() }
-            .sheet(isPresented: $managerPresented) { CityBankManagerView(game: game) }
+            .fullScreenCover(isPresented: $managerPresented) { CityBankManagerView(game: game) }
+    }
+    /// The manager's industry orders, with what is under way.
+    private var investmentCard: some View {
+        let open = MPCCityEconomy.ProjectKind.allCases.filter { $0.isOpen(completed: game.churchTowerMissionNumbers, reputation: game.cityContribution.points) }
+        let running = game.cityEconomy.projects.filter { !$0.settled }
+        return Button { managerPresented = true } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "chart.line.uptrend.xyaxis").font(.title2)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("产业投资 · 见投资经理").font(.headline)
+                    Text(running.isEmpty
+                         ? "自行车厂、工坊检修、港务货运、染坊票据 · 已获邀\(open.count)／4份"
+                         : running.map { $0.kind.title + ($0.bicycle.map { "：" + CityBicycleOrderView.summary($0) } ?? "") }.joined(separator: "\n"))
+                        .font(.caption).lineLimit(3).multilineTextAlignment(.leading)
+                }.frame(maxWidth: .infinity, alignment: .leading)
+                Image(systemName: "chevron.right").font(.caption.bold())
+            }
+        }.buttonStyle(GameArtButtonStyle(primary: true)).accessibilityIdentifier("bank-manager-entry")
+    }
+    private func depositCard<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 8, content: content)
+            .frame(maxWidth: .infinity, alignment: .topLeading).padding(10)
+            .background(.black.opacity(0.06), in: RoundedRectangle(cornerRadius: 10))
     }
     @ViewBuilder private var welcomeDeposit: some View {
-        Text("新客三日存单").font(.headline)
+        Text("新客三日存单").font(.subheadline.bold())
         if let deposit = game.cityEconomy.deposit {
-            if deposit.closed { Text("开户奖励已使用").font(.subheadline) }
+            if deposit.closed { Text("开户奖励已使用").font(.caption) }
             else {
                 BankDepositReceipt(principal: deposit.principal, profit: deposit.maturityValue - deposit.principal, dueAt: deposit.dueAt)
-                Button("取回\(deposit.principal)铜 · 提前取不计息") {
+                Button("提前取回\(deposit.principal)铜") {
                     run { try await game.cityEconomyAction { try $0.redeemDeposit(now: now, coins: &$1) } }
                 }.buttonStyle(GameArtButtonStyle()).disabled(busy)
             }
         } else {
-            Picker("新客本金", selection: $amount) { ForEach([20, 40, 60], id: \.self) { Text("\($0)铜").tag($0) } }.pickerStyle(.segmented)
-            bankQuote(amount, profit: amount / 20 * 4, term: "72小时")
-            Button("存\(amount)铜 · 到期收\(amount / 20 * 24)铜") {
+            Picker("新客本金", selection: $amount) { ForEach([20, 40, 60], id: \.self) { Text("\($0)").tag($0) } }.pickerStyle(.segmented)
+            bankQuote(amount, profit: amount / 20 * 4, term: "72时")
+            Button("存\(amount)铜") {
                 run { try await game.signBankDeposit(amount: amount, ordinary: false) }
             }.buttonStyle(GameArtButtonStyle()).disabled(!canSign(amount)).accessibilityIdentifier("bank-welcome-sign")
-            Text(canSign(amount) ? "仅一次 · 本金可提前取回" : "先留足生活与晋阶预算，或选较小本金").font(.caption)
+            Text(canSign(amount) ? "仅一次 · 可提前取回本金" : "先留足生活与晋阶预算").font(.caption2)
         }
     }
     @ViewBuilder private var ordinaryDeposit: some View {
-        Text("普通七日定期").font(.headline)
+        Text("普通七日定期").font(.subheadline.bold())
         if let deposit = game.cityEconomy.termDeposit, !deposit.closed {
             BankDepositReceipt(principal: deposit.principal, profit: deposit.profit, dueAt: deposit.dueAt)
-            Button("取回\(deposit.principal)铜 · 提前取不计息") {
+            Button("提前取回\(deposit.principal)铜") {
                 run { try await game.cityEconomyAction { try $0.redeemTermDeposit(now: now, coins: &$1) } }
             }.buttonStyle(GameArtButtonStyle()).disabled(busy).accessibilityIdentifier("bank-term-redeem")
         } else {
-            Picker("定期本金", selection: $termAmount) { ForEach([60, 120], id: \.self) { Text("\($0)铜").tag($0) } }.pickerStyle(.segmented)
+            Picker("定期本金", selection: $termAmount) { ForEach([60, 120], id: \.self) { Text("\($0)").tag($0) } }.pickerStyle(.segmented)
             bankQuote(termAmount, profit: MPCCityEconomy.termProfit(termAmount), term: "7日")
-            Button("存\(termAmount)铜 · 到期收\(termAmount + MPCCityEconomy.termProfit(termAmount))铜") {
+            Button("存\(termAmount)铜") {
                 run { try await game.signBankDeposit(amount: termAmount, ordinary: true) }
             }.buttonStyle(GameArtButtonStyle()).disabled(!canSign(termAmount)).accessibilityIdentifier("bank-term-sign")
-            Text("到期可再存 · 自动入钱包，不自动续存").font(.caption)
+            Text("到期入钱包，不自动续存").font(.caption2)
         }
     }
     private func bankQuote(_ principal: Int, profit: Int, term: String) -> some View {
         HStack {
-            Text("\(principal)铜 · \(term)")
-            Spacer()
-            Text("净赚\(profit)铜").bold().foregroundStyle(Color(red: 0.15, green: 0.39, blue: 0.23))
-        }.monospacedDigit().accessibilityElement(children: .combine)
+            Text("\(principal)铜·\(term)")
+            Spacer(minLength: 4)
+            Text("赚\(profit)").bold().foregroundStyle(Color(red: 0.15, green: 0.39, blue: 0.23))
+        }.font(.caption).monospacedDigit().accessibilityElement(children: .combine)
     }
     @ViewBuilder private var budgetTools: some View {
         Text("已留\(game.bankLiquidReserve)铜：三日食宿、药品及本阶段成长准备。").font(.footnote)
@@ -97,9 +120,9 @@ private struct BankDepositReceipt: View {
     let profit: Int
     let dueAt: TimeInterval
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("本金\(principal)铜 · 到期净赚\(profit)铜").monospacedDigit()
-            Text("到账：\(Date(timeIntervalSince1970: dueAt).formatted(date: .abbreviated, time: .shortened))").font(.caption)
+        VStack(alignment: .leading, spacing: 4) {
+            Text("本金\(principal)铜 · 净赚\(profit)铜").font(.caption).monospacedDigit()
+            Text("到账\(Date(timeIntervalSince1970: dueAt).formatted(date: .abbreviated, time: .shortened))").font(.caption2)
         }
     }
 }
@@ -113,12 +136,16 @@ struct CityBankManagerView: View {
     var body: some View {
         HomeCounterScene(title: "银行经理 · 产业投资", room: .counter("cityhall"),
             actorArt: "HomeCivilClerk20260929", illustrationArt: "BankManagerOffice20261014", returnTitle: "返回银行") {
-            Text("经理：欢迎。存单赚的是稳当钱，这几份订单则要一起承担生意的风险。")
-            Text("港城声望\(game.cityContribution.points) · 可用\(game.venueCoins)铜").font(.headline.monospacedDigit())
+            Text("经理：存单赚稳当钱，这几份订单要一起承担生意的风险。").font(.subheadline)
+            Text("港城声望\(game.cityContribution.points) · 可用\(game.venueCoins)铜 · 在途\(game.cityEconomy.outstanding)／\(MPCCityEconomy.limit(completed: game.churchTowerMissionNumbers))铜").font(.subheadline.bold().monospacedDigit())
+            // Orders under way first, then the four offers two to a row (2026-10-15: one page).
+            ForEach(game.cityEconomy.projects.filter { !$0.settled }.reversed()) { CityProjectCard(game: game, project: $0) }
             Picker("认购本金", selection: $amount) { ForEach([20, 40, 60, 80, 100, 120, 160], id: \.self) { Text("\($0)").tag($0) } }.pickerStyle(.segmented)
-            Toggle("我接受本金可能全部损失", isOn: $acceptsRisk)
-            ForEach([MPCCityEconomy.ProjectKind.bicycle, .shipping, .invoice, .workshop], id: \.self) { kind in projectOffer(kind) }
-            ForEach(game.cityEconomy.projects.reversed()) { CityProjectCard(game: game, project: $0) }
+            Toggle("我接受本金可能全部损失", isOn: $acceptsRisk).font(.subheadline)
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
+                ForEach([MPCCityEconomy.ProjectKind.bicycle, .shipping, .invoice, .workshop], id: \.self) { kind in projectOffer(kind) }
+            }
+            ForEach(game.cityEconomy.projects.filter(\.settled).suffix(2).reversed()) { CityProjectCard(game: game, project: $0) }
             if !message.isEmpty { Text(message).foregroundStyle(.orange) }
             DisclosureGroup("投资条款") {
                 Text("款项投入生产，不能随时取回。须核对原件并送验，7／10／14日到期，最多延期3日。未交付或验收错误可能损失全部本金，不产生额外欠债。").font(.footnote)
@@ -130,20 +157,20 @@ struct CityBankManagerView: View {
         let open = kind.isOpen(completed: game.churchTowerMissionNumbers, reputation: game.cityContribution.points)
         let validAmount = amount >= kind.minimum && amount <= kind.maximum
         let quoted = validAmount ? amount : kind.minimum
-        VStack(alignment: .leading, spacing: 8) {
-            Text(kind.title).font(.headline)
-            Text("\(quoted)铜 · \(kind.days)日 · 履约净赚\(kind.repayment(quoted) - quoted)铜").font(.subheadline)
+        VStack(alignment: .leading, spacing: 5) {
+            Text(kind.title).font(.subheadline.bold()).lineLimit(1).minimumScaleFactor(0.8)
+            Text("\(quoted)铜 · \(kind.days)日 · 净赚\(kind.repayment(quoted) - quoted)").font(.caption).monospacedDigit()
             if !open {
                 Text(game.cityContribution.points < kind.reputation
-                    ? "经理：您目前声望不足。声望到\(kind.reputation)、办妥第\(kind.mission)关后，再来找我。"
-                    : "经理：声望我认可了。等您办妥第\(kind.mission)关，我们再谈这笔生意。").font(.subheadline)
-            } else if !validAmount { Text("经理：这份订单认购\(kind.minimum)～\(kind.maximum)铜，请换个金额。").font(.caption) }
-            Button(open ? "认购\(kind.title)" : "尚未获邀") { subscribe(kind) }
+                    ? "需声望\(kind.reputation)、第\(kind.mission)关"
+                    : "办妥第\(kind.mission)关后开放").font(.caption2)
+            } else { Text("认购\(kind.minimum)～\(kind.maximum)铜").font(.caption2).foregroundStyle(validAmount ? .secondary : .primary) }
+            Button(open ? "认购" : "尚未获邀") { subscribe(kind) }
                 .buttonStyle(GameArtButtonStyle())
                 .disabled(!open || !validAmount || !acceptsRisk || busy || game.venueCoins - amount < game.bankLiquidReserve
                     || game.cityEconomy.outstanding + amount > MPCCityEconomy.limit(completed: game.churchTowerMissionNumbers))
                 .accessibilityIdentifier("bank-invest-\(kind.rawValue)")
-        }.padding(14).background(.black.opacity(0.06), in: RoundedRectangle(cornerRadius: 12))
+        }.frame(maxWidth: .infinity, alignment: .leading).padding(10).background(.black.opacity(0.06), in: RoundedRectangle(cornerRadius: 10))
     }
     private func subscribe(_ kind: MPCCityEconomy.ProjectKind) {
         busy = true
@@ -172,9 +199,9 @@ private struct CityProjectCard: View {
     @State private var message = ""
     @State private var workshopOpen = false
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(project.kind.title).font(.headline)
-            Text("本金\(project.committed)铜 · 到期\(Date(timeIntervalSince1970: project.dueAt).formatted(date: .abbreviated, time: .shortened))")
+        VStack(alignment: .leading, spacing: 6) {
+            Text(project.kind.title).font(.subheadline.bold())
+            Text("本金\(project.committed)铜 · 到期\(Date(timeIntervalSince1970: project.dueAt).formatted(date: .abbreviated, time: .shortened))").font(.caption)
             if project.settled { Text("已结算\(project.repayment)铜" + (project.repayment == 0 ? " · 本金损失" : "")) }
             else if let order = project.bicycle {
                 Text(CityBicycleOrderView.summary(order))
@@ -192,9 +219,9 @@ private struct CityProjectCard: View {
                 Button("送至验收台 · 5体力") { command(stamina: 5) { try $0.deliverProject(project.id, now: game.housingNow.timeIntervalSince1970) } }
             } else { Text("已送验，等待合同到期；若到期前没有交付，最多延期三日再清算。") }
             if !message.isEmpty { Text(message).font(.footnote).foregroundStyle(.orange) }
-        }.padding(14).background(.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 12))
+        }.padding(10).background(.black.opacity(0.12), in: RoundedRectangle(cornerRadius: 10))
             .buttonStyle(GameArtButtonStyle()).disabled(busy)
-            .sheet(isPresented: $workshopOpen) { CityBicycleOrderView(game: game, projectID: project.id) }
+            .fullScreenCover(isPresented: $workshopOpen) { CityBicycleOrderView(game: game, projectID: project.id) }
     }
     private func command(stamina: Int = 0, _ action: @escaping (inout MPCCityEconomy) throws -> Void) {
         busy = true
@@ -361,7 +388,7 @@ struct CityPrivateMeetingView: View {
                     .buttonStyle(GameArtButtonStyle(primary: true)).disabled(busy || !game.churchTowerMissionNumbers.contains(13))
             }
             if !message.isEmpty { Text(message).foregroundStyle(.orange) }
-        }.task { await game.openHousingDay() }.sheet(isPresented: $working) { CityContractWorkView(game: game) }
+        }.task { await game.openHousingDay() }.fullScreenCover(isPresented: $working) { CityContractWorkView(game: game) }
     }
     @ViewBuilder private func meeting(_ item: MPCCityEconomy.Meeting) -> some View {
         Text("招待已付\(item.fee)铜 · 耗材\(item.inputs)铜 · 验收后合同款\(item.payment)铜 · 净收入\(item.payment - item.inputs - item.fee)铜").font(.footnote)
@@ -441,9 +468,11 @@ struct CityInstitutionsView: View {
     ]
     var body: some View {
         GameArtPage(title: "港城办事册", subtitle: "第\(game.pacingDay)日 · 钱袋、住处与成长") {
-            CityWalletSummary(game: game)
-            ForEach(counters, id: \.0) { id, name, detail in
-                HomeCounterAction(title: name, detail: detail) { onOpen(id) }
+            Text("可用\(game.venueCoins)铜 · 保管\(game.cityEconomy.savings)铜 · 在途\(game.cityEconomy.outstanding)铜 · 建议留\(game.cityBudgetReserve)铜").font(.subheadline.bold().monospacedDigit())
+            HomeCounterActionGrid {
+                ForEach(counters, id: \.0) { id, name, detail in
+                    HomeCounterAction(title: name, detail: detail, detailLines: 1) { onOpen(id) }
+                }
             }
         }
     }
@@ -501,6 +530,9 @@ struct InstitutionPlaytestRoot: View {
             .task {
                 game.configureInstitutionClock()
                 if profile == "housing" { await game.prepareInstitutionHousingFixtureIfNeeded() }
+                // Panel review profiles (-institution.profile review-<name>): the housing fixture
+                // plus enough reputation to open the manager's orders. Their own suites only.
+                if profile.hasPrefix("review-") { await game.prepareInstitutionReviewFixtureIfNeeded() }
                 await storefront.prepare()
                 if ProcessInfo.processInfo.arguments.contains("--verify-institutions") { await GameStore.verifyInstitutionIntegration() }
                 if let flag = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--review-bicycle-order") }) {

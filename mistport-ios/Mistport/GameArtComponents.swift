@@ -168,20 +168,21 @@ struct GameArtPage<Content: View>: View {
                     Text(title).font(.title2.bold()).fontDesign(.serif).foregroundStyle(.white)
                 }.frame(maxWidth: .infinity, alignment: .leading)
                 GameArtReturnButton(title: closeTitle) { onClose?(); if dismissOnClose { dismiss() } }
-            }.padding(18).background(GameArt.night)
+            }.padding(.horizontal, 18).padding(.vertical, 12).background(GameArt.night)
             GameArtPaperScroll {
                 VStack(spacing: 0) {
                     if let art {
                         GeometryReader { g in
                             Image(art).resizable().scaledToFill().frame(width: g.size.width, height: g.size.height).clipped()
                                 .overlay(alignment: .bottom) { LinearGradient(colors: [.clear, GameArt.night.opacity(0.6)], startPoint: .top, endPoint: .bottom).frame(height: 60) }
-                        }.frame(height: 180).accessibilityHidden(true)
+                        }.frame(height: 130).accessibilityHidden(true)
                     }
-                    VStack(alignment: .leading, spacing: 18, content: content)
+                    // Tighter (2026-10-15, user: 尽量一页展示所有内容).
+                    VStack(alignment: .leading, spacing: 12, content: content)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(20).foregroundStyle(GameArt.ink)
+                        .padding(14).foregroundStyle(GameArt.ink)
                         .environment(\.colorScheme, .light)
-                        .padding(.horizontal, 12).padding(.top, art == nil ? 14 : -12).padding(.bottom, 24)
+                        .padding(.horizontal, 4).padding(.top, art == nil ? 6 : -12).padding(.bottom, 16)
                 }
             }
         }.background(GameArt.night.ignoresSafeArea())

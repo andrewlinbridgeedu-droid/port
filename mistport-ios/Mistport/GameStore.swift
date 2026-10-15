@@ -5650,6 +5650,12 @@ extension GameStore {
         defaults.set(defaults.double(forKey: "institution.clock-offset") + 86_400, forKey: "institution.clock-offset")
         await openHousingDay()
     }
+    func prepareInstitutionReviewFixtureIfNeeded() async {
+        await prepareInstitutionHousingFixtureIfNeeded()
+        guard !defaults.bool(forKey: "institution.review-fixture") else { return }
+        for index in 0..<30 { recordCityContribution(.eventSuccess, receipt: "panel-review-\(index)") }
+        defaults.set(true, forKey: "institution.review-fixture")
+    }
     func prepareInstitutionHousingFixtureIfNeeded() async {
         guard Bundle.main.bundleIdentifier == "local.mistport.institutions" else { return }
         defaults.set(Pathway.ID.fool.rawValue, forKey: PersistenceKey.selectedPathID)
