@@ -1005,6 +1005,8 @@ struct ChapterOneEncounterTestView: View {
     @State private var q30AngelIntroSessionID: UUID?
     /// Allies whose rig was last sent `down` (final-boss party; `syncPartyRigPresentation`).
     @State private var lastPartyFallenPresentation: Set<String> = []
+    /// The haste end last told to Unity (抢拍开幕's hourglass lasts exactly the rules' haste).
+    @State private var lastHeroHasteUntil: TimeInterval = 0
     @State private var presentedRelicEventIDs: Set<String> = []
     @State private var pendingGhostReveals: [String: TimeInterval] = [:]
     @State private var revealedGhostIDs: Set<String> = []
@@ -2005,6 +2007,14 @@ struct ChapterOneEncounterTestView: View {
             }
         }
         if !orderedHits.isEmpty { syncVisualHealth() }
+        // 抢拍开幕 starts the haste, 后手改写 extends it: Unity keeps the hourglass up for the time left.
+        if session.orderedHasteUntil != lastHeroHasteUntil {
+            lastHeroHasteUntil = session.orderedHasteUntil
+            let left = session.orderedHasteUntil - now
+            if usesUnityBattlefield, !isFastForwardingBattle, left > 0 {
+                unityBattleRuntime.send(action: "hero-haste:" + String(format: "%.2f", left))
+            }
+        }
         if session.waveIndex != waveBeforeClock {
             pendingPlayerImpact = nil
             pendingEnemyImpacts.removeAll()
