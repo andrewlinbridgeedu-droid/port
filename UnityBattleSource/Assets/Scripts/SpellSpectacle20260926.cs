@@ -12,7 +12,7 @@ using UnityEngine;
 /// casts never receive a damage explosion.
 /// </summary>
 [DefaultExecutionOrder(10000)]
-public sealed class SpellSpectacle20260926 : MonoBehaviour
+public sealed partial class SpellSpectacle20260926 : MonoBehaviour
 {
     public enum Family { Crescent, Rising, Falling, Surge, Fan, Twin, Curtain, Tide, MirrorCut }
     public enum Style { Light, Strike, Heavy, Support, Control }
@@ -140,10 +140,19 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         if (!director || targets == null || targets.Count == 0) return;
         var profile = PlayerProfile(skillID);
         // 后手改写 works on the hero itself: its landing is on the hero, not the enemy.
-        if ((profile.form == Form.Rewrite || profile.id == "tempo") && caster != null) { targets = new List<Func<Vector3>> { caster }; targetSeeds = new List<int> { 9 }; }
+        if (profile.form == Form.Rewrite && caster != null) { targets = new List<Func<Vector3>> { caster }; targetSeeds = new List<int> { 9 }; }
+        // 抢拍开幕 lands on the hero first and nicks its target as well (2026-10-14).
+        else if (profile.id == "tempo" && caster != null)
+        {
+            var self = new List<Func<Vector3>> { caster }; var selfSeeds = new List<int> { 9 };
+            for (int i = 0; i < targets.Count; i++) { self.Add(targets[i]); selfSeeds.Add(targetSeeds != null && i < targetSeeds.Count ? targetSeeds[i] : i * 7919); }
+            targets = self; targetSeeds = selfSeeds;
+        }
         var cue = director.Register("player", profile, profile.style, caster, targets, targetSeeds);
         if (cue == null) return;
         cue.player = true;
+        // The ordered loop's three cards draw themselves (SpellSpectacle20260926.Cards1113.cs).
+        if (IsOrderedCard(profile.id)) { if (!Suppressed) director.CardLaunch(cue, expectedContact); return; }
         if (profile.form != Form.Bloom && !Suppressed) director.Launch(cue, expectedContact);
     }
 
@@ -157,12 +166,12 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         var profile = PlayerProfile(skillID);
         var cue = director.Register("ordered-impact", profile, profile.style, caster, targets, null);
         if (cue == null) return;
-        cue.player = true;
+        cue.player = true; cue.intent = "ordered";
         director.Burst(cue);
         director.pending.Remove("ordered-impact");
     }
 
-    public static bool HasForm(string skillID) => PlayerProfile(skillID).form != Form.Bloom;
+    public static bool HasForm(string skillID) { var p = PlayerProfile(skillID); return p.form != Form.Bloom || IsOrderedCard(p.id); }
 
     /// Light coming off the hero while it casts (2026-10-03, user, with the reference
     /// battles: 出技能时主角本身就要冒出各种光). Built once at the cast from the figure
@@ -171,7 +180,10 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
     {
         var director = Ensure(battle);
         if (!director || Suppressed || chest == null || feet == null) return;
-        director.HeroLight(PlayerProfile(skillID), skillID == "basic", SafeEval(chest), SafeEval(feet), expectedContact);
+        // The ordered loop's quick cards keep the basic's small light: their full cast light
+        // washed the hero white (probe8) and their own hits carry the show.
+        var profile = PlayerProfile(skillID);
+        director.HeroLight(profile, skillID == "basic" || IsOrderedCard(profile.id), SafeEval(chest), SafeEval(feet), expectedContact);
     }
 
     /// Logs launch and impact geometry (SPELLFORM lines) for Simulator review builds.
@@ -1022,6 +1034,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             // The angel intro's fight clip (2026-10-11): 64 frames, 8x8 (cells 100+).
             var fight = Resources.Load<Texture2D>("SpellSpectacle20260926/SpectacleFight");
             if (fight) { paintFlipMaterial5 = new Material(flipShader) { name = "SpectacleFightSprite" }; paintFlipMaterial5.SetTexture("_MainTex", fight); paintFlipMaterial5.SetFloat("_Bright", 1f); paintFlipMaterial5.SetFloat("_Cols", 8f); paintFlipMaterial5.SetFloat("_Rows", 8f); paintFlipMaterial5.SetTexture("_Noise", noise); }
+            // The ordered loop's three cards (2026-10-14): hourglass, gold sand, mirror shards, letter bomb (cells 200+).
+            var paint4 = Resources.Load<Texture2D>("SpellSpectacle20260926/SpectaclePaint4");
+            if (paint4) { paintAtlas4 = paint4; paintFlipMaterial6 = new Material(flipShader) { name = "SpectaclePaintSprite4" }; paintFlipMaterial6.SetTexture("_MainTex", paint4); paintFlipMaterial6.SetFloat("_Bright", .9f); paintFlipMaterial6.SetTexture("_Noise", noise); }
             var piecesShader = Resources.Load<Shader>("SpellSpectacle20260926/SpectaclePieces20261009");
             if (piecesShader) { piecesMaterial = new Material(piecesShader) { name = "SpectaclePaintPieces" }; piecesMaterial.SetTexture("_Noise", noise); }
         }
@@ -1092,6 +1107,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         // environment body spans the group, and every recipient still gets its
         // own heart, splash and matter so no hit is hidden inside another.
         bool group = points.Count > 1;
+        if (cue.player && IsOrderedCard(p.id)) { CardImpact(cue, cam, caster, points); return; }
         // The backdrop darkens a little at the hit (2026-10-07, user: 可以在命中的瞬间把背景压暗一点):
         // hero cards and an enemy's real blows, not the basic beat or support.
         float darken = cue.player
@@ -1667,6 +1683,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             42 or 43 or 44 => 3f,
             49 => 1f,   // the pursuer's mist billows; the angel's figures (50, 51) stay rigid
             48 => 4f,   // her feather shimmers
+            201 => 4f,  // the gold sand glitters; the hourglass, shards and letter (200, 202-205) stay rigid
             _ => 0f,
         };
         float flow, seed; int globalCell;
@@ -1686,7 +1703,8 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             // Cells 16+ are on the second sheet (rock burst, salt crystals, venom glob / splash).
             // Cells 16+ are on the second sheet, 32+ on the third (tower demons, bounties).
             int global = cell;
-            if (cell >= 100) { if (!owner.paintFlipMaterial5) return; material = owner.paintFlipMaterial5; cell -= 100; }
+            if (cell >= 200) { if (!owner.paintFlipMaterial6) return; material = owner.paintFlipMaterial6; cell -= 200; }
+            else if (cell >= 100) { if (!owner.paintFlipMaterial5) return; material = owner.paintFlipMaterial5; cell -= 100; }
             else if (cell >= 48) { if (!owner.paintFlipMaterial4) return; material = owner.paintFlipMaterial4; cell -= 48; }
             else if (cell >= 32) { if (!owner.paintFlipMaterial3) return; material = owner.paintFlipMaterial3; cell -= 32; }
             else if (cell >= 16) { if (!owner.paintFlipMaterial2) return; material = owner.paintFlipMaterial2; cell -= 16; }
@@ -2837,9 +2855,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
 
         public static void Create(Transform parent, SpellSpectacle20260926 owner, Vector3 at, float delay, int cell, Pose2 pose, Scatter mode, float speed, float life, int seed)
         {
-            var tex = cell >= 32 ? owner.paintAtlas3 : cell >= 16 ? owner.paintAtlas2 : owner.paintAtlas;
+            var tex = cell >= 200 ? owner.paintAtlas4 : cell >= 32 ? owner.paintAtlas3 : cell >= 16 ? owner.paintAtlas2 : owner.paintAtlas;
             if (!owner.piecesMaterial || !tex) return;
-            int c = cell % 16;
+            int c = cell >= 200 ? cell - 200 : cell % 16;
             var go = new GameObject("SpectaclePaintPieces");
             go.transform.SetParent(parent, false);
             var p = go.AddComponent<PaintPieces>();
@@ -3006,7 +3024,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
     /// user's reference short (yao_vs_ting: Skia vector + cel bands + bloom). Continuous time
     /// with eased envelopes; the hand feel comes from fbm wobble on widths and spines, not
     /// from stepping. Every kind is a short script over u = t / duration.
-    sealed class Ink2D : MonoBehaviour
+    sealed partial class Ink2D : MonoBehaviour
     {
         SpellSpectacle20260926 owner;
         Mesh mesh;
@@ -3102,6 +3120,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             else if (kind == "mask") { k.outer = Hex("1F6FD6"); k.band2 = Hex("3AD6E8"); k.band3 = Hex("BFF2FF"); k.core = Hex("F4FCFF"); k.hot = Hex("CFF4FF"); k.duration = .8f; }
             else if (kind == "rewrite") { k.outer = Hex("2A9FE0"); k.band2 = Hex("39C6FF"); k.band3 = Hex("8AE0FF"); k.core = Hex("F2FCFF"); k.hot = Hex("FFE7A0"); k.duration = 1f; }
             else if (kind == "finale") { k.outer = Hex("6A3CFF"); k.band2 = Hex("FF5FD0"); k.band3 = Hex("FFC23A"); k.core = Hex("FFF8E0"); k.hot = Hex("FFE39A"); k.duration = 1.05f; }
+            else if (k.CardPalette(kind)) { }
             else { k.outer = Hex("9A2EF0"); k.band2 = Hex("D45CFF"); k.band3 = Hex("FF6AD0"); k.core = Hex("FFC4EE"); k.hot = Hex("F4B0FF"); k.duration = .62f; }
             k.mesh = new Mesh { name = "SpectacleInk" }; k.mesh.MarkDynamic();
             go.AddComponent<MeshFilter>().sharedMesh = k.mesh;
@@ -3176,12 +3195,13 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         /// 略长一点点 … 前一个法术消散时，后一个法术已经到了): the hit itself keeps its
         /// approved timing; only slow motes and a fading glow stay on, long enough to still be
         /// dissolving when the next spell lands (the hero and the enemy alternate ~1-1.5 s).
-        float Linger => kind == "finale" ? .95f : kind == "rewrite" ? .8f : .75f;
+        float Linger => kind == "finale" ? .95f : kind == "rewrite" ? .8f : kind == "mirror" || kind == "tempotick" ? .25f : .75f;
         const float Pace = HitPace;
 
         void LateUpdate()
         {
             age += Time.deltaTime;
+            if (mark) { MarkFrame(); return; }
             // A non-gather ink whose owner says it is over (a skipped angel intro) goes at once.
             if (!gather && stillActing != null && !stillActing()) { Destroy(gameObject); return; }
             if (gather)
@@ -3218,7 +3238,9 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             vs.Clear(); cs.Clear(); u0.Clear(); u1.Clear(); u2.Clear(); u3.Clear(); tris.Clear();
             now = t;
             if (enemyHit) ImpactLayer(t);
-            if (t >= duration * .4f && kind != "angelintro") Afterglow(t);
+            // 抢拍开幕 lands on the hero himself: the afterglow's glows washed him gold (probe10),
+            // and its haste mark carries the glitter on.
+            if (t >= duration * .4f && kind != "angelintro" && kind != "tempo") Afterglow(t);
             if (t >= 0f && t <= duration)
                 switch (kind)
                 {
@@ -3281,7 +3303,7 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
                     case "b09rend": B09Rend(t); break;
                     case "b10veil": B10Veil(t); break;
                     case "crimsonmend": CrimsonMend(t); break;
-                    default: Burst(t); break;
+                    default: if (!CardKind(t)) Burst(t); break;
                 }
             mesh.Clear();
             // An empty vertex list makes Unity compute an invalid bounding box (MinMaxAABB).
@@ -3303,8 +3325,10 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
             float fade = inA * (1f - v * v);
             if (fade <= .005f) return;
             var c = kind == "mask" ? new Vector2(0f, .55f * s) : Vector2.zero;
-            Glow(c, (1.5f + .5f * v) * s, band2, .3f * fade * (1f - v));
-            Glow(c, (2.5f + .7f * v) * s, outer, .16f * fade * (1f - v));
+            // 碎镜连弹's six landings stacked these glows into a blue sheen on the target (probe10).
+            float gk = kind == "mirror" ? .3f : 1f;
+            Glow(c, (1.5f + .5f * v) * s, band2, .3f * gk * fade * (1f - v));
+            Glow(c, (2.5f + .7f * v) * s, outer, .16f * gk * fade * (1f - v));
             bool rise = kind == "rewrite";
             float age = t - a0;
             // Wisps: slow curling ribbons of light drifting up and out, thinning away.
@@ -6480,12 +6504,15 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         var hand = chest + right * .14f * h;
         if (Diagnostics) Debug.Log($"SPELLFORM light {p.id} t={Time.unscaledTime:F3} release={release:F3} chest={chest:F2} feet={feet:F2} h={h:F2}");
         var floor = new Vector3(feet.x, feet.y + .02f, feet.z);
-        Flares.Create(root, flareUnderMaterial, this).Aura(p, feet + up * .55f * h, floor, right, h, release, basic, rng);
+        // The ordered loop's cards have no aura: in their pale gold and ice it read as a white
+        // haze over the hero (probe9).
+        if (!IsOrderedCard(p.id)) Flares.Create(root, flareUnderMaterial, this).Aura(p, feet + up * .55f * h, floor, right, h, release, basic, rng);
         Flares.Create(root, flareMaterial, this).CastSparkle(p, feet, chest, hand, right, up, toCam, h, release, basic, rng);
         if (basic) return;
         // A solid card keeps only the glow and the motes: its rising rays and floor arcs were
         // more lines round the hero (2026-10-07, user: 你很多这些一条条的).
-        if (Solid(p.form)) return;
+        // The ordered loop's cards too: in gold the four rays read as bars aimed at the enemy (2026-10-14).
+        if (Solid(p.form) || IsOrderedCard(p.id)) return;
         var ramp = Ramp(p);
         var gx = right; gx.y = 0;
         gx = gx.sqrMagnitude > 1e-6f ? gx.normalized : Vector3.right;
@@ -11002,9 +11029,11 @@ public sealed class SpellSpectacle20260926 : MonoBehaviour
         ["defend"] = P("defend", Family.Rising, Family.Rising, Style.Support, new[] { "#0b5a8a", "#39c6ff", "#8ae0ff", "#ffd66b", "#ffffff" }, "#fff0b0", "#ffffff", "#2a9fe0", "#e6f8ff", Mote.Wisp, Mote.Spark, Matter.Water, Accent.None, false, 1f, 0.04f),
         ["declaration"] = P("declaration", Family.Rising, Family.Rising, Style.Heavy, new[] { "#2b1466", "#6a3cff", "#c07aff", "#ffcf6a", "#fff4dc" }, "#ffd76a", "#fffaf0", "#6f3cff", "#fff0cc", Mote.Card, Mote.Shard, Matter.Filigree, Accent.None, false, 1f, 0f, Form.Proclaim),
 
-        ["tempo"] = P("tempo", Family.Fan, Family.Rising, Style.Support, new[] { "#42220a", "#b76b0e", "#ffb52f", "#ffe190", "#fff2cb" }, "#ffcb59", "#fff1c2", "#a76a13", "#ffe7a0", Mote.Glint, Mote.Spark, Matter.Filigree, Accent.ClockHands, false, .75f, 0f),
-        ["barrage"] = P("barrage", Family.MirrorCut, Family.Fan, Style.Strike, new[] { "#103943", "#287484", "#91dce7", "#def8ff", "#ffffff" }, "#aef4ff", "#ffffff", "#448b9b", "#defbff", Mote.Shard, Mote.Glint, Matter.Crystal, Accent.Needles, false, .6f, 0f),
-        ["signature"] = P("signature", Family.Falling, Family.Surge, Style.Heavy, new[] { "#17151b", "#47414c", "#c9bc9b", "#f3e6c6", "#ffb760" }, "#e4c99b", "#fff0cb", "#5f4f48", "#ffc074", Mote.Ink, Mote.Ember, Matter.Ink, Accent.Cracks, false, .8f, 0f, Form.Flick),
+        // Ramps end saturated (2026-10-14): the cast light multiplies their light end by 1.35, and the
+        // cream / white ends Codex gave these three blew the hero out white at the cast.
+        ["tempo"] = P("tempo", Family.Fan, Family.Rising, Style.Support, new[] { "#4a2004", "#a85a0a", "#e8860e", "#ffaa22", "#ffc040" }, "#ffcb59", "#fff1c2", "#a76a13", "#ffe7a0", Mote.Glint, Mote.Spark, Matter.Filigree, Accent.ClockHands, false, .75f, 0f),
+        ["barrage"] = P("barrage", Family.MirrorCut, Family.Fan, Style.Strike, new[] { "#0a2f5a", "#1a6ab8", "#2ecbf5", "#7fe4ff", "#bdf4ff" }, "#aef4ff", "#ffffff", "#448b9b", "#defbff", Mote.Shard, Mote.Glint, Matter.Crystal, Accent.Needles, false, .6f, 0f),
+        ["signature"] = P("signature", Family.Falling, Family.Surge, Style.Heavy, new[] { "#1a0e10", "#4a1a0e", "#b8400c", "#ff7a1e", "#ffb648" }, "#e4c99b", "#fff0cb", "#5f4f48", "#ffc074", Mote.Ink, Mote.Ember, Matter.Ink, Accent.Cracks, false, .8f, 0f, Form.Flick),
 
         // Mainline enemies.
         ["guard"] = P("guard", Family.Twin, Family.Twin, Style.Strike, new[] { "#4a0610", "#c01a24", "#ff5a1e", "#ffc23a", "#fff0c0" }, "#ffcf6a", "#fff1d6", "#d8341c", "#ffd9a8", Mote.Spark, Mote.Ember, Matter.Flame, Accent.FlyingSwords),

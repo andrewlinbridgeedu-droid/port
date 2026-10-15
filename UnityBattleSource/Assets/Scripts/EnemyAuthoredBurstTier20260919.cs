@@ -7,6 +7,9 @@ public sealed class EnemyAuthoredBurstTier20260919 : MonoBehaviour
 {
     public enum Motif { Clock, Hammer, Convoy, Scribe, Executor, Bearer, Leech }
     MainlineDistinct20260925 distinct;
+    /// The leech is a pool of crude oil (OilLeechBody20261012): its ligaments are black oil with a
+    /// violet film instead of olive gut.
+    public bool oil;
     Mesh mesh; Material material;
     readonly List<Vector3> v=new List<Vector3>(6000);
     readonly List<Color> c=new List<Color>(6000);
@@ -51,7 +54,7 @@ public sealed class EnemyAuthoredBurstTier20260919 : MonoBehaviour
         }
         if(age>=1)age=1+EnemyImpactEnvelope20260921.Sample((age-1)/.5f)*.5f;
         v.Clear();c.Clear();uv.Clear();ix.Clear();
-        material.SetFloat("_Age",age);material.SetFloat("_Motif",motif==Motif.Scribe?1:motif==Motif.Leech?2:motif==Motif.Hammer||motif==Motif.Convoy?3:motif==Motif.Clock?4:0);
+        material.SetFloat("_Age",age);material.SetFloat("_Motif",motif==Motif.Scribe?1:motif==Motif.Leech?(oil?2.25f:2):motif==Motif.Hammer||motif==Motif.Convoy?3:motif==Motif.Clock?4:0);
         var cam=Camera.main;Vector3 right=cam?cam.transform.right:Vector3.right,up=cam?cam.transform.up:Vector3.up;
         Vector3 forward=target-source;if(forward.sqrMagnitude<.01f)forward=Vector3.forward;forward.Normalize();
         Vector3 floorForward=Vector3.ProjectOnPlane(forward,Vector3.up).normalized;
@@ -167,9 +170,9 @@ public sealed class EnemyAuthoredBurstTier20260919 : MonoBehaviour
                 Vector3 b=impact?target+d*(.55f+open*(1.2f+h*1.3f)):center+d*.13f;
                 Vector3 bend=up*(.13f+h*.32f)+right*(h-.5f)*.6f;
                 Vector3 side=Vector3.Cross(forward,d)+up*.2f;
-                Fold(a,b,bend,side,.27f+h*.20f,new Color(.30f,.62f,.065f,fade*.85f),i+16);
+                Fold(a,b,bend,side,.27f+h*.20f,oil?new Color(.05f,.04f,.075f,fade*.92f):new Color(.30f,.62f,.065f,fade*.85f),i+16);
                 Fold(a+forward*.05f,b+forward*.05f,bend*.82f,side,.095f+h*.07f,
-                    new Color(.83f,1f,.29f,fade*.90f),i+29);
+                    oil?new Color(.66f,.46f,1f,fade*.90f):new Color(.83f,1f,.29f,fade*.90f),i+29);
             }
         }
         mesh.Clear();mesh.SetVertices(v);mesh.SetColors(c);mesh.SetUVs(0,uv);mesh.SetTriangles(ix,0);mesh.RecalculateBounds();

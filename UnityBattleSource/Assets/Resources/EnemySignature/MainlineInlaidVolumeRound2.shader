@@ -38,7 +38,8 @@ Shader "Mindstone/Mainline/InlaidVolumeRound2" {
     }
     if(_Motif>1.5&&_Motif<2.5) {
      base=i.color.rgb*(.44+.27*sin(y*9+x*5)*sin(y*7-x*8)+relief*.3);
-     gold=float3(.74,.86,.18);ornament=inlay*.48+branch*.18;
+     // 2.25: the oil leech (2026-10-12) - violet oil-film inlay instead of olive.
+     gold=_Motif>2.1?float3(.72,.52,1):float3(.74,.86,.18);ornament=inlay*.48+branch*.18;
     }
     if(_Motif>2.5&&_Motif<4.5)base*=.84;
     // M20 only: two unequal, longitudinal handwritten strokes, not periodic ribs.

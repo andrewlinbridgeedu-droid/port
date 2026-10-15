@@ -45,6 +45,13 @@ CELLS3 = [
     # 镇钟重砸 (2026-10-10): the user's painted bronze clock-bell.
     ("bronze_bell", "alpha"),
 ]
+# Fourth sheet SpectaclePaint4.png (2026-10-14, the ordered loop's three cards, prompts in
+# docs/development/SPELL_CARDS_11_13_ART_REQUEST_20261014.md): PaintSprite cells 200+.
+CELLS4 = [
+    ("hourglass", "alpha"), ("gold_sand", "light"),
+    ("mirror_shard_a", "alpha"), ("mirror_shard_b", "alpha"), ("mirror_shard_c", "alpha"),
+    ("letter_bomb", "alpha"),
+]
 CELL = 512
 PAD = 10
 
@@ -87,6 +94,6 @@ def main(src, out, cells=None):
 
 
 if __name__ == "__main__":
-    # usage: paint_atlas.py <art-dir> <out.png> [2|3]   (the second / third sheet)
+    # usage: paint_atlas.py <art-dir> <out.png> [2|3|4]   (the second / third / fourth sheet)
     sheet = sys.argv[3] if len(sys.argv) > 3 else "1"
-    main(sys.argv[1], sys.argv[2], {"2": CELLS2, "3": CELLS3}.get(sheet))
+    main(sys.argv[1], sys.argv[2], {"2": CELLS2, "3": CELLS3, "4": CELLS4}.get(sheet))
