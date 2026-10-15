@@ -32,43 +32,38 @@ public sealed partial class SpellSpectacle20260926
         if (cue.profile.id == "barrage" && HasCardArt && expectedContact > 0f) BarrageShards(cue, expectedContact);
     }
 
-    /// 抢拍开幕 in the user's paintings: the golden hourglass pops up beside the hero's left
-    /// shoulder, flips end over end (the beat stolen) and bursts apart; its gold sand pours out
-    /// down both sides and crumbles into grains. Beside him, not above: with the low camera
-    /// anything over his head lands on the enemy row (probe8). Times in HitPace.
+    /// 抢拍开幕 in the user's paintings: the golden hourglass rises beside the hero's left shoulder
+    /// and spins over twice, fast (the stolen beat), then flows into him - it shrinks toward his
+    /// chest and melts into light while its gold sand streams into him after it (user 10-14:
+    /// 为什么要散开呢沙漏 - the haste is time taken for himself, not time destroyed). Beside him,
+    /// not above: with the low camera anything over his head lands on the enemy row. Times in
+    /// HitPace (PaintSprite's clock).
     void TempoPaint(Camera cam, Vector3 chest, float s, int seed)
     {
         var at = new Vector2(-.62f * s, .22f * s);
+        var into = new Vector2(.02f * s, -.05f * s);
         float sign = (seed & 1) == 0 ? 1f : -1f, size = .75f * s;
-        PaintSprite.Create(root, paintFlipMaterial, this, chest, 0f, .3f, CellHourglass, t =>
+        const float Spun = .3f, Gone = .5f;
+        PaintSprite.Create(root, paintFlipMaterial, this, chest, 0f, Gone + .02f, CellHourglass, t =>
         {
-            float rise = EoutSmooth(Iv(0f, .08f, t)), flip = Smooth01(Iv(.08f, .22f, t));
-            return new Pose2 { off = at + new Vector2(.25f * s * (1f - rise), -.2f * s * (1f - rise)), roll = sign * 180f * flip, scale = size * (.55f + .45f * rise),
-                alpha = Iv(0f, .02f, t), tint = Color.white, soft = true };
+            float rise = EoutSmooth(Iv(0f, .08f, t)), spin = Smooth01(Iv(.06f, Spun, t)), go = Smooth01(Iv(Spun, Gone, t));
+            var pos = Vector2.Lerp(at + new Vector2(.25f * s * (1f - rise), -.2f * s * (1f - rise)), into, go * go);
+            // Melts into light as it goes (_Erode wisps), never fading as one picture.
+            return new Pose2 { off = pos, roll = sign * 720f * spin, scale = size * (.55f + .45f * rise) * (1f - .7f * go),
+                alpha = Iv(0f, .02f, t) * (1f - go), tint = Color.white, soft = go <= 0f };
         });
-        var burst = new Pose2 { off = at, roll = sign * 180f, scale = size, alpha = 1f, tint = Color.white };
-        PaintPieces.Create(root, this, chest, .27f / HitPace, CellHourglass, burst, Scatter.Burst, 1.3f * s, .5f, seed + 7);
-        // The sand pours out and at once breaks into falling clumps (user 10-14, of three sprays
-        // fanned from one point: 灯这个东西有些怪 - they stood as a glowing fan). Two pours: a big one
-        // straight down, a smaller one out to the left, away from the hero.
-        for (int side_ = 0; side_ < 2; side_++)
+        // The sand streams from the hourglass into the hero: the painting's spray turned to run
+        // from where the hourglass was toward his chest, drawn in and thinning away.
+        var d = into - at; float aim = Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg;
+        float roll = aim - 45f, sz = .85f * s;
+        var corner = Rot2(new Vector2(-.42f, -.42f) * sz, roll * Mathf.Deg2Rad);
+        PaintSprite.Create(root, paintFlipMaterial, this, chest, Spun / HitPace, .4f, CellGoldSand, t =>
         {
-            int side = side_;
-            // The painting sprays from its lower left corner up to the right; mirrored and turned
-            // it pours from the hourglass downward.
-            float roll = side == 0 ? 135f : 95f, sz = (side == 0 ? 1.15f : .85f) * s;
-            float born = .24f + .06f * side, breakAt = .13f;
-            var corner = Rot2(new Vector2(.42f, -.42f) * sz, roll * Mathf.Deg2Rad);
-            var pour = at - corner;
-            PaintSprite.Create(root, paintFlipMaterial, this, chest, born / HitPace, breakAt + .02f, CellGoldSand, t =>
-            {
-                float g = EoutSmooth(Iv(0f, breakAt, t));
-                return new Pose2 { off = at - corner * (.5f + .5f * g), roll = roll, scale = sz * (.5f + .5f * g), mirror = true,
-                    alpha = Iv(0f, .03f, t) * (1f - Iv(breakAt - .01f, breakAt + .02f, t)), tint = Color.white, soft = true };
-            });
-            var whole = new Pose2 { off = pour, roll = roll, scale = sz, mirror = true, alpha = 1f, tint = Color.white };
-            PaintPieces.Create(root, this, chest, (born + breakAt) / HitPace, CellGoldSand, whole, Scatter.Burst, 1.5f * s, .75f, seed + 11 + side);
-        }
+            float g = EoutSmooth(Iv(0f, .12f, t)), pull = Smooth01(Iv(.1f, .4f, t));
+            var source = Vector2.Lerp(at, into, pull * .8f);
+            return new Pose2 { off = source - corner * (.6f + .4f * g) * (1f - .5f * pull), roll = roll, scale = sz * (.6f + .4f * g) * (1f - .5f * pull),
+                alpha = Iv(0f, .03f, t) * (1f - Smooth01(Iv(.18f, .4f, t))), tint = Color.white };
+        });
     }
 
     /// 碎镜连弹's shards, from the cast: as many as the rules will fire (three, or six inside
