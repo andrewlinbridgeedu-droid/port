@@ -960,6 +960,7 @@ public sealed partial class SpellSpectacle20260926 : MonoBehaviour
     {
         if (!instance) return;
         instance.pending.Clear();
+        instance.hasteUntil = -1f;
         if (instance.root)
             for (int i = instance.root.childCount - 1; i >= 0; i--)
                 Destroy(instance.root.GetChild(i).gameObject);
