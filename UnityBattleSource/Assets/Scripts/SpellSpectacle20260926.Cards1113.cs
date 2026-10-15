@@ -48,22 +48,26 @@ public sealed partial class SpellSpectacle20260926
         });
         var burst = new Pose2 { off = at, roll = sign * 180f, scale = size, alpha = 1f, tint = Color.white };
         PaintPieces.Create(root, this, chest, .27f / HitPace, CellHourglass, burst, Scatter.Burst, 1.3f * s, .5f, seed + 7);
-        // Three sprays (user 10-14: 沙漏的沙可以多一些): steeply down, down-left, out to the left.
-        for (int side_ = 0; side_ < 3; side_++)
+        // The sand pours out and at once breaks into falling clumps (user 10-14, of three sprays
+        // fanned from one point: 灯这个东西有些怪 - they stood as a glowing fan). Two pours: a big one
+        // straight down, a smaller one out to the left, away from the hero.
+        for (int side_ = 0; side_ < 2; side_++)
         {
             int side = side_;
             // The painting sprays from its lower left corner up to the right; mirrored and turned
-            // both pour away from the hero (he stands to the right): one steeply down, one out to
-            // the left. Pouring across him, one gilded his legs (probe9).
-            float roll = side == 0 ? 118f : side == 1 ? 92f : 62f, sz = (side == 0 ? 1.3f : side == 1 ? 1.15f : 1f) * s;
+            // it pours from the hourglass downward.
+            float roll = side == 0 ? 135f : 95f, sz = (side == 0 ? 1.15f : .85f) * s;
+            float born = .24f + .06f * side, breakAt = .13f;
             var corner = Rot2(new Vector2(.42f, -.42f) * sz, roll * Mathf.Deg2Rad);
-            PaintSprite.Create(root, paintFlipMaterial, this, chest, (.24f + .04f * side) / HitPace, 1.05f, CellGoldSand, t =>
+            var pour = at - corner;
+            PaintSprite.Create(root, paintFlipMaterial, this, chest, born / HitPace, breakAt + .02f, CellGoldSand, t =>
             {
-                float g = EoutSmooth(Iv(0f, .2f, t)), fall = Iv(.15f, 1.05f, t);
-                // Fades by crumbling into grains (_Erode), never as one picture.
-                return new Pose2 { off = at - corner * (.6f + .4f * g) + Vector2.down * (.5f * s * fall * fall), roll = roll + 10f * fall,
-                    scale = sz * (.6f + .4f * g), mirror = true, alpha = Iv(0f, .03f, t) * (1f - Smooth01(Iv(.35f, 1.05f, t))), tint = Color.white };
+                float g = EoutSmooth(Iv(0f, breakAt, t));
+                return new Pose2 { off = at - corner * (.5f + .5f * g), roll = roll, scale = sz * (.5f + .5f * g), mirror = true,
+                    alpha = Iv(0f, .03f, t) * (1f - Iv(breakAt - .01f, breakAt + .02f, t)), tint = Color.white, soft = true };
             });
+            var whole = new Pose2 { off = pour, roll = roll, scale = sz, mirror = true, alpha = 1f, tint = Color.white };
+            PaintPieces.Create(root, this, chest, (born + breakAt) / HitPace, CellGoldSand, whole, Scatter.Burst, 1.5f * s, .75f, seed + 11 + side);
         }
     }
 
