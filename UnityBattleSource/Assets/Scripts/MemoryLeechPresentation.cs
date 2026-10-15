@@ -9,6 +9,7 @@ public sealed class MemoryLeechPresentation : MonoBehaviour
     EnemyAuthoredBurstTier20260919 impactVisual;
     MainlineDistinct20260925 devourImpact;bool currentDevour;
     BattlePrototype battleOwner;
+    OilLeechBody20261012 oil;   // the leech drawn as living crude oil (2026-10-12)
     Vector3 impactFrom,impactTarget;
     float impactAge;
     int epoch;GameObject activeGlob;Material globMaterial;MainlineBodyRound2 body;
@@ -21,7 +22,7 @@ public sealed class MemoryLeechPresentation : MonoBehaviour
         battleOwner=FindFirstObjectByType<BattlePrototype>();
         impactRoot=new GameObject("Leech contact digestive rupture");impactRoot.transform.SetParent(transform,false);
         if(currentDevour){devourImpact=impactRoot.AddComponent<MainlineDistinct20260925>();devourImpact.Devour(1,impactFrom,impactTarget);}
-        else {impactVisual=impactRoot.AddComponent<EnemyAuthoredBurstTier20260919>();impactVisual.Draw(EnemyAuthoredBurstTier20260919.Motif.Leech,1,impactFrom,impactTarget);}
+        else {impactVisual=impactRoot.AddComponent<EnemyAuthoredBurstTier20260919>();impactVisual.oil=oil!=null;impactVisual.Draw(EnemyAuthoredBurstTier20260919.Motif.Leech,1,impactFrom,impactTarget);}
     }
     void Update(){
         if(bodyActive&&body){bodyElapsed+=Time.deltaTime;body.Sample(bodyElapsed);if(bodyElapsed>=1.75f){body.Stop();bodyActive=false;}}
@@ -39,6 +40,7 @@ public sealed class MemoryLeechPresentation : MonoBehaviour
         // Evaluate even before the camera sees the actor to avoid a culling loop.
         foreach (var renderer in GetComponentsInChildren<SkinnedMeshRenderer>(true))
             renderer.updateWhenOffscreen = true;
+        oil = OilLeechBody20261012.Install(transform);
         clips = GetComponent<Animation>();
         if (clips == null) clips = GetComponentInChildren<Animation>();
         if (clips == null) return;
@@ -51,7 +53,7 @@ public sealed class MemoryLeechPresentation : MonoBehaviour
     }
     bool dying;
     void OnEnable() => RestoreIdle();
-    public void RestoreIdle() { ClearImpact(); dying = false; PlayClip("Idle", WrapMode.Loop); }
+    public void RestoreIdle() { ClearImpact(); dying = false; if (oil) oil.Restore(); PlayClip("Idle", WrapMode.Loop); }
     AnimationState PlayClip(string name, WrapMode mode)
     {
         var state = clips != null ? clips[name] : null;
@@ -70,6 +72,7 @@ public sealed class MemoryLeechPresentation : MonoBehaviour
         ClearImpact();currentDevour=devour;
         int ticket=epoch;
         body=MainlineBodyRound2.Get(gameObject);body.Begin(MainlineBodyRound2.Pose.Leech,false,.42f,1.04f,1.75f);
+        if(oil)oil.Heave(.42f);   // the pool rears up to the spit
         bodyActive=true;bodyElapsed=0;
         PlayClip("Cast", WrapMode.Once);
         yield return new WaitForSeconds(.42f);
@@ -78,11 +81,15 @@ public sealed class MemoryLeechPresentation : MonoBehaviour
         Destroy(glob.GetComponent<Collider>());
         var mat=new Material(Resources.Load<Shader>("EnemySignature/MainlineLeechWetRound2"));
         mat.color=new Color(.24f,.42f,.045f);
+        if(oil){   // a gob of the black oil, a violet film and white glints on it
+            mat.color=new Color(.03f,.026f,.045f);mat.SetColor("_VeinTint",new Color(.5f,.32f,.95f));
+            mat.SetColor("_SpecTint",new Color(1.25f,1.2f,1.35f));mat.SetColor("_RimTint",new Color(.55f,.38f,1f));}
         glob.GetComponent<Renderer>().material=mat;
         activeGlob=glob;globMaterial=mat;
         glob.transform.localScale=Vector3.one*.34f;
         var skin=glob.AddComponent<MainlineLeechGlobRound2>();
         var tier=devour?null:glob.AddComponent<EnemyAuthoredBurstTier20260919>();
+        if(tier)tier.oil=oil!=null;
         MainlineDistinct20260925 suction=null;
         if(devour){var strands=new GameObject("Devour inward name strands");strands.transform.SetParent(glob.transform,false);suction=strands.AddComponent<MainlineDistinct20260925>();}
         if(devour){glob.GetComponent<Renderer>().enabled=false;glob.transform.localScale=Vector3.one;}
@@ -108,6 +115,7 @@ public sealed class MemoryLeechPresentation : MonoBehaviour
         ClearImpact();
         dying = true;
         var death = PlayClip("Death", WrapMode.ClampForever);
+        if (oil) oil.Sink(death != null ? death.length : 1.2f);
         if (death != null) yield return new WaitForSeconds(death.length);
     }
 }

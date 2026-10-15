@@ -11,6 +11,13 @@ using UnityEngine;
 // named parts (torso/body, head, armL/R, foreL/R or handL/R, panels, skirt, legs/boots, lantern,
 // wings, staff) and move the whole body - lunges toward the boss, dips, leans, a fall to the floor
 // - never only an arm (user 2026-10-09: 敌人的动作都要和守卫的转身攻击一样生动).
+//
+// Video skin (2026-10-14, user: 队友视频你接): with clips in Resources/FinalBossParty/Video
+// (<ally>-<action>.png/.json/-idle.png, tools/animation/prepare_party_video_body.py) the parts are
+// hidden and one camera-facing quad shows the user's AI video of that action. An action with its
+// own clip plays it (the video moves the whole body, so the keyed root motion is dropped, except
+// the guard's step in front); one without shows the rest frame moved by the keyed root pose as
+// before (诺恩 has no hit / down / revive takes yet). An idle clip loops at rest.
 public sealed class CutoutRig20261010 : MonoBehaviour
 {
     [Serializable] sealed class PartData { public string name, parent; public float z, rot; public float[] uv, size, pivot, offset; }
@@ -41,6 +48,110 @@ public sealed class CutoutRig20261010 : MonoBehaviour
     float sizeMul = 1f;
     /// Scales the figure to stand `worldHeight` tall (the rig is packed at its own height).
     public void SetHeight(float worldHeight) { if (worldHeight > .1f) sizeMul = worldHeight / height; }
+
+    [Serializable] sealed class ClipInfo { public int frames, columns, rows, releaseFrame, feetRow, figureHeight, width, height; public bool held; }
+    sealed class VideoClip { public ClipInfo info; public Texture2D atlas, rest; }
+    const string VideoRoot = "FinalBossParty/Video/";
+    static readonly string[] VideoActions = { "attack", "cast", "guard", "hit", "down", "revive", "idle" };
+    readonly Dictionary<string, VideoClip> videos = new Dictionary<string, VideoClip>();
+    Material videoMaterial; Mesh videoMesh; VideoClip videoShown; Texture2D videoRest; float videoIdleClock;
+    /// The video skin is on (some action of this ally has its take).
+    public bool HasVideo => videoMaterial != null;
+    /// Each take's own pace: seconds to the contact cell, and in all (the cut rig's are too
+    /// quick for the videos - a 2.7 s wind-up played in .55 s reads as a twitch).
+    static (float contact, float total) VideoTiming(string a) => a switch
+    {
+        "attack" => (1f, 1.8f), "cast" => (1.2f, 2.5f), "guard" => (.6f, 1.35f), "hit" => (.25f, .65f),
+        "down" => (1.4f, 1.4f), "revive" => (.8f, .8f), _ => (1f, 1f),
+    };
+
+    void LoadVideo(string ally, int sortingBase)
+    {
+        foreach (var a in VideoActions)
+        {
+            var json = Resources.Load<TextAsset>(VideoRoot + ally + "-" + a);
+            if (!json) continue;
+            var clip = new VideoClip { info = JsonUtility.FromJson<ClipInfo>(json.text),
+                atlas = Resources.Load<Texture2D>(VideoRoot + ally + "-" + a), rest = Resources.Load<Texture2D>(VideoRoot + ally + "-" + a + "-idle") };
+            if (clip.info != null && clip.info.frames > 0 && clip.info.figureHeight > 0 && clip.atlas && clip.rest) videos[a] = clip;
+        }
+        var shader = Resources.Load<Shader>("CombatTempo/AIHero/AIHeroAtlas");
+        if (videos.Count == 0 || !shader || !shader.isSupported) { videos.Clear(); return; }
+        // The rest frame: the idle loop's, else the first take's standing first frame.
+        foreach (var a in VideoActions) if (videos.TryGetValue(a, out var c)) { videoRest = c.rest; if (a != "down" && a != "revive") break; }
+        foreach (var r in GetComponentsInChildren<MeshRenderer>(true)) r.enabled = false;
+        var go = new GameObject("Video body");
+        go.transform.SetParent(transform, false);
+        videoMesh = new Mesh { name = "Party video quad" };
+        videoMesh.vertices = new Vector3[4];
+        videoMesh.uv = new[] { Vector2.zero, Vector2.right, Vector2.up, Vector2.one };
+        videoMesh.triangles = new[] { 0, 2, 1, 2, 3, 1 };
+        videoMaterial = new Material(shader) { name = "PartyVideo " + ally };
+        videoMaterial.SetColor("_EchoTint", new Color(1f, .95f, .85f));
+        go.AddComponent<MeshFilter>().sharedMesh = videoMesh;
+        var surface = go.AddComponent<MeshRenderer>(); surface.sharedMaterial = videoMaterial;
+        surface.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; surface.receiveShadows = false;
+        surface.sortingOrder = sortingBase;
+        ShowVideo(videos.TryGetValue("idle", out var idle) ? idle : null);
+        Debug.Log($"PARTY_VIDEO {ally} clips={string.Join(",", videos.Keys)}");
+    }
+
+    /// Puts a take (or, null, the rest frame) on the quad, its figure standing `height` tall
+    /// with the feet on the rig's root (takes are matted at their own figure height).
+    void ShowVideo(VideoClip clip)
+    {
+        if (clip != null && clip == videoShown) return;
+        videoShown = clip;
+        var info = clip?.info ?? FirstInfo();
+        videoMaterial.SetTexture("_MainTex", clip != null ? clip.atlas : videoRest);
+        videoMaterial.SetTexture("_IdleTex", clip != null ? clip.rest : videoRest);
+        videoMaterial.SetVector("_Grid", new Vector4(info.columns, info.rows, 0, 0));
+        float unit = height / info.figureHeight, half = info.width * .5f;
+        float below = info.height - info.feetRow, above = info.feetRow;
+        videoMesh.vertices = new[] {
+            new Vector3(-half*unit,-below*unit,0), new Vector3(half*unit,-below*unit,0),
+            new Vector3(-half*unit,above*unit,0), new Vector3(half*unit,above*unit,0) };
+        videoMesh.RecalculateBounds();
+    }
+    ClipInfo FirstInfo() { foreach (var c in videos.Values) return c.info; return null; }
+
+    /// The video frame for this moment, and whether the keyed root motion still applies.
+    bool DriveVideo(float dt)
+    {
+        videoIdleClock += dt;
+        string a = action;
+        if (a != "idle" && videos.TryGetValue(a, out var clip))
+        {
+            ShowVideo(clip);
+            var (contact, total) = VideoTiming(a);
+            var info = clip.info;
+            float frame = age <= contact
+                ? info.releaseFrame * Mathf.Clamp01(age / Mathf.Max(.01f, contact))
+                : Mathf.Lerp(info.releaseFrame, info.frames - 1, Mathf.Clamp01((age - contact) / Mathf.Max(.01f, total - contact)));
+            videoMaterial.SetFloat("_Frame", Mathf.Floor(frame));
+            // Straight onto the take's first cell: blending it with the rest frame (another pose)
+            // drew a see-through double (party rec2).
+            videoMaterial.SetFloat("_IdleBlend", 0f);
+            return a == "guard";
+        }
+        if (down && videos.TryGetValue("down", out var fallen))
+        {
+            ShowVideo(fallen);
+            videoMaterial.SetFloat("_Frame", fallen.info.frames - 1); videoMaterial.SetFloat("_IdleBlend", 0f);
+            return false;
+        }
+        if (!down && videos.TryGetValue("idle", out var idle))
+        {
+            ShowVideo(idle);
+            // The loop plays at the take's own pace (24 fps cells over its source seconds, ~8 s).
+            videoMaterial.SetFloat("_Frame", Mathf.Floor(Mathf.Repeat(videoIdleClock / 8.4f, 1f) * idle.info.frames) % idle.info.frames);
+            videoMaterial.SetFloat("_IdleBlend", 0f);
+            return action != "idle";
+        }
+        ShowVideo(null);
+        videoMaterial.SetFloat("_IdleBlend", 1f);
+        return true;
+    }
 
     public static CutoutRig20261010 Create(string name, Vector3 feet, Transform parent = null, int sortingBase = 0)
     {
@@ -82,6 +193,7 @@ public sealed class CutoutRig20261010 : MonoBehaviour
         }
         foreach (var p in data.parts) Build(p);
         rig.idleClock = UnityEngine.Random.value * 10f;
+        rig.LoadVideo(name.Replace("_back", ""), sortingBase);
         return rig;
     }
 
@@ -98,6 +210,7 @@ public sealed class CutoutRig20261010 : MonoBehaviour
         if (down && next != "revive" && next != "down") return;
         action = next; age = 0f;
         duration = next switch { "attack" => 1f, "cast" => 1.3f, "guard" => 1f, "hit" => .5f, "down" => 1f, "revive" => .9f, _ => 1f };
+        if (videos.ContainsKey(next)) duration = VideoTiming(next).total;
         if (next == "down") down = true;
         if (next == "revive") down = false;
     }
@@ -109,6 +222,8 @@ public sealed class CutoutRig20261010 : MonoBehaviour
     {
         if (material) Destroy(material);
         foreach (var m in meshes) if (m) Destroy(m);
+        if (videoMaterial) Destroy(videoMaterial);
+        if (videoMesh) Destroy(videoMesh);
     }
 
     static float Smooth(float u) { u = Mathf.Clamp01(u); return u * u * (3f - 2f * u); }
@@ -235,6 +350,11 @@ public sealed class CutoutRig20261010 : MonoBehaviour
         }
         else Idle(idleClock, down ? 0f : 1f);
         if (action == "idle" && down) { var a = Act("down", 1f); r = a; }
+        if (videoMaterial && !DriveVideo(dt))
+        {
+            // The take moves the body itself; a fallen take keeps the dimmed look of the fallen.
+            r = new RootPose { sy = 1f, alpha = down ? .72f : 1f, flash = action == "hit" ? Mathf.Clamp01(1f - age / .35f) * .6f : 0f };
+        }
         foreach (var kv in bones)
             kv.Value.localRotation = Quaternion.Euler(0f, 0f, rest[kv.Key] + (pose.TryGetValue(kv.Key, out var v) ? v : 0f));
         var cam = Camera.main;
@@ -249,5 +369,13 @@ public sealed class CutoutRig20261010 : MonoBehaviour
         transform.localScale = new Vector3(sizeMul * sx, sizeMul * r.sy * breathe, sizeMul);
         material.SetFloat("_Flash", Mathf.Clamp01(r.flash));
         material.SetColor("_Color", new Color(1f, 1f, 1f, r.alpha));
+        if (videoMaterial)
+        {
+            // A light warm flash only, and the fallen darkened, never see-through: on the video
+            // body both read as a white ghost on the bright marble (party rec1).
+            videoMaterial.SetFloat("_EchoMix", Mathf.Clamp01(r.flash) * .3f);
+            float dim = Mathf.Clamp01((1f - r.alpha) / .28f);
+            videoMaterial.SetColor("_Color", Color.Lerp(Color.white, new Color(.7f, .7f, .76f, 1f), dim));
+        }
     }
 }
