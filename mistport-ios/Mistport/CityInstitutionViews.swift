@@ -205,8 +205,9 @@ private struct CityProjectCard: View {
 /// 自行车厂首批订单 (2026-10-14, INVESTMENT_QUESTS_AND_CAPITAL_CALLS_20261014): 赫伯特's workshop.
 /// 帕维 hands over two requisition slips to check against the original order, a hub is short,
 /// 乔里 test-rides the bikes, 米拉 the buyer offers one more bike, and the bikes go to her shop.
-/// Every step goes through the bank journal (GameStore.bicycleOrderStep); stand-in portraits
-/// from the existing counters until the order's own characters are painted.
+/// Every step goes through the bank journal (GameStore.bicycleOrderStep). Each step shows who is
+/// speaking: the user's portraits of 赫伯特, 黛娜, 乔里 and 米拉 (2026-10-15); 帕维 is the existing
+/// labour clerk.
 struct CityBicycleOrderView: View {
     @Bindable var game: GameStore
     let projectID: String
@@ -230,17 +231,18 @@ struct CityBicycleOrderView: View {
         }
     }
 
-    private func actor(_ stage: Order.Stage) -> String {
-        switch stage {
-        case .parts, .sourcing: "HomeLaborClerk20260929"
-        case .testing, .assembling: "HomeCarpenter20260929"
-        case .ready, .delivered: "HomePhotographer20260929"   // 米拉 (stand-in until her portrait)
+    private func actor(_ order: Order?) -> String {
+        guard let order else { return "HomeHerbert20261014" }
+        switch order.stage {
+        case .parts, .assembling: return "HomeHerbert20261014"
+        case .sourcing: return "HomeLaborClerk20260929"   // 帕维
+        case .testing: return order.failedTests > 0 ? "HomeDana20261014" : "HomeJori20261014"
+        case .ready, .delivered: return "HomeMira20261014"
         }
     }
 
     var body: some View {
-        let stage = project?.bicycle?.stage ?? .delivered
-        HomeCounterScene(title: "赫伯特车厂 · 首批订单", room: .counter("oldstreet"), actorArt: actor(stage), returnTitle: "返回经理室") {
+        HomeCounterScene(title: "赫伯特车厂 · 首批订单", room: .counter("oldstreet"), actorArt: actor(project?.bicycle), returnTitle: "返回经理室") {
             if let project, let order = project.bicycle {
                 Text("\(order.bikes)辆车 · 已投入\(project.committed + order.extraCosts)铜 · 买家托管\(order.bikes * Order.pricePerBike)铜")
                     .font(.headline.monospacedDigit())
@@ -286,7 +288,7 @@ struct CityBicycleOrderView: View {
             }.accessibilityIdentifier("bicycle-hub-runner")
         case .testing:
             Text(order.failedTests > 0
-                 ? "乔里：车架上的铆钉又被剪断了——这不是铜的。拧得再紧也撑不住。"
+                 ? "黛娜：乔里一刹车，铆钉就被剪断了。这批是铁铆钉，不是原单上的铜铆钉，拧得再紧也撑不住。"
                  : "乔里：我骑一圈。刹车发尖，车把往左偏。")
             Button("紧固刹车、校正车把再试") {
                 step(project.id, "test-\(order.failedTests)") { economy, coins, now in try economy.bicycleTestRide(project.id, replaceRivets: false, now: now, coins: &coins) }
