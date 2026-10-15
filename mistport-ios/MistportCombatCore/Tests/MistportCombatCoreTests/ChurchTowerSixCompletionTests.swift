@@ -42,10 +42,10 @@ struct ChurchTowerSixCompletionTests {
         for f in MPCChurchTowerCatalog.floors {
             let q = MPCChurchTowerVerificationRunner.mission(for: f)
             let l = MPCChurchTowerVerificationRunner.recommendedLoadout(for: f)
-            let unlocked = Set(MPCChapterOneCatalog.missions.filter { $0.number <= q }.flatMap(\.permanentSkillIDs))
+            // Clearing Qq opens Q(q+1)'s cards and slots (MPCOrderedSkillRules, 2026-10-12).
+            let unlocked = Set(MPCOrderedSkillRules.ordinarySkills.filter { (MPCOrderedSkillRules.unlockMission($0) ?? .max) <= q + 1 })
             #expect(Set(l.normalSkillIDs).isSubset(of: unlocked))
-            #expect(!l.normalSkillIDs.contains(.backstageChange))
-            #expect(l.normalSkillIDs.count <= 4)
+            #expect(l.normalSkillIDs.count <= MPCOrderedSkillRules.slotCapacity(availableThrough: q + 1))
         }
     }
     @Test func milestonesCompareRealRelicBuildsAndPoorPreparation() throws {
@@ -83,24 +83,26 @@ struct ChurchTowerSixCompletionTests {
     }
 
     @Test func supportCastsAreFiniteAndEmpowerExpiresOnWallClock() throws {
-        var healer = try MPCChapterOneEncounterSession.start(encounterID: "church_tower_021", companionIDs: [], loadout: .init(normalSkillIDs: [], isUltimateUnlocked: false, passiveIDs: [], relicIDs: []))
-        let source = healer.enemies[0].id, recipient = healer.enemies[1].id
-        try healer.endRound(actingEnemyID: recipient, at: 0) // open true shield
+        // Supports close their floors after the minion waves (2026-10-12); pick them by species.
+        var (healer, start) = try startChurchTower(21, containing: [.backSac, .shieldJaw])
+        let source = try #require(healer.enemies.first { towerSpecies($0) == .backSac }).id
+        let recipient = try #require(healer.enemies.first { towerSpecies($0) == .shieldJaw }).id
+        try healer.endRound(actingEnemyID: recipient, at: start) // open true shield
         for cycle in 0..<5 {
             _ = try healer.applyPartyDamage(70, to: recipient)
-            try healer.endRound(actingEnemyID: source, at: Double(cycle * 4))
-            try healer.endRound(actingEnemyID: source, at: Double(cycle * 4 + 1))
+            try healer.endRound(actingEnemyID: source, at: start + Double(cycle * 4))
+            try healer.endRound(actingEnemyID: source, at: start + Double(cycle * 4 + 1))
             #expect(healer.lastEnemyActionResolutions.last?.healing == (cycle < 4 ? 60 : 0))
-            try healer.endRound(actingEnemyID: source, at: Double(cycle * 4 + 2))
-            try healer.endRound(actingEnemyID: source, at: Double(cycle * 4 + 3))
+            try healer.endRound(actingEnemyID: source, at: start + Double(cycle * 4 + 2))
+            try healer.endRound(actingEnemyID: source, at: start + Double(cycle * 4 + 3))
         }
-        var crown = try MPCChapterOneEncounterSession.start(encounterID: "church_tower_041", companionIDs: [], loadout: .init(normalSkillIDs: [], isUltimateUnlocked: false, passiveIDs: [], relicIDs: []))
-        let id = crown.enemies[0].id
-        try crown.endRound(actingEnemyID: id, at: 0)
-        try crown.endRound(actingEnemyID: id, at: 1)
-        crown.advanceChurchTowerEffects(at: 8.99)
+        var (crown, now) = try startChurchTower(41, containing: [.crown])
+        let id = try #require(crown.enemies.first { towerSpecies($0) == .crown }).id
+        try crown.endRound(actingEnemyID: id, at: now)
+        try crown.endRound(actingEnemyID: id, at: now + 1)
+        crown.advanceChurchTowerEffects(at: now + 8.99)
         #expect(crown.towerEmpoweredEnemyIDs.count == 1)
-        crown.advanceChurchTowerEffects(at: 9)
+        crown.advanceChurchTowerEffects(at: now + 9)
         #expect(crown.towerEmpoweredEnemyIDs.isEmpty)
     }
 

@@ -994,16 +994,6 @@ final class DungeonScene: SKScene {
         ]))
     }
 
-    /// Basic defense uses a personal glass-like oval rather than the Clock
-    /// Guard's violet mantle. The node is parented to the player, so it keeps
-    /// covering the whole body if the actor moves during the presentation.
-    func presentFoolBasicDefense() {
-        guard presentationOnly else { return }
-        turnPhase = .player
-        combat.isPlayerTurn = true
-        spawnFoolPersonalAegis()
-    }
-
     private func enemyBodyCenter(_ enemy: DungeonEnemyActor) -> CGPoint {
         guard let artwork = enemy.artworkNode else {
             return CGPoint(x: enemy.node.position.x, y: enemy.node.position.y + 48)
@@ -1303,29 +1293,6 @@ final class DungeonScene: SKScene {
         return path
     }
 
-    /// Shows an enemy support skill after CombatCore has resolved its healing.
-    /// It is deliberately separate from the health mutation so skip-animation
-    /// mode can suppress every hostile VFX without suppressing the mechanic.
-    func presentChapterOneEnemyHealing(
-        targetID: String,
-        amount: Int,
-        delay: TimeInterval = 0.72
-    ) {
-        guard presentationOnly,
-              amount > 0,
-              let target = enemies.first(where: { $0.spawn.id == targetID && $0.isAlive }) else { return }
-
-        run(.sequence([
-            .wait(forDuration: delay),
-            .run { [weak self] in
-                guard let self else { return }
-                target.health = min(target.spawn.maxHealth, target.health + amount)
-                let fraction = CGFloat(target.health) / CGFloat(max(1, target.spawn.maxHealth))
-                self.animateEnemyHealthFill(target, fraction: fraction, duration: 0.42)
-            }
-        ]), withKey: "chapter-one-enemy-healing-\(targetID)")
-    }
-
     /// The combat runtime owns the defeat decision; this method only gives the
     /// SpriteKit battlefield its matching visual endpoint.
     func presentChapterOnePlayerDefeat() {
@@ -1375,16 +1342,6 @@ final class DungeonScene: SKScene {
             }
         }
         publishState(force: true)
-    }
-
-    /// Shows authoritative zero damage without mutating the presentation
-    /// scene's legacy combat model.
-    func presentChapterOneZeroDamage(targetID: String) {
-        guard presentationOnly,
-              let enemy = enemies.first(where: { $0.spawn.id == targetID && $0.isAlive }) else { return }
-        let position = enemyBodyCenter(enemy)
-        spawnCombatNumber("0", at: enemyCombatNumberAnchor(enemy), color: .systemRed, scale: 1.10)
-        spawnImpact(at: position, color: .systemRed, radius: 42)
     }
 
     /// Adds state markers to the authored actor nodes. These are presentation
@@ -1659,39 +1616,6 @@ final class DungeonScene: SKScene {
             .wait(forDuration: 0.98),
             .removeFromParent()
         ]))
-    }
-
-    func presentChapterOneControlSealBreak(targetID: String) {
-        guard presentationOnly,
-              let enemy = enemies.first(where: { $0.spawn.id == targetID && $0.isAlive }),
-              enemy.usesIntegratedControlSeal,
-              let artwork = enemy.artworkNode,
-              let aura = enemy.controlSealAuraNode else { return }
-
-        enemy.animationKey = "hit"
-        enemy.usesIntegratedControlSeal = false
-        aura.removeAction(forKey: "control-seal-impact-flash")
-        aura.isHidden = true
-        // Breaking the seal removes only the visual barrier. The guard keeps
-        // the current imported model stance after the control layer is torn
-        // away; the barrier itself is a procedural combat effect.
-        enemy.animationClips = enemy.shieldedAnimationClips ?? enemy.baseAnimationClips
-        artwork.removeAllActions()
-        artwork.run(.sequence([
-            .colorize(with: .white, colorBlendFactor: 0.78, duration: 0.08),
-            .colorize(withColorBlendFactor: 0, duration: 0.24),
-            .run { [weak self, weak enemy, weak artwork] in
-                guard let self, let enemy, let artwork else { return }
-                enemy.animationKey = ""
-                if let texture = enemy.animationClips.idle.first {
-                    self.normalizeClockGuardArtwork(artwork, texture: texture)
-                }
-            }
-        ]), withKey: "control-seal-hit")
-
-        // The retired procedural oval also supplied a synthetic rupture
-        // ellipse.  Keep it absent with the oval; the authored actor hit flash
-        // above remains as the temporary seal-break acknowledgement.
     }
 
     private func setClockGuardControlSeal(
@@ -2058,148 +1982,6 @@ final class DungeonScene: SKScene {
         for enemy in enemies {
             enemy.node.childNode(withName: "queued-target-feedback")?.removeFromParent()
         }
-    }
-
-    /// Layered impact confirmation for CombatCore-driven attacks. The actor
-    /// stays on its authored combat mark while material flash, restrained
-    /// vibration, spectral separation and a small camera impulse sell contact.
-    func presentChapterOneHitReaction(
-        targetID: String,
-        damage: Int,
-        showsDamageNumber: Bool = true
-    ) {
-        guard damage >= 0,
-              let enemy = enemies.first(where: { $0.spawn.id == targetID && $0.isAlive })
-        else { return }
-
-        flashClockGuardShieldOnPlayerImpact(for: enemy)
-        let heavy = damage >= 100
-        let origin = enemy.node.position
-        if damage == 0, showsDamageNumber {
-            presentChapterOneZeroDamage(targetID: targetID)
-        } else if showsDamageNumber {
-            spawnBigDamageNumber(damage, at: enemyCombatNumberAnchor(enemy))
-        }
-        let amplitude: CGFloat = heavy ? 5 : 3
-        enemy.node.removeAction(forKey: "chapter-one-hit-shake")
-        enemy.node.run(.sequence([
-            .move(to: CGPoint(x: origin.x - amplitude, y: origin.y + 1), duration: 0.035),
-            .move(to: CGPoint(x: origin.x + amplitude, y: origin.y - 1), duration: 0.045),
-            .move(to: CGPoint(x: origin.x - amplitude * 0.45, y: origin.y), duration: 0.04),
-            .move(to: origin, duration: 0.055)
-        ]), withKey: "chapter-one-hit-shake")
-
-        if let artwork = enemy.artworkNode {
-            artwork.run(.sequence([
-                .group([
-                    .colorize(with: .white, colorBlendFactor: 0.88, duration: 0.035),
-                    .fadeAlpha(to: 0.42, duration: 0.035)
-                ]),
-                .group([
-                    .colorize(with: UIColor(red: 0.66, green: 0.30, blue: 1, alpha: 1), colorBlendFactor: 0.38, duration: 0.08),
-                    .fadeAlpha(to: 0.78, duration: 0.08)
-                ]),
-                .group([
-                    .colorize(withColorBlendFactor: 0, duration: 0.14),
-                    .fadeAlpha(to: 1, duration: 0.14)
-                ])
-            ]), withKey: "chapter-one-hit-material")
-
-            for (offset, tint) in [
-                (CGPoint(x: -8, y: 2), UIColor.systemPurple),
-                (CGPoint(x: 8, y: -1), UIColor.systemCyan)
-            ] {
-                let ghost = SKSpriteNode(texture: artwork.texture)
-                ghost.size = artwork.size
-                ghost.anchorPoint = artwork.anchorPoint
-                ghost.position = artwork.position
-                ghost.xScale = artwork.xScale
-                ghost.yScale = artwork.yScale
-                ghost.zRotation = artwork.zRotation
-                ghost.zPosition = artwork.zPosition - 0.5
-                ghost.alpha = 0.30
-                ghost.color = tint
-                ghost.colorBlendFactor = 0.62
-                enemy.node.addChild(ghost)
-                ghost.run(.sequence([
-                    .group([
-                        .move(by: CGVector(dx: offset.x, dy: offset.y), duration: 0.12),
-                        .fadeAlpha(to: 0.14, duration: 0.12)
-                    ]),
-                    .group([
-                        .move(by: CGVector(dx: -offset.x, dy: -offset.y), duration: 0.14),
-                        .fadeOut(withDuration: 0.14)
-                    ]),
-                    .removeFromParent()
-                ]))
-            }
-        }
-
-        let cameraOrigin = sceneCamera.position
-        let cameraAmplitude: CGFloat = heavy ? 3.5 : 2
-        sceneCamera.removeAction(forKey: "chapter-one-camera-impact")
-        sceneCamera.run(.sequence([
-            .move(to: CGPoint(x: cameraOrigin.x + cameraAmplitude, y: cameraOrigin.y + 1), duration: 0.035),
-            .move(to: CGPoint(x: cameraOrigin.x - cameraAmplitude * 0.7, y: cameraOrigin.y - 1), duration: 0.045),
-            .move(to: cameraOrigin, duration: 0.07)
-        ]), withKey: "chapter-one-camera-impact")
-
-        spawnResidualArcana(
-            at: CGPoint(x: enemy.node.position.x, y: enemy.node.position.y + 24),
-            color: UIColor(red: 0.72, green: 0.36, blue: 1, alpha: 1),
-            count: heavy ? 9 : 6
-        )
-    }
-
-    /// Shows a secondary hit's number without replaying the full authored
-    /// impact effect. Multi-target cards use one enemy as their visual anchor;
-    /// this keeps the other authoritative damage result readable without
-    /// creating a second effect that can outlive a defeated target.
-    func presentChapterOneDamageNumber(targetID: String, damage: Int) {
-        guard presentationOnly,
-              damage >= 0,
-              let enemy = enemies.first(where: { $0.spawn.id == targetID && $0.isAlive })
-        else { return }
-
-        if damage == 0 {
-            presentChapterOneZeroDamage(targetID: targetID)
-        } else {
-            spawnBigDamageNumber(damage, at: enemyCombatNumberAnchor(enemy))
-        }
-    }
-
-    /// The Unity actor and this SpriteKit overlay live in separate view trees,
-    /// so a persistent shield cannot be transform-locked without drift. Show
-    /// it only for the short contact beat of a player hit, while the enemy is
-    /// stationary at its authored formation slot.
-    private func flashClockGuardShieldOnPlayerImpact(for enemy: DungeonEnemyActor) {
-        guard effectsOnlyOverlayEnabled,
-              enemy.spawn.kind == .hollowClockGuard,
-              enemy.usesIntegratedControlSeal,
-              let aura = enemy.controlSealAuraNode else { return }
-
-        aura.removeAction(forKey: "control-seal-impact-flash")
-        aura.removeAction(forKey: "unity-guard-follow")
-        aura.position = unityClockGuardAuraHomes[enemy.spawn.id] ?? aura.position
-        aura.setScale(0.96)
-        aura.alpha = 0
-        aura.isHidden = false
-        aura.run(.sequence([
-            .group([
-                .fadeAlpha(to: 0.94, duration: 0.055),
-                .scale(to: 1.02, duration: 0.08)
-            ]),
-            .wait(forDuration: 0.14),
-            .group([
-                .fadeOut(withDuration: 0.18),
-                .scale(to: 1.08, duration: 0.18)
-            ]),
-            .run { [weak aura] in
-                aura?.isHidden = true
-                aura?.alpha = 1
-                aura?.setScale(1)
-            }
-        ]), withKey: "control-seal-impact-flash")
     }
 
     // MARK: - Fool skill presentation recipes
@@ -6021,86 +5803,6 @@ final class DungeonScene: SKScene {
         ]))
     }
 
-    private func spawnFoolPersonalAegis() {
-        player.childNode(withName: "combat-effect-fool-personal-aegis")?.removeFromParent()
-
-        let aegis = SKNode()
-        aegis.name = "combat-effect-fool-personal-aegis"
-        aegis.position = CGPoint(x: 0, y: 43)
-        aegis.zPosition = 24
-        aegis.alpha = 0
-        aegis.setScale(0.88)
-        player.addChild(aegis)
-
-        let shell = SKShapeNode(ellipseOf: CGSize(width: 112, height: 166))
-        shell.fillColor = UIColor(red: 0.38, green: 0.86, blue: 1, alpha: 0.10)
-        shell.strokeColor = UIColor(red: 0.72, green: 0.94, blue: 1, alpha: 0.92)
-        shell.lineWidth = 2.4
-        shell.glowWidth = 12
-        shell.blendMode = .add
-        aegis.addChild(shell)
-
-        let innerShell = SKShapeNode(ellipseOf: CGSize(width: 98, height: 150))
-        innerShell.fillColor = UIColor(red: 1, green: 0.84, blue: 0.42, alpha: 0.035)
-        innerShell.strokeColor = UIColor(red: 0.94, green: 0.82, blue: 0.48, alpha: 0.62)
-        innerShell.lineWidth = 1.15
-        innerShell.glowWidth = 5
-        innerShell.blendMode = .add
-        aegis.addChild(innerShell)
-
-        for (index, y) in [CGFloat(-48), -16, 18, 51].enumerated() {
-            let normalizedY = y / 83
-            let halfWidth = sqrt(max(0, 1 - normalizedY * normalizedY)) * 53
-            let path = CGMutablePath()
-            path.move(to: CGPoint(x: -halfWidth, y: y))
-            path.addQuadCurve(
-                to: CGPoint(x: halfWidth, y: y),
-                control: CGPoint(x: 0, y: y + (index.isMultiple(of: 2) ? 7 : -7))
-            )
-            let current = SKShapeNode(path: path)
-            current.strokeColor = index.isMultiple(of: 2)
-                ? UIColor(red: 0.68, green: 0.95, blue: 1, alpha: 0.44)
-                : UIColor(red: 1, green: 0.84, blue: 0.46, alpha: 0.30)
-            current.lineWidth = index == 1 || index == 2 ? 1.4 : 0.8
-            current.glowWidth = 4
-            current.blendMode = .add
-            current.alpha = 0.25
-            aegis.addChild(current)
-            current.run(.repeatForever(.sequence([
-                .wait(forDuration: TimeInterval(index) * 0.08),
-                .fadeAlpha(to: 0.72, duration: 0.22),
-                .fadeAlpha(to: 0.20, duration: 0.42)
-            ])))
-        }
-
-        for index in 0..<7 {
-            let angle = CGFloat(index) / 7 * .pi * 2
-            let mote = SKShapeNode(circleOfRadius: index.isMultiple(of: 3) ? 1.8 : 1.1)
-            mote.position = CGPoint(x: cos(angle) * 49, y: sin(angle) * 73)
-            mote.fillColor = index.isMultiple(of: 2) ? .white : UIColor.systemCyan
-            mote.strokeColor = .clear
-            mote.glowWidth = 4
-            mote.blendMode = .add
-            aegis.addChild(mote)
-        }
-
-        aegis.run(.sequence([
-            .group([
-                .fadeAlpha(to: 1, duration: 0.16),
-                .scale(to: 1, duration: 0.20)
-            ]),
-            .group([
-                .scale(to: 1.025, duration: 0.22),
-                .fadeAlpha(to: 0.88, duration: 0.22)
-            ]),
-            .group([
-                .scale(to: 0.98, duration: 0.30),
-                .fadeOut(withDuration: 0.30)
-            ]),
-            .removeFromParent()
-        ]))
-    }
-
     private func spawnSpiritualAfterimages(at position: CGPoint, color: UIColor) {
         guard let artwork = playerArtwork, let texture = artwork.texture else { return }
         for (index, horizontalOffset) in [CGFloat(-54), 54].enumerated() {
@@ -7202,10 +6904,6 @@ final class DungeonScene: SKScene {
 
     private func spawnDamageNumber(_ damage: Int, at position: CGPoint, color: UIColor) {
         spawnCombatNumber("−\(damage)", at: position, color: color)
-    }
-
-    private func spawnBigDamageNumber(_ damage: Int, at position: CGPoint) {
-        spawnCombatNumber("−\(damage)", at: position, color: .systemRed, scale: 1.10)
     }
 
     private func spawnCombatNumber(

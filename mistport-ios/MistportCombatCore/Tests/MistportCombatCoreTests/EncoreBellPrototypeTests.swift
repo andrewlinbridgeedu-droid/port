@@ -21,7 +21,7 @@ struct EncoreBellPrototypeTests {
         #expect(rang)
         let enemyHP = s.enemies[0].hp
         _ = try s.useBasicAction(.damage, targetID: id)
-        _ = try s.useFoolSkill(.sidestepStrike, targetID: id, usesRealtimeCooldown: true)
+        _ = try s.useFoolSkill(.sidestepStrike, targetID: id)
         #expect(s.enemies[0].hp < enemyHP)
         #expect(s.enemies[0].currentIntent == "charge")
         let early = bell.consumeReleaseIfDue(at: 5.99)

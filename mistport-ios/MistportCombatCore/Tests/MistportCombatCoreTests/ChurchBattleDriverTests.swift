@@ -142,7 +142,8 @@ struct ChurchBattleDriverTests {
 
     @Test("stepping by hand, as the App will, gives the same battle, log and presentation events")
     func stepperMatchesRecording() throws {
-        let (floor, loadout) = floorLoadout(12)
+        // F12 now falls before any enemy contact resolves (2026-10-12 cadence); F30 still trades blows.
+        let (floor, loadout) = floorLoadout(30)
         let (recorded, log) = try MPCChurchBattleDriver.record(encounterID: floor.id, loadout: loadout, policy: runnerPolicy(floors: floor.waves.count))
         let policy = runnerPolicy(floors: floor.waves.count)
         var stepper = try MPCChurchBattleStepper(encounterID: floor.id, loadout: loadout)

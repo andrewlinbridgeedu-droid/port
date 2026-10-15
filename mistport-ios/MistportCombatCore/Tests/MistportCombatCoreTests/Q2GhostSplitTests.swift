@@ -59,7 +59,7 @@ struct Q2GhostSplitTests {
         #expect(fresh.enemies.filter(\.isAlive).count == 2)
         #expect(fresh.enemies.dropFirst(2).allSatisfy { $0.hp == 0 })
     }
-    @Test("After both parents split, any selected red child and one other take real HP damage", arguments: [0, 1, 2, 3])
+    @Test("After both parents split, any selected red child and two others take real HP damage", arguments: [0, 1, 2, 3])
     func sidestepAgainstFourChildren(selectedSlot: Int) throws {
         var session = try MPCChapterOneEncounterSession.start(
             encounterID: "chapter01_q02_encounter", companionIDs: [],
@@ -72,12 +72,13 @@ struct Q2GhostSplitTests {
         for _ in 0..<2 {
             let before = Dictionary(uniqueKeysWithValues: session.enemies.map { ($0.id, $0.hp) })
             // Native cooldown scheduling calls this API only when the next cast is due.
-            let result = try session.useFoolSkill(.sidestepStrike, targetID: selectedID, usesRealtimeCooldown: true)
-            #expect(result.targets.count == 2)
-            #expect(Set(result.targets.map(\.targetID)).count == 2)
-            #expect(result.targets.contains { $0.targetID == selectedID })
+            // 错步穿行 cuts up to three bodies (ten-card redesign, 2026-10-12).
+            let result = try session.useFoolSkill(.sidestepStrike, targetID: selectedID)
+            #expect(result.targets.count == 3)
+            #expect(Set(result.targets.map(\.targetID)).count == 3)
+            #expect(result.targets.first?.targetID == selectedID)
             let changed = session.enemies.filter { $0.hp < before[$0.id, default: 0] }
-            #expect(changed.count == 2)
+            #expect(changed.count == 3)
             #expect(Set(changed.map(\.id)) == Set(result.targets.map(\.targetID)))
             for target in result.targets {
                 let after = try #require(session.enemies.first { $0.id == target.targetID })
@@ -97,7 +98,7 @@ struct Q2GhostSplitTests {
         for child in children.dropLast() { _ = try session.applyPartyDamage(10_000, to: child.id) }
         let last = try #require(children.last)
         _ = try session.applyPartyDamage(last.maxHP - 1, to: last.id)
-        let result = try session.useFoolSkill(.sidestepStrike, targetID: last.id, usesRealtimeCooldown: true)
+        let result = try session.useFoolSkill(.sidestepStrike, targetID: last.id)
         #expect(result.targets.map(\.targetID) == [last.id])
         #expect(session.outcome == .victory)
     }

@@ -91,7 +91,7 @@ struct RemnantBattleView: View {
             if let initial = configuredSession ?? previewSession {
                 ChapterOneEncounterTestView(initialSession: initial,
                     campaign: game.churchBattleCampaign, playerSequence: game.currentSequence,
-                    battleIsActive: started, automatesSkillSequence: true,
+                    battleIsActive: started,
                     showsStandaloneOpeningBattleButton: false,
                     onVictory: { result in
                         guard !finished else { return }

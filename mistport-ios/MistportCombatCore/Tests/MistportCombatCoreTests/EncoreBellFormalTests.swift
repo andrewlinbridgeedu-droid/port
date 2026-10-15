@@ -65,7 +65,7 @@ struct EncoreBellFormalTests {
         #expect(equipped.canUseEncoreBell)
         let mutationResult7 = equipped.activateTimedMasquerade(at: 0)
         #expect(!mutationResult7)
-        _ = try equipped.useFoolSkill(.maskedWhisper, targetID: equipped.enemies[0].id, usesRealtimeCooldown: true)
+        _ = try equipped.useFoolSkill(.maskedWhisper, targetID: equipped.enemies[0].id)
         #expect(equipped.masqueradeCharges > 0)
         #expect(equipped.timedMasqueradeExpiresAt == nil)
         #expect(!equipped.q5PaperRelicReady)

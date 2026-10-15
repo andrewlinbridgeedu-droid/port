@@ -21,7 +21,8 @@ public enum MPCChurchTowerVerificationRunner {
         let q = mission(for: floor)
         let cards: [FoolSkillID]
         if route == .unprepared { cards = [] }
-        else if q < 8 { cards = [.stolenTempo, .sidestepStrike, .backstageChange, .mirrorBarrage] }
+        // Clearing Q7 opens three slots and cards up to Q8's 张冠李戴; 碎镜连弹 waits for Q9 (2026-10-15 fix).
+        else if q < 8 { cards = [.stolenTempo, .sidestepStrike, .backstageChange] }
         else if q < 11 { cards = [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .sidestepStrike] }
         else if route == .counter { cards = [.turnTheTables, .fabricatedEvidence, .identityDisplacement, .absurdFinale] }
         else { cards = [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .absurdFinale] }

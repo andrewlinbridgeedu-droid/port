@@ -24,7 +24,7 @@ struct ChapterOneEncounterRuntimeTests {
         #expect(campaign.loadout.relicIDs == [watch, anchor, watch])
     }
 
-    @Test("Q1 and Q2 retain one card; Q3 grants the second card slot")
+    @Test("Clearing Q1 opens Q2's card and second slot; Q2 and Q3 add no card")
     func progressiveChapterStart() throws {
         var campaign = MPCChapterOneCampaignState.chapterStartState
         #expect(campaign.unlockedSkillIDs.isEmpty)
@@ -34,26 +34,27 @@ struct ChapterOneEncounterRuntimeTests {
         #expect(campaign.ownedRelicIDs.isEmpty)
         #expect(Set(campaign.inventory.keys) == ["currency_copper"])
 
+        // Cards and slots open once Q(n-1) is cleared (MPCOrderedSkillRules, 2026-10-12).
         let first = try #require(MPCChapterOneCatalog.encounters.first { $0.id == "chapter01_q01_encounter" })
         campaign.claimVictory(for: first)
-        #expect(campaign.unlockedSkillIDs == [.sidestepStrike])
-        #expect(campaign.loadout.normalSkillIDs == [.sidestepStrike])
-        #expect(campaign.loadoutSlotCapacity == 1)
+        #expect(campaign.unlockedSkillIDs == [.sidestepStrike, .fabricatedEvidence])
+        #expect(campaign.loadout.normalSkillIDs == [.sidestepStrike, .fabricatedEvidence])
+        #expect(campaign.loadoutSlotCapacity == MPCOrderedSkillRules.slotCapacity(availableThrough: 2))
         #expect(!campaign.loadout.normalSkillIDs.contains(.paperDouble))
         #expect(campaign.inventory["item_old_clock_pass"] == 1)
         #expect(campaign.inventory["consumable_pain_salve"] == 1)
 
         let second = try #require(MPCChapterOneCatalog.encounters.first { $0.id == "chapter01_q02_encounter" })
         campaign.claimVictory(for: second)
-        #expect(campaign.unlockedSkillIDs == [.sidestepStrike])
-        #expect(campaign.loadout.normalSkillIDs == [.sidestepStrike])
+        #expect(campaign.unlockedSkillIDs == [.sidestepStrike, .fabricatedEvidence])
+        #expect(campaign.loadout.normalSkillIDs == [.sidestepStrike, .fabricatedEvidence])
         #expect(campaign.currentMissionID == "chapter01_q03")
 
         let third = try #require(MPCChapterOneCatalog.encounters.first { $0.id == "chapter01_q03_encounter" })
         campaign.claimVictory(for: third)
-        #expect(campaign.unlockedSkillIDs == [.sidestepStrike])
+        #expect(campaign.unlockedSkillIDs == [.sidestepStrike, .fabricatedEvidence])
         #expect(campaign.ownsManualMask)
-        #expect(campaign.loadout.normalSkillIDs == [.sidestepStrike])
+        #expect(campaign.loadout.normalSkillIDs == [.sidestepStrike, .fabricatedEvidence])
         #expect(campaign.loadoutSlotCapacity == 2)
         #expect(campaign.currentMissionID == "chapter01_q04")
     }
@@ -208,14 +209,15 @@ struct ChapterOneEncounterRuntimeTests {
         #expect(campaign.skillUnlockStates[.paperDouble] == nil)
         #expect(campaign.ownedRelicIDs.contains("relic_encore_bell") == MPCChapterOneCatalog.relicsEnabled)
         #expect(campaign.inventory["item_sealed_transfer"] == nil)
-        #expect(campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: 5) == nil)
-        #expect(campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: 8) == .identityDisplacement)
-        #expect(campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: 9) == .fabricatedEvidence)
-        #expect(campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: 10) == .mirrorPursuit)
-        #expect(campaign.loadoutSlotCapacity == 4)
-        #expect(campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: 11) == .absurdFinale)
-        #expect(campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: 12) == .turnTheTables)
-        #expect(campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: 13) == .namelessStage)
+        // Clearing Qn opens the cards gated at Q(n+1) (MPCOrderedSkillRules.unlockMission, 2026-10-12);
+        // the call reports the first new one, and slots follow slotCapacity(availableThrough: n+1).
+        let expected: [(Int, FoolSkillID?)] = [(6, .stolenTempo), (7, .identityDisplacement), (8, .mirrorBarrage),
+            (9, .mirrorPursuit), (10, .absurdFinale), (11, .delayedSignature), (12, nil), (13, .namelessStage)]
+        #expect(campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: 5) == nil) // claimVictory already applied it
+        for (number, skill) in expected {
+            #expect(campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: number) == skill, "Q\(number)")
+            #expect(campaign.loadoutSlotCapacity == MPCOrderedSkillRules.slotCapacity(availableThrough: number + 1), "Q\(number)")
+        }
         #expect(campaign.applyChapterMissionProgress(districtID: "salt-warehouse", missionNumber: 15) == nil)
         #expect(campaign.applyChapterMissionProgress(districtID: "mist-crown", missionNumber: 20) == nil)
         #expect(campaign.loadoutSlotCapacity == 4)
@@ -262,13 +264,17 @@ struct ChapterOneEncounterRuntimeTests {
             loadout: loadout
         )
         let expectedEnemyIDs = session.enemies.filter(\.isAlive).map(\.id)
+        let hp = session.playerHP, shield = session.playerShield
 
         try session.endRound()
 
         let actions = session.lastEnemyActionResolutions
         #expect(actions.map(\.enemyID) == expectedEnemyIDs)
         #expect(Set(actions.map(\.enemyID)).count == 2)
-        #expect(actions.allSatisfy { $0.playerDamage > 0 })
+        // Damage numbers show the HP actually lost (2026-10-15, user): the opening shield
+        // swallows the first blow, the second reaches health.
+        #expect(actions.map(\.playerDamage) == [0, hp - session.playerHP])
+        #expect(shield > 0 && session.playerShield < shield && session.playerHP < hp)
         #expect(actions.allSatisfy { $0.healedTargetID == nil })
     }
 
@@ -294,7 +300,7 @@ struct ChapterOneEncounterRuntimeTests {
     @Test("Q4 stays ranged and probes before two charged fireballs")
     func q4NormalHoundDealsDamage() throws {
         let loadout = MPCChapterOneLoadout(
-            normalSkillIDs: [.sidestepStrike, .maskedWhisper],
+            normalSkillIDs: [.sidestepStrike, .fabricatedEvidence],
             passiveIDs: [],
             relicIDs: []
         )
@@ -314,9 +320,12 @@ struct ChapterOneEncounterRuntimeTests {
         try session.endRound()
         #expect(session.lastEnemyActionResolutions.first?.intent == "charge")
         #expect(session.lastEnemyActionResolutions.first?.playerDamage == 0)
+        let hpBeforeFlame = session.playerHP
         try session.endRound()
         #expect(session.lastEnemyActionResolutions.first?.intent == "q4_flame_first")
-        #expect(session.lastEnemyActionResolutions.first?.playerDamage == (session.playerMaxHP * 110 + 99) / 100)
+        // The 110% flame overkills; its number shows the HP that was left (2026-10-15, user).
+        #expect((session.playerMaxHP * 110 + 99) / 100 > hpBeforeFlame)
+        #expect(session.lastEnemyActionResolutions.first?.playerDamage == hpBeforeFlame)
         #expect(session.outcome == .defeat)
         #expect(session.playerHP == 0)
 
@@ -324,16 +333,17 @@ struct ChapterOneEncounterRuntimeTests {
 
     @Test("Q4 finishes through actual damage, without a forced fourth-beat kill")
     func q4ActualDamage() throws {
-        var session = try MPCChapterOneEncounterSession.start(encounterID: "chapter01_q04_encounter", companionIDs: [], loadout: .init(normalSkillIDs: [.maskedWhisper, .sidestepStrike], passiveIDs: [], relicIDs: []))
+        var session = try MPCChapterOneEncounterSession.start(encounterID: "chapter01_q04_encounter", companionIDs: [], loadout: .init(normalSkillIDs: [.fabricatedEvidence, .sidestepStrike], passiveIDs: [], relicIDs: []))
         let id = session.enemies[0].id
         let before = session.enemies[0].hp
-        _ = try session.applyPartyDamage(1, to: id)
-        #expect(session.enemies[0].hp == before - 1)
+        // Outside the counter window the hound takes 25% (3753d5d).
+        _ = try session.applyPartyDamage(100, to: id)
+        #expect(session.enemies[0].hp == before - 25)
         for _ in 0..<4 {
-            _ = try session.applyPartyDamage(1, to: id)
+            _ = try session.applyPartyDamage(100, to: id)
         }
         #expect(session.outcome == .inProgress)
-        #expect(session.enemies[0].hp == before - 5)
+        #expect(session.enemies[0].hp == before - 125)
     }
 
     @Test("Retired paper relic cannot rescue the player or reset a defeat")
@@ -487,18 +497,16 @@ struct ChapterOneEncounterRuntimeTests {
 
     @Test("Encounter skill execution preserves the Fool combo state")
     func foolComboExecution() throws {
+        // 假面谕令 is a relic now; 伪证 alone writes the four stacks (ten-card redesign).
         var session = try MPCChapterOneEncounterSession.start(encounterID: "encounter_rain_01")
         let target = try #require(session.enemies.first)
-        _ = try session.useFoolSkill(.maskedWhisper, targetID: target.id)
         _ = try session.useFoolSkill(.fabricatedEvidence, targetID: target.id)
         #expect(session.foolState(for: target.id)?.illusionStacks == 4)
         _ = try session.useFoolSkill(.identityDisplacement, targetID: target.id)
         #expect(session.foolState(for: target.id)?.illusionStacks == 0)
         #expect(session.foolState(for: target.id)?.misalignmentStacks == 2)
         #expect(session.log.contains { entry in
-            entry.message.contains("fool_skill_04")
-                && entry.message.contains("基础命中")
-                && entry.message.contains("最终伤害")
+            entry.message.contains("fool_skill_04") && entry.message.contains("首次命中")
                 && !entry.message.contains("剩余冷却")
         })
     }
@@ -569,14 +577,15 @@ struct ChapterOneEncounterRuntimeTests {
             passiveIDs: MPCChapterOneCatalog.passives.map(\.id),
             relicIDs: MPCChapterOneCatalog.relics.map(\.id)
         )
-        #expect(loadout.normalSkillIDs.count == 5)
+        // Four ordered slots (ten-card redesign, 2026-10-12).
+        #expect(loadout.normalSkillIDs.count == 4)
         #expect(!loadout.normalSkillIDs.contains(.namelessStage))
-        #expect(Set(loadout.normalSkillIDs).count == 5)
+        #expect(Set(loadout.normalSkillIDs).count == 4)
         #expect(loadout.passiveIDs.count == 2)
         #expect(loadout.relicIDs.count == 2)
     }
 
-    @Test("Loadout removes duplicate normal skills before applying the five-slot limit")
+    @Test("Loadout removes duplicate normal skills before applying the four-slot limit")
     func loadoutDeduplicatesSkills() {
         let loadout = MPCChapterOneLoadout(normalSkillIDs: [
             .maskedWhisper, .maskedWhisper, .fabricatedEvidence,
@@ -584,8 +593,7 @@ struct ChapterOneEncounterRuntimeTests {
             .absurdFinale, .turnTheTables,
         ])
         #expect(loadout.normalSkillIDs == [
-            .maskedWhisper, .fabricatedEvidence, .identityDisplacement,
-            .mirrorPursuit, .sidestepStrike,
+            .maskedWhisper, .fabricatedEvidence, .identityDisplacement, .mirrorPursuit,
         ])
     }
 
@@ -616,24 +624,28 @@ struct ChapterOneEncounterRuntimeTests {
             loadout: MPCChapterOneLoadout(ritual: .borrowedSecond)
         )
         let target = try #require(session.enemies.first)
-        _ = try session.useFoolSkill(.maskedWhisper, targetID: target.id)
-        #expect(session.remainingCooldownActions(for: .maskedWhisper) == 2)
+        // The default hand has no 假面谕令 any more (now a relic); 伪证 shares its two-action delay.
+        _ = try session.useFoolSkill(.fabricatedEvidence, targetID: target.id)
+        #expect(session.remainingCooldownActions(for: .fabricatedEvidence) == 2)
         #expect(!session.borrowedSecondAvailable)
     }
 
     @Test("Late applause empowers the next single-hit skill")
     func lateApplause() throws {
-        var session = try MPCChapterOneEncounterSession.start(
-            encounterID: "encounter_midnight_02",
-            loadout: MPCChapterOneLoadout(normalSkillIDs: [.identityDisplacement, .mirrorPursuit, .sidestepStrike], passiveIDs: ["fool_passive_04"], relicIDs: [])
-        )
-        let target = try #require(session.enemies.first)
-        _ = try session.useFoolSkill(.namelessStage, targetID: nil)
-        _ = try session.useFoolSkill(.identityDisplacement, targetID: target.id)
-        _ = try session.useFoolSkill(.mirrorPursuit, targetID: target.id)
-        let strike = try session.useFoolSkill(.sidestepStrike, targetID: target.id)
-        #expect(strike.damage > 100)
-        #expect(session.triggeredEffects.contains { $0.contains("迟到的掌声") })
+        // Realtime: the bonus arms once the multi-hit spell's last contact lands.
+        func strike(passives: [String]) throws -> Int {
+            var session = try MPCChapterOneEncounterSession.start(
+                encounterID: "encounter_midnight_02",
+                loadout: MPCChapterOneLoadout(normalSkillIDs: [.mirrorPursuit, .sidestepStrike], passiveIDs: passives, relicIDs: [])
+            )
+            let target = try #require(session.enemies.first)
+            _ = try session.useFoolSkill(.mirrorPursuit, targetID: target.id)
+            _ = session.advanceRelicClock(at: 1) // the second mirror lands
+            #expect(session.drainOrderedSkillImpacts().contains { $0.skill == .mirrorPursuit })
+            return try session.useFoolSkill(.sidestepStrike, targetID: target.id).damage
+        }
+        let plain = try strike(passives: []), applauded = try strike(passives: ["fool_passive_04"])
+        #expect(plain > 0 && abs(applauded - plain * 110 / 100) <= 1)
     }
 
     @Test("Unwritten ending grants and consumes a low-health evasion")
@@ -723,24 +735,6 @@ struct ChapterOneEncounterRuntimeTests {
         try session.endRound()
         #expect(session.foolState(for: trimmer.id)?.illusionStacks == 2)
         #expect(session.triggeredEffects.contains { $0.contains("裁去的名牌") })
-    }
-
-    @Test("Blank ticket preserves one expired finale setup", .enabled(if: MPCChapterOneCatalog.relicsEnabled))
-    func blankTicket() throws {
-        var session = try MPCChapterOneEncounterSession.start(
-            encounterID: "encounter_midnight_02",
-            loadout: MPCChapterOneLoadout(
-                normalSkillIDs: [.maskedWhisper, .paperDouble, .turnTheTables],
-                passiveIDs: [], relicIDs: ["relic_blank_ticket"]
-            )
-        )
-        let target = try #require(session.enemies.first)
-        _ = try session.useFoolSkill(.namelessStage, targetID: nil)
-        _ = try session.useFoolSkill(.maskedWhisper, targetID: target.id)
-        _ = try session.useFoolSkill(.paperDouble, targetID: nil)
-        _ = try session.useFoolSkill(.turnTheTables, targetID: target.id)
-        #expect(session.foolState(for: target.id)?.finaleReady == true)
-        #expect(session.triggeredEffects.contains { $0.contains("空白戏票") })
     }
 
     @Test("Unequipped skills cannot bypass the six-slot loadout")
@@ -875,13 +869,14 @@ struct ChapterOneEncounterRuntimeTests {
             consumables: ["consumable_clock_key": 1]
         )
         let target = try #require(session.enemies.first)
-        _ = try session.useFoolSkill(.maskedWhisper, targetID: target.id)
-        #expect(session.remainingCooldownActions(for: .maskedWhisper) == 2)
+        // The default hand has no 假面谕令 any more (now a relic); 伪证 shares its two-action delay.
+        _ = try session.useFoolSkill(.fabricatedEvidence, targetID: target.id)
+        #expect(session.remainingCooldownActions(for: .fabricatedEvidence) == 2)
         _ = try session.useBasicAction(.damage, targetID: target.id)
         _ = try session.useBasicAction(.damage, targetID: target.id)
-        _ = try session.useFoolSkill(.maskedWhisper, targetID: target.id)
+        _ = try session.useFoolSkill(.fabricatedEvidence, targetID: target.id)
         try session.useConsumable("consumable_clock_key")
-        #expect(session.remainingCooldownActions(for: .maskedWhisper) == 2)
+        #expect(session.remainingCooldownActions(for: .fabricatedEvidence) == 2)
     }
 
     @Test("Battle consumables apply their effects and are consumed")

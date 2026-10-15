@@ -43,16 +43,19 @@ struct OutfitBonusTests {
         let bare = bareLoadout()
         var dressed = bare
         dressed.outfit = .midnightCarnival
+        // Measure on a skill hit: the 32-point basic swing truncates +2% away (2026-10-12 basics).
+        var armed = bare, dressedArmed = dressed
+        armed.normalSkillIDs = [.sidestepStrike]; dressedArmed.normalSkillIDs = [.sidestepStrike]
         var baseAttack = try MPCChapterOneEncounterSession.start(
-            encounterID: "church_tower_011", companionIDs: [], loadout: bare
+            encounterID: "church_tower_011", companionIDs: [], loadout: armed
         )
         var dressedAttack = try MPCChapterOneEncounterSession.start(
-            encounterID: "church_tower_011", companionIDs: [], loadout: dressed
+            encounterID: "church_tower_011", companionIDs: [], loadout: dressedArmed
         )
         let target = baseAttack.enemies[0].id
-        let baseDamage = try baseAttack.useBasicAction(.damage, targetID: target)
-        let outfitDamage = try dressedAttack.useBasicAction(.damage, targetID: target)
-        #expect(outfitDamage > baseDamage)
+        let baseDamage = try baseAttack.useFoolSkill(.sidestepStrike, targetID: target).damage
+        let outfitDamage = try dressedAttack.useFoolSkill(.sidestepStrike, targetID: target).damage
+        #expect(baseDamage > 0 && outfitDamage > baseDamage)
         #expect(dressedAttack.loadout.outfit == .midnightCarnival)
 
         var baseDefense = try MPCChapterOneEncounterSession.start(
@@ -74,12 +77,9 @@ struct OutfitBonusTests {
         let bare = bareLoadout()
         var lucky = bare
         lucky.outfit = .starlightMagician // zero reduction isolates the dodge result
-        var base = try MPCChapterOneEncounterSession.start(
-            encounterID: "church_tower_004", party: party, companionIDs: [], loadout: bare
-        )
-        var dressed = try MPCChapterOneEncounterSession.start(
-            encounterID: "church_tower_004", party: party, companionIDs: [], loadout: lucky
-        )
+        // F04's shield-jaw closes the floor after its minion waves (2026-10-12).
+        var (base, start) = try startChurchTower(4, containing: [.shieldJaw], loadout: bare, party: party)
+        var (dressed, _) = try startChurchTower(4, containing: [.shieldJaw], loadout: lucky, party: party)
         let attacker = try #require(base.enemies.first { MPCChurchTowerCatalog.isShieldJaw($0.contentID) })
         var observedDodge = false
         for tick in 0..<1_000 {
@@ -88,8 +88,8 @@ struct OutfitBonusTests {
                 encounterID: dressed.encounter.id, enemyID: enemy.id,
                 intent: enemy.currentIntent, wave: dressed.waveIndex, actionIndex: enemy.intentIndex
             )
-            try base.endRound(actingEnemyID: attacker.id, at: Double(tick))
-            try dressed.endRound(actingEnemyID: attacker.id, at: Double(tick))
+            try base.endRound(actingEnemyID: attacker.id, at: start + Double(tick))
+            try dressed.endRound(actingEnemyID: attacker.id, at: start + Double(tick))
             let bareDamage = try #require(base.lastEnemyActionResolutions.first?.playerDamage)
             let dressedDamage = try #require(dressed.lastEnemyActionResolutions.first?.playerDamage)
             if wouldDodge, bareDamage > 0 {

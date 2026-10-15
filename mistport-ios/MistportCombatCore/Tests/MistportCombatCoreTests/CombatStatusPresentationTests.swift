@@ -7,7 +7,7 @@ struct CombatStatusPresentationTests {
         var s = try MPCChapterOneEncounterSession.start(encounterID: "chapter01_q08_encounter", companionIDs: [],
             loadout: .init(normalSkillIDs: [.sidestepStrike, .identityDisplacement], isUltimateUnlocked: false, passiveIDs: [], relicIDs: []))
         let id = s.enemies[0].id
-        _ = try s.useFoolSkill(.identityDisplacement, targetID: id, usesRealtimeCooldown: true)
+        _ = try s.useFoolSkill(.identityDisplacement, targetID: id)
         #expect(s.enemyCombatStatuses(enemyID: id, at: 0).first { $0.id == "illusion" }?.count == s.foolStates[id]?.illusionStacks)
         #expect(s.enemyCombatStatuses(enemyID: "missing", at: 0).isEmpty)
         #expect(!s.playerCombatStatuses(at: 0).contains { $0.id == "illusion" })

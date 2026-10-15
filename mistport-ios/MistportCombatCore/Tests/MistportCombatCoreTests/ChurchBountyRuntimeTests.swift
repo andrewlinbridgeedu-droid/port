@@ -36,8 +36,8 @@ struct ChurchBountyRuntimeTests {
         func incoming(repeated: Bool) throws -> Int {
             var s = try MPCChapterOneEncounterSession.start(encounterID: "church_bounty_b04", companionIDs: [], loadout: .init(normalSkillIDs: [.sidestepStrike, .identityDisplacement], isUltimateUnlocked: false, passiveIDs: [], relicIDs: []))
             let id = s.enemies[0].id
-            _ = try s.useFoolSkill(.sidestepStrike, targetID: id, usesRealtimeCooldown: true)
-            _ = try s.useFoolSkill(repeated ? .sidestepStrike : .identityDisplacement, targetID: id, usesRealtimeCooldown: true)
+            _ = try s.useFoolSkill(.sidestepStrike, targetID: id)
+            _ = try s.useFoolSkill(repeated ? .sidestepStrike : .identityDisplacement, targetID: id)
             // Control can delay an action; consume that actual delay before advancing.
             while s.consumeEnemyDelay(for: id) {}
             while s.enemies[0].currentIntent != "bounty_overwrite" { try s.endRound(actingEnemyID: id, at: 0) }

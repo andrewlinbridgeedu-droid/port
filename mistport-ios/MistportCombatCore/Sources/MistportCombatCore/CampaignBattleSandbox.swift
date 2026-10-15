@@ -185,7 +185,7 @@ public struct MPCCampaignBattleDriver: Sendable {
             if session.outcome == .inProgress, let hit = pending, time >= hit.at {
                 pending = nil
                 if session.enemies.contains(where: { $0.id == hit.target && $0.isAlive }) {
-                    if let skill = hit.skill { _ = try session.useFoolSkill(skill, targetID: hit.target, usesRealtimeCooldown: true) }
+                    if let skill = hit.skill { _ = try session.useFoolSkill(skill, targetID: hit.target) }
                     else { _ = try session.useBasicAction(.damage, targetID: hit.target) }
                 } else { session.campaignRecord("target_lost", target: hit.target) }
             }

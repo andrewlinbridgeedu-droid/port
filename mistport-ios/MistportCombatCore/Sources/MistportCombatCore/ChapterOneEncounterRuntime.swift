@@ -628,24 +628,6 @@ public struct MPCFoolSkillTargetResolution: Equatable, Sendable {
     }
 }
 
-/// Group cards (2026-10-03, user: tower minion packs should let group skills shine).
-/// In the church tower, where minion packs walk in, ordinary group cards reach at most
-/// three enemies and the ultimate reaches all. The main story keeps its authored
-/// two-target 错步 and single-target 荒谬 (Q2's split teaching depends on them).
-public enum MPCFoolGroupCards {
-    /// Targets beyond the chosen one: 错步穿行 cuts through, 荒谬归结 splashes.
-    public static func extraTargets(encounterID: String, skill: FoolSkillID) -> Int {
-        let tower = encounterID.hasPrefix("church_tower_")
-        switch skill {
-        case .sidestepStrike: return tower ? 2 : 1
-        case .absurdFinale: return tower ? 2 : 0
-        default: return 0
-        }
-    }
-    /// 荒谬归结 deals this share of its own calculation to each bystander.
-    public static let finaleSplashPercent = 50
-}
-
 public struct MPCFoolSkillEncounterResolution: Equatable, Sendable {
     public let skillID: FoolSkillID
     public let damage: Int
@@ -720,7 +702,6 @@ public enum MPCEncounterRuntimeError: Error, Equatable {
     case unknownEncounter
     case invalidTarget
     case encounterFinished
-    case skillOnCooldown(FoolSkillID, remainingActions: Int)
     case skillNotEquipped(FoolSkillID)
     case unknownConsumable
     case noConsumableRemaining
@@ -1534,11 +1515,9 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     public private(set) var sealConversionReady = false
     private var memoryLeechCostPaid: Bool
     private var readySkillHeldActions: [FoolSkillID: Int]
-    private var finaleReadyExpiresAtAction: Int?
-    private var blankTicketUsed: Bool
     private var healingPenaltyBP: Int
     private var previousActionCategory: MPCPlayerActionCategory?
-    /// Extra misread stacks the next setup card applies (后手改写 1, with the leech vial 2).
+    /// Set by 后手改写 with the leech vial: the next 伪证 marks last 0.5 s longer per stack.
     private var enhancedSetupStacks: Int
     private var borrowedBellTriggeredRound: Int?
     private var unreliableNarratorTriggeredRound: Int?
@@ -1634,8 +1613,6 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             unifiedGearDamageReady: false,
             memoryLeechCostPaid: false,
             readySkillHeldActions: [:],
-            finaleReadyExpiresAtAction: nil,
-            blankTicketUsed: false,
             healingPenaltyBP: 0,
             previousActionCategory: nil,
             enhancedSetupStacks: 0,
@@ -1818,18 +1795,12 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         loadout.normalSkillIDs = next
     }
 
-    /// Prevents a battle from deadlocking when every equipped action is on
-    /// cooldown (notably the opening tutorial, which starts with one card).
-    @discardableResult
-    public mutating func recoverPlayableSkillIfNeeded() -> FoolSkillID? {
-        nil
-    }
-
+    /// Lands a cast on the realtime clock: callers (App loop, story/church steppers) own the
+    /// 7 s card cooldowns. The turn-based manual card mode was removed (2026-10-15, user: 手动出牌模式删掉).
     @discardableResult
     public mutating func useFoolSkill(
         _ skillID: FoolSkillID,
         targetID: String?,
-        usesRealtimeCooldown: Bool = false,
         sealedByPaperweight: Bool? = nil
     ) throws -> MPCFoolSkillEncounterResolution {
         combatHasBegun = true
@@ -1839,12 +1810,6 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         guard !playerIsDown else { throw MPCEncounterRuntimeError.playerDown }
         guard loadout.battleSkillIDs.contains(skillID) else {
             throw MPCEncounterRuntimeError.skillNotEquipped(skillID)
-        }
-        guard usesRealtimeCooldown || foolCooldowns.isAvailable(skillID) else {
-            throw MPCEncounterRuntimeError.skillOnCooldown(
-                skillID,
-                remainingActions: remainingCooldownActions(for: skillID)
-            )
         }
         // A card already on its way when the name seal fell still lands; the loop skips it next.
         foolSkillCastAt[skillID] = relicClock
@@ -1858,80 +1823,37 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             triggeredEffects.append("缄卷镇纸：封存第3槽，护层建立")
             return .init(skillID: skillID, damage: 0, targetID: targetID)
         }
-        if usesRealtimeCooldown, skillID.isOrderedOrdinary {
+        if skillID.isOrderedOrdinary {
             return try resolveOrderedFirstImpact(skillID, targetID: targetID)
         }
         defer { talentLastSkill = skillID }
-        expireFinaleReadyIfNeeded()
         let clockSpurBoost = loadout.relicIDs.contains("relic_clock_chaser_spur")
             && readySkillHeldActions[skillID, default: 0] >= 2
 
         let result: MPCFoolSkillEncounterResolution
         var calculationDetail = "效果技能；最终伤害0"
         switch skillID {
-        case .sidestepStrike where controlSealActive && encounter.id == "chapter01_q01_encounter":
-            let id = try validatedTargetID(targetID)
-            controlSealActive = false
-            applyBossActionCategory(.damage)
-            result = .init(skillID: skillID, damage: 0, targetID: id)
-            calculationDetail = "错步切断控制印记；保护层破除；最终伤害0"
         case .paperDouble:
             paperDoubleCounterCharges = 1
             behaviorTags.insert(.defensiveResponse)
             applyBossActionCategory(.protection)
             result = .init(skillID: skillID, damage: 0, targetID: nil)
             calculationDetail = "召唤纸偶；本回合首次针对玩家的直接攻击由纸偶承受；回合结束消失；最终伤害0"
-        case .backstageChange:
-            // The skill works on its own: strike out one enemy-applied damage over time and
-            // write one extra misread into the next setup card. The leech vial adds a second
-            // cleanse and a second extra misread. Relic costs (the needle's healing block)
-            // are the player's own bargain and are not cleansed.
-            let hasVial = loadout.relicIDs.contains("relic_memory_leech_vial")
-            // It also strikes out the final boss's name seal on the hero (2026-10-10).
-            var cleansed = (clearHeroSeal() ? ["夺名封印"] : []) + [cleanseOnePlayerDamageOverTime()].compactMap { $0 }
-            if hasVial {
-                if !memoryLeechCostPaid {
-                    playerHP = max(1, playerHP - 40)
-                    memoryLeechCostPaid = true
-                }
-                if let second = cleanseOnePlayerDamageOverTime() { cleansed.append(second) }
-                triggeredEffects.append("记忆蛭标本：再净化一次，下一张铺垫再多1层误认")
-            }
-            enhancedSetupStacks = max(enhancedSetupStacks, hasVial ? 2 : 1)
-            triggeredEffects.append("后手改写：" + (cleansed.isEmpty ? "无可净化" : "划去" + cleansed.joined(separator: "、")) + "；下一张铺垫额外\(enhancedSetupStacks)层误认")
-            applyBossActionCategory(.setup)
-            result = .init(skillID: skillID, damage: 0, targetID: nil)
-            calculationDetail = "净化\(cleansed.count)项持续伤害，下一张铺垫额外\(enhancedSetupStacks)层误认；最终伤害0"
         case .namelessStage:
             guard !foolUltimateUsed else { throw FoolBattleError.ultimateAlreadyUsed }
             let hasSeal = loadout.relicIDs.contains("relic_nameless_seal")
             for id in foolStates.keys {
                 foolStates[id]?.illusionStacks = hasSeal ? 2 : 4
-                if usesRealtimeCooldown { foolStates[id]?.illusionExpiresAt = relicClock + MPCOrderedSkillRules.markDuration }
-                foolStates[id]?.finaleReady = !usesRealtimeCooldown
+                foolStates[id]?.illusionExpiresAt = relicClock + MPCOrderedSkillRules.markDuration
+                foolStates[id]?.finaleReady = false
             }
             sealConversionReady = hasSeal
             foolUltimateUsed = true
-            finaleReadyExpiresAtAction = foolCooldowns.currentPlayerActionIndex + 3
             applyBossActionCategory(.setup)
             result = .init(skillID: skillID, damage: 0, targetID: nil)
             calculationDetail = "全体\(hasSeal ? 2 : 4)层误认并准备归结；最终伤害0"
-        case .turnTheTables:
-            let id = try validatedTargetID(targetID)
-            var state = foolStates[id] ?? .init()
-            if let boost = enemyDefenseBoosts.removeValue(forKey: id) {
-                state.targetDefense = enemies.first(where: { $0.id == id })?.defense ?? state.targetDefense
-                state.misalignmentStacks = 1
-                triggeredEffects.append("反客为主：驱散\(boost.bonusBP / 100)%防御增益并施加1幕错位")
-            } else {
-                state.illusionStacks = min(4, state.illusionStacks + 2)
-                triggeredEffects.append("反客为主：目标没有可驱散增益，施加2层误认")
-            }
-            foolStates[id] = state
-            applyBossActionCategory(.utility)
-            result = .init(skillID: skillID, damage: 0, targetID: id)
-            calculationDetail = "驱散防御增益并施加错位；无增益则追加2层误认，最终伤害0"
-        default:
+        case .maskedWhisper:
+            // Retired card (now the ownerless-mask relic); old loadouts and fixtures may still cast it.
             let id = try validatedTargetID(targetID)
             let state = foolStates[id] ?? .init(targetDefense: enemies.first(where: { $0.id == id })?.defense ?? 20)
             var calculationState = state
@@ -1946,47 +1868,24 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             var persistentResolutionState = resolution.state
             persistentResolutionState.attack = state.attack
             persistentResolutionState.targetDefense = state.targetDefense
-            if skillID == .identityDisplacement, state.illusionStacks >= 4, sealConversionReady {
-                persistentResolutionState.illusionStacks = 4
-                sealConversionReady = false
-                triggeredEffects.append("无主印章：成功转换保留4层误认，免费机会已用尽")
-            }
             foolStates[id] = persistentResolutionState
-            if skillID == .identityDisplacement, state.illusionStacks >= 4,
-               let index = enemies.firstIndex(where: { $0.id == id }) {
-                enemies[index].delayedRounds = max(1, enemies[index].delayedRounds)
-                behaviorTags.formUnion([.convertToMisalignment, .reachFourIllusion])
-                triggeredEffects.append("张冠李戴：转换4层误认，目标下次起手延迟一拍；在途攻击不取消")
-            }
-            if skillID == .maskedWhisper {
-                masqueradeCharges = 2
-                if loadout.talents.has("phantom.0") { playerShield = min(playerMaxHP, playerShield + strengthenedSkillAmount(30, skill: skillID)) }
-                if loadout.talents.has("phantom.4") { talentMaskReady = true }
-                triggeredEffects.append("假面谕令：幻影承接接下来的两次敌方攻击；再次施放刷新为两次，不叠加")
-            }
-            if loadout.passiveIDs.contains("fool_passive_02"),
-               skillID == .maskedWhisper || skillID == .fabricatedEvidence,
-               unreliableNarratorTriggeredRound != round {
+            masqueradeCharges = 2
+            if loadout.talents.has("phantom.0") { playerShield = min(playerMaxHP, playerShield + strengthenedSkillAmount(30, skill: skillID)) }
+            if loadout.talents.has("phantom.4") { talentMaskReady = true }
+            triggeredEffects.append("假面谕令：幻影承接接下来的两次敌方攻击；再次施放刷新为两次，不叠加")
+            if loadout.passiveIDs.contains("fool_passive_02"), unreliableNarratorTriggeredRound != round {
                 var passiveState = foolStates[id] ?? resolution.state
                 passiveState.illusionStacks = min(4, passiveState.illusionStacks + 1)
                 foolStates[id] = passiveState
                 unreliableNarratorTriggeredRound = round
                 triggeredEffects.append("不可靠叙述者：额外1层误认，本回合承伤增加5%")
             }
-            if enhancedSetupStacks > 0, skillID == .maskedWhisper || skillID == .fabricatedEvidence {
+            if enhancedSetupStacks > 0 {
                 var enhancedState = foolStates[id] ?? resolution.state
                 enhancedState.illusionStacks = min(4, enhancedState.illusionStacks + enhancedSetupStacks)
                 foolStates[id] = enhancedState
                 triggeredEffects.append("强化铺垫：额外施加\(enhancedSetupStacks)层误认")
                 enhancedSetupStacks = 0
-            }
-            if loadout.passiveIDs.contains("fool_passive_03"), skillID == .identityDisplacement {
-                let healing = receivePlayerHealing(80)
-                triggeredEffects.append("借来的名字：恢复\(healing)生命")
-            }
-            if skillID == .fabricatedEvidence {
-                if loadout.talents.has("omen.0") { var marked = foolStates[id] ?? .init(); marked.illusionStacks = min(4, marked.illusionStacks + 1); foolStates[id] = marked }
-                if loadout.talents.has("omen.4") { talentEvidenceReady = true }
             }
             var damage = resolution.totalDamage
             var modifiers: [String] = []
@@ -2018,83 +1917,13 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 damage = damage * 95 / 100
                 modifiers.append("第十三声录片×95%")
             }
-            let nonTalentDamage = damage
             damage = talentDamage(damage, skill: skillID, stacks: state.illusionStacks, targetID: id)
             damage = strengthenedSkillAmount(damage, skill: skillID)
             if loadout.skillLevel(for: skillID) > 1 {
                 modifiers.append("技能Lv.\(loadout.skillLevel(for: skillID))×\(MPCSkillGrowth.multiplierBasisPoints(for: loadout.skillLevel(for: skillID)) / 100)%")
             }
             if damage > 0, state.illusionStacks > 0, loadout.talents.has("omen.2") { playerShield = min(playerMaxHP, playerShield + strengthenedSkillAmount(15, skill: skillID)) }
-            // Select the further targets before the first hit can spawn children.
-            // Group cards (2026-10-03): in the tower 错步 cuts through up to three
-            // targets and 荒谬's volley lands on up to two more at half damage.
-            let secondariesAtImpact = Array(enemies.filter { $0.isAlive && $0.id != id }
-                .prefix(MPCFoolGroupCards.extraTargets(encounterID: encounter.id, skill: skillID)))
             damage = try applyPartyDamage(damage, to: id, category: actionCategory(for: skillID))
-            var affectedTargets = [MPCFoolSkillTargetResolution(targetID: id, damage: damage)]
-
-            // 错步穿行会同时撕开多个目标的错误方位（主线两个，塔内三个）。每个副目标
-            // 独立保存状态和承受伤害，避免表现层把它当作第一只敌人的复制品。
-            for secondary in secondariesAtImpact where skillID == .sidestepStrike {
-                guard outcome == .inProgress, enemies.contains(where: { $0.id == secondary.id && $0.isAlive }) else { continue }
-                let secondaryState = foolStates[secondary.id]
-                    ?? .init(targetDefense: secondary.defense)
-                var secondaryCalculationState = secondaryState
-                if isUsurpedLifeMedalActive { secondaryCalculationState.attack = secondaryState.attack * 130 / 100 }
-                if loadout.relicIDs.contains("relic_cracked_monocle"),
-                   secondaryState.illusionStacks == 4 {
-                    secondaryCalculationState.targetDefense = secondaryState.targetDefense * 95 / 100
-                }
-                secondaryCalculationState.targetDefense = talentDefense(secondaryCalculationState.targetDefense, skill: skillID, stacks: secondaryState.illusionStacks)
-                let secondaryResolution = try FoolComboSimulator.resolve(
-                    skillID: skillID,
-                    from: secondaryCalculationState
-                )
-                var persistedSecondaryState = secondaryResolution.state
-                persistedSecondaryState.attack = secondaryState.attack
-                persistedSecondaryState.targetDefense = secondaryState.targetDefense
-                foolStates[secondary.id] = persistedSecondaryState
-
-                // Reuse the action-wide relic/passive multiplier already consumed above,
-                // while retaining this target's own defense and Fool-state calculation.
-                var secondaryDamage: Int
-                if resolution.totalDamage > 0 {
-                    secondaryDamage = max(
-                        0,
-                        secondaryResolution.totalDamage * nonTalentDamage / resolution.totalDamage
-                    )
-                } else {
-                    secondaryDamage = 0
-                }
-                secondaryDamage = talentDamage(secondaryDamage, skill: skillID, stacks: secondaryState.illusionStacks, targetID: secondary.id)
-                secondaryDamage = strengthenedSkillAmount(secondaryDamage, skill: skillID)
-                secondaryDamage = try applyPartyDamage(
-                    secondaryDamage,
-                    to: secondary.id,
-                    category: actionCategory(for: skillID)
-                )
-                affectedTargets.append(.init(
-                    targetID: secondary.id,
-                    damage: secondaryDamage
-                ))
-            }
-            // 塔内，荒谬归结的道具雨落到旁边最多两个敌人身上，伤害减半。余波只读取
-            // 它们的误认和错位，不消耗；归结只对主目标兑现。
-            for secondary in secondariesAtImpact where skillID == .absurdFinale {
-                guard outcome == .inProgress, enemies.contains(where: { $0.id == secondary.id && $0.isAlive }) else { continue }
-                let bystander = foolStates[secondary.id] ?? .init(targetDefense: secondary.defense)
-                var splashState = bystander
-                if isUsurpedLifeMedalActive { splashState.attack = bystander.attack * 130 / 100 }
-                splashState.targetDefense = talentDefense(splashState.targetDefense, skill: skillID, stacks: bystander.illusionStacks)
-                let splash = try FoolComboSimulator.resolve(skillID: skillID, from: splashState)
-                var splashDamage = resolution.totalDamage > 0
-                    ? max(0, splash.totalDamage * nonTalentDamage / resolution.totalDamage) * MPCFoolGroupCards.finaleSplashPercent / 100
-                    : 0
-                splashDamage = talentDamage(splashDamage, skill: skillID, stacks: bystander.illusionStacks, targetID: secondary.id)
-                splashDamage = strengthenedSkillAmount(splashDamage, skill: skillID)
-                splashDamage = try applyPartyDamage(splashDamage, to: secondary.id, category: actionCategory(for: skillID))
-                affectedTargets.append(.init(targetID: secondary.id, damage: splashDamage))
-            }
             if damage > 0 {
                 talentDamageCount += 1
                 talentLastDamageSkill = skillID
@@ -2103,25 +1932,12 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 talentMaskReady = false
                 talentEvidenceReady = false
             }
-            if loadout.passiveIDs.contains("fool_passive_04"), resolution.damageHits.count > 1 {
-                lateApplauseReady = true
-                triggeredEffects.append("迟到的掌声：下一次单段技能已强化")
-            }
-            if loadout.relicIDs.contains("relic_mirror_thread"), skillID == .mirrorPursuit {
-                mirrorThreadBonusReady = true
-            }
-            if skillID == .sidestepStrike, foolStates[id]?.finaleReady == true {
-                finaleReadyExpiresAtAction = foolCooldowns.currentPlayerActionIndex + 3
-            }
-            result = .init(
-                skillID: skillID,
-                damage: damage,
-                targetID: id,
-                targets: affectedTargets
-            )
+            result = .init(skillID: skillID, damage: damage, targetID: id)
             let hits = resolution.damageHits.map(String.init).joined(separator: "+")
             let modifierText = modifiers.isEmpty ? "无额外倍率" : modifiers.joined(separator: "，")
             calculationDetail = "防御\(state.targetDefense)；基础命中[\(hits)]；\(modifierText)；最终伤害\(damage)"
+        default:
+            throw FoolComboError.unsupportedSkill(skillID)
         }
         borrowedSecondAvailable = false
         foolCooldowns.currentPlayerActionIndex += 1
@@ -2405,7 +2221,6 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         defer { activeDamageSource = "other" }
         guard outcome == .inProgress else { throw MPCEncounterRuntimeError.encounterFinished }
         guard !playerIsDown else { throw MPCEncounterRuntimeError.playerDown }
-        expireFinaleReadyIfNeeded()
 
         var damage: Int
         switch category {
@@ -3864,23 +3679,6 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             comboRecords.append(record)
         }
     }
-
-    private mutating func expireFinaleReadyIfNeeded() {
-        guard let expiration = finaleReadyExpiresAtAction,
-              foolCooldowns.currentPlayerActionIndex >= expiration else { return }
-        let hasReadyState = foolStates.values.contains(where: \.finaleReady)
-        if hasReadyState, loadout.relicIDs.contains("relic_blank_ticket"), !blankTicketUsed {
-            blankTicketUsed = true
-            finaleReadyExpiresAtAction = nil
-            enhancedSetupStacks = max(enhancedSetupStacks, 1)
-            triggeredEffects.append("空白戏票：终幕准备被保留一次")
-            return
-        }
-        for id in foolStates.keys {
-            foolStates[id]?.finaleReady = false
-        }
-        finaleReadyExpiresAtAction = nil
-    }
 }
 
 // MARK: - Isolated campaign mechanics (explicit opt-in; no rewards/save writes)
@@ -4070,11 +3868,19 @@ extension MPCChapterOneEncounterSession {
             let next = MPCOrderedSkillRules.finishWork(start: relicClock, work: 0.6, hasteUntil: orderedHasteUntil)
             if next <= end + 0.000_001 { orderedPending.append(.init(at: next, skill: skill, target: id, kind: .barrage(end: end), damageContext: orderedDamageContext)) }
         case .identityDisplacement:
-            let valid = (foolStates[id]?.illusionStacks ?? 0) >= (sealConversionReady ? 2 : 4)
+            let stacks = foolStates[id]?.illusionStacks ?? 0
+            let valid = stacks >= (sealConversionReady ? 2 : 4)
             targets = [result(orderedDamage(skill, to: id, coefficient: valid ? 11_000 : 3_000))]
             if valid {
                 foolStates[id]?.illusionStacks = 0; orderedMisalign(id); sealConversionReady = false
                 triggeredEffects.append("张冠李戴：4误认转为2错位，破甲70%，持续4秒")
+                // A full four-stack conversion also delays the target's next wind-up by one beat
+                // (Q8's 吞名). An attack already committed still lands (2026-10-15, user: 恢复张冠李戴能打断吞名).
+                if stacks >= 4, let index = enemies.firstIndex(where: { $0.id == id && $0.isAlive }) {
+                    enemies[index].delayedRounds = max(1, enemies[index].delayedRounds)
+                    behaviorTags.insert(.reachFourIllusion)
+                    triggeredEffects.append("张冠李戴：目标下次起手延迟一拍；在途攻击不取消")
+                }
             } else { orderedMark(id, stacks: 1) }
             if valid, loadout.passiveIDs.contains("fool_passive_03") { _ = receivePlayerHealing(80) }
         case .mirrorPursuit:
@@ -4099,7 +3905,7 @@ extension MPCChapterOneEncounterSession {
             orderedWardUntil = relicClock + 4
         case .backstageChange:
             targets = [result(orderedDamage(skill, to: id, coefficient: 2_000))]
-            if clearHeroSeal() { triggeredEffects.append("后手改写：划去夺名封印") }; _ = cleanseOnePlayerDamageOverTime()
+            var cleansed = (clearHeroSeal() ? ["夺名封印"] : []) + [cleanseOnePlayerDamageOverTime()].compactMap { $0 }
             orderedShield = max(orderedShield, strengthenedSkillAmount(240, skill: skill)); orderedShieldUntil = relicClock + 4
             if relicClock < orderedHasteUntil { orderedHasteUntil += 1.3 }
             if (foolStates[id]?.illusionStacks ?? 0) > 0 { foolStates[id]!.illusionExpiresAt += 1.3 }
@@ -4107,9 +3913,11 @@ extension MPCChapterOneEncounterSession {
             if relicClock < (foolStates[id]?.armorBreakExpiresAt ?? 0) { foolStates[id]!.armorBreakExpiresAt += 1.3 }
             if loadout.relicIDs.contains("relic_memory_leech_vial") {
                 if !memoryLeechCostPaid { playerHP = max(1, playerHP - 40); memoryLeechCostPaid = true }
-                _ = cleanseOnePlayerDamageOverTime()
+                if let second = cleanseOnePlayerDamageOverTime() { cleansed.append(second) }
                 enhancedSetupStacks = max(enhancedSetupStacks, 1)
             }
+            // The App shows 净化 only for a real cleanse; this line was the manual path's (2026-10-15).
+            triggeredEffects.append("后手改写：" + (cleansed.isEmpty ? "无可净化" : "划去" + cleansed.joined(separator: "、")))
         case .delayedSignature:
             targets = [result(orderedDamage(skill, to: id, coefficient: 2_000))]
             orderedPending.removeAll { $0.target == id && $0.skill == .delayedSignature }

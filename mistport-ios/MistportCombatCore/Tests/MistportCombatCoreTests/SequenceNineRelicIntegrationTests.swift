@@ -26,8 +26,9 @@ struct SequenceNineRelicIntegrationTests {
         let ticket = try #require(stamped.sequenceNineRelics.deferredDamage)
         let matching = try #require(ordinary.targets.first { $0.targetID == ticket.targetID })
         #expect(ticket.amount == matching.damage + min(matching.damage * 40 / 100, 150))
-        #expect(deferred.targets.count == 2)
-        #expect(deferred.targets.filter { $0.damage > 0 }.count == 1)
+        // 错步 cuts all three Q7 bodies since the ten-card redesign; exactly one packet is deferred.
+        #expect(deferred.targets.count == 3)
+        #expect(deferred.targets.filter { $0.damage == 0 }.map(\.targetID) == [ticket.targetID])
         let before = try #require(stamped.enemies.first { $0.id == ticket.targetID }).hp
         _ = stamped.advanceRelicClock(at: 3)
         let after = try #require(stamped.enemies.first { $0.id == ticket.targetID }).hp
@@ -206,7 +207,7 @@ struct SequenceNineRelicIntegrationTests {
         _ = try full.useFoolSkill(.identityDisplacement, targetID: target)
         _ = full.advanceRelicClock(at: 4)
         #expect(!full.willSealPreparedSkill(.identityDisplacement, at: 4))
-        _ = try full.useFoolSkill(.identityDisplacement, targetID: target, usesRealtimeCooldown: true)
+        _ = try full.useFoolSkill(.identityDisplacement, targetID: target)
         #expect((full.foolStates[target]?.illusionStacks ?? 0) > 0)
         #expect(full.sequenceNineRelics.paperweightReadyAt == 18)
     }

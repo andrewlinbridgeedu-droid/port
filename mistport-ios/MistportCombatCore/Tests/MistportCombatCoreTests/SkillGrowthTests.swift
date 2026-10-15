@@ -67,19 +67,28 @@ struct SkillGrowthTests {
     }
 
     @Test func utilityCardsDoNotGainDamageShieldOrLayers() throws {
-        for skill in [FoolSkillID.turnTheTables, .backstageChange, .namelessStage] {
-            var base = try session()
-            var raised = try session(level: 5)
-            if skill != .namelessStage {
-                base.setContinuousSkillSequence([skill])
-                raised.setContinuousSkillSequence([skill])
-            }
-            let a = try base.useFoolSkill(skill, targetID: base.enemies[0].id)
-            let b = try raised.useFoolSkill(skill, targetID: raised.enemies[0].id)
-            #expect(a.damage == 0 && b.damage == 0)
-            #expect(base.playerShield == raised.playerShield)
-            #expect(base.foolStates == raised.foolStates)
-        }
+        var base = try session()
+        var raised = try session(level: 5)
+        let a = try base.useFoolSkill(.namelessStage, targetID: base.enemies[0].id)
+        let b = try raised.useFoolSkill(.namelessStage, targetID: raised.enemies[0].id)
+        #expect(a.damage == 0 && b.damage == 0)
+        #expect(base.playerShield == raised.playerShield)
+        #expect(base.foolStates == raised.foolStates)
+    }
+
+    /// 反客为主 and 后手改写 strike since the ten-card redesign (2026-10-12): the hit scales once,
+    /// the marks they write do not.
+    @Test(arguments: [FoolSkillID.turnTheTables, .backstageChange])
+    func redesignedSupportCardsScaleOnlyTheirHit(skill: FoolSkillID) throws {
+        var base = try session()
+        var raised = try session(level: 5)
+        base.setContinuousSkillSequence([skill])
+        raised.setContinuousSkillSequence([skill])
+        let a = try base.useFoolSkill(skill, targetID: base.enemies[0].id)
+        let b = try raised.useFoolSkill(skill, targetID: raised.enemies[0].id)
+        #expect(a.damage > 0 && b.damage == a.damage * 140 / 100)
+        #expect(base.playerShield == raised.playerShield)
+        #expect(base.foolStates == raised.foolStates)
     }
 
     @Test func freshEncounterRetainsLevelsWithoutTemporaryEffects() throws {

@@ -41,7 +41,7 @@ struct ChapterOneNaturalCombatTests {
                 impact = nil
                 if session.enemies.contains(where: { $0.id == hit.target && $0.isAlive }) {
                     if let skill = hit.skill {
-                        _ = try session.useFoolSkill(skill, targetID: hit.target, usesRealtimeCooldown: true)
+                        _ = try session.useFoolSkill(skill, targetID: hit.target)
                     } else { _ = try session.useBasicAction(.damage, targetID: hit.target) }
                 }
             }

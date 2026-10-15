@@ -17,11 +17,11 @@ struct ThreeCategoryRelicTests {
             _ = try boosted.useBasicAction(category, targetID: target)
             _ = try baseline.useBasicAction(category, targetID: target)
         }
-        let normal = try baseline.useFoolSkill(.sidestepStrike, targetID: target, usesRealtimeCooldown: true)
-        let enhanced = try boosted.useFoolSkill(.sidestepStrike, targetID: target, usesRealtimeCooldown: true)
+        let normal = try baseline.useFoolSkill(.sidestepStrike, targetID: target)
+        let enhanced = try boosted.useFoolSkill(.sidestepStrike, targetID: target)
         #expect(enhanced.damage == normal.damage * 120 / 100)
-        let secondNormal = try baseline.useFoolSkill(.sidestepStrike, targetID: target, usesRealtimeCooldown: true)
-        let secondEnhanced = try boosted.useFoolSkill(.sidestepStrike, targetID: target, usesRealtimeCooldown: true)
+        let secondNormal = try baseline.useFoolSkill(.sidestepStrike, targetID: target)
+        let secondEnhanced = try boosted.useFoolSkill(.sidestepStrike, targetID: target)
         #expect(secondEnhanced.damage == secondNormal.damage)
     }
 

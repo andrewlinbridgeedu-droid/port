@@ -37,7 +37,7 @@ struct ContinuousSkillSchedulerTests {
         #expect(session.enemies[1].intentIndex == before[1].intentIndex)
         #expect(session.lastEnemyActionResolutions.map(\.enemyID) == [before[0].id])
         // A player cast can resolve immediately, without advancing the second enemy.
-        _ = try session.useFoolSkill(.sidestepStrike, targetID: before[0].id, usesRealtimeCooldown: true)
+        _ = try session.useFoolSkill(.sidestepStrike, targetID: before[0].id)
         #expect(session.enemies[1].intentIndex == before[1].intentIndex)
     }
 }

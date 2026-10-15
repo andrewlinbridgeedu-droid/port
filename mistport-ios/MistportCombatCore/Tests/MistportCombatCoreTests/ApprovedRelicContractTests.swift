@@ -38,7 +38,7 @@ struct ApprovedRelicContractTests {
         try triggerRing(&s)
         try triggerRing(&s)
         #expect(s.playerShield == 200)
-        _ = try s.useFoolSkill(.maskedWhisper, targetID: s.enemies[0].id, usesRealtimeCooldown: true)
+        _ = try s.useFoolSkill(.maskedWhisper, targetID: s.enemies[0].id)
         for _ in 0..<4 { try s.endRound() }
         #expect(s.masqueradeCharges == 0)
         #expect(s.ringExposurePending)
@@ -88,15 +88,15 @@ struct ApprovedRelicContractTests {
         #expect(s.foolUltimateUsed)
         #expect(s.sealConversionReady)
         for expected in [3, 4] {
-            _ = try s.useFoolSkill(.identityDisplacement, targetID: id, usesRealtimeCooldown: true)
+            _ = try s.useFoolSkill(.identityDisplacement, targetID: id)
             #expect(s.foolState(for: id)?.illusionStacks == expected)
             #expect(s.sealConversionReady)
         }
-        _ = try s.useFoolSkill(.identityDisplacement, targetID: id, usesRealtimeCooldown: true)
+        _ = try s.useFoolSkill(.identityDisplacement, targetID: id)
         #expect(s.foolState(for: id)?.illusionStacks == 4)
         #expect(s.foolState(for: id)?.misalignmentStacks == 2)
         #expect(!s.sealConversionReady)
-        _ = try s.useFoolSkill(.identityDisplacement, targetID: id, usesRealtimeCooldown: true)
+        _ = try s.useFoolSkill(.identityDisplacement, targetID: id)
         #expect(s.foolState(for: id)?.illusionStacks == 0)
         #expect(!s.sealConversionReady)
         let retry = try session(["relic_nameless_seal"])
@@ -111,7 +111,7 @@ struct ApprovedRelicContractTests {
         _ = try s.useFoolSkill(.namelessStage, targetID: nil)
         #expect(s.foolState(for: id)?.illusionStacks == 4)
         #expect(!s.sealConversionReady)
-        _ = try s.useFoolSkill(.identityDisplacement, targetID: id, usesRealtimeCooldown: true)
+        _ = try s.useFoolSkill(.identityDisplacement, targetID: id)
         #expect(s.foolState(for: id)?.illusionStacks == 0)
         var campaign = MPCChapterOneCampaignState.chapterStartState
         campaign.ownedRelicIDs = ["relic_unified_gear", "relic_nameless_seal"]

@@ -65,7 +65,7 @@ enum ProgressionBalanceSimulator {
             if let p = hit, now >= p.2 {
                 hit = nil
                 if s.enemies.contains(where: { $0.id == p.1 && $0.isAlive }) {
-                    if let skill = p.0 { _ = try s.useFoolSkill(skill, targetID: p.1, usesRealtimeCooldown: true) }
+                    if let skill = p.0 { _ = try s.useFoolSkill(skill, targetID: p.1) }
                     else { _ = try s.useBasicAction(.damage, targetID: p.1); tutorialBasics += 1 }
                 }
             }
@@ -157,9 +157,10 @@ struct ProgressionBalance20260915Tests {
         #expect(s.enemyDefenseBonusBP(for:puppet.id) == 5000)
         try s.endRound(actingEnemyID:leech.id)
         #expect(s.enemyDefenseBonusBP(for:puppet.id) == 5000)
-        _ = try s.useFoolSkill(.turnTheTables,targetID:puppet.id,usesRealtimeCooldown:true)
+        _ = try s.useFoolSkill(.turnTheTables,targetID:puppet.id)
         #expect(s.enemyDefenseBonusBP(for:puppet.id) == 0)
-        #expect(s.foolState(for:puppet.id)?.misalignmentStacks == 1)
+        // 反客为主's dispel grants 2 错位 since the ten-card redesign (2026-10-12).
+        #expect(s.foolState(for:puppet.id)?.misalignmentStacks == 2)
     }
     @Test func finaleTargetPriorityChangesSurvival() throws {
         let skills: [FoolSkillID] = [.fabricatedEvidence,.identityDisplacement,.mirrorPursuit,.absurdFinale]

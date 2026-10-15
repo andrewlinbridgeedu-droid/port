@@ -74,7 +74,7 @@ enum NewMaskBalanceSimulator {
             if let p = hit, now >= p.2 {
                 hit = nil
                 if !s.playerIsDown, s.enemies.contains(where: { $0.id == p.1 && $0.isAlive }) {
-                    if let skill = p.0 { _ = try s.useFoolSkill(skill, targetID: p.1, usesRealtimeCooldown: true) }
+                    if let skill = p.0 { _ = try s.useFoolSkill(skill, targetID: p.1) }
                     else { _ = try s.useBasicAction(.damage, targetID: p.1); tutorialBasics += 1 }
                     if s.outcome == .inProgress { _ = s.performCompanionActions(focusTargetID: p.1) }
                 }

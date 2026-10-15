@@ -53,7 +53,7 @@ struct EmeraldPoisonTests {
 
     @Test func mistAndTicksPreserveMaskForHeavyBurst() throws {
         var battle = try session()
-        _ = try battle.useFoolSkill(.maskedWhisper, targetID: battle.enemies[0].id, usesRealtimeCooldown: true)
+        _ = try battle.useFoolSkill(.maskedWhisper, targetID: battle.enemies[0].id)
         let charges = battle.masqueradeCharges
         #expect(charges > 0)
         try battle.endRound(at: 1)
@@ -155,8 +155,7 @@ struct EmeraldPoisonTests {
         // input/cast delay still allows mask contact before charge release at6.0.
         try battle.endRound(at: 1.1)
         _ = battle.advanceEmeraldPoison(at: 5.4)
-        _ = try battle.useFoolSkill(.maskedWhisper, targetID: battle.enemies[0].id,
-                                   usesRealtimeCooldown: true)
+        _ = try battle.useFoolSkill(.maskedWhisper, targetID: battle.enemies[0].id)
         let charges = battle.masqueradeCharges
         try battle.endRound(at: 6.0)
         _ = battle.advanceEmeraldPoison(at: 7.1)

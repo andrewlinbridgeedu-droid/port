@@ -33,13 +33,14 @@ struct ChapterOneExecutionPairTests {
     func recoveryResetsPressure() throws {
         var s = try start()
         let id = try #require(s.enemies.first?.id)
+        // Finish one cycle before Q19's 6 s pressure (MPCOrderedSkillRules.pressureStart) doubles the burst.
         try s.endRound(actingEnemyID: id, at: 0)
-        _ = s.advanceEmeraldPoison(at: 9)
+        _ = s.advanceEmeraldPoison(at: 3.5)
         #expect(s.emeraldPoisonIntensity > 1)
-        try s.endRound(actingEnemyID: id, at: 9)
-        try s.endRound(actingEnemyID: id, at: 10)
-        try s.endRound(actingEnemyID: id, at: 11)
-        #expect(s.emeraldPoisonIntensity == 1)
+        try s.endRound(actingEnemyID: id, at: 4)
+        try s.endRound(actingEnemyID: id, at: 4.5)
+        try s.endRound(actingEnemyID: id, at: 5)
+        #expect(s.outcome == .inProgress && s.emeraldPoisonIntensity == 1)
     }
 
     @Test("Defeating Q19 ends this body and grants its unique evidence")

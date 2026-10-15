@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import MistportCombatCore
 
@@ -64,14 +65,23 @@ struct CombatTempoTests {
 
     @Test("a hound killed mid-charge ends Q4 instead of stalling it")
     func deadChargerEndsTheBattle() throws {
-        let loadout = MPCChapterOneLoadout(normalSkillIDs: [.sidestepStrike], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
+        // Q4's legal two-card hand plus the counter, as production plays it: sidestep alone
+        // cannot finish the armoured hound outside its counter windows (3753d5d).
+        let loadout = MPCChapterOneLoadout(normalSkillIDs: [.fabricatedEvidence, .sidestepStrike], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
+        #expect(loadout.normalSkillIDs.count == MPCOrderedSkillRules.slotCapacity(availableThrough: 4))
         var st = try MPCStoryBattleStepper(encounterID: "chapter01_q04_encounter", loadout: loadout, mask: .init(owned: true, teachingLoan: true))
+        var houndDownAt: TimeInterval?
         while !st.isFinished && st.now < 120 {
             var out: [MPCBattleInput] = []
             if st.maskIsReady(at: st.now), let c = st.q4CycleStart, st.now >= c + 7.8, st.now < c + 8.4 { out.append(.init(tick: st.tick, kind: .mask)) }
+            if st.session.canRequestCounter { out.append(.init(tick: st.tick, kind: .counter)) }
             _ = try st.step(out)
+            if houndDownAt == nil, st.session.enemies.allSatisfy({ !$0.isAlive }) { houndDownAt = st.now }
         }
         #expect(st.session.outcome == .victory)
-        #expect(st.now < 70)
+        // The kill closes the battle on that step, whatever the hound was charging; the
+        // armoured Q4 (3753d5d) now runs ~80 s, so a fixed 70 s budget no longer measures stalls.
+        let down = try #require(houndDownAt)
+        #expect(st.isFinished && st.now < 120 && st.now - down < MPCChurchBattleDriver.step * 1.5)
     }
 }

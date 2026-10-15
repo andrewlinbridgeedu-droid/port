@@ -344,7 +344,7 @@ public enum MPCChapterOneCatalog {
         .init(id: .mirrorBarrage, name: "碎镜连弹", summary: "持续1.8秒，每0.6秒打出36%伤害并追加1层误认（4秒）。抢拍时每0.3秒一发，共6发。收招0.3秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["多段", "加速增弹"]),
         .init(id: .backstageChange, name: "后手改写", summary: "20%伤害，净化一项持续伤害，获得240护盾4秒。延长仍生效的抢拍和目标误认、错位、破甲各1.3秒。施法0.65秒，收招0.3秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["续时", "净化护盾"]),
         .init(id: .turnTheTables, name: "反客为主", summary: "驱散目标礼盾或强化：成功造成275%伤害并施加2错位与70%破甲4秒；否则35%伤害、2误认4秒。下次直接受击减伤60%，4秒内有效。施法0.65秒，收招0.4秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["驱散反制", "错位"]),
-        .init(id: .identityDisplacement, name: "张冠李戴", summary: "消耗4误认，造成110%伤害并施加2错位与70%破甲4秒；不足时仅30%伤害、追加1误认。施法0.95秒，收招0.4秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["转换", "破甲"]),
+        .init(id: .identityDisplacement, name: "张冠李戴", summary: "消耗4误认，造成110%伤害并施加2错位与70%破甲4秒，目标下次起手延迟一拍（在途攻击照常命中）；不足时仅30%伤害、追加1误认。施法0.95秒，收招0.4秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["转换", "破甲"]),
         .init(id: .mirrorPursuit, name: "双影追猎", summary: "两段各40%伤害；起手与命中时均有错位，每段提升为180%，结束消耗1错位。施法1.15秒，收招0.4秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["两段", "错位兑现"]),
         .init(id: .absurdFinale, name: "荒谬归结", summary: "60%伤害；命中时仍有错位，追加500%与80%穿甲，错位期间每次技能命中再加80%（最多3次），消耗错位。施法1.8秒，收招0.55秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["重击", "短窗终结"]),
         .init(id: .delayedSignature, name: "延时落款", summary: "20%伤害，2.6秒后引爆：50%＋期间每次有效技能命中70%，最多8次；溅射2人半伤。普攻、自身落款与爆炸不计；目标倒下取消。施法0.55秒，收招0.25秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["延时爆炸", "多段搭档"]),

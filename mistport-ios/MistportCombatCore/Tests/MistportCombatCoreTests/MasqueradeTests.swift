@@ -7,7 +7,7 @@ struct MasqueradeTests {
             encounterID: "chapter01_q02_encounter", companionIDs: [],
             loadout: .init(normalSkillIDs: [.maskedWhisper], passiveIDs: [], relicIDs: []))
         let ids = session.enemies.filter(\.isAlive).map(\.id)
-        _ = try session.useFoolSkill(.maskedWhisper, targetID: ids[0], usesRealtimeCooldown: true)
+        _ = try session.useFoolSkill(.maskedWhisper, targetID: ids[0])
         let hp = session.playerHP
         for (index, id) in ids.enumerated() {
             try session.endRound(actingEnemyID: id)
@@ -48,9 +48,9 @@ struct MasqueradeTests {
             encounterID: "chapter01_q02_encounter", companionIDs: [],
             loadout: .init(normalSkillIDs: [.maskedWhisper], passiveIDs: [], relicIDs: []))
         let id = session.enemies[0].id
-        _ = try session.useFoolSkill(.maskedWhisper, targetID: id, usesRealtimeCooldown: true)
+        _ = try session.useFoolSkill(.maskedWhisper, targetID: id)
         try session.endRound(actingEnemyID: id)
-        _ = try session.useFoolSkill(.maskedWhisper, targetID: id, usesRealtimeCooldown: true)
+        _ = try session.useFoolSkill(.maskedWhisper, targetID: id)
         #expect(session.masqueradeCharges == 2)
         var scheduler = ContinuousSkillScheduler()
         scheduler.didCast(.maskedWhisper, at: 10)

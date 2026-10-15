@@ -322,7 +322,7 @@ public struct MPCStoryBattleStepper: Sendable {
                 let wave = s.waveIndex
                 if let skill = p.skill {
                     if skill != .namelessStage, !s.loadout.normalSkillIDs.contains(skill) { s.setContinuousSkillSequence([skill] + self.loop) }
-                    _ = try s.useFoolSkill(skill, targetID: p.targetID, usesRealtimeCooldown: true, sealedByPaperweight: p.sealed)
+                    _ = try s.useFoolSkill(skill, targetID: p.targetID, sealedByPaperweight: p.sealed)
                     s.setContinuousSkillSequence(self.loop)
                 } else {
                     _ = try s.useBasicAction(.damage, targetID: p.targetID)

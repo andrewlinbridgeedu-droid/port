@@ -42,30 +42,7 @@ struct ChurchTowerHundredTests {
     }
     func start(_ n: Int) throws -> MPCChapterOneEncounterSession {
         let floor = try #require(MPCChurchTowerCatalog.floor(number: n))
-        return try .start(encounterID: floor.id, companionIDs: [], loadout: .init(normalSkillIDs: [], isUltimateUnlocked: false, passiveIDs: [], relicIDs: []))
-    }
-    /// Reach the authored threat through the preceding minion waves. Keep the
-    /// same session and advance its clock through each real one-second fade.
-    func start(_ n: Int, containing species: [MPCChurchTowerCatalog.Species], minimumEnemies: Int = 1) throws -> (session: MPCChapterOneEncounterSession, now: TimeInterval) {
-        let floor = try #require(MPCChurchTowerCatalog.floor(number: n))
-        let targetWave = try #require(floor.waves.firstIndex { wave in
-            wave.count >= minimumEnemies && species.allSatisfy { requested in
-                wave.contains { $0.species == requested }
-            }
-        }, "Floor \(n) must retain the required threat composition")
-        var session = try start(n)
-        var now: TimeInterval = 0
-        for wave in 0..<targetWave {
-            try #require(session.waveIndex == wave && session.outcome == .inProgress)
-            for enemy in session.enemies.filter(\.isAlive) {
-                _ = try session.applyPartyDamage(10000, to: enemy.id)
-            }
-            try #require(session.isAwaitingTowerWave)
-            now += 1
-            _ = session.advanceEmeraldPoison(at: now)
-            try #require(session.waveIndex == wave + 1 && session.outcome == .inProgress)
-        }
-        return (session, now)
+        return try .start(encounterID: floor.id, companionIDs: [], loadout: bareTowerLoadout)
     }
     @Test func allChurchPreparationFamiliesShareAnExclusiveGate() throws {
         let families: [(Int, MPCChurchTowerCatalog.Species)] = [
@@ -73,7 +50,7 @@ struct ChurchTowerHundredTests {
             (31, .scissor), (41, .crown), (51, .boneclaw)
         ]
         for (n, species) in families {
-            var (s, now) = try start(n, containing: [species])
+            var (s, now) = try startChurchTower(n, containing: [species])
             let id = try #require(s.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == species }).id
             if species == .shieldJaw {
                 #expect(!s.isChurchHighThreatPreparation(enemyID: id)) // guard precedes charge
@@ -85,7 +62,7 @@ struct ChurchTowerHundredTests {
             #expect(!s.isChurchHighThreatPreparation(enemyID: id))
         }
         // F12 introduces Copperback; F13 retains the shield/poison pair after its minions.
-        var (s, now) = try start(13, containing: [.shieldJaw, .saltSac])
+        var (s, now) = try startChurchTower(13, containing: [.shieldJaw, .saltSac])
         let hound = try #require(s.enemies.first { MPCChurchTowerCatalog.isShieldJaw($0.contentID) }).id
         let poison = try #require(s.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .saltSac }).id
         try s.endRound(actingEnemyID: hound, at: now)
@@ -94,7 +71,7 @@ struct ChurchTowerHundredTests {
         #expect(!s.churchPreparationMustWait(enemyID: hound, pendingEnemyIDs: [poison]))
     }
     @Test func poisonHasThreeTicksDoesNotStackAndDiesWithSource() throws {
-        var (s, now) = try start(11, containing: [.saltSac])
+        var (s, now) = try startChurchTower(11, containing: [.saltSac])
         let id = try #require(s.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .saltSac }).id
         try s.endRound(actingEnemyID: id, at: now)
         try s.endRound(actingEnemyID: id, at: now + 1)
@@ -113,7 +90,7 @@ struct ChurchTowerHundredTests {
         let afterAttack = s.playerHP
         _ = s.advanceEmeraldPoison(at: now + 120)
         #expect(s.playerHP == afterAttack)
-        var (death, deathNow) = try start(12, containing: [.saltSac])
+        var (death, deathNow) = try startChurchTower(12, containing: [.saltSac])
         let poison = try #require(death.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .saltSac }).id
         try death.endRound(actingEnemyID: poison, at: deathNow); try death.endRound(actingEnemyID: poison, at: deathNow + 1)
         _ = try death.applyPartyDamage(10000, to: poison)
@@ -123,7 +100,7 @@ struct ChurchTowerHundredTests {
         #expect(death.playerHP == hp)
     }
     @Test func repairFreezesRecipientNoRetargetAndNoSelfHeal() throws {
-        var (s, now) = try start(23, containing: [.backSac], minimumEnemies: 3)
+        var (s, now) = try startChurchTower(23, containing: [.backSac], minimumEnemies: 3)
         let healer = try #require(s.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .backSac }).id
         let recipients = s.enemies.filter { $0.id != healer }
         try #require(recipients.count >= 2)
@@ -139,7 +116,7 @@ struct ChurchTowerHundredTests {
         #expect(s.lastEnemyActionResolutions.last?.healing == 0)
     }
     @Test func crownEmpowersOneAttackCycleThenDisappearsAndDeathCancels() throws {
-        var (s, now) = try start(41, containing: [.crown, .shieldJaw])
+        var (s, now) = try startChurchTower(41, containing: [.crown, .shieldJaw])
         let crown = try #require(s.enemies.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .crown }).id
         let dog = try #require(s.enemies.first { MPCChurchTowerCatalog.isShieldJaw($0.contentID) }).id
         // Crown chooses the first living recipient. Clear the minion escort
@@ -238,7 +215,7 @@ enum TowerHundredSimulator {
             if let p = hit, now >= p.2 {
                 hit = nil
                 if s.enemies.contains(where: { $0.id == p.1 && $0.isAlive }) {
-                    if let skill = p.0 { _ = try s.useFoolSkill(skill, targetID: p.1, usesRealtimeCooldown: true) }
+                    if let skill = p.0 { _ = try s.useFoolSkill(skill, targetID: p.1) }
                     else { _ = try s.useBasicAction(.damage, targetID: p.1) }
                 }
             }

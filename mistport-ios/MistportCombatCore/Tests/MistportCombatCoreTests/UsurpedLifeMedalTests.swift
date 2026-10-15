@@ -39,8 +39,8 @@ struct UsurpedLifeMedalTests {
         let check29 = try boosted.useOwnedManualMasquerade(targetID: nil, isOwned: true, at: 0) == nil
         #expect(check29)
         let target = plain.enemies[0].id
-        let a = try plain.useFoolSkill(.sidestepStrike, targetID: target, usesRealtimeCooldown: true)
-        let b = try boosted.useFoolSkill(.sidestepStrike, targetID: target, usesRealtimeCooldown: true)
+        let a = try plain.useFoolSkill(.sidestepStrike, targetID: target)
+        let b = try boosted.useFoolSkill(.sidestepStrike, targetID: target)
         #expect(b.damage > a.damage)
         #expect(b.targets.count == 3)
         #expect(boosted.foolStates[target]?.attack == 100)
@@ -146,7 +146,7 @@ struct UsurpedLifeMedalTests {
         #expect(activated)
         let id = s.enemies[0].id
         let basic = try s.useBasicAction(.damage, targetID: id)
-        let skill = try s.useFoolSkill(.sidestepStrike, targetID: id, usesRealtimeCooldown: true)
+        let skill = try s.useFoolSkill(.sidestepStrike, targetID: id)
         #expect(basic == 0 && skill.damage == 0)
         #expect(s.enemies[0].hp == s.enemies[0].maxHP)
         try s.endRound(actingEnemyID: id, at: 8)

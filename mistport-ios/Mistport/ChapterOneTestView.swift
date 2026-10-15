@@ -246,7 +246,6 @@ struct ChapterOneTestView: View {
                     initialSession: active,
                     campaign: campaign,
                     battleIsActive: false,
-                    automatesSkillSequence: true,
                     encorePrototypeEnabled: active.encounter.id == "chapter01_q05_encounter",
                     tutorialCue: active.encounter.id == "chapter01_q02_encounter" ? .fogGhostPrelude : active.encounter.id == "chapter01_q03_encounter" ? .houndPrelude : nil,
                     requiresExplicitBattleStartAfterIntervention: true,
@@ -546,16 +545,6 @@ private func endingTitle(_ choice: MPCChapterOneEndingChoice) -> String {
     case .sealClock: "交由教会封存"
     case .returnMemories: "分还居民记忆"
     }
-}
-
-private enum QueuedRetargetPolicy {
-    case anyValidEnemy
-    case sameTargetOnly
-}
-
-private enum QueuedCombatAction: Equatable {
-    case skill(FoolSkillID)
-    case basic(MPCPlayerActionCategory)
 }
 
 private enum CombatFloatingNumberKind {
@@ -980,11 +969,8 @@ struct ChapterOneEncounterTestView: View {
     @State private var combatFloatingNumbers: [CombatFloatingNumber] = []
     @State private var healthOverlaySize: CGSize = .zero
     @State private var musicOwnerID = UUID()
-    @State private var isResolvingEnemyTurn = false
     @State private var showsTutorial: Bool
     @State private var isFirstCardTutorial = false
-    @State private var selectedCardID: FoolSkillID?
-    @State private var queuedActions: [QueuedCombatAction] = []
     @State private var requestedUltimate = false
     @State private var requestedEmeraldMask = false
     @State private var q3HuntStart: TimeInterval?
@@ -1036,18 +1022,11 @@ struct ChapterOneEncounterTestView: View {
 
     @State private var basicCooldownStarted: TimeInterval?
 
-    @State private var queuedTargetIDs: [FoolSkillID: String] = [:]
-    @State private var queuedBasicTargetIDs: [String: String] = [:]
-    @State private var pendingTargetSkillID: FoolSkillID?
-    @State private var pendingBasicTargetCategory: MPCPlayerActionCategory?
     @State private var inspectedSkill: MPCSkillContent?
     @State private var q1PreludeRoundsCompleted = 0
     @State private var q1CardsGranted: Bool
     @State private var showsQ1GoddessIntervention = false
     @State private var showsQ5MaraIntervention = false
-    // Keep the Q5 finishing beat visible long enough for the player to see
-    // the second hit actually defeat the hound before the mission closes.
-    @State private var isHoldingQ5VictoryPresentation = false
     // Closing Mara's intervention and switching the parent back to pre-battle
     // setup happen in two SwiftUI update passes. Keep automation locally
     // blocked across that gap so neither side can steal a turn before the
@@ -1057,9 +1036,7 @@ struct ChapterOneEncounterTestView: View {
     @State private var hasStartedHeldQ5Preview = false
     @State private var hasStartedOpeningBattle = false
     private let playerSequence: Int
-    private let locksCardSelectionForPreview: Bool
     private let showsCardComparisonPreview: Bool
-    private let automatesSkillSequence: Bool
     private let holdsQ5Preview: Bool
     /// The mission bridge owns the pre-battle setup button. The standalone
     /// preview keeps its own opening button so the direct Q1 test remains
@@ -1097,7 +1074,6 @@ struct ChapterOneEncounterTestView: View {
         playerSequence: Int = 9,
         playerPlacement: ChapterOnePlayerPlacement = .standard,
         battleIsActive: Bool = true,
-        automatesSkillSequence: Bool = true,
         encorePrototypeEnabled: Bool = false,
         tutorialCue: ChapterOneTutorialCue? = nil,
         requiresExplicitBattleStartAfterIntervention: Bool = true,
@@ -1125,10 +1101,6 @@ struct ChapterOneEncounterTestView: View {
         // Q1 must finish Mara's explanation before the player can configure
         // the opening sequence. Do not postpone the tutorial behind combat.
         let delaysFirstBattleTutorial = false
-        let openingCardID = MPCChapterOneCatalog.visibleSkills.first {
-            initialSession.loadout.battleSkillIDs.contains($0.id)
-                && initialSession.canUseFoolSkill($0.id)
-        }?.id
         self.encorePrototypeEnabled = encorePrototypeEnabled || arguments.contains("--preview-chapter-one-encore-bell")
         var initialSession = initialSession
         initialSession.adoptTempo(CombatTempoReviewConfiguration.profile(initialSession.encounter.id))
@@ -1142,7 +1114,6 @@ struct ChapterOneEncounterTestView: View {
         self.playerSequence = playerSequence
         self.playerPlacement = playerPlacement.normalized
         self.battleIsActive = holdsQ5Preview ? false : battleIsActive
-        self.automatesSkillSequence = automatesSkillSequence && !holdsQ5Preview
         self.holdsQ5Preview = holdsQ5Preview
         self.showsStandaloneOpeningBattleButton = showsStandaloneOpeningBattleButton
         self.requiresExplicitBattleStartAfterIntervention = requiresExplicitBattleStartAfterIntervention
@@ -1176,13 +1147,11 @@ struct ChapterOneEncounterTestView: View {
         _selectedTargetID = State(initialValue: Self.defaultTargetID(in: initialSession.enemies))
         _showsTutorial = State(initialValue: tutorialCue != nil && !delaysFirstBattleTutorial && !locksCardSelectionForPreview && !previewsUnselectedCard && !showsCardComparisonPreview)
         _actionMessage = State(initialValue: "选择目标并使用技能")
-        _selectedCardID = State(initialValue: (locksCardSelectionForPreview || showsCardComparisonPreview) ? openingCardID : nil)
         // Q1 starts with an empty sequence, but its first three fallback basic
         // attacks are still the authored prelude that summons Mara.
         _q1CardsGranted = State(
             initialValue: initialSession.encounter.id != "chapter01_q01_encounter"
         )
-        self.locksCardSelectionForPreview = locksCardSelectionForPreview || showsCardComparisonPreview
         self.showsCardComparisonPreview = showsCardComparisonPreview
         self.tutorialCue = tutorialCue
         self.onVictory = onVictory
@@ -1370,10 +1339,9 @@ struct ChapterOneEncounterTestView: View {
                         }
                         q1CardsGranted = true
                         // Keep the tutorial flag for the granted-card
-                        // presentation. The standalone preview queues this
-                        // card from its explanatory button; the real mission
-                        // bridge releases the automatic scan after the
-                        // explicit Start Battle tap.
+                        // presentation until the card's first realtime cast;
+                        // the automatic loop resumes after the explicit Start
+                        // Battle tap.
                         isFirstCardTutorial = true
                         actionMessage = "装备「错步穿行」后开始战斗"
                         onFirstBattleInterventionCompleted()
@@ -1492,7 +1460,7 @@ struct ChapterOneEncounterTestView: View {
             unityBattleRuntime.send(action: "encore-model-on")
         }
         .task(id: "\(combatIsActive)-\(showsTutorial)-\(showsQ1GoddessIntervention)-\(showsQ5MaraIntervention)-\(waitsForPostInterventionStart)-\(showsQ30AngelIntro)") {
-            guard automatesSkillSequence, combatIsActive else { return }
+            guard combatIsActive else { return }
             lastBattleWallTime = nil
             while !Task.isCancelled && combatIsActive {
                 if !showsTutorial && !showsQ1GoddessIntervention && !showsQ5MaraIntervention && !waitsForPostInterventionStart && !showsQ30AngelIntro {
@@ -1522,7 +1490,7 @@ struct ChapterOneEncounterTestView: View {
             finishQ30AngelIntro(skipped: false)
         }
         .onChange(of: unityBattleRuntime.combatContactToken) { _, _ in
-            guard automatesSkillSequence, combatIsActive, !showsTutorial,
+            guard combatIsActive, !showsTutorial,
                   !showsQ1GoddessIntervention, !showsQ5MaraIntervention, !waitsForPostInterventionStart, !showsQ30AngelIntro else { return }
             tickContinuousCombat()
         }
@@ -1641,7 +1609,7 @@ struct ChapterOneEncounterTestView: View {
                 return
             }
             // Q5's first defeat is an authored Mara beat, not a retry screen.
-            // Let the hound's lethal animation finish, then the commit path
+            // Let the hound's lethal animation finish, then the contact path
             // presents Mara's rewind overlay and calls the runtime reset.
             if session.encounter.id == "chapter01_q05_encounter",
                session.paperDoubleTutorialPhase == .awaitingMara {
@@ -1694,15 +1662,6 @@ struct ChapterOneEncounterTestView: View {
         (battleIsActive && !waitsForPostInterventionStart)
             || (showsStandaloneOpeningBattleButton && hasStartedOpeningBattle && !waitsForPostInterventionStart)
             || (holdsQ5Preview && hasStartedHeldQ5Preview)
-    }
-
-    private var pausesAutomaticCombatForFirstCardTutorial: Bool {
-        // The standalone command-line Q1 preview explicitly teaches the
-        // player to tap the first card, and its intervention callback queues
-        // that card for them. The real mission bridge instead returns to the
-        // setup screen: once the player taps "开始战斗", the normal automatic
-        // scan must be allowed to execute the first granted card immediately.
-        false
     }
 
     private var requiresOpeningBattleStart: Bool {
@@ -1768,13 +1727,6 @@ struct ChapterOneEncounterTestView: View {
         session.encounter.id == "chapter01_q01_encounter" && !q1CardsGranted
     }
 
-    private var queuedSkillIDs: [FoolSkillID] {
-        queuedActions.compactMap { action in
-            guard case let .skill(skill) = action else { return nil }
-            return skill
-        }
-    }
-
     private var firstTutorialCardID: FoolSkillID? {
         if session.loadout.battleSkillIDs.contains(.sidestepStrike),
            session.canUseFoolSkill(.sidestepStrike) {
@@ -1819,20 +1771,6 @@ struct ChapterOneEncounterTestView: View {
         }
 
         return unlocked
-    }
-
-    private var actionSlotLimit: Int {
-        if isHoundLesson { return 1 }
-        // Sequence never caps the number of actions in a round. Every
-        // ordinary card currently equipped and unlocked executes once in the
-        // saved order. Q1's one-card tutorial is reflected by
-        // `visibleBattleSkills` itself.
-        return max(1, visibleBattleSkills.count)
-    }
-
-    private var isHoundLesson: Bool {
-        session.encounter.id == "chapter01_q04_encounter"
-            || session.encounter.id == "chapter01_q05_encounter"
     }
 
     /// Finish the opening sequence before revisiting ready skills. Subsequent
@@ -2096,7 +2034,7 @@ struct ChapterOneEncounterTestView: View {
                     let sealed = value.controlSealActive
                     let statesBefore = value.foolStates
                     let shieldBefore = value.playerShield
-                    let result = try value.useFoolSkill(skill, targetID: impact.target, usesRealtimeCooldown: true, sealedByPaperweight: impact.sealed)
+                    let result = try value.useFoolSkill(skill, targetID: impact.target, sealedByPaperweight: impact.sealed)
                     value.setContinuousSkillSequence(selectedSequence)
                     if skill == .namelessStage { recordUltimateContact(value) }
                     if skill == .maskedWhisper {
@@ -2450,9 +2388,8 @@ struct ChapterOneEncounterTestView: View {
                         .flatMap { unityBattleEnemyID(for: $0) } ?? ""
                     unityBattleRuntime.send(action: "sidestep-secondary:\(secondaryID)")
                 }
-                // Same reach as the rules: two for 错步 in the story, three in the tower,
-                // where 荒谬's volley also lands on two bystanders.
-                let reach = skill.isOrderedOrdinary ? (skill == .sidestepStrike ? 2 : 0) : MPCFoolGroupCards.extraTargets(encounterID: session.encounter.id, skill: skill)
+                // Same reach as the rules: 错步 cuts up to three bodies (ten-card redesign).
+                let reach = skill == .sidestepStrike ? 2 : 0
                 if skill == .namelessStage || reach > 0 {
                     let recipients = skill == .namelessStage
                         ? session.enemies.filter(\.isAlive)
@@ -2843,60 +2780,6 @@ struct ChapterOneEncounterTestView: View {
                         "enemies": enemies])
         storage.set(Array(records.suffix(20)), forKey: "debug.ultimate-contacts")
         #endif
-    }
-
-    private func enqueueAutomaticTurn() {
-        if isQ1PreludeActive {
-            enqueueAutomaticBasicAttack()
-            return
-        }
-
-        let sequence = chosenLoopSkills ?? visibleBattleSkills.map(\.id)
-        guard !sequence.isEmpty else {
-            enqueueAutomaticBasicAttack()
-            return
-        }
-
-        guard let skill = nextAutomaticSkill(in: sequence) else {
-            // Basic attacks fill the gap while skill cooldowns run in real time.
-            enqueueAutomaticBasicAttack()
-            actionMessage = "自动普攻 · 技能冷却中"
-            return
-        }
-
-        let targetID = selectedTargetID.flatMap { selectedID in
-            session.enemies.contains(where: { $0.id == selectedID && $0.isAlive })
-                ? selectedID
-                : nil
-        } ?? Self.defaultTargetID(in: session.enemies)
-        queuedActions = [.skill(skill)]
-        queuedTargetIDs = [skill: targetID].compactMapValues { $0 }
-        actionMessage = "自动执行 · \(skillName(skill))"
-        updateQueuedTargetPresentation()
-    }
-
-    private func nextAutomaticSkill(in sequence: [FoolSkillID]) -> FoolSkillID? {
-        skillScheduler.next(in: sequence.filter {
-            $0 != .namelessStage || session.canUseFoolSkill($0)
-        }, at: battleTime, skipping: session.sealedFoolSkillIDs(at: battleTime))
-    }
-
-    /// Automatic fallback attacks must be fully resolved without opening the
-    /// manual target-picker. Otherwise the automatic task commits an empty
-    /// queue and combat appears frozen on “选择目标”.
-    private func enqueueAutomaticBasicAttack() {
-        guard let targetID = selectedTargetID.flatMap({ selectedID in
-            session.enemies.contains(where: { $0.id == selectedID && $0.isAlive })
-                ? selectedID
-                : nil
-        }) ?? Self.defaultTargetID(in: session.enemies) else { return }
-
-        queuedActions = [.basic(.damage)]
-        queuedBasicTargetIDs[MPCPlayerActionCategory.damage.rawValue] = targetID
-        pendingBasicTargetCategory = nil
-        selectedTargetID = targetID
-        actionMessage = "自动普攻"
-        updateQueuedTargetPresentation()
     }
 
     private var battleRelicContents: [MPCRelicContent] {
@@ -3442,26 +3325,6 @@ struct ChapterOneEncounterTestView: View {
         }
     }
 
-    private var queuedComboPreview: (title: String, detail: String)? {
-        guard queuedSkillIDs.count >= 2 else { return nil }
-        return switch Array(queuedSkillIDs.prefix(2)) {
-        case [.stolenTempo, .mirrorBarrage]: ("抢拍 → 连弹", "加速让固定引导从三发提升至六发")
-        case [.fabricatedEvidence, .identityDisplacement]: ("伪证 → 张冠", "四层误认在到期前转为错位与破甲")
-        case [.identityDisplacement, .mirrorPursuit]: ("张冠 → 双影", "错位期间兑现两段重击")
-        case [.delayedSignature, .mirrorBarrage]: ("落款 → 连弹", "让后续连击计入2.6秒后的爆炸")
-        default: nil
-        }
-    }
-
-    private func retargetPolicy(for skill: FoolSkillID) -> QueuedRetargetPolicy {
-        switch skill {
-        case .sidestepStrike, .mirrorPursuit, .absurdFinale, .namelessStage:
-            .anyValidEnemy
-        default:
-            .sameTargetOnly
-        }
-    }
-
     private func exitBattleSettlingMedal() {
         _ = session.finishRelicBattle()
         syncVisualHealth()
@@ -3636,7 +3499,6 @@ struct ChapterOneEncounterTestView: View {
             .frame(width: proxy.size.width, height: proxy.size.height)
         }
         .frame(minHeight: 280)
-        .animation(.easeOut(duration: 0.20), value: targetSelectionDetail)
     }
 
     static func enemyPreludeLines(_ mission: Int) -> [String] {
@@ -3707,16 +3569,6 @@ struct ChapterOneEncounterTestView: View {
         case "chapter01_q10_encounter": return .houndEscort
         default: return .clockGuard
         }
-    }
-
-    private var targetSelectionDetail: String? {
-        if let pendingTargetSkillID {
-            return skillName(pendingTargetSkillID)
-        }
-        if pendingBasicTargetCategory == .damage {
-            return "普攻"
-        }
-        return nil
     }
 
     private func protectedBossTargetLabel(for enemy: MPCRuntimeEnemy) -> String? {
@@ -4168,41 +4020,6 @@ struct ChapterOneEncounterTestView: View {
         }
     }
 
-    private func targetSelectionPrompt(detail: String) -> some View {
-        HStack(spacing: 8) {
-            Image(systemName: "scope")
-                .font(.system(size: 16, weight: .bold))
-                .foregroundStyle(Color(red: 0.72, green: 0.66, blue: 1.0))
-                .symbolEffect(.pulse, options: .repeating.speed(0.72))
-            VStack(alignment: .leading, spacing: 1) {
-                Text("选择目标")
-                    .font(.system(size: 13, weight: .black, design: .rounded))
-                Text(detail)
-                    .font(.system(size: 9, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.68))
-            }
-        }
-        .padding(.horizontal, 13)
-        .padding(.vertical, 8)
-        .background(.black.opacity(0.78), in: Capsule())
-        .overlay {
-            Capsule()
-                .stroke(
-                    LinearGradient(
-                        colors: [
-                            Color(red: 0.42, green: 0.68, blue: 1.0).opacity(0.72),
-                            Color(red: 0.68, green: 0.38, blue: 1.0).opacity(0.72)
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
-                    lineWidth: 1
-                )
-        }
-        .shadow(color: Color(red: 0.42, green: 0.36, blue: 1.0).opacity(0.34), radius: 10)
-        .accessibilityLabel("选择(detail)的目标")
-    }
-
     private var battleProgressChip: some View {
         HStack(spacing: 5) {
             Text("CHAPTER I")
@@ -4372,7 +4189,7 @@ struct ChapterOneEncounterTestView: View {
                     .accessibilityIdentifier("combat-skip-picture")
                 basicActionCard("普攻", subtitle: "自动出招", systemImage: "sparkles",
                                 artName: "IconBasicAttackFool", tint: .orange,
-                                isLocked: false, queuePositions: []) { }
+                                isLocked: false) { }
                     .overlay { ClockwiseCardCooldown(now: battleTime, startedAt: basicCooldownStarted, duration: session.tempo?.basicInterval ?? 2.4) }
                 }
             }
@@ -4491,38 +4308,6 @@ struct ChapterOneEncounterTestView: View {
             if session.outcome == .defeat {
                 defeatPanel
             } else {
-            if session.bossPhase != nil {
-                HStack(spacing: 6) {
-                    responseButton("闪避", .evasion)
-                    responseButton("防护", .protection)
-                    responseButton("破意志", .willBreak)
-                    responseButton("终结", .fullFinisher)
-                }
-            }
-
-            if let preview = queuedComboPreview {
-                HStack(spacing: 8) {
-                    Image(systemName: "theatermasks.fill")
-                        .foregroundStyle(Color(red: 0.92, green: 0.67, blue: 0.27))
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text(preview.title)
-                            .font(.system(size: 10, weight: .black, design: .rounded))
-                        Text(preview.detail)
-                            .font(.system(size: 9, weight: .medium, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.70))
-                            .lineLimit(1)
-                    }
-                    Spacer(minLength: 0)
-                    Capsule()
-                        .fill(LinearGradient(colors: [.purple.opacity(0.15), .yellow.opacity(0.86), .purple.opacity(0.15)], startPoint: .leading, endPoint: .trailing))
-                        .frame(width: 44, height: 2)
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(Color(red: 0.14, green: 0.09, blue: 0.23).opacity(0.82), in: RoundedRectangle(cornerRadius: 10))
-                .overlay(RoundedRectangle(cornerRadius: 10).stroke(.yellow.opacity(0.22), lineWidth: 1))
-            }
-
             if !isQ1PreludeActive {
             if showsCombatInventoryPanel {
             VStack(spacing: 5) {
@@ -4549,8 +4334,8 @@ struct ChapterOneEncounterTestView: View {
                             comparisonUnselectedCard(skill)
                         }
                         ForEach(ownedBattleSkills) { skill in
-                            // A tap immediately queues the card; long press
-                            // keeps the separate detail presentation.
+                            // A tap adds or removes the card from the loop before
+                            // battle; long press keeps the detail presentation.
                             let remaining = session.remainingCooldownActions(for: skill.id)
                             let isTutorialCard = isFirstCardTutorial && firstTutorialCardID == skill.id
                             let isSelectedCard = skill.isUltimate ? requestedUltimate : (chosenLoopSkills ?? visibleBattleSkills.map(\.id)).contains(skill.id)
@@ -4844,16 +4629,8 @@ struct ChapterOneEncounterTestView: View {
         if !configuredSession.enemies.contains(where: { $0.id == selectedTargetID && $0.isAlive }) {
             selectedTargetID = Self.defaultTargetID(in: configuredSession.enemies)
         }
-        queuedActions.removeAll()
-        queuedTargetIDs.removeAll()
-        queuedBasicTargetIDs.removeAll()
-        pendingTargetSkillID = nil
-        pendingBasicTargetCategory = nil
-        selectedCardID = nil
         combatFloatingNumbers.removeAll()
         transientEnemyHealth.removeAll()
-        isResolvingEnemyTurn = false
-        isHoldingQ5VictoryPresentation = false
         syncVisualHealth()
         updateQueuedTargetPresentation()
         // Q30 opens on the angel's cutscene; its end announces the blessings (2026-10-11).
@@ -4892,7 +4669,6 @@ struct ChapterOneEncounterTestView: View {
         #endif
         _ = session.finishRelicBattle()
         isDefeatOverlayVisible = false
-        isHoldingQ5VictoryPresentation = false
         battleTime = 0
         sentHeroHasteUntil = 0
         lastBattleWallTime = nil
@@ -4924,11 +4700,6 @@ struct ChapterOneEncounterTestView: View {
         chosenLoopSkills = []
         hasStartedHeldQ5Preview = false
         selectedTargetID = Self.defaultTargetID(in: initialSession.enemies)
-        queuedActions.removeAll()
-        queuedTargetIDs.removeAll()
-        queuedBasicTargetIDs.removeAll()
-        pendingTargetSkillID = nil
-        pendingBasicTargetCategory = nil
         combatFloatingNumbers.removeAll()
         actionMessage = "选择目标并使用技能"
         hasStartedOpeningBattle = false
@@ -4952,253 +4723,6 @@ struct ChapterOneEncounterTestView: View {
         showPartyRigs(rebuild: true)
     }
 
-    private func responseButton(_ title: String, _ response: MPCBossMechanicResponse) -> some View {
-        Button(title) {
-            var value = session
-            if let chosenLoopSkills { value.setContinuousSkillSequence(chosenLoopSkills) }
-            let previousWave = value.waveIndex
-            try? value.endRound(response: response)
-            session = value
-            if value.waveIndex != previousWave {
-                replaceVisualScene(for: value)
-            } else {
-                syncVisualHealth()
-            }
-            actionMessage = value.outcome == .defeat ? "战斗失败 · 可重新挑战" : "敌方行动已经结算"
-        }
-        .buttonStyle(.borderedProminent)
-        .tint(.red.opacity(0.8))
-        .disabled(isResolvingEnemyTurn)
-    }
-
-    private func toggleQueuedSkill(_ skill: FoolSkillID) {
-        guard combatIsActive,
-              !locksCardSelectionForPreview,
-              !isResolvingEnemyTurn,
-              session.canUseFoolSkill(skill) else { return }
-
-        if let index = queuedActions.firstIndex(of: .skill(skill)) {
-            withAnimation(.spring(response: 0.32, dampingFraction: 0.72)) {
-                queuedActions.remove(at: index)
-                queuedTargetIDs[skill] = nil
-                if pendingTargetSkillID == skill { pendingTargetSkillID = nil }
-                if selectedCardID == skill { selectedCardID = nil }
-            }
-            updateQueuedTargetPresentation()
-            updateQueueMessage()
-            return
-        }
-
-        guard queuedActions.count < actionSlotLimit else {
-            actionMessage = "本回合已排入全部 \(actionSlotLimit) 张已装备卡牌"
-            return
-        }
-
-        // Keep the card visibly selected while the player is choosing its
-        // target. Previously selection was derived only from the queued list,
-        // so multi-target encounters lost the original tilt/foil treatment
-        // during this intermediate state.
-        withAnimation(.spring(response: 0.28, dampingFraction: 0.78)) {
-            selectedCardID = skill
-        }
-
-        if skill == .paperDouble {
-            enqueue(skill, targetID: nil)
-            commitFirstTutorialCardIfNeeded()
-            return
-        }
-
-        let legalTargets = session.enemies.filter(\.isAlive)
-        guard let target = legalTargets.first(where: { $0.id == selectedTargetID })
-                ?? legalTargets.first else { return }
-        selectedTargetID = target.id
-        // Queue against the current/default living enemy immediately. Tapping
-        // another enemy before commit still retargets this queued skill.
-        enqueue(skill, targetID: target.id)
-        commitFirstTutorialCardIfNeeded()
-    }
-
-    private func commitFirstTutorialCardIfNeeded() {
-        // Continuous combat owns all automated casts; never launch the legacy task.
-        guard !automatesSkillSequence, combatIsActive, isFirstCardTutorial else { return }
-        Task { @MainActor in
-            await Task.yield()
-            guard !Task.isCancelled, combatIsActive, !queuedActions.isEmpty else { return }
-            commitQueuedTurn()
-        }
-    }
-
-    private func enqueue(_ skill: FoolSkillID, targetID: String?) {
-        withAnimation(.spring(response: 0.32, dampingFraction: 0.72)) {
-            queuedActions.append(.skill(skill))
-            queuedTargetIDs[skill] = targetID
-            pendingTargetSkillID = automatesSkillSequence ? nil : (targetID == nil ? nil : skill)
-            selectedCardID = skill
-        }
-        updateQueueMessage()
-        if let targetID,
-           let target = session.enemies.first(where: { $0.id == targetID }) {
-            actionMessage = "已选目标：\(target.name) · 第 \(queuedActions.count) 个行动已排入"
-        }
-        updateQueuedTargetPresentation()
-    }
-
-    private func enqueueBasicAction(
-        _ category: MPCPlayerActionCategory,
-        targetID: String? = nil
-    ) {
-        // Let the player prepare the next action while the enemy presentation
-        // is playing. Committing remains disabled until resolution finishes.
-        guard combatIsActive,
-              !locksCardSelectionForPreview,
-              session.outcome == .inProgress else { return }
-        if let index = queuedActions.firstIndex(of: .basic(category)) {
-            withAnimation(.spring(response: 0.32, dampingFraction: 0.72)) {
-                _ = queuedActions.remove(at: index)
-                queuedBasicTargetIDs[category.rawValue] = nil
-            }
-            updateQueueMessage()
-            updateQueuedTargetPresentation()
-            return
-        }
-        guard queuedActions.count < actionSlotLimit else {
-            actionMessage = "本回合已排入全部 \(actionSlotLimit) 张已装备卡牌"
-            return
-        }
-        let resolvedTargetID: String?
-        if category == .damage {
-            resolvedTargetID = targetID
-                ?? selectedTargetID.flatMap { selectedID in
-                    session.enemies.contains(where: { $0.id == selectedID && $0.isAlive })
-                        ? selectedID
-                        : nil
-                }
-                ?? Self.defaultTargetID(in: session.enemies)
-        } else {
-            resolvedTargetID = nil
-        }
-        withAnimation(.spring(response: 0.28, dampingFraction: 0.78)) {
-            queuedActions.append(.basic(category))
-            if let resolvedTargetID {
-                queuedBasicTargetIDs[category.rawValue] = resolvedTargetID
-            }
-            pendingBasicTargetCategory = category == .damage ? .damage : nil
-        }
-        if category == .protection {
-            actionMessage = "第 \(queuedActions.count) 个行动：防御"
-        } else if let resolvedTargetID,
-                  let target = session.enemies.first(where: { $0.id == resolvedTargetID }) {
-            actionMessage = "普攻已排入 · 目标 \(target.name)"
-        } else {
-            actionMessage = "第 \(queuedActions.count) 个行动：普攻"
-        }
-        updateQueuedTargetPresentation()
-    }
-
-    private func resolveQ1PreludeRound(_ category: MPCPlayerActionCategory) {
-        guard combatIsActive else { return }
-        isResolvingEnemyTurn = true
-        var value = session
-        let targetID = selectedTargetID ?? value.enemies.first(where: \.isAlive)?.id
-
-        if category == .protection {
-            if usesUnityBattlefield, !skipsCombatAnimations { UnityBattleRuntime.shared.send(action: "defend") }
-            if !skipsCombatAnimations { visualScene.presentFoolBasicDefense() }
-            actionMessage = "防御展开 · 护幕 +100"
-        } else {
-            if usesUnityBattlefield, !skipsCombatAnimations { UnityBattleRuntime.shared.send(action: "basic") }
-            if !skipsCombatAnimations { visualScene.presentFoolBasicAttack() }
-            basicCooldownStarted = battleTime
-            actionMessage = "普攻出手"
-        }
-
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(skipsCombatAnimations ? 90 : 620))
-            guard combatIsActive else {
-                isResolvingEnemyTurn = false
-                return
-            }
-            do {
-                _ = try value.useBasicAction(category, targetID: targetID)
-            } catch {
-                actionMessage = errorMessage(error)
-                isResolvingEnemyTurn = false
-                return
-            }
-            if category == .damage, let targetID {
-                // Skip mode omits the attack strip but keeps an immediate hit
-                // reaction, so the zero-damage control-seal probe remains
-                // visible and the player can tell the action resolved.
-                visualScene.presentChapterOneHitReaction(targetID: targetID, damage: 0)
-                actionMessage = "普攻命中 · 0 伤害"
-                try? await Task.sleep(for: .milliseconds(skipsCombatAnimations ? 30 : 620))
-            }
-            guard value.outcome == .inProgress else {
-                isResolvingEnemyTurn = false
-                return
-            }
-
-            let playerHPBeforeEnemyTurn = value.playerHP
-            let resolvingEnemyActions = value.announcedIntents.filter {
-                !$0.intent.hasPrefix("下一意图：") && $0.intent != "delayed"
-            }
-            let resolvingEnemyIntents = resolvingEnemyActions.map(\.intent)
-            do {
-                try value.endRound(response: category == .protection ? .protection : .none)
-            } catch {
-                actionMessage = errorMessage(error)
-                isResolvingEnemyTurn = false
-                return
-            }
-
-            let received = max(0, playerHPBeforeEnemyTurn - value.playerHP)
-            actionMessage = category == .damage
-                ? "0 伤害 · 敌方行动"
-                : "防御完成 · 敌方行动"
-            if !skipsCombatAnimations {
-                let unityCompletionToken = usesUnityBattlefield && UnityBattleRuntime.shared.isReady
-                    ? UnityBattleRuntime.shared.enemyPresentationCompletionToken
-                    : nil
-                if usesUnityBattlefield {
-                    UnityBattleRuntime.shared.send(action: "enemy")
-                }
-                // The third visible attack must finish before Miriel enters.
-                visualScene.presentChapterOneEnemyTurn(
-                    damage: received,
-                    intents: resolvingEnemyIntents
-                )
-                await waitForEnemyPresentationToSettle(
-                    unityCompletionToken: unityCompletionToken
-                )
-            }
-
-            guard combatIsActive else {
-                isResolvingEnemyTurn = false
-                return
-            }
-
-            session = value
-            syncVisualHealth()
-            let completedPreludeAttacks = q1PreludeRoundsCompleted + 1
-            q1PreludeRoundsCompleted = completedPreludeAttacks
-
-            if completedPreludeAttacks >= Self.q1PreludeAttackCount {
-                actionMessage = ""
-                // The overlay itself fades the battle to black for one second
-                // before revealing the guide; mounting it must not add another transition.
-                var blackoutTransaction = Transaction(animation: nil)
-                blackoutTransaction.disablesAnimations = true
-                withTransaction(blackoutTransaction) {
-                    showsQ1GoddessIntervention = true
-                }
-            } else {
-                let remainingAttacks = Self.q1PreludeAttackCount - completedPreludeAttacks
-                actionMessage = "控制印记仍在 · 还需普攻 \(remainingAttacks) 次"
-            }
-            isResolvingEnemyTurn = false
-        }
-    }
-
     private func basicActionCard(
         _ title: String,
         subtitle: String,
@@ -5206,7 +4730,6 @@ struct ChapterOneEncounterTestView: View {
         artName: String?,
         tint: Color,
         isLocked: Bool,
-        queuePositions: [Int],
         action: @escaping () -> Void
     ) -> some View {
         Button {
@@ -5255,17 +4778,6 @@ struct ChapterOneEncounterTestView: View {
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(tint.opacity(isLocked ? 0.24 : 0.92), lineWidth: 1.5)
             }
-            .overlay(alignment: .topLeading) {
-                if !queuePositions.isEmpty {
-                    Text(queuePositions.map(String.init).joined(separator: "·"))
-                        .font(.system(size: 8, weight: .black, design: .rounded))
-                        .foregroundStyle(.black)
-                        .padding(.horizontal, 4)
-                        .frame(height: 16)
-                        .background(tint, in: Capsule())
-                        .padding(3)
-                }
-            }
             .shadow(color: tint.opacity(isLocked ? 0 : 0.28), radius: 9, y: 3)
             .saturation(isLocked ? 0.15 : 1)
             .opacity(isLocked ? 0.52 : 1)
@@ -5277,111 +4789,19 @@ struct ChapterOneEncounterTestView: View {
         .accessibilityValue(isLocked ? "尚未解锁" : subtitle)
     }
 
-    private func basicQueuePositions(for category: MPCPlayerActionCategory) -> [Int] {
-        queuedActions.enumerated().compactMap { index, action in
-            action == .basic(category) ? index + 1 : nil
-        }
-    }
-
+    /// Tapping an enemy retargets the automatic loop's next cast and basic attacks.
     private func handleEnemyTap(_ targetID: String) {
         selectedTargetID = targetID
-        if let pendingTargetSkillID {
-            // Keep target mode open after the first choice. The same card can
-            // be retargeted repeatedly until the player removes the card or
-            // commits the queue.
-            if queuedSkillIDs.contains(pendingTargetSkillID) {
-                queuedTargetIDs[pendingTargetSkillID] = targetID
-                actionMessage = session.enemies.first(where: { $0.id == targetID })
-                    .map { "已改选目标：\($0.name)" } ?? "已改选目标"
-                updateQueuedTargetPresentation()
-            } else {
-                enqueuePendingSkillTarget(pendingTargetSkillID, targetID: targetID)
-            }
-        } else if let pendingBasicTargetCategory {
-            if queuedActions.contains(.basic(pendingBasicTargetCategory)) {
-                queuedBasicTargetIDs[pendingBasicTargetCategory.rawValue] = targetID
-                actionMessage = session.enemies.first(where: { $0.id == targetID })
-                    .map { "已改选普攻目标：\($0.name)" } ?? "已改选普攻目标"
-                updateQueuedTargetPresentation()
-            } else {
-                enqueuePendingBasicTarget(pendingBasicTargetCategory, targetID: targetID)
-            }
-        } else if let selectedCardID,
-                  selectedCardID != .paperDouble,
-                  queuedSkillIDs.contains(selectedCardID) {
-            queuedTargetIDs[selectedCardID] = targetID
-            if let target = session.enemies.first(where: { $0.id == targetID }) {
-                actionMessage = "已改选目标：\(target.name)"
-            }
-            updateQueuedTargetPresentation()
-        } else if queuedActions.contains(.basic(.damage)) {
-            // Basic attacks remain optionally targetable after being queued.
-            queuedBasicTargetIDs[MPCPlayerActionCategory.damage.rawValue] = targetID
-            if let target = session.enemies.first(where: { $0.id == targetID }) {
-                actionMessage = "已改选普攻目标：\(target.name)"
-            }
-            updateQueuedTargetPresentation()
-        } else {
-            updateQueuedTargetPresentation()
-        }
-    }
-
-    private func clearQueuedTurn() {
-        withAnimation(.easeOut(duration: 0.2)) {
-            queuedActions.removeAll()
-            queuedTargetIDs.removeAll()
-            queuedBasicTargetIDs.removeAll()
-            pendingTargetSkillID = nil
-            pendingBasicTargetCategory = nil
-        }
-        updateQueueMessage()
         updateQueuedTargetPresentation()
     }
 
-    private func updateQueueMessage() {
-        actionMessage = queuedActions.isEmpty
-            ? "选择本回合的行动"
-            : "已编排 \(queuedActions.count)/\(actionSlotLimit) 个行动"
-    }
-
     private func updateQueuedTargetPresentation() {
-        // Target selection remains in the queue and transparent hit regions.
+        // Targets are picked through transparent hit regions only.
         // The battlefield must not display selection ornaments or floor rings.
         if usesUnityBattlefield {
             UnityBattleRuntime.shared.setTargetSigils("")
         }
         visualScene.showQueuedTargets([], pendingTargetIDs: [])
-    }
-
-    private func enqueuePendingSkillTarget(
-        _ skill: FoolSkillID,
-        targetID: String
-    ) {
-        withAnimation(.spring(response: 0.32, dampingFraction: 0.72)) {
-            queuedActions.append(.skill(skill))
-            queuedTargetIDs[skill] = targetID
-            selectedCardID = skill
-        }
-        if let target = session.enemies.first(where: { $0.id == targetID }) {
-            actionMessage = "已选目标：\(target.name) · 可继续改选"
-        }
-        updateQueueMessage()
-        updateQueuedTargetPresentation()
-    }
-
-    private func enqueuePendingBasicTarget(
-        _ category: MPCPlayerActionCategory,
-        targetID: String
-    ) {
-        withAnimation(.spring(response: 0.32, dampingFraction: 0.72)) {
-            queuedActions.append(.basic(category))
-            queuedBasicTargetIDs[category.rawValue] = targetID
-        }
-        if let target = session.enemies.first(where: { $0.id == targetID }) {
-            actionMessage = "已选目标：\(target.name) · 普攻可继续改选"
-        }
-        updateQueueMessage()
-        updateQueuedTargetPresentation()
     }
 
     private static func defaultTargetID(
@@ -5412,528 +4832,10 @@ struct ChapterOneEncounterTestView: View {
         return alive[alive.count / 2].id
     }
 
-    /// A multi-target skill still has one visual impact anchor. Resolve that
-    /// anchor from the live combat state instead of letting a presentation
-    /// layer infer it from the whole hit list. This matters when the first
-    /// victim dies during a queued action: the spell must remain attached to
-    /// an enemy, never fall back to the protagonist or the battlefield center.
-    private static func combatVisualTargetID(
-        preferredTargetID: String?,
-        in enemies: [MPCRuntimeEnemy]
-    ) -> String? {
-        if let preferredTargetID,
-           enemies.contains(where: { $0.id == preferredTargetID && $0.isAlive }) {
-            return preferredTargetID
-        }
-        return enemies.first(where: \.isAlive)?.id
-    }
-
     private func unityBattleEnemyID(
         for enemy: MPCRuntimeEnemy
     ) -> String? {
         MPCChapterOneBattleIdentity.battleID(for: enemy.id, in: session.enemies)
-    }
-
-    private func commitQueuedTurn() {
-        guard !automatesSkillSequence, combatIsActive,
-              !queuedActions.isEmpty,
-              !isResolvingEnemyTurn,
-              !isHoldingQ5VictoryPresentation,
-              !locksCardSelectionForPreview else { return }
-        let committedActions = queuedActions
-        let committedTargetIDs = queuedTargetIDs
-        let committedBasicTargetIDs = queuedBasicTargetIDs
-        let completesFirstCardTutorial = isFirstCardTutorial
-        queuedActions.removeAll()
-        queuedTargetIDs.removeAll()
-        queuedBasicTargetIDs.removeAll()
-        pendingTargetSkillID = nil
-        pendingBasicTargetCategory = nil
-        updateQueuedTargetPresentation()
-        isResolvingEnemyTurn = true
-
-        if isQ1PreludeActive {
-            guard committedActions == [.basic(.damage)] else {
-                isResolvingEnemyTurn = false
-                actionMessage = "先将普攻排入第①行动位"
-                return
-            }
-            resolveQ1PreludeRound(.damage)
-            return
-        }
-
-        Task { @MainActor in
-            guard combatIsActive else {
-                isResolvingEnemyTurn = false
-                return
-            }
-            var value = session
-            let previousWave = value.waveIndex
-            var messages: [String] = []
-            var interruptedByBossPhase = false
-            var playerDamageDealt = 0
-            var enemyHealingEvents: [(targetID: String, amount: Int)] = []
-            var enemyDefenseBoostEvents: [(targetID: String, percentage: Int)] = []
-            var enemyActionResolutions: [MPCEnemyActionResolution] = []
-            var shouldPresentQ5MaraIntervention = false
-
-            actionLoop: for (actionIndex, action) in committedActions.enumerated() where value.outcome == .inProgress {
-                guard combatIsActive else { isResolvingEnemyTurn = false; return }
-                let orderText = "\(actionIndex + 1)/\(committedActions.count)"
-                switch action {
-                case let .basic(category):
-                    selectedCardID = nil
-                    if category == .protection {
-                        actionMessage = "正在执行 \(orderText)：防御"
-                        if usesUnityBattlefield, !skipsCombatAnimations { UnityBattleRuntime.shared.send(action: "defend") }
-                        if !skipsCombatAnimations { visualScene.presentFoolBasicDefense() }
-                        _ = try? value.useBasicAction(.protection)
-                        messages.append("防御 · 护幕 +100")
-                        try? await Task.sleep(for: .milliseconds(skipsCombatAnimations ? 90 : 720))
-                    } else {
-                        let queuedTargetID = committedBasicTargetIDs[category.rawValue]
-                        let targetID = queuedTargetID.flatMap { candidateID in
-                            value.enemies.contains(where: { $0.id == candidateID && $0.isAlive })
-                                ? candidateID
-                                : nil
-                        } ?? Self.defaultTargetID(in: value.enemies)
-                        guard let targetID else { continue actionLoop }
-                        basicCooldownStarted = battleTime
-                        actionMessage = "正在执行 \(orderText)：普攻"
-                        if usesUnityBattlefield, !skipsCombatAnimations { UnityBattleRuntime.shared.send(action: "basic") }
-                        if !skipsCombatAnimations {
-                            visualScene.presentFoolBasicAttack()
-                            // TarotNova reaches the target at 0.58s; preserve the
-                            // SpriteKit fallback's existing contact timing.
-                            try? await Task.sleep(for: .milliseconds(usesUnityBattlefield ? 580 : 360))
-                        }
-                        do {
-                            let damage = try value.useBasicAction(.damage, targetID: targetID)
-                            playerDamageDealt += damage
-                            presentEnemyImpacts(skill: nil, hits: [(targetID, damage)])
-                            if usesUnityBattlefield { showCombatFloatingNumber(damage, for: targetID, kind: .damage) }
-                            messages.append("普攻命中 · \(damage) 点伤害")
-                            visualScene.presentChapterOneHitReaction(targetID: targetID, damage: damage)
-                            selectedTargetID = targetID
-                            session = value
-                            syncVisualHealth()
-                            // Let the 1.65s tarot effect finish before the next action.
-                            try? await Task.sleep(for: .milliseconds(skipsCombatAnimations ? 90 : (usesUnityBattlefield ? 1070 : 360)))
-                        } catch {
-                            messages.append(errorMessage(error))
-                        }
-                    }
-
-                case let .skill(skill):
-                    let targetID: String?
-                    if let plannedTargetID = committedTargetIDs[skill],
-                       value.enemies.contains(where: { $0.id == plannedTargetID && $0.isAlive }) {
-                        targetID = plannedTargetID
-                    } else if retargetPolicy(for: skill) == .anyValidEnemy {
-                        targetID = value.enemies.first(where: \.isAlive)?.id
-                    } else {
-                        messages.append("\(skillName(skill))：目标已失效")
-                        continue actionLoop
-                    }
-                    // The core may resolve this card against two enemies, but
-                    // the visual cast must use exactly one stable enemy anchor.
-                    // Keep the pre-action choice only as a preference; after
-                    // resolution we re-select from the enemies that survived
-                    // so a lethal first hit cannot leave the effect on a dead
-                    // actor or redirect it to the player.
-                    let plannedVisualTargetID = Self.combatVisualTargetID(
-                        preferredTargetID: targetID,
-                        in: value.enemies
-                    )
-                    selectedTargetID = plannedVisualTargetID
-                    selectedCardID = skill
-                    let controlSealWasActive = value.controlSealActive
-                    // Skipping animation shortens timing only; the skill must
-                    // still show its cast and impact, especially Sidestep
-                    // Strike's signature hit.
-                    if !skipsCombatAnimations, !usesUnityBattlefield {
-                        visualScene.presentFoolSkill(
-                            FoolSpellVFXSkill.authored(skill),
-                            extendedPresentation: true
-                        )
-                    }
-                    do {
-                        let bossPhaseBeforeAction = value.bossPhase
-                        let preResolutionRecipients = value.enemies.filter(\.isAlive)
-                        let result = try value.useFoolSkill(skill, targetID: targetID, usesRealtimeCooldown: automatesSkillSequence)
-                        skillScheduler.didCast(skill, at: battleTime)
-                        // A multi-target skill can kill the planned anchor as
-                        // part of this very resolution. Choose one surviving
-                        // enemy for the authored spell impact before Unity is
-                        // asked to play it. If both victims die, the Unity
-                        // bridge still falls back only across enemy handles.
-                        let resolvedVisualTargetID = Self.combatVisualTargetID(
-                            preferredTargetID: plannedVisualTargetID,
-                            in: value.enemies
-                        )
-                        selectedTargetID = resolvedVisualTargetID ?? targetID
-                        if usesUnityBattlefield, !skipsCombatAnimations {
-                            let unityVisualTargetID = (skill == .sidestepStrike ? result.targets.first?.targetID : resolvedVisualTargetID)
-                                .flatMap { id in value.enemies.first(where: { $0.id == id }) }
-                                .flatMap { unityBattleEnemyID(for: $0) }
-                            let targetSuffix = unityVisualTargetID.map { ":\($0)" } ?? ""
-                            if skill == .sidestepStrike {
-                                let secondaryID = result.targets.dropFirst().first
-                                    .flatMap { hit in value.enemies.first { $0.id == hit.targetID } }
-                                    .flatMap { unityBattleEnemyID(for: $0) } ?? ""
-                                UnityBattleRuntime.shared.send(action: "sidestep-secondary:\(secondaryID)")
-                            }
-                            // 荒谬归结 lists its tower bystanders too, so the volley visibly lands on them.
-                            if skill == .namelessStage || skill == .sidestepStrike || (skill == .absurdFinale && result.targets.count > 1) {
-                                let recipients = skill == .namelessStage ? preResolutionRecipients
-                                    : result.targets.compactMap { hit in preResolutionRecipients.first { $0.id == hit.targetID } }
-                                let ids = recipients.compactMap { unityBattleEnemyID(for: $0) }
-                                UnityBattleRuntime.shared.send(action: "skill-targets:\(ids.joined(separator: "|"))")
-                            }
-                            UnityBattleRuntime.shared.send(
-                                action: "skill:\(skill.rawValue)\(targetSuffix)"
-                            )
-                        }
-                        if !skipsCombatAnimations { announceSignatureMove(skill) }
-                        let brokeControlSeal = controlSealWasActive && !value.controlSealActive
-                        playerDamageDealt += result.targets.reduce(0) { total, hit in
-                            total + max(0, hit.damage)
-                        }
-                        messages.append(
-                            brokeControlSeal
-                                ? (value.encounter.id == "chapter01_q02_encounter"
-                                    ? "寄生护罩破除"
-                                    : "控制印记破除 · 保护层消失")
-                                : (result.damage > 0
-                                    ? "\(skillName(skill))命中 · \(result.damage) 点伤害"
-                                    : "\(skillName(skill))已生效")
-                        )
-                        actionMessage = "正在执行 \(orderText)：\(skillName(skill))"
-                        if !skipsCombatAnimations {
-                            try? await Task.sleep(for: .milliseconds(850))
-                        }
-                        presentEnemyImpacts(skill: skill, hits: result.targets.map { ($0.targetID, $0.damage) })
-                        if let targetID {
-                            if brokeControlSeal {
-                                if usesUnityBattlefield {
-                                    UnityBattleRuntime.shared.send(action: "guardian-ward-break")
-                                }
-                                visualScene.presentChapterOneControlSealBreak(targetID: targetID)
-                                showCombatFloatingNumber(
-                                    result.damage,
-                                    for: targetID,
-                                    kind: .damage
-                                )
-                                try? await Task.sleep(for: .milliseconds(skipsCombatAnimations ? 30 : 900))
-                            } else {
-                                // Damage numbers remain per victim, but the
-                                // authored impact/shake/VFX is intentionally
-                                // presented once at one still-valid enemy.
-                                // Iterating hit reactions here used to let a
-                                // disappearing second victim redirect the
-                                // effect to an invalid/default presentation
-                                // anchor.
-                                let visualHit = result.targets.first { hit in
-                                    value.enemies.contains { enemy in
-                                        enemy.id == hit.targetID && enemy.isAlive
-                                    }
-                                } ?? result.targets.first(where: { $0.targetID == resolvedVisualTargetID })
-                                if let visualHit {
-                                    visualScene.presentChapterOneHitReaction(
-                                        targetID: visualHit.targetID,
-                                        damage: visualHit.damage,
-                                        showsDamageNumber: !usesUnityBattlefield
-                                    )
-                                }
-                                for hit in result.targets {
-                                    if usesUnityBattlefield {
-                                        showCombatFloatingNumber(
-                                            hit.damage,
-                                            for: hit.targetID,
-                                            kind: .damage
-                                        )
-                                    } else if hit.targetID != visualHit?.targetID {
-                                        visualScene.presentChapterOneDamageNumber(
-                                            targetID: hit.targetID,
-                                            damage: hit.damage
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        session = value
-                        syncVisualHealth()
-                        try? await Task.sleep(for: .milliseconds(skipsCombatAnimations ? 90 : 360))
-
-                        if value.bossPhase != bossPhaseBeforeAction, value.bossPhase != nil {
-                            let returnedActions = Array(committedActions.dropFirst(actionIndex + 1))
-                            queuedActions = returnedActions
-                            queuedTargetIDs = committedTargetIDs
-                            queuedBasicTargetIDs = committedBasicTargetIDs
-                            interruptedByBossPhase = true
-                            actionMessage = "首领进入新阶段 · 后续卡牌已退回队列"
-                            updateQueuedTargetPresentation()
-                            break
-                        }
-                    } catch {
-                        messages.append(errorMessage(error))
-                    }
-                }
-            }
-            selectedCardID = nil
-
-            if value.outcome == .inProgress && !interruptedByBossPhase {
-                guard combatIsActive else { isResolvingEnemyTurn = false; return }
-                messages += value.performCompanionActions(focusTargetID: selectedTargetID).map(\.message)
-            }
-            if let selectedTargetID,
-               !value.enemies.contains(where: { $0.id == selectedTargetID && $0.isAlive }) {
-                self.selectedTargetID = Self.defaultTargetID(in: value.enemies)
-            }
-
-            let shouldResolveEnemyTurn = value.outcome == .inProgress
-                && value.waveIndex == previousWave
-                && !interruptedByBossPhase
-            let playerHPBeforeEnemyTurn = value.playerHP
-            let resolvingEnemyActions = value.announcedIntents.filter {
-                !$0.intent.hasPrefix("下一意图：") && $0.intent != "delayed"
-            }
-            let resolvingEnemyIntents = resolvingEnemyActions.map(\.intent)
-            if shouldResolveEnemyTurn {
-                let q5PhaseBeforeEnemyTurn = value.paperDoubleTutorialPhase
-                let enemyHPBeforeTurn = Dictionary(
-                    uniqueKeysWithValues: value.enemies.map { ($0.id, $0.hp) }
-                )
-                let enemyDefenseBonusBeforeTurn = Dictionary(
-                    uniqueKeysWithValues: value.enemies.map {
-                        ($0.id, value.enemyDefenseBonusBP(for: $0.id))
-                    }
-                )
-                do {
-                    try value.endRound()
-                    enemyActionResolutions = value.lastEnemyActionResolutions
-                    shouldPresentQ5MaraIntervention =
-                        q5PhaseBeforeEnemyTurn != .awaitingMara
-                        && value.paperDoubleTutorialPhase == .awaitingMara
-                    enemyHealingEvents = value.enemies.compactMap { enemy in
-                        let restored = enemy.hp - (enemyHPBeforeTurn[enemy.id] ?? enemy.hp)
-                        return restored > 0 ? (enemy.id, restored) : nil
-                    }
-                    enemyDefenseBoostEvents = value.enemies.compactMap { enemy in
-                        let previousBonus = enemyDefenseBonusBeforeTurn[enemy.id] ?? 0
-                        let currentBonus = value.enemyDefenseBonusBP(for: enemy.id)
-                        guard currentBonus > previousBonus else { return nil }
-                        return (enemy.id, currentBonus / 100)
-                    }
-                    let damage = max(0, playerHPBeforeEnemyTurn - value.playerHP)
-                    messages.append(damage > 0 ? "敌方回合 · 受到 \(damage) 点伤害" : "敌方回合 · 攻势被化解")
-                } catch {
-                    messages.append(errorMessage(error))
-                }
-            }
-            if completesFirstCardTutorial {
-                isFirstCardTutorial = false
-                onTutorialDismiss()
-            }
-
-            if shouldResolveEnemyTurn {
-                // Damage numbers belong to the player action that created
-                // them. Remove them before the enemy presentation begins so
-                // they cannot visually imply that an attacker hurt itself.
-                withAnimation(.easeOut(duration: 0.12)) {
-                    combatFloatingNumbers.removeAll { $0.kind == .damage }
-                }
-                // Q4's hound is rendered through Unity's effects-only bridge;
-                // that bridge deliberately does not draw the native player
-                // damage label. Read the authoritative per-enemy ledger here
-                // so a normal 88-point breath is visible on the protagonist,
-                // while a Q5 paper-double interception remains damage-free.
-                let houndDamage = enemyActionResolutions.reduce(0) { total, resolution in
-                    guard resolution.playerDamage > 0,
-                          value.enemies.first(where: { $0.id == resolution.enemyID })?.contentID == "enemy_clockwork_hound"
-                    else { return total }
-                    return total + resolution.playerDamage
-                }
-                showPlayerDamageFloatingNumber(houndDamage)
-                actionMessage = "敌方行动：\(localizedIntent(resolvingEnemyIntents.first ?? "strike"))"
-                if !skipsCombatAnimations {
-                    if !enemyHealingEvents.isEmpty || !enemyDefenseBoostEvents.isEmpty {
-                        let repairedName = enemyHealingEvents.first.flatMap { event in
-                            value.enemies.first(where: { $0.id == event.targetID })?.name
-                        } ?? "受损目标"
-                        actionMessage = "寄忆核心 · 修复\(repairedName)"
-                        let corePresentationToken = usesUnityBattlefield && unityBattleRuntime.isReady
-                            ? unityBattleRuntime.clockCorePresentationCompletionToken
-                            : nil
-                        if usesUnityBattlefield {
-                            unityBattleRuntime.send(action: "clock-core-cast")
-                        }
-                        if let corePresentationToken {
-                            await unityBattleRuntime.waitForClockCorePresentationCompletion(
-                                after: corePresentationToken
-                            )
-                        } else {
-                            try? await Task.sleep(for: .milliseconds(820))
-                        }
-                        enemyHealingEvents.forEach { event in
-                            if let healedEnemy = value.enemies.first(where: { $0.id == event.targetID }) {
-                                transientEnemyHealth[event.targetID] = healedEnemy.hp
-                            }
-                            showCombatFloatingNumber(
-                                event.amount,
-                                for: event.targetID,
-                                kind: .healing
-                            )
-                            visualScene.presentChapterOneEnemyHealing(
-                                targetID: event.targetID,
-                                amount: event.amount,
-                                delay: 0
-                            )
-                        }
-                        enemyDefenseBoostEvents.forEach { event in
-                            showCombatFloatingNumber(
-                                event.percentage,
-                                for: event.targetID,
-                                kind: .defenseUp
-                            )
-                        }
-                        try? await Task.sleep(for: .milliseconds(220))
-                    }
-
-                    // Consume the core's authoritative per-enemy ledger in
-                    // authored order. Never infer an attacker from a combined
-                    // player HP delta: that made dual guards animate together,
-                    // stack their numbers, and appear to damage themselves.
-                    for enemyAction in enemyActionResolutions {
-                        guard enemyAction.healing == 0,
-                              enemyAction.defenseBoostBP == 0 else { continue }
-                        let nonAttackIntents: Set<String> = [
-                            "transfer", "recover", "guard", "fortify",
-                            "calibrate", "charge", "delayed"
-                        ]
-                        guard !nonAttackIntents.contains(enemyAction.intent) else { continue }
-                        let actingEnemy = value.enemies.first { $0.id == enemyAction.enemyID }
-                        let actingEnemyName = actingEnemy?.name ?? "敌方"
-                        actionMessage = "\(actingEnemyName) · \(localizedIntent(enemyAction.intent))"
-                        if enemyAction.redirectedByPaperDouble {
-                            actionMessage = "纸人代身 · 替主角承受致命攻击"
-                            visualScene.presentChapterOnePaperDoubleBreak()
-                        }
-
-                        if actingEnemy?.contentID == "enemy_memory_leech_node" {
-                            let corePresentationToken = usesUnityBattlefield && unityBattleRuntime.isReady
-                                ? unityBattleRuntime.clockCorePresentationCompletionToken
-                                : nil
-                            if usesUnityBattlefield { unityBattleRuntime.send(action: "clock-core-cast") }
-                            visualScene.presentChapterOneEnemyTurn(
-                                damage: enemyAction.playerDamage,
-                                intents: [enemyAction.intent],
-                                actingEnemyIDs: [enemyAction.enemyID]
-                            )
-                            if let corePresentationToken {
-                                await unityBattleRuntime.waitForClockCorePresentationCompletion(
-                                    after: corePresentationToken
-                                )
-                            } else {
-                                try? await Task.sleep(for: .milliseconds(820))
-                            }
-                            continue
-                        }
-
-                        let battleEnemyID = actingEnemy.flatMap { unityBattleEnemyID(for: $0) }
-                        let unityCompletionToken = usesUnityBattlefield
-                            && unityBattleRuntime.isReady
-                            && battleEnemyID != nil
-                            ? unityBattleRuntime.enemyPresentationCompletionToken
-                            : nil
-                        if usesUnityBattlefield, let battleEnemyID {
-                            unityBattleRuntime.send(action: "enemy:\(battleEnemyID)")
-                        }
-                        visualScene.presentChapterOneEnemyTurn(
-                            damage: enemyAction.playerDamage,
-                            intents: [enemyAction.intent],
-                            actingEnemyIDs: [enemyAction.enemyID]
-                        )
-                        await waitForEnemyPresentationToSettle(
-                            unityCompletionToken: unityCompletionToken
-                        )
-                        // Unity normally restores the protagonist after the
-                        // paper fragments finish. Reassert that same cleanup
-                        // boundary from the authoritative combat host so a
-                        // stale embedded presentation cannot leave the paper
-                        // silhouette in place on the next Q5 beat.
-                        if enemyAction.redirectedByPaperDouble,
-                           usesUnityBattlefield,
-                           !skipsCombatAnimations {
-                            unityBattleRuntime.send(action: "player-reset")
-                        }
-                    }
-                }
-            }
-
-            // Do not expose the incremented intent while the previous intent's
-            // animation is still playing. Publish the next forecast only once
-            // the enemy action has visibly finished.
-            session = value
-            transientEnemyHealth.removeAll()
-            isResolvingEnemyTurn = false
-            syncVisualHealth()
-            if shouldPresentQ5MaraIntervention {
-                actionMessage = ""
-                showsQ5MaraIntervention = true
-                return
-            } else if interruptedByBossPhase {
-                actionMessage = "首领进入新阶段 · 后续卡牌已退回队列"
-            } else if value.outcome == .victory {
-                if value.encounter.id == "chapter01_q05_encounter" {
-                    // The core has already applied the second finishing hit.
-                    // Hold the defeated state long enough for the player to
-                    // see the revenant collapse before the mission closes.
-                    isHoldingQ5VictoryPresentation = true
-                    actionMessage = "不肯落幕的铃 · 翠焰亡灵返场"
-                    try? await Task.sleep(for: .milliseconds(skipsCombatAnimations ? 240 : 1_150))
-                    guard !Task.isCancelled else { return }
-                    isHoldingQ5VictoryPresentation = false
-                }
-                actionMessage = "战斗胜利"
-                onVictory(value)
-            } else if value.outcome == .defeat {
-                actionMessage = "战斗失败 · 可重新挑战"
-            } else if value.waveIndex != previousWave {
-                replaceVisualScene(for: value)
-                actionMessage = "新的敌群正在接近"
-            } else {
-                let received = max(0, playerHPBeforeEnemyTurn - value.playerHP)
-                actionMessage = compactRoundResult(dealt: playerDamageDealt, received: received)
-            }
-        }
-    }
-
-
-    private func compactRoundResult(dealt: Int, received: Int) -> String {
-        if dealt == 0, received == 0 {
-            return "行动已结算 · 轮到你"
-        }
-        return "伤害 \(dealt) · 受击 \(received) · 轮到你"
-    }
-
-    /// The next player countdown begins after the enemy's attack presentation
-    /// finishes, followed by a short visual rest.
-    /// SpriteKit-only encounters retain their authored presentation duration;
-    /// Unity-backed encounters use the runtime completion event.
-    @MainActor
-    private func waitForEnemyPresentationToSettle(
-        unityCompletionToken: Int?
-    ) async {
-        if let unityCompletionToken {
-            await UnityBattleRuntime.shared.waitForEnemyPresentationCompletion(
-                after: unityCompletionToken
-            )
-        } else {
-            try? await Task.sleep(for: .milliseconds(780))
-        }
-        guard !Task.isCancelled else { return }
-        try? await Task.sleep(for: .milliseconds(120))
     }
 
     private func clearChurchStatusPresentation() {
@@ -6784,7 +5686,6 @@ private func errorMessage(_ error: Error) -> String {
     switch error {
     case FoolComboError.requiresFourIllusions: "需要目标达到4层误认"
     case FoolBattleError.ultimateAlreadyUsed: "终极技能每场战斗只能使用一次"
-    case MPCEncounterRuntimeError.skillOnCooldown(_, let remaining): "技能还需等待\(remaining)次行动"
     case MPCEncounterRuntimeError.skillNotEquipped: "该技能未装备"
     case MPCEncounterRuntimeError.invalidTarget: "请选择一个存活目标"
     case MPCEncounterRuntimeError.noConsumableRemaining: "该消耗品已经用完"
@@ -7522,8 +6423,6 @@ struct ChapterOneMissionBridgeView: View {
                         forMissionNumber: game.activeChapterMission?.number ?? 1
                     ),
                     battleIsActive: battleFlowPhase == .battle,
-                    // All player actions are explicitly queued and committed.
-                    automatesSkillSequence: true,
                     tutorialCue: tutorialCue,
                     // The bridge presents ChapterOneBattleSetupOverlay in
                     // .setup. Do not leave the child's standalone Q1 button
@@ -8805,7 +7704,7 @@ private struct ChurchTowerBattleView: View {
         ZStack {
             ChapterOneEncounterTestView(initialSession: configuredSession ?? initialSession,
                 campaign: game.churchBattleCampaign, playerSequence: game.currentSequence,
-                battleIsActive: started, automatesSkillSequence: true,
+                battleIsActive: started,
                 showsStandaloneOpeningBattleButton: false,
                 onVictory: { result in
                     guard !victory else { return }

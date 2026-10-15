@@ -87,10 +87,11 @@ struct Levels20RewardsRegressionTests {
     @Test("Sequential Q1–Q30 settlements preserve the authored card and slot milestones")
     func sequentialProgression() throws {
         var campaign = MPCChapterOneCampaignState.chapterStartState
-        let milestones: [Int: FoolSkillID] = [
-            1: .sidestepStrike, 8: .identityDisplacement,
-            9: .fabricatedEvidence, 10: .mirrorPursuit, 11: .absurdFinale,
-            12: .turnTheTables, 13: .namelessStage,
+        // Clearing Qn opens Q(n+1)'s cards and slots (MPCOrderedSkillRules.unlockMission, 2026-10-12).
+        let milestones: [Int: [FoolSkillID]] = [
+            1: [.sidestepStrike, .fabricatedEvidence], 4: [.backstageChange], 5: [.turnTheTables],
+            6: [.stolenTempo], 7: [.identityDisplacement], 8: [.mirrorBarrage], 9: [.mirrorPursuit],
+            10: [.absurdFinale], 11: [.delayedSignature], 13: [.namelessStage],
         ]
         var expectedSkills = Set<FoolSkillID>()
         for number in 1...30 {
@@ -98,11 +99,11 @@ struct Levels20RewardsRegressionTests {
             let session = try win(mission.encounterID)
             try #require(session.outcome == .victory)
             campaign.completeEncounter(session)
-            if let skill = milestones[number] { expectedSkills.insert(skill) }
+            expectedSkills.formUnion(milestones[number] ?? [])
             #expect(campaign.unlockedSkillIDs == expectedSkills)
             #expect(campaign.ownsManualMask == (number >= 3))
             #expect(!campaign.unlockedSkillIDs.contains(.maskedWhisper))
-            #expect(campaign.loadoutSlotCapacity == (number < 3 ? 1 : number < 10 ? 2 : 4))
+            #expect(campaign.loadoutSlotCapacity == (number < 6 ? 2 : number < 9 ? 3 : 4))
             #expect(campaign.loadout.isUltimateUnlocked == (number >= 13))
             #expect(campaign.completedMissionIDs.count == number)
             let inventory = campaign.inventory

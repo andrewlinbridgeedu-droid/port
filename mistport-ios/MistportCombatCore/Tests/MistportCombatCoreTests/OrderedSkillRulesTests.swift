@@ -16,7 +16,7 @@ struct OrderedSkillRulesTests {
         let prepared = s.prepareOrderedSkill(skill, targetID: target, at: now)
         let timing = try #require(prepared)
         _ = s.advanceRelicClock(at: timing.firstImpactAt)
-        return try s.useFoolSkill(skill, targetID: target, usesRealtimeCooldown: true)
+        return try s.useFoolSkill(skill, targetID: target)
     }
 
     @Test func speedExpiresDuringWorkAndNeverShortensCooldown() {

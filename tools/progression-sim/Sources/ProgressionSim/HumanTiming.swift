@@ -14,9 +14,9 @@ struct HumanPace: Codable, Sendable {
     let tapSeconds: Double
     /// One decision: which answer, which card set, which recipe.
     let decisionSeconds: Double
-    /// Added after every combat action lock. The App casts the skill sequence itself every
-    /// 1.75 s (`automatesSkillSequence: true` in every battle view), so a person's reaction
-    /// time does not slow casting: 0 for every pace. People differ in the manual parts.
+    /// Added after every combat action lock. The App casts the skill sequence itself (every
+    /// battle runs the automatic loop; the manual card mode was removed 2026-10-15), so a
+    /// person's reaction time does not slow casting: 0 for every pace. People differ in the manual parts.
     let battleActionDelay: Double
     /// Casual players do not always hit the priority target first.
     let priorityCore: Bool

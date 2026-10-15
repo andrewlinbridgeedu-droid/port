@@ -91,7 +91,7 @@ import Testing
         let prepared = s.prepareOrderedSkill(.sidestepStrike, targetID: id, at: 1.2)
         let timing = try #require(prepared)
         _ = s.advanceRelicClock(at: timing.firstImpactAt)
-        _ = try s.useFoolSkill(.sidestepStrike, targetID: id, usesRealtimeCooldown: true)
+        _ = try s.useFoolSkill(.sidestepStrike, targetID: id)
         let ticket = try #require(s.sequenceNineRelics.deferredDamage)
         let hp = try #require(s.enemies.first { $0.id == ticket.targetID }).hp
         _ = s.advanceRelicClock(at: ticket.dueAt)

@@ -69,13 +69,13 @@ struct ArchiveStreetProgressionTests {
         #expect(s.enemies.map(\.contentID) == ["enemy_memory_leech"])
         let id = s.enemies[0].id
         // Four earned identity casts create four stacks; the mask no longer grants misrecognition.
-        for _ in 0..<4 { _ = try s.useFoolSkill(.identityDisplacement, targetID: id, usesRealtimeCooldown: true) }
+        for _ in 0..<4 { _ = try s.useFoolSkill(.identityDisplacement, targetID: id) }
         try s.endRound(actingEnemyID: id)
         try s.endRound(actingEnemyID: id)
         try s.endRound(actingEnemyID: id)
         try s.endRound(actingEnemyID: id)
         #expect(s.enemies[0].currentIntent == "name_devour")
-        _ = try s.useFoolSkill(.identityDisplacement, targetID: id, usesRealtimeCooldown: true)
+        _ = try s.useFoolSkill(.identityDisplacement, targetID: id)
         let hp = s.playerHP
         try s.endRound(actingEnemyID: id)
         #expect(s.nameDevourCount == 0)
@@ -91,13 +91,13 @@ struct ArchiveStreetProgressionTests {
         let id = controlled.enemies[0].id
         // Four deliberate identity casts build misidentification; mask no longer adds it.
         for _ in 0..<4 {
-            _ = try controlled.useFoolSkill(.identityDisplacement, targetID: id, usesRealtimeCooldown: true)
+            _ = try controlled.useFoolSkill(.identityDisplacement, targetID: id)
         }
         for clock in 0..<4 {
             try controlled.endRound(actingEnemyID: id, at: Double(clock))
             try ordinary.endRound(actingEnemyID: ordinary.enemies[0].id, at: Double(clock))
         }
-        _ = try controlled.useFoolSkill(.identityDisplacement, targetID: id, usesRealtimeCooldown: true)
+        _ = try controlled.useFoolSkill(.identityDisplacement, targetID: id)
         let delayed = controlled.consumeEnemyDelay(for: id)
         #expect(delayed)
         let ordinaryDelayed = ordinary.consumeEnemyDelay(for: ordinary.enemies[0].id)
@@ -106,6 +106,21 @@ struct ArchiveStreetProgressionTests {
         try ordinary.endRound(actingEnemyID: ordinary.enemies[0].id, at: 5)
         #expect(ordinary.nameDevourCount == 1)
         #expect(controlled.playerHP > ordinary.playerHP)
+    }
+
+    /// The App's loop (MPCStoryBattleStepper): 伪证 writes four marks, 张冠李戴 converts them and
+    /// holds back the leech's next wind-up (2026-10-15, user: 恢复张冠李戴能打断吞名).
+    @Test func q8RealLoopConversionDelaysTheDevour() throws {
+        var game = try MPCStoryBattleStepper(encounterID: "chapter01_q08_encounter",
+            loadout: .init(normalSkillIDs: [.fabricatedEvidence, .identityDisplacement, .sidestepStrike], isUltimateUnlocked: false, passiveIDs: [], relicIDs: []))
+        var delays = 0
+        while !game.isFinished && game.now < 60 {
+            let before = game.session.enemies.first?.delayedRounds ?? 0
+            _ = try game.step()
+            if (game.session.enemies.first?.delayedRounds ?? 0) > before { delays += 1 }
+        }
+        #expect(delays > 0)
+        #expect(game.session.triggeredEffects.contains { $0.contains("目标下次起手延迟一拍") })
     }
 
     @Test(arguments: [6, 7]) func archiveBattlesWithEarnedRealtimeActions(_ q: Int) throws {
@@ -134,10 +149,10 @@ struct ArchiveStreetProgressionTests {
     @Test func committedDevourSurvivesLateControl() throws {
         var s = try session(8)
         let id = s.enemies[0].id
-        for _ in 0..<4 { _ = try s.useFoolSkill(.identityDisplacement, targetID: id, usesRealtimeCooldown: true) }
+        for _ in 0..<4 { _ = try s.useFoolSkill(.identityDisplacement, targetID: id) }
         for _ in 0..<4 { try s.endRound(actingEnemyID: id) }
         s.commitEnemyImpact(from: id)
-        _ = try s.useFoolSkill(.identityDisplacement, targetID: id, usesRealtimeCooldown: true)
+        _ = try s.useFoolSkill(.identityDisplacement, targetID: id)
         let hp = s.playerHP
         try s.endRound(actingEnemyID: id)
         #expect(s.nameDevourCount == 1)

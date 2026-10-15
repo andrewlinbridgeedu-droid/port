@@ -125,7 +125,7 @@ struct FinalBossPartyTests {
         _ = try s.applyPartyDamage(boss(s).maxHP * 45 / 100, to: boss(s).id)
         try act(&s, at: 0); try act(&s, at: 3)
         #expect(s.sealedFoolSkillIDs(at: 3) == [.sidestepStrike])
-        _ = try s.useFoolSkill(.backstageChange, targetID: nil, usesRealtimeCooldown: true)
+        _ = try s.useFoolSkill(.backstageChange, targetID: nil)
         #expect(s.sealedFoolSkillIDs(at: 3).isEmpty)
         #expect(s.triggeredEffects.contains { $0.contains("夺名封印") })
     }
@@ -194,7 +194,7 @@ struct FinalBossPartyTests {
         #expect(s.outcome == .inProgress && s.playerHP == 0 && s.sharedReviveCharges == 1)
         #expect(s.heroReviveAt == down + Double(MPCProgressionWalls.partyReviveTenths) / 10)
         #expect(throws: MPCEncounterRuntimeError.playerDown) { try s.useBasicAction(.damage, targetID: boss(s).id) }
-        #expect(throws: MPCEncounterRuntimeError.playerDown) { try s.useFoolSkill(.sidestepStrike, targetID: boss(s).id, usesRealtimeCooldown: true) }
+        #expect(throws: MPCEncounterRuntimeError.playerDown) { try s.useFoolSkill(.sidestepStrike, targetID: boss(s).id) }
         // Blows meant for the hero land on the protector at the same share of his health.
         while boss(s).currentIntent != "strike" { try act(&s, at: time); time += 1 }
         try act(&s, at: time)

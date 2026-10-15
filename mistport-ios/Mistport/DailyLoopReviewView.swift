@@ -14,7 +14,7 @@ struct DailyStreetReviewView: View {
         Group {
             if let session {
                 ChapterOneEncounterTestView(initialSession: session, campaign: game.churchBattleCampaign,
-                    playerSequence: game.currentSequence, battleIsActive: true, automatesSkillSequence: true,
+                    playerSequence: game.currentSequence, battleIsActive: true,
                     showsStandaloneOpeningBattleButton: false,
                     onVictory: { result in
                         do {

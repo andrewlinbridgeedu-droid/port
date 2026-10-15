@@ -419,7 +419,7 @@ public struct MPCChurchBattleStepper: Sendable {
             if s.enemies.contains(where: { $0.id == p.targetID && $0.isAlive }) {
                 let wave = s.waveIndex
                 if let skill = p.skill {
-                    _ = try s.useFoolSkill(skill, targetID: p.targetID, usesRealtimeCooldown: true, sealedByPaperweight: p.sealed)
+                    _ = try s.useFoolSkill(skill, targetID: p.targetID, sealedByPaperweight: p.sealed)
                 } else { _ = try s.useBasicAction(.damage, targetID: p.targetID) }
                 events.landed = p
                 if s.waveIndex != wave { beginWave(s.waveIndex, into: &events) }

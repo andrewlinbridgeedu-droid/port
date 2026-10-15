@@ -26,7 +26,9 @@ struct ChurchMinionTests {
                             #expect((18 * attackShare / 100...23 * attackShare / 100).contains(enemy.attack))
                         } else {
                             let band = (floor.number - 11) / 10
-                            let authoredReplacement = enemy.hp == 600 + (floor.waves.count == 1 ? 140 : 0) && enemy.attack == 45
+                            // Body budget follows the authored layout (+140 for a single wave), which the
+                            // 2026-10-12 wave split no longer exposes as `floor.waves.count`.
+                            let authoredReplacement = [600, 740].contains(enemy.hp) && enemy.attack == 45
                             let smallEscort = enemy.hp == (210 + band * 19) * hpShare / 100 && enemy.attack == (20 + band * 2) * attackShare / 100
                             #expect(authoredReplacement || smallEscort)
                         }

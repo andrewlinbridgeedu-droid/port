@@ -46,7 +46,8 @@ struct ChurchBattleRulesTests {
         #expect(throws: MPCChurchBattleDriver.Failure.version("church-battle-v2")) { try MPCChurchBattleDriver.replay(old, loadout: floorLoadout(5)) }
     }
 
-    @Test("rule 1: a dead enemy's attack never resolves; it is cancelled", arguments: [12, 30, 55, 80])
+    // F12 no longer kills mid-wind-up under this policy once 张冠李戴 delays again (2026-10-15); F13 still does.
+    @Test("rule 1: a dead enemy's attack never resolves; it is cancelled", arguments: [13, 30, 55, 80])
     func deadEnemiesDoNotHit(number: Int) throws {
         let trace = try play(MPCChurchTowerCatalog.floor(number: number)!.id, loadout: floorLoadout(number), policy: aggressive)
         var before = try MPCChapterOneEncounterSession.start(encounterID: MPCChurchTowerCatalog.floor(number: number)!.id, companionIDs: [], loadout: floorLoadout(number))

@@ -49,40 +49,47 @@ struct ChurchTowerTests {
         #expect(floors.map(\.number) == Array(1...10))
         #expect(Set(floors.map(\.id)).count == 10)
         #expect(floors[0].enemies.count == 1)
-        // One or two majors plus the floor's walking minion pack.
+        // One or two majors plus the floor's walking minion pack, spread over the floor's
+        // waves since 2026-10-12: minions first, majors close the floor.
         #expect(floors.dropFirst().allSatisfy { floor in
             let pack = MPCChurchTowerCatalog.minionPackSize(floor: floor.number)
-            return (pack + 1...pack + 2).contains(floor.enemies.count)
+            return (pack + 1...pack + 2).contains(floor.waves.flatMap { $0 }.count)
         })
-        #expect(floors.dropFirst().allSatisfy { $0.enemies.filter { [.copperback, .crimsonBrute, .veilOracle, .goldenThroat, .moonfang].contains($0.species) }.count >= 2 })
-        #expect(floors.flatMap(\.enemies).allSatisfy { $0.hp > 0 && $0.attack > 0 && $0.interval > 0 })
-        #expect(floors.last?.enemies[1].elite == true)
-        #expect(floors.last?.enemies[1].species == .shieldJaw)
-        for floor in floors { #expect(Set(floor.enemies.map(\.initialDelay)).count >= min(2, floor.enemies.count)) }
+        #expect(floors.dropFirst().allSatisfy { $0.waves.flatMap { $0 }.filter { [.copperback, .crimsonBrute, .veilOracle, .goldenThroat, .moonfang].contains($0.species) }.count >= 2 })
+        #expect(floors.flatMap { $0.waves.flatMap { $0 } }.allSatisfy { $0.hp > 0 && $0.attack > 0 && $0.interval > 0 })
+        #expect(floors.last?.waves.last?.contains { $0.elite && $0.species == .shieldJaw } == true)
+        for floor in floors { #expect(Set(floor.waves.joined().map(\.initialDelay)).count >= min(2, floor.waves.joined().count)) }
     }
     @Test func runtimeIdentityShieldAndSeparateFireballs() throws {
-        var jaw = try MPCChapterOneEncounterSession.start(encounterID: "church_tower_002", companionIDs: [])
-        let id = jaw.enemies[0].id
-        #expect(MPCChapterOneBattleIdentity.visualDescriptor(for: id, in: jaw.enemies, encounterID: jaw.encounter.id) == "clock-guard-primary@stonehide")
-        let hp = jaw.enemies[0].hp
+        // Majors close their floors after the minion waves (2026-10-12); pick them by species.
+        var (jaw, jawNow) = try startChurchTower(2, containing: [.shieldJaw], loadout: MPCChapterOneLoadout())
+        let id = try #require(jaw.enemies.first { towerSpecies($0) == .shieldJaw }).id
+        func jawState() -> MPCRuntimeEnemy? { jaw.enemies.first { $0.id == id } }
+        // The slot name follows the jaw's place behind its minion; the stonehide body is the identity.
+        let slot = try #require(MPCChapterOneBattleIdentity.battleID(for: id, in: jaw.enemies))
+        #expect(MPCChapterOneBattleIdentity.visualDescriptor(for: id, in: jaw.enemies, encounterID: jaw.encounter.id) == slot + "@stonehide")
+        let hp = try #require(jawState()).hp
         _ = try jaw.applyPartyDamage(10000, to: id)
-        #expect(jaw.enemies[0].hp == hp)
-        try jaw.endRound(actingEnemyID: id, at: 3)
-        #expect(jaw.enemies[0].currentIntent == "charge")
+        #expect(jawState()?.hp == hp)
+        try jaw.endRound(actingEnemyID: id, at: jawNow + 3)
+        #expect(jawState()?.currentIntent == "charge")
         _ = try jaw.applyPartyDamage(100, to: id)
-        #expect(jaw.enemies[0].hp < hp)
-        var hound = try MPCChapterOneEncounterSession.start(encounterID: "church_tower_031", companionIDs: [], loadout: .init(normalSkillIDs: [], isUltimateUnlocked: false, passiveIDs: [], relicIDs: []))
-        let dog = hound.enemies[0].id
-        try hound.endRound(actingEnemyID: dog, at: 2)
+        #expect((jawState()?.hp ?? .max) < hp)
+        var (hound, houndNow) = try startChurchTower(31, containing: [.scissor])
+        let dog = try #require(hound.enemies.first { towerSpecies($0) == .scissor }).id
+        try hound.endRound(actingEnemyID: dog, at: houndNow + 2)
         let before = hound.playerHP
-        try hound.endRound(actingEnemyID: dog, at: 3)
+        try hound.endRound(actingEnemyID: dog, at: houndNow + 3)
         let afterFirst = hound.playerHP
-        try hound.endRound(actingEnemyID: dog, at: 4)
+        try hound.endRound(actingEnemyID: dog, at: houndNow + 4)
         #expect(before > afterFirst && afterFirst > hound.playerHP)
     }
-    @Test func q7SidestepMedalNoMaskNoConsumablesClearsEveryFloor() throws {
+    @Test func q7HandMedalNoMaskNoConsumablesClearsEveryFloor() throws {
         for floor in MPCChurchTowerCatalog.floors.prefix(10) {
-            var loadout = MPCChapterOneLoadout(normalSkillIDs: [.sidestepStrike], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
+            // Clearing Q7 opens a three-card hand (2026-10-12 schedule); sidestep alone is no longer the Q7 kit.
+            let hand = MPCChurchTowerVerificationRunner.recommendedLoadout(for: floor).normalSkillIDs
+            #expect(hand.count == MPCOrderedSkillRules.slotCapacity(availableThrough: 8))
+            var loadout = MPCChapterOneLoadout(normalSkillIDs: hand, isUltimateUnlocked: false, passiveIDs: [], relicIDs: [])
             loadout.selectedActiveRelicID = MPCChapterOneCatalog.usurpedLifeMedalRelicID
             var earnedGear = MPCChurchGearLedger()
             if floor.number > 1 {
@@ -91,59 +98,26 @@ struct ChurchTowerTests {
                 }
             }
             loadout.churchGear = earnedGear.stats
-            var battle = try MPCChapterOneEncounterSession.start(encounterID: floor.id, companionIDs: [], loadout: loadout)
-            var due = Dictionary(uniqueKeysWithValues: battle.enemies.map { ($0.id, MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)!.initialDelay) })
-            var basicAt = 0.0, playerAt = 0.0
-            var scheduler = ContinuousSkillScheduler()
-            var contact: (FoolSkillID?, String, Double)?
-            for tick in 0..<2400 where battle.outcome == .inProgress {
-                let now = Double(tick) * 0.05
-                _ = battle.advanceUsurpedLifeMedal(at: now)
-                let living = battle.enemies.filter(\.isAlive)
-                guard let target = living.first(where: { $0.currentIntent != "guard" }) ?? living.first else { break }
-                if now >= 6 && target.currentIntent != "guard" { _ = battle.activateUsurpedLifeMedal(isOwned: true, at: now) }
-                if let hit = contact, now >= hit.2 {
-                    contact = nil
-                    if battle.enemies.contains(where: { $0.id == hit.1 && $0.isAlive }) {
-                        if let skill = hit.0 { _ = try battle.useFoolSkill(skill, targetID: hit.1, usesRealtimeCooldown: true) }
-                        else { _ = try battle.useBasicAction(.damage, targetID: hit.1) }
-                    }
-                }
-                if battle.outcome != .inProgress { break }
-                if now >= playerAt && contact == nil {
-                    if let skill = scheduler.next(in: [.sidestepStrike], at: now) {
-                        scheduler.didCast(skill, at: now); playerAt = now + 1.75
-                        contact = (skill, target.id, now + 0.6192)
-                    } else if now >= basicAt {
-                        basicAt = now + 2.4; playerAt = now + 1.65
-                        contact = (nil, target.id, now + 0.58)
-                    }
-                }
-                for enemy in battle.enemies.filter(\.isAlive) where now >= due[enemy.id, default: 0] {
-                    try battle.endRound(actingEnemyID: enemy.id, at: now)
-                    if battle.outcome != .inProgress { break }
-                    let updated = battle.enemies.first { $0.id == enemy.id }!
-                    due[enemy.id] = now + (MPCChurchTowerCatalog.preparationDuration(contentID: updated.contentID, intent: updated.currentIntent) ?? (updated.currentIntent == "tower_flame_second" ? 0.8 : 1.0))
-                }
-            }
+            // The App's rules through MPCChurchBattleStepper: waves advance through their fades.
+            let battle = try MPCChurchTowerVerificationRunner.run(number: floor.number, medalOffset: 6, suppliedLoadout: loadout).session
             print("TOWER_BALANCE floor=\(floor.number) outcome=\(battle.outcome) hp=\(battle.playerHP)")
             #expect(battle.outcome == .victory, "floor \(floor.number)")
         }
     }
 
     @Test func towerMaskBlocksTwoContactsWithFourSecondWindowAndEighteenSecondCooldown() throws {
-        var s = try MPCChapterOneEncounterSession.start(encounterID: "church_tower_031", companionIDs: [], loadout: .init(normalSkillIDs: [], isUltimateUnlocked: false, passiveIDs: [], relicIDs: []))
-        let dog = s.enemies[0].id
-        try s.endRound(actingEnemyID: dog, at: 0) // charge -> first fireball
-        let accepted = try s.useOwnedManualMasquerade(targetID: nil, isOwned: true, lifetimeCracks: 0, at: 1)
+        var (s, now) = try startChurchTower(31, containing: [.scissor])
+        let dog = try #require(s.enemies.first { towerSpecies($0) == .scissor }).id
+        try s.endRound(actingEnemyID: dog, at: now) // charge -> first fireball
+        let accepted = try s.useOwnedManualMasquerade(targetID: nil, isOwned: true, lifetimeCracks: 0, at: now + 1)
         #expect(accepted != nil && accepted?.damage == 0)
-        #expect(s.ownedManualMaskExpiresAt == 5 && s.ownedManualMaskReadyAt == 19)
+        #expect(s.ownedManualMaskExpiresAt == now + 5 && s.ownedManualMaskReadyAt == now + 19)
         let hp = s.playerHP
-        try s.endRound(actingEnemyID: dog, at: 2)
-        try s.endRound(actingEnemyID: dog, at: 2.8)
+        try s.endRound(actingEnemyID: dog, at: now + 2)
+        try s.endRound(actingEnemyID: dog, at: now + 2.8)
         #expect(s.playerHP == hp && s.masqueradeCharges == 0)
-        #expect(try s.useOwnedManualMasquerade(targetID: nil, isOwned: true, at: 18.99) == nil)
-        #expect(try s.useOwnedManualMasquerade(targetID: nil, isOwned: true, at: 19) != nil)
+        #expect(try s.useOwnedManualMasquerade(targetID: nil, isOwned: true, at: now + 18.99) == nil)
+        #expect(try s.useOwnedManualMasquerade(targetID: nil, isOwned: true, at: now + 19) != nil)
     }
     @Test func towerMaskConsumesPermanentCrackIncludingTenthAndRetryDoesNotRestoreIt() throws {
         var campaign = MPCChapterOneCampaignState(masqueradeCrackCount: 9)

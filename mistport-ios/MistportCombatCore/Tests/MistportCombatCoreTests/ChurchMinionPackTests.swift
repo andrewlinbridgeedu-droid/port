@@ -2,8 +2,8 @@ import Testing
 @testable import MistportCombatCore
 
 /// Tower minion packs and group cards (2026-10-03): more, smaller small monsters walk
-/// in from the back, so 错步穿行 (up to three targets) and 荒谬归结 (two bystanders at
-/// half damage) have several bodies to hit.
+/// in from the back, so 错步穿行 (up to three targets) has several bodies to hit.
+/// 荒谬归结's tower splash belonged to the manual card mode, removed 2026-10-15.
 @Suite("Church tower minion packs and group cards")
 struct ChurchMinionPackTests {
     typealias Catalog = MPCChurchTowerCatalog
@@ -13,54 +13,33 @@ struct ChurchMinionPackTests {
             for wave in floor.waves {
                 #expect(wave.count <= Catalog.maxWaveSize, "Floor \(floor.number) wave has \(wave.count) enemies")
                 let minions = wave.filter { Catalog.minionSpecies.contains($0.species) }
-                #expect(minions.count >= Catalog.minionPackSize(floor: floor.number), "Floor \(floor.number) pack \(minions.count)")
                 for (k, minion) in minions.enumerated() {
                     // A minion never acts before it has walked to its slot.
                     #expect(minion.initialDelay >= Catalog.minionArrival(k), "Floor \(floor.number) minion \(k) acts at \(minion.initialDelay)")
                 }
             }
+            // The pack is spread over the floor's waves since 2026-10-12; the floor keeps it whole.
+            let pack = floor.waves.joined().filter { Catalog.minionSpecies.contains($0.species) }.count
+            #expect(pack >= Catalog.minionPackSize(floor: floor.number), "Floor \(floor.number) pack \(pack)")
         }
         #expect(Catalog.floor(number: 1)?.enemies.count == 1)
-        #expect(Catalog.floor(number: 100)?.waves.allSatisfy { $0.filter { Catalog.minionSpecies.contains($0.species) }.count >= 6 } == true)
-    }
-
-    private func packSession(_ skills: [FoolSkillID]) throws -> MPCChapterOneEncounterSession {
-        try MPCChapterOneEncounterSession.start(
-            encounterID: try #require(Catalog.floor(number: 2)).id, companionIDs: [],
-            loadout: .init(normalSkillIDs: skills, isUltimateUnlocked: false, passiveIDs: [], relicIDs: []))
+        let top = Catalog.floor(number: 100)
+        #expect((top?.waves.joined().filter { Catalog.minionSpecies.contains($0.species) }.count ?? 0) >= 6)
+        #expect(top?.waves.allSatisfy { $0.contains { Catalog.minionSpecies.contains($0.species) } } == true)
     }
 
     @Test func sidestepCutsThroughThreeTargets() throws {
-        var session = try packSession([.sidestepStrike])
+        // F20's closing wave holds two minions and two majors (2026-10-12 wave split).
+        var (session, _) = try startChurchTower(20, containing: [], minimumEnemies: 4,
+            loadout: .init(normalSkillIDs: [.sidestepStrike], isUltimateUnlocked: false, passiveIDs: [], relicIDs: []))
         let alive = session.enemies.filter(\.isAlive)
-        #expect(alive.count == 5)
+        #expect(alive.count >= 4)
         // Aim at a minion: the shield jaw may open behind its guard.
-        let result = try session.useFoolSkill(.sidestepStrike, targetID: try #require(alive.last).id)
-        #expect(result.targets.count == 3)
+        let minion = try #require(alive.first { Catalog.minionSpecies.contains(towerSpecies($0) ?? .shieldJaw) })
+        let result = try session.useFoolSkill(.sidestepStrike, targetID: minion.id)
+        #expect(result.targets.count == 3 && result.targets.first?.targetID == minion.id)
         #expect(Set(result.targets.map(\.targetID)).count == result.targets.count)
-        // The shield jaw may still be behind its guard; every minion takes the cut.
+        // The shield jaw may still be behind its guard; every other body takes the cut.
         #expect(result.targets.filter { !Catalog.isShieldJaw($0.targetID) }.allSatisfy { $0.damage > 0 })
-    }
-
-    @Test func storyKeepsItsAuthoredReach() {
-        #expect(MPCFoolGroupCards.extraTargets(encounterID: "chapter01_q02_encounter", skill: .sidestepStrike) == 1)
-        #expect(MPCFoolGroupCards.extraTargets(encounterID: "chapter01_q22_encounter", skill: .absurdFinale) == 0)
-        #expect(MPCFoolGroupCards.extraTargets(encounterID: "church_tower_012", skill: .absurdFinale) == 2)
-    }
-
-    @Test func finaleSplashesTwoBystandersAtHalfWithoutSpendingTheirSetup() throws {
-        var session = try packSession([.absurdFinale])
-        let alive = session.enemies.filter(\.isAlive)
-        let main = try #require(alive.last)
-        let before = session.foolStates
-        let result = try session.useFoolSkill(.absurdFinale, targetID: main.id)
-        #expect(result.targets.count == 3)
-        #expect(result.targets[0].targetID == main.id)
-        for hit in result.targets.dropFirst() {
-            #expect(hit.targetID != main.id)
-            #expect(Catalog.isShieldJaw(hit.targetID) || hit.damage > 0)
-            // Bystanders' Fool state is read, never written: no finale is cashed on them.
-            #expect(session.foolStates[hit.targetID] == before[hit.targetID])
-        }
     }
 }

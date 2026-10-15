@@ -74,7 +74,7 @@ struct CombatTempoDeviceReviewRoot: View {
                 ContentView(game: game, storefront: storefront)
             } else if let session, running {
                 ChapterOneEncounterTestView(initialSession: session, campaign: campaign,
-                    battleIsActive: running, automatesSkillSequence: true,
+                    battleIsActive: running,
                     showsStandaloneOpeningBattleButton: false,
                     onVictory: { result in Task { await finish(result: result, outcome: "victory") } },
                     onExit: { Task {

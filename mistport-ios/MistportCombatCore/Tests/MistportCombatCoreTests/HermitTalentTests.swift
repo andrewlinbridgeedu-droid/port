@@ -21,11 +21,11 @@ struct HermitTalentTests {
                 try improved.endRound(actingEnemyID: target)
             }
         }
-        let ordinary = try baseline.useFoolSkill(.sidestepStrike, targetID: target, usesRealtimeCooldown: true)
-        let enhanced = try improved.useFoolSkill(.sidestepStrike, targetID: target, usesRealtimeCooldown: true)
+        let ordinary = try baseline.useFoolSkill(.sidestepStrike, targetID: target)
+        let enhanced = try improved.useFoolSkill(.sidestepStrike, targetID: target)
         if mission == 20 { #expect(improved.chapterObjectiveProgress > baseline.chapterObjectiveProgress) }
         else { #expect(enhanced.damage > ordinary.damage) }
-        _ = try improved.useFoolSkill(.maskedWhisper, targetID: target, usesRealtimeCooldown: true)
+        _ = try improved.useFoolSkill(.maskedWhisper, targetID: target)
         #expect(improved.playerShield == 30)
         #expect(improved.masqueradeCharges == 2)
         // A new encounter carries the allocation, but not the previous shield
@@ -66,8 +66,8 @@ struct HermitTalentTests {
     @Test func trickeryBoostsBothTargets() throws {
         var baseline = try session()
         var improved = try session(.trickery)
-        let a = try baseline.useFoolSkill(.sidestepStrike, targetID: baseline.enemies[0].id, usesRealtimeCooldown: true)
-        let b = try improved.useFoolSkill(.sidestepStrike, targetID: improved.enemies[0].id, usesRealtimeCooldown: true)
+        let a = try baseline.useFoolSkill(.sidestepStrike, targetID: baseline.enemies[0].id)
+        let b = try improved.useFoolSkill(.sidestepStrike, targetID: improved.enemies[0].id)
         #expect(b.damage > a.damage)
         // Q2 uses the same per-target modifiers and must preserve independent HP.
         var loadout = improved.loadout
@@ -80,7 +80,7 @@ struct HermitTalentTests {
 
     @Test func phantomWaitsForActualEnemyResolution() throws {
         var value = try session(.phantom)
-        _ = try value.useFoolSkill(.maskedWhisper, targetID: value.enemies[0].id, usesRealtimeCooldown: true)
+        _ = try value.useFoolSkill(.maskedWhisper, targetID: value.enemies[0].id)
         #expect(value.playerShield == 30)
         #expect(value.masqueradeCharges == 2)
         let hp = value.playerHP
@@ -88,21 +88,21 @@ struct HermitTalentTests {
         #expect(value.playerHP == hp)
         #expect(value.playerShield == 50)
         #expect(value.masqueradeCharges == 1)
-        let enhanced = try value.useFoolSkill(.sidestepStrike, targetID: value.enemies[0].id, usesRealtimeCooldown: true)
+        let enhanced = try value.useFoolSkill(.sidestepStrike, targetID: value.enemies[0].id)
         var base = try session()
-        _ = try base.useFoolSkill(.maskedWhisper, targetID: base.enemies[0].id, usesRealtimeCooldown: true)
+        _ = try base.useFoolSkill(.maskedWhisper, targetID: base.enemies[0].id)
         try base.endRound()
-        let ordinary = try base.useFoolSkill(.sidestepStrike, targetID: base.enemies[0].id, usesRealtimeCooldown: true)
+        let ordinary = try base.useFoolSkill(.sidestepStrike, targetID: base.enemies[0].id)
         #expect(enhanced.damage > ordinary.damage)
     }
 
     @Test func omenCapsStacksAndGrantsShieldOnDamagingHit() throws {
         var value = try session(.omen)
         let id = value.enemies[0].id
-        _ = try value.useFoolSkill(.fabricatedEvidence, targetID: id, usesRealtimeCooldown: true)
+        _ = try value.useFoolSkill(.fabricatedEvidence, targetID: id)
         #expect((value.foolStates[id]?.illusionStacks ?? 0) > 0)
         let shield = value.playerShield
-        _ = try value.useFoolSkill(.sidestepStrike, targetID: id, usesRealtimeCooldown: true)
+        _ = try value.useFoolSkill(.sidestepStrike, targetID: id)
         #expect(value.playerShield == shield + 15)
         #expect((value.foolStates[id]?.illusionStacks ?? 0) <= 4)
     }
