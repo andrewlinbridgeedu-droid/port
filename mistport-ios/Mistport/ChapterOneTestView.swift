@@ -935,6 +935,8 @@ struct ChapterOneEncounterTestView: View {
     @AppStorage(GameSettingsKeys.battleSpeed, store: .standard) private var savedBattleSpeed = 1
     // Rule time starts at zero, matching deterministic replay. Uptime only feeds frame deltas.
     @State private var battleTime: TimeInterval = 0
+    /// The haste end last told to Unity (抢拍开幕's hourglass beside the hero, 2026-10-15).
+    @State private var sentHeroHasteUntil: TimeInterval = 0
     @State private var lastBattleWallTime: TimeInterval?
     @State private var battleTickRemainder: TimeInterval = 0
     @State private var isFastForwardingBattle = false
@@ -2005,6 +2007,14 @@ struct ChapterOneEncounterTestView: View {
             }
         }
         if !orderedHits.isEmpty { syncVisualHealth() }
+        // 抢拍开幕's haste (2026-10-15, user: the haste needs a cue lasting its 3.2 or 4.5 seconds):
+        // whenever the rules start or extend it, Unity's hourglass beside the hero is given the
+        // seconds left; an extension spins it once more.
+        if usesUnityBattlefield, !isFastForwardingBattle, session.orderedHasteUntil > now,
+           session.orderedHasteUntil > sentHeroHasteUntil + 0.01 {
+            sentHeroHasteUntil = session.orderedHasteUntil
+            unityBattleRuntime.send(action: "hero-haste:\(String(format: "%.2f", session.orderedHasteUntil - now))")
+        }
         if session.waveIndex != waveBeforeClock {
             pendingPlayerImpact = nil
             pendingEnemyImpacts.removeAll()
@@ -4798,6 +4808,7 @@ struct ChapterOneEncounterTestView: View {
         lastBattleWallTime = nil
         battleTickRemainder = 0
         battleTime = 0
+        sentHeroHasteUntil = 0
         playerHitFlashUntil = 0
         combatDraggedSkill = nil
         combatDragOffset = .zero
@@ -4883,6 +4894,7 @@ struct ChapterOneEncounterTestView: View {
         isDefeatOverlayVisible = false
         isHoldingQ5VictoryPresentation = false
         battleTime = 0
+        sentHeroHasteUntil = 0
         lastBattleWallTime = nil
         battleTickRemainder = 0
         lightAttackClock = initialSession.tempo.map(MPCLightAttackClock.init(tempo:))
