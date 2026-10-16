@@ -30,7 +30,7 @@ enum HumanReport {
         var gear = MPCChurchGearLedger()
         for f in 1...floor { if let drop = MPCChurchGearCatalog.towerDrop(floor: f) { gear.grant(drop.id) } }
         let passive = Shop.passives.filter { $0.unlock < mission }.last?.id
-        let l = loadout(mission: mission, gear: gear.stats, passive: passive, sequence: cards(forMission: mission)[0], bountyRelic: nil)
+        let l = loadout(mission: mission, gear: gear.stats, passive: passive, sequence: MPCStageLoadout.towerHand(before: mission), bountyRelic: nil)
         var seconds = 0.0, wins = 0
         for site in 1...3 {
             let id = kind == .patrol ? "church_maintenance_j1_s\(site)_timing-\(site)" : "church_maintenance_j2_f\(floor)_s\(site)_timing-\(site)"

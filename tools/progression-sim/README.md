@@ -4,6 +4,8 @@
 
 战斗驱动 `ChapterDriver.swift`、`TowerDriver.swift` 取自 Codex 2026-09-25 的[逐关审计](../../docs/development/CHAPTER1_PROGRESSION_MATH_AUDIT_20260925.md)，只改了类型名。新写的是 `Campaign.swift`（串行存档和打法）、`main.swift`（场景和关卡图）、`report.py`（汇总）。
 
+**2026-10-15：** 战斗一直走正式步进器（`MPCStoryBattleStepper` / `MPCChurchBattleStepper`，即 App 的循环：有序出牌、7 秒冷却、追逼层、施法计时）；现在手牌和配装也按真实规则：`cards(forMission:)` 取正式审计的合法编排（`MPCStageLoadout.orders`，每套手牌一种排法，`CARDS=all` 试全部排法），`loadout` 用 `MPCStageLoadout`（当时已得天赋、两次粉尘升级、默认装扮），塔和通缉用塔手牌 `MPCStageLoadout.towerHand`，`ChapterDriver` 会像审计一样点反击。`walls` 模式试每一种审计排法。旧版那套两张牌的手牌和 1.75 秒节奏的测试模拟器已删除。
+
 ## 运行
 
 从项目根目录：

@@ -165,111 +165,46 @@ struct ChurchTowerHundredTests {
     }
 }
 
-/// Shares the native serial player cadence and committed hit lifecycle. This is
-/// a deterministic contract test; it does not stand in for device art validation.
-enum TowerHundredSimulator {
-    static func run(floor: MPCChurchTowerCatalog.Floor, offset: Double, passive: String? = nil) throws -> MPCChapterOneEncounterSession {
-        try run(encounterID: floor.id, mission: max(7, floor.requiredMission), offset: offset, passive: passive)
-    }
-    static func run(encounterID: String, mission q: Int, offset: Double, passive: String? = nil, jitter: Double = 0, seed: UInt64 = 1, onFinished: ((Double) -> Void)? = nil) throws -> MPCChapterOneEncounterSession {
-        var randomState = seed
-        func variation() -> Double {
-            randomState = randomState &* 6364136223846793005 &+ 1442695040888963407
-            return (Double((randomState >> 32) % 10001) / 5000 - 1) * jitter
-        }
-        var nextMedalAt = max(0, offset + variation())
-        let sequence: [FoolSkillID] = q < 8 ? [.sidestepStrike] : q < 11 ? [.identityDisplacement, .sidestepStrike] : q < 12 ? [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .sidestepStrike] : [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .absurdFinale]
-        var loadout = MPCChapterOneLoadout(normalSkillIDs: sequence, isUltimateUnlocked: false, passiveIDs: [], relicIDs: passive.map { [$0] } ?? [])
-        loadout.selectedActiveRelicID = MPCChapterOneCatalog.usurpedLifeMedalRelicID
-        var earnedGear = MPCChurchGearLedger()
-        if let number = Int(encounterID.suffix(3)), number > 1 {
-            for cleared in 1..<number {
-                if let drop = MPCChurchGearCatalog.towerDrop(floor: cleared) { earnedGear.grant(drop.id) }
-            }
-        }
-        loadout.churchGear = earnedGear.stats
-        let budget = (1...q).compactMap { MPCChapterOneThirtyMissionContract.firstClear(for: $0)?.talentPoints }.reduce(0, +)
-        loadout.talents = HermitTalentAllocation.restored((0...5).map { "trickery.\($0)" } + (0...5).map { "omen.\($0)" }, budget: budget)
-        var s = try MPCChapterOneEncounterSession.start(encounterID: encounterID, companionIDs: [], loadout: loadout)
-        var scheduler = ContinuousSkillScheduler(), playerAt = 0.0, basicAt = 0.0
-        var hit: (FoolSkillID?, String, Double)?
-        var ready: [String: Double] = [:], pending: [String: Double] = [:]
-        var elapsed = 0.0
-        for tick in 0..<7200 where s.outcome == .inProgress {
-            let now = Double(tick) * 0.05
-            elapsed = now
-            _ = s.advanceEmeraldPoison(at: now)
-            guard s.outcome == .inProgress else { break }
-            let alive = s.enemies.filter(\.isAlive)
-            // Target selection is a supported player action, with support-first priority.
-            let target = alive.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .backSac }
-                ?? alive.first { MPCChurchTowerCatalog.enemyConfiguration(contentID: $0.contentID)?.species == .crown }
-                ?? alive.first { $0.contentID.hasPrefix("bounty_b03_escort_") }
-                ?? alive.first { $0.currentIntent != "guard" } ?? alive.first
-            if let target {
-                s.updateRelicTarget(target.id, at: now)
-                if now >= nextMedalAt && target.currentIntent != "guard" {
-                    if s.activateUsurpedLifeMedal(isOwned: true, at: now) { nextMedalAt = s.usurpedLifeMedalReadyAt + max(0, variation()) }
-                }
-            }
-            if let p = hit, now >= p.2 {
-                hit = nil
-                if s.enemies.contains(where: { $0.id == p.1 && $0.isAlive }) {
-                    if let skill = p.0 { _ = try s.useFoolSkill(skill, targetID: p.1) }
-                    else { _ = try s.useBasicAction(.damage, targetID: p.1) }
-                }
-            }
-            guard s.outcome == .inProgress else { break }
-            for id in pending.keys.sorted() where now >= pending[id]! {
-                pending[id] = nil
-                guard s.enemies.contains(where: { $0.id == id }) else { continue }
-                try s.endRound(actingEnemyID: id, at: now)
-                ready[id] = now
-                if s.outcome != .inProgress { break }
-            }
-            guard s.outcome == .inProgress else { break }
-            for enemy in s.enemies.filter(\.isAlive) {
-                if ready[enemy.id] == nil { ready[enemy.id] = now + (MPCChurchTowerCatalog.enemyConfiguration(contentID: enemy.contentID)?.initialDelay ?? 3) }
-                guard now >= ready[enemy.id]!, pending[enemy.id] == nil else { continue }
-                // One active high-threat preparation at a time; ordinary contacts
-                // still use their own deadlines and are never silently skipped.
-                let preparation = s.authoredPreparationDuration(for: enemy.id)
-                if s.churchPreparationMustWait(enemyID: enemy.id, pendingEnemyIDs: Set(pending.keys)) { continue }
-                if s.consumeEnemyDelay(for: enemy.id) { ready[enemy.id] = now + 3.2 * enemy.attackIntervalMultiplier; continue }
-                let contact = MPCChurchTowerCatalog.enemyConfiguration(contentID: enemy.contentID) == nil ? 1.0 : MPCChurchTowerCatalog.contactDuration(contentID: enemy.contentID, intent: enemy.currentIntent)
-                s.commitEnemyImpact(from: enemy.id)
-                pending[enemy.id] = now + (preparation ?? max(0.15, contact + variation()))
-            }
-            guard let target, s.enemies.contains(where: { $0.id == target.id && $0.isAlive }), now >= playerAt, hit == nil else { continue }
-            if let skill = scheduler.next(in: sequence, at: now) {
-                scheduler.didCast(skill, at: now); playerAt = now + 1.75 + max(0, variation())
-                hit = (skill, target.id, now + max(0.15, NewMaskBalanceSimulator.playerContact(skill) + variation()))
-            } else if now >= basicAt {
-                basicAt = now + 2.4; playerAt = now + 1.65 + max(0, variation())
-                hit = (nil, target.id, now + max(0.15, 0.58 + variation()))
-            }
-        }
-        onFinished?(elapsed)
-        return s
-    }
-}
-
+/// Tower calibration on the real loop (2026-10-15, user: 塔重新校准难度). Each floor opens at its pace stage
+/// (`MPCChurchTowerCatalog.paceMission`: F1–10 Q7, F11–30 Q10, F50 Q15, F70 Q20, F90 Q25, F100 Q27); the
+/// recommended loadout of that stage wins every floor with the gear below it (ChurchTowerSixCompletionTests).
+/// These are the other side of the curve.
 @Suite("Church hundred floor legal realtime balance")
 struct ChurchTowerHundredBalanceTests {
-    @Test func eachFloorHasAnEarnedBuildRouteWithoutConsumableOrMaskGrinding() throws {
-        for floor in MPCChurchTowerCatalog.floors {
-            var won = false
-            var lastHP = 0
-            let routes: [(Double, String?)] = [(6, nil), (14, nil), (22, nil)] + (floor.requiredMission >= 20 ? [(6, "relic_sealed_paperweight"), (14, "relic_sealed_paperweight"), (6, "relic_return_gift_clasp"), (14, "relic_return_gift_clasp"), (22, "relic_return_gift_clasp")] : [])
-            for (offset, passive) in routes {
-                let session = try TowerHundredSimulator.run(floor: floor, offset: offset, passive: passive)
-                lastHP = session.playerHP
-                if session.outcome == .victory {
-                    print("TOWER100_BALANCE floor=\(floor.number) offset=\(offset) hp=\(lastHP) waves=\(floor.waves.count) passive=\(passive ?? "none")")
-                    won = true; break
-                }
-            }
-            #expect(won, "Floor \(floor.number) has no tested earned build victory, HP \(lastHP)")
+    /// The user's case: a Q7 hand, no tower gear, no input at all used to clear F100 (13/60 arrangements).
+    /// Every decade's closing floor: `OrderedChapterBalanceAuditTests.towerAudit`.
+    @Test(arguments: [100]) func q7HandWithoutGearOrInputCannotClimb(_ floor: Int) async throws {
+        let wins = try await RealLoop.map(MPCStageLoadout.orders(before: 7)) { order -> Bool in
+            var game = try MPCChurchBattleStepper(encounterID: MPCChurchTowerCatalog.floor(number: floor)!.id,
+                                                  loadout: MPCStageLoadout.loadout(before: 7, order: order, passive: nil))
+            while !game.isFinished { _ = try game.step() }
+            return game.session.outcome == .victory
         }
+        #expect(!wins.contains(true), "F\(floor): \(wins.filter { $0 }.count)/60")
+    }
+
+    /// Floor progress follows tower gear: with no tower gear at all, even the recommended hand loses the
+    /// closing floors from F60 (it wins every floor with the gear below, ChurchTowerSixCompletionTests).
+    /// The strongest hand needs little gear before that (F50 without any): reported 2026-10-15.
+    @Test(arguments: [60, 70, 80, 90, 100]) func closingFloorsNeedTowerGear(_ n: Int) throws {
+        var bare = MPCChurchTowerVerificationRunner.recommendedLoadout(for: try #require(MPCChurchTowerCatalog.floor(number: n)))
+        bare.churchGear = .init()
+        #expect(try MPCChurchTowerVerificationRunner.run(number: n, suppliedLoadout: bare).session.outcome == .defeat)
+    }
+
+    /// Floor progress follows the chapter: F20 and F30 are lost three missions before their pace stage (Q7's
+    /// three cards). From Q10 on four slots, so F40/F50 depend on gear and the daily gate more than on cards.
+    @Test(arguments: [20, 30]) func closingFloorsNeedTheirStage(_ n: Int) async throws {
+        let stage = MPCChurchTowerCatalog.paceMission(floor: n) - 3
+        let wins = try await RealLoop.map(MPCStageLoadout.orders(before: stage + 1)) {
+            try RealLoop.church(MPCChurchTowerCatalog.floor(number: n)!.id, before: stage + 1, order: $0, gearThrough: n - 1).session.outcome == .victory
+        }
+        #expect(wins.filter { $0 }.count * 10 <= wins.count, "F\(n) at Q\(stage): \(wins.filter { $0 }.count)/\(wins.count)")
+    }
+
+    /// F12 at Q10 power no longer ends at full health.
+    @Test func floorTwelveCostsHealthAtItsStage() throws {
+        let r = try MPCChurchTowerVerificationRunner.run(number: 12)
+        #expect(r.session.outcome == .victory && r.session.playerHP < r.session.playerNormalMaxHP * 3 / 4)
     }
 }

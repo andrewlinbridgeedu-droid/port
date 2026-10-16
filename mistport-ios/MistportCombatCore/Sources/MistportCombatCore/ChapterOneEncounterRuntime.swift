@@ -1120,7 +1120,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     /// A delayed actor spends this ready beat without starting a new attack.
     public mutating func consumeEnemyDelay(for id: String) -> Bool {
         guard let index = enemies.firstIndex(where: { $0.id == id }),
-              enemies[index].delayedRounds > 0 else { return false }
+              enemies[index].delayedRounds > 0, !q22FailedBlowIsDue(enemies[index]) else { return false }
         enemies[index].delayedRounds -= 1
         return true
     }
@@ -2325,7 +2325,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
                 triggeredEffects.append("余响欠账：本次攻击伤害提高50%")
             }
             missedBossMechanic = missedBossMechanic || result.missedBossMechanic
-            if !appliesEmeraldPoison, sequenceNineRelics.blankCardBlocks(enemies[index].id, at: now) { resolvedDamage = 0 }
+            if !appliesEmeraldPoison, !q22FailedBlowIsDue(enemies[index]), sequenceNineRelics.blankCardBlocks(enemies[index].id, at: now) { resolvedDamage = 0 }
             // Final-boss party: the seal's target, the protector's intercept, the slam on allies.
             var partyBeat = resolvePartyBossBeat(enemy: enemies[index], intent: intent, heroDamage: &resolvedDamage)
             if playerIsDown, resolvedDamage > 0 {
@@ -2574,7 +2574,11 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             heroDamage = 0
             triggeredEffects.append("\(companionName(guardID))：替主角挡下第十三响")
         case "slam":
-            let percent = sovereignIsEnraged(enemy) ? MPCProgressionWalls.partySlamAllyEnragedPercent : MPCProgressionWalls.partySlamAllyPercent
+            // Q30 wall without F90-or-deeper gear: the slam takes the wall's share of each ally's health too, so the
+            // shared revive cannot carry the party past it (2026-10-15: F80 won 3/168 audit lines by a revive).
+            let unchecked = chapterMissionNumber == 30 && !MPCProgressionWalls.meetsTowerFloor(mission: 30, gear: loadout.churchGear)
+            let percent = unchecked ? MPCProgressionWalls.towerCheckBlowHealthPercent[30, default: 100]
+                : sovereignIsEnraged(enemy) ? MPCProgressionWalls.partySlamAllyEnragedPercent : MPCProgressionWalls.partySlamAllyPercent
             for id in activeCompanionIDs where isAllyStanding(id) {
                 beat.allyDamage[id] = damageAlly(id, allyMaxHP[id, default: 0] * percent / 100)
             }
@@ -2770,6 +2774,9 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         foolStates = Dictionary(uniqueKeysWithValues: enemies.filter(\.isAlive).map {
             ($0.id, FoolComboState(targetDefense: $0.defense))
         })
+        if chapterMissionNumber == 12, MPCProgressionWalls.q12OpeningFortifyStacks > 0 {
+            for enemy in enemies where enemy.contentID == "enemy_calibration_puppet" { q12FortifyStacks[enemy.id] = MPCProgressionWalls.q12OpeningFortifyStacks }
+        }
     }
 
     private mutating func splitQ2GhostIfDefeated(at index: Int) {
@@ -3301,6 +3308,12 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         default: return fallback
         }
     }
+    /// Q22 wall: the blow after a failed check is neither delayed (张冠李戴 waits for the wind-up after it)
+    /// nor held by the blank card; only the reverse seal answers it (2026-10-15).
+    func q22FailedBlowIsDue(_ enemy: MPCRuntimeEnemy) -> Bool {
+        chapterMissionNumber == 22 && chapterVerificationFailed && enemy.currentIntent == "strike"
+            && enemy.contentID == "enemy_hollow_clockmaker" && !MPCProgressionWalls.wearsWallRelic(mission: 22, bountyRelicID: loadout.bountyRelicID)
+    }
     /// A failed Q17/Q22 verification empowers the next blow; the reverse seal caps it.
     private func verificationBlowPercent() -> Int {
         guard chapterVerificationFailed else { return 100 }
@@ -3312,7 +3325,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     private func sovereignIsEnraged(_ enemy: MPCRuntimeEnemy) -> Bool {
         chapterMissionNumber == 30 && enemy.contentID == "boss_chronarch_sovereign"
             && (enemy.hp * 100 < enemy.maxHP * MPCProgressionWalls.q30EnrageBelowPercent || mistMendPhase >= 3)
-            && loadout.bountyRelicID != MPCBountyRelicCatalog.lifeLedger
+            && !MPCProgressionWalls.wearsWallRelic(mission: 30, bountyRelicID: loadout.bountyRelicID)
     }
 
     /// The sovereign's blow at the hero before any player defence. Pure, so the allies'
@@ -3370,7 +3383,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             if intent == "strike" {
                 // Q22 wall: a failed verification without the reverse seal hits for a share
                 // of the player's health, so armor and tower weapons cannot outpace it.
-                if chapterMissionNumber == 22, chapterVerificationFailed, loadout.bountyRelicID != MPCBountyRelicCatalog.reverseSeal {
+                if chapterMissionNumber == 22, chapterVerificationFailed,
+                   !MPCProgressionWalls.wearsWallRelic(mission: 22, bountyRelicID: loadout.bountyRelicID) {
                     return .attack(playerBaseMaxHP * MPCProgressionWalls.q22FailedBlowHealthPercent / 100)
                 }
                 return .attack(enemy.attack * verificationBlowPercent() / 100)

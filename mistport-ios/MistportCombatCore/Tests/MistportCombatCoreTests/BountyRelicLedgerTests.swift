@@ -70,4 +70,56 @@ struct BountyRelicLedgerTests {
         #expect(MPCProgressionWalls.defeatHint(mission: 8, highestTowerFloor: 10, equippedRelicID: nil, ownedRelicIDs: [],
                                                wornTowerDepth: 2, caseTitle: title) == nil)
     }
+
+    /// Pre-fight warning (2026-10-15, user: the walls stay lethal, but say first what the mission needs).
+    @Test func prebattleHintNamesExactlyTheUnmetWallRequirement() throws {
+        typealias W = MPCProgressionWalls
+        typealias C = MPCBountyRelicCatalog
+        func loadout(_ depth: Int, _ relic: String?) -> MPCChapterOneLoadout {
+            var loadout = MPCChapterOneLoadout()
+            loadout.churchGear = .init(towerDepth: depth)
+            loadout.bountyRelicID = relic
+            return loadout
+        }
+        #expect(W.prebattleHint(mission: 12, loadout: loadout(100, nil)) == "这一关需要：通缉遗落物「七号缺齿剑」")
+        #expect(W.prebattleHint(mission: 12, loadout: loadout(0, C.reverseSeal)) == "这一关需要：通缉遗落物「七号缺齿剑」")
+        #expect(W.prebattleHint(mission: 12, loadout: loadout(0, C.brokenSword)) == nil)
+        #expect(W.prebattleHint(mission: 22, loadout: loadout(100, C.brokenSword)) == "这一关需要：通缉遗落物「伪造者倒签笔」")
+        #expect(W.prebattleHint(mission: 22, loadout: loadout(0, C.reverseSeal)) == nil)
+        #expect(W.prebattleHint(mission: 18, loadout: loadout(40, C.lifeLedger)) == "这一关需要：教会塔第 50 层或更深的装备")
+        #expect(W.prebattleHint(mission: 18, loadout: loadout(50, nil)) == nil)
+        #expect(W.prebattleHint(mission: 26, loadout: loadout(60, nil)) == "这一关需要：教会塔第 70 层或更深的装备")
+        #expect(W.prebattleHint(mission: 26, loadout: loadout(70, nil)) == nil)
+        #expect(W.prebattleHint(mission: 30, loadout: loadout(80, nil)) == "这一关需要：教会塔第 90 层或更深的装备、通缉遗落物「绯月寿账签」")
+        #expect(W.prebattleHint(mission: 30, loadout: loadout(90, C.brokenSword)) == "这一关需要：通缉遗落物「绯月寿账签」")
+        #expect(W.prebattleHint(mission: 30, loadout: loadout(80, C.lifeLedger)) == "这一关需要：教会塔第 90 层或更深的装备")
+        #expect(W.prebattleHint(mission: 30, loadout: loadout(100, C.lifeLedger)) == nil)
+        // Workshop pieces count by their tier, as in the fight.
+        let craftedF50 = try #require(MPCChurchGearCatalog.craftedPiece(tier: 50, slot: .weapon))
+        var ledger = MPCChurchGearLedger()
+        ledger.grant(craftedF50.id)
+        let wore = ledger.equip(craftedF50.id, highestTowerFloor: 50)
+        #expect(wore)
+        var crafted = loadout(0, nil)
+        crafted.churchGear = ledger.stats
+        #expect(W.prebattleHint(mission: 18, loadout: crafted) == nil)
+
+        // Independent table of the lethal walls (PROGRESSION_WALLS_AND_BOUNTY_RELICS_20260928.md §10):
+        // every mission, depth and worn relic gets exactly these requirements and nothing else (Q8's
+        // recommended floor is no lethal check, Q28/Q29 are no walls).
+        let walls: [Int: (floor: Int?, relic: String?)] = [12: (nil, C.brokenSword), 18: (50, nil), 22: (nil, C.reverseSeal),
+                                                           26: (70, nil), 30: (90, C.lifeLedger)]
+        for q in 1...30 {
+            for depth in [0, 10, 40, 49, 50, 69, 70, 89, 90, 100] {
+                for relic in [nil] + C.all.map(\.id) {
+                    var expected: [W.Requirement] = []
+                    if let floor = walls[q]?.floor, depth < floor { expected.append(.towerGear(floor: floor)) }
+                    if let id = walls[q]?.relic, relic != id { expected.append(.bountyRelic(try #require(C.relic(id)))) }
+                    #expect(W.unmetRequirements(mission: q, loadout: loadout(depth, relic)) == expected, "Q\(q) F\(depth) \(relic ?? "-")")
+                    #expect(W.wearsWallRelic(mission: q, bountyRelicID: relic) == (walls[q]?.relic.map { $0 == relic } ?? true))
+                    #expect((W.prebattleHint(mission: q, loadout: loadout(depth, relic)) == nil) == expected.isEmpty)
+                }
+            }
+        }
+    }
 }

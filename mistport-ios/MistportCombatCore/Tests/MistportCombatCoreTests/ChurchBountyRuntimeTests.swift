@@ -55,18 +55,23 @@ struct ChurchBountyRuntimeTests {
         _ = try ship.applyPartyDamage(100, to: id)
         #expect(ship.enemies[0].hp == hp - 175)
     }
-    @Test func everyBountyHasLegalNoMaskVictoryRoute() throws {
-        for bounty in MPCChurchBountyCatalog.all {
-            var wins = false
-            let routes: [(Double, String?)] = [(6, nil), (14, nil), (6, "relic_return_gift_clasp"), (14, "relic_return_gift_clasp")]
-            for (offset, passive) in routes {
-                let s = try TowerHundredSimulator.run(encounterID: bounty.encounterID, mission: bounty.unlockMission, offset: offset, passive: passive)
-                if s.outcome == .victory {
-                    print("BOUNTY_BALANCE \(bounty.id) hp=\(s.playerHP) passive=\(passive ?? "none")")
-                    wins = true; break
+    /// Each case on the real loop (2026-10-15): the stage it opens at (never before the church's Q7), the
+    /// tower gear a player on the daily pace holds then, the medal and no mask; the tower hand, the clasp or not.
+    @Test func everyBountyHasLegalNoMaskVictoryRoute() async throws {
+        let wins = try await RealLoop.map(MPCChurchBountyCatalog.all) { bounty -> String? in
+            let stage = max(MPCChurchTowerCatalog.unlockMission, bounty.unlockMission)
+            for passive in [nil, RealLoop.clasp] {
+                for medal in [6.0, 14.0] {
+                    let r = try RealLoop.church(bounty.encounterID, before: stage + 1, order: RealLoop.towerHand(before: stage + 1),
+                                                gearThrough: RealLoop.paceFloor(after: stage), passive: passive, medalAt: medal)
+                    if r.session.outcome == .victory { return "hp=\(r.session.playerHP) passive=\(passive ?? "none") medal=\(medal)" }
                 }
             }
-            #expect(wins, "Bounty \(bounty.id)")
+            return nil
+        }
+        for (bounty, win) in zip(MPCChurchBountyCatalog.all, wins) {
+            print("BOUNTY_BALANCE \(bounty.id) \(win ?? "no route")")
+            #expect(win != nil, "Bounty \(bounty.id)")
         }
     }
     @Test func belltoadLeavesFinitePoisonThatEndsWithItsDeath() throws {

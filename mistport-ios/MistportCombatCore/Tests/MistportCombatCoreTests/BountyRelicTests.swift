@@ -41,8 +41,8 @@ struct BountyRelicTests {
             var s = try session(22, relic: relic)
             let clockmaker = s.enemies.first { $0.contentID == "enemy_hollow_clockmaker" }!
             #expect(clockmaker.currentIntent == "calibration")
-            // Three hits: short of the five the Q22 wall asks for, unless each counts twice.
-            for _ in 0..<3 { _ = try s.useBasicAction(.damage, targetID: clockmaker.id) }
+            // Six hits: short of the twelve the Q22 wall asks for (2026-10-15), unless each counts twice.
+            for _ in 0..<6 { _ = try s.useBasicAction(.damage, targetID: clockmaker.id) }
             try act(&s, clockmaker.id, at: 4.2)
             #expect(s.chapterVerificationFailed == (relic == nil))
             #expect(s.enemies.first { $0.id == clockmaker.id }!.currentIntent == "strike")
@@ -83,7 +83,7 @@ struct BountyRelicTests {
             taken.append(hp - s.playerHP)
             guard relic != nil else {
                 // Enraged blows take a share of health, not of the boss's attack.
-                #expect(taken[0] >= s.playerBaseMaxHP * MPCProgressionWalls.q30EnragedBlowHealthPercent / 100 * 3 / 4)
+                #expect(taken[0] >= min(hp, s.playerBaseMaxHP * MPCProgressionWalls.q30EnragedBlowHealthPercent / 100 * 3 / 4))
                 continue
             }
             // Below the enrage line the loop is phase three's four beats (no recovery), entered
@@ -97,37 +97,29 @@ struct BountyRelicTests {
         #expect(taken[0] > taken[1])
     }
 
-    /// The three mechanism walls: every tower floor open at the time does not replace the
-    /// wall's relic, and wearing it (with the floors earlier walls ask for) gives a route.
-    @Test func mechanismWallsNeedTheirRelic() throws {
-        let sequences: [[FoolSkillID]] = [[.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .absurdFinale],
-                                          [.sidestepStrike, .fabricatedEvidence, .mirrorPursuit, .absurdFinale]]
-        let passives = ["relic_salt_sealed_breathing_bag", "relic_return_gift_clasp"]
-        func gear(through floor: Int) -> MPCChurchGearStats {
-            var ledger = MPCChurchGearLedger()
-            for f in 1...floor { if let drop = MPCChurchGearCatalog.towerDrop(floor: f) { ledger.grant(drop.id) } }
-            return ledger.stats
-        }
-        for (q, openFloor) in [(12, 30), (22, 100), (30, 100)] {
-            let budget = (1..<q).compactMap { MPCChapterOneThirtyMissionContract.firstClear(for: $0)?.talentPoints }.reduce(0, +)
-            var wins: [Bool: Int] = [:]
-            for wearsRelic in [false, true] {
-                for sequence in sequences {
-                    for passive in passives {
-                        for offset in [6.0, 14.0] {
-                            var loadout = MPCChapterOneLoadout(normalSkillIDs: sequence, isUltimateUnlocked: q >= 14, passiveIDs: [], relicIDs: [passive])
-                            loadout.talents = .restored((0...5).map { "trickery.\($0)" } + (0...5).map { "omen.\($0)" }, budget: budget)
-                            loadout.churchGear = wearsRelic ? EarnedChapterAuditFixture.wallGear(beforeOrAt: q) : gear(through: openFloor)
-                            loadout.bountyRelicID = wearsRelic ? EarnedChapterAuditFixture.wallRelic(q) : nil
-                            let r = try NewMaskBalanceSimulator.run(q: q, sequence: sequence, mask: false, consumables: ["consumable_pain_salve": 1],
-                                                                    ultimate: q >= 14, loadout: loadout, medalOffset: offset, precise: true)
-                            if r.session.outcome == .victory { wins[wearsRelic, default: 0] += 1 }
-                        }
-                    }
-                }
-            }
-            #expect(wins[false, default: 0] == 0, "Q\(q) falls to tower gear alone")
-            #expect(wins[true, default: 0] > 0, "Q\(q) has no route with its relic")
+    /// Q30 arrangements that broke through before 2026-10-15: 37 won without the ledger at F100 (phase three's
+    /// 70% blows), ten more with F80 gear (the 140% slam and a revive). The exhaustive check is the env audit.
+    static let q30Breakers = ["11,12,04,07", "11,07,12,04", "12,04,11,07", "12,04,07,11", "04,07,11,12", "07,11,12,04", "05,04,06,07",
+        "05,04,07,06", "05,06,04,07", "04,06,07,05", "04,07,05,06", "04,07,06,05", "06,05,04,07", "06,05,07,04", "06,04,07,05",
+        "06,07,05,04", "07,05,04,06", "07,05,06,04", "07,06,05,04", "08,07,06,09", "06,07,09,08", "05,04,07,09", "05,04,09,07",
+        "05,09,04,07", "04,05,09,07", "04,07,05,09", "04,07,09,05", "04,09,05,07", "04,09,07,05", "07,05,04,09", "07,05,09,04",
+        "07,09,05,04", "07,09,04,05", "09,05,04,07", "09,04,05,07", "09,04,07,05", "09,07,05,04", "04,11,07,12", "08,07,09,06",
+        "07,09,08,06"].map(RealLoop.line)
+    static func wallLines(_ q: Int) -> [[FoolSkillID]] { q == 30 ? q30Breakers : MPCStageLoadout.orders(before: q) }
+
+    /// The three mechanism walls on the real loop (2026-10-15, user: 让“必须带遗落物”重新成立): without the
+    /// wall's relic every audit arrangement loses, even wearing all the tower open then (Q12 F30, Q22 F80,
+    /// Q30 F100); wearing it with the floors earlier walls ask for wins often. Outfits and slower reaction
+    /// profiles: `OrderedChapterBalanceAuditTests.wallAudit`.
+    @Test(arguments: [(12, 30), (22, 80), (30, 100)]) func mechanismWallsNeedTheirRelic(_ q: Int, _ openFloor: Int) async throws {
+        let orders = Self.wallLines(q)
+        let bare = try await RealLoop.map(orders) { try RealLoop.story(q, $0, gear: MPCStageLoadout.towerGear(through: openFloor), relic: .some(nil)).won }
+        #expect(!bare.contains(true), "Q\(q) falls without its relic: \(bare.filter { $0 }.count) lines")
+        let worn = try await RealLoop.map(orders) { try RealLoop.story(q, $0).won }.filter { $0 }.count
+        #expect(worn * 6 >= orders.count, "Q\(q) wears its relic but wins only \(worn)/\(orders.count)")
+        if q == 22 { // The blank card cannot hold a failed check's blow, and 张冠李戴 cannot delay it.
+            let carded = try await RealLoop.map(orders) { try RealLoop.story(22, $0, gear: MPCStageLoadout.towerGear(through: 80), relic: .some(nil), active: "relic_blank_name_card").won }
+            #expect(!carded.contains(true))
         }
     }
 
@@ -145,36 +137,14 @@ struct BountyRelicTests {
         #expect(MPCProgressionWalls.meetsTowerFloor(mission: 8, gear: .init()))
     }
 
-    @Test func towerWallsNeedTheirFloor() throws {
-        let sequences: [[FoolSkillID]] = [[.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .absurdFinale],
-                                          [.sidestepStrike, .fabricatedEvidence, .mirrorPursuit, .absurdFinale]]
-        let passives = ["relic_salt_sealed_breathing_bag", "relic_return_gift_clasp"]
-        func gear(through floor: Int) -> MPCChurchGearStats {
-            var ledger = MPCChurchGearLedger()
-            for f in 1...floor { if let drop = MPCChurchGearCatalog.towerDrop(floor: f) { ledger.grant(drop.id) } }
-            return ledger.stats
-        }
-        for q in [18, 26, 30] {
-            let floor = try #require(MPCProgressionWalls.wall(mission: q)?.towerFloor)
-            let budget = (1..<q).compactMap { MPCChapterOneThirtyMissionContract.firstClear(for: $0)?.talentPoints }.reduce(0, +)
-            var wins: [Bool: Int] = [:]
-            for deepEnough in [false, true] {
-                for sequence in sequences {
-                    for passive in passives {
-                        for offset in [6.0, 14.0] {
-                            var loadout = MPCChapterOneLoadout(normalSkillIDs: sequence, isUltimateUnlocked: q >= 14, passiveIDs: [], relicIDs: [passive])
-                            loadout.talents = .restored((0...5).map { "trickery.\($0)" } + (0...5).map { "omen.\($0)" }, budget: budget)
-                            loadout.churchGear = gear(through: deepEnough ? floor : floor - 10)
-                            loadout.bountyRelicID = EarnedChapterAuditFixture.wallRelic(q)
-                            let r = try NewMaskBalanceSimulator.run(q: q, sequence: sequence, mask: false, consumables: ["consumable_pain_salve": 1],
-                                                                    ultimate: q >= 14, loadout: loadout, medalOffset: offset, precise: true)
-                            if r.session.outcome == .victory { wins[deepEnough, default: 0] += 1 }
-                        }
-                    }
-                }
-            }
-            #expect(wins[false, default: 0] == 0, "Q\(q) falls to gear from above F\(floor)")
-            #expect(wins[true, default: 0] > 0, "Q\(q) has no route with F\(floor) gear")
-        }
+    /// The tower-checked walls on the real loop: gear from a decade short of the floor loses at every audit
+    /// arrangement (Q30: its former breakers), the wall's relic worn; the floor's gear wins often (2026-10-15).
+    @Test(arguments: [18, 26, 30]) func towerWallsNeedTheirFloor(_ q: Int) async throws {
+        let floor = try #require(MPCProgressionWalls.wall(mission: q)?.towerFloor)
+        let orders = Self.wallLines(q)
+        let short = try await RealLoop.map(orders) { try RealLoop.story(q, $0, gear: MPCStageLoadout.towerGear(through: floor - 10)).won }
+        #expect(!short.contains(true), "Q\(q) falls to F\(floor - 10) gear: \(short.filter { $0 }.count) lines")
+        let deep = try await RealLoop.map(orders) { try RealLoop.story(q, $0, gear: MPCStageLoadout.towerGear(through: floor)).won }.filter { $0 }.count
+        #expect(deep * 6 >= orders.count, "Q\(q) with F\(floor) gear wins only \(deep)/\(orders.count)")
     }
 }

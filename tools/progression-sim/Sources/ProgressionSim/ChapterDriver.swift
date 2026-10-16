@@ -78,6 +78,8 @@ enum ChapterDriver {
                     if wants { out.append(.init(tick: view.tick, kind: .mask)) }
                 }
             }
+            // A defended heavy blow's restart, as the production audit takes it (2026-10-15).
+            if view.session.canRequestCounter { out.append(.init(tick: view.tick, kind: .counter)) }
             if trial.playerHP <= 400, trial.consumables["consumable_pain_salve", default: 0] > 0, (try? trial.useConsumable("consumable_pain_salve")) != nil {
                 out.append(.init(tick: view.tick, kind: .consumable, itemID: "consumable_pain_salve")); used += 1
             }

@@ -28,8 +28,11 @@ struct ChurchMinionTests {
                             let band = (floor.number - 11) / 10
                             // Body budget follows the authored layout (+140 for a single wave), which the
                             // 2026-10-12 wave split no longer exposes as `floor.waves.count`.
-                            let authoredReplacement = [600, 740].contains(enemy.hp) && enemy.attack == 45
-                            let smallEscort = enemy.hp == (210 + band * 19) * hpShare / 100 && enemy.attack == (20 + band * 2) * attackShare / 100
+                            // Decade calibration (2026-10-15) scales every body of the floor alike.
+                            let k = MPCChurchTowerCatalog.strengthPercent(floor: floor.number)
+                            let authoredReplacement = [600, 740].map { $0 * k.hp / 100 }.contains(enemy.hp) && enemy.attack == 45 * k.attack / 100
+                            let smallEscort = enemy.hp == (210 + band * 19) * hpShare / 100 * k.hp / 100
+                                && enemy.attack == max(1, (20 + band * 2) * attackShare / 100 * k.attack / 100)
                             #expect(authoredReplacement || smallEscort)
                         }
                         let id = floor.enemyID(wave: wave, slot: slot)

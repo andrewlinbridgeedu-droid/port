@@ -80,36 +80,22 @@ enum Shop {
     static func value(_ id: String) -> Int { passives.first { $0.id == id }?.price ?? 0 }
 }
 
-/// Cards available for the next story mission, as in the 2026-09-25 audit.
+/// Legal hands on the ordered-card rules (2026-10-15): one arrangement per hand, from the production
+/// audit's lines (`MPCStageLoadout.orders`); `CARDS=all` tries every arrangement.
 func cards(forMission q: Int) -> [[FoolSkillID]] {
-    switch q {
-    case ...7: return [[.sidestepStrike]]
-    case 8...9: return [[.identityDisplacement, .sidestepStrike], [.sidestepStrike, .identityDisplacement]]
-    case 10: return [[.fabricatedEvidence, .sidestepStrike], [.identityDisplacement, .sidestepStrike]]
-    case 11: return [[.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .sidestepStrike]]
-    default: return [[.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .absurdFinale],
-                     [.sidestepStrike, .fabricatedEvidence, .mirrorPursuit, .absurdFinale]]
-    }
+    let lines = MPCStageLoadout.orders(before: q)
+    if ProcessInfo.processInfo.environment["CARDS"] == "all" { return lines }
+    var hands = Set<Set<FoolSkillID>>()
+    return lines.filter { hands.insert(Set($0)).inserted }
 }
 
-func talentBudget(completed: Int) -> Int {
-    completed > 0 ? (1...completed).compactMap { MPCChapterOneThirtyMissionContract.firstClear(for: $0)?.talentPoints }.reduce(0, +) : 0
-}
-
-/// The loadout a player has when the next story mission is `q`: cards, talents,
-/// the two dust upgrades (Q9, Q14), the medal from Q5, one passive relic, the bounty-slot relic and church gear.
+/// The loadout a player has when the next story mission is `q` (`MPCStageLoadout`, 2026-10-15): cards,
+/// the chapter's talents, the two dust upgrades, the medal from Q5, one passive relic, the bounty-slot relic,
+/// church gear and the default outfit.
 func loadout(mission q: Int, gear: MPCChurchGearStats, passive: String?, sequence: [FoolSkillID],
              bountyRelic: String? = nil) -> MPCChapterOneLoadout {
-    var l = MPCChapterOneLoadout(normalSkillIDs: sequence, isUltimateUnlocked: q >= 14, passiveIDs: [], relicIDs: passive.map { [$0] } ?? [])
-    l.bountyRelicID = bountyRelic
-    l.talents = .restored((0...5).map { "trickery.\($0)" } + (0...5).map { "omen.\($0)" } + (0...5).map { "phantom.\($0)" },
-                          budget: talentBudget(completed: q - 1))
-    if q >= 10 { l.skillLevels[.sidestepStrike] = 2 }
-    if q >= 15 { l.skillLevels[.mirrorPursuit] = 2 }
-    if q >= 5 { l.selectedActiveRelicID = MPCChapterOneCatalog.usurpedLifeMedalRelicID }
-    l.churchGear = gear
-    l.outfit = .mistportNight
-    return l
+    MPCStageLoadout.loadout(before: q, order: sequence, gear: gear, bountyRelic: bountyRelic, passive: passive,
+                            activeRelic: q >= 5 ? MPCChapterOneCatalog.usurpedLifeMedalRelicID : nil)
 }
 
 /// Bounty-slot relics worth wearing for `mission`, the wall's own counter first.
@@ -531,7 +517,7 @@ final class Campaign {
 
     /// Street fights of the daily content, on the shipping combat core like every other battle.
     func streetFight(_ encounterID: String, kind: String) -> TowerDriver.Report {
-        let l = loadout(mission: q + 1, gear: stats, passive: passives.last, sequence: cards(forMission: q + 1)[0], bountyRelic: worn)
+        let l = loadout(mission: q + 1, gear: stats, passive: passives.last, sequence: MPCStageLoadout.towerHand(before: q + 1), bountyRelic: worn)
         let report = try! TowerDriver.run(number: 1, medalOffset: 6, suppliedLoadout: l, actionDelay: profile.actionDelay,
                                           encounterID: encounterID)
         spend(kind, report.seconds)
@@ -653,7 +639,7 @@ final class Campaign {
     /// Replays the richest low floor already cleared for materials (no first-clear reward).
     func replayForMaterials() {
         let floor = min(tower, 10)
-        let l = loadout(mission: q + 1, gear: stats, passive: passives.last, sequence: cards(forMission: q + 1)[0], bountyRelic: worn)
+        let l = loadout(mission: q + 1, gear: stats, passive: passives.last, sequence: MPCStageLoadout.towerHand(before: q + 1), bountyRelic: worn)
         guard let report = try? TowerDriver.run(number: floor, medalOffset: 6, suppliedLoadout: l, actionDelay: profile.actionDelay) else { return }
         spend("workshop", report.seconds); replays += 1
         guard report.session.outcome == .victory else { return }
@@ -737,7 +723,7 @@ final class Campaign {
         for passive in passiveCandidates {
             for offset in [6.0, 14.0, 22.0] {
                 attempts += 1
-                let l = loadout(mission: mission, gear: stats, passive: passive, sequence: cards(forMission: mission)[0], bountyRelic: worn)
+                let l = loadout(mission: mission, gear: stats, passive: passive, sequence: MPCStageLoadout.towerHand(before: mission), bountyRelic: worn)
                 let report = try! TowerDriver.run(number: floor, medalOffset: offset, suppliedLoadout: l, actionDelay: profile.actionDelay)
                 spend("tower", report.seconds); total += report.seconds
                 let won = report.session.outcome == .victory
@@ -769,7 +755,7 @@ final class Campaign {
         for passive in passiveCandidates {
             for offset in [6.0, 14.0, 22.0] {
                 attempts += 1
-                let l = loadout(mission: mission, gear: stats, passive: passive, sequence: cards(forMission: mission)[0], bountyRelic: worn)
+                let l = loadout(mission: mission, gear: stats, passive: passive, sequence: MPCStageLoadout.towerHand(before: mission), bountyRelic: worn)
                 let report = try! TowerDriver.run(number: 1, medalOffset: offset, suppliedLoadout: l,
                                                   actionDelay: profile.actionDelay, encounterID: bounty.encounterID)
                 spend("bounty", report.seconds); total += report.seconds

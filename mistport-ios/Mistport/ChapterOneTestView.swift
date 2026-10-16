@@ -6529,7 +6529,7 @@ struct ChapterOneMissionBridgeView: View {
 
                     VStack {
                         let number = game.activeChapterMission?.number ?? 1
-                        if number >= 3 || Self.prebattleObjective(number) != nil {
+                        if number >= 3 || Self.prebattleObjective(number) != nil || prebattleWallHint != nil {
                             prebattleReadiness
                         }
                         Spacer(minLength: 0)
@@ -6585,6 +6585,14 @@ struct ChapterOneMissionBridgeView: View {
             && game.chapterOneLoadoutSlotCapacity >= 2
     }
 
+    /// Wall missions kill outright without their requirement (2026-10-15); say so before the
+    /// fight, never block it. Same mission number and church gear / bounty slot that
+    /// `beginConfiguredBattle` hands the runtime, checked by the runtime's own predicates.
+    private var prebattleWallHint: String? {
+        MPCProgressionWalls.prebattleHint(mission: session.chapterMissionNumber,
+                                          loadout: game.applyingChurchLoans(to: campaign.effectiveLoadout))
+    }
+
     private var prebattleReadiness: some View {
         let number = game.activeChapterMission?.number ?? 1
         let equipped = campaign.loadout.relicIDs + [campaign.loadout.selectedActiveRelicID].compactMap { $0 }
@@ -6594,6 +6602,13 @@ struct ChapterOneMissionBridgeView: View {
                 && game.churchServices.ownedCondition.currentDurability($0) == 0
         }
         return VStack(alignment: .leading, spacing: 5) {
+            if let wallHint = prebattleWallHint {
+                Label(wallHint, systemImage: "exclamationmark.triangle.fill")
+                    .font(.caption.bold())
+                    .foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("chapter-one-prebattle-wall-requirement")
+            }
             if (3...8).contains(number) {
                 let lines = ChapterOneEncounterTestView.enemyPreludeLines(number)
                 if !lines.isEmpty {

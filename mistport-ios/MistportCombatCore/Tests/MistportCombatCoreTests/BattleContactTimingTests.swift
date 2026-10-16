@@ -49,6 +49,8 @@ struct BattleContactTimingTests {
 
     /// This proves batching preserves a complete rules-engine snapshot. The App
     /// adapter still needs its own device check: it has separate presentation state.
+    /// The defeat case plays F100 with F1's loadout (Q7's three cards, no tower gear, no input); before
+    /// the 2026-10-15 tower calibration that won (13/60 arrangements), now it is a defeat by design.
     @Test("a mid-battle snapshot settles identically one tick or 200 ticks at a time", arguments: [false, true])
     func batchingPreservesAnInFlightBattle(expectDefeat: Bool) throws {
         let firstFloor = try #require(MPCChurchTowerCatalog.floor(number: 1))

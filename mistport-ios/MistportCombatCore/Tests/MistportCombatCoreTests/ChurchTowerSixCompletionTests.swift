@@ -48,7 +48,10 @@ struct ChurchTowerSixCompletionTests {
             #expect(l.normalSkillIDs.count <= MPCOrderedSkillRules.slotCapacity(availableThrough: q + 1))
         }
     }
+    /// Report only: writes milestone-builds.csv when TOWER_REPORT_DIR is set (2026-10-15: skipped otherwise,
+    /// the calibrated floors make these 70 battles the suite's slowest report).
     @Test func milestonesCompareRealRelicBuildsAndPoorPreparation() throws {
+        guard ProcessInfo.processInfo.environment["TOWER_REPORT_DIR"] != nil else { return }
         var rows = ["floor,route,passive,medal_offset,seconds,hp,outcome,medal_uses"]
         for n in [10, 30, 50, 70, 90, 100] {
             let q = MPCChurchTowerVerificationRunner.mission(for: MPCChurchTowerCatalog.floor(number: n)!)
@@ -68,7 +71,9 @@ struct ChurchTowerSixCompletionTests {
         }
     }
 
+    /// Report only: timing-samples.csv when TOWER_REPORT_DIR is set.
     @Test func timingPerturbationIsReportedRatherThanHidden() throws {
+        guard ProcessInfo.processInfo.environment["TOWER_REPORT_DIR"] != nil else { return }
         var rows = ["floor,seed,jitter,seconds,hp,outcome"]
         for n in [10, 30, 50, 70, 90, 100] {
             for seed in 1...20 {

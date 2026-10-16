@@ -52,12 +52,14 @@ struct ChapterThirtyEarlyRelicTests {
         #expect(healthDamage == 50)
         #expect(s.enemyGiftShields[id] == 0 && s.returnGiftClaspIsReady)
     }
+    /// Gift-shield balance samples on the real loop (2026-10-15), the audit's first arrangement.
     @Test func balanceMatrix() throws {
         for q in [5,6] {
             let passive = q == 5 ? "relic_salt_sealed_breathing_bag" : "relic_return_gift_clasp"
             for offset in [0.0, 6, 12, 14, 16] {
-                let loadout = MPCChapterOneLoadout(normalSkillIDs: [.sidestepStrike], isUltimateUnlocked: false, passiveIDs: [], relicIDs: [passive])
-                let r = try NewMaskBalanceSimulator.run(q: q, sequence: [.sidestepStrike], mask: false, loadout: loadout, medalOffset: offset, relicBalance: .init(giftShieldPercent: 50))
+                var loadout = MPCStageLoadout.loadout(before: q, order: MPCStageLoadout.orders(before: q)[0], passive: passive, activeRelic: RealLoop.medal)
+                loadout.talents = .init()
+                let r = try MPCStoryVerificationRunner.run(mission: q, loadout: loadout, policy: .init(mask: false, medalFrom: offset)) { $0.relicBalance = .init(giftShieldPercent: 50) }
                 print("CH30_RELIC Q\(q) offset=\(offset) outcome=\(r.session.outcome) time=\(r.seconds) hp=\(r.session.playerHP) enemy=\(r.session.enemies.map(\.hp))")
                 #expect(r.session.outcome != .inProgress)
             }

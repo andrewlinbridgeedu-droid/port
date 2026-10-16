@@ -63,10 +63,10 @@ enum WallProbe {
         return Fight(won: s.outcome == .victory, hpPercent: max(0, s.playerHP) * 100 / normalMax, seconds: report.seconds)
     }
 
-    /// Any card order, shop relic and medal time, with a salve: what the audit bots count as a win.
+    /// Any audit arrangement, shop relic and medal time, with a salve: what the audit bots count as a win.
     static func wins(_ q: Int, _ profile: Profile, floor: Int, relic: String?) -> Bool {
         let owned = Shop.passives.filter { q - 1 >= $0.unlock }.map { Optional($0.id) }
-        for sequence in cards(forMission: q) {
+        for sequence in MPCStageLoadout.orders(before: q) { // every audit arrangement (2026-10-15)
             for passive in q >= 5 && !owned.isEmpty ? owned : [nil] {
                 for offset in q >= 5 ? [6.0, 14.0] as [Double?] : [nil] {
                     if fight(q, profile, floor: floor, relic: relic, passive: passive, sequence: sequence, offset: offset, salve: true).won { return true }

@@ -3,8 +3,8 @@ import Testing
 
 @Suite("Q1–Q15 earned campaign reward and unlock ledger")
 struct PlayerTestProgressionTests {
-    @Test func continuousEarnedCampaign() throws {
-        let campaign = try EarnedChapterAuditFixture.run(through: 15)
+    @Test func continuousEarnedCampaign() async throws {
+        let campaign = try await EarnedChapterAuditFixture.run(through: 15)
         #expect(campaign.completedEncounterIDs.count == 15)
         #expect(campaign.ownedRelicIDs.contains(MPCChapterOneCatalog.usurpedLifeMedalRelicID))
         #expect(campaign.inventory["item_blank_identity"] == 1)

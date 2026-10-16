@@ -95,16 +95,25 @@ public enum MPCProgressionWalls {
     /// puppet takes by this percentage, up to the cap. The broken sword clears them.
     nonisolated(unsafe) public static var q12FortifyStackPercent = 50
     nonisolated(unsafe) public static var q12FortifyMaxPercent = 95
+    /// Q12 puppets enter with this many stacks (2026-10-15, user: 让“必须带遗落物”重新成立): with the
+    /// ordered cards a 伪证→张冠李戴→荒谬 burst, its delay pushing the first fortify back, killed a puppet
+    /// before it ever fortified (27/168 audit lines won without the sword at F30; now 0, sword lines 77/168).
+    nonisolated(unsafe) public static var q12OpeningFortifyStacks = 1
     nonisolated(unsafe) public static var q18AdjudicatorHP = 5200
     nonisolated(unsafe) public static var q18AdjudicatorAttack = 140
     /// Q18 thirteenth blow and Q26 slam, percent of attack.
     nonisolated(unsafe) public static var q18ChargePercent = 200
     /// Q18 thirteenth blow, Q26 convoy slam and Q30 sovereign slam: without a worn piece
-    /// from the wall's tower floor or deeper, the blow takes this share of base health.
-    nonisolated(unsafe) public static var towerCheckBlowHealthPercent: [Int: Int] = [18: 140, 26: 140, 30: 140]
+    /// from the wall's tower floor or deeper, the blow takes this share of base health. 140 → 300 (2026-10-15):
+    /// the medal's 150% health, the clasp and armor let one 140% blow through, and 张冠李戴's delay held the next
+    /// one back until the boss died (F40 won Q18 9/168 audit lines, F60 Q26 21/168, F80 Q30 10/168; now 0).
+    /// Fights with the floor's gear never see this blow, so the Q30 blessing tuning at F90 is untouched.
+    nonisolated(unsafe) public static var towerCheckBlowHealthPercent: [Int: Int] = [18: 300, 26: 300, 30: 300]
     nonisolated(unsafe) public static var q22ClockmakerHP = 5000
-    /// Q22: a failed verification without the reverse seal hits for this share of base health.
-    nonisolated(unsafe) public static var q22FailedBlowHealthPercent = 140
+    /// Q22: a failed verification without the reverse seal hits for this share of base health, before the
+    /// clasp's 30% and armor (2026-10-15: 140 → 300, so the medal's 150% health and F80 armor no longer
+    /// carry it; with 12 hits and the blow undelayable and unblockable, 0/168 audit lines win without the seal).
+    nonisolated(unsafe) public static var q22FailedBlowHealthPercent = 300
     nonisolated(unsafe) public static var q26ConvoyHP = 5600
     nonisolated(unsafe) public static var q26ConvoyAttack = 150
     nonisolated(unsafe) public static var q26SlamPercent = 200
@@ -115,8 +124,11 @@ public enum MPCProgressionWalls {
     nonisolated(unsafe) public static var q30PhaseTwoBelowPercent = 60
     /// Q30: phase three, the enrage, below this share of its health.
     nonisolated(unsafe) public static var q30EnrageBelowPercent = 30
-    /// Q30: while enraged, each blow takes at least this share of base health.
-    nonisolated(unsafe) public static var q30EnragedBlowHealthPercent = 70
+    /// Q30: while enraged, each blow takes at least this share of base health. Only a fight without the life
+    /// ledger enrages, so the blessing tuning (F90 + ledger) never sees it. 70 → 300 (2026-10-15, user: Q30 must
+    /// need its relic): on the real loop 37/168 audit lines won without the ledger, their bursts outrunning a
+    /// phase three that the medal, the clasp and the shared revive absorbed; now 0 (with the enraged ally slam).
+    nonisolated(unsafe) public static var q30EnragedBlowHealthPercent = 300
     /// Q30 blows at their target, percent of the hero's base health before any defence;
     /// name seal on an ally takes its share of that ally's health instead.
     nonisolated(unsafe) public static var q30StrikeHealthPercent = 32
@@ -147,7 +159,8 @@ public enum MPCProgressionWalls {
     /// Final-boss party (Q28–Q30): the slam also hits each standing ally for this share of
     /// its health, more while enraged.
     nonisolated(unsafe) public static var partySlamAllyPercent = 18
-    nonisolated(unsafe) public static var partySlamAllyEnragedPercent = 30
+    /// Enraged (no life ledger) 30 → 100 (2026-10-15): the allies no longer finish the sovereign after its blow.
+    nonisolated(unsafe) public static var partySlamAllyEnragedPercent = 100
     /// The protector's intercept takes this share of the thirteenth blow; the hero takes none.
     nonisolated(unsafe) public static var partyInterceptPercent = 60
     /// 夺名代签 holds one card of the hero, or an ally to its basic attack, this long.
@@ -168,8 +181,9 @@ public enum MPCProgressionWalls {
     nonisolated(unsafe) public static var partyReviveHealthPercent = 30
     /// The allies' clock in party fights: they act on combat time, not only after the hero's hits.
     nonisolated(unsafe) public static var partyCompanionTickTenths = 10
-    /// Q17/Q22: hits needed while the enemy calibrates, and the failed blow's multiplier.
-    nonisolated(unsafe) public static var verificationHitsRequired: [Int: Int] = [17: 2, 22: 5]
+    /// Q17/Q22: hits needed while the enemy calibrates, and the failed blow's multiplier. Q22 5 → 12
+    /// (2026-10-15): 碎镜连弹's six hits under 抢拍 passed every check; the seal's double count needs six.
+    nonisolated(unsafe) public static var verificationHitsRequired: [Int: Int] = [17: 2, 22: 12]
     nonisolated(unsafe) public static var verificationFailPercent: [Int: Int] = [17: 180, 22: 160]
     /// The reverse seal's cap on a failed-verification blow.
     nonisolated(unsafe) public static var reverseSealFailPercent = 120
@@ -205,6 +219,55 @@ public enum MPCProgressionWalls {
     public static func meetsTowerFloor(mission: Int, gear: MPCChurchGearStats) -> Bool {
         guard towerCheckBlowHealthPercent[mission] != nil, let floor = wall(mission: mission)?.towerFloor else { return true }
         return gear.towerDepth >= floor
+    }
+
+    /// The relic a mechanism wall checks (Q12 b01, Q22 b04, Q30 b10), if any.
+    public static func wallRelic(mission: Int) -> MPCBountyRelicCatalog.Relic? {
+        wall(mission: mission)?.caseID.flatMap(MPCBountyRelicCatalog.relic(forCase:))
+    }
+
+    /// Mechanism walls let their lethal mechanic through unless the wall's relic is worn in the
+    /// bounty slot. The runtime's Q22 and Q30 checks call this; Q12's counter is the broken
+    /// sword's own effect, which fires for the same relic id.
+    public static func wearsWallRelic(mission: Int, bountyRelicID: String?) -> Bool {
+        guard let relic = wallRelic(mission: mission) else { return true }
+        return bountyRelicID == relic.id
+    }
+
+    /// One wall requirement a loadout does not meet.
+    public enum Requirement: Equatable, Sendable {
+        /// A worn piece from this tower floor or deeper (MPCChurchGearStats.towerDepth).
+        case towerGear(floor: Int)
+        /// This relic worn in the bounty slot.
+        case bountyRelic(MPCBountyRelicCatalog.Relic)
+
+        public var label: String {
+            switch self {
+            case .towerGear(let floor): "教会塔第 \(floor) 层或更深的装备"
+            case .bountyRelic(let relic): "通缉遗落物「\(relic.name)」"
+            }
+        }
+    }
+
+    /// What `loadout` lacks for the mission's wall, with the predicates the fight uses
+    /// (`meetsTowerFloor`, `wearsWallRelic`), so the warning and the fight never disagree.
+    public static func unmetRequirements(mission: Int, loadout: MPCChapterOneLoadout) -> [Requirement] {
+        var unmet: [Requirement] = []
+        if let floor = wall(mission: mission)?.towerFloor, !meetsTowerFloor(mission: mission, gear: loadout.churchGear) {
+            unmet.append(.towerGear(floor: floor))
+        }
+        if let relic = wallRelic(mission: mission), !wearsWallRelic(mission: mission, bountyRelicID: loadout.bountyRelicID) {
+            unmet.append(.bountyRelic(relic))
+        }
+        return unmet
+    }
+
+    /// Shown before a wall fight whose requirement is unmet (2026-10-15, user: keep the walls
+    /// lethal, but say what the mission needs first). A warning only; entering stays allowed.
+    public static func prebattleHint(mission: Int, loadout: MPCChapterOneLoadout) -> String? {
+        let unmet = unmetRequirements(mission: mission, loadout: loadout)
+        guard !unmet.isEmpty else { return nil }
+        return "这一关需要：" + unmet.map(\.label).joined(separator: "、")
     }
 
     /// The case the daily board must carry while the player stands at a mechanism

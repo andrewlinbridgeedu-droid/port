@@ -57,9 +57,7 @@ public enum MPCChurchTowerCatalog {
         public init(number: Int, title: String, enemies: [Enemy]) { self.init(number: number, title: title, waves: [enemies]) }
         public init(number: Int, title: String, waves: [[Enemy]]) { self.number = number; self.title = title; self.waves = waves }
         public var id: String { String(format: "church_tower_%03d", number) }
-        public var requiredMission: Int {
-            switch number { case ...10: return 0; case ...30: return 10; case ...50: return 13; case ...70: return 16; default: return 20 }
-        }
+        public var requiredMission: Int { MPCChurchTowerCatalog.requiredMission(floor: number) }
         public func enemyID(slot: Int) -> String { enemyID(wave: 0, slot: slot) }
         public func enemyID(wave: Int, slot: Int) -> String {
             waves[wave][slot].species.rawValue + (number <= 10 && wave == 0 ? String(format: "_f%02d_s%d", number, slot) : String(format: "_f%03d_w%d_s%d", number, wave, slot))
@@ -182,9 +180,39 @@ public enum MPCChurchTowerCatalog {
         Floor(number: 9, title: "断续封锚", enemies: [sac(650, 60, 3), jaw(800, 75, 8)] + pack(9, [.crimsonBrute, .goldenThroat], 225, 22)),
         Floor(number: 10, title: "守住井口", enemies: [sac(850, 65, 3), jaw(900, 80, 8, elite: true)] + pack(10, [.veilOracle, .crimsonBrute], 235, 23))
     ]
-    /// Explicit wave compositions, not one roster with a floor-number HP multiplier.
-    /// Each decade changes target order, attack timing and between-wave resources.
-    public static let floors: [Floor] = (openingFloors + laterFloors).map(sequentialMinionWaves)
+    /// Explicit wave compositions; each decade changes target order, attack timing and between-wave
+    /// resources, and since 2026-10-15 its bodies' weight (`strengthPercent`).
+    public static let floors: [Floor] = (openingFloors + laterFloors).map(sequentialMinionWaves).map(calibrated)
+
+    /// The chapter stage at which floor `n`'s first clear opens for a player on the daily pace: the floor's
+    /// gate, the church's Q7 and the day `MPCDailyPacing` allows it (F1–10 Q7, F11–30 Q10, F50 Q15, F70 Q20,
+    /// F90 Q25, F100 Q27). Tower verification plays each floor with the loadout of this stage.
+    public static func paceMission(floor n: Int) -> Int {
+        let day = (n + MPCDailyPacing.towerFloorsPerDay - 1) / MPCDailyPacing.towerFloorsPerDay
+        return max(unlockMission, requiredMission(floor: n), min(30, MPCDailyPacing.highestOpenMission(day: day)))
+    }
+    public static func requiredMission(floor n: Int) -> Int {
+        switch n { case ...10: return 0; case ...30: return 10; case ...50: return 13; case ...70: return 16; default: return 20 }
+    }
+
+    /// Tower calibration (2026-10-15, user: 塔重新校准难度): authored HP and attack, percent, per decade
+    /// (F1–10, F11–20, …). The authored budgets were flat past F10, so a Q7 hand without gear cleared F100
+    /// (12/60 arrangements) and every arrangement cleared every floor at its pace stage. Now each floor is
+    /// a fight at `paceMission` with the gear below it (decade ends: 21–60% of arrangements win, the tower
+    /// hand all), lost without tower gear from F60 and out of a Q7 hand's reach from F40 (CHURCH_TOWER.md,
+    /// 2026-10-15). F1–10 stay the opening. Read once, when the catalog is first built; `var` only so
+    /// tools can sweep it.
+    nonisolated(unsafe) public static var decadeStrength: [(hp: Int, attack: Int)] = [(100, 100), (200, 200), (200, 200), (205, 205), (240, 240),
+                                                                                     (210, 210), (200, 200), (210, 210), (210, 210), (230, 230)]
+    public static func strengthPercent(floor n: Int) -> (hp: Int, attack: Int) { decadeStrength[min(9, max(0, (n - 1) / 10))] }
+    private static func calibrated(_ floor: Floor) -> Floor {
+        let k = strengthPercent(floor: floor.number)
+        guard k != (100, 100) else { return floor }
+        return Floor(number: floor.number, title: floor.title, waves: floor.waves.map { wave in wave.map {
+            Enemy(species: $0.species, hp: $0.hp * k.hp / 100, attack: max(1, $0.attack * k.attack / 100),
+                  interval: $0.interval, initialDelay: $0.initialDelay, elite: $0.elite)
+        } })
+    }
 
     /// Ordinary packs arrive in 3–5 cleared waves. Redistribute the authored
     /// roster instead of multiplying its HP, attack or first-clear reward budget.

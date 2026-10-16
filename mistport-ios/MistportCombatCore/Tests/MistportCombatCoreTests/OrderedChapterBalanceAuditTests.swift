@@ -2,86 +2,93 @@ import Foundation
 import Testing
 @testable import MistportCombatCore
 
+/// The exhaustive real-loop audits, env-gated (minutes each); the default suite runs the focused
+/// per-contract checks. Every battle goes through the production steppers with stage-legal loadouts.
 @Suite(.serialized)
 struct OrderedChapterBalanceAuditTests {
-    @Test func productionAudit() throws {
-        guard let output = ProcessInfo.processInfo.environment["MISTPORT_ORDER_AUDIT"] else { return }
-        func permutations(_ cards: [FoolSkillID]) -> [[FoolSkillID]] {
-            guard cards.count > 1 else { return [cards] }
-            return cards.flatMap { first in permutations(cards.filter { $0 != first }).map { [first] + $0 } }
-        }
-        func combinations(_ cards: [FoolSkillID], _ count: Int) -> [[FoolSkillID]] {
-            if count == 0 { return [[]] }
-            guard cards.count >= count, let first = cards.first else { return [] }
-            let rest = Array(cards.dropFirst())
-            return combinations(rest, count - 1).map { [first] + $0 } + combinations(rest, count)
-        }
-        let families: [[FoolSkillID]] = [
-            [.stolenTempo, .mirrorBarrage, .sidestepStrike, .fabricatedEvidence],
-            [.stolenTempo, .mirrorBarrage, .identityDisplacement, .absurdFinale],
-            [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .absurdFinale],
-            [.stolenTempo, .delayedSignature, .mirrorBarrage, .backstageChange],
-            [.turnTheTables, .mirrorPursuit, .absurdFinale, .backstageChange],
-            [.stolenTempo, .sidestepStrike, .backstageChange, .mirrorBarrage],
-            [.fabricatedEvidence, .identityDisplacement, .absurdFinale, .backstageChange]
-        ]
-        let missions = (ProcessInfo.processInfo.environment["MISTPORT_ORDER_MISSIONS"] ?? "4,8,12,18,30").split(separator: ",").compactMap { Int($0) }
+    var env: [String: String] { ProcessInfo.processInfo.environment }
+
+    /// MISTPORT_ORDER_AUDIT=<json> [MISTPORT_ORDER_MISSIONS=1,…]: every audit arrangement of every listed mission.
+    @Test func productionAudit() async throws {
+        guard let output = env["MISTPORT_ORDER_AUDIT"] else { return }
+        let missions = (env["MISTPORT_ORDER_MISSIONS"] ?? "4,8,12,18,30").split(separator: ",").compactMap { Int($0) }
         var rows: [[String: Any]] = []
         for q in missions {
-            let available = MPCOrderedSkillRules.ordinarySkills.filter { (MPCOrderedSkillRules.unlockMission($0) ?? 99) <= q }
-            var tried = Set<String>()
+            let orders = MPCStageLoadout.orders(before: q)
+            let reports = try await RealLoop.map(orders) { try MPCStoryVerificationRunner.audit(mission: q, order: $0) }
             var wins: [[String: Any]] = [], losses: [[String: Any]] = []
-            let capacity = min(MPCOrderedSkillRules.slotCapacity(availableThrough: q), available.count)
-            for family in q < 10 ? combinations(available, capacity) : families {
-                var deck = Array(family.filter { available.contains($0) }.prefix(capacity))
-                deck += available.filter { !deck.contains($0) }.prefix(max(0, capacity - deck.count))
-                for order in permutations(deck) {
-                    let key = order.map(\.rawValue).joined(separator: ",")
-                    guard tried.insert(key).inserted else { continue }
-                    var loadout = MPCChapterOneLoadout(normalSkillIDs: order, isUltimateUnlocked: q >= 14, passiveIDs: [], relicIDs: [])
-                    loadout.churchGear = EarnedChapterAuditFixture.wallGear(beforeOrAt: q)
-                    loadout.bountyRelicID = EarnedChapterAuditFixture.wallRelic(q)
-                    loadout.selectedActiveRelicID = q <= 9 ? MPCChapterOneCatalog.ownerlessMaskRelicID : MPCChapterOneCatalog.usurpedLifeMedalRelicID
-                    if q >= 5 { loadout.relicIDs = [MPCChapterOneCatalog.returnGiftClaspRelicID] }
-                    let budget = (1..<q).compactMap { MPCChapterOneThirtyMissionContract.firstClear(for: $0)?.talentPoints }.reduce(0, +)
-                    loadout.talents = .restored((0...5).map { "trickery.\($0)" } + (0...5).map { "omen.\($0)" }, budget: budget)
-                    if q >= 10 { loadout.skillLevels[.mirrorPursuit] = 2 }
-                    if q >= 15 { loadout.skillLevels[.absurdFinale] = 2 }
-                    var game = try MPCStoryBattleStepper(encounterID: String(format: "chapter01_q%02d_encounter", q), loadout: loadout,
-                        companionIDs: q >= 28 ? MPCChapterOneCatalog.finalBossPartyIDs : [], mask: .init(owned: true, teachingLoan: q <= 4))
-                    var requestedUltimate = false
-                    while !game.isFinished {
-                        let view = game.view
-                        var inputs: [MPCBattleInput] = []
-                        var trial = view.session
-                        let imminentHeavy = view.session.enemies.contains { enemy in
-                            guard let deadline = view.incoming[enemy.id], deadline - view.tick <= 6 else { return false }
-                            if q == 3 { return enemy.currentIntent == "memory_breath" }
-                            if q == 4 { return enemy.currentIntent == "q4_flame_first" || enemy.currentIntent == "q4_flame_second" }
-                            return MPCCombatCounter.isHeavy(enemy.currentIntent)
-                        }
-                        if !view.session.playerIsDown, view.session.outcome == .inProgress, game.maskIsReady(at: view.now), imminentHeavy {
-                            inputs.append(.init(tick: view.tick, kind: .mask))
-                        }
-                        if view.session.canRequestCounter { inputs.append(.init(tick: view.tick, kind: .counter)) }
-                        if q >= 10, view.session.outcome == .inProgress, view.now >= 6,
-                           trial.activateUsurpedLifeMedal(isOwned: true, at: view.now) { inputs.append(.init(tick: view.tick, kind: .medal)) }
-                        if q >= 14, !requestedUltimate, view.session.outcome == .inProgress, !view.session.playerIsDown, !view.session.foolUltimateUsed, view.now >= 1 {
-                            inputs.append(.init(tick: view.tick, kind: .ultimate)); requestedUltimate = true
-                        }
-                        do { _ = try game.step(inputs) }
-                        catch MPCChurchBattleDriver.Failure.refused { _ = try game.step() }
-                    }
-                    let result: [String: Any] = ["order": order.map(\.rawValue), "hp": game.session.playerHP,
-                        "ticks": game.tick, "remaining": game.session.enemies.reduce(0) { $0 + $1.hp }]
-                    if game.session.outcome == .victory { wins.append(result) } else { losses.append(result) }
-                }
+            for (order, r) in zip(orders, reports) {
+                let result: [String: Any] = ["order": order.map(\.rawValue), "hp": r.session.playerHP,
+                    "ticks": Int((r.seconds / MPCChurchBattleDriver.step).rounded()) + 1, "remaining": r.enemyHPLeft]
+                if r.won { wins.append(result) } else { losses.append(result) }
             }
             #expect(!wins.isEmpty, "Q\(q) needs an earned winning arrangement")
-            rows.append(["mission": q, "tested": tried.count, "wins": wins, "losses": losses])
-            print("ORDER_AUDIT Q\(q) wins=\(wins.count)/\(tried.count)")
+            rows.append(["mission": q, "tested": orders.count, "wins": wins, "losses": losses])
+            print("ORDER_AUDIT Q\(q) wins=\(wins.count)/\(orders.count)")
             let data = try JSONSerialization.data(withJSONObject: rows, options: [.prettyPrinted, .sortedKeys])
             try data.write(to: URL(fileURLWithPath: output))
+        }
+    }
+
+    /// MISTPORT_WALL_AUDIT=1: each wall at every arrangement, outfit and reaction profile (0, 0.25, 0.8 s),
+    /// without its requirement (must be 0) and with it.
+    @Test func wallAudit() async throws {
+        guard env["MISTPORT_WALL_AUDIT"] != nil else { return }
+        struct Case: Sendable { let q: Int; let bareGear: Int; let bareRelic: Bool }
+        // Mechanism walls without their relic wear all the tower open then; tower walls a decade short.
+        let cases = [Case(q: 12, bareGear: 30, bareRelic: false), Case(q: 22, bareGear: 80, bareRelic: false), Case(q: 30, bareGear: 100, bareRelic: false),
+                     Case(q: 18, bareGear: 40, bareRelic: true), Case(q: 26, bareGear: 60, bareRelic: true), Case(q: 30, bareGear: 80, bareRelic: true)]
+        for c in cases {
+            let orders = MPCStageLoadout.orders(before: c.q)
+            for outfit in MPCOutfit.allCases {
+                for delay in [0.0, 0.25, 0.8] {
+                    let bare = try await RealLoop.map(orders) { try RealLoop.story(c.q, $0, gear: MPCStageLoadout.towerGear(through: c.bareGear),
+                        relic: c.bareRelic ? .none : .some(nil), delay: delay, outfit: outfit).won }.filter { $0 }.count
+                    let worn = try await RealLoop.map(orders) { try RealLoop.story(c.q, $0, delay: delay, outfit: outfit).won }.filter { $0 }.count
+                    print("WALL_AUDIT Q\(c.q) short=\(c.bareRelic ? "F\(c.bareGear)" : "no relic") \(outfit.rawValue) d=\(delay) short=\(bare)/\(orders.count) met=\(worn)/\(orders.count)")
+                    #expect(bare == 0)
+                }
+            }
+        }
+    }
+
+    /// MISTPORT_Q30_AUDIT=1: Q30 with F90 and the ledger in every farewell-blessing pair: the four ordinary
+    /// relics against the clasp, every arrangement.
+    @Test func q30BlessingAudit() async throws {
+        guard env["MISTPORT_Q30_AUDIT"] != nil else { return }
+        let orders = MPCStageLoadout.orders(before: 30)
+        let pairs: [MPCFarewellBlessings?] = [nil] + MPCFarewellBlessings.Hero.allCases.flatMap { h in MPCFarewellBlessings.Sovereign.allCases.map { MPCFarewellBlessings(hero: h, sovereign: $0) } }
+        for passive in [RealLoop.clasp, RealLoop.bag, "relic_reflecting_ink_mirror", "relic_countertide_anchor", "relic_ownership_severing_needle"] {
+            for pair in pairs {
+                let wins = try await RealLoop.map(orders) { order in try RealLoop.story(30, order, passive: passive) { s in if let pair { _ = s.applyFarewellBlessings(pair) } }.won }.filter { $0 }.count
+                print("Q30_AUDIT \(passive) \(pair.map { "\($0.hero.rawValue)+\($0.sovereign.rawValue)" } ?? "none") wins=\(wins)/\(orders.count)")
+            }
+        }
+    }
+
+    /// MISTPORT_TOWER_AUDIT=1: the tower curve, every arrangement of the stage: at the pace stage with the gear
+    /// below, three missions earlier, a decade of gear short, and with no gear; then the Q7 hand without input.
+    @Test func towerAudit() async throws {
+        guard env["MISTPORT_TOWER_AUDIT"] != nil else { return }
+        // MISTPORT_TOWER_STRENGTH=100 replays the uncalibrated tower (before the catalog is first built).
+        if let flat = env["MISTPORT_TOWER_STRENGTH"].flatMap(Int.init) { MPCChurchTowerCatalog.decadeStrength = Array(repeating: (flat, flat), count: 10) }
+        let floors = (env["MISTPORT_TOWER_FLOORS"] ?? "10,20,30,40,50,60,70,80,90,100").split(separator: ",").compactMap { Int($0) }
+        for n in floors {
+            let id = try #require(MPCChurchTowerCatalog.floor(number: n)).id, pace = MPCChurchTowerCatalog.paceMission(floor: n)
+            var line = "TOWER_AUDIT F\(n) pace=Q\(pace)"
+            for (label, stage, gear) in [("pace", pace, n - 1), ("pace-3", max(2, pace - 3), n - 1), ("gear-10", pace, max(0, n - 11)), ("no-gear", pace, 0)] {
+                let orders = MPCStageLoadout.orders(before: stage + 1)
+                let reports = try await RealLoop.map(orders) { try RealLoop.church(id, before: stage + 1, order: $0, gearThrough: gear) }
+                let won = reports.filter { $0.session.outcome == .victory }
+                let best = won.map { $0.session.playerHP * 100 / max(1, $0.session.playerNormalMaxHP) }.max() ?? -1
+                line += " \(label)=\(won.count)/\(orders.count)(best \(best)%)"
+            }
+            let q7 = try await RealLoop.map(MPCStageLoadout.orders(before: 7)) { order -> Bool in
+                var game = try MPCChurchBattleStepper(encounterID: id, loadout: MPCStageLoadout.loadout(before: 7, order: order, passive: nil))
+                while !game.isFinished { _ = try game.step() }
+                return game.session.outcome == .victory
+            }.filter { $0 }.count
+            print(line + " q7-no-input=\(q7)/60")
         }
     }
 }

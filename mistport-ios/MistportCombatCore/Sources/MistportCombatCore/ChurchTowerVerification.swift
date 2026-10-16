@@ -16,31 +16,19 @@ public enum MPCChurchTowerVerificationRunner {
         public let medalUses: Int
         public var tempoStats = MPCTempoStats()
     }
-    public static func mission(for floor: MPCChurchTowerCatalog.Floor) -> Int { max(7, floor.requiredMission) }
+    /// The stage a floor is played at: missions completed when its first clear opens on the daily pace
+    /// (`MPCChurchTowerCatalog.paceMission`; 2026-10-15, was the floor's gate alone).
+    public static func mission(for floor: MPCChurchTowerCatalog.Floor) -> Int { MPCChurchTowerCatalog.paceMission(floor: floor.number) }
+    /// The pace stage's loadout (`MPCStageLoadout`) with the gear of every floor below.
     public static func recommendedLoadout(for floor: MPCChurchTowerCatalog.Floor, route: Route = .medal) -> MPCChapterOneLoadout {
-        let q = mission(for: floor)
+        let n = mission(for: floor) + 1
         let cards: [FoolSkillID]
         if route == .unprepared { cards = [] }
-        // Clearing Q7 opens three slots and cards up to Q8's 张冠李戴; 碎镜连弹 waits for Q9 (2026-10-15 fix).
-        else if q < 8 { cards = [.stolenTempo, .sidestepStrike, .backstageChange] }
-        else if q < 11 { cards = [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .sidestepStrike] }
-        else if route == .counter { cards = [.turnTheTables, .fabricatedEvidence, .identityDisplacement, .absurdFinale] }
-        else { cards = [.fabricatedEvidence, .identityDisplacement, .mirrorPursuit, .absurdFinale] }
-        var loadout = MPCChapterOneLoadout(normalSkillIDs: cards, isUltimateUnlocked: q >= 13 && route != .unprepared, passiveIDs: [], relicIDs: [])
-        if route != .unprepared { loadout.selectedActiveRelicID = route == .blankCard && q >= 17 ? "relic_blank_name_card" : MPCChapterOneCatalog.usurpedLifeMedalRelicID }
-        let budget = (1...q).compactMap { MPCChapterOneThirtyMissionContract.firstClear(for: $0)?.talentPoints }.reduce(0, +)
-        loadout.talents = HermitTalentAllocation.restored((0...5).map { "trickery.\($0)" } + (0...5).map { "omen.\($0)" }, budget: budget)
-        // Spend only earned chapter dust: Q9 grants 30; Q14 grants another 30.
-        // These are two genuine level-1 -> level-2 upgrades, not free levels.
-        if q >= 10 { loadout.skillLevels[.mirrorPursuit] = 2 }
-        if q >= 14 { loadout.skillLevels[.absurdFinale] = 2 }
-        var earnedGear = MPCChurchGearLedger()
-        if floor.number > 1 {
-            for cleared in 1..<floor.number {
-                if let drop = MPCChurchGearCatalog.towerDrop(floor: cleared) { earnedGear.grant(drop.id) }
-            }
-        }
-        loadout.churchGear = earnedGear.stats
+        else if route == .counter, n >= 10 { cards = [.turnTheTables, .fabricatedEvidence, .identityDisplacement, .absurdFinale] }
+        else { cards = MPCStageLoadout.towerHand(before: n) }
+        let active: String? = route == .unprepared ? nil : route == .blankCard && n > 17 ? "relic_blank_name_card" : MPCChapterOneCatalog.usurpedLifeMedalRelicID
+        var loadout = MPCStageLoadout.loadout(before: n, order: cards, gear: MPCStageLoadout.towerGear(through: floor.number - 1), passive: nil, activeRelic: active)
+        if route == .unprepared { loadout.isUltimateUnlocked = false; loadout.selectedActiveRelicID = nil }
         return loadout
     }
     public static func playerContact(_ skill: FoolSkillID) -> Double { MPCChurchBattleDriver.playerContact(skill) }

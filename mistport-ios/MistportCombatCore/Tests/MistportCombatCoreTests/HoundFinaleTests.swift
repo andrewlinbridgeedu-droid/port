@@ -123,13 +123,11 @@ struct ArchiveStreetProgressionTests {
         #expect(game.session.triggeredEffects.contains { $0.contains("目标下次起手延迟一拍") })
     }
 
-    @Test(arguments: [6, 7]) func archiveBattlesWithEarnedRealtimeActions(_ q: Int) throws {
-        let loadout = MPCChapterOneLoadout(normalSkillIDs: [.sidestepStrike], isUltimateUnlocked: false,
-            passiveIDs: [], relicIDs: [MPCChapterOneCatalog.returnGiftClaspRelicID])
-        let report = try NewMaskBalanceSimulator.run(q: q, sequence: [.sidestepStrike], mask: false,
-            consumables: ["consumable_pain_salve": 1], loadout: loadout, medalOffset: 6)
-        #expect(report.session.outcome == .victory)
-        #expect(report.maskUses == 0)
+    /// The archive battles on the real loop: the earned clasp and the medal, no mask (2026-10-15).
+    @Test(arguments: [6, 7]) func archiveBattlesWithEarnedRealtimeActions(_ q: Int) async throws {
+        let win = try await RealLoop.firstWin(RealLoop.orders(before: q)) { try RealLoop.noMask(q, $0, medal: 6).won }
+        let order = try #require(win, "Q\(q) has no earned no-mask route")
+        #expect(try RealLoop.noMask(q, order, medal: 6).maskUses == 0)
     }
 
     @Test func repairTargetIsFrozenAndNeverRevives() throws {

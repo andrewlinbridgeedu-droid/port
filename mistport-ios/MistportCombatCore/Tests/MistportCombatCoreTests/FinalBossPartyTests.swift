@@ -429,15 +429,14 @@ struct FinalBossPartyTests {
         try act(&s, at: 1, shielded: true); try act(&s, at: 2, shielded: true)
         #expect(boss(s).intentPattern == Session.q30Pattern(phase: 2) && boss(s).hp == full * 59 / 100 + heal && mends(s) == 1)
         _ = try s.applyPartyDamage(boss(s).hp - full * 29 / 100, to: boss(s).id)
+        // Phase three opens on the slam. Healed back above 30%, the sovereign stays enraged, so the slam takes the
+        // enraged share; without the ledger that share (300%, 2026-10-15) and the enraged ally slam end the fight.
+        let hp = s.playerHP
         try act(&s, at: 3, shielded: true)
         #expect(boss(s).hp == full * 29 / 100 + heal && s.finalBossPhase == 3)
         #expect(boss(s).intentPattern == Session.q30Pattern(phase: 3) && mends(s) == 2)
-        // Healed back above 30%, it stays enraged: the slam still takes the enraged share.
-        let hp = s.playerHP
-        try act(&s, at: 4, shielded: true)
-        #expect(hp - s.playerHP == 100_000 * W.q30EnragedBlowHealthPercent / 100 - 40_000)
-        for step in 5..<8 { try act(&s, at: Double(step), shielded: true) }
-        #expect(boss(s).intentPattern == Session.q30Pattern(phase: 3) && mends(s) == 2)
+        #expect(hp - s.playerHP == min(hp, 100_000 * W.q30EnragedBlowHealthPercent / 100 - 40_000))
+        #expect(s.outcome == .defeat)
         // Without the gift the same health runs exactly as before.
         var plain = try session(30, hp: 100_000)
         _ = try plain.applyPartyDamage(full * 41 / 100, to: boss(plain).id)

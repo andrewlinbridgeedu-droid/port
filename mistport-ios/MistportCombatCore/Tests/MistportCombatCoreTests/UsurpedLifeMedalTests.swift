@@ -153,10 +153,11 @@ struct UsurpedLifeMedalTests {
         #expect(!s.isUsurpedLifeMedalActive && s.playerHP == 750)
     }
 
+    /// Medal timing samples on the real loop (2026-10-15): the audit's first Q5/Q6 arrangement, no mask.
     @Test func initialQ5Q6TimingSamples() throws {
         for q in [5,6] {
             for offset in [0.0,3,6,9,12] {
-                let result = try NewMaskBalanceSimulator.run(q: q, sequence: [.sidestepStrike], mask: false, medalOffset: offset)
+                let result = try RealLoop.noMask(q, MPCStageLoadout.orders(before: q)[0], medal: offset, passive: nil)
                 print("MEDAL_SAMPLE Q\(q) offset=\(offset) outcome=\(result.session.outcome) seconds=\(result.seconds) hp=\(result.session.playerHP) enemy=\(result.session.enemies.map(\.hp))")
                 #expect(result.session.outcome != .inProgress)
             }
