@@ -33,7 +33,7 @@ enum CharacterLoadoutCatalog {
         CharacterWeaponDefinition(id: "silver-lie-blade", name: "偏差透镜", effect: "攻击4层误认目标时获得穿甲", power: 18, unlockAt: 0, color: .purple),
         CharacterWeaponDefinition(id: "paper-moon-token", name: "纸月筹码", effect: "控场技能额外削减意志", power: 12, unlockAt: 0, color: .mint),
         CharacterWeaponDefinition(id: "mirror-card-case", name: "镜面卡匣", effect: "影牌射程与弹射强化", power: 28, unlockAt: 5, color: .cyan),
-        CharacterWeaponDefinition(id: "backward-watch", name: "倒走怀表", effect: "闪避缩短技能冷却", power: 40, unlockAt: 10, color: .orange)
+        CharacterWeaponDefinition(id: "backward-watch", name: "逆时怀表", effect: "闪避缩短技能冷却", power: 40, unlockAt: 10, color: .orange)
     ]
 
     static let foolPassives = [

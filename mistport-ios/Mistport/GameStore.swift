@@ -24,7 +24,7 @@ enum EarlyRelicShop {
         [salt: 4, clasp: 4, stamp: 9, mirror: 14, paperweight: 18, anchor: 20, needle: 26, blankCard: 17][id] ?? 31
     }
     static func name(_ id: String) -> String {
-        [salt: "盐封呼吸囊", clasp: "返礼银扣", stamp: "迟签印章", mirror: "反照墨镜", paperweight: "缄卷镇纸", anchor: "逆潮铜锚", needle: "归属断线针", blankCard: "空栏名片"][id] ?? "遗落物"
+        [salt: "盐封呼吸囊", clasp: "返礼银扣", stamp: "迟签印章", mirror: "奥瑞斯之镜", paperweight: "缄卷镇纸", anchor: "逆潮铜锚", needle: "归属断线针", blankCard: "空栏名片"][id] ?? "遗落物"
     }
     static func art(_ id: String) -> String {
         [salt: "RelicSaltPouch", clasp: "RelicReturnClasp", stamp: "RelicDeferredStamp", mirror: "RelicInkMirror", paperweight: "RelicPaperweight", anchor: "RelicCountertideAnchor", needle: "RelicSeveringNeedle", blankCard: "RelicBlankCard"][id] ?? "RewardMaterial"

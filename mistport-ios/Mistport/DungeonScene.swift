@@ -1673,7 +1673,7 @@ final class DungeonScene: SKScene {
             for skillID in DungeonSkillID.allCases {
                 skillCooldowns[skillID] = max(0, skillCooldowns[skillID, default: 0] - 1)
             }
-            spawnFloatingText("倒走一刻 · 冷却-1", at: player.position, color: .systemOrange)
+            spawnFloatingText("逆时一刻 · 冷却-1", at: player.position, color: .systemOrange)
             spawnCastSigil(at: player.position, color: .systemOrange, radius: 62)
         default:
             break

@@ -371,7 +371,7 @@ public enum MPCChapterOneCatalog {
 
     public static let relics: [MPCRelicContent] = [
         relic("relic_deferred_stamp", "迟签印章", .uncommon, "技能的一笔直接伤害延后3秒，并追加有限伤害。", "目标离场或届时真免伤则作废；12秒冷却。", "签下不能撤回的迟到伤害", "它总要等到约定的第三秒才肯落印。", .investigationTwo),
-        relic("relic_reflecting_ink_mirror", "反照墨镜", .uncommon, "锁定2秒后普攻赠血，换另一个敌人的一次直击反射。", "先送血再等4秒，落空不退；8秒冷却。", "把好意和恶意折向同一人", "镜里的人必须先收下一份礼物。", .investigationTwo),
+        relic("relic_reflecting_ink_mirror", "奥瑞斯之镜", .uncommon, "锁定2秒后普攻赠血，换另一个敌人的一次直击反射。", "先送血再等4秒，落空不退；8秒冷却。", "把好意和恶意折向同一人", "镜里的人必须先收下一份礼物。", .investigationTwo),
         relic("relic_sealed_paperweight", "缄卷镇纸", .uncommon, "封掉固定第3槽的一次技能，建立4秒一次直伤收容。", "原技能全部效果消失，卡牌冷却照常；18秒冷却。", "以未曾发生的一招换取庇护", "第三行永远压在它的下面。", .investigationTwo),
         relic("relic_countertide_anchor", "逆潮铜锚", .uncommon, "同敌同招首击后2秒内下两段收容有限直伤。", "首击额外承受5%入场生命；10秒冷却。", "先付逆潮的第一笔代价", "没有后浪，第一道伤口也不会归还。", .investigationTwo),
         relic("relic_ownership_severing_needle", "归属断线针", .uncommon, "截取选中敌人收到的外来治疗给自己。", "随后6秒自己不能回血；每场两次、12秒冷却。", "割走别人的治愈也割断自己的", "它挑断归属，却不问你下一次何时需要援手。", .investigationTwo),
