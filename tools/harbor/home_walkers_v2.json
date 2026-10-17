@@ -1,0 +1,239 @@
+{
+  "about": "Home-street walkers, second pass (2026-10-17). Every citizen has an own look: the twelve detailed models as they are, and nineteen recoloured from them (hue shift, saturation, value on the clothes; skin, fair hair and leather browns stay). The street musician's own model tears at the coat hem in the walk, so she is the cafe keeper's model in purple. Replaces the 2026-09-29 atlases, of which four carried primitive props (disc hats, slab boxes, a cone skirt).",
+  "models": {
+    "baker": "ArtSource/HarborCityRoutes20260925/resident-walks/baker-walk.glb",
+    "cafe_keeper": "ArtSource/HarborCityRoutes20260925/resident-walks/cafe_keeper-walk.glb",
+    "clockmaker": "ArtSource/HarborCityRoutes20260925/resident-walks/clockmaker-walk.glb",
+    "dockworker": "ArtSource/HarborCityRoutes20260925/resident-walks/dockworker-walk.glb",
+    "florist": "ArtSource/HarborCityRoutes20260925/resident-walks/florist-walk.glb",
+    "merchant": "ArtSource/HarborCityRoutes20260925/resident-walks/merchant-walk.glb",
+    "musician": "ArtSource/HarborCityRoutes20260925/resident-walks/musician-walk.glb",
+    "scholar": "ArtSource/HarborCityRoutes20260925/resident-walks/scholar-walk.glb",
+    "street_warden": "ArtSource/HarborCityRoutes20260925/resident-walks/street_warden-walk.glb",
+    "visitor": "ArtSource/HarborCityRoutes20260925/resident-walks/visitor-walk.glb",
+    "courier": "mistport-ios/Mistport/WisteriaMap/characters/courier-walking.gltf",
+    "postman": "mistport-ios/Mistport/WisteriaMap/characters/postman-user-walking.gltf"
+  },
+  "looks": {
+    "HarborWalkerPostman20261017": {
+      "model": "postman",
+      "citizens": [
+        "postman"
+      ]
+    },
+    "HarborWalkerCourier20261017": {
+      "model": "courier",
+      "citizens": [
+        "courier"
+      ]
+    },
+    "HarborWalkerBaker20261017": {
+      "model": "baker",
+      "citizens": [
+        "baker"
+      ]
+    },
+    "HarborWalkerCafeKeeper20261017": {
+      "model": "cafe_keeper",
+      "citizens": [
+        "cafe_keeper"
+      ]
+    },
+    "HarborWalkerClockmaker20261017": {
+      "model": "clockmaker",
+      "citizens": [
+        "clockmaker"
+      ]
+    },
+    "HarborWalkerDockworker20261017": {
+      "model": "dockworker",
+      "citizens": [
+        "dockworker"
+      ]
+    },
+    "HarborWalkerFlorist20261017": {
+      "model": "florist",
+      "citizens": [
+        "florist"
+      ]
+    },
+    "HarborWalkerMerchant20261017": {
+      "model": "merchant",
+      "citizens": [
+        "merchant"
+      ]
+    },
+    "HarborWalkerMusician20261017": {
+      "model": "cafe_keeper",
+      "citizens": [
+        "musician"
+      ],
+      "hue": "0.38,0.6,0.9"
+    },
+    "HarborWalkerScholar20261017": {
+      "model": "scholar",
+      "citizens": [
+        "scholar"
+      ]
+    },
+    "HarborWalkerStreetWarden20261017": {
+      "model": "street_warden",
+      "citizens": [
+        "street_warden"
+      ]
+    },
+    "HarborWalkerVisitor20261017": {
+      "model": "visitor",
+      "citizens": [
+        "visitor"
+      ]
+    },
+    "HarborWalkerRegistrar20261017": {
+      "model": "clockmaker",
+      "hue": "0.45,0.75,0.95",
+      "citizens": [
+        "west-lane"
+      ]
+    },
+    "HarborWalkerCafeRunner20261017": {
+      "model": "courier",
+      "hue": "0.73,0.8,1.0",
+      "citizens": [
+        "cafe-lane"
+      ]
+    },
+    "HarborWalkerMarketHelper20261017": {
+      "model": "courier",
+      "hue": "0.52,0.75,1.05",
+      "citizens": [
+        "market-lane"
+      ]
+    },
+    "HarborWalkerSquareSailor20261017": {
+      "model": "dockworker",
+      "hue": "0.12,1.0,0.95",
+      "citizens": [
+        "clock-square"
+      ]
+    },
+    "HarborWalkerEastLamplighter20261017": {
+      "model": "baker",
+      "hue": "0.55,0.8,0.85",
+      "citizens": [
+        "east-houses"
+      ]
+    },
+    "HarborWalkerUpperLampkeeper20261017": {
+      "model": "street_warden",
+      "hue": "0.45,0.55,0.95",
+      "citizens": [
+        "upper-road"
+      ]
+    },
+    "HarborWalkerQuayClerk20261017": {
+      "model": "merchant",
+      "hue": "0.59,0.85,0.95",
+      "citizens": [
+        "south-quay"
+      ]
+    },
+    "HarborWalkerChurchRunner20261017": {
+      "model": "courier",
+      "hue": "0.2,0.8,0.95",
+      "citizens": [
+        "cathedral-road"
+      ]
+    },
+    "HarborWalkerFlowerHawker20261017": {
+      "model": "visitor",
+      "hue": "0.42,0.85,1.0",
+      "citizens": [
+        "flower-seller-walk"
+      ]
+    },
+    "HarborWalkerDepartingSailor20261017": {
+      "model": "dockworker",
+      "hue": "0.63,0.8,1.0",
+      "citizens": [
+        "sailor-walk"
+      ]
+    },
+    "HarborWalkerArchiveApprentice20261017": {
+      "model": "courier",
+      "hue": "0.0,0.35,1.0",
+      "citizens": [
+        "archive-apprentice-walk"
+      ]
+    },
+    "HarborWalkerMohr20261017": {
+      "model": "merchant",
+      "hue": "0.71,0.8,0.9",
+      "citizens": [
+        "mohr"
+      ]
+    },
+    "HarborWalkerOldSailor20261017": {
+      "model": "clockmaker",
+      "hue": "0.05,0.9,0.8",
+      "citizens": [
+        "old-sailor"
+      ]
+    },
+    "HarborWalkerOdelle20261017": {
+      "model": "visitor",
+      "hue": "0.12,0.9,0.95",
+      "citizens": [
+        "odelle"
+      ]
+    },
+    "HarborWalkerVera20261017": {
+      "model": "scholar",
+      "hue": "0.53,0.8,1.0",
+      "citizens": [
+        "vera"
+      ]
+    },
+    "HarborWalkerArchivist20261017": {
+      "model": "merchant",
+      "hue": "0.0,0.25,0.85",
+      "citizens": [
+        "archivist"
+      ]
+    },
+    "HarborWalkerNorn20261017": {
+      "model": "street_warden",
+      "hue": "0.78,0.55,0.9",
+      "citizens": [
+        "norn"
+      ]
+    },
+    "HarborWalkerHarborOfficer20261017": {
+      "model": "street_warden",
+      "hue": "0.0,0.3,1.0",
+      "citizens": [
+        "harbor-officer"
+      ]
+    },
+    "HarborWalkerIlya20261017": {
+      "model": "baker",
+      "hue": "0.25,0.7,0.9",
+      "citizens": [
+        "ilya"
+      ]
+    }
+  },
+  "idleModels": {
+    "baker": "mistport-ios/Mistport/WisteriaMap/characters/baker-idle.gltf",
+    "cafe_keeper": "mistport-ios/Mistport/WisteriaMap/characters/cafe_keeper-idle.gltf",
+    "clockmaker": "mistport-ios/Mistport/WisteriaMap/characters/clockmaker-idle.gltf",
+    "dockworker": "mistport-ios/Mistport/WisteriaMap/characters/dockworker-idle.gltf",
+    "florist": "mistport-ios/Mistport/WisteriaMap/characters/florist-idle.gltf",
+    "merchant": "mistport-ios/Mistport/WisteriaMap/characters/merchant-idle.gltf",
+    "musician": "mistport-ios/Mistport/WisteriaMap/characters/musician-idle.gltf",
+    "scholar": "mistport-ios/Mistport/WisteriaMap/characters/scholar-idle.gltf",
+    "street_warden": "mistport-ios/Mistport/WisteriaMap/characters/street_warden-idle.gltf",
+    "visitor": "mistport-ios/Mistport/WisteriaMap/characters/visitor-idle.gltf",
+    "courier": "mistport-ios/Mistport/WisteriaMap/characters/courier-idle.gltf",
+    "postman": "mistport-ios/Mistport/WisteriaMap/characters/postman-user-idle.gltf"
+  }
+}

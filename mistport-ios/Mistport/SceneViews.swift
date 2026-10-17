@@ -130,7 +130,7 @@ struct CityHubView: View {
         let panoramaWidth = panoramaWidth(for: viewport)
 
         return ZStack {
-            CityLivingScene(isActive: homeIsActive, showsNearPeople: false, housingLodgingID: housingLodgingID, housingPlayerName: housingPlayerName, onHousing: onHousing)
+            CityLivingScene(isActive: homeIsActive, showsPeople: false, housingLodgingID: housingLodgingID, housingPlayerName: housingPlayerName, onHousing: onHousing)
                 .frame(width: panoramaWidth, height: viewport.height)
 
             let painting = HarborPainting.rect(in: CGSize(width: panoramaWidth, height: viewport.height))

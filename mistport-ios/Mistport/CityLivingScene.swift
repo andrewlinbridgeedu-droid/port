@@ -460,7 +460,9 @@ struct HarborLight {
 /// the painting's own coordinates (the paintings share one composition).
 struct CityLivingScene: View {
     var isActive = true
-    var showsNearPeople = true
+    /// The painted passers-by. The home street draws none (user 2026-10-17: each player sees
+    /// only the NPCs of their own tasks, plus the shopkeepers everyone shares).
+    var showsPeople = true
     var housingLodgingID: String?
     var housingPlayerName = ""
     var onHousing: () -> Void = {}
@@ -510,7 +512,7 @@ struct CityLivingScene: View {
                                                         snow: season == .winter, lightning: lightning,
                                                         sunsetX: season.sunsetX, still: reduceMotion,
                                                         moon: context.resolve(Image("CityBloodMoon")))
-                            painter.showsNearPeople = showsNearPeople
+                            painter.showsPeople = showsPeople
                             painter.cloudImage = context.resolve(Image("CityStormClouds"))
                             painter.skyMask = context.resolve(Image(season.plateSet.skyMask))
                             painter.landMask = context.resolve(Image(season.plateSet.landMask))
@@ -1039,7 +1041,7 @@ private struct HarborLeaves {
 // MARK: - Painter
 
 private struct HarborPainter {
-    var showsNearPeople = true
+    var showsPeople = true
     let origin: CGPoint
     /// Painting height in points: one painting unit.
     let side: CGFloat
@@ -2026,10 +2028,10 @@ private struct HarborPainter {
     }
 
     func drawPeople(_ context: GraphicsContext) {
+        guard showsPeople else { return }
         var figures: [(y: Double, draw: (inout GraphicsContext) -> Void)] = []
 
         for (routeIndex, route) in Self.routes.enumerated() {
-            if !showsNearPeople && routeIndex != 0 { continue }
             let meters = routeMeters(route)
             for slot in 0..<Self.slotsPerRoute[routeIndex] {
                 let id = 400 + routeIndex * 10 + slot
@@ -2060,7 +2062,6 @@ private struct HarborPainter {
             }
         }
         for (i, group) in Self.spots.enumerated() {
-            if !showsNearPeople { continue }
             let id = 500 + i
             for run in runs(period: 110 + 50 * hash01(id, 1), duration: 70 + 40 * hash01(id, 2), slot: id) {
                 let startHour = HarborClock.hour(at: Date(timeIntervalSinceReferenceDate: run.start))

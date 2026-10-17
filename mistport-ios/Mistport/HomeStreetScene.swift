@@ -53,10 +53,10 @@ struct HomeMapLayout: Decodable {
     private func distance(_ a: [Double], _ b: [Double]) -> Double { hypot(a[0]-b[0], a[1]-b[1]) }
 }
 
+/// A home-street citizen. Their look on the street comes from home-walkers-v2.json by id.
 struct HomeCitizen: Decodable, Identifiable {
     let id: String
     let name: String
-    let atlasName: String
     let dialogue: String
     var post: [Double]?
     var service: String?
@@ -78,17 +78,12 @@ enum HomeCitizenCatalog {
         let url = Bundle.main.url(forResource: "harbor-pedestrians", withExtension: "json", subdirectory: "WisteriaMap")!
         var citizens = try! JSONDecoder().decode(Catalog.self, from: Data(contentsOf: url)).citizens
         let layout = HomeMapLayout.current
-        for (id, name, atlas, service) in [
-            ("mohr", "莫尔", "HarborResidentScholarWalkAtlas", "mohr"),
-            ("old-sailor", "码头老水手", "HarborSailorWalkAtlas", "old-sailor"),
-            ("odelle", "奥黛尔", "HarborResidentVisitorWalkAtlas", ""),
-            ("vera", "维拉", "HarborResidentClockmakerWalkAtlas", ""),
-            ("archivist", "档案员", "HarborArchiveApprenticeWalkAtlas", ""),
-            ("norn", "诺恩", "HarborResidentStreetWardenWalkAtlas", ""),
-            ("harbor-officer", "港务员", "HarborArchiveApprenticeWalkAtlas", ""),
-            ("ilya", "伊莱", "HarborLamplighterWalkAtlas", "")
+        for (id, name, service) in [
+            ("mohr", "莫尔", "mohr"), ("old-sailor", "码头老水手", "old-sailor"),
+            ("odelle", "奥黛尔", ""), ("vera", "维拉", ""), ("archivist", "档案员", ""),
+            ("norn", "诺恩", ""), ("harbor-officer", "港务员", ""), ("ilya", "伊莱", "")
         ] {
-            citizens.append(.init(id: id, name: name, atlasName: atlas, dialogue: "今天也请多关照。", post: nil, service: service.isEmpty ? nil : service))
+            citizens.append(.init(id: id, name: name, dialogue: "今天也请多关照。", post: nil, service: service.isEmpty ? nil : service))
         }
         for index in citizens.indices {
             let post = (layout.alwaysInteractive + layout.namedPosts).first { $0.who == citizens[index].name }
@@ -106,7 +101,11 @@ enum HomeCitizenCatalog {
     }
 }
 
-/// At most ten on-screen people. All positions are in painting-height units.
+/// The home street's people (user 2026-10-17): each player sees only the NPCs of their own
+/// tasks, plus the shopkeepers everyone shares (the merchant and the old sailor at their
+/// stalls); there is no ambient crowd. A task NPC walks in from the street entry nearest their
+/// post, waits at a hold spot standing (idle frames, now and then a glance aside) and walks back
+/// out once the task no longer needs them. Positions are in painting-height units.
 /// The clock stops while a cover is open; no save writes occur in this layer.
 struct HomeStreetScene: View {
     let painting: CGRect
@@ -116,41 +115,36 @@ struct HomeStreetScene: View {
     let trackedID: String?
     let onTarget: (MPCStreetTaskTarget) -> Void
     let onService: (String) -> Void
+    /// Shopkeepers standing at their stalls. The cafe keeper and Mohr stay inside their venues
+    /// (their doors are on the map) unless a task brings them out.
+    static let streetShopkeepers: Set<String> = ["merchant", "old-sailor"]
     @State private var epoch = Date()
     @State private var pausedAt: Date?
     @State private var pausedDuration: TimeInterval = 0
+    /// When each task NPC set off towards their hold spot. People already needed when the
+    /// street first appears are standing there, not all walking in at every launch.
     @State private var summonStarts: [String: Double] = [:]
-    @State private var returnStarts: [String: Double] = [:]
-    @State private var returnPoints: [String: [Double]] = [:]
-    @State private var greetingID: String?
-    @State private var greetingPoint: [Double]?
-    @State private var greetingText = ""
-    @State private var greetingStarted: Double?
-    @State private var personPauses: [String: Double] = [:]
+    @State private var seeded = false
+    /// Task NPCs on their way out: when they left, and from where.
+    @State private var departureStarts: [String: Double] = [:]
+    @State private var departurePoints: [String: [Double]] = [:]
+    /// People sharing a hold spot stand apart, and later arrivals lift their plate a row, so names
+    /// and bells do not print over one another ("钟楼广场水手账员", playtest 2026-10-17). Both
+    /// depend only on who is needed, so they are worked out when the targets change.
+    @State private var holdOffsets: [String: Double] = [:]
+    @State private var plateRows: [String: Int] = [:]
 
     private func elapsed(_ date: Date) -> Double { max(0, (pausedAt ?? date).timeIntervalSince(epoch) - pausedDuration) }
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 12.0, paused: !active)) { timeline in
             let time = elapsed(timeline.date)
-            let poses = visiblePeople(time: time)
             ZStack {
-                ForEach(poses, id: \.person.id) { pose in
-                    citizen(pose, date: timeline.date, time: time)
+                ForEach(visiblePeople(time: time), id: \.person.id) { pose in
+                    citizen(pose)
+                        .opacity(pose.opacity)
                         .position(x: painting.minX + pose.point[0] * painting.height,
                                   y: painting.minY + pose.point[1] * painting.height - pose.size * 0.5)
                         .zIndex(pose.point[1])
-                }
-                if let greetingID, let greetingPoint {
-                    VStack(spacing: 3) {
-                        Text(HomeCitizenCatalog.people.first { $0.id == greetingID }!.name).font(.caption.bold())
-                        Text(greetingText).font(.caption)
-                    }
-                    .foregroundStyle(.black).padding(9)
-                    .background(.white, in: RoundedRectangle(cornerRadius: 10))
-                    .frame(width: 180)
-                    .position(x: painting.minX + greetingPoint[0] * painting.height,
-                              y: painting.minY + greetingPoint[1] * painting.height - 68)
-                    .allowsHitTesting(false).zIndex(2)
                 }
             }
         }
@@ -162,134 +156,126 @@ struct HomeStreetScene: View {
             let people = Set(targets.compactMap(\.personID))
             let now = elapsed(Date())
             for id in Set(summonStarts.keys).subtracting(people) {
-                let route = HomeMapLayout.current.approach(for: id)
-                let index = HomeCitizenCatalog.people.firstIndex { $0.id == id } ?? 0
+                let path = arrivalPath(id)
                 let age = now - (summonStarts[id] ?? now)
-                returnPoints[id] = age < 7 ? Self.interpolate(route, fraction: max(0, age / 7)).point
-                    : Self.waitingPose(route, seconds: age - 7 + Double(index % 5) * 0.6).point
-                returnStarts[id] = now
+                let offset = (holdOffsets[id] ?? 0) * min(1, max(0, age) / max(path.duration, 0.01))
+                var from = path.pose(at: age).point
+                from[0] += offset
+                departurePoints[id] = from
+                departureStarts[id] = now
             }
-            for id in people { returnStarts[id] = nil; returnPoints[id] = nil }
+            for id in people { departureStarts[id] = nil; departurePoints[id] = nil }
             summonStarts = summonStarts.filter { people.contains($0.key) }
-            for id in people where summonStarts[id] == nil { summonStarts[id] = elapsed(Date()) }
+            for id in people where summonStarts[id] == nil { summonStarts[id] = seeded ? now : -10_000 }
+            seeded = true
+            (holdOffsets, plateRows) = holdLayout()
         }
-        .task(id: greetingStarted) {
-            guard greetingID != nil else { return }
-            try? await Task.sleep(for: .seconds(4))
-            guard !Task.isCancelled else { return }
-            finishGreeting()
-        }
-        #if DEBUG
-        .task {
-            guard ProcessInfo.processInfo.arguments.contains("--home-map-review-greeting") else { return }
-            try? await Task.sleep(for: .seconds(6))
-            let date = Date(), time = elapsed(Date())
-            guard let pose = visiblePeople(time: time).first(where: { $0.tasks.isEmpty && $0.person.service == nil && $0.moving }) else { return }
-            greet(pose, date: date, time: time)
-            try? await Task.sleep(for: .milliseconds(400))
-            HomeFrameSampler.saveScreenshot("home-greeting.png")
-        }
-        #endif
     }
     private struct Pose {
         let person: HomeCitizen
         let point: [Double]
         let size: Double
-        let moving: Bool
-        let direction: Int
+        let motion: HomeWalkPath.Pose
         let tasks: [MPCStreetTaskTarget]
-        /// Later arrivals at a shared hold spot lift their plate a row each, so names and
-        /// bells do not print over one another ("钟楼广场水手账员", playtest 2026-10-17).
+        var opacity = 1.0
         var plateRow = 0
     }
-    private func visiblePeople(time: Double) -> [Pose] {
+    /// A person's pace in metres a second, a little different for everyone.
+    private static func pace(_ id: String) -> Double {
+        1.15 + Double(id.unicodeScalars.reduce(0) { ($0 &* 31 &+ Int($1.value)) & 0xffff } % 100) / 400
+    }
+    /// The walk in: the approach from the street entry to the hold spot.
+    private func arrivalPath(_ id: String) -> HomeWalkPath {
+        HomeWalkPath(HomeMapLayout.current.approach(for: id), pace: Self.pace(id))
+    }
+    /// Waiting at a spot: the idle loop facing the street, now and then a glance to one side.
+    private static func standing(_ seconds: Double, _ index: Int) -> HomeWalkPath.Pose {
+        let cycle = (seconds + Double(index) * 3.7).truncatingRemainder(dividingBy: 16)
+        let direction = cycle < 11 ? 4 : (index.isMultiple(of: 2) ? 3 : 5)
+        return .init(point: [], direction: direction, frame: Int((seconds + Double(index)) * 4) % 8, walking: false)
+    }
+    private func holdLayout() -> ([String: Double], [String: Int]) {
         let layout = HomeMapLayout.current
-        let hour = HarborClock.hour(at: Date())
-        let rain = HarborWeather(gameHours: HarborClock.gameHours(at: Date())).rain
-        let ambientLimit = (hour < 6 || hour > 20 || rain > 0.4) ? 4 : 7
-        var poses: [Pose] = []
-        // Summoned people walk to the hold spot nearest their own post, so two
-        // witnesses of one case (诺恩 and 奥黛尔 both reach H6) stood on the same
-        // point and only the top one could be seen or tapped (playtest
-        // 2026-10-04). Stand later arrivals a step to either side.
-        var holdCounts: [String: Int] = [:]
-        var holdOffsets: [String: Double] = [:]
-        var plateRows: [String: Int] = [:]
-        // A fixed post right on a hold spot (the merchant at H7) counts as the
-        // first occupant, so a summoned witness is not hidden behind it.
+        var counts: [String: Int] = [:], offsets: [String: Double] = [:], rows: [String: Int] = [:]
+        // A shopkeeper standing right on a hold spot (the merchant at H7) is its first occupant,
+        // so a summoned witness is not hidden behind them.
         for spot in layout.holdSpots {
             guard let holdID = spot.id, let at = spot.at else { continue }
-            let posted = HomeCitizenCatalog.people.filter { person in
-                guard let post = person.post, !targets.contains(where: { $0.personID == person.id }) else { return false }
+            let standing = HomeCitizenCatalog.people.filter { person in
+                guard Self.streetShopkeepers.contains(person.id), let post = person.post,
+                      !targets.contains(where: { $0.personID == person.id }) else { return false }
                 return hypot(post[0] - at[0], post[1] - at[1]) < 0.04
             }.count
-            if posted > 0 { holdCounts[holdID] = posted }
+            if standing > 0 { counts[holdID] = standing }
         }
+        var taken: [String: [Double]] = [:]
+        for spot in layout.holdSpots where counts[spot.id ?? ""] != nil { taken[spot.id!] = [0] }
         for person in HomeCitizenCatalog.people where targets.contains(where: { $0.personID == person.id }) {
-            let hold = layout.hold(for: person.id)?.id ?? ""
-            let slot = holdCounts[hold, default: 0]
-            holdCounts[hold] = slot + 1
+            guard let hold = layout.hold(for: person.id), let holdID = hold.id, let at = hold.at else { continue }
+            let slot = counts[holdID, default: 0]
+            counts[holdID] = slot + 1
+            rows[person.id] = slot
             // 0.05 painting heights (about 44 points on a phone) keeps neighbouring tap areas apart.
-            holdOffsets[person.id] = slot == 0 ? 0 : Double((slot + 1) / 2) * 0.05 * (slot.isMultiple(of: 2) ? -1 : 1)
-            plateRows[person.id] = slot
+            // Take the nearest free place to either side that is still on the pavement: the
+            // merchant's spot H7 has a foreground pillar on its right (playtest 2026-10-17).
+            let candidates = [0.0] + (1...4).flatMap { [Double($0) * 0.05, -Double($0) * 0.05] }
+            let free = candidates.filter { !(taken[holdID] ?? []).contains($0) }
+            // The authored spot itself is always fine for the first to arrive.
+            let offset = free.first == 0 ? 0 : free.first { Self.onPavement([at[0] + $0, at[1]], layout) } ?? free.first ?? 0
+            taken[holdID, default: []].append(offset)
+            offsets[person.id] = offset
         }
-        for (index, person) in HomeCitizenCatalog.people.enumerated() {
-            let personTime = time - (personPauses[person.id] ?? 0)
-            let tasks = targets.filter { $0.personID == person.id }
-            let point: [Double]
-            let moving: Bool
-            let direction: Int
-            if greetingID == person.id, let frozen = greetingPoint {
-                point = frozen; moving = false; direction = 4
-            } else if !tasks.isEmpty {
-                let route = layout.approach(for: person.id)
-                let age = max(0, time - (summonStarts[person.id] ?? 0))
-                let pose = age < 7 ? Self.interpolate(route, fraction: age / 7)
-                    : Self.waitingPose(route, seconds: age - 7 + Double(index % 5) * 0.6)
-                point = [pose.point[0] + (holdOffsets[person.id] ?? 0), pose.point[1]]
-                direction = pose.direction
-                let phase = (age - 7 + Double(index % 5) * 0.6).truncatingRemainder(dividingBy: 24)
-                moving = age < 7 || (phase >= 4 && phase < 16)
-            } else if let start = returnStarts[person.id], let from = returnPoints[person.id], time - start < 8 {
-                let route = [from] + Array(layout.approach(for: person.id).dropLast().reversed())
-                let pose = Self.interpolate(route, fraction: max(0, time - start) / 8)
-                point = pose.point; direction = pose.direction; moving = true
-            } else if person.id == "cafe_keeper" {
-                guard let outing = cafeOuting(time: personTime) else { continue }
-                point = outing.point; direction = outing.direction; moving = true
-            } else if person.id == "mohr" {
-                guard let outing = mohrOuting(time: personTime) else { continue }
-                point = outing.point; direction = outing.direction; moving = true
-            } else if let post = person.post {
-                point = post; direction = 4; moving = false
-            } else {
-                let ambient = HomeCitizenCatalog.people.filter { $0.post == nil }
-                let batch = Int(time / 48) * 7
-                guard let slot = (0..<ambientLimit).first(where: { ambient[(batch + $0) % ambient.count].id == person.id }) else { continue }
-                let routeIndex = index % 3
-                var route = layout.streets.first { $0.id == ["boulevard-main", "plaza-ring", "yard-main"][routeIndex] }!.points!
-                if routeIndex == 2 { route = [[1.52, 0.925], [1.465, 0.91]] + route.dropFirst() }
-                route += Array(route.dropLast().reversed())
-                let duration = [34.0, 23.0, 32.0][routeIndex]
-                let local = personTime.truncatingRemainder(dividingBy: 48) - Double(slot) * 1.5
-                guard local >= 0 && local < duration else { continue } // leave at the entry; another citizen can arrive
-                let pose = Self.interpolate(route, fraction: local / duration)
-                point = pose.point; direction = pose.direction; moving = true
+        return (offsets, rows)
+    }
+    /// Inside one of the layout's walkable zones (boulevard, plaza, yard).
+    private static func onPavement(_ point: [Double], _ layout: HomeMapLayout) -> Bool {
+        layout.zones.contains { zone in
+            guard let polygon = zone.polygon, polygon.count > 2 else { return false }
+            var inside = false
+            for (a, b) in zip(polygon, polygon.dropFirst() + [polygon[0]])
+            where (a[1] > point[1]) != (b[1] > point[1]) && point[0] < a[0] + (point[1] - a[1]) * (b[0] - a[0]) / (b[1] - a[1]) {
+                inside.toggle()
             }
-            guard visibleRange.contains(point[0]) else { continue }
-            let size = Self.bodyHeight(at: point[1]) * painting.height
-            poses.append(.init(person: person, point: point, size: size, moving: moving, direction: direction, tasks: tasks,
+            return inside
+        }
+    }
+    private func visiblePeople(time: Double) -> [Pose] {
+        var poses: [Pose] = []
+        for (index, person) in HomeCitizenCatalog.people.enumerated() {
+            let tasks = targets.filter { $0.personID == person.id }
+            var motion: HomeWalkPath.Pose
+            var opacity = 1.0
+            if !tasks.isEmpty {
+                let path = arrivalPath(person.id)
+                let age = time - (summonStarts[person.id] ?? -10_000)
+                let offset = holdOffsets[person.id] ?? 0
+                if age < path.duration {
+                    motion = path.pose(at: age)
+                    motion.point[0] += offset * max(0, age) / max(path.duration, 0.01)
+                    opacity = min(1, max(0, age) / 0.6)
+                } else {
+                    motion = Self.standing(age - path.duration, index)
+                    motion.point = [path.end[0] + offset, path.end[1]]
+                }
+            } else if let start = departureStarts[person.id], let from = departurePoints[person.id] {
+                let path = HomeWalkPath([from] + Array(HomeMapLayout.current.approach(for: person.id).dropLast().reversed()),
+                                        pace: Self.pace(person.id))
+                let age = time - start
+                guard age < path.duration else { continue }
+                motion = path.pose(at: age)
+                opacity = min(1, (path.duration - age) / 0.6)
+            } else if Self.streetShopkeepers.contains(person.id), let post = person.post {
+                motion = Self.standing(time, index)
+                motion.point = post
+            } else {
+                continue
+            }
+            guard visibleRange.contains(motion.point[0]) else { continue }
+            poses.append(.init(person: person, point: motion.point, size: Self.bodyHeight(at: motion.point[1]) * painting.height,
+                               motion: motion, tasks: tasks, opacity: opacity,
                                plateRow: tasks.isEmpty ? 0 : plateRows[person.id] ?? 0))
         }
-        poses.sort {
-            let a = !$0.tasks.isEmpty ? 0 : $0.person.service != nil ? 1 : $0.person.post != nil ? 2 : 3
-            let b = !$1.tasks.isEmpty ? 0 : $1.person.service != nil ? 1 : $1.person.post != nil ? 2 : 3
-            if a != b { return a < b }
-            // Rotate the ambient crowd, without changing its path.
-            return $0.person.id < $1.person.id
-        }
-        let fixedCount = poses.filter { $0.person.post != nil || !$0.tasks.isEmpty }.count
-        return Array(poses.prefix(min(10, fixedCount + ambientLimit)))
+        return poses
     }
     static func bodyHeight(at depth: Double) -> Double {
         let anchors: [(Double, Double)] = [(0.4, 0.016), (0.55, 0.027), (0.65, 0.041), (0.75, 0.060), (0.85, 0.083), (0.99, 0.115)]
@@ -299,78 +285,7 @@ struct HomeStreetScene: View {
         }
         return anchors.last!.1
     }
-    private func cafeOuting(time: Double) -> (point: [Double], direction: Int)? {
-        // One short city-wide errand per twenty minutes of active home time.
-        // She spends over 90% of the cycle at her counter. Street tasks override
-        // this schedule, and the cafe doorway is always available.
-        var cycle = (epoch.timeIntervalSince1970 + time).truncatingRemainder(dividingBy: 1200)
-        #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("--home-map-review-cafe-out") {
-            cycle = UserDefaults.standard.double(forKey: "MistportCafeOutingStart") + time
-        } else if ProcessInfo.processInfo.arguments.contains("--home-map-review") { cycle = 200 }
-        #endif
-        guard cycle < 96 else { return nil }
-        let leg = Int(cycle / 32), local = cycle.truncatingRemainder(dividingBy: 32)
-        guard local < 28 else { return nil } // pass through an entry between districts
-        var route = HomeMapLayout.current.streets.first { $0.id == ["boulevard-main", "plaza-ring", "yard-main"][leg] }!.points!
-        if leg == 2 { route = [[1.52, 0.925], [1.465, 0.91]] + route.dropFirst() }
-        route += Array(route.dropLast().reversed())
-        return Self.interpolate(route, fraction: local / 28)
-    }
-    private func mohrOuting(time: Double) -> (point: [Double], direction: Int)? {
-        // The errand starts at a different point in each half-hour window.
-        // It lasts 48–72 seconds; otherwise Mohr is inside the tavern.
-        let absolute = epoch.timeIntervalSince1970 + time
-        let block = UInt64(max(0, absolute / 1800))
-        let seed = block &* 1_103_515_245 &+ 12_345
-        let start = 180 + Double(seed % 1280)
-        let duration = 48 + Double((seed / 1280) % 25)
-        var local = absolute.truncatingRemainder(dividingBy: 1800) - start
-        #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("--home-map-review-mohr-out") {
-            local = UserDefaults.standard.double(forKey: "MistportMohrOutingStart") + time
-        } else if ProcessInfo.processInfo.arguments.contains("--home-map-review") { local = -1 }
-        #endif
-        guard local >= 0 && local < duration else { return nil }
-        let legDuration = duration / 3
-        let leg = min(2, Int(local / legDuration))
-        let within = local.truncatingRemainder(dividingBy: legDuration)
-        guard within < legDuration - 2 else { return nil }
-        var route = HomeMapLayout.current.streets.first { $0.id == ["plaza-ring", "yard-main", "boulevard-main"][leg] }!.points!
-        if leg == 1 { route = [[1.52, 0.925], [1.465, 0.91]] + route.dropFirst() }
-        route += Array(route.dropLast().reversed())
-        return Self.interpolate(route, fraction: within / (legDuration - 2))
-    }
-    /// A few steps along the authored pavement edge, with rests; never an endless frozen pose.
-    static func waitingPose(_ route: [[Double]], seconds: Double) -> (point: [Double], direction: Int) {
-        let hold = route.last!
-        guard route.count > 1 else { return (hold, 4) }
-        let phase = max(0, seconds).truncatingRemainder(dividingBy: 24)
-        guard phase >= 4, phase < 16 else { return (hold, 4) }
-        let previous = route[route.count - 2]
-        let distance = hypot(previous[0] - hold[0], previous[1] - hold[1])
-        let fraction = min(1, 0.025 / max(0.0001, distance))
-        let back = zip(hold, previous).map { $0 + ($1 - $0) * fraction }
-        return interpolate([hold, back, hold], fraction: (phase - 4) / 12)
-    }
-    static func interpolate(_ route: [[Double]], fraction: Double) -> (point: [Double], direction: Int) {
-        let lengths = zip(route, route.dropFirst()).map { hypot($0[0]-$1[0], $0[1]-$1[1]) }
-        let total = lengths.reduce(0, +)
-        var distance = fraction * total
-        for (index, length) in lengths.enumerated() {
-            if distance <= length || index == lengths.count - 1 {
-                let t = min(1, distance / max(length, 0.0001))
-                let dx = route[index+1][0] - route[index][0]
-                let dy = route[index+1][1] - route[index][1]
-                // Screen y increases toward the viewer. Row zero is the back view.
-                let direction = (Int((atan2(dx, -dy) / (.pi / 4)).rounded()) + 8) % 8
-                return ([route[index][0] + dx*t, route[index][1] + dy*t], direction)
-            }
-            distance -= length
-        }
-        return (route[0], 4)
-    }
-    private func citizen(_ pose: Pose, date: Date, time: Double) -> some View {
+    private func citizen(_ pose: Pose) -> some View {
         // Name plates near either screen edge slide inward instead of being
         // cut in half (playtest 2026-10-05, shots 488/495/506).
         // On-screen x, from the visible strip's left edge. This used the panorama x, so every
@@ -383,81 +298,132 @@ struct HomeStreetScene: View {
             : screenX > viewportWidth - plateHalfWidth ? (viewportWidth - plateHalfWidth) - screenX : 0
         return Button {
             if let task = pose.tasks.first { onTarget(task) }
-            else if pose.person.id == "cafe_keeper" {
-                greet(pose, date: date, time: time)
-                greetingText = "我出来办点事，买补给请进咖啡馆。"
-            }
-            else if pose.person.id == "mohr" {
-                greet(pose, date: date, time: time)
-                greetingText = "出来透口气，一会儿就回酒馆。想打牌，到牌桌找我。"
-            }
             else if let service = pose.person.service { onService(service) }
-            else { greet(pose, date: date, time: time) }
         } label: {
             ZStack {
                 // The body's tap area; the plate below adds its own, so a name can be tapped
                 // too when people share a hold spot (it was outside the hit shape, 2026-10-17).
                 Color.clear.frame(width: 44, height: max(44, pose.size)).contentShape(Rectangle())
                 Ellipse().fill(.black.opacity(0.28)).frame(width: pose.size * 0.4, height: 4).offset(y: pose.size * 0.5)
-                HomeWalkSprite(atlas: pose.person.atlasName,
-                               frame: pose.moving ? Int(time * 7) % 8 : 0,
-                               direction: pose.direction, size: pose.size)
-                if !pose.tasks.isEmpty || pose.person.service != nil {
-                    VStack(spacing: 1) {
-                        if let kind = pose.tasks.first?.kind { Image(systemName: kind == .postal ? "envelope.fill" : kind == .neighbor ? "bell.fill" : "seal.fill").foregroundStyle(kind == .bounty ? .red : .yellow) }
-                        Text(pose.person.name).font(.system(size: 10, weight: .semibold)).fixedSize(horizontal: true, vertical: false).foregroundStyle(.white)
-                    }.padding(3).background(.black.opacity(0.55), in: Capsule()).opacity(pose.tasks.isEmpty || pose.tasks.contains { $0.id == trackedID } ? 1 : 0.55).offset(x: plateShift, y: -pose.size * 0.7 - Double(pose.plateRow) * 28)
-                }
+                HomeWalkSprite(citizen: pose.person.id, motion: pose.motion, size: pose.size)
+                VStack(spacing: 1) {
+                    if let kind = pose.tasks.first?.kind { Image(systemName: kind == .postal ? "envelope.fill" : kind == .neighbor ? "bell.fill" : "seal.fill").foregroundStyle(kind == .bounty ? .red : .yellow) }
+                    Text(pose.person.name).font(.system(size: 10, weight: .semibold)).fixedSize(horizontal: true, vertical: false).foregroundStyle(.white)
+                }.padding(3).background(.black.opacity(0.55), in: Capsule()).opacity(pose.tasks.isEmpty || pose.tasks.contains { $0.id == trackedID } ? 1 : 0.55).offset(x: plateShift, y: -pose.size * 0.7 - Double(pose.plateRow) * 28)
             }.frame(width: 44, height: max(44, pose.size))
-        }.buttonStyle(.plain).accessibilityLabel("\(pose.person.name)\(pose.tasks.isEmpty ? "，打招呼" : "，任务互动")")
-    }
-    private func greet(_ pose: Pose, date: Date, time: Double) {
-        finishGreeting()
-        greetingID = pose.person.id; greetingPoint = pose.point; greetingStarted = time
-        let hour = HarborClock.hour(at: date)
-        let season = HarborSeason.state(gameHours: HarborClock.gameHours(at: date)).current
-        let seasonal: String = switch season {
-        case .spring: "新叶长出来了，海风也暖了。"
-        case .summer: "太阳正好，路上慢慢走。"
-        case .autumn: "落叶又铺满台阶了。"
-        case .winter: "天冷，记得把领口拢好。"
-        }
-        greetingText = (hour < 6 || hour > 20) ? "夜深了，愿港灯照着你回去。" : seasonal + pose.person.dialogue
-    }
-    private func finishGreeting() {
-        if let id = greetingID, let start = greetingStarted {
-            personPauses[id, default: 0] += max(0, elapsed(Date()) - start)
-        }
-        greetingID = nil; greetingPoint = nil; greetingStarted = nil
+        }.buttonStyle(.plain).accessibilityLabel("\(pose.person.name)\(pose.tasks.isEmpty ? "，店铺" : "，任务互动")")
     }
 }
 
-private enum HomeWalkSpriteCache {
-    private struct Metrics: Decodable { let asset: String; let cellWidth: Int; let cellHeight: Int; let bounds: [[Int]] }
-    static let images: [String: [CGImage]] = {
-        let url = Bundle.main.url(forResource: "home-direction-atlas-metrics", withExtension: "json", subdirectory: "WisteriaMap")!
-        let metrics = try! JSONDecoder().decode([String: Metrics].self, from: Data(contentsOf: url))
-        return Dictionary(uniqueKeysWithValues: metrics.map { name, metric in
-            let atlas = UIImage(named: metric.asset)!.cgImage!
-            let frames = (0..<64).map { index in
-                let direction = index / 8
-                let b = metric.bounds[direction]
-                return atlas.cropping(to: CGRect(x: (index % 8) * metric.cellWidth + b[0],
-                                                y: direction * metric.cellHeight + b[1],
-                                                width: b[2]-b[0], height: b[3]-b[1]))!
+/// A walk along a street polyline at a person's pace (2026-10-17): corners are rounded, and
+/// speed and stride are in metres, with a body 1.7 m tall at the painting's depth scale, so a
+/// far walker covers less of the painting a second and the feet keep step with the ground.
+struct HomeWalkPath {
+    struct Pose {
+        var point: [Double]
+        var direction: Int
+        var frame: Int
+        var walking: Bool
+    }
+    private let points: [[Double]]
+    private let times: [Double]
+    private let metres: [Double]
+    var duration: Double { times.last ?? 0 }
+    var end: [Double] { points.last ?? [0.5, 0.7] }
+
+    init(_ route: [[Double]], pace: Double) {
+        var p = route
+        for _ in 0..<2 where p.count > 2 {   // Chaikin corner cutting; the ends stay put
+            var cut = [p[0]]
+            for (a, b) in zip(p, p.dropFirst()) {
+                cut.append([a[0] * 0.75 + b[0] * 0.25, a[1] * 0.75 + b[1] * 0.25])
+                cut.append([a[0] * 0.25 + b[0] * 0.75, a[1] * 0.25 + b[1] * 0.75])
             }
-            return (name, frames)
-        })
+            cut.append(p[p.count - 1])
+            p = cut
+        }
+        points = p
+        var t = [0.0], m = [0.0]
+        for (a, b) in zip(p, p.dropFirst()) {
+            let unitsPerMetre = HomeStreetScene.bodyHeight(at: (a[1] + b[1]) / 2) / 1.7
+            let dm = hypot(b[0] - a[0], b[1] - a[1]) / max(unitsPerMetre, 0.0001)
+            m.append(m.last! + dm)
+            t.append(t.last! + dm / pace)
+        }
+        times = t; metres = m
+    }
+    func pose(at time: Double) -> Pose {
+        guard points.count > 1 else { return .init(point: end, direction: 4, frame: 0, walking: false) }
+        let time = min(max(0, time), duration)
+        var i = 0
+        while i < times.count - 2 && times[i + 1] < time { i += 1 }
+        let f = (time - times[i]) / max(times[i + 1] - times[i], 0.000001)
+        let a = points[i], b = points[i + 1]
+        let dx = b[0] - a[0], dy = b[1] - a[1]
+        // Screen y increases toward the viewer. Row zero is the back view.
+        let direction = (Int((atan2(dx, -dy) / (.pi / 4)).rounded()) + 8) % 8
+        let walked = metres[i] + (metres[i + 1] - metres[i]) * f
+        // One gait cycle (both steps, eight frames) every 1.5 m.
+        return .init(point: [a[0] + dx * f, a[1] + dy * f], direction: direction, frame: Int(walked / 1.5 * 8) % 8, walking: true)
+    }
+}
+
+/// Second-pass walkers (tools/harbor/package_home_walkers_v2.py): for each look, strips W0-W4
+/// walk (directions 5-7 draw 3-1 mirrored) and I3/I4 stand. A strip is decoded the first time
+/// a person on screen needs it, and may be dropped again under memory pressure.
+@MainActor
+enum HomeWalkerArt {
+    private struct Strip: Decodable { let asset: String; let cellWidth: Int; let cellHeight: Int }
+    private struct Look: Decodable { let citizens: [String]; let strips: [String: Strip] }
+    private struct File: Decodable { let looks: [String: Look] }
+    private static let strips: [String: [String: Strip]] = {
+        let url = Bundle.main.url(forResource: "home-walkers-v2", withExtension: "json", subdirectory: "WisteriaMap")!
+        let file = try! JSONDecoder().decode(File.self, from: Data(contentsOf: url))
+        var byCitizen: [String: [String: Strip]] = [:]
+        for look in file.looks.values { for id in look.citizens { byCitizen[id] = look.strips } }
+        return byCitizen
     }()
+    private final class Frames {
+        let images: [CGImage]
+        init(_ images: [CGImage]) { self.images = images }
+    }
+    private static let cache: NSCache<NSString, Frames> = {
+        let cache = NSCache<NSString, Frames>()
+        cache.countLimit = 40
+        return cache
+    }()
+    static func hasLook(_ citizen: String) -> Bool { strips[citizen] != nil }
+    /// The frame to draw, and whether to mirror it.
+    static func frame(_ citizen: String, direction: Int, walking: Bool, index: Int) -> (image: CGImage, mirrored: Bool)? {
+        let mirrored = direction >= 5
+        let base = mirrored ? 8 - direction : direction
+        let key = walking ? "W\(base)" : (base == 3 || base == 4 ? "I\(base)" : "I4")
+        guard let strip = strips[citizen]?[key] else { return nil }
+        let frames: Frames
+        if let cached = cache.object(forKey: strip.asset as NSString) {
+            frames = cached
+        } else {
+            guard let sheet = UIImage(named: strip.asset)?.cgImage else { return nil }
+            let images = (0..<8).compactMap {
+                sheet.cropping(to: CGRect(x: $0 * strip.cellWidth, y: 0, width: strip.cellWidth, height: strip.cellHeight))
+            }
+            guard images.count == 8 else { return nil }
+            frames = Frames(images)
+            cache.setObject(frames, forKey: strip.asset as NSString)
+        }
+        return (frames.images[index % 8], mirrored)
+    }
 }
 private struct HomeWalkSprite: View {
-    let atlas: String
-    let frame: Int
-    let direction: Int
+    let citizen: String
+    let motion: HomeWalkPath.Pose
     let size: Double
     var body: some View {
-        Image(decorative: HomeWalkSpriteCache.images[atlas]![direction * 8 + frame], scale: 1)
-            .resizable().interpolation(.high).scaledToFit().frame(height: size)
+        if let art = HomeWalkerArt.frame(citizen, direction: motion.direction, walking: motion.walking, index: motion.frame) {
+            Image(decorative: art.image, scale: 1)
+                .resizable().interpolation(.high).scaledToFit().frame(height: size)
+                .scaleEffect(x: art.mirrored ? -1 : 1, y: 1)
+        }
     }
 }
 
