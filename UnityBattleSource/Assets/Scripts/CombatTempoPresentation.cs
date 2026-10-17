@@ -22,7 +22,6 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         if (id != "mistport-night" && id != "starlight-magician" && id != "midnight-carnival") return;
         outfit = id;
         if (hero != null && hero.ai) hero.ai.Apply(id);
-        if (hero != null && hero.replacement) hero.replacement.GetComponent<RefinedHeroAppearance>()?.Apply(id);
     }
     string encounter;
     Entry hero;
@@ -140,23 +139,10 @@ public sealed class CombatTempoPresentation : MonoBehaviour
     }
     Entry Replace(Transform original, string kind, Transform target, EnemyHandle handle)
     {
-        bool refinedHero = kind == "Hero";
-        bool aiHero = refinedHero;
-#if UNITY_EDITOR || UNITY_STANDALONE
-        var flags = Environment.GetCommandLineArgs();
-        if (Array.IndexOf(flags,"--hero-v1") >= 0 || Array.IndexOf(flags,"--hero-v2") >= 0 || Array.IndexOf(flags,"--hero-v3") >= 0 || Array.IndexOf(flags,"--hero-v4") >= 0) aiHero = false;
-#endif
-        if (aiHero) return ReplaceAIHero(original);
-        string heroAsset = "CombatTempo/RefinedHeroV4/HeroSovereignV4";
-#if UNITY_EDITOR || UNITY_STANDALONE
-        if (Array.IndexOf(Environment.GetCommandLineArgs(), "--hero-v3") >= 0) heroAsset = "CombatTempo/RefinedHeroV3/HeroMeshyV3";
-        if (Array.IndexOf(Environment.GetCommandLineArgs(), "--hero-v2") >= 0) heroAsset = "CombatTempo/RefinedHeroV2/HeroMeshyV2";
-        if (Array.IndexOf(Environment.GetCommandLineArgs(), "--hero-v1") >= 0) heroAsset = "CombatTempo/RefinedHero/HeroRefined";
-#endif
-        var prefab = Resources.Load<GameObject>(refinedHero ? heroAsset : "CombatTempo/Animation/" + kind);
-        if (!original || !prefab) return null;
-        Bounds before;
-        if (!(refinedHero ? CurrentPoseBounds(original, out before) : BoundsOf(original, out before))) return null;
+        // Retired hero versions cannot be selected; only the current AI art.
+        if (kind == "Hero") return ReplaceAIHero(original);
+        var prefab = Resources.Load<GameObject>("CombatTempo/Animation/" + kind);
+        if (!original || !prefab || !BoundsOf(original, out var before)) return null;
         var e = new Entry { original = original, handle = handle, previousModel = handle ? handle.Model : null };
         var skins = original.GetComponentsInChildren<SkinnedMeshRenderer>(false);
         var materials = skins.Length > 0 ? skins[0].sharedMaterials : Array.Empty<Material>();
@@ -167,25 +153,16 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         e.oldAnimator = original.GetComponentInChildren<Animator>(true);
         if (e.oldAnimator) { e.animatorEnabled = e.oldAnimator.enabled; e.oldAnimator.enabled = false; }
         var model = Instantiate(prefab, original, false); model.name = "Blender " + kind + " sample";
-        if (refinedHero) model.AddComponent<RefinedHeroAppearance>().Apply(outfit);
-        // Imported FBX remains an intact skin/rig, including the new jaw and coat.
-        if (!refinedHero) foreach (var skin in model.GetComponentsInChildren<SkinnedMeshRenderer>()) if (materials.Length > 0) skin.sharedMaterials = materials;
-        Bounds after;
-        if ((refinedHero ? CurrentPoseBounds(model.transform, out after) : BoundsOf(model.transform, out after)) && after.size.y > .001f) {
+        foreach (var skin in model.GetComponentsInChildren<SkinnedMeshRenderer>())
+            if (materials.Length > 0) skin.sharedMaterials = materials;
+        if (BoundsOf(model.transform, out var after) && after.size.y > .001f) {
             model.transform.localScale *= before.size.y / after.size.y;
-            if (refinedHero) CurrentPoseBounds(model.transform, out after); else BoundsOf(model.transform, out after);
+            BoundsOf(model.transform, out after);
             model.transform.position += new Vector3(before.center.x - after.center.x, before.min.y - after.min.y, before.center.z - after.center.z);
-#if UNITY_EDITOR || UNITY_STANDALONE
-            if (refinedHero) Debug.Log("HERO_POSE_ALIGNMENT before=" + before + " after=" + after + " scale=" + model.transform.lossyScale);
-#endif
         }
-        if (!refinedHero) CloneAccessories(e.renderers, model.transform, before.size.y);
-        if (refinedHero) {
-            e.oldHeroIdle = original.GetComponentInChildren<HeroLivingIdle20260916>();
-            if (e.oldHeroIdle) { e.heroIdleEnabled = e.oldHeroIdle.enabled; e.oldHeroIdle.enabled = false; }
-        }
+        CloneAccessories(e.renderers, model.transform, before.size.y);
         e.replacement = model.transform;
-        e.body = CombatTempoAnimatedBody.Install(model, kind, target, refinedHero ? heroAsset : null);
+        e.body = CombatTempoAnimatedBody.Install(model, kind, target, null);
         if (handle) handle.SetTempoPresentationModel(model.transform);
         return e;
     }

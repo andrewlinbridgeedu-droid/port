@@ -1,0 +1,44 @@
+{
+  "version": "171.7",
+  "bundle_id": "local.mistport.institutions",
+  "local_sources_sha256": {
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/CityEconomy.swift": "5c4dc533a191824727963462dfd4c75277f173129afa66b16d2422b54bf6e395",
+    "mistport-ios/Mistport/GameStore.swift": "621eacbf88cde1fbd80a454da6d7e3b4ccab9a7493086131cc00c532b2547c51",
+    "mistport-ios/Mistport/CityInstitutionViews.swift": "6c2c784852f6c362a533e2d47eda7c6a633ec76c7e1e452735bd1f7d30582fa1",
+    "mistport-ios/Mistport/HomeStreetScene.swift": "d2dd4c3df7b1b944ecd0d240026d0561df6db0929fdf47c0ff9d7744658dac34",
+    "mistport-ios/Mistport/Assets.xcassets/BankManagerOffice20261014.imageset/art.png": "d0cd7cbf92d410d1fbfc29edc33d44f06b3e770d4442da944fe16a96b7791dd6",
+    "mistport-ios/MistportCombatCore/Tests/MistportCombatCoreTests/CityEconomyTests.swift": "5d1540af33a22a935a76c347d6c8c649bf19258cfd8008554c3b4d58da9eecdf",
+    "tools/progression-sim/Sources/ProgressionSim/BankSimulation.swift": "b40b34ec02a1af091f5703f61e805cad6e80a6671ee8f0e28de4aabdd7c8218e",
+    "tools/progression-sim/Sources/ProgressionSim/Campaign.swift": "d6c1e2ff2e4442b97532cf2f1315eb409e84239603446c3ba8a933d9690aa526",
+    "tools/progression-sim/Sources/ProgressionSim/HousingSimulation.swift": "0843540b6e417aa20a31c9cba8720ffca566c4843fc7d1269698648e1f089fba",
+    "tools/progression-sim/Sources/ProgressionSim/Walls.swift": "ebcb9c42507af296833c4ee778952a71c61eb684b1dbfda0c90b332b262b576a",
+    "docs/development/bank-playtest-20261014/simulation-216/runs.json": "2743d63f3c98ebc6abe5bcdad18d1e750e301812ff0f10b20f0b7cadd37448a9",
+    "mistport-ios/docs/game-design/chapter-one-30/INVESTMENT_QUESTS_AND_CAPITAL_CALLS_20261014.md": "36704e85a6a59bc1f6d52e6b274bd513999d81d91d38a06f2047d459ed477366",
+    "mistport-ios/docs/game-design/chapter-one-30/MESHY_ECONOMY_CAST_20_20261014.md": "848dffbdc61f66a109bd5b262376bc2032e639e5588b1e0960c2b3f9a0c7f5dd"
+  },
+  "test_logs": {
+    "core": ".build/bank-1717-core-tests-final.log",
+    "native_final": ".build/bank-1717-native-verify-final.log",
+    "host_build": ".build/institutions-device/build.log"
+  },
+  "test_results": {
+    "related_core_tests": 26,
+    "related_core_suites": 4,
+    "native_simulator_bank": true,
+    "native_simulator_institutions": true,
+    "economic_paths": 216,
+    "economic_all_main_q30": true,
+    "economic_all_ritual_day": 28,
+    "economic_all_advancement_spent": 2400,
+    "economic_aid_through_story": 0
+  },
+  "iphone_install": "success",
+  "preferences_before_after_files": 11,
+  "preferences_all_byte_identical": true,
+  "physical_launch_and_new_bank_visual": "pending_device_unavailable",
+  "new_unity_resources_modified_in_this_bank_change": false,
+  "installed_source_boundary": "all bank functions and manager art installed; later one-line institution-book description built locally, not reinstalled",
+  "future_capital_calls_and_pirate_quests": "design_only_not_implemented",
+  "future_economy_roles": 20,
+  "simulator_ui_final": "bank welcome and term deposit order, collapsed budget, new manager scene, reputation locks, corrected return button and shipping quote observed"
+}

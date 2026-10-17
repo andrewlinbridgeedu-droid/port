@@ -54,11 +54,11 @@ struct HousingStaminaTests {
         try h.sign(lodgingID: "canal_house", mealID: "cafe", day: 1, roomsLeft: 3)
         var cash = 1_000
         let full = h.payDay(1, cash: &cash, completedMissions: 5)
-        #expect(full.copper == 26 && !full.downgraded && cash == 974)
-        #expect(h.payDay(1, cash: &cash, completedMissions: 5).copper == 26 && cash == 974, "one payment a day")
+        #expect(full.copper == 22 && !full.downgraded && cash == 978)
+        #expect(h.payDay(1, cash: &cash, completedMissions: 5).copper == 22 && cash == 978, "one payment a day")
         // 200 cash, recovery line 180: keeps 90; 26 fits.
         cash = 200
-        #expect(h.payDay(2, cash: &cash, completedMissions: 5).copper == 26)
+        #expect(h.payDay(2, cash: &cash, completedMissions: 5).copper == 22)
         // Below the recovery line: the basic basket if it leaves half the line, else the free shelter.
         cash = 120
         let basic = h.payDay(3, cash: &cash, completedMissions: 5)
@@ -78,7 +78,7 @@ struct HousingStaminaTests {
         var cash = 2_000
         #expect(!h.canTakeHighlandErrands(day: 30))
         h.payDay(30, cash: &cash, completedMissions: 30)
-        #expect(h.canTakeHighlandErrands(day: 30) && cash == 1_950)
+        #expect(h.canTakeHighlandErrands(day: 30) && cash == 1_958)
         var poor = 150
         h.payDay(31, cash: &poor, completedMissions: 30)
         #expect(!h.canTakeHighlandErrands(day: 31), "a day that could not pay the house loses highland access")
@@ -114,10 +114,10 @@ struct HousingStaminaTests {
         let expiry = ledger.leaseEndsDay
         try ledger.chooseMeal("cafe")
         #expect(ledger.leaseEndsDay == expiry && ledger.mealID == "cafe")
-        #expect(ledger.payDay(4, cash: &cash, completedMissions: 5) == payment && cash == 976)
+        #expect(ledger.payDay(4, cash: &cash, completedMissions: 5) == payment && cash == 980)
         #expect(throws: MPCHousingLedger.Failure.notAllowed) { try ledger.chooseMeal("house_kitchen") }
         #expect(ledger.mealID == "cafe")
-        #expect(ledger.payDay(5, cash: &cash, completedMissions: 5).copper == 26)
+        #expect(ledger.payDay(5, cash: &cash, completedMissions: 5).copper == 22)
     }
 
     @Test("stamina replaces count-based copper decay, preserving merit and receipt limits")

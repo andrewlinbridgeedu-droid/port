@@ -1,0 +1,22 @@
+{
+  "before_files": 9,
+  "after_files": 10,
+  "removed": [],
+  "added": [
+    "mistport.institutions.playtest.20261013.visual-review-20261014.plist"
+  ],
+  "modified": {
+    "local.mistport.institutions.plist": {
+      "semantic_changed_paths": [
+        ".mistport.music.enabled"
+      ]
+    },
+    "mistport.institutions.playtest.20261013.fresh.plist": {
+      "semantic_changed_paths": [
+        ".mistport.combatItemsOnLeft"
+      ]
+    }
+  },
+  "play_progress_preserved": true,
+  "notes": "Existing data only changed music setting and initialized combatItemsOnLeft=false after left/right toggle. New visual-review profile isolates Q1 review; wallet, missions, materials, ownership, bank and contracts unchanged."
+}

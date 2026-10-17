@@ -29,10 +29,7 @@ struct CityEventsView: View {
             }
             ForEach(MPCCityEventCatalog.all) { event in
                 if !event.isRunning(day: game.pacingDay) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("\(event.title) · 第 \(event.firstDay)–\(event.lastDay) 天").font(.headline)
-                        Text(statusText(event))
-                    }
+                    Text("\(event.title) · 第\(event.firstDay)–\(event.lastDay)天 · \(statusText(event))").font(.caption)
                 }
             }
             if !errorText.isEmpty { Text(errorText).foregroundStyle(.orange).accessibilityAddTraits(.updatesFrequently) }
@@ -51,7 +48,7 @@ struct CityEventsView: View {
     }
     private func eventCard(_ event: MPCCityEvent) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(event.title).font(.title.bold())
+            Text(event.title).font(.title3.bold())
             Text("第 \(event.firstDay)–\(event.lastDay) 天 · \(event.partner)").font(.subheadline)
             Text(event.briefing).lineSpacing(5)
             if game.cityEvents.status(event.id, day: game.pacingDay) == .succeeded {

@@ -1,0 +1,41 @@
+{
+  "status": "design arithmetic only, new quests not implemented",
+  "rows": [
+    {
+      "case": "bicycle_base",
+      "invested": 60,
+      "repayment": 69,
+      "net": 9
+    },
+    {
+      "case": "bicycle_expand",
+      "invested": 80,
+      "repayment": 92,
+      "net": 12
+    },
+    {
+      "case": "bicycle_emergency",
+      "invested": 72,
+      "repayment": 69,
+      "net": -3
+    },
+    {
+      "case": "shipping_base",
+      "invested": 100,
+      "repayment": 120,
+      "net": 20
+    },
+    {
+      "case": "shipping_escort",
+      "invested": 120,
+      "repayment": 120,
+      "net": 0
+    },
+    {
+      "case": "shipping_reroute",
+      "invested": 108,
+      "repayment": 120,
+      "net": 12
+    }
+  ]
+}

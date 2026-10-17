@@ -1,13 +1,13 @@
 import Foundation
 
 /// Chapter One's Sequence 8 ritual at Black Salt Shore, qualification only.
-/// The three main materials and the 280-copper fee are spent once; the three
+/// The three main materials and the 300-copper fee are spent once; the three
 /// story proofs are checked and kept. No Sequence 8 combat rule is granted:
 /// the receipt is the record that the player reached Sequence 8.
 public enum MPCSequenceEightRitual {
-    public static let ruleVersion = "chapter1-s8-qualification-v1"
+    public static let ruleVersion = "chapter1-s8-qualification-v2"
     public static let feeID = "chapter1.ritual.fee"
-    public static let fee = 280
+    public static let fee = 300
     /// Black Salt Shore is reached after Q30.
     public static let storyMission = 30
     public static let ingredientIDs = MPCAdvancementMaterialMarket.offers.map(\.id)

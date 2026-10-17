@@ -1,0 +1,3 @@
+来源：构建并安装 iPhone 测试版，会话 01a12f14-0320-7191-836d-d0e8f190a43d，只读回复，2026-10-14。
+完整基线 eaece4f6ecf857c9eb2f7dbe98be7661e9b44ac2；HUD核心 b9015a4。卡牌下移、遗落物默认右侧，箭头左右切换；十张独立牌图、状态格17pt、侧栏64pt；新扩牌节奏Q2–6两槽、Q7–9三槽、Q10起四槽；通用手动反击。GameStore不能覆盖机构经济逻辑。169.91是对方最后交付，171.5是本会话中间版。无必需未提交功能，30份meta仅空白，队友新视频未接入。相关源码、桥接和回放依赖应一起整合，旧RefinedHero组件不可重新引入。
+对方定向通过范围不含BountyRelicTests.mechanismWallsNeedTheirRelic与BattleContactTimingTests.batchingPreservesAnInFlightBattle；不能说这两项已被证明是历史无害问题。新通过98项明确排除二者，完整失败日志保留。

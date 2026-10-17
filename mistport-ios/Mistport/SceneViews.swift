@@ -286,7 +286,7 @@ struct CityHubView: View {
         case "tavern": serviceIsUnlocked(.church) && path?.id == .fool ? onBountyTavern : nil
         case "industry": onBuild
         case "newspaper": onNewspaper
-        case "housing", "highland-board", "cityhall", "police", "post", "clinic", "harbor", "oldstreet", "board", "cafe": { onCounter(id) }
+        case "bank", "science", "palace", "housing", "highland-board", "cityhall", "police", "post", "clinic", "harbor", "oldstreet", "board", "cafe": { onCounter(id) }
         default: nil
         }
     }

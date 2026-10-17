@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import MistportCombatCore
 
@@ -15,11 +16,13 @@ struct TavernPokerPrizeTests {
             ownedRelicIDs: ["relic_deferred_stamp"], ownedMaterialIDs: []) == nil)
     }
 
-    @Test func materialRequiresMissionAndNeverDuplicates() {
+    @Test func newWagersNeverGrantAdvancementMaterials() {
         let offer = MPCTavernPrizeRotation.offer(dayOrdinal: 20260925, completedMissions: [17],
             ownedRelicIDs: Set(MPCChurchLoanOffer.all.map(\.relicID)), ownedMaterialIDs: [])
-        #expect(offer?.itemID == "mirrorMothScale")
-        #expect(offer?.kind == .advancementMaterial)
+        #expect(offer == nil)
+        // A photographed old stake survives upgrading the game.
+        let old = MPCTavernPrize(dayOrdinal: 20260925, kind: .advancementMaterial, itemID: "mirrorMothScale", name: "星纹镜蛾鳞粉")
+        #expect((try? JSONDecoder().decode(MPCTavernPrize.self, from: JSONEncoder().encode(old))) == old)
         #expect(MPCTavernPrizeRotation.offer(dayOrdinal: 20260925, completedMissions: [17],
             ownedRelicIDs: Set(MPCChurchLoanOffer.all.map(\.relicID)),
             ownedMaterialIDs: ["mirrorMothScale"]) == nil)

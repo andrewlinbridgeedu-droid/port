@@ -1,0 +1,1305 @@
+{
+  "original": {
+    "original_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 18,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        29,
+        622
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 177.2
+    },
+    "original_deposit20": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 18,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        30,
+        623
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        1
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 177.2
+    },
+    "original_deposit60": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 18,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        31,
+        625
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        3
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 177.2
+    },
+    "original_early_exit": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 18,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        29,
+        622
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 177.2
+    },
+    "original_risk80_profit": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 18,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        11,
+        632
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        4
+      ],
+      "deposit_profit": [
+        3
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 177.2
+    },
+    "original_risk80_delay": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 18,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        21,
+        642
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        4
+      ],
+      "deposit_profit": [
+        3
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 177.2
+    },
+    "original_risk80_loss20pct": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 18,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        81,
+        644
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        -16
+      ],
+      "deposit_profit": [
+        3
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 177.2
+    },
+    "original_risk80_total_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 18,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        11,
+        577
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        -80
+      ],
+      "deposit_profit": [
+        3
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 177.2
+    },
+    "original_risk160_total_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 18,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        46,
+        612
+      ],
+      "risk_subscribed": 24,
+      "actual_risk_principal": [
+        0,
+        160
+      ],
+      "risk_profit": [
+        -160,
+        0
+      ],
+      "deposit_profit": [
+        3
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 177.2
+    },
+    "original_unsafe160_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 18,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        46,
+        612
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        160
+      ],
+      "risk_profit": [
+        -160
+      ],
+      "deposit_profit": [
+        3
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 177.2
+    },
+    "original_shock_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 18,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        76,
+        595
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 177.2
+    },
+    "original_shock_risk80_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 18,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        48,
+        629
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        -80
+      ],
+      "deposit_profit": [
+        3
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 177.2
+    },
+    "original_intermittent_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 18,
+      "ritual_days": [
+        29,
+        29
+      ],
+      "cash": [
+        10,
+        612
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 189.8
+    },
+    "original_intermittent_risk80_loss": {
+      "n": 27,
+      "story_finished": 18,
+      "ritual_finished": 12,
+      "ritual_days": [
+        29,
+        29
+      ],
+      "cash": [
+        11,
+        612
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        -80
+      ],
+      "deposit_profit": [
+        3
+      ],
+      "relief_days": 141,
+      "max_active_day_minutes": 189.8
+    },
+    "original_time45_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 24,
+      "ritual_days": [
+        28,
+        36
+      ],
+      "cash": [
+        2,
+        622
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 72,
+      "max_active_day_minutes": 65.7
+    },
+    "original_time45_risk80_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 24,
+      "ritual_days": [
+        28,
+        36
+      ],
+      "cash": [
+        2,
+        577
+      ],
+      "risk_subscribed": 21,
+      "actual_risk_principal": [
+        0,
+        80
+      ],
+      "risk_profit": [
+        -80,
+        0
+      ],
+      "deposit_profit": [
+        3
+      ],
+      "relief_days": 73,
+      "max_active_day_minutes": 65.7
+    },
+    "original_time120_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 21,
+      "ritual_days": [
+        28,
+        35
+      ],
+      "cash": [
+        2,
+        622
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 21,
+      "max_active_day_minutes": 130.6
+    },
+    "original_time120_risk80_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 21,
+      "ritual_days": [
+        28,
+        35
+      ],
+      "cash": [
+        2,
+        577
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        -80
+      ],
+      "deposit_profit": [
+        3
+      ],
+      "relief_days": 21,
+      "max_active_day_minutes": 130.6
+    }
+  },
+  "final": {
+    "final_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        292,
+        907
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_deposit20": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        292,
+        905
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        4
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_deposit60": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        292,
+        907
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_early_exit": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        292,
+        907
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_risk80_profit": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        314,
+        917
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        4
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_risk80_delay": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        310,
+        917
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        0,
+        4
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_risk80_loss20pct": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        282,
+        897
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        -16
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_risk80_total_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        312,
+        903
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        -80
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_risk160_total_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        301,
+        817
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        160
+      ],
+      "risk_profit": [
+        -160
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_unsafe160_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        301,
+        817
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        160
+      ],
+      "risk_profit": [
+        -160
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_shock_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        293,
+        910
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_shock_risk80_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        279,
+        843
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        -80
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_intermittent_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        29,
+        29
+      ],
+      "cash": [
+        284,
+        844
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_intermittent_risk80_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        29,
+        29
+      ],
+      "cash": [
+        331,
+        899
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        -80
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_time45_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        320,
+        907
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 52.8
+    },
+    "final_time45_risk80_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        312,
+        903
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        -80
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 52.8
+    },
+    "final_time120_none": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        292,
+        907
+      ],
+      "risk_subscribed": 0,
+      "actual_risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "deposit_profit": [
+        0
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    },
+    "final_time120_risk80_loss": {
+      "n": 27,
+      "story_finished": 27,
+      "ritual_finished": 27,
+      "ritual_days": [
+        28,
+        28
+      ],
+      "cash": [
+        312,
+        903
+      ],
+      "risk_subscribed": 27,
+      "actual_risk_principal": [
+        80
+      ],
+      "risk_profit": [
+        -80
+      ],
+      "deposit_profit": [
+        12
+      ],
+      "relief_days": 0,
+      "max_active_day_minutes": 65.1
+    }
+  },
+  "checks": {
+    "campaign_pairs": 486,
+    "final_completed": 486,
+    "cached_vs_uncached_identical": 18,
+    "server_runs": 45,
+    "server_days_checked": 16425,
+    "money_identity_errors": 0
+  },
+  "representative": [
+    {
+      "policy": "all",
+      "profile": "medium",
+      "copper": 499,
+      "copperBySource": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "postal": 45,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "repairCopper": 528,
+      "salvesUsed": 9,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_sealed_paperweight",
+        "relic_reflecting_ink_mirror"
+      ],
+      "scenario": "final_none",
+      "days": 28,
+      "risk_day": null
+    },
+    {
+      "policy": "completionist",
+      "profile": "medium",
+      "copper": 691,
+      "copperBySource": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "postal": 45,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "repairCopper": 559,
+      "salvesUsed": 9,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_sealed_paperweight",
+        "relic_reflecting_ink_mirror"
+      ],
+      "scenario": "final_none",
+      "days": 28,
+      "risk_day": null
+    },
+    {
+      "policy": "hinted",
+      "profile": "medium",
+      "copper": 392,
+      "copperBySource": {
+        "bounty": 330,
+        "main": 2280,
+        "postal": 122,
+        "tower": 1440
+      },
+      "repairCopper": 244,
+      "salvesUsed": 14,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_sealed_paperweight",
+        "relic_reflecting_ink_mirror"
+      ],
+      "scenario": "final_none",
+      "days": 28,
+      "risk_day": null
+    },
+    {
+      "policy": "all",
+      "profile": "medium",
+      "copper": 501,
+      "copperBySource": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "postal": 40,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "repairCopper": 528,
+      "salvesUsed": 9,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_sealed_paperweight",
+        "relic_reflecting_ink_mirror"
+      ],
+      "scenario": "final_deposit60",
+      "days": 28,
+      "risk_day": null
+    },
+    {
+      "policy": "completionist",
+      "profile": "medium",
+      "copper": 698,
+      "copperBySource": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "postal": 40,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "repairCopper": 559,
+      "salvesUsed": 9,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_sealed_paperweight",
+        "relic_reflecting_ink_mirror"
+      ],
+      "scenario": "final_deposit60",
+      "days": 28,
+      "risk_day": null
+    },
+    {
+      "policy": "hinted",
+      "profile": "medium",
+      "copper": 392,
+      "copperBySource": {
+        "bounty": 330,
+        "main": 2280,
+        "postal": 110,
+        "tower": 1440
+      },
+      "repairCopper": 244,
+      "salvesUsed": 14,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_sealed_paperweight",
+        "relic_reflecting_ink_mirror"
+      ],
+      "scenario": "final_deposit60",
+      "days": 28,
+      "risk_day": null
+    },
+    {
+      "policy": "all",
+      "profile": "medium",
+      "copper": 561,
+      "copperBySource": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "postal": 40,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "repairCopper": 530,
+      "salvesUsed": 9,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_sealed_paperweight",
+        "relic_reflecting_ink_mirror"
+      ],
+      "scenario": "final_risk80_profit",
+      "days": 28,
+      "risk_day": 5
+    },
+    {
+      "policy": "completionist",
+      "profile": "medium",
+      "copper": 708,
+      "copperBySource": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "postal": 40,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "repairCopper": 561,
+      "salvesUsed": 9,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_sealed_paperweight",
+        "relic_reflecting_ink_mirror"
+      ],
+      "scenario": "final_risk80_profit",
+      "days": 28,
+      "risk_day": 5
+    },
+    {
+      "policy": "hinted",
+      "profile": "medium",
+      "copper": 396,
+      "copperBySource": {
+        "bounty": 330,
+        "main": 2280,
+        "postal": 110,
+        "tower": 1440
+      },
+      "repairCopper": 244,
+      "salvesUsed": 14,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_sealed_paperweight",
+        "relic_reflecting_ink_mirror"
+      ],
+      "scenario": "final_risk80_profit",
+      "days": 28,
+      "risk_day": 16
+    },
+    {
+      "policy": "all",
+      "profile": "medium",
+      "copper": 479,
+      "copperBySource": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "postal": 40,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "repairCopper": 528,
+      "salvesUsed": 9,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_sealed_paperweight",
+        "relic_reflecting_ink_mirror"
+      ],
+      "scenario": "final_risk80_total_loss",
+      "days": 28,
+      "risk_day": 5
+    },
+    {
+      "policy": "completionist",
+      "profile": "medium",
+      "copper": 626,
+      "copperBySource": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "postal": 40,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "repairCopper": 559,
+      "salvesUsed": 9,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_sealed_paperweight",
+        "relic_reflecting_ink_mirror"
+      ],
+      "scenario": "final_risk80_total_loss",
+      "days": 28,
+      "risk_day": 5
+    },
+    {
+      "policy": "hinted",
+      "profile": "medium",
+      "copper": 312,
+      "copperBySource": {
+        "bounty": 330,
+        "main": 2280,
+        "postal": 110,
+        "tower": 1440
+      },
+      "repairCopper": 244,
+      "salvesUsed": 14,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_reflecting_ink_mirror",
+        "relic_sealed_paperweight"
+      ],
+      "scenario": "final_risk80_total_loss",
+      "days": 28,
+      "risk_day": 16
+    },
+    {
+      "policy": "all",
+      "profile": "medium",
+      "copper": 349,
+      "copperBySource": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "postal": 40,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "repairCopper": 520,
+      "salvesUsed": 9,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_sealed_paperweight",
+        "relic_reflecting_ink_mirror"
+      ],
+      "scenario": "final_risk160_total_loss",
+      "days": 28,
+      "risk_day": 14
+    },
+    {
+      "policy": "completionist",
+      "profile": "medium",
+      "copper": 540,
+      "copperBySource": {
+        "bounty": 1060,
+        "errand": 129,
+        "event": 97,
+        "main": 2280,
+        "postal": 40,
+        "remnant": 90,
+        "tower": 1700,
+        "workshop": 274
+      },
+      "repairCopper": 557,
+      "salvesUsed": 9,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_sealed_paperweight",
+        "relic_reflecting_ink_mirror"
+      ],
+      "scenario": "final_risk160_total_loss",
+      "days": 28,
+      "risk_day": 14
+    },
+    {
+      "policy": "hinted",
+      "profile": "medium",
+      "copper": 632,
+      "copperBySource": {
+        "bounty": 330,
+        "main": 2280,
+        "postal": 110,
+        "tower": 1440
+      },
+      "repairCopper": 244,
+      "salvesUsed": 14,
+      "passives": [
+        "relic_salt_sealed_breathing_bag",
+        "relic_return_gift_clasp",
+        "relic_deferred_stamp",
+        "relic_reflecting_ink_mirror"
+      ],
+      "scenario": "final_risk160_total_loss",
+      "days": 28,
+      "risk_day": 19
+    }
+  ]
+}

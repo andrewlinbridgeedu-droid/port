@@ -1,0 +1,622 @@
+{
+  "scope": "Sources and saved evidence at delivery; not historical build snapshots",
+  "git_head": "493918c262b31d3de8c4faecd3a3b7191c51815d",
+  "files": {
+    "docs/development/economy-2000-v3-pro-source/mistport_server_economy_sim_v3.py": {
+      "bytes": 69855,
+      "sha256": "723031cdff1d0a3cc6c8aef4c47ba2f3ad8157349b560dc5bd99c41b1115b1d0"
+    },
+    "docs/planning/city-institutions-20261013/HOUSING_AND_PRIVATE_MEETINGS.md": {
+      "bytes": 22144,
+      "sha256": "7f72a202679ed3c3c49b5aa4bf06c01903c1c828202b1d46c2dd790086b01b77"
+    },
+    "docs/planning/city-institutions-20261013/REPRODUCE.md": {
+      "bytes": 9355,
+      "sha256": "9f007305252773a15bd658e11091df789aac2e2340cde163acea812c555ac4c1"
+    },
+    "docs/planning/city-institutions-20261013/SIMULATION_REPORT.md": {
+      "bytes": 13859,
+      "sha256": "3a061d713121b977ad5dc54b2dcbe1e9d8ad4c144bdf3b95398f12a06ed6136e"
+    },
+    "docs/planning/city-institutions-20261013/SIMULATION_REPORT_1360_STAGE.md": {
+      "bytes": 15095,
+      "sha256": "3e77e6195d46e26c034a8fc2f4daccf585e6bc417d9b4cfe5f21e9413f58e90c"
+    },
+    "docs/planning/city-institutions-20261013/analyze_earning.py": {
+      "bytes": 4271,
+      "sha256": "be321597bc170c0cf73cc41a76102128843b0de1c98118d1c1baf88439c3972a"
+    },
+    "docs/planning/city-institutions-20261013/analyze_housing.py": {
+      "bytes": 6674,
+      "sha256": "8d9c38b78f75322b6f2a1261e89bb1918fc1df08bf2fae68f50c307fb4fd8cd0"
+    },
+    "docs/planning/city-institutions-20261013/analyze_simulation.py": {
+      "bytes": 5819,
+      "sha256": "113f14ed37ae70e45c8fcb3de1863e89c66b96e5b01fb579d9ded8b4a2659577"
+    },
+    "docs/planning/city-institutions-20261013/check_food_aid.py": {
+      "bytes": 1259,
+      "sha256": "d8ed23b818b73809738f1b2a9290a9e4c9dc947007207f219e1ee765d2bbedcb"
+    },
+    "docs/planning/city-institutions-20261013/check_proposal.py": {
+      "bytes": 5352,
+      "sha256": "d254d9ff82bf92c8bdfcfd856b4e3fb0dc5219b80709cff3ef9b4f6ee5124bc0"
+    },
+    "docs/planning/city-institutions-20261013/proposal-before-simulation.md": {
+      "bytes": 49582,
+      "sha256": "8360287cd8fa66577b53bab3808b337ad20b704584f98ed08a6a116d6b8dbdfd"
+    },
+    "docs/planning/city-institutions-20261013/simulation/bank-checks.txt": {
+      "bytes": 692,
+      "sha256": "8fb48cc854e918cdf7d4d1cf7e12257b174e3b632d79c6cac08bf1a503570403"
+    },
+    "docs/planning/city-institutions-20261013/simulation/bank-regression-housing/runs.json.gz": {
+      "bytes": 94453,
+      "sha256": "ecfa4f761328c616571fa5750ab0defa28f66b3a64107bbc5ff1d549e5007d69"
+    },
+    "docs/planning/city-institutions-20261013/simulation/earning-final/runs.json.gz": {
+      "bytes": 2555678,
+      "sha256": "9bb32b2e1635e0ce57ba20a5a530eed5f343e9df68b0aefd9b194e9eb483b7e8"
+    },
+    "docs/planning/city-institutions-20261013/simulation/earning-summary.json": {
+      "bytes": 94630,
+      "sha256": "9e411d6f5d83458d43949f332dfc4ca8a6c7bffdf8b5c2956742de473f17fc3c"
+    },
+    "docs/planning/city-institutions-20261013/simulation/earning-uncached/runs.json.gz": {
+      "bytes": 94444,
+      "sha256": "d9d2e8d2f0839308bd8bef7171520298c3080514c8d25cf6c886cc4fbc677310"
+    },
+    "docs/planning/city-institutions-20261013/simulation/earning2200-pilot/runs.json.gz": {
+      "bytes": 142223,
+      "sha256": "9360c599d7647a5600f64d2048ceffa405265c1418bba067eb78f4c867f76650"
+    },
+    "docs/planning/city-institutions-20261013/simulation/earning2400-pilot/runs.json.gz": {
+      "bytes": 142191,
+      "sha256": "f929882149c159c242c6037c354cb21a6515bd4e3940c94a455e8a05d3cc16d9"
+    },
+    "docs/planning/city-institutions-20261013/simulation/earning2600-pilot/runs.json.gz": {
+      "bytes": 143681,
+      "sha256": "d76eef3f405d9ba2bee2cdeaf48b2471f5ed30eba8de96321920a8370a5453f4"
+    },
+    "docs/planning/city-institutions-20261013/simulation/earning3200-pilot/runs.json.gz": {
+      "bytes": 157247,
+      "sha256": "71df5bddad8c6da9a5a607ed5f48b96633f0045d830220455f7a21aa84d39c95"
+    },
+    "docs/planning/city-institutions-20261013/simulation/final/runs.json.gz": {
+      "bytes": 2556996,
+      "sha256": "7578c177a7e1caf741295f5a29275cc25f90d3703675607dc3dc4a809d5d9fc1"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-adjusted/runs.json.gz": {
+      "bytes": 8456811,
+      "sha256": "657d916b2f3857ce1f05d54b8ffc22054275b065824fb521cf63b3252b04dea3"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-basic-no-guests/runs.json.gz": {
+      "bytes": 556644,
+      "sha256": "9fb44253163dbd12561d416e21af657b0ce6a3c92a32caf0768fd9cb642ecb69"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-checks.txt": {
+      "bytes": 453,
+      "sha256": "672858fb2282af23e8cc24b1dc3067a96f735c10a56abb4aadd7b23f1d29dba3"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-draft/runs.json.gz": {
+      "bytes": 1820597,
+      "sha256": "e9099f1e482e0cc73019c3d003a71d9184236f40e54a80aeab56e8c4129eb83d"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-draft-pilot/runs.json.gz": {
+      "bytes": 407056,
+      "sha256": "253e0f6e246574ee7e1090c27c0eb4fa63b47c1378c0e4c9a27a0c40a3b4434b"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-intermittent/runs.json.gz": {
+      "bytes": 381692,
+      "sha256": "c73fb1414bbd280880f2bd5d543930b051935c5d3e033d372266f6d593decbe4"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-power.json": {
+      "bytes": 7464,
+      "sha256": "826925caa349fff18606b06363342c47217d828784d5840f81ddedffd35975ea"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-price20-pilot/runs.json.gz": {
+      "bytes": 404584,
+      "sha256": "31c4d6b6afbda65ace85c51dd2ffe8f376089d28ce5e57cfe9346ab32c6d034b"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-price22-pilot/runs.json.gz": {
+      "bytes": 404588,
+      "sha256": "c6b05b4abcc6061c0568321bad6398b9b49a9d082fc09db1600d94dc8239b014"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-split-before-clock-fix/runs.json.gz": {
+      "bytes": 605068,
+      "sha256": "1b939a4d04b75a6d9af2a43919abcd06dcc424d942b82c5ea1642d0661925310"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-split-clock-fixed/runs.json.gz": {
+      "bytes": 607405,
+      "sha256": "39d5310e4497a3a558a296b44dba99cb3da46266b665e1be4b115a7e0f786311"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-summary.json": {
+      "bytes": 1787763,
+      "sha256": "c30c86e147ec248e44a9967c39e1716db75a45c9e9e7288bbde6431da32c1572"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-time120/runs.json.gz": {
+      "bytes": 403855,
+      "sha256": "0192b1477684b963d85c99c4748b9d0a0a9a86edcfa9b5dc3aeb2f28b19ba5de"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-time45/runs.json.gz": {
+      "bytes": 403937,
+      "sha256": "732edc270e9d709dde40ae8340abc1e688c886ffe6865bc79570068a9aeb8bbf"
+    },
+    "docs/planning/city-institutions-20261013/simulation/housing-uncached/runs.json.gz": {
+      "bytes": 130740,
+      "sha256": "e289e65b2c7843dff7463bfa103be6cfa49db590e1db23378923625121074b03"
+    },
+    "docs/planning/city-institutions-20261013/simulation/iteration2/runs.json.gz": {
+      "bytes": 2635360,
+      "sha256": "587a5e043ca8a8f2a91c3e04dda48a6d30c2d94ed378addad1971d695a50aba8"
+    },
+    "docs/planning/city-institutions-20261013/simulation/iteration3/runs.json.gz": {
+      "bytes": 2557904,
+      "sha256": "07e3d2c85982c1e3d29a3e43a6ce72ba59aee43363bc3bee53477a8f565e348c"
+    },
+    "docs/planning/city-institutions-20261013/simulation/meeting-ui-checks.json": {
+      "bytes": 294,
+      "sha256": "f894c7b04184e885e21189141a619df16d17cee4dec597b46ea78c2fe6f06b6a"
+    },
+    "docs/planning/city-institutions-20261013/simulation/original/runs.json.gz": {
+      "bytes": 2664084,
+      "sha256": "6891693c51655064459ebcdb0211a0cdf8c92b3667c6dfdad94248cf7321bd13"
+    },
+    "docs/planning/city-institutions-20261013/simulation/pilot/runs.json.gz": {
+      "bytes": 149064,
+      "sha256": "0ebc18bad5e0e1a13663ea50bfadb2850c8f71687c71875ea752ccf03b3b09e0"
+    },
+    "docs/planning/city-institutions-20261013/simulation/power.json": {
+      "bytes": 20177,
+      "sha256": "177ecc4562a5cc53d03358a82d7f307eca9ad08bcb3d6a2cb187ddd86d73992b"
+    },
+    "docs/planning/city-institutions-20261013/simulation/revised/runs.json.gz": {
+      "bytes": 2630237,
+      "sha256": "cbec5ac0486a22dcd6edb740bfed00b83a4f4a7e7d6c79a2e06c187cfe057de1"
+    },
+    "docs/planning/city-institutions-20261013/simulation/server/results.json": {
+      "bytes": 87936,
+      "sha256": "7e2463d2cdef3bd5e87be09e20d903dc346d260f46d24941ba8e58f6b77ff8b9"
+    },
+    "docs/planning/city-institutions-20261013/simulation/server-adjusted/results.json": {
+      "bytes": 23509,
+      "sha256": "bff207c2082f54559565827cb8ccfbac84acbb0ae9a2110e2c491d09e6427ae4"
+    },
+    "docs/planning/city-institutions-20261013/simulation/server-adjusted-iteration3/results.json": {
+      "bytes": 23513,
+      "sha256": "93ba2ef1e7d3d69e45959bfd613a0cd164965be1680dbbb45d635cf3c7875916"
+    },
+    "docs/planning/city-institutions-20261013/simulation/server-earning/results.json": {
+      "bytes": 52639,
+      "sha256": "03e54df6392949d919134b26036d424e9f037f09eed197ed8b6abf55f7d03059"
+    },
+    "docs/planning/city-institutions-20261013/simulation/server-earning-controls/results.json": {
+      "bytes": 26895,
+      "sha256": "46b52c6c2db59e6d8ce76030d0eab58a4856410fdb60f3cdf198db4c9328149b"
+    },
+    "docs/planning/city-institutions-20261013/simulation/server-final/results.json": {
+      "bytes": 91946,
+      "sha256": "5923c1b10e3759c0ce33d90ca8b229bf7817b85454124885b4a39a1f4124d18f"
+    },
+    "docs/planning/city-institutions-20261013/simulation/server-housing-adjusted/results.json": {
+      "bytes": 103946,
+      "sha256": "3993a8dcd7e90f1894185fa8d969a7afcfbd7865ff48ccb82694d17584f34a8a"
+    },
+    "docs/planning/city-institutions-20261013/simulation/server-housing-draft/results.json": {
+      "bytes": 34097,
+      "sha256": "a7ecfd19b16f69d8d058506e96970e34ed8aa4a92523fbfce7a253cce74bd286"
+    },
+    "docs/planning/city-institutions-20261013/simulation/server-iteration3/results.json": {
+      "bytes": 91947,
+      "sha256": "cd0e1fe8d7764315adc4a64aeeb845ea34c059fb17a948506d741e5074551911"
+    },
+    "docs/planning/city-institutions-20261013/simulation/server-pilot/results.json": {
+      "bytes": 29312,
+      "sha256": "724a83543a134e1152e56bc1d96a30dd0bc4d40ffeb24b5cc886ac9984355c45"
+    },
+    "docs/planning/city-institutions-20261013/simulation/summary.json": {
+      "bytes": 25606,
+      "sha256": "0084f29cb62da0f06457fb0ca545faef71af9674c1bfc4b60ccac66cfb5a2fc7"
+    },
+    "docs/planning/city-institutions-20261013/simulation/uncached/runs.json.gz": {
+      "bytes": 94652,
+      "sha256": "aafad74304821484ff52cccc67fca62b6bb22a8f52443bb1fca8fe4216467b3f"
+    },
+    "docs/planning/city-institutions-20261013/simulation/uncached-iteration3/runs.json.gz": {
+      "bytes": 94686,
+      "sha256": "693b0eb811eaed4bcb118a94b2f2f93ec50be764436fb221b562f6800dbc34e7"
+    },
+    "docs/planning/city-institutions-20261013/write_earning_report.py": {
+      "bytes": 14724,
+      "sha256": "f71f8f716f511fad79ab6a5a84edafd34169e318345de8b2b5e8cb587f617184"
+    },
+    "docs/planning/city-institutions-20261013/write_simulation_report.py": {
+      "bytes": 16498,
+      "sha256": "046373f30b2bebd2a082b6357fe3a9cf4ef52ed1196aa2bfb238412e29da0dbb"
+    },
+    "mistport-ios/Mistport/GameStore.swift": {
+      "bytes": 329061,
+      "sha256": "57e0bce6d336c46b5ad032a580355a3fdcd27703a405732c4c2c0f66095e16ac"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/AdvancementMaterialMarket.swift": {
+      "bytes": 1218,
+      "sha256": "198206a4f2a3c278843d63976a11257464c8c4f497fabd52aa3472acd4064976"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/AttackActionResolver.swift": {
+      "bytes": 3958,
+      "sha256": "1fb838471f73429e8fe37fae7dd754e433acb738951598f0caea30c643541bb8"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/BattleMusicRoute.swift": {
+      "bytes": 2004,
+      "sha256": "a1f708b11d70b4649948ff361030b9fbb84cbe667555bf756df89f674175137d"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/BountyDouDizhu.swift": {
+      "bytes": 16563,
+      "sha256": "490aff8f2b80fcebcf2f60f94774fa948754e325752477595556a327e3d6eab0"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/BountyPoker.swift": {
+      "bytes": 7975,
+      "sha256": "d343a916084c2708655262919e30b6f33bdc848be4989b1fe799de3739d9f03f"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/BountyRelics.swift": {
+      "bytes": 11772,
+      "sha256": "34a69cf054d00bf8920f86d0a163a337d10ba2723a066d09daaa7930bbb5a0fd"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/CampaignBattleSandbox.swift": {
+      "bytes": 12686,
+      "sha256": "d31fe5b401a730e770537f3c8fb8ca640789a5299b8415e9e459589a1b59e636"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChapterOneBattleIdentity.swift": {
+      "bytes": 9153,
+      "sha256": "5beca788a9812d8befca5743f4233e4c2a7987c0ebbe71a680ae67d102e07142"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChapterOneConclusion.swift": {
+      "bytes": 2919,
+      "sha256": "7099e95ba2e46f404fb93a030a6d5bfd766c0aec04858ae0b17b475472635b59"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChapterOneContent.swift": {
+      "bytes": 96876,
+      "sha256": "eb242b98e4722edf818648ac3d3e200732658c7849b4b108f99770e1be01820a"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChapterOneEncounterRuntime.swift": {
+      "bytes": 179926,
+      "sha256": "abe49c7e64cc755133e714ce44975ec308b34baff3e92bde8b98e8cfff824b99"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChapterOneRelicContracts.swift": {
+      "bytes": 1351,
+      "sha256": "84cab54546fa92ac9cfb686e7d2ae980a95e2809122a03c00d621e08fd6df030"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChapterOneThirtyMissionContract.swift": {
+      "bytes": 8033,
+      "sha256": "28e0d9364279fd816e11bcce327636a7d3ce39f0c377cb979b215bb0c0338a4e"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChapterTwoBridge.swift": {
+      "bytes": 4070,
+      "sha256": "3595c899d48706c7f5996487b1d9ce3310193b0612e23ddd5cd4d96cd9a9f16a"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChurchBattleDriver.swift": {
+      "bytes": 24315,
+      "sha256": "081607e21bff5e885788e4defc33f65ddfb9552fb3dace149cb814668877cfda"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChurchBounties.swift": {
+      "bytes": 38682,
+      "sha256": "75bd200fa32ef2fa5f5f89f82ec89ba71aca2837bfc1b6c3a3d90fe59b57e9ef"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChurchGear.swift": {
+      "bytes": 13194,
+      "sha256": "607642340d4ef47e62bd8de4d26a49471b9930735b9a3dc5eb68875d663215ed"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChurchLoans.swift": {
+      "bytes": 10154,
+      "sha256": "3ecd41262286c84074a81be5e93098ba76ab42cc0204eddc443ea626bd070e98"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChurchMaintenance.swift": {
+      "bytes": 14285,
+      "sha256": "50af941d85199a508749b58fd8c0f8ee7287a170e5d3e2dccd2d41e2ae008d9b"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChurchOwnedRelicLedger.swift": {
+      "bytes": 4787,
+      "sha256": "1abbf03764c3707277d2efac458f89900befa338275c344f91074607f404cc47"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChurchTower.swift": {
+      "bytes": 18197,
+      "sha256": "9110ebcbf51a2cefa488f5fed63349d79b227ef079f7edd8030bd9ef0f3a5f11"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ChurchTowerVerification.swift": {
+      "bytes": 7959,
+      "sha256": "812510b321fb8d113d7147d4d74c5d552ee01701ef4f16d2ede6865a8ff2b7fc"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/CityContribution.swift": {
+      "bytes": 6251,
+      "sha256": "dff353412c9ee0a2ca14c0403386f4c610e47dcc67944d000cbc354de03d8c9a"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/CityEvents.swift": {
+      "bytes": 16507,
+      "sha256": "c36860a8204f7a2fc14ffc8a28f8af4c0855f83cefabdcfa383462db4e6858bd"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/CombatHapticsPolicy.swift": {
+      "bytes": 4849,
+      "sha256": "79fa1f30ea9f559de6668b916cb85ac75e35cc591dd8427ce5b1d61b5db57a08"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/CombatStatusClock.swift": {
+      "bytes": 5383,
+      "sha256": "0601f09caaebf589dd47cdeff2481ac27640c89b925f82facd6bea7678a84665"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/ContinuousSkillScheduler.swift": {
+      "bytes": 1554,
+      "sha256": "43f07651f49d0e0c759e003e5636e9147767cb337dc45e07800175789287d973"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/Crafting.swift": {
+      "bytes": 11247,
+      "sha256": "3194d1c98a335a3de66443d0efd306405b6de56ca89b7b108c083cd58ea7ad6a"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/DailyBountyBoard.swift": {
+      "bytes": 6321,
+      "sha256": "20c265bde1c60aa216d39b25b9c8349eaf35c8a1951f7924503fc48f225acfbb"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/DailyPacing.swift": {
+      "bytes": 6633,
+      "sha256": "390aff4251270d7b23cee30d2e342299b440dd7445757c73b55453d5f839f8fa"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/DailyWork.swift": {
+      "bytes": 2736,
+      "sha256": "02930bfa1a3040e6c60bba4fc0d1fb7ff343de59fdfafb8d06e1954f6da51f53"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/FixedPointCombatMath.swift": {
+      "bytes": 3413,
+      "sha256": "49b5788cc9ef755451304f91b37fb86cb07191f49efc870ce1e141bcede2e7ca"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/FoolBattleEngine.swift": {
+      "bytes": 9234,
+      "sha256": "00fbb1b280b95f03c3eede4f7b566a86bed0503095e7f9a76691d6d1b9926f51"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/FoolCombatConfiguration.swift": {
+      "bytes": 4442,
+      "sha256": "be91d6480d0584c3d9738ce9305135c99ea6d47297721a22bf7972ec8afe1e52"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/FoolComboSimulator.swift": {
+      "bytes": 7387,
+      "sha256": "dfa0e46a33ee9c2d5a70a3be9fc08337a22aad3971e8d22ac8cb731bb3fc1bb9"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/HermitTalents.swift": {
+      "bytes": 4327,
+      "sha256": "b093f583369fd1f9e8fe0cb5cbd518b59feca0d0c8c5ce920f9079743b83cb0c"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/HousingStamina.swift": {
+      "bytes": 12095,
+      "sha256": "42da6b38bc102140e0d884367beb34c84ab959c808d7780003c26416a9756cf4"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/LightsEventPreview.swift": {
+      "bytes": 21198,
+      "sha256": "b25e87bd9fddf7b37ef1fc80e2d596dba06c2a9fd7a7e2a4d8b51378ef281113"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/LightsLocalEvent.swift": {
+      "bytes": 9761,
+      "sha256": "afde359813d67244dfa2fa6399f774e0244e1173e7e6f2ba9c37e714d9821c14"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/LocalWorkshop.swift": {
+      "bytes": 5319,
+      "sha256": "149ebad6197baaa36f6eebae3c9cbccc22b0f78d020d15db6cb3cf144ccb5c8d"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/MPCEncoreBellState.swift": {
+      "bytes": 4662,
+      "sha256": "53654134b51a2c8741920c1782dbf05327a4c304f8fb65c702f5206f708930b9"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/NeighborErrands.swift": {
+      "bytes": 50939,
+      "sha256": "f779abfdb20fcdf3758c5b5011f976d55eaa15510bfb75b8c7fb560c858e8784"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/OutfitBonus.swift": {
+      "bytes": 1865,
+      "sha256": "338a499c4bc382b84618b82e2be4c983c739c443a522040c3431d35c63877e7c"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/PartyAIPlanner.swift": {
+      "bytes": 14469,
+      "sha256": "64fb9ef0c7bf0a7845b9370440d41535d1c1dff3703ba62a8945dfda4a55e7dc"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/RemnantCases.swift": {
+      "bytes": 19386,
+      "sha256": "1aaace77ca53dceb0fa9e86909e101281f4c0f575e0b647202ca9b2f1ad94b8e"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/S9TalentEditor.swift": {
+      "bytes": 14204,
+      "sha256": "f9cff57991cdc41f7fbbedd0fc30659774e1ef76d63572959e81785a899ce5d1"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/SequenceEightRitual.swift": {
+      "bytes": 2428,
+      "sha256": "a1d3ef0325ab4c08bde689162299585f39dc75ad77cc8c7d996f6927a5d5fa33"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/SequenceNineRelicState.swift": {
+      "bytes": 6495,
+      "sha256": "3b9f6acf1f32d5d5c178cbbf4737fda1e71938aaaf72543e37b38dbb1891878a"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/SkillGrowth.swift": {
+      "bytes": 1321,
+      "sha256": "e005849f9c9bbf25f180a990114756d887c454b20580731b589e98f256c13169"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/StoryBattleDriver.swift": {
+      "bytes": 23244,
+      "sha256": "7d5bf7386e1196c51b66cad28210ea75de97bc40fa21326381137ea1ac108925"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/StreetEncounters.swift": {
+      "bytes": 2538,
+      "sha256": "abac9c63b96c3c3bc2209660492cd6e827fd98303e2bc679b98572578d95a8f6"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/StreetTaskTargets.swift": {
+      "bytes": 3560,
+      "sha256": "cb94a0ea220e3d624801192e4d7798f014500221a8a91537f51c7ce9e06eb4d6"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/TacticalLoop.swift": {
+      "bytes": 4946,
+      "sha256": "af23a105c283a3dcf1b32b6ed3f34ed339075f1f130027a120d50b9dbf99638e"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/TavernPokerPrize.swift": {
+      "bytes": 2444,
+      "sha256": "be1898b561d8000a84e629c0377c278bf584920c01c952e350974ab689d54e8e"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/WorkshopPlaytest.swift": {
+      "bytes": 11596,
+      "sha256": "1627c7d36625b449cf017e571eb92117b4ca1ea3908d31bbde4454b5dc201678"
+    },
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/WorldCampaignPrototype.swift": {
+      "bytes": 17120,
+      "sha256": "bd441dca10c0a0d03fb89a9ac8047f876f0bbf7cc89348aa5420da0f0cbe08de"
+    },
+    "mistport-ios/docs/game-design/chapter-one-30/CITY_INSTITUTIONS_AND_BANK_PROPOSAL_20261013.md": {
+      "bytes": 63552,
+      "sha256": "7f62816fee6b50c047385635fe0d238e364e1db759238e81d8f83e850829d3a3"
+    },
+    "mistport-ios/docs/game-design/chapter-one-30/HOUSING_STAMINA_ARCHITECTURE_20260930.md": {
+      "bytes": 18290,
+      "sha256": "e73cee375b2b598c3a3513deb130593e672d5d9cec644c9f6d05ca6b282b76fa"
+    },
+    "tools/economy-decisions/bank_check.py": {
+      "bytes": 16605,
+      "sha256": "ffc1f92c098c4f5d0d02a39ae7791de75ef4a2fdff4fdfe9552919273d82acfa"
+    },
+    "tools/economy-decisions/housing_check.py": {
+      "bytes": 8760,
+      "sha256": "06eeb0887855ddec5056cfd41aeb286d1d5f375c667da4b620c7da2e478acce6"
+    },
+    "tools/economy-decisions/shared_decisions.py": {
+      "bytes": 35423,
+      "sha256": "90d6e7ee183010130b47e4b42aba789006b8f40853c4e8bd2867f0a833cd3a2f"
+    },
+    "tools/progression-sim/Package.swift": {
+      "bytes": 390,
+      "sha256": "414305858cd114b2080657c3ec73e25b16a1b4c146a30f01a640ac55e4be4cb0"
+    },
+    "tools/progression-sim/Sources/ProgressionSim/BankChecks.swift": {
+      "bytes": 5764,
+      "sha256": "7067d8e5b912a1673a19cbfed576bb870d4bc0ccf5ecee7cb97ff40fc1e60921"
+    },
+    "tools/progression-sim/Sources/ProgressionSim/BankPowerProbe.swift": {
+      "bytes": 1510,
+      "sha256": "c214d6ed979f6c986897dc7dfb41ea6afe28f8f5ebf9a622d6cdc567b5a44c32"
+    },
+    "tools/progression-sim/Sources/ProgressionSim/BankSimulation.swift": {
+      "bytes": 17327,
+      "sha256": "37049342134d85a9cb5353d39902e88b6732579881afbc3edcd09da006920b8e"
+    },
+    "tools/progression-sim/Sources/ProgressionSim/Campaign.swift": {
+      "bytes": 56333,
+      "sha256": "566102ba3aa062d8d8101e0ba8762d444671670477811f7f4361307a63e8cf9a"
+    },
+    "tools/progression-sim/Sources/ProgressionSim/CampaignFights.swift": {
+      "bytes": 3011,
+      "sha256": "8dcb7617f44357b6b54096ec1b3063d20c5bc8546cc9aff1284ad0837041bd49"
+    },
+    "tools/progression-sim/Sources/ProgressionSim/ChapterDriver.swift": {
+      "bytes": 6154,
+      "sha256": "7c3dcd704a898bd99b0f7cde9feae4dc939539421757617bbc53c502ad9d78e2"
+    },
+    "tools/progression-sim/Sources/ProgressionSim/HousingChecks.swift": {
+      "bytes": 3608,
+      "sha256": "02624cd1545795801cd5dcdc70741cb6a4c89ecaa692eb73be20f77edeb508f3"
+    },
+    "tools/progression-sim/Sources/ProgressionSim/HousingPower.swift": {
+      "bytes": 1699,
+      "sha256": "4ba9a73e26ca8e716c951cc2333d21c38e6bdd4368cd31fecc1f678e67a5f117"
+    },
+    "tools/progression-sim/Sources/ProgressionSim/HousingSimulation.swift": {
+      "bytes": 18206,
+      "sha256": "6309a19a0d3da2f91f82020350d027788162a51f16cf491965a32e7546e42226"
+    },
+    "tools/progression-sim/Sources/ProgressionSim/HumanReport.swift": {
+      "bytes": 9182,
+      "sha256": "21440af2b940e0af3cf81d9dcc8581207c03c47a07d3cd9bfed355264e90c476"
+    },
+    "tools/progression-sim/Sources/ProgressionSim/HumanTiming.swift": {
+      "bytes": 18325,
+      "sha256": "fc3b43642d9cc8ae77b98a9207fedc6bec099721f29017f448d82bde3aeaa87a"
+    },
+    "tools/progression-sim/Sources/ProgressionSim/TowerDriver.swift": {
+      "bytes": 4276,
+      "sha256": "01713df4f2d73e0fa870ded759b2e5d017521e77bd5514aa105645e95027bb90"
+    },
+    "tools/progression-sim/Sources/ProgressionSim/Walls.swift": {
+      "bytes": 10612,
+      "sha256": "04e5608f74e5b134664d9db73cc9909faca3839c63814df4c01acfab8b9b7e7c"
+    },
+    "tools/progression-sim/Sources/ProgressionSim/main.swift": {
+      "bytes": 9271,
+      "sha256": "6c20635a171f989f903118b64a92f13ada6a742ec2c3a0b4f821e242f81635e9"
+    }
+  },
+  "documentation_followups": [
+    {
+      "date": "2026-10-13",
+      "topic": "住宿恢复、备战、保养与会面候选；未加入既有模拟结果",
+      "files": [
+        {
+          "path": "mistport-ios/docs/game-design/chapter-one-30/CITY_INSTITUTIONS_AND_BANK_PROPOSAL_20261013.md",
+          "prior_sha256": "ddd7ecd0e8f065ab12310d1bd9b432bf34df3911eb3c38fb475e60053bd45842",
+          "sha256": "8afa38cc141a2664050afd90ee5dc289e127a687ea1193239100cf6e0ce24bf9"
+        },
+        {
+          "path": "mistport-ios/docs/game-design/chapter-one-30/HOUSING_STAMINA_ARCHITECTURE_20260930.md",
+          "prior_sha256": null,
+          "sha256": "b2058a4daaa81f41ef393c1817e62a7a7f307d920b723d333aa869ba04728d3a"
+        }
+      ]
+    }
+  ],
+  "followup_snapshots": [
+    {
+      "date": "2026-10-13",
+      "scope": "Lodging growth, economy and meeting prototype followup; prior raw evidence preserved",
+      "changed_files": [
+        {
+          "path": "docs/planning/city-institutions-20261013/SIMULATION_REPORT.md",
+          "prior_sha256": "af207124553fd51b1e47fe3dc77416b65dbc4ef1192c455312015406f753a3f8",
+          "sha256": "3a061d713121b977ad5dc54b2dcbe1e9d8ad4c144bdf3b95398f12a06ed6136e"
+        },
+        {
+          "path": "docs/planning/city-institutions-20261013/check_proposal.py",
+          "prior_sha256": "820348f490a95317d0d2cd7e1e73b958af5f052995c697fdb09547a88b247bf8",
+          "sha256": "d254d9ff82bf92c8bdfcfd856b4e3fb0dc5219b80709cff3ef9b4f6ee5124bc0"
+        },
+        {
+          "path": "docs/planning/city-institutions-20261013/write_earning_report.py",
+          "prior_sha256": "346eaf03a96c25e99db57396d46d6605edae281713e1da808314e9df5ad4b84e",
+          "sha256": "f71f8f716f511fad79ab6a5a84edafd34169e318345de8b2b5e8cb587f617184"
+        },
+        {
+          "path": "mistport-ios/docs/game-design/chapter-one-30/CITY_INSTITUTIONS_AND_BANK_PROPOSAL_20261013.md",
+          "prior_sha256": "8afa38cc141a2664050afd90ee5dc289e127a687ea1193239100cf6e0ce24bf9",
+          "sha256": "7f62816fee6b50c047385635fe0d238e364e1db759238e81d8f83e850829d3a3"
+        },
+        {
+          "path": "mistport-ios/docs/game-design/chapter-one-30/HOUSING_STAMINA_ARCHITECTURE_20260930.md",
+          "prior_sha256": "b2058a4daaa81f41ef393c1817e62a7a7f307d920b723d333aa869ba04728d3a",
+          "sha256": "e73cee375b2b598c3a3513deb130593e672d5d9cec644c9f6d05ca6b282b76fa"
+        },
+        {
+          "path": "tools/progression-sim/Sources/ProgressionSim/BankSimulation.swift",
+          "prior_sha256": "4f92876f374009fa4247870a5baeddf1ef11e28ab44d5b0a3e082b127606e3f2",
+          "sha256": "37049342134d85a9cb5353d39902e88b6732579881afbc3edcd09da006920b8e"
+        },
+        {
+          "path": "tools/progression-sim/Sources/ProgressionSim/Campaign.swift",
+          "prior_sha256": "d52adbf53191dbf708b0a15983f1f9fa00e502720f09c2696772722cd75574f6",
+          "sha256": "566102ba3aa062d8d8101e0ba8762d444671670477811f7f4361307a63e8cf9a"
+        },
+        {
+          "path": "tools/progression-sim/Sources/ProgressionSim/CampaignFights.swift",
+          "prior_sha256": "57f2989c71bedbf66b829ba04a6e3eadb0f02094502e23f4ba996ef62d982c62",
+          "sha256": "8dcb7617f44357b6b54096ec1b3063d20c5bc8546cc9aff1284ad0837041bd49"
+        },
+        {
+          "path": "tools/progression-sim/Sources/ProgressionSim/main.swift",
+          "prior_sha256": "32cc81f5bdfdcc63db2ad4bcd8d6f5af910d3aeb0e8dc5f6fd6de24cec58536b",
+          "sha256": "6c20635a171f989f903118b64a92f13ada6a742ec2c3a0b4f821e242f81635e9"
+        }
+      ]
+    }
+  ],
+  "external_prototype": {
+    "path": "/Users/andrewlin/.codex/visualizations/2026/10/14/01a138bb-2297-7fd2-83d5-523e1379b4a7/private-meeting.html",
+    "sha256": "4d616da6468073a2755cb9359c3ed30cab6f575d3a89eddaebb624ef6b056c32",
+    "scope": "Conversation-only functional proposal, not shipping art or App"
+  }
+}

@@ -993,6 +993,7 @@ struct ChapterOneEncounterTestView: View {
     @State private var q30AngelIntroSessionID: UUID?
     /// Allies whose rig was last sent `down` (final-boss party; `syncPartyRigPresentation`).
     @State private var lastPartyFallenPresentation: Set<String> = []
+    /// The haste end last told to Unity (抢拍开幕's hourglass lasts exactly the rules' haste).
     @State private var presentedRelicEventIDs: Set<String> = []
     @State private var pendingGhostReveals: [String: TimeInterval] = [:]
     @State private var revealedGhostIDs: Set<String> = []
@@ -6647,7 +6648,7 @@ struct ChapterOneMissionBridgeView: View {
             }
             ForEach(depleted, id: \.self) { id in
                 if let offer = MPCChurchLoanOffer.all.first(where: { $0.relicID == id }) {
-                    let price = MPCChurchLoanLedger.ownedRepairPrice(value: offer.value, durability: 0)
+                    let price = game.ownedRelicRepairQuote(offer.relicID)
                     HStack(spacing: 8) {
                         Text("\(EarlyRelicShop.name(id))已失效 · 完好度0%")
                             .font(.caption2.bold())
@@ -8352,7 +8353,7 @@ struct ChurchBountyBoard: View {
                     Rectangle().fill(ChurchGold.opacity(0.48)).frame(height: 1)
 
                     ScrollView {
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: 10) {
                             HStack(alignment: .bottom) {
                                 VStack(alignment: .leading, spacing: 5) {
                                     Text("联合缉捕 · 每日告示")
@@ -8393,11 +8394,13 @@ struct ChurchBountyBoard: View {
 
                             if !ongoing.isEmpty {
                                 sectionTitle("追缉进行中", detail: "跨日保留 · \(ongoing.count) 案")
+                                LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
                                 ForEach(ongoing) { bounty in
                                     BountyNoticeCard(bounty: bounty, power: game.combatPower,
-                                        status: game.churchServices.bounties.cases[bounty.id]?.pendingTurnIn == true ? "待交案" : "调查中") {
+                                        status: game.churchServices.bounties.cases[bounty.id]?.pendingTurnIn == true ? "待交案" : "调查中", compact: true) {
                                         selected = bounty.id
                                     }
+                                }
                                 }
                             }
                             sectionTitle("今日新帖", detail: "本地每日 00:00 更替 · 当前战力 \(game.combatPower)")
@@ -8410,10 +8413,12 @@ struct ChurchBountyBoard: View {
                                     .background(.black.opacity(0.76))
                                     .overlay(Rectangle().stroke(ChurchGold.opacity(0.35)))
                             }
+                            LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
                             ForEach(fresh) { bounty in
-                                BountyNoticeCard(bounty: bounty, power: game.combatPower, status: "可接案") {
+                                BountyNoticeCard(bounty: bounty, power: game.combatPower, status: "可接案", compact: true) {
                                     selected = bounty.id
                                 }
+                            }
                             }
                             Button("无名残余案 · 每日当地小案") { showsRemnants = true }
                                 .buttonStyle(GameArtButtonStyle(primary: true))
@@ -8430,10 +8435,12 @@ struct ChurchBountyBoard: View {
                                     .overlay(Rectangle().stroke(ChurchGold.opacity(0.4)))
                                 }.buttonStyle(.plain)
                                 if showsClosed {
+                                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
                                     ForEach(closed) { bounty in
-                                        BountyNoticeCard(bounty: bounty, power: game.combatPower, status: "已结案") {
+                                        BountyNoticeCard(bounty: bounty, power: game.combatPower, status: "已结案", compact: true) {
                                             selected = bounty.id
                                         }
+                                    }
                                     }
                                 }
                             }
@@ -8444,7 +8451,7 @@ struct ChurchBountyBoard: View {
                 }
             }
             .preferredColorScheme(.dark)
-            .sheet(isPresented: $showsRemnants) { RemnantCasesView(game: game) }
+            .fullScreenCover(isPresented: $showsRemnants) { RemnantCasesView(game: game) }
             .onAppear { game.refreshChurchBountyBoard() }
             .task {
                 while !Task.isCancelled {
@@ -8472,6 +8479,8 @@ private struct BountyNoticeCard: View {
     let bounty: MPCChurchBounty
     let power: Int
     let status: String
+    /// Two to a row on the board (2026-10-15: one page): portrait on top, the crime in two lines.
+    var compact = false
     let onTap: () -> Void
     private let ink = Color(red: 0.20, green: 0.14, blue: 0.12)
     private var notice: MPCBountyNotice? { MPCBountyNoticeCatalog.notice(for: bounty.id) }
@@ -8485,6 +8494,47 @@ private struct BountyNoticeCard: View {
         return ("仍有风险", Color(red: 0.13, green: 0.40, blue: 0.40))
     }
     var body: some View {
+        if compact { compactBody } else { fullBody }
+    }
+    private var compactBody: some View {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 5) {
+                HStack {
+                    Text(bounty.id.uppercased()).font(.system(size: 10, weight: .bold, design: .serif)).foregroundStyle(ink.opacity(0.72))
+                    Spacer()
+                    Text(status).font(.system(size: 11, weight: .bold, design: .serif))
+                        .foregroundStyle(status == "可接案" ? danger.1 : ink.opacity(0.7))
+                }
+                HStack(alignment: .top, spacing: 6) {
+                    Image("ChurchBounty" + bounty.id).resizable().scaledToFit()
+                        .frame(width: 46, height: 58).background(Color(red: 0.08, green: 0.07, blue: 0.09)).clipped()
+                        .overlay(Rectangle().stroke(ink.opacity(0.75), lineWidth: 1.5)).accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(bounty.title).font(.system(size: 15, weight: .bold, design: .serif)).foregroundStyle(ink)
+                            .lineLimit(2).minimumScaleFactor(0.8)
+                        Text(danger.0).font(.system(size: 10, weight: .bold, design: .serif)).foregroundStyle(danger.1)
+                    }
+                }
+                Text(notice?.crime ?? bounty.visualIdentity).font(.system(size: 10, weight: .medium, design: .serif))
+                    .foregroundStyle(ink.opacity(0.86)).lineLimit(2)
+                HStack(spacing: 4) {
+                    if let enemy { Text("生命\(enemy.maxHP)").font(.system(size: 9, design: .serif)).foregroundStyle(ink.opacity(0.72)) }
+                    Spacer(minLength: 0)
+                    reward("RewardCoin", value: bounty.copper)
+                    reward("RewardReputation", value: bounty.merit)
+                }
+            }
+            .padding(9)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background { Image(decorative: "BountyNoticeParchment").resizable().scaledToFill() }
+            .clipped()
+            .overlay(Rectangle().stroke(Color(red: 0.35, green: 0.23, blue: 0.13), lineWidth: 2))
+            .shadow(color: .black.opacity(0.5), radius: 5, y: 3)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(bounty.title)，\(danger.0)，\(notice?.crime ?? "")，赏金\(bounty.copper)铜币和\(bounty.merit)功勋")
+    }
+    private var fullBody: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
@@ -8861,7 +8911,7 @@ private struct ChurchLoanCabinet: View {
                                         for (id, relics) in condition.battleRelicIDs where relics.contains(offer.relicID) && !condition.settledBattleIDs.contains(id) { game.finishChurchLoanBattle(id, outcome: .retreat) }
                                     }
                                 } else {
-                                    let price = MPCChurchLoanLedger.ownedRepairPrice(value: offer.value, durability: durability)
+                                    let price = game.ownedRelicRepairQuote(offer.relicID)
                                     ChurchActionButton(title: "修复 · \(price) 铜币", enabled: durability < 100 && game.venueCoins >= price) { perform { try game.repairOwnedChurchRelic(offer.relicID) } }
                                     Text("归零时保留所有权，修复后恢复使用。假面裂纹与僭命勋章不在此修复。").font(.caption).foregroundStyle(.white.opacity(0.6))
                                 }

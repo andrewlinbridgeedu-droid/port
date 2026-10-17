@@ -1,0 +1,4298 @@
+{
+  "days": 365,
+  "results": [
+    {
+      "ext": {
+        "name": "basic",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7401160.0,
+      "money_end": 18258739.0,
+      "money_growth": 1.4670104416064507,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 391,
+      "player_cash_median": 522,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7616577,
+      "recycled": 2224556,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3056050,
+        "combat_cost_paid": 8678919,
+        "combat_cost_due": 8684361.142893529,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 15160,
+        "premium_paid": 0,
+        "meeting_paid": 92028,
+        "contract_gross": 1825400,
+        "contract_inputs": 920280,
+        "contracts": 46014,
+        "deliveries": 45635,
+        "client_denials": 0,
+        "budget_denials": 0,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 255017,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        },
+        "rooms_peak": {
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        },
+        "leases": 1587,
+        "open_contracts": 379,
+        "late_material_accounts": 0,
+        "contract_net": 813092
+      },
+      "housing_rules": {
+        "strategy": "basic",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "basic",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402540.0,
+      "money_end": 18229200.0,
+      "money_growth": 1.4625601482734303,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 375,
+      "player_cash_median": 522,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7616581,
+      "recycled": 2222611,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2944050,
+        "combat_cost_paid": 8774754,
+        "combat_cost_due": 8780141.714320706,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 14560,
+        "premium_paid": 0,
+        "meeting_paid": 90924,
+        "contract_gross": 1803920,
+        "contract_inputs": 909240,
+        "contracts": 45462,
+        "deliveries": 45098,
+        "client_denials": 0,
+        "budget_denials": 0,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 255334,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        },
+        "rooms_peak": {
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        },
+        "leases": 1515,
+        "open_contracts": 364,
+        "late_material_accounts": 0,
+        "contract_net": 803756
+      },
+      "housing_rules": {
+        "strategy": "basic",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "basic",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402360.0,
+      "money_end": 18281165.0,
+      "money_growth": 1.469640087755797,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 391,
+      "player_cash_median": 510,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7618631,
+      "recycled": 2209234,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3037000,
+        "combat_cost_paid": 8760443,
+        "combat_cost_due": 8765842.285749486,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 14480,
+        "premium_paid": 0,
+        "meeting_paid": 91882,
+        "contract_gross": 1823160,
+        "contract_inputs": 918820,
+        "contracts": 45941,
+        "deliveries": 45579,
+        "client_denials": 0,
+        "budget_denials": 0,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 255969,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        },
+        "rooms_peak": {
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        },
+        "leases": 1566,
+        "open_contracts": 362,
+        "late_material_accounts": 0,
+        "contract_net": 812458
+      },
+      "housing_rules": {
+        "strategy": "basic",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7401160.0,
+      "money_end": 19017137.0,
+      "money_growth": 1.5694805949337671,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 309,
+      "player_cash_median": 428,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7604181,
+      "recycled": 2212160,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3025650,
+        "combat_cost_paid": 8659608,
+        "combat_cost_due": 8664007.171419324,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 21920,
+        "premium_paid": 1489664,
+        "meeting_paid": 184300,
+        "contract_gross": 2527584,
+        "contract_inputs": 1279180,
+        "contracts": 45632,
+        "deliveries": 45261,
+        "client_denials": 0,
+        "budget_denials": 1291,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 68238,
+          "1": 99553,
+          "2": 59968,
+          "3": 20373,
+          "4": 6885
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 599,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1631,
+        "open_contracts": 371,
+        "late_material_accounts": 0,
+        "contract_net": 1064104
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402540.0,
+      "money_end": 18997530.0,
+      "money_growth": 1.5663529004909127,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 298,
+      "player_cash_median": 428,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7605043,
+      "recycled": 2211073,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2906050,
+        "combat_cost_paid": 8755099,
+        "combat_cost_due": 8759563.25713584,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 20940,
+        "premium_paid": 1472520,
+        "meeting_paid": 181628,
+        "contract_gross": 2490028,
+        "contract_inputs": 1259880,
+        "contracts": 45072,
+        "deliveries": 44718,
+        "client_denials": 0,
+        "budget_denials": 1309,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 68859,
+          "1": 101235,
+          "2": 58021,
+          "3": 20575,
+          "4": 6644
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 599,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1595,
+        "open_contracts": 354,
+        "late_material_accounts": 0,
+        "contract_net": 1048520
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402360.0,
+      "money_end": 19059316.0,
+      "money_growth": 1.5747621028969139,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 259,
+      "player_cash_median": 428,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7606656,
+      "recycled": 2197259,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3000900,
+        "combat_cost_paid": 8740848,
+        "combat_cost_due": 8745297.342849793,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 20924,
+        "premium_paid": 1489398,
+        "meeting_paid": 183638,
+        "contract_gross": 2519004,
+        "contract_inputs": 1274360,
+        "contracts": 45584,
+        "deliveries": 45231,
+        "client_denials": 0,
+        "budget_denials": 1250,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 68296,
+          "1": 100856,
+          "2": 59558,
+          "3": 20461,
+          "4": 6798
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 600,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1612,
+        "open_contracts": 353,
+        "late_material_accounts": 0,
+        "contract_net": 1061006
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "greedy",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7401160.0,
+      "money_end": 19121611.0,
+      "money_growth": 1.583596490279902,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 274,
+      "player_cash_median": 417,
+      "below_floor_share": 0.0006556024526899265,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7603288,
+      "recycled": 2211267,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3012350,
+        "combat_cost_paid": 8604543,
+        "combat_cost_due": 8608033.75,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 23832,
+        "premium_paid": 1796662,
+        "meeting_paid": 205888,
+        "contract_gross": 2748912,
+        "contract_inputs": 1390750,
+        "contracts": 46002,
+        "deliveries": 45624,
+        "client_denials": 0,
+        "budget_denials": 44,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 22905,
+          "1": 124579,
+          "2": 79307,
+          "3": 21344,
+          "4": 6882
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 600,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1588,
+        "open_contracts": 378,
+        "late_material_accounts": 0,
+        "contract_net": 1152274
+      },
+      "housing_rules": {
+        "strategy": "greedy",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "greedy",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402540.0,
+      "money_end": 19107771.0,
+      "money_growth": 1.5812452212348735,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 268,
+      "player_cash_median": 417,
+      "below_floor_share": 0.0006075962609238224,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7604118,
+      "recycled": 2210148,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2895600,
+        "combat_cost_paid": 8699513,
+        "combat_cost_due": 8702972.5,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 22896,
+        "premium_paid": 1789082,
+        "meeting_paid": 204396,
+        "contract_gross": 2721596,
+        "contract_inputs": 1376570,
+        "contracts": 45452,
+        "deliveries": 45089,
+        "client_denials": 0,
+        "budget_denials": 44,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 23024,
+          "1": 125523,
+          "2": 78691,
+          "3": 21425,
+          "4": 6671
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 600,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1569,
+        "open_contracts": 363,
+        "late_material_accounts": 0,
+        "contract_net": 1140630
+      },
+      "housing_rules": {
+        "strategy": "greedy",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "greedy",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402360.0,
+      "money_end": 19175353.0,
+      "money_growth": 1.590437779302817,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 234,
+      "player_cash_median": 417,
+      "below_floor_share": 0.0005935775926754272,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7605704,
+      "recycled": 2196307,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2997100,
+        "combat_cost_paid": 8685332,
+        "combat_cost_due": 8688798.75,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 22908,
+        "premium_paid": 1800646,
+        "meeting_paid": 205602,
+        "contract_gross": 2743760,
+        "contract_inputs": 1387770,
+        "contracts": 45931,
+        "deliveries": 45569,
+        "client_denials": 0,
+        "budget_denials": 47,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 23012,
+          "1": 125252,
+          "2": 79394,
+          "3": 21477,
+          "4": 6834
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 600,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1583,
+        "open_contracts": 362,
+        "late_material_accounts": 0,
+        "contract_net": 1150388
+      },
+      "housing_rules": {
+        "strategy": "greedy",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_loss160",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7401160.0,
+      "money_end": 19143410.0,
+      "money_growth": 1.5865418393873392,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 234,
+      "player_cash_median": 429,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7599624,
+      "recycled": 2207603,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3564,
+        "budget": 111600,
+        "custody": 3360,
+        "buyer_escrow": 10120,
+        "deposit_paid": 108036,
+        "risk_principal": 410880,
+        "risk_returned": 0,
+        "deposit_principal": 543540,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 166620,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2979450,
+        "combat_cost_paid": 8659573,
+        "combat_cost_due": 8664007.171419324,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 11516,
+        "deposit_accounts": 9059,
+        "risk_accounts": 2568,
+        "open_contracts": 111,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 21816,
+        "premium_paid": 1434172,
+        "meeting_paid": 182406,
+        "contract_gross": 2512248,
+        "contract_inputs": 1270910,
+        "contracts": 45014,
+        "deliveries": 44651,
+        "client_denials": 0,
+        "budget_denials": 3219,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 72161,
+          "1": 98122,
+          "2": 60672,
+          "3": 17931,
+          "4": 6131
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 600,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1629,
+        "open_contracts": 363,
+        "late_material_accounts": 0,
+        "contract_net": 1058932
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_loss160",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402540.0,
+      "money_end": 19132248.0,
+      "money_growth": 1.584551788980539,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 224,
+      "player_cash_median": 431,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7600415,
+      "recycled": 2206445,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3516,
+        "budget": 111600,
+        "custody": 3180,
+        "buyer_escrow": 9568,
+        "deposit_paid": 108084,
+        "risk_principal": 421760,
+        "risk_returned": 0,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 170034,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2858550,
+        "combat_cost_paid": 8755045,
+        "combat_cost_due": 8759563.25713584,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 11591,
+        "deposit_accounts": 9060,
+        "risk_accounts": 2636,
+        "open_contracts": 105,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 20056,
+        "premium_paid": 1415494,
+        "meeting_paid": 179364,
+        "contract_gross": 2481068,
+        "contract_inputs": 1254280,
+        "contracts": 44491,
+        "deliveries": 44146,
+        "client_denials": 0,
+        "budget_denials": 2982,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 72426,
+          "1": 99367,
+          "2": 60939,
+          "3": 16839,
+          "4": 5763
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 600,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1620,
+        "open_contracts": 345,
+        "late_material_accounts": 0,
+        "contract_net": 1047424
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_loss160",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402360.0,
+      "money_end": 19211627.0,
+      "money_growth": 1.5953381083870548,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 210,
+      "player_cash_median": 431,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7601927,
+      "recycled": 2192530,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 3492,
+        "budget": 111600,
+        "custody": 3060,
+        "buyer_escrow": 9752,
+        "deposit_paid": 108108,
+        "risk_principal": 427520,
+        "risk_returned": 0,
+        "deposit_principal": 543600,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 168549,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2963250,
+        "combat_cost_paid": 8740778,
+        "combat_cost_due": 8745297.342849793,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 11628,
+        "deposit_accounts": 9060,
+        "risk_accounts": 2672,
+        "open_contracts": 104,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 20088,
+        "premium_paid": 1434860,
+        "meeting_paid": 182060,
+        "contract_gross": 2513176,
+        "contract_inputs": 1270480,
+        "contracts": 45009,
+        "deliveries": 44668,
+        "client_denials": 0,
+        "budget_denials": 3057,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 72179,
+          "1": 98868,
+          "2": 61576,
+          "3": 17297,
+          "4": 6049
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 600,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1629,
+        "open_contracts": 341,
+        "late_material_accounts": 0,
+        "contract_net": 1060636
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_supply_repair",
+        "family": "bank",
+        "base": "supply_half_90_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": true,
+      "recovery_days": 1,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.4777777777777778,
+      "money_start": 7401160.0,
+      "money_end": 18807137.0,
+      "money_growth": 1.5411066643607216,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 309,
+      "player_cash_median": 428,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7604181,
+      "recycled": 2212160,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3025650,
+        "combat_cost_paid": 8659608,
+        "combat_cost_due": 8664007.171419324,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 21920,
+        "premium_paid": 1489664,
+        "meeting_paid": 184300,
+        "contract_gross": 2527584,
+        "contract_inputs": 1279180,
+        "contracts": 45632,
+        "deliveries": 45261,
+        "client_denials": 0,
+        "budget_denials": 1291,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 68238,
+          "1": 99553,
+          "2": 59968,
+          "3": 20373,
+          "4": 6885
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 599,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1631,
+        "open_contracts": 371,
+        "late_material_accounts": 0,
+        "contract_net": 1064104
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_supply_repair",
+        "family": "bank",
+        "base": "supply_half_90_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": true,
+      "recovery_days": 1,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.4777777777777778,
+      "money_start": 7402540.0,
+      "money_end": 18787530.0,
+      "money_growth": 1.537984259456889,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 298,
+      "player_cash_median": 428,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7605043,
+      "recycled": 2211073,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2906050,
+        "combat_cost_paid": 8755099,
+        "combat_cost_due": 8759563.25713584,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 20940,
+        "premium_paid": 1472520,
+        "meeting_paid": 181628,
+        "contract_gross": 2490028,
+        "contract_inputs": 1259880,
+        "contracts": 45072,
+        "deliveries": 44718,
+        "client_denials": 0,
+        "budget_denials": 1309,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 68859,
+          "1": 101235,
+          "2": 58021,
+          "3": 20575,
+          "4": 6644
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 599,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1595,
+        "open_contracts": 354,
+        "late_material_accounts": 0,
+        "contract_net": 1048520
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_supply_repair",
+        "family": "bank",
+        "base": "supply_half_90_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": true,
+      "recovery_days": 1,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.4777777777777778,
+      "money_start": 7402360.0,
+      "money_end": 18849316.0,
+      "money_growth": 1.5463927720348645,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 259,
+      "player_cash_median": 428,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7606656,
+      "recycled": 2197259,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3000900,
+        "combat_cost_paid": 8740848,
+        "combat_cost_due": 8745297.342849793,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 20924,
+        "premium_paid": 1489398,
+        "meeting_paid": 183638,
+        "contract_gross": 2519004,
+        "contract_inputs": 1274360,
+        "contracts": 45584,
+        "deliveries": 45231,
+        "client_denials": 0,
+        "budget_denials": 1250,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 68296,
+          "1": 100856,
+          "2": 59558,
+          "3": 20461,
+          "4": 6798
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 600,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1612,
+        "open_contracts": 353,
+        "late_material_accounts": 0,
+        "contract_net": 1061006
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_supply_unrepaired",
+        "family": "bank",
+        "base": "supply_half_90_no_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 0.6567958357432042,
+      "fill_share_99": 0.8904109589041096,
+      "shock": true,
+      "recovery_days": 2,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.9222222222222223,
+      "money_start": 7401160.0,
+      "money_end": 18807137.0,
+      "money_growth": 1.5411066643607216,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 309,
+      "player_cash_median": 428,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7327305,
+      "recycled": 1935284,
+      "stock_paid": 1256753,
+      "L1": false,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3025650,
+        "combat_cost_paid": 8659608,
+        "combat_cost_due": 8664007.171419324,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 21920,
+        "premium_paid": 1489664,
+        "meeting_paid": 184300,
+        "contract_gross": 2527584,
+        "contract_inputs": 1279180,
+        "contracts": 45632,
+        "deliveries": 45261,
+        "client_denials": 0,
+        "budget_denials": 1291,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 68238,
+          "1": 99553,
+          "2": 59968,
+          "3": 20373,
+          "4": 6885
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 599,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1631,
+        "open_contracts": 371,
+        "late_material_accounts": 0,
+        "contract_net": 1064104
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_supply_unrepaired",
+        "family": "bank",
+        "base": "supply_half_90_no_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 0.6573378050190818,
+      "fill_share_99": 0.8904109589041096,
+      "shock": true,
+      "recovery_days": 2,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.9222222222222223,
+      "money_start": 7402540.0,
+      "money_end": 18787530.0,
+      "money_growth": 1.537984259456889,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 298,
+      "player_cash_median": 428,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7328129,
+      "recycled": 1934159,
+      "stock_paid": 1260692,
+      "L1": false,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2906050,
+        "combat_cost_paid": 8755099,
+        "combat_cost_due": 8759563.25713584,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 20940,
+        "premium_paid": 1472520,
+        "meeting_paid": 181628,
+        "contract_gross": 2490028,
+        "contract_inputs": 1259880,
+        "contracts": 45072,
+        "deliveries": 44718,
+        "client_denials": 0,
+        "budget_denials": 1309,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 68859,
+          "1": 101235,
+          "2": 58021,
+          "3": 20575,
+          "4": 6644
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 599,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1595,
+        "open_contracts": 354,
+        "late_material_accounts": 0,
+        "contract_net": 1048520
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_supply_unrepaired",
+        "family": "bank",
+        "base": "supply_half_90_no_repair",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 0.6583082967413912,
+      "fill_share_99": 0.8904109589041096,
+      "shock": true,
+      "recovery_days": 2,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 0.9222222222222223,
+      "money_start": 7402360.0,
+      "money_end": 18849316.0,
+      "money_growth": 1.5463927720348645,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 259,
+      "player_cash_median": 428,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7329076,
+      "recycled": 1919679,
+      "stock_paid": 1262821,
+      "L1": false,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 3000900,
+        "combat_cost_paid": 8740848,
+        "combat_cost_due": 8745297.342849793,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 20924,
+        "premium_paid": 1489398,
+        "meeting_paid": 183638,
+        "contract_gross": 2519004,
+        "contract_inputs": 1274360,
+        "contracts": 45584,
+        "deliveries": 45231,
+        "client_denials": 0,
+        "budget_denials": 1250,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 68296,
+          "1": 100856,
+          "2": 59558,
+          "3": 20461,
+          "4": 6798
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 600,
+          "3": 200,
+          "4": 80
+        },
+        "leases": 1612,
+        "open_contracts": 353,
+        "late_material_accounts": 0,
+        "contract_net": 1061006
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_guests25pct",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7401160.0,
+      "money_end": 19233349.0,
+      "money_growth": 1.5986938533959543,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 201,
+      "player_cash_median": 423,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7600922,
+      "recycled": 2208901,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2945200,
+        "combat_cost_paid": 8659608,
+        "combat_cost_due": 8664007.171419324,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 6020,
+        "premium_paid": 1099426,
+        "meeting_paid": 51372,
+        "contract_gross": 671300,
+        "contract_inputs": 340370,
+        "contracts": 11915,
+        "deliveries": 11819,
+        "client_denials": 0,
+        "budget_denials": 411,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 93757,
+          "1": 101745,
+          "2": 45339,
+          "3": 11639,
+          "4": 2537
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 592,
+          "3": 189,
+          "4": 52
+        },
+        "leases": 1653,
+        "open_contracts": 96,
+        "late_material_accounts": 0,
+        "contract_net": 279558
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_guests25pct",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402540.0,
+      "money_end": 19220391.0,
+      "money_growth": 1.5964589181551196,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 203,
+      "player_cash_median": 428,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7601779,
+      "recycled": 2207809,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2832150,
+        "combat_cost_paid": 8755099,
+        "combat_cost_due": 8759563.25713584,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 5680,
+        "premium_paid": 1088814,
+        "meeting_paid": 52176,
+        "contract_gross": 685476,
+        "contract_inputs": 347380,
+        "contracts": 12144,
+        "deliveries": 12050,
+        "client_denials": 0,
+        "budget_denials": 415,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 94269,
+          "1": 102786,
+          "2": 44839,
+          "3": 10870,
+          "4": 2570
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 574,
+          "3": 152,
+          "4": 63
+        },
+        "leases": 1602,
+        "open_contracts": 94,
+        "late_material_accounts": 0,
+        "contract_net": 285920
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_guests25pct",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402360.0,
+      "money_end": 19288717.0,
+      "money_growth": 1.6057523546544616,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 200,
+      "player_cash_median": 423,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7603286,
+      "recycled": 2193889,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2924850,
+        "combat_cost_paid": 8740848,
+        "combat_cost_due": 8745297.342849793,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 4792,
+        "premium_paid": 1094666,
+        "meeting_paid": 50104,
+        "contract_gross": 664320,
+        "contract_inputs": 336090,
+        "contracts": 11839,
+        "deliveries": 11758,
+        "client_denials": 0,
+        "budget_denials": 387,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 94053,
+          "1": 102595,
+          "2": 45952,
+          "3": 11019,
+          "4": 2350
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 573,
+          "3": 157,
+          "4": 53
+        },
+        "leases": 1638,
+        "open_contracts": 81,
+        "late_material_accounts": 0,
+        "contract_net": 278126
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_guests_failed",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7401160.0,
+      "money_end": 19284579.0,
+      "money_growth": 1.605615741316226,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 196,
+      "player_cash_median": 423,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7599288,
+      "recycled": 2207267,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2846850,
+        "combat_cost_paid": 8659574,
+        "combat_cost_due": 8664007.171419324,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 0,
+        "premium_paid": 869692,
+        "meeting_paid": 125302,
+        "contract_gross": 0,
+        "contract_inputs": 0,
+        "contracts": 0,
+        "deliveries": 0,
+        "client_denials": 0,
+        "budget_denials": 8084,
+        "failed_meetings": 43244,
+        "tier_days": {
+          "0": 106134,
+          "1": 105475,
+          "2": 39980,
+          "3": 3428,
+          "4": 0
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 557,
+          "3": 86,
+          "4": 0
+        },
+        "leases": 1653,
+        "open_contracts": 0,
+        "late_material_accounts": 0,
+        "contract_net": -125302
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": true,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_guests_failed",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402540.0,
+      "money_end": 19279970.0,
+      "money_growth": 1.6045073717940057,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 197,
+      "player_cash_median": 430,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7600069,
+      "recycled": 2206099,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2737650,
+        "combat_cost_paid": 8755046,
+        "combat_cost_due": 8759563.25713584,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 0,
+        "premium_paid": 863004,
+        "meeting_paid": 123470,
+        "contract_gross": 0,
+        "contract_inputs": 0,
+        "contracts": 0,
+        "deliveries": 0,
+        "client_denials": 0,
+        "budget_denials": 7743,
+        "failed_meetings": 42797,
+        "tier_days": {
+          "0": 106793,
+          "1": 105853,
+          "2": 39510,
+          "3": 3178,
+          "4": 0
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 539,
+          "3": 86,
+          "4": 0
+        },
+        "leases": 1599,
+        "open_contracts": 0,
+        "late_material_accounts": 0,
+        "contract_net": -123470
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": true,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_guests_failed",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402360.0,
+      "money_end": 19349476.0,
+      "money_growth": 1.613960412625163,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 196,
+      "player_cash_median": 430,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7601577,
+      "recycled": 2192180,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2823500,
+        "combat_cost_paid": 8740809,
+        "combat_cost_due": 8745297.342849793,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 0,
+        "premium_paid": 872706,
+        "meeting_paid": 125190,
+        "contract_gross": 0,
+        "contract_inputs": 0,
+        "contracts": 0,
+        "deliveries": 0,
+        "client_denials": 0,
+        "budget_denials": 7944,
+        "failed_meetings": 43256,
+        "tier_days": {
+          "0": 106490,
+          "1": 105862,
+          "2": 40345,
+          "3": 3272,
+          "4": 0
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 533,
+          "3": 85,
+          "4": 0
+        },
+        "leases": 1644,
+        "open_contracts": 0,
+        "late_material_accounts": 0,
+        "contract_net": -125190
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": true,
+        "failed_meetings": true,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_no_guests",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 1,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7401160.0,
+      "money_end": 19296235.0,
+      "money_growth": 1.6071906295769853,
+      "mint_cum": 15493832.0,
+      "player_cash_p10": 200,
+      "player_cash_median": 423,
+      "below_floor_share": 0.0,
+      "loop_due": 5392021,
+      "loop_paid": 5392021,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_due_by_channel": {
+        "orders": 2531838,
+        "errands": 1366745,
+        "remnants": 783383,
+        "events": 710055
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7599786,
+      "recycled": 2207765,
+      "stock_paid": 1256753,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2922250,
+        "combat_cost_paid": 8659608,
+        "combat_cost_due": 8664007.171419324,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 778
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 0,
+        "premium_paid": 931638,
+        "meeting_paid": 0,
+        "contract_gross": 0,
+        "contract_inputs": 0,
+        "contracts": 0,
+        "deliveries": 0,
+        "client_denials": 0,
+        "budget_denials": 0,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 102676,
+          "1": 102922,
+          "2": 42979,
+          "3": 6440,
+          "4": 0
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 557,
+          "3": 157,
+          "4": 0
+        },
+        "leases": 1659,
+        "open_contracts": 0,
+        "late_material_accounts": 0,
+        "contract_net": 0
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": false,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_no_guests",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 2,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402540.0,
+      "money_end": 19293117.0,
+      "money_growth": 1.6062833838115025,
+      "mint_cum": 15530982.0,
+      "player_cash_p10": 200,
+      "player_cash_median": 428,
+      "below_floor_share": 0.0,
+      "loop_due": 5393970,
+      "loop_paid": 5393970,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_due_by_channel": {
+        "orders": 2537362,
+        "errands": 1356560,
+        "remnants": 781980,
+        "events": 718068
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7600583,
+      "recycled": 2206613,
+      "stock_paid": 1260692,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2815650,
+        "combat_cost_paid": 8755099,
+        "combat_cost_due": 8759563.25713584,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 726
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 0,
+        "premium_paid": 919780,
+        "meeting_paid": 0,
+        "contract_gross": 0,
+        "contract_inputs": 0,
+        "contracts": 0,
+        "deliveries": 0,
+        "client_denials": 0,
+        "budget_denials": 0,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 103480,
+          "1": 103742,
+          "2": 42189,
+          "3": 5923,
+          "4": 0
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 539,
+          "3": 148,
+          "4": 0
+        },
+        "leases": 1606,
+        "open_contracts": 0,
+        "late_material_accounts": 0,
+        "contract_net": 0
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": false,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    },
+    {
+      "ext": {
+        "name": "budget_no_guests",
+        "family": "bank",
+        "base": "steady_fresh20",
+        "loop": "funded",
+        "share": 1.0,
+        "tax": 0.2,
+        "import_cap": 0,
+        "import_rate": 1.0,
+        "need_increment": 1.0,
+        "unbacked_per_active": 0,
+        "underground": false,
+        "scale": 1.0,
+        "control": false
+      },
+      "seed": 3,
+      "peak_index": 1.0,
+      "max_30d_change": 0.0,
+      "annual_change": 0.0,
+      "fill_min": 1.0,
+      "fill_share_99": 1.0,
+      "shock": false,
+      "recovery_days": null,
+      "recovery_fund_min": 960000.0,
+      "recovery_fund_end": 960000.0,
+      "j0_paid": 0.0,
+      "stabilizer_min_share": 1.0,
+      "money_start": 7402360.0,
+      "money_end": 19357296.0,
+      "money_growth": 1.615016832469645,
+      "mint_cum": 15572564.0,
+      "player_cash_p10": 200,
+      "player_cash_median": 423,
+      "below_floor_share": 0.0,
+      "loop_due": 5409397,
+      "loop_paid": 5409397,
+      "loop_paid_share": 1.0,
+      "loop_paid_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_due_by_channel": {
+        "orders": 2542666,
+        "errands": 1364965,
+        "remnants": 784931,
+        "events": 716835
+      },
+      "loop_short_days": {
+        "orders": 0,
+        "errands": 0,
+        "remnants": 0,
+        "events": 0
+      },
+      "account_empty_day": {},
+      "loop_minted": 0,
+      "import_minted": 0,
+      "underground_minted": 0,
+      "unbacked_minted": 0,
+      "levy_moved": 7602105,
+      "recycled": 2192708,
+      "stock_paid": 1262821,
+      "L1": true,
+      "L2_primary": true,
+      "L2_strict": true,
+      "L3": true,
+      "bank": {
+        "coupon": 0,
+        "budget": 0,
+        "custody": 0,
+        "buyer_escrow": 0,
+        "deposit_paid": 0,
+        "risk_principal": 0,
+        "risk_returned": 0,
+        "deposit_principal": 0,
+        "redeemed": 0,
+        "denied_budget": 0,
+        "denied_reserve": 0,
+        "minimum_coverage": 1.0,
+        "food_aid_paid": 0,
+        "food_aid_baskets": 0,
+        "advance_paid": 2902150,
+        "combat_cost_paid": 8740848,
+        "combat_cost_due": 8745297.342849793,
+        "j0_avoided": 0,
+        "minted_bonus": 0,
+        "settled": 0,
+        "deposit_accounts": 0,
+        "risk_accounts": 0,
+        "open_contracts": 0,
+        "finished_ritual_accounts": 746
+      },
+      "candidate_rules": {
+        "materials": [
+          [
+            17,
+            500
+          ],
+          [
+            20,
+            650
+          ],
+          [
+            23,
+            950
+          ],
+          [
+            30,
+            300
+          ]
+        ],
+        "cash_recovery": false
+      },
+      "source_audit_pass": true,
+      "housing": {
+        "escrow": 0,
+        "premium_paid": 932008,
+        "meeting_paid": 0,
+        "contract_gross": 0,
+        "contract_inputs": 0,
+        "contracts": 0,
+        "deliveries": 0,
+        "client_denials": 0,
+        "budget_denials": 0,
+        "failed_meetings": 0,
+        "tier_days": {
+          "0": 103138,
+          "1": 103523,
+          "2": 43099,
+          "3": 6209,
+          "4": 0
+        },
+        "rooms_peak": {
+          "1": 1200,
+          "2": 533,
+          "3": 138,
+          "4": 0
+        },
+        "leases": 1646,
+        "open_contracts": 0,
+        "late_material_accounts": 0,
+        "contract_net": 0
+      },
+      "housing_rules": {
+        "strategy": "budget",
+        "prices": [
+          12,
+          16,
+          22,
+          26,
+          42
+        ],
+        "meetings": false,
+        "failed_meetings": false,
+        "customer_account": "general_business_cash"
+      }
+    }
+  ]
+}

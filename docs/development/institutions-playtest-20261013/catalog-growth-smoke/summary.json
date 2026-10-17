@@ -1,0 +1,19 @@
+{
+  "runs": 54,
+  "all_story_and_ritual_complete": true,
+  "ritual_day": 28,
+  "advancement_cost": 2400,
+  "modes": [
+    "adjusted_basic_no_meeting_none",
+    "adjusted_basic_no_meeting_unsafe160_loss",
+    "adjusted_budget_none",
+    "adjusted_budget_unsafe160_loss",
+    "adjusted_greedy_none",
+    "adjusted_greedy_unsafe160_loss"
+  ],
+  "minimum_cash": 0,
+  "stamina_max": 100,
+  "reserve_max": 20,
+  "source": "current integrated CombatCore; existing deterministic growth/housing decision model; not 54 native UI playthroughs",
+  "early_shift": 0
+}

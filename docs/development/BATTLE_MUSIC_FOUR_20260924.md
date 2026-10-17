@@ -2,12 +2,10 @@
 
 用户提供的四个 MP3 是本批唯一战斗配乐来源。原始文件逐字节保存在 `output/battle-music-four-20260924/originals`；`tools/audio/prepare_battle_music_four.py` 仅为游戏版本剪去淡出尾段、做首尾 2.8 秒交叠，并压成 44.1 kHz 立体声 AAC。剪辑边界、音量测量和文件大小见同目录 `music-prep-report.json`。旧 Lyria 战斗曲保留在源码中，但不再进入 iOS 安装包。
 
-2026-10-13配曲调整（169.91已安装）：用户确认前三关已换曲，但原Petals听起来不像战斗曲，故Q1–5改用Gears。下表为现行配置；2026-09-24初次接入时Q1–5使用Petals。设备证据及听感边界见[本轮交接](HANDOFF_EARLY_BATTLE_THEME_20261013.md)。
-
 | 曲目 | 正式战斗场景 |
 | --- | --- |
-| `Petals_on_the_River` | 通缉 B07 铃蛙、B08 假面决斗者 |
-| `Gears_Against_the_Fog` | 主线 Q1–15 早期战斗与齿轮调查；教会塔 F1–30；通缉 B01、B04、B09；早期巡检 |
+| `Petals_on_the_River` | 主线 Q1–5 雨夜旧城区；通缉 B07 铃蛙、B08 假面决斗者 |
+| `Gears_Against_the_Fog` | 主线 Q6–15 档案与齿轮调查；教会塔 F1–30；通缉 B01、B04、B09；早期巡检 |
 | `The_Harbor’s_Iron_Toll` | 主线 Q16–27 签发、押运与港口营救；教会塔 F31–70；通缉 B02、B03、B06 |
 | `March_of_the_Brass_Tide` | 主线 Q28–30 瑟维安三战；教会塔 F71–100；通缉 B05、B10 |
 

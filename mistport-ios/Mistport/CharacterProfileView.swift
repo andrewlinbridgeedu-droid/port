@@ -416,7 +416,7 @@ struct CharacterProfileView: View {
             }
             ForEach(owned.filter { ownedRelicIsDepleted($0.id) }) { relic in
                 if let offer = MPCChurchLoanOffer.all.first(where: { $0.relicID == relic.id }) {
-                    let price = MPCChurchLoanLedger.ownedRepairPrice(value: offer.value, durability: 0)
+                    let price = game.ownedRelicRepairQuote(relic.id)
                     HStack {
                         Text("\(relic.name) · 已失效（0%）")
                             .font(.caption.bold())

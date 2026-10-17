@@ -50,6 +50,10 @@ struct MistportApp: App {
     #endif
     private static var playerDefaults: UserDefaults {
         #if DEBUG
+        if Bundle.main.bundleIdentifier == "local.mistport.institutions" {
+            let profile = UserDefaults.standard.string(forKey: "institution.profile") ?? "fresh"
+            return UserDefaults(suiteName: "mistport.institutions.playtest.20261013." + profile)!
+        }
         if ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("--mainline-music-review=") }) { return UserDefaults(suiteName: "mistport.mainline-music-review.20261013")! }
         if ProcessInfo.processInfo.arguments.contains("--baker-board-review") { return bakerReviewDefaults }
         if CombatTempoReviewConfiguration.requested { return UserDefaults(suiteName: "mistport.combat-tempo-review.20261001")! }
@@ -104,7 +108,10 @@ struct MistportApp: App {
     var body: some Scene {
         WindowGroup {
             #if DEBUG
-            if CombatTempoReviewConfiguration.requested {
+            if Bundle.main.bundleIdentifier == "local.mistport.institutions" {
+                InstitutionPlaytestRoot(game: $game, storefront: storefront)
+                    .preferredColorScheme(.dark)
+            } else if CombatTempoReviewConfiguration.requested {
                 CombatTempoDeviceReviewRoot(game: game, storefront: storefront)
                     .defaultAppStorage(Self.playerDefaults)
             } else if ProcessInfo.processInfo.arguments.contains("--housing-device-walk") {

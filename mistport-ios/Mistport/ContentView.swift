@@ -4,6 +4,7 @@ import UIKit
 
 private enum AppSheet: String, Identifiable {
     case settings
+    case institutions
     case store
     case church
     case world
@@ -110,7 +111,8 @@ struct ContentView: View {
     }
 
     private func openHomeService(_ service: String) {
-        if service == "merchant" { homeDestination = .init(id: "merchant") }
+        if service == "bank" { homeDestination = .init(id: "bank") }
+        else if service == "merchant" { homeDestination = .init(id: "merchant") }
         else if service.hasPrefix("housing-") { homeDestination = .init(id: service) }
         else if service == "cafe_keeper" {
             guard game.venueIsUnlocked("midnight-clock-cafe") else { homeDestination = .init(id: "cafe-locked"); return }
@@ -288,6 +290,14 @@ struct ContentView: View {
                 }
             }
 
+            if game.phase == .cityHub {
+                VStack { HStack { Spacer(); Button { presentedSheet = .institutions } label: {
+                    Label("办事册", systemImage: "building.columns.fill").font(.subheadline.bold()).padding(.horizontal, 12).frame(height: 44)
+                }.buttonStyle(.plain).foregroundStyle(Color(red: 0.96, green: 0.85, blue: 0.60))
+                    .background(.black.opacity(0.65), in: Capsule()).accessibilityIdentifier("city-institutions-entry") }
+                    .padding(.trailing, 16).padding(.top, 80); Spacer() }.zIndex(12)
+            }
+
             if game.phase == .title {
                 DriftingMist()
                     .allowsHitTesting(false)
@@ -416,25 +426,38 @@ struct ContentView: View {
             presentDailyNewspaperIfNeeded()
         }
         .task(id: game.phase) {
-            guard game.phase == .cityHub else { return }
+            guard game.phase != .title && game.phase != .pathSelection else { return }
             while !Task.isCancelled {
                 if scenePhase == .active { await game.openHousingDay(); try? game.openNeighborDay(); game.openStreetDay() }
                 do { try await Task.sleep(for: .seconds(30)) } catch { return }
             }
         }
-        .onChange(of: scenePhase) { _, phase in if phase == .active { Task { await game.openHousingDay(); presentDailyNewspaperIfNeeded() } } }
+        .onChange(of: scenePhase) { _, phase in Task { if phase == .active { await game.openHousingDay(); presentDailyNewspaperIfNeeded() } } }
         .fullScreenCover(isPresented: $newspaperPresented, onDismiss: openNewspaperDestination) {
             DailyNewspaperView(game: game) { destination in
                 newspaperDestination = destination
                 newspaperPresented = false
             }
         }
+        #if DEBUG
+        // Panel review (2026-10-15): --review-panel=<home destination | sheet:<AppSheet>> opens one
+        // panel straight away for screenshots; the institutions playtest's profile supplies the data.
+        .task {
+            guard let flag = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--review-panel=") }) else { return }
+            let value = String(flag.dropFirst("--review-panel=".count))
+            try? await Task.sleep(for: .milliseconds(900))
+            newspaperPresented = false
+            try? await Task.sleep(for: .milliseconds(500))
+            if value.hasPrefix("sheet:"), let sheet = AppSheet(rawValue: String(value.dropFirst(6))) { presentedSheet = sheet }
+            else { homeDestination = .init(id: value) }
+        }
+        #endif
         .onReceive(NotificationCenter.default.publisher(for: .homeQuestFocus)) { event in
             homeFocusID = event.object as? String; homeFocusRevision += 1
             presentedSheet = nil; churchPresented = false; tavernBountyPresented = false
             newspaperPresented = false; homeDestination = nil
         }
-        .sheet(item: $homeDestination) { destination in
+        .fullScreenCover(item: $homeDestination) { destination in
             if let target = destination.target {
                 let matching = destination.choices.isEmpty ? [target] : destination.choices
                 if matching.count > 1 { HomeTaskChoicesView(game: game, targets: matching) }
@@ -447,6 +470,16 @@ struct ContentView: View {
             else if destination.id == "housing-stamina" { HousingStaminaView(game: game) }
             else if destination.id == "highland-board" { HousingHighlandBoardView(game: game) }
             else if ["housing-soup", "housing-bakery", "housing-cafe"].contains(destination.id) { HousingMealCounterView(game: game, venue: String(destination.id.dropFirst(8))) }
+            else if destination.id == "postal-work" { CityPostalWorkView(game: game) }
+            else if destination.id == "bank" { CityBankView(game: game) }
+            else if destination.id == "bank-manager" { CityBankManagerView(game: game) }
+            else if destination.id == "meeting" { CityPrivateMeetingView(game: game) }
+            else if destination.id == "workshop" { LocalWorkshopView(game: game) }
+            else if destination.id == "church" { ChurchSanctuaryView(game: game) }
+            else if destination.id == "newspaper" { DailyNewspaperView(game: game, onSelect: { _ in }) }
+            else if destination.id == "tavern" { TavernInteriorView(game: game, onBack: { homeDestination = nil }) }
+            else if destination.id == "science" { CityScienceView(game: game) }
+            else if destination.id == "palace" { HomeServiceGreetingView(title: "皇宫接待处", message: "皇宫的外墙记着雾港的城史。内廷与新业务随后续章节开放。") }
             else if destination.id == "merchant" { HomeCopperShopView(game: game) }
             else if destination.id == "mohr" || destination.id == "old-sailor" {
                 if game.tavernPokerUnlocked {
@@ -461,21 +494,29 @@ struct ContentView: View {
         .fullScreenCover(isPresented: $tavernBountyPresented) {
             TavernInteriorView(game: game, onBack: { tavernBountyPresented = false })
         }
-        .sheet(item: $presentedSheet) { sheet in
+        .fullScreenCover(item: $presentedSheet) { sheet in
             switch sheet {
+            case .institutions:
+                CityInstitutionsView(game: game) { destination in
+                    presentedSheet = nil
+                    Task { @MainActor in
+                        try? await Task.sleep(for: .milliseconds(350))
+                        homeDestination = .init(id: destination)
+                    }
+                }
             case .settings:
                 GameSettingsView()
             case .store:
                 if game.cityServiceIsUnlocked(.store) {
                     StoreView(storefront: storefront)
                 } else {
-                    Text("商店尚未开放 · 随主线推进解锁").padding()
+                    GameArtPage(title: "商店", subtitle: "随主线推进解锁") { Text("商店尚未开放 · 随主线推进解锁") }
                 }
             case .church:
                 if game.cityServiceIsUnlocked(.church) {
                     ChurchSanctuaryView(game: game)
                 } else {
-                    Text("教会尚未开放 · \(MPCChurchTowerCatalog.lockText)").padding()
+                    GameArtPage(title: "联合教会", subtitle: "尚未开放") { Text("教会尚未开放 · \(MPCChurchTowerCatalog.lockText)") }
                 }
             case .dailyTower:
                 ChurchTowerView(game: game)

@@ -1,0 +1,366 @@
+{
+  "paths": 216,
+  "main_q30": 216,
+  "story_days": [
+    28
+  ],
+  "ritual_days": [
+    28
+  ],
+  "advancement_payments": [
+    2400
+  ],
+  "maximum_daily_minutes": 48.5,
+  "aid_before_or_on_story_day": 0,
+  "late_aid_days": [
+    37,
+    38,
+    39,
+    40,
+    41,
+    42
+  ],
+  "minimum_chapter_end_cash": 216,
+  "scenarios": {
+    "none": {
+      "paths": 27,
+      "ordinary_profits": [
+        0
+      ],
+      "ordinary_sign_counts": [
+        0
+      ],
+      "ordinary_early_exits": [
+        0
+      ],
+      "risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "material_day_deltas_vs_no_bank": {
+        "mirrorMothScale": [
+          0
+        ],
+        "ownerlessMaskWax": [
+          0
+        ],
+        "reverseClockEssence": [
+          0
+        ]
+      },
+      "postal_job_deltas_vs_no_bank": [
+        0
+      ],
+      "minimum_cash_whole_42_days": 3
+    },
+    "deposit60": {
+      "paths": 27,
+      "ordinary_profits": [
+        0
+      ],
+      "ordinary_sign_counts": [
+        0
+      ],
+      "ordinary_early_exits": [
+        0
+      ],
+      "risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "material_day_deltas_vs_no_bank": {
+        "mirrorMothScale": [
+          -1,
+          0
+        ],
+        "ownerlessMaskWax": [
+          -1,
+          0
+        ],
+        "reverseClockEssence": [
+          -1,
+          0
+        ]
+      },
+      "postal_job_deltas_vs_no_bank": [
+        -1,
+        0,
+        1
+      ],
+      "minimum_cash_whole_42_days": 1
+    },
+    "term1": {
+      "paths": 27,
+      "ordinary_profits": [
+        2,
+        3,
+        4
+      ],
+      "ordinary_sign_counts": [
+        2,
+        3,
+        4
+      ],
+      "ordinary_early_exits": [
+        0,
+        1,
+        2
+      ],
+      "risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "material_day_deltas_vs_no_bank": {
+        "mirrorMothScale": [
+          -1,
+          0
+        ],
+        "ownerlessMaskWax": [
+          -1,
+          0
+        ],
+        "reverseClockEssence": [
+          -1,
+          0
+        ]
+      },
+      "postal_job_deltas_vs_no_bank": [
+        -1,
+        0,
+        1,
+        2
+      ],
+      "minimum_cash_whole_42_days": 3
+    },
+    "term2": {
+      "paths": 27,
+      "ordinary_profits": [
+        4,
+        6,
+        8
+      ],
+      "ordinary_sign_counts": [
+        2,
+        3,
+        4
+      ],
+      "ordinary_early_exits": [
+        0,
+        1,
+        2
+      ],
+      "risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "material_day_deltas_vs_no_bank": {
+        "mirrorMothScale": [
+          -1,
+          0
+        ],
+        "ownerlessMaskWax": [
+          -1,
+          0
+        ],
+        "reverseClockEssence": [
+          -1,
+          0
+        ]
+      },
+      "postal_job_deltas_vs_no_bank": [
+        -1,
+        0,
+        1,
+        2
+      ],
+      "minimum_cash_whole_42_days": 5
+    },
+    "term3": {
+      "paths": 27,
+      "ordinary_profits": [
+        6,
+        9,
+        12
+      ],
+      "ordinary_sign_counts": [
+        2,
+        3,
+        4
+      ],
+      "ordinary_early_exits": [
+        0,
+        1,
+        2
+      ],
+      "risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "material_day_deltas_vs_no_bank": {
+        "mirrorMothScale": [
+          -1,
+          0
+        ],
+        "ownerlessMaskWax": [
+          -1,
+          0
+        ],
+        "reverseClockEssence": [
+          -1,
+          0
+        ]
+      },
+      "postal_job_deltas_vs_no_bank": [
+        -1,
+        0,
+        1,
+        2
+      ],
+      "minimum_cash_whole_42_days": 7
+    },
+    "term120": {
+      "paths": 27,
+      "ordinary_profits": [
+        0,
+        2
+      ],
+      "ordinary_sign_counts": [
+        0,
+        2,
+        3
+      ],
+      "ordinary_early_exits": [
+        0,
+        1,
+        2
+      ],
+      "risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "material_day_deltas_vs_no_bank": {
+        "mirrorMothScale": [
+          -1,
+          0
+        ],
+        "ownerlessMaskWax": [
+          -1,
+          0
+        ],
+        "reverseClockEssence": [
+          -1,
+          0
+        ]
+      },
+      "postal_job_deltas_vs_no_bank": [
+        -1,
+        0,
+        1,
+        2
+      ],
+      "minimum_cash_whole_42_days": 1
+    },
+    "term_early": {
+      "paths": 27,
+      "ordinary_profits": [
+        1,
+        2,
+        3
+      ],
+      "ordinary_sign_counts": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "ordinary_early_exits": [
+        1,
+        2,
+        3
+      ],
+      "risk_principal": [
+        0
+      ],
+      "risk_profit": [
+        0
+      ],
+      "material_day_deltas_vs_no_bank": {
+        "mirrorMothScale": [
+          -1,
+          0
+        ],
+        "ownerlessMaskWax": [
+          -1,
+          0
+        ],
+        "reverseClockEssence": [
+          -1,
+          0
+        ]
+      },
+      "postal_job_deltas_vs_no_bank": [
+        -1,
+        0,
+        1,
+        2
+      ],
+      "minimum_cash_whole_42_days": 2
+    },
+    "term_loss": {
+      "paths": 27,
+      "ordinary_profits": [
+        2,
+        3
+      ],
+      "ordinary_sign_counts": [
+        2,
+        3
+      ],
+      "ordinary_early_exits": [
+        0,
+        1
+      ],
+      "risk_principal": [
+        160
+      ],
+      "risk_profit": [
+        -160
+      ],
+      "material_day_deltas_vs_no_bank": {
+        "mirrorMothScale": [
+          -1,
+          0
+        ],
+        "ownerlessMaskWax": [
+          0,
+          1
+        ],
+        "reverseClockEssence": [
+          -1,
+          0,
+          1
+        ]
+      },
+      "postal_job_deltas_vs_no_bank": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "minimum_cash_whole_42_days": 0
+    }
+  }
+}

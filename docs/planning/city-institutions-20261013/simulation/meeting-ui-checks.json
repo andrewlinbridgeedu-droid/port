@@ -1,0 +1,13 @@
+{
+  "scope": "Interactive proposal demonstration; not shipping App",
+  "private_contract_net": 26,
+  "public_contract_net": 18,
+  "missing_evidence_refuses": true,
+  "max_evidence": 2,
+  "insufficient_budget_cannot_confirm": true,
+  "viewports": [
+    360,
+    736
+  ],
+  "runtime_errors": 0
+}

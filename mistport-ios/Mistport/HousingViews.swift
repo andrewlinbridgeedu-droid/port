@@ -130,6 +130,7 @@ struct HousingSearchView: View {
     @Environment(\.dismiss) private var dismiss
     var body: some View {
         HousingPage(title: "赁屋行 · 找住处", backTitle: "返回", onBack: onBack) {
+            CityWalletSummary(game: game)
             switch step {
             case .districts: districts
             case .cards(let district): cards(district)
@@ -229,6 +230,9 @@ struct HousingSearchView: View {
                     if let art = HousingArt.home(lodging.id) { Image(art.exterior).resizable().aspectRatio(1.5, contentMode: .fit) }
                     Text(lodging.name).font(.system(size: 23, weight: .bold, design: .serif))
                     Text("房钱 \(lodging.copperPerDay) 铜／日")
+                    if MPCHousingCatalog.unlockMission(lodging.id) > game.churchTowerMissionNumbers.count { Text("完成第\(MPCHousingCatalog.unlockMission(lodging.id))关后可签约").font(.caption).foregroundStyle(.secondary) }
+                    let meal = nearbyMeals(lodging).first ?? MPCHousingCatalog.meals[1]
+                    Text("建议留足\(game.cityBudgetReserve + 7 * (lodging.copperPerDay + meal.copperPerDay))铜，再承担七个活跃日的房餐与材料准备。").font(.caption).foregroundStyle(.secondary)
                     Text(HousingArt.history(lodging.id)).font(.footnote)
                     Text("附近饮食：" + nearbyMeals(lodging).map(\.name).joined(separator: "、")).font(.footnote)
                     Text(availability(lodging)).font(.caption)
@@ -347,7 +351,7 @@ private struct HousingDistrictMap: View {
     }
 }
 
-private struct HousingInteriorArtwork: View {
+struct HousingInteriorArtwork: View {
     let homeID: String
     let onDetail: (String) -> Void
     var body: some View {
@@ -378,6 +382,8 @@ struct HousingResidenceView: View {
     var onBack: (() -> Void)? = nil
     @State private var detail = ""
     @State private var finding = false
+    @State private var meeting = false
+    @State private var maintenance = false
     var body: some View {
         Group {
             if finding { HousingSearchView(game: game, onBack: { finding = false }) }
@@ -389,15 +395,31 @@ struct HousingResidenceView: View {
         .task { await game.openHousingDay() }
     }
     private var residencePage: some View {
+        // One page (2026-10-15): doorplate beside the name, the room smaller, actions two to a row.
         HousingPage(title: "我的住处", backTitle: "返回", onBack: onBack) {
-            HousingDoorplate(name: game.housingPlayerName)
-            Text(MPCHousingCatalog.lodging(game.housingHomeID)?.name ?? "住处").font(.title2.bold())
-            HousingInteriorArtwork(homeID: game.housingHomeID) { detail = $0 }
+            HStack(alignment: .center, spacing: 10) {
+                HousingDoorplate(name: game.housingPlayerName).frame(width: 130)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(MPCHousingCatalog.lodging(game.housingHomeID)?.name ?? "住处").font(.title3.bold())
+                    Text(game.housingDailyNotice).font(.caption)
+                    Text("休息储备 \(game.restReserve)／20 · 回房转入体力，不超过100").font(.caption)
+                }
+            }
+            HousingInteriorArtwork(homeID: game.housingHomeID) { detail = $0 }.frame(maxHeight: 190)
             if !detail.isEmpty { Text(detail).font(.footnote) }
-            Text(game.housingDailyNotice).font(.footnote)
+            let prepare = MPCCityEconomy.restBP(lodgingID: game.housingPayment?.lodgingID ?? "dock_bunk")
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
+                Button("回房休息 · 补回体力") { Task { do { try await game.returnHomeRest(prepareBattle: false); detail = "已把可用储备转回体力。" } catch { detail = error.localizedDescription } } }.buttonStyle(GameArtButtonStyle())
+                if prepare > 0 {
+                    Button("床边准备 · 生命＋\(prepare / 100)%") { Task { do { try await game.returnHomeRest(prepareBattle: true); detail = "下一场准备已完成；每日一次，失败也消耗。" } catch { detail = error.localizedDescription } } }.buttonStyle(GameArtButtonStyle())
+                    Button("保养角 · 维修报价") { maintenance = true }.buttonStyle(GameArtButtonStyle())
+                    Button("书桌与来信 · 会客") { meeting = true }.buttonStyle(GameArtButtonStyle(primary: true))
+                }
+                Button("去赁屋行换住处") { finding = true }.buttonStyle(GameArtButtonStyle(primary: true))
+            }.font(.subheadline)
+            if prepare > 0 { Text("保养角每日一件普通遗落物维修，抵扣1／2／3铜、不超过服务费一半，在教会维修柜办理。").font(.caption2) }
             HousingMealChoices(game: game)
-            Button("去赁屋行换住处") { finding = true }.buttonStyle(GameArtButtonStyle(primary: true))
-        }
+        }.fullScreenCover(isPresented: $meeting) { CityPrivateMeetingView(game: game, privateRoom: true) }.fullScreenCover(isPresented: $maintenance) { CityHousingMaintenanceView(game: game) }
     }
 }
 
@@ -406,9 +428,9 @@ private struct HousingMealChoices: View {
     @State private var busy = false
     @State private var message = ""
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("每日饮食").font(.headline)
-            Text("今晨的饭钱已经付过。换一处吃饭，明晨起安排，房期照旧。").font(.footnote)
+        VStack(alignment: .leading, spacing: 8) {
+            Text("每日饮食 · 换处吃饭明晨起算，房期照旧").font(.subheadline.bold())
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
             ForEach(MPCHousingCatalog.meals.filter { $0.requiresLodgingID == nil || $0.requiresLodgingID == game.housingHomeID }) { meal in
                 Button {
                     Task {
@@ -422,6 +444,7 @@ private struct HousingMealChoices: View {
                         Spacer(); if game.housingMealID == meal.id { Image(systemName: "checkmark.seal.fill") }
                     }
                 }.buttonStyle(GameArtButtonStyle(selected: game.housingMealID == meal.id)).disabled(busy)
+            }
             }
             if !message.isEmpty { Text(message).font(.footnote) }
         }
@@ -715,7 +738,7 @@ struct HousingMealChoicesLink: View {
     @State private var opened = false
     var body: some View {
         HomeCounterAction(title: venue == "soup" ? "汤棚 · 每日饮食" : venue == "bakery" ? "面包坊 · 每日饮食" : "咖啡馆 · 每日饮食") { opened = true }
-            .sheet(isPresented: $opened) { HousingMealCounterView(game: game, venue: venue) }
+            .fullScreenCover(isPresented: $opened) { HousingMealCounterView(game: game, venue: venue) }
     }
 }
 

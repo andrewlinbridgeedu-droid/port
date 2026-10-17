@@ -1,0 +1,21 @@
+{
+  "bundle": "local.mistport.institutions",
+  "version": "171.5",
+  "source_sha256": {
+    "UnityBattleSource/Assets/Scripts/CombatTempoPresentation.cs": "eb2b10bc6407146fa7bee11557fc09d2f305bcd9a23a7a26223237ba06f6011a",
+    "UnityBattleSource/Assets/Scripts/AIHeroAnimatedBody.cs": "ff3fb99d0f50d0227ad2179972a458cbc84a65499f131b522a700209dbdd5fcf",
+    "UnityBattleSource/Assets/Scripts/SpellSpectacle20260926.cs": "ae392e4888c1ea31f8edbaaf815b5c15b7686ec0547a765b6b422a3b87e40bc9",
+    "mistport-ios/Mistport/CombatHaptics.swift": "a92ea7feac51c86a5ef26b82a0a472dda6540fe4dc91fb5f3b51c99176347087",
+    "mistport-ios/MistportCombatCore/Sources/MistportCombatCore/CombatHapticsPolicy.swift": "02def6c4ca715ecf59180a6188e4666bd10fe21bd8931577e20de7df4bbe4309",
+    "scripts/build_institutions_playtest.sh": "7eabb19fe83e8bb0894b5c25bcbd47e99bed9522662f0f48e2a337c101386e7c",
+    "scripts/check_institutions_art_baseline.py": "16979b6102ab355461be5c47fe4c62cfb62579071fd66ae17a67562e5df47dca",
+    "scripts/export_current_unity_art.sh": "ae82492c81eff0143eaa202103d3991016d0a3a5212d1c97674a1793ea52df9f"
+  },
+  "unity_export_manifest_sha256": "03c77a3ffc4a826da8dfc83b50657d64283cd99b3f9ef2ca253ad9d1c2fe3c62",
+  "core_tests": 566,
+  "core_suites": 100,
+  "unity_export_success": true,
+  "unity_export_fresh": true,
+  "host_build_success": true,
+  "physical_install_confirmed": false
+}

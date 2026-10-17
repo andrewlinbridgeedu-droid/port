@@ -1,0 +1,16 @@
+[
+  {
+    "path": ".build/institutions-device",
+    "exists": true,
+    "root_symlink": false,
+    "symlinks_within": [],
+    "size_kib": 3909112
+  },
+  {
+    "path": ".build/institutions-native-harness",
+    "exists": true,
+    "root_symlink": false,
+    "symlinks_within": [],
+    "size_kib": 1697708
+  }
+]

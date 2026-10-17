@@ -1,0 +1,17 @@
+{
+  "before_files": 7,
+  "after_files": 9,
+  "changed": [
+    "mistport.institutions.playtest.20261013.fresh.plist"
+  ],
+  "added": [
+    "mistport.institutions.integration.56627176-B2A6-432D-99AB-8BC321F1B311.paid-window.plist",
+    "mistport.institutions.integration.56627176-B2A6-432D-99AB-8BC321F1B311.plist"
+  ],
+  "missing": [],
+  "all_identical": false,
+  "profile_semantics_equal_except_stamina_settlement_timestamp": true,
+  "cash_before_and_after": 168,
+  "added_plists_contents": "two empty random self-test suite dictionaries",
+  "changed_profile_explanation": "Re-encoded JSON order and full-stamina settlement timestamp only; no mission, wallet, ownership, contract, bank, receipt or advancement change."
+}

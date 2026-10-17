@@ -5,7 +5,6 @@ set -eu
 workspace_root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 unity_assets="$workspace_root/UnityBattleSource/Assets"
 generated_cpp="$workspace_root/mistport-ios/UnityBuild/Il2CppOutputProject/Source/il2cppOutput/Assembly-CSharp.cpp"
-generated_cpp_directory="$(dirname -- "$generated_cpp")"
 export_metadata="$workspace_root/mistport-ios/UnityBuild/Data/Managed/Metadata/global-metadata.dat"
 export_manifest="$workspace_root/mistport-ios/UnityBuild/.mistport-unity-export-manifest"
 export_version_file="$workspace_root/mistport-ios/UnityBuild/.mistport-unity-export-version"
@@ -43,9 +42,7 @@ has_required_presentation_code() {
     # symbol is generated only when the matching Unity presentation code
     # reached the iOS export, preventing a new Swift HUD from being paired
     # with old actors.
-    # IL2CPP splits this assembly into numbered files as the actor code grows.
-    # The required method can move out of Assembly-CSharp.cpp on a fresh export.
-    [ -f "$generated_cpp" ] && grep -q 'BattlePrototype_UseDualClockGuardModel' "$generated_cpp_directory"/Assembly-CSharp*.cpp
+    [ -f "$generated_cpp" ] && grep -q 'BattlePrototype_UseDualClockGuardModel' "$generated_cpp"
 }
 
 export_is_fresh() {

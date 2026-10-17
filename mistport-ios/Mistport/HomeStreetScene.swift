@@ -575,23 +575,27 @@ struct HomeCounterScene<Content: View>: View {
     let title: String
     let room: HomeSceneRoom
     let actorArt: String
+    var illustrationArt: String? = nil
+    var returnTitle = "返回港城"
     @ViewBuilder let content: () -> Content
     @Environment(\.dismiss) private var dismiss
     var body: some View {
+        GeometryReader { screen in
         VStack(spacing: 0) {
             HStack {
                 Text(title).font(.title2.bold()).frame(maxWidth: .infinity, alignment: .leading)
-                GameArtReturnButton { dismiss() }
+                GameArtReturnButton(title: returnTitle) { dismiss() }
             }.foregroundStyle(Color(red: 0.96, green: 0.88, blue: 0.67))
-                .padding(18).background(Color(red: 0.13, green: 0.17, blue: 0.20))
+                .padding(.horizontal, 18).padding(.vertical, 12).background(Color(red: 0.13, green: 0.17, blue: 0.20))
             GameArtPaperScroll {
                 VStack(spacing: 0) {
-                    HomeSceneArtwork(room: room, actorArt: actorArt)
-                    VStack(alignment: .leading, spacing: 14, content: content)
-                        .frame(maxWidth: .infinity, alignment: .leading).padding(20)
+                    banner(width: screen.size.width, screenHeight: screen.size.height)
+                    VStack(alignment: .leading, spacing: 10, content: content)
+                        .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 16).padding(.vertical, 14)
                         .environment(\.colorScheme, .light)
                 }
             }
+        }
         }.background(Color(red: 0.13, green: 0.17, blue: 0.20).ignoresSafeArea(edges: .top))
             .foregroundStyle(Color(red: 0.20, green: 0.16, blue: 0.10))
             .tint(Color(red: 0.33, green: 0.24, blue: 0.12))
@@ -599,17 +603,62 @@ struct HomeCounterScene<Content: View>: View {
     }
 }
 
+extension HomeCounterScene {
+    /// The scene as a banner a fifth of the screen tall (2026-10-15, user: 尽量一页展示所有内容，
+    /// 不需要翻页): the room is drawn full width and only the band round the person's head and
+    /// shoulders shows, so the counter's business fits below without scrolling.
+    @ViewBuilder fileprivate func banner(width: CGFloat, screenHeight: CGFloat) -> some View {
+        let height = min(width / max(room.aspectRatio, 0.3), max(150, screenHeight * 0.21))
+        if let illustrationArt {
+            Image(illustrationArt).resizable().scaledToFill()
+                .frame(width: width, height: height, alignment: .top).clipped().accessibilityHidden(true)
+        } else {
+            HomeSceneBanner(room: room, actorArt: actorArt, height: height, width: width)
+        }
+    }
+}
+
+/// A counter room cut down to a banner: drawn full width, showing the band from just above
+/// the person's head down (their face and hands, then the counter).
+struct HomeSceneBanner: View {
+    let room: HomeSceneRoom
+    let actorArt: String
+    let height: CGFloat
+    var width: CGFloat? = nil
+    var body: some View {
+        if let width { cut(width) } else { GeometryReader { g in cut(g.size.width) }.frame(height: height) }
+    }
+    private func cut(_ width: CGFloat) -> some View {
+        let full = width / room.aspectRatio
+        let shown = min(height, full)
+        let top = min(max(0, (room.actorTop - 0.03) * full), max(0, full - shown))
+        return HomeSceneArtwork(room: room, actorArt: actorArt)
+            .frame(width: width, height: full)
+            .offset(y: -top)
+            .frame(width: width, height: shown, alignment: .top).clipped()
+    }
+}
+
+/// Counter actions two to a row, so a long list of people and errands fits on one page.
+struct HomeCounterActionGrid<Content: View>: View {
+    @ViewBuilder let content: () -> Content
+    var body: some View {
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], alignment: .leading, spacing: 8, content: content)
+    }
+}
+
 struct HomeCounterAction: View {
     let title: String
     var detail: String? = nil
+    var detailLines = 3
     let action: () -> Void
     @Environment(\.isEnabled) private var isEnabled
     var body: some View {
         Button(action: action) {
             HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(title).font(.body.bold())
-                    if let detail { Text(detail).font(.caption).fixedSize(horizontal: false, vertical: true) }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title).font(.subheadline.bold()).lineLimit(2).minimumScaleFactor(0.85)
+                    if let detail { Text(detail).font(.caption2).lineLimit(detailLines).fixedSize(horizontal: false, vertical: true) }
                 }
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -623,6 +672,9 @@ struct HomeCounterView: View {
     @Bindable var game: GameStore
     let buildingID: String
     @State private var greeting = ""
+    @State private var meetingPresented = false
+    @State private var postalPresented = false
+    @State private var contractWorkPresented = false
     @State private var selectedStaffName: String?
     @State private var selectedTarget: MPCStreetTaskTarget?
     @State private var neighborVisit: NeighborVisitRef?
@@ -690,11 +742,20 @@ struct HomeCounterView: View {
                     let venue = buildingID == "harbor" ? "soup" : buildingID == "oldstreet" ? "bakery" : "cafe"
                     HousingMealChoicesLink(game: game, venue: venue)
                 }
-                ForEach(staffNames, id: \.self) { name in
-                    HomeCounterAction(title: name, detail: activeStaffName == name ? "正在接待" : nil) { selectStaff(name) }
+                if buildingID == "post" { HomeCounterAction(title: "承接邮务核对", detail: "Q4后；40铜／单，10体力") { postalPresented = true } }
+                if buildingID == "cityhall" || (buildingID == "oldstreet" && activeStaffName == "染坊账房") {
+                    HomeCounterAction(title: "雨夜的交货单 · 公开会面", detail: "Q13后；核验证据、谈条款与履约") { meetingPresented = true }
                 }
-                ForEach(localTargets) { target in
-                    HomeCounterAction(title: target.title, detail: "通缉问话") { selectedTarget = target }
+                if (buildingID == "cityhall" && game.cityEconomy.meeting?.stage == .collected) || (buildingID == "oldstreet" && game.cityEconomy.meeting?.stage == .sealed) {
+                    HomeCounterAction(title: "办理当前交货合同", detail: "核对原封／取得收条") { contractWorkPresented = true }
+                }
+                HomeCounterActionGrid {
+                    ForEach(staffNames, id: \.self) { name in
+                        HomeCounterAction(title: name, detail: activeStaffName == name ? "正在接待" : nil) { selectStaff(name) }
+                    }
+                    ForEach(localTargets) { target in
+                        HomeCounterAction(title: target.title, detail: "通缉问话") { selectedTarget = target }
+                    }
                 }
                 if buildingID == "board" {
                     // A poster is not a conversation with its absent author.
@@ -717,9 +778,12 @@ struct HomeCounterView: View {
                         }
                     }
                 }
-        }.sheet(item: $selectedTarget) { target in HomeBountyInteractionView(game: game, target: target) }
-        .sheet(item: $neighborVisit) { visit in HomeNeighborPosterView(game: game, neighborID: visit.id) }
-        .sheet(item: $streetTarget) { target in HomeStreetTaskView(game: game, target: target) }
+        }.fullScreenCover(item: $selectedTarget) { target in HomeBountyInteractionView(game: game, target: target) }
+            .fullScreenCover(isPresented: $meetingPresented) { CityPrivateMeetingView(game: game) }
+            .fullScreenCover(isPresented: $postalPresented) { CityPostalWorkView(game: game) }
+            .fullScreenCover(isPresented: $contractWorkPresented) { CityContractWorkView(game: game) }
+        .fullScreenCover(item: $neighborVisit) { visit in HomeNeighborPosterView(game: game, neighborID: visit.id) }
+        .fullScreenCover(item: $streetTarget) { target in HomeStreetTaskView(game: game, target: target) }
         #if DEBUG
         .task {
             guard ProcessInfo.processInfo.arguments.contains("--home-map-review"),
@@ -736,17 +800,20 @@ struct HomeCopperShopView: View {
     var body: some View {
         HomeCounterScene(title: "商人 · 铜币买卖", room: .counter("merchant"), actorArt: "HomeMerchant20260929") {
                 Text("铜币 \(game.venueCoins)").font(.headline.monospacedDigit())
-                if game.earlyRelicShopUnlocked {
-                    HomeCounterAction(title: "止痛膏", detail: "\(game.painSalvePrice) 铜") { game.purchasePainSalve() }.disabled(game.painSalveStock > 0)
-                    ForEach(EarlyRelicShop.ids.filter(game.relicPurchaseUnlocked), id: \.self) { id in
-                        if !game.chapterOneCampaign.ownedRelicIDs.contains(id) {
-                            HomeCounterAction(title: EarlyRelicShop.name(id), detail: "\(EarlyRelicShop.price(id) ?? 0) 铜") { game.purchaseEarlyRelic(id) }
+                if !game.featureMessage.isEmpty { Text(game.featureMessage).foregroundStyle(.orange) }
+                HomeCounterActionGrid {
+                    if game.earlyRelicShopUnlocked {
+                        HomeCounterAction(title: "止痛膏", detail: "\(game.painSalvePrice) 铜") { game.purchasePainSalve() }.disabled(game.painSalveStock > 0)
+                        ForEach(EarlyRelicShop.ids.filter(game.relicPurchaseUnlocked), id: \.self) { id in
+                            if !game.chapterOneCampaign.ownedRelicIDs.contains(id) {
+                                HomeCounterAction(title: EarlyRelicShop.name(id), detail: "\(EarlyRelicShop.price(id) ?? 0) 铜") { game.purchaseEarlyRelic(id) }
+                            }
                         }
                     }
-                }
-                ForEach(AdvancementIngredient.allCases) { ingredient in
-                    HomeCounterAction(title: ingredient.name, detail: "\(ingredient.purchaseOffer.price) 铜") { game.purchaseAdvancementIngredient(ingredient) }
-                        .disabled(!game.advancementPurchaseUnlocked(ingredient) || game.advancementIngredients.contains(ingredient))
+                    ForEach(AdvancementIngredient.allCases) { ingredient in
+                        HomeCounterAction(title: ingredient.name, detail: "\(ingredient.purchaseOffer.price) 铜") { game.purchaseAdvancementIngredient(ingredient) }
+                            .disabled(!game.advancementPurchaseUnlocked(ingredient) || game.advancementIngredients.contains(ingredient))
+                    }
                 }
         }
     }

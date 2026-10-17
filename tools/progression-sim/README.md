@@ -22,13 +22,9 @@ python3 tools/progression-sim/report.py <输出目录>
 ```sh
 # 六堵墙逐项探针：光板、只有之前墙的要求、塔全开不带本墙遗落物、最低塔层、首次不用药
 swift run -c release --package-path tools/progression-sim ProgressionSim walls <输出目录> 8,12,18,22,26,30 high,medium,low
-# 单关逐套打法；TRACE=1 打印敌人每次行动（Q28–30 含队友受伤、替挡、封印），TRACE=2 再加队友每次出手
+# 单关逐套打法；TRACE=1 打印敌人每次行动
 swift run -c release --package-path tools/progression-sim ProgressionSim fight 18 medium 50 -
-# 第 30 关离场祝福（彩蛋）：BLESSINGS=<主角>,<瑟维安> 指定一对，不设则没有；可选 lamp_wick/feather_shelter/name_light 与 salt_crust/cold_bell/mist_mend
-BLESSINGS=lamp_wick,salt_crust swift run -c release --package-path tools/progression-sim ProgressionSim fight 30 high 90 bounty_relic_b10_life_ledger
 ```
-
-Q28–30 是三人组队战（2026-10-10）：`ChapterDriver` 按关卡把诺恩、奥黛尔带进战斗，和 App 一样。
 
 人类计时（2026-09-29，用户定用模拟器代替真人计时）：
 

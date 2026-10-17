@@ -236,6 +236,7 @@ final class GameStore {
     private(set) var latestResult = ""
     private(set) var selectedChapterDistrictID = "old-clock"
     private(set) var activeChapterMissionID: String?
+    @ObservationIgnored private var pendingCityEconomy: MPCCityEconomy?
     @ObservationIgnored private var preparedChapterOneMissionID: String?
     var churchServicesRevision = 0
     @ObservationIgnored fileprivate var churchServicesCache: (data: Data?, state: GameStore.ChurchServicesState)?
@@ -1695,7 +1696,7 @@ final class GameStore {
     }
 
     var sequenceEightRitualStatus: String {
-        if sequenceEightRitual != nil { return "已完成：三份主材与\(MPCSequenceEightRitual.fee)铜币已交付，记为序列 8。新能力随后续剧情开放。" }
+        if let ritual = sequenceEightRitual { return "已完成：三份主材与\(ritual.fee)铜币已交付，记为序列 8。新能力随后续剧情开放。" }
         if currentSequence <= 8 { return "已是序列 8，原有权益保留。" }
         guard churchTowerMissionNumbers.contains(MPCSequenceEightRitual.storyMission) else {
             return "第30关后抵达黑盐岸举行。需三份主材、个人演证、悖论见证、无主回响，提交时扣\(MPCSequenceEightRitual.fee)铜币。"
@@ -1990,6 +1991,7 @@ final class GameStore {
         }
         loadout.passiveIDs = loadout.passiveIDs.filter(chapterOneCampaign.unlockedPassiveIDs.contains)
         loadout.relicIDs = loadout.relicIDs.filter(chapterOneCampaign.ownedRelicIDs.contains)
+        loadout.housingRestBP = cityEconomy.restBonus(day: HousingServerDay.number(housingNow))
         loadout.churchGear = churchServices.gear.stats
         loadout.bountyRelicID = churchServices.bountyRelics.equippedID
         loadout.outfit = MPCOutfit(rawValue: equippedOutfitID) ?? .mistportNight
@@ -2863,6 +2865,7 @@ extension GameStore {
         var neighbors: NeighborRecord? = nil
         var remnants: RemnantRecord? = nil
         var housing: HousingRecord? = nil
+        var cityEconomy: MPCCityEconomy? = nil
         let coins: Int
         let lifetime: Int
         let available: Int
@@ -2930,6 +2933,7 @@ extension GameStore {
             guard (try? housingService.commit(housing)) != nil else { return }
         }
         venueCoins = receipt.coins
+        if let economy = receipt.cityEconomy { defaults.set(try? JSONEncoder().encode(economy), forKey: Self.cityEconomyKey) }
         if let work = receipt.dailyWork { persistDailyWork(work) }
         if let workshop = receipt.dailyWorkshop { persistDailyWorkshop(workshop) }
         if let events = receipt.cityEvents { defaults.set(try? JSONEncoder().encode(events), forKey: PersistenceKey.cityEvents) }
@@ -2952,18 +2956,20 @@ extension GameStore {
         defaults.removeObject(forKey: "mistport.church.services.pending.v1")
         churchServicesRevision += 1
     }
-    private func updateChurchServices(dailyWork: DailyWorkRecord? = nil, remnants: RemnantRecord? = nil, neighbors: NeighborRecord? = nil, cityEvents: CityEventRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil, _ change: (inout ChurchServicesState) throws -> Void) throws {
+    private func updateChurchServices(cityEconomy: MPCCityEconomy? = nil, dailyWork: DailyWorkRecord? = nil, remnants: RemnantRecord? = nil, neighbors: NeighborRecord? = nil, cityEvents: CityEventRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil, _ change: (inout ChurchServicesState) throws -> Void) throws {
         // Never replace an unreadable financial ledger with the default empty state.
-        guard workshopLedgerIsReadable, housingService.isReadable else { throw MPCLocalWorkshopLedger.Failure.locked }
+        guard workshopLedgerIsReadable, housingService.isReadable, cityEconomyIsReadable else { throw MPCLocalWorkshopLedger.Failure.locked }
+        pendingCityEconomy = nil
+        defer { pendingCityEconomy = nil }
         var state = churchServices
         state.loans.coins = venueCoins
         state.loans.lifetimeMerit = chapterOneCampaign.lifetimeChurchMerit
         state.loans.availableMerit = chapterOneCampaign.spendableChurchMerit
         try change(&state)
-        try commitChurchServices(state, remnants: remnants, dailyWork: dailyWork, neighbors: neighbors, cityEvents: cityEvents, dailyWorkshop: dailyWorkshop, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
+        try commitChurchServices(state, cityEconomy: cityEconomy ?? pendingCityEconomy, remnants: remnants, dailyWork: dailyWork, neighbors: neighbors, cityEvents: cityEvents, dailyWorkshop: dailyWorkshop, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
     }
-    private func commitChurchServices(_ state: ChurchServicesState, housing: HousingRecord? = nil, remnants: RemnantRecord? = nil, dailyWork: DailyWorkRecord? = nil, neighbors: NeighborRecord? = nil, cityEvents: CityEventRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil) throws {
-        let receipt = ChurchServicesReceipt(state: state, dailyWork: dailyWork, dailyWorkshop: dailyWorkshop, cityEvents: cityEvents, neighbors: neighbors, remnants: remnants, housing: housing ?? pendingHousingRecord, coins: state.loans.coins, lifetime: state.loans.lifetimeMerit, available: state.loans.availableMerit, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
+    private func commitChurchServices(_ state: ChurchServicesState, cityEconomy: MPCCityEconomy? = nil, housing: HousingRecord? = nil, remnants: RemnantRecord? = nil, dailyWork: DailyWorkRecord? = nil, neighbors: NeighborRecord? = nil, cityEvents: CityEventRecord? = nil, dailyWorkshop: DailyWorkshopRecord? = nil, towerProgress: MPCChurchTowerProgress? = nil, relicSnapshot: BountyRelicSnapshot? = nil, ingredientIDs: [String]? = nil, inventory: [String: Int]? = nil) throws {
+        let receipt = ChurchServicesReceipt(state: state, dailyWork: dailyWork, dailyWorkshop: dailyWorkshop, cityEvents: cityEvents, neighbors: neighbors, remnants: remnants, housing: housing ?? pendingHousingRecord, cityEconomy: cityEconomy ?? pendingCityEconomy, coins: state.loans.coins, lifetime: state.loans.lifetimeMerit, available: state.loans.availableMerit, towerProgress: towerProgress, relicSnapshot: relicSnapshot, ingredientIDs: ingredientIDs, inventory: inventory)
         defaults.set(try JSONEncoder().encode(receipt), forKey: "mistport.church.services.pending.v1")
         recoverChurchServices()
         preparedChapterOneSession = nil
@@ -3009,6 +3015,11 @@ extension GameStore {
         let borrowedRelics = Set(borrowed.compactMap { state.loans.effectiveRelicID(loanID: $0) })
         _ = try state.loans.beginBattle(battleID: battleID, equippedLoanIDs: borrowed)
         _ = try state.ownedCondition.beginBattle(battleID: battleID, equippedRelicIDs: Array(actual), ownedRelicIDs: chapterOneCampaign.ownedRelicIDs, borrowedRelicIDs: borrowedRelics)
+        if loadout.housingRestBP > 0 {
+            var economy = cityEconomy
+            _ = economy.consumeRest(battleID: battleID, day: HousingServerDay.number(housingNow))
+            pendingCityEconomy = economy
+        }
     }
     private func settleChurchGear(_ state: inout ChurchServicesState, battleID: String, outcome: MPCChurchBattleOutcome) throws {
         _ = state.gear.wear(battleID: battleID, outcome: outcome)
@@ -3026,10 +3037,22 @@ extension GameStore {
             if outcome != .victory { state.workshop.abandonTower(id: battleID) }
         }
     }
+    func ownedRelicRepairQuote(_ relicID: String) -> Int {
+        let fee = (try? churchServices.ownedCondition.repairCost(relicID, ownedRelicIDs: chapterOneCampaign.ownedRelicIDs)) ?? 0
+        var economy = cityEconomy
+        return fee - economy.maintenanceCredit(day: HousingServerDay.number(housingNow),
+            lodgingID: housingPayment?.lodgingID ?? "dock_bunk", fee: fee)
+    }
     func repairOwnedChurchRelic(_ relicID: String) throws {
+        var economy = cityEconomy
         try updateChurchServices { state in
-            let receipt = try state.ownedCondition.repair(relicID, ownedRelicIDs: chapterOneCampaign.ownedRelicIDs, availableCoins: state.loans.coins)
-            state.loans.coins -= receipt.copperCost
+            let fee = try state.ownedCondition.repairCost(relicID, ownedRelicIDs: chapterOneCampaign.ownedRelicIDs)
+            let discount = economy.maintenanceCredit(day: HousingServerDay.number(housingNow),
+                lodgingID: housingPayment?.lodgingID ?? "dock_bunk", fee: fee)
+            let receipt = try state.ownedCondition.repair(relicID, ownedRelicIDs: chapterOneCampaign.ownedRelicIDs,
+                availableCoins: state.loans.coins + discount)
+            state.loans.coins -= receipt.copperCost - discount
+            pendingCityEconomy = economy
         }
     }
     func previewChurchBountyIssue(asOf date: Date = Date()) -> MPCDailyBountyIssue {
@@ -3319,6 +3342,7 @@ extension GameStore {
 extension GameStore {
     func applyingChurchLoans(to source: MPCChapterOneLoadout, allowsActive: Bool = true) -> MPCChapterOneLoadout {
         var loadout = source
+        loadout.housingRestBP = cityEconomy.restBonus(day: HousingServerDay.number(housingNow))
         loadout.churchGear = churchServices.gear.stats
         loadout.bountyRelicID = churchServices.bountyRelics.equippedID
         loadout.outfit = MPCOutfit(rawValue: equippedOutfitID) ?? .mistportNight
@@ -5176,7 +5200,7 @@ extension GameStore {
         housingHomeID == MPCHousingCatalog.highlandLodgingID && housingRecord?.ledger.canTakeHighlandErrands(day: HousingServerDay.number(housingNow)) == true
     }
     private func ensureHousingDay() async throws {
-        guard workshopLedgerIsReadable, housingService.isReadable else { throw HousingServiceFailure.unreadable }
+        guard workshopLedgerIsReadable, housingService.isReadable, cityEconomyIsReadable else { throw HousingServiceFailure.unreadable }
         if housingPayment != nil { return }
         let update = try await housingService.prepareDay(cash: venueCoins, completedMissions: churchTowerMissionNumbers.count, at: housingNow)
         var state = churchServices
@@ -5187,7 +5211,17 @@ extension GameStore {
     }
     func openHousingDay() async {
         await housingGate.acquire(); defer { housingGate.release() }
-        do { try await ensureHousingDay(); housingDisplayTick += 1 } catch { featureMessage = housingError(error) }
+        do {
+            guard cityEconomyIsReadable else { throw HousingServiceFailure.unreadable }
+            var economy = cityEconomy, coins = venueCoins
+            economy.settle(now: housingNow.timeIntervalSince1970, coins: &coins)
+            let update = try await housingService.prepareDay(cash: coins, completedMissions: churchTowerMissionNumbers.count, at: housingNow)
+            var state = churchServices; state.loans.coins = update.cash
+            state.loans.lifetimeMerit = chapterOneCampaign.lifetimeChurchMerit
+            state.loans.availableMerit = chapterOneCampaign.spendableChurchMerit
+            try commitChurchServices(state, cityEconomy: economy, housing: update.record)
+            housingDisplayTick += 1
+        } catch { featureMessage = housingError(error) }
     }
     func housingRooms() async throws -> [HousingRoomAvailability] { try await housingService.rooms() }
     func signHousing(lodgingID: String, mealID: String) async throws {
@@ -5213,7 +5247,8 @@ extension GameStore {
         try await ensureHousingDay()
         guard MPCHousingCatalog.lodging(lodgingID) != nil, var r = housingRecord else { throw HousingServiceFailure.unavailable }
         r.queuedLodgingIDs.insert(lodgingID)
-        try commitChurchServices(churchServices, housing: r)
+        var state = churchServices; state.loans.coins = venueCoins
+        try commitChurchServices(state, housing: r)
     }
     func housingError(_ error: Error) -> String {
         if case MPCStaminaState.Failure.notEnough(let needed, _) = error {
@@ -5502,6 +5537,336 @@ extension GameStore {
         #else
         "shipping-core-on-device"
         #endif
+    }
+}
+#endif
+
+// MARK: Chapter-one institutions: one wallet, one durable transaction journal
+extension GameStore {
+    private static let cityEconomyKey = "mistport.city-economy.v1"
+    var cityEconomy: MPCCityEconomy {
+        _ = churchServicesRevision
+        return defaults.data(forKey: Self.cityEconomyKey).flatMap { try? JSONDecoder().decode(MPCCityEconomy.self, from: $0) } ?? .init()
+    }
+    var cityEconomyIsReadable: Bool {
+        guard let data = defaults.data(forKey: Self.cityEconomyKey) else { return true }
+        return (try? JSONDecoder().decode(MPCCityEconomy.self, from: data)) != nil
+    }
+    var cityBudgetReserve: Int {
+        sequenceEightQualified ? 36 + painSalvePrice : MPCCityEconomy.reserve(completed: churchTowerMissionNumbers,
+            ownedMaterials: Set(advancementIngredients.map(\.rawValue)), ownedRelics: chapterOneCampaign.ownedRelicIDs,
+            salve: painSalveStock > 0 ? 0 : painSalvePrice)
+    }
+    var bankLiquidReserve: Int {
+        let lodging = housingPayment?.lodgingID ?? housingHomeID
+        let meal = housingPayment?.mealID ?? "soup"
+        let daily = max(12, (MPCHousingCatalog.lodging(lodging)?.copperPerDay ?? 0)
+            + (MPCHousingCatalog.meal(meal)?.copperPerDay ?? 0))
+        return cityBudgetReserve + max(0, daily * 3 - 36)
+    }
+    func signBankDeposit(amount: Int, ordinary: Bool) async throws {
+        try await cityEconomyAction { economy, coins in
+            if ordinary {
+                try economy.openTermDeposit(amount, completed: self.churchTowerMissionNumbers,
+                    liquidReserve: self.bankLiquidReserve, now: self.housingNow.timeIntervalSince1970, coins: &coins)
+            } else {
+                try economy.openDeposit(amount, completed: self.churchTowerMissionNumbers,
+                    liquidReserve: self.bankLiquidReserve, now: self.housingNow.timeIntervalSince1970, coins: &coins)
+            }
+        }
+    }
+    func signBankProject(kind: MPCCityEconomy.ProjectKind, amount: Int) async throws {
+        try await cityEconomyAction { economy, coins in
+            guard coins - amount >= self.bankLiquidReserve else { throw MPCCityEconomy.Failure.funds }
+            try economy.openProject(kind: kind, amount: amount, completed: self.churchTowerMissionNumbers,
+                reputation: self.cityContribution.points, day: self.pacingDay,
+                now: self.housingNow.timeIntervalSince1970, coins: &coins)
+        }
+    }
+    /// One step of the bicycle order (CityBicycleOrderView): journaled with the wallet like every
+    /// bank command; a step's stamina is charged once per receipt.
+    @discardableResult
+    func bicycleOrderStep(_ id: String, step: String, stamina: Int = 0,
+                          _ change: (inout MPCCityEconomy, inout Int, TimeInterval) throws -> Bool) async throws -> Bool {
+        var result = true
+        try await cityEconomyAction(stamina: stamina, receipt: "bicycle-\(step)-\(id)") { economy, coins in
+            result = try change(&economy, &coins, housingNow.timeIntervalSince1970)
+        }
+        return result
+    }
+    var restReserve: Int { Int(housingRecord?.stamina.reserve(at: housingNow.timeIntervalSince1970) ?? 0) }
+    /// Uses the housing command gate so rents, task starts and bank commands cannot
+    /// debit independent copies of the same wallet around asynchronous preparation.
+    func cityEconomyAction(stamina: Int = 0, receipt: String? = nil,
+                           _ change: (inout MPCCityEconomy, inout Int) throws -> Void) async throws {
+        await housingGate.acquire(); defer { housingGate.release() }
+        guard cityEconomyIsReadable else { throw HousingServiceFailure.unreadable }
+        try await ensureHousingDay()
+        var economy = cityEconomy, coins = venueCoins
+        let now = housingNow.timeIntervalSince1970
+        economy.settle(now: now, coins: &coins)
+        var housing = housingRecord ?? HousingRecord(at: housingNow)
+        if stamina > 0 { try housing.stamina.spend(points: stamina, receiptID: receipt ?? UUID().uuidString, at: now) }
+        try change(&economy, &coins)
+        var state = churchServices; state.loans.coins = coins
+        state.loans.lifetimeMerit = chapterOneCampaign.lifetimeChurchMerit
+        state.loans.availableMerit = chapterOneCampaign.spendableChurchMerit
+        try commitChurchServices(state, cityEconomy: economy, housing: housing)
+        housingDisplayTick += 1
+    }
+    func returnHomeRest(prepareBattle: Bool) async throws {
+        await housingGate.acquire(); defer { housingGate.release() }
+        try await ensureHousingDay()
+        var housing = housingRecord ?? HousingRecord(at: housingNow), economy = cityEconomy
+        _ = housing.stamina.returnHome(at: housingNow.timeIntervalSince1970)
+        if prepareBattle { try economy.prepareRest(day: HousingServerDay.number(housingNow), lodgingID: housingPayment?.lodgingID ?? "dock_bunk") }
+        var state = churchServices; state.loans.coins = venueCoins
+        try commitChurchServices(state, cityEconomy: economy, housing: housing)
+        housingDisplayTick += 1
+    }
+    func inviteDyeBookkeeper(privateRoom: Bool) async throws {
+        try await cityEconomyAction(stamina: 10) { economy, coins in
+            try economy.invite(privateRoom: privateRoom, lodgingID: housingPayment?.lodgingID ?? "dock_bunk",
+                completed: churchTowerMissionNumbers, now: housingNow.timeIntervalSince1970, coins: &coins)
+        }
+    }
+    func deliverMeetingGoods() async throws {
+        let item = cityEconomy.meeting
+        try await cityEconomyAction(stamina: item?.deliveryStamina ?? 15, receipt: "meeting-delivery-" + (item?.id ?? "none")) { economy, _ in
+            try economy.deliverGoods(now: housingNow.timeIntervalSince1970)
+        }
+    }
+}
+
+#if DEBUG
+extension GameStore {
+    func configureInstitutionClock() {
+        guard Bundle.main.bundleIdentifier == "local.mistport.institutions" else { return }
+        let store = defaults
+        pacingClock = { Date().addingTimeInterval(store.double(forKey: "institution.clock-offset")) }
+    }
+    func advanceInstitutionClock() async {
+        guard Bundle.main.bundleIdentifier == "local.mistport.institutions" else { return }
+        defaults.set(defaults.double(forKey: "institution.clock-offset") + 86_400, forKey: "institution.clock-offset")
+        await openHousingDay()
+    }
+    func prepareInstitutionReviewFixtureIfNeeded() async {
+        await prepareInstitutionHousingFixtureIfNeeded()
+        guard !defaults.bool(forKey: "institution.review-fixture") else { return }
+        for index in 0..<30 { recordCityContribution(.eventSuccess, receipt: "panel-review-\(index)") }
+        defaults.set(true, forKey: "institution.review-fixture")
+    }
+    func prepareInstitutionHousingFixtureIfNeeded() async {
+        guard Bundle.main.bundleIdentifier == "local.mistport.institutions" else { return }
+        defaults.set(Pathway.ID.fool.rawValue, forKey: PersistenceKey.selectedPathID)
+        if defaults.bool(forKey: "institution.housing-fixture-created") {
+            selectedPathID = .fool
+            if phase == .title { returnToCity() }
+            return
+        }
+        debugJumpToOldClockMission(14, enterImmediately: false)
+        venueCoins = 1_200; persistChapterProgress(); returnToCity()
+        chapterOneTutorialFlags = Set(ChapterOneTutorialCue.allCases.map(\.persistenceKey))
+        defaults.set(Array(chapterOneTutorialFlags), forKey: PersistenceKey.chapterOneTutorialFlags)
+        var record = HousingRecord(at: housingNow)
+        try? record.ledger.sign(lodgingID: "canal_house", mealID: "cafe", day: HousingServerDay.number(housingNow), roomsLeft: 1)
+        var coins = venueCoins
+        _ = record.ledger.payDay(HousingServerDay.number(housingNow), cash: &coins, completedMissions: 13)
+        record.homeLodgingID = "canal_house"
+        record.stamina.setRecovery(perDay: 111, at: housingNow.timeIntervalSince1970)
+        record.bonusExpiresAt = HousingServerDay.nextBoundary(housingNow)
+        var state = churchServices; state.loans.coins = coins
+        try? commitChurchServices(state, housing: record)
+        defaults.set(true, forKey: "institution.housing-fixture-created")
+    }
+}
+#endif
+
+#if DEBUG
+extension GameStore {
+    /// `--review-bicycle-order[=parts|sourcing|testing|failed|expansion|assembling|delivered]`: a
+    /// throwaway Q16 store holding one bicycle order at the asked step, for looking at
+    /// CityBicycleOrderView. Its own suite is wiped first; no playtest or player data is touched.
+    static func bicycleOrderReview(stage: String) async -> (GameStore, String)? {
+        let suite = "mistport.institutions.review.bicycle"
+        UserDefaults(suiteName: suite)!.removePersistentDomain(forName: suite)
+        let storage = UserDefaults(suiteName: suite)!
+        let now = Date()
+        let store = GameStore(launchArguments: [], defaults: storage)
+        store.debugJumpToOldClockMission(17, enterImmediately: false)
+        store.pacingClock = { now }; store.venueCoins = 1_000; store.persistChapterProgress()
+        await store.openHousingDay()
+        for index in 0..<24 { store.recordCityContribution(.eventSuccess, receipt: "bicycle-review-\(index)") }
+        guard (try? await store.signBankProject(kind: .bicycle, amount: 60)) != nil,
+              let order = store.cityEconomy.projects.last, let slip = order.bicycle?.correctSlip else { return nil }
+        let id = order.id
+        func step(_ name: String, _ change: (inout MPCCityEconomy, inout Int, TimeInterval) throws -> Bool) async {
+            _ = try? await store.bicycleOrderStep(id, step: name, change)
+        }
+        let order_ = ["parts", "sourcing", "testing", "failed", "expansion", "assembling", "delivered"]
+        let target = order_.firstIndex(of: stage) ?? 0
+        if target >= 1 { await step("parts") { e, _, t in try e.bicycleIssueParts(id, slip: stage == "failed" ? 1 - slip : slip, now: t); return true } }
+        if target >= 2 { await step("hub") { e, c, t in try e.bicycleSourceHub(id, hireRunner: true, now: t, coins: &c); return true } }
+        if target == 3 { await step("test-0") { e, c, t in try e.bicycleTestRide(id, replaceRivets: false, now: t, coins: &c) } }
+        if target >= 4 { await step("test-0") { e, c, t in try e.bicycleTestRide(id, replaceRivets: false, now: t, coins: &c) } }
+        if target >= 5 { await step("expand") { e, c, t in try e.bicycleAnswerExpansion(id, accept: true, completed: store.churchTowerMissionNumbers, now: t, coins: &c); return true } }
+        if target >= 6 {
+            await step("assemble") { e, _, t in try e.bicycleAssembleExtra(id, now: t); return true }
+            await step("deliver") { e, _, t in try e.bicycleDeliver(id, now: t); return true }
+        }
+        return (store, id)
+    }
+
+    static func verifyInstitutionIntegration() async {
+        let suite = "mistport.institutions.integration." + UUID().uuidString
+        let storage = UserDefaults(suiteName: suite)!
+        defer { storage.removePersistentDomain(forName: suite) }
+        var now = Date(timeIntervalSince1970: 1_800_000_000)
+        let store = GameStore(launchArguments: [], defaults: storage)
+        store.debugJumpToOldClockMission(14, enterImmediately: false)
+        store.pacingClock = { now }; store.venueCoins = 1_200; store.persistChapterProgress()
+        await store.openHousingDay()
+        let initial = store.venueCoins
+        try! await store.cityEconomyAction { try $0.openDeposit(60, completed: store.churchTowerMissionNumbers, now: now.timeIntervalSince1970, coins: &$1) }
+        housingAssert(store.venueCoins == initial - 60)
+        let reopened = GameStore(launchArguments: [], defaults: storage); reopened.pacingClock = { now }
+        housingAssert(reopened.cityEconomy.deposit?.principal == 60 && reopened.venueCoins == initial - 60)
+        now = now.addingTimeInterval(72 * 3_600)
+        await reopened.openHousingDay()
+        housingAssert(reopened.cityEconomy.deposit?.closed == true && reopened.venueCoins == initial + 12 - 12)
+        let once = reopened.venueCoins
+        await reopened.openHousingDay(); housingAssert(reopened.venueCoins == once)
+        try! await reopened.signHousing(lodgingID: "canal_house", mealID: "cafe")
+        // Changing rooms doesn't replace today's paid basic receipt.
+        housingAssert(reopened.housingPayment?.lodgingID == "dock_bunk")
+        now = now.addingTimeInterval(86_400)
+        await reopened.openHousingDay(); housingAssert(reopened.housingPayment?.copper == 22)
+        let beforeMeeting = reopened.venueCoins
+        try! await reopened.inviteDyeBookkeeper(privateRoom: true)
+        housingAssert(reopened.venueCoins == beforeMeeting - 4 && reopened.currentStamina == 90)
+        do { try await reopened.inviteDyeBookkeeper(privateRoom: true); preconditionFailure("duplicate invite") } catch {}
+        housingAssert(reopened.venueCoins == beforeMeeting - 4 && reopened.currentStamina == 90)
+        try! await reopened.cityEconomyAction { economy, _ in try economy.verifyMeeting(evidence: ["delivery_receipt", "original_seal"]) }
+        try! await reopened.cityEconomyAction { try $0.contract(inspectFirst: true, payOnDelivery: true, limitedLiability: true, now: now.timeIntervalSince1970, coins: &$1) }
+        let mid = GameStore(launchArguments: [], defaults: storage); mid.pacingClock = { now }
+        housingAssert(mid.cityEconomy.meeting?.stage == .contracted && mid.venueCoins == beforeMeeting - 34)
+        try! await mid.cityEconomyAction { economy, _ in try economy.collectGoods(now: now.timeIntervalSince1970) }
+        try! await mid.cityEconomyAction { economy, _ in try economy.sealGoods(original: true, now: now.timeIntervalSince1970) }
+        try! await mid.deliverMeetingGoods(); housingAssert(mid.currentStamina == 70)
+        now = now.addingTimeInterval(86_400)
+        await mid.openHousingDay()
+        housingAssert(mid.cityEconomy.meeting?.stage == .paid && mid.venueCoins == beforeMeeting - 34 + 60 - 22)
+        let paid = mid.venueCoins
+        await mid.openHousingDay(); housingAssert(mid.venueCoins == paid)
+        try! await mid.returnHomeRest(prepareBattle: true)
+        var loadout = mid.applyingChurchLoans(to: mid.chapterOneCampaign.loadout)
+        housingAssert(loadout.housingRestBP == 300)
+        try! mid.beginChurchLoanBattle("housing-rest-test", loadout: loadout)
+        housingAssert(mid.cityEconomy.restBonus(day: HousingServerDay.number(now)) == 0)
+        loadout = mid.applyingChurchLoans(to: mid.chapterOneCampaign.loadout)
+        housingAssert(loadout.housingRestBP == 0)
+        do { try await mid.returnHomeRest(prepareBattle: true); preconditionFailure("rest reset") } catch {}
+        // A housing-only transaction cannot restore the pre-purchase wallet.
+        let beforePurchase = mid.venueCoins
+        mid.purchaseEarlyRelic(EarlyRelicShop.salt)
+        try! await mid.queueHousing("bell_loft")
+        housingAssert(mid.venueCoins == beforePurchase - 120)
+        var repairLoadout = mid.applyingChurchLoans(to: mid.chapterOneCampaign.loadout)
+        repairLoadout.relicIDs = [EarlyRelicShop.salt]
+        try! mid.beginChurchLoanBattle("repair-discount", loadout: repairLoadout)
+        mid.finishChurchLoanBattle("repair-discount", outcome: .retreat)
+        let ordinaryFee = try! mid.churchServices.ownedCondition.repairCost(EarlyRelicShop.salt, ownedRelicIDs: mid.chapterOneCampaign.ownedRelicIDs)
+        let quote = mid.ownedRelicRepairQuote(EarlyRelicShop.salt)
+        housingAssert(quote < ordinaryFee && quote > 0)
+        mid.venueCoins = quote; mid.persistChapterProgress()
+        try! mid.repairOwnedChurchRelic(EarlyRelicShop.salt)
+        housingAssert(mid.venueCoins == 0 && mid.churchServices.ownedCondition.currentDurability(EarlyRelicShop.salt) == 100)
+        mid.venueCoins = 100; mid.persistChapterProgress()
+        // Crash recovery uses an absolute journal, not an extra additive credit.
+        var economy = mid.cityEconomy, coins = mid.venueCoins
+        try! economy.save(20, coins: &coins)
+        var state = mid.churchServices; state.loans.coins = coins
+        let receipt = ChurchServicesReceipt(state: state, cityEconomy: economy, coins: coins, lifetime: state.loans.lifetimeMerit, available: state.loans.availableMerit)
+        storage.set(try! JSONEncoder().encode(receipt), forKey: "mistport.church.services.pending.v1")
+        let recovered = GameStore(launchArguments: [], defaults: storage)
+        housingAssert(recovered.venueCoins == coins && recovered.cityEconomy.savings == 20)
+        let recoveredTwice = GameStore(launchArguments: [], defaults: storage)
+        housingAssert(recoveredTwice.venueCoins == coins && recoveredTwice.cityEconomy.savings == 20)
+        storage.set(Data("bad ledger".utf8), forKey: cityEconomyKey)
+        do { try await recoveredTwice.cityEconomyAction { try $0.withdraw(20, coins: &$1) }; preconditionFailure("corrupt financial ledger replaced") } catch {}
+        housingAssert(recoveredTwice.venueCoins == coins)
+        // The paid calendar day earns its bonus while resting; whole offline
+        // days earn only base recovery and never charge rent retroactively.
+        let paidSuite = suite + ".paid-window"
+        let paidDefaults = UserDefaults(suiteName: paidSuite)!
+        defer { paidDefaults.removePersistentDomain(forName: paidSuite) }
+        let paidStart = HousingServerDay.calendar.startOfDay(for: now)
+        let housingService = RulesHousingService(defaults: paidDefaults)
+        var paidRecord = HousingRecord(at: paidStart)
+        try! paidRecord.ledger.sign(lodgingID: "canal_house", mealID: "cafe", day: HousingServerDay.number(paidStart), roomsLeft: 1)
+        try! housingService.commit(paidRecord)
+        let firstPaid = try! await housingService.prepareDay(cash: 1_000, completedMissions: 13, at: paidStart)
+        try! housingService.commit(firstPaid.record)
+        let skip = HousingServerDay.calendar.date(byAdding: .day, value: 3, to: paidStart)!
+        let afterOffline = try! await housingService.prepareDay(cash: firstPaid.cash, completedMissions: 13, at: skip)
+        housingAssert(afterOffline.cash == 956 && afterOffline.record.ledger.payments.count == 2)
+        housingAssert(abs(afterOffline.record.stamina.restReserve - 11) < 0.0001)
+        let bankSuite = suite + ".repeat-bank"
+        let bankDefaults = UserDefaults(suiteName: bankSuite)!
+        defer { bankDefaults.removePersistentDomain(forName: bankSuite) }
+        let bank = GameStore(launchArguments: [], defaults: bankDefaults)
+        bank.debugJumpToOldClockMission(17, enterImmediately: false)
+        bank.pacingClock = { now }; bank.venueCoins = 5_000; bank.persistChapterProgress()
+        await bank.openHousingDay()
+        let bankStart = bank.venueCoins
+        bank.venueCoins = bank.bankLiquidReserve + 59
+        let protectedCash = bank.venueCoins
+        do { try await bank.signBankDeposit(amount: 60, ordinary: true); preconditionFailure("term used growth reserve") } catch {}
+        housingAssert(bank.venueCoins == protectedCash && bank.cityEconomy.termDeposit == nil)
+        bank.venueCoins = bankStart
+        try! await bank.signBankDeposit(amount: 60, ordinary: true)
+        let termID = bank.cityEconomy.termDeposit!.id
+        let bankReload = GameStore(launchArguments: [], defaults: bankDefaults); bankReload.pacingClock = { now }
+        housingAssert(bankReload.cityEconomy.termDeposit?.id == termID && bankReload.venueCoins == bankStart - 60)
+        now = now.addingTimeInterval(7 * 86_400)
+        await bankReload.openHousingDay()
+        housingAssert(bankReload.venueCoins == bankStart + 1 - 12 && bankReload.cityEconomy.termDeposit!.closed)
+        let maturedCash = bankReload.venueCoins
+        await bankReload.openHousingDay(); housingAssert(bankReload.venueCoins == maturedCash)
+        try! await bankReload.signBankDeposit(amount: 60, ordinary: true)
+        housingAssert(bankReload.cityEconomy.termDeposit?.id != termID)
+        try! await bankReload.cityEconomyAction { try $0.redeemTermDeposit(now: now.timeIntervalSince1970, coins: &$1) }
+        housingAssert(bankReload.venueCoins == maturedCash && bankReload.cityEconomy.bankBonusPaid == 1)
+        do { try await bankReload.signBankProject(kind: .bicycle, amount: 60); preconditionFailure("industry bypassed reputation") } catch {}
+        housingAssert(bankReload.venueCoins == maturedCash && bankReload.cityEconomy.projects.isEmpty)
+        for index in 0..<24 { bankReload.recordCityContribution(.eventSuccess, receipt: "bank-review-\(index)") }
+        try! await bankReload.signBankProject(kind: .bicycle, amount: 60)
+        housingAssert(bankReload.cityEconomy.projects.last?.kind == .bicycle && bankReload.venueCoins == maturedCash - 60)
+        // 自行车厂首批订单 through the store (2026-10-14): wrong-free path, errand in person,
+        // tightened at the test ride, expansion declined, delivered; reopened between steps.
+        let bike = bankReload.cityEconomy.projects.last!, bikeID = bike.id, slip = bike.bicycle!.correctSlip
+        try! await bankReload.bicycleOrderStep(bikeID, step: "parts") { e, _, t in try e.bicycleIssueParts(bikeID, slip: slip, now: t); return true }
+        try! await bankReload.bicycleOrderStep(bikeID, step: "hub", stamina: MPCCityEconomy.BicycleOrder.errandStamina) { e, c, t in
+            try e.bicycleSourceHub(bikeID, hireRunner: false, now: t, coins: &c); return true }
+        let bikeReload = GameStore(launchArguments: [], defaults: bankDefaults); bikeReload.pacingClock = { now }
+        housingAssert(bikeReload.cityEconomy.projects.last?.bicycle?.stage == .testing && bikeReload.venueCoins == maturedCash - 60)
+        let passed = try! await bikeReload.bicycleOrderStep(bikeID, step: "test-0") { e, c, t in try e.bicycleTestRide(bikeID, replaceRivets: false, now: t, coins: &c) }
+        housingAssert(passed)
+        try! await bikeReload.bicycleOrderStep(bikeID, step: "expand") { e, c, t in
+            try e.bicycleAnswerExpansion(bikeID, accept: false, completed: bikeReload.churchTowerMissionNumbers, now: t, coins: &c); return true }
+        try! await bikeReload.bicycleOrderStep(bikeID, step: "deliver", stamina: MPCCityEconomy.BicycleOrder.deliveryStamina) { e, _, t in
+            try e.bicycleDeliver(bikeID, now: t); return true }
+        do { try await bikeReload.bicycleOrderStep(bikeID, step: "deliver") { e, _, t in try e.bicycleDeliver(bikeID, now: t); return true }
+             preconditionFailure("bicycle delivered twice") } catch {}
+        let deliveredCash = bikeReload.venueCoins
+        housingAssert(deliveredCash == maturedCash - 60 && bikeReload.cityEconomy.projects.last?.delivered == true)
+        now = now.addingTimeInterval(10 * 86_400)
+        try! await bikeReload.cityEconomyAction { _, _ in }
+        housingAssert(bikeReload.cityEconomy.projects.last?.settled == true && bikeReload.cityEconomy.projects.last?.repayment == 69)
+        NSLog("BICYCLE_ORDER_VERIFY_PASS: slip checked, hub fetched with stamina, test ride, expansion answered, delivered once, reopened mid-order, 69 paid at term")
+        NSLog("BANK_REPEAT_VERIFY_PASS: protected reserve, persisted receipt, seven-day payout once, repeat signing, principal exit, reputation gate, industry subscription")
+        UserDefaults.standard.set("PASS: native same-wallet integration, reopen, duplicate, private contract, next-day rents, rest consumed, journal recovery, corrupt refusal", forKey: "institution.integration-result")
+        NSLog("INSTITUTIONS_VERIFY_PASS: same wallet, maturity once, no offline rent, lease receipt immutable, meeting and delivery stamina once, contract escrow, next-day payment, rest consumed once, reopen, journal recovery, corrupt ledger refusal")
     }
 }
 #endif

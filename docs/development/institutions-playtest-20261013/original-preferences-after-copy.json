@@ -1,0 +1,36 @@
+{
+  "info" : {
+    "arguments" : [
+      "devicectl",
+      "device",
+      "copy",
+      "from",
+      "--device",
+      "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+      "--domain-type",
+      "appDataContainer",
+      "--domain-identifier",
+      "com.yourcompany.mistport",
+      "--source",
+      "Library/Preferences",
+      "--destination",
+      ".build/institutions-playtest-evidence/player-preferences-after",
+      "--json-output",
+      "/private/tmp/mistport-original-preferences-after.json"
+    ],
+    "commandType" : "devicectl.device.copy.from",
+    "environment" : {
+      "TERM" : "dumb"
+    },
+    "jsonVersion" : 3,
+    "outcome" : "success",
+    "version" : "518.33"
+  },
+  "result" : {
+    "destination" : "file:///Volumes/andrew's%20SSD/Downloads/mindstone-game/.build/institutions-playtest-evidence/player-preferences-after",
+    "deviceIdentifier" : "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+    "domain" : "appDataContainer",
+    "domainIdentifier" : "com.yourcompany.mistport",
+    "source" : "Library/Preferences"
+  }
+}

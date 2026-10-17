@@ -69,6 +69,7 @@ public sealed class HellHoundEffekseerFireball : MonoBehaviour
 
     public IEnumerator Fly(System.Func<Vector3> source, System.Func<Vector3> target)
     {
+        if (SpellSpectacle20260926.DrawsBreath) { yield return new WaitForSeconds(.78f); yield break; }
         if (!IsReady) yield break;
 
         // Reuse the authored flame mesh/particles, including their location curve.

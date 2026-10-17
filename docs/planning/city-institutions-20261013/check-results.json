@@ -1,0 +1,169 @@
+{
+  "date": "2026-10-13",
+  "scope": "候选方案的静态日期、算术、孤立合同现金守恒；不是正式游戏模拟或经济稳定性验证",
+  "mission_opening_days": {
+    "Q1": 1,
+    "Q3": 1,
+    "Q4": 2,
+    "Q5": 3,
+    "Q6": 4,
+    "Q7": 5,
+    "Q8": 6,
+    "Q9": 7,
+    "Q10": 8,
+    "Q12": 10,
+    "Q13": 11,
+    "Q16": 14,
+    "Q17": 15,
+    "Q18": 16,
+    "Q20": 18,
+    "Q22": 20,
+    "Q23": 21,
+    "Q25": 23,
+    "Q26": 24,
+    "Q28": 26,
+    "Q30": 28
+  },
+  "tower_earliest_days": {
+    "F10": 5,
+    "F30": 8,
+    "F50": 13,
+    "F70": 18,
+    "F90": 23,
+    "F100": 25
+  },
+  "story_reward_sum_before_and_after": [
+    2280,
+    2280
+  ],
+  "one_time_gross_income": 5220,
+  "source_advancement_budget": 1360,
+  "candidate_advancement_budget": 2400,
+  "minimum_nonstory_income_with_two_basic_relics": 556,
+  "basic_living_28_active_days": 336,
+  "remaining_before_other_required_costs": 2484,
+  "new_customer_bonus_budget_2000_accounts": 24000,
+  "new_customer_bonus_budget_9300_accounts": 111600,
+  "source_weekly_highland_cost": 350,
+  "candidate_weekly_highland_cost": 294,
+  "candidate_weekly_highland_premium_vs_basic": 210,
+  "sample_daily_stamina": {
+    "street_day": 80,
+    "production_day": 80
+  },
+  "deposits": [
+    {
+      "principal": 20,
+      "early_exit": false,
+      "cash": {
+        "wallet": 24,
+        "principal_custody": 0,
+        "bank_service_budget": 0
+      }
+    },
+    {
+      "principal": 20,
+      "early_exit": true,
+      "cash": {
+        "wallet": 20,
+        "principal_custody": 0,
+        "bank_service_budget": 4
+      }
+    },
+    {
+      "principal": 40,
+      "early_exit": false,
+      "cash": {
+        "wallet": 48,
+        "principal_custody": 0,
+        "bank_service_budget": 0
+      }
+    },
+    {
+      "principal": 40,
+      "early_exit": true,
+      "cash": {
+        "wallet": 40,
+        "principal_custody": 0,
+        "bank_service_budget": 8
+      }
+    },
+    {
+      "principal": 60,
+      "early_exit": false,
+      "cash": {
+        "wallet": 72,
+        "principal_custody": 0,
+        "bank_service_budget": 0
+      }
+    },
+    {
+      "principal": 60,
+      "early_exit": true,
+      "cash": {
+        "wallet": 60,
+        "principal_custody": 0,
+        "bank_service_budget": 12
+      }
+    }
+  ],
+  "order_note_cash_paths": [
+    {
+      "customer_payment": 115,
+      "cash": {
+        "investor": 105,
+        "customer": 0,
+        "project": 8,
+        "suppliers": 100,
+        "bank": 2
+      },
+      "investor_net": 5
+    },
+    {
+      "customer_payment": 80,
+      "cash": {
+        "investor": 80,
+        "customer": 35,
+        "project": 0,
+        "suppliers": 100,
+        "bank": 0
+      },
+      "investor_net": -20
+    },
+    {
+      "customer_payment": 0,
+      "cash": {
+        "investor": 0,
+        "customer": 115,
+        "project": 0,
+        "suppliers": 100,
+        "bank": 0
+      },
+      "investor_net": -100
+    }
+  ],
+  "equity_distributions_player_then_npc": {
+    "448": [
+      90,
+      358
+    ],
+    "360": [
+      72,
+      288
+    ],
+    "160": [
+      32,
+      128
+    ]
+  },
+  "bank_loan_capacity_fee_outside_equity": 428,
+  "bank_loan_capacity_fee_inside_equity": 388,
+  "not_verified": [
+    "真实生产工时与需求",
+    "新手连续现金流",
+    "合同失败概率",
+    "全服通胀与缺货",
+    "并发与幂等实现",
+    "真机体验"
+  ]
+}

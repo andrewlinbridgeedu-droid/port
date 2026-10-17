@@ -67,13 +67,14 @@ public enum MPCChapterOneThirtyMissionContract {
         guard (1...missionCount).contains(number) else { return nil }
         let copper: Int
         switch number {
-        case 1...5: copper = 30
+        case 3, 5: copper = 130
+        case 1, 2, 4: copper = 30
         case 6...10: copper = 40
         case 11...15: copper = 50
         case 16...20: copper = 80
         case 21...25: copper = 100
-        case 26...29: copper = 120
-        default: copper = 300
+        case 26...29: copper = 80
+        default: copper = 260
         }
         let talent = [9: 4, 16: 4, 18: 6, 22: 8, 24: 8][number] ?? 0
         let merit = [9: 20, 15: 20, 21: 20, 30: 40][number] ?? 0

@@ -1,0 +1,22 @@
+{
+  "targets": [
+    {
+      "path": ".build/institutions-device",
+      "exists": true,
+      "root_symlink": false,
+      "symlinks_within": [],
+      "size_kib": 3909112,
+      "deleted": true
+    },
+    {
+      "path": ".build/institutions-native-harness",
+      "exists": true,
+      "root_symlink": false,
+      "symlinks_within": [],
+      "size_kib": 1697708,
+      "deleted": true
+    }
+  ],
+  "freed_kib": 5606820,
+  "scope": "Only this session obsolete 171.4 device build and native harness; no source art, player saves, archive or symbolic links removed."
+}

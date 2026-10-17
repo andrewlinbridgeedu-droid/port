@@ -59,7 +59,8 @@ struct DailyNewspaperView: View {
             .background(Color(red: 0.12, green: 0.075, blue: 0.04))
             GameArtPaperScroll(newsprint: true) {
                 VStack(spacing: 0) {
-                    HomeSceneArtwork(room: .newspaper, actorArt: talkingToPrinter ? "HomePrinter20260929" : "HomeEditor20260929")
+                    // A banner, not the whole room (2026-10-15: one page).
+                    HomeSceneBanner(room: .newspaper, actorArt: talkingToPrinter ? "HomePrinter20260929" : "HomeEditor20260929", height: 170)
                         .overlay(alignment: .bottomLeading) {
                             Text(talkingToPrinter ? "排字工 · 新刊已经印好了。" : "报馆编辑  ·  今日新刊已经印好，请看。")
                                 .font(.system(size: 12, weight: .medium, design: .serif))

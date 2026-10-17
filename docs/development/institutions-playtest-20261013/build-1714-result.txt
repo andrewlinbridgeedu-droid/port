@@ -1,0 +1,12 @@
+    Signing Identity:     "Apple Development: linlinrenren@hotmail.com (76BLH5Y4YB)"
+    Provisioning Profile: "iOS Team Provisioning Profile: local.mistport.institutions"
+                          (9c170761-79c9-4039-992f-ad37a1ec7ee2)
+    
+    /usr/bin/codesign --force --sign 71D6D74A01D06039406F0D57DF870A26C70B2AF1 --entitlements /Volumes/andrew\'s\ SSD/Downloads/mindstone-game/.build/institutions-device/Build/Intermediates.noindex/Mistport.build/Debug-iphoneos/Mistport.build/Mistport.app.xcent --timestamp\=none --generate-entitlement-der /Volumes/andrew\'s\ SSD/Downloads/mindstone-game/.build/institutions-device/Build/Products/Debug-iphoneos/Mistport.app
+
+Validate /Volumes/andrew\'s\ SSD/Downloads/mindstone-game/.build/institutions-device/Build/Products/Debug-iphoneos/Mistport.app (in target 'Mistport' from project 'Mistport')
+    cd /Volumes/andrew\'s\ SSD/Downloads/mindstone-game/mistport-ios
+    builtin-validationUtility /Volumes/andrew\'s\ SSD/Downloads/mindstone-game/.build/institutions-device/Build/Products/Debug-iphoneos/Mistport.app -shallow-bundle -infoplist-subpath Info.plist
+
+** BUILD SUCCEEDED **
+

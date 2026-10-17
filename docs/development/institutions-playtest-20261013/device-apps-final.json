@@ -1,0 +1,58 @@
+{
+  "info" : {
+    "arguments" : [
+      "devicectl",
+      "device",
+      "info",
+      "apps",
+      "--device",
+      "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+      "--timeout",
+      "20",
+      "--json-output",
+      "/private/tmp/mistport-device-apps-final.json"
+    ],
+    "commandType" : "devicectl.device.info.apps",
+    "environment" : {
+      "TERM" : "dumb"
+    },
+    "jsonVersion" : 3,
+    "outcome" : "success",
+    "version" : "518.33"
+  },
+  "result" : {
+    "apps" : [
+      {
+        "appClip" : false,
+        "builtByDeveloper" : true,
+        "bundleIdentifier" : "com.linren.textbridge.phone",
+        "bundleVersion" : "1",
+        "defaultApp" : false,
+        "hidden" : false,
+        "internalApp" : false,
+        "name" : "TextBridge",
+        "removable" : true,
+        "url" : "file:///private/var/containers/Bundle/Application/A071C63B-DB0D-4622-89C9-791F9B815CE1/TextBridge.app/",
+        "version" : "1.0"
+      },
+      {
+        "appClip" : false,
+        "builtByDeveloper" : true,
+        "bundleIdentifier" : "local.mistport.institutions",
+        "bundleVersion" : "171.4",
+        "defaultApp" : false,
+        "hidden" : false,
+        "internalApp" : false,
+        "name" : "雾港·机构试玩",
+        "removable" : true,
+        "url" : "file:///private/var/containers/Bundle/Application/BFB3976C-EFD5-43C8-B34A-5AD4B0DA7CD5/Mistport.app/",
+        "version" : "0.1.0"
+      }
+    ],
+    "defaultAppsIncluded" : false,
+    "deviceIdentifier" : "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+    "hiddenAppsIncluded" : false,
+    "internalAppsIncluded" : false,
+    "removableAppsIncluded" : true
+  }
+}

@@ -75,7 +75,7 @@ private struct ChapterOneTutorialPage {
     }
 }
 
-enum ChapterOneTutorialCue: String {
+enum ChapterOneTutorialCue: String, CaseIterable {
     case opening
     case cityMission
     case mapEntry

@@ -1,0 +1,48 @@
+{
+  "info" : {
+    "arguments" : [
+      "devicectl",
+      "device",
+      "info",
+      "apps",
+      "--device",
+      "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+      "--bundle-id",
+      "local.mistport.institutions",
+      "--json-output",
+      "/private/tmp/mistport-institutions-apps-1716.json",
+      "--timeout",
+      "20"
+    ],
+    "commandType" : "devicectl.device.info.apps",
+    "environment" : {
+      "TERM" : "dumb"
+    },
+    "jsonVersion" : 3,
+    "outcome" : "success",
+    "version" : "518.33"
+  },
+  "result" : {
+    "apps" : [
+      {
+        "appClip" : false,
+        "builtByDeveloper" : true,
+        "bundleIdentifier" : "local.mistport.institutions",
+        "bundleVersion" : "171.6",
+        "defaultApp" : false,
+        "hidden" : false,
+        "internalApp" : false,
+        "name" : "雾港·机构试玩",
+        "removable" : true,
+        "url" : "file:///private/var/containers/Bundle/Application/32AE8C66-1472-4753-A5C9-3340DE839DEA/Mistport.app/",
+        "version" : "0.1.0"
+      }
+    ],
+    "defaultAppsIncluded" : false,
+    "deviceIdentifier" : "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+    "hiddenAppsIncluded" : false,
+    "internalAppsIncluded" : false,
+    "matchingBundleIdentifier" : "local.mistport.institutions",
+    "removableAppsIncluded" : true
+  }
+}

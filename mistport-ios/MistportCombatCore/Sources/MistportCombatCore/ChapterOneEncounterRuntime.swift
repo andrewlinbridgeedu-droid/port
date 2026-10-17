@@ -129,6 +129,8 @@ public struct MPCChapterOneLoadout: Equatable, Sendable {
     public var talents = HermitTalentAllocation()
     public var skillLevels: [FoolSkillID: Int] = [:]
     public var churchGear = MPCChurchGearStats()
+    /// Temporary lodging preparation; never written into persistent gear.
+    public var housingRestBP = 0
     public var outfit: MPCOutfit? = nil
     /// The separate bounty slot (MPCBountyRelicCatalog); independent of shop relics.
     public var bountyRelicID: String? = nil
@@ -1565,8 +1567,8 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             outcome: .inProgress,
             // Every encounter is a fresh combat instance. Persistent HP may
             // be used by other modes, but chapter stages always begin full.
-            playerHP: party.playerMaxHP + loadout.churchGear.maxHP,
-            playerBaseMaxHP: party.playerMaxHP + loadout.churchGear.maxHP,
+            playerHP: (party.playerMaxHP + loadout.churchGear.maxHP) * (10_000 + loadout.housingRestBP) / 10_000,
+            playerBaseMaxHP: (party.playerMaxHP + loadout.churchGear.maxHP) * (10_000 + loadout.housingRestBP) / 10_000,
             playerShield: (loadout.passiveIDs.contains("fool_passive_01") ? 50 : 0)
                 + (loadout.ritual == .paperWard ? 100 : 0),
             allyHP: initialAllyHP,

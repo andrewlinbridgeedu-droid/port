@@ -6,9 +6,25 @@ import MistportCombatCore
 WallTuning.apply(ProcessInfo.processInfo.environment["WALLS"])
 PacingTuning.apply(ProcessInfo.processInfo.environment["PACING"])
 var arguments = CommandLine.arguments
+if arguments.count > 2 && arguments[1] == "housing-power" { try HousingPower.run(URL(fileURLWithPath:arguments[2])); exit(0) }
+if arguments.count > 1 && arguments[1] == "housing-check" { HousingChecks.run(); exit(0) }
+if arguments.count > 2 && arguments[1] == "housing" {
+    let destination = URL(fileURLWithPath:arguments[2]); try FileManager.default.createDirectory(at:destination,withIntermediateDirectories:true)
+    let offsets = arguments.count > 3 ? arguments[3].split(separator:",").compactMap { Int($0) } : [0,30,90]
+    try HousingReport.run(destination:destination,offsets:offsets,version:arguments.count > 4 ? arguments[4] : "draft")
+    exit(0)
+}
+if arguments.count > 2 && arguments[1] == "bank-power" { try BankPowerProbe.run(to: URL(fileURLWithPath: arguments[2])); exit(0) }
+if arguments.count > 1 && arguments[1] == "bank-check" { BankChecks.run(); exit(0) }
+if arguments.count > 2 && arguments[1] == "bank" {
+    let destination = URL(fileURLWithPath: arguments[2])
+    try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
+    let offsets = arguments.count > 3 ? arguments[3].split(separator: ",").compactMap { Int($0) } : [0, 30, 90]
+    try BankReport.run(destination: destination, offsets: offsets, version: arguments.count > 4 ? arguments[4] : "original")
+    exit(0)
+}
 if arguments.count > 5 && arguments[1] == "fight" {
     // fight <mission> <profile> <floor> <bounty relic id or -> : every shop relic, medal time and salve choice.
-    // BLESSINGS=<hero>,<sovereign> (e.g. lamp_wick,salt_crust) adds a Q30 离场祝福 pair; default none.
     let q = Int(arguments[2])!, profile = (Profile.all + HumanPace.all.map(\.profile)).first { $0.name == arguments[3] } ?? Profile(name: "delay", actionDelay: Double(arguments[3]) ?? 0, priorityCore: true), floor = Int(arguments[4])!
     let relic = arguments[5] == "-" ? nil : arguments[5]
     let owned = Shop.passives.filter { q - 1 >= $0.unlock }.map { Optional($0.id) }
@@ -19,50 +35,6 @@ if arguments.count > 5 && arguments[1] == "fight" {
                     let f = WallProbe.fight(q, profile, floor: floor, relic: relic, passive: passive, sequence: sequence, offset: offset, salve: salve)
                     print("cards#\(n) \((passive ?? "-").padding(toLength: 34, withPad: " ", startingAt: 0)) medal \(offset.map { String(Int($0)) } ?? "-") salve \(salve ? "y" : "n")  \(f.won ? "WIN " : "lose") hp \(f.hpPercent)% \(Int(f.seconds))s")
                 }
-            }
-        }
-    }
-    exit(0)
-}
-if arguments.count > 1 && arguments[1] == "tempo" {
-    // tempo: the combat tempo samples (Q4, D01, B01) under the former rules and the shipped tempo.
-    // TEMPO="key=value,..." tries other numbers for all three instead
-    // (keys: light lightPct auth parry basic basicRec skillRec basicPct).
-    var custom = MPCCombatTempo.standard
-    if let spec = ProcessInfo.processInfo.environment["TEMPO"] {
-        var v: [String: Double] = [:]
-        for pair in spec.split(separator: ",") { let kv = pair.split(separator: "="); if kv.count == 2 { v[String(kv[0])] = Double(kv[1]) } }
-        let t = MPCCombatTempo.standard
-        custom = MPCCombatTempo(lightInterval: v["light"] ?? t.lightInterval, lightWindup: t.lightWindup, lightOpening: t.lightOpening,
-                                lightOpeningPerSlot: t.lightOpeningPerSlot, lightAttackPercent: v["lightPct"].map(Int.init) ?? t.lightAttackPercent,
-                                authoredDamagePercent: v["auth"].map(Int.init) ?? t.authoredDamagePercent, parryPercent: v["parry"].map(Int.init) ?? t.parryPercent,
-                                authoredClearance: t.authoredClearance, basicInterval: v["basic"] ?? t.basicInterval,
-                                basicRecovery: v["basicRec"] ?? t.basicRecovery, skillRecovery: v["skillRec"] ?? t.skillRecovery,
-                                basicDamagePercent: v["basicPct"].map(Int.init) ?? t.basicDamagePercent)
-    }
-    let forced = ProcessInfo.processInfo.environment["TEMPO"] != nil
-    func choices(_ encounterID: String) -> [(String, MPCTempoChoice)] {
-        [("before", .off), ("tempo", forced ? .custom(custom) : .automatic)]
-    }
-    func line(_ name: String, _ profile: Profile, _ choice: String, _ s: MPCChapterOneEncounterSession, _ seconds: Double, _ t: MPCTempoStats) -> String {
-        let hp = s.playerHP * 100 / max(1, s.playerMaxHP)
-        let rate = seconds > 0 ? Double(t.visibleEvents) / seconds : 0
-        return [name, profile.name, choice, s.outcome == .victory ? "WIN " : "lose", "hp \(hp)%", "\(Int(seconds.rounded()))s",
-                "light \(t.lightHits) parry \(t.parries) authored \(t.authoredHits)",
-                "max light \(Double(t.largestLightBP) / 100)% authored \(Double(t.largestAuthoredBP) / 100)%",
-                String(format: "events/s %.2f", rate)].joined(separator: "  ")
-    }
-    let floor10 = TowerDriver.recommendedLoadout(for: MPCChurchTowerCatalog.floor(number: 10)!)
-    for profile in Profile.all {
-        for (choice, tempo) in choices("") {
-            let q4 = try ChapterDriver.run(q: 4, sequence: [.sidestepStrike], mask: true, actionDelay: profile.actionDelay, tempo: tempo)
-            print(line("Q4 ", profile, choice, q4.session, q4.seconds, q4.tempoStats))
-            let d01 = try TowerDriver.run(number: 1, actionDelay: profile.actionDelay, tempo: tempo)
-            print(line("D01", profile, choice, d01.session, d01.seconds, d01.tempoStats))
-            for offset in [6.0, 14.0] {
-                let b01 = try TowerDriver.run(number: 1, medalOffset: offset, suppliedLoadout: floor10, actionDelay: profile.actionDelay,
-                                              encounterID: "church_bounty_b01", tempo: tempo)
-                print(line("B01 medal@\(Int(offset))", profile, choice, b01.session, b01.seconds, b01.tempoStats))
             }
         }
     }
@@ -108,8 +80,7 @@ for policy in Policy.allCases {
             let total = result.minutes.values.reduce(0, +)
             print("\(policy.rawValue.padding(toLength: 13, withPad: " ", startingAt: 0)) \(profile.name.padding(toLength: 6, withPad: " ", startingAt: 0)) day+\(offset): reached Q\(result.finalMission)"
                   + (result.stuckAt.map { " STUCK at Q\($0)" } ?? " done") + String(format: " · %.0f min", total)
-                  + " · 贡献 \(result.daily.contribution) 档日 " + (2...4).map { result.daily.contributionTierDays["\($0)"].map(String.init) ?? "-" }.joined(separator: "/")
-                  + " · 街头任务 急\(result.daily.streetTasks["urgent"] ?? 0)/难\(result.daily.streetTasks["joint"] ?? 0)/城\(result.daily.streetTasks["commission"] ?? 0)")
+                  + " · 贡献 \(result.daily.contribution) 档日 " + (2...4).map { result.daily.contributionTierDays["\($0)"].map(String.init) ?? "-" }.joined(separator: "/"))
         }
     }
 }

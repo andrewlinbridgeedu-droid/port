@@ -1,0 +1,1946 @@
+{
+  "deleted_media_files": 292,
+  "deleted_media_bytes": 777667526,
+  "files": [
+    {
+      "path": "mistport-ios/Mistport/Assets.xcassets/BountyCityPanorama.imageset/city-user-exact-4k.png",
+      "size": 11922480,
+      "sha256": "d6448c5df59afaee8e5b67743a21cec92201d5c0c3d0ae1b35e9ccb7f682bd06",
+      "deleted": true
+    },
+    {
+      "path": "mistport-ios/Mistport/Assets.xcassets/BountyCityPanorama.imageset/city.png",
+      "size": 25038579,
+      "sha256": "37f550b16e4b7b1984179cae53a7729fe2237ddf4d69edddf422117328297578",
+      "deleted": true
+    },
+    {
+      "path": "mistport-ios/Mistport/Assets.xcassets/BountyCityPanorama.imageset/city-open-4k.png",
+      "size": 11368611,
+      "sha256": "fe620d94aeedceb491dee4c39d9a46f1eaf1f490292c63e19c625985d4a530ee",
+      "deleted": true
+    },
+    {
+      "path": "mistport-ios/Mistport/Assets.xcassets/BountyCityPanorama.imageset/city-home-style-4k.png",
+      "size": 13128526,
+      "sha256": "52f122795b73e629e005968dd4df5ca513f06a4d1ad3e930d246b73eb30db8ad",
+      "deleted": true
+    },
+    {
+      "path": "mistport-ios/Mistport/Assets.xcassets/BountyCityPanorama.imageset/city-user-provided-20260926.png",
+      "size": 3288972,
+      "sha256": "5bdeff578a9b62f5559abcc8d49eae6a248035d0c5885f18ac31d265d2caa293",
+      "deleted": true
+    },
+    {
+      "path": "backups/hound-foot-fire-20260914/HoundGroundFracture.shader",
+      "size": 2036,
+      "sha256": "cb9a7cd5c1a5e4cb5a714e171f3f24ee6f9303b7e4fd84b8a89e01ffc73bd4ed",
+      "deleted": true
+    },
+    {
+      "path": "backups/hound-foot-fire-20260914/HoundVolumetricInferno.shader",
+      "size": 3588,
+      "sha256": "7b0871a4becdd46be9798a368190956b3e69e5343ee2546f65a3ef0ef71d3624",
+      "deleted": true
+    },
+    {
+      "path": "backups/hero-premium-20260917/root/HeroFacePaint.png",
+      "size": 189989,
+      "sha256": "97f2447561eb59c852f3b10b1ae6da1958028ae2a0a99c70cd714f5973649a16",
+      "deleted": true
+    },
+    {
+      "path": "backups/hero-premium-20260917/root/HeroTailoredPBR.shader",
+      "size": 5757,
+      "sha256": "12c7bd1fb5e48eb23a9fcf3b9f37c2b9a489054c10b22dbd950d044740679a92",
+      "deleted": true
+    },
+    {
+      "path": "backups/hero-reference-vfx-20260913/SignatureSprite.shader",
+      "size": 1499,
+      "sha256": "114a247665668cd0d3b2914fb1db8cb23d8acf2d7ed5bf14af9751831c98cc98",
+      "deleted": true
+    },
+    {
+      "path": "backups/sidestep-cinematic-20260915/FoolSidestepRift.shader",
+      "size": 10761,
+      "sha256": "10e9e91f4a7e5b67ecb5d8cbebcfb587443d9ca6998a7edc179bb40ce37d91c0",
+      "deleted": true
+    },
+    {
+      "path": "backups/phoenix-wave-20260921/PhoenixWing.shader",
+      "size": 1369,
+      "sha256": "205c2e92d5a0b344822a31c91a262d0ee045a607512b87f679f2393806c70cb4",
+      "deleted": true
+    },
+    {
+      "path": "backups/phoenix-wave-20260921/IceThunderBolt.shader",
+      "size": 1183,
+      "sha256": "bc063af442d566a9f66d0ccc9d23baef4901b86168deb68613e4fc64d095f8b8",
+      "deleted": true
+    },
+    {
+      "path": "backups/phoenix-wave-20260921/GoldenRiftArt.shader",
+      "size": 1223,
+      "sha256": "4f27a2697638f3e0d7c9097d640d6c0cb921e9d3dfc3d1e64250837f69d4962b",
+      "deleted": true
+    },
+    {
+      "path": "backups/hound-painted-ground-20260914/HoundGroundFracture.shader",
+      "size": 1429,
+      "sha256": "196de81b8ef8be511c0e99220be3f11a36dfb62b1ef5ab1e7a610fc47bb6e1d3",
+      "deleted": true
+    },
+    {
+      "path": "backups/h00-fullscreen-restoration-20260923/TarotNova-before.shader",
+      "size": 3198,
+      "sha256": "0fab151d7db7b6dbddf8ef1cdbd15024643fb63b4210a1b8c025d4b865f13b03",
+      "deleted": true
+    },
+    {
+      "path": "backups/h00-fullscreen-restoration-20260923/HeroSpellVolume-before.shader",
+      "size": 10002,
+      "sha256": "3ae1275e5883697d0fb8cd6414a84e2673dd036f91970d390ece0c3c1114f06a",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/representative-v1-MainlineSilkRound2.shader",
+      "size": 1927,
+      "sha256": "ae0c7e90fb36653d15efbe35318c3891b6565a0d3ce6a4f6b150debc51ca4246",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/representative-v1-AuthoredNeedle.shader",
+      "size": 1549,
+      "sha256": "a09acc71c2ccd5715abd575f4d342fe49ff05e04bf3458a19a8e594d2d3ea037",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/MainlineInlaidVolumeRound2.shader",
+      "size": 4055,
+      "sha256": "834fdea252c06fc694292ab02a9b93fc21eeafb171c55887f684df7e7dea7eb2",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/HeroSpellVolume.shader",
+      "size": 12868,
+      "sha256": "139de605dfb0985a17d56135fec15e2637b7e92fd2340614dd5ca7cebd3e724a",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/SpellImpact20260925/CrimsonCurtain.shader",
+      "size": 1597,
+      "sha256": "3f55a08ff7e744711a6cb6dbf4381cd8f27cb7d067bb93b2de374a0523062f2c",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/SpellImpact20260925/GoldContractInk.png",
+      "size": 2212294,
+      "sha256": "2cabc3a711322c1ccfa359855efe6626f8904eac2a91a1ddad007f73db748255",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/SpellImpact20260925/AuthoredNeedle.shader",
+      "size": 1550,
+      "sha256": "13d63fbb8c6821bfc14e4729b6f2344cb0f8757fa98792d691d01fa982489181",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/SpellImpact20260925/SilverNeedleSilk.png",
+      "size": 2061915,
+      "sha256": "46fde4e6a234fce56a86ed0d018a8c3335fc1d33d7a591d0e4c1932ccd71a57c",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/ChurchSpellArt/venom.png",
+      "size": 522555,
+      "sha256": "24d144dbf732ecddc5e456f04747edf2121ce5f4a26f517655ada533ae979c29",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/ChurchSpellArt/BountyEffekseer/Texture/CrimsonSilk.png",
+      "size": 929287,
+      "sha256": "6540b4b983a321b670454bf5ebb9aafa5fd31bcb0d88a115b01a58bea305c2ce",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/ChurchSpellArt/BindingAuthored/GoldFiligree.png",
+      "size": 1581748,
+      "sha256": "7d4c769d4fd7d8955938a36602c37580c3b648c5332cecca44fde21bbba91c7c",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/EnemySignature/MainlineSilkRound2.shader",
+      "size": 2079,
+      "sha256": "b7282a7cbcc3eff81f66fded7049dbbed9033f765e925526069270900df88b51",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/EnemySignature/MainlineInlaidVolumeRound2.shader",
+      "size": 5594,
+      "sha256": "5c1a866b8efc6f989796e85858237392b598a56bcd04dd8fc3da3e4b8bb56f9e",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "size": 13154,
+      "sha256": "8934db2983cf4ea18a961799d717f194fef3dcd8ce400e5404cddd1a8f8d3b1a",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/Effects/Fool/CurtainRift.png",
+      "size": 1987514,
+      "sha256": "2f6f53865eb80c181547de19d77a56e44b25d4514738e6f99202dec802ee649c",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/spell-impact-grade-20260925/frozen-final/UnityBattleSource/Assets/Resources/Effects/Fool/HeavyTarotFace.png",
+      "size": 4011341,
+      "sha256": "498aa5c8bb280a430a52a95610e7477015054e48720cee331b9c412498344e67",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/church-demon-grotesque-20260917/ChurchArcane.shader",
+      "size": 1618,
+      "sha256": "ddab07cbcb9ba36506de6775f4453a5117c9a16823ff39fcb054755b3e7c74a6",
+      "deleted": true
+    },
+    {
+      "path": "backups/surface-audit-20260916/CharacterSurfaceRefinement20260916.shader",
+      "size": 3704,
+      "sha256": "7c8d5fe05c02894da586df5ac696541e1337a0ebaeb4beb940d4283895c09a65",
+      "deleted": true
+    },
+    {
+      "path": "backups/surface-audit-20260916/CharacterSurfaceRefinement20260916Fade.shader",
+      "size": 3729,
+      "sha256": "36dc1c4cdf64dec86e26f12b210c5186dc5084bc8680ff7550f242f6faafedd6",
+      "deleted": true
+    },
+    {
+      "path": "backups/infernal-warhound-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/HellhoundSentinel_Combat.fbx",
+      "size": 1318748,
+      "sha256": "688de2521faf77106c272deb05e4dfba93b8a9a75b0819355f143105502f92e9",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/infernal-warhound-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Body.mat",
+      "size": 2402,
+      "sha256": "105eb4ee2c354805379210b966ef404b8f2a7006394edd22c6fc1a5970aabfa2",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/infernal-warhound-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_2.png",
+      "size": 1280540,
+      "sha256": "11b28f3d6dced93fe05404e0266a2058153c301a10651e02b0e72997d6105049",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/infernal-warhound-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_0.png",
+      "size": 2681481,
+      "sha256": "9b7302fafe3b8942ef631d9bc979890e36a8768f55ddb59bfe517b7eb2e75728",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/infernal-warhound-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/MetallicSmoothness.png",
+      "size": 3760959,
+      "sha256": "17b11c55bcf3e02e1ec7eca608448c7673cee5428a20a399ee3445bbfd4eb785",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/rift-relief-20260921/GoldenRiftArt.shader",
+      "size": 1572,
+      "sha256": "af74ad9c0b5f7a026f36d68443583fadc6e859c30fe1a9b02322bed6136fcdab",
+      "deleted": true
+    },
+    {
+      "path": "backups/bounty-size-spell-overhaul-20260923/source/BindingRibbon20260921.shader",
+      "size": 2211,
+      "sha256": "8d6f975acc502bfe157bff2113e52e96886c14f5582f866c6a6044e678b8d743",
+      "deleted": true
+    },
+    {
+      "path": "backups/bounty-size-spell-overhaul-20260923/source/BountyMatterRound2.shader",
+      "size": 2825,
+      "sha256": "b038c9edebdf50a6d18278c33f6da23a41a7c4075b3b420fbac37cca99ec4fc2",
+      "deleted": true
+    },
+    {
+      "path": "backups/bounty-weapon-scale-20260923/ArtSource/BountyCombat20260923/b01/B01_Combat.blend",
+      "size": 12136195,
+      "sha256": "a02644f4c142f4cf0c4e42363ff9f62bcf502579aca4355dcf0da152b3881000",
+      "deleted": true
+    },
+    {
+      "path": "backups/bounty-weapon-scale-20260923/ArtSource/BountyCombat20260923/b01/B01_Combat.fbx",
+      "size": 3361884,
+      "sha256": "15be1f2f86dfdc1dc7fdf76604f2b8c46a120a8b42c55f070d3b8a0f98bf3de3",
+      "deleted": true
+    },
+    {
+      "path": "backups/hound-subtle-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/HellhoundSentinel_Combat.fbx",
+      "size": 1292972,
+      "sha256": "a31e87a8c1f6f47d43a4d2791ede4368a1a039ee7efd129fe9102532b8b72695",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-subtle-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Body.mat",
+      "size": 2402,
+      "sha256": "105eb4ee2c354805379210b966ef404b8f2a7006394edd22c6fc1a5970aabfa2",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-subtle-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_2.png",
+      "size": 1280540,
+      "sha256": "11b28f3d6dced93fe05404e0266a2058153c301a10651e02b0e72997d6105049",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-subtle-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_0.png",
+      "size": 2681481,
+      "sha256": "9b7302fafe3b8942ef631d9bc979890e36a8768f55ddb59bfe517b7eb2e75728",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-subtle-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/MetallicSmoothness.png",
+      "size": 3760959,
+      "sha256": "17b11c55bcf3e02e1ec7eca608448c7673cee5428a20a399ee3445bbfd4eb785",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/spell-reference-grade-20260923/bounty/BindingRibbon20260921.shader",
+      "size": 2426,
+      "sha256": "8094c655240009fffb2280d97019d82c119b875ad7a2b8159ec308332413cbb2",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-reference-grade-20260923/bounty/BountyMatterRound2.shader",
+      "size": 4249,
+      "sha256": "fe69adb425342f058d5b2d0f73cf34feb48598a2422e09e111384bd89543606c",
+      "deleted": true
+    },
+    {
+      "path": "backups/m12-armor-20260926/original/ArchiveAegis.shader",
+      "size": 1870,
+      "sha256": "4598c62cdde51e0e04c29dbe9cd5271eaac30154e9dd8a4cc89c523c3f1895a3",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/trials/phoenix-reference-addition/Shaders/PhoenixWing.shader",
+      "size": 2816,
+      "sha256": "3d4491ae27c79ceb94c53a91cd62df574e57736f4887a51dd86e56ad8320e1a3",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/trials/Scripts/IceThunderBolt.shader",
+      "size": 1284,
+      "sha256": "ebb016b0aef74a63874291c5a6a4993f4a9f11ba734b67935e281d05de9a56cf",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/trials/Scripts/GoldenRiftArt.shader",
+      "size": 2599,
+      "sha256": "fdf3ab4b45875ccc35b64719737793b9de843a4339f599a491038fa4527d7118",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/trials/Shaders/PhoenixWing.shader",
+      "size": 1883,
+      "sha256": "e8156fb8ecfd2137ad669c7caa5a98799ad8f7c87e584d165567df0155268e3c",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/trials/Shaders/RiftImpact.shader",
+      "size": 805,
+      "sha256": "9ab53e3392afee9c623d0c8a5e1013c12f1d2bd7dea3a41dbe249de71aa0a0f2",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/trials/Shaders/SpellContact.shader",
+      "size": 897,
+      "sha256": "9decc6779716348a7cf2ad2040e566f10a25e702be255da2a231a7cfdee3214d",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/trials/Shaders/IceCrystal.shader",
+      "size": 1203,
+      "sha256": "96e0fee06eb7e2e903ff098a8d7753ce3e82ea992d25a94bee30b690b4dc6897",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/tower/UnityBattleSource/Assets/Resources/Shaders/ChurchFragments.shader",
+      "size": 874,
+      "sha256": "84a47743c9e31d94a457e411872686dbe0358a56f070d21bf13801de01f08c26",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/tower/UnityBattleSource/Assets/Resources/Shaders/BonePattern20260920.shader",
+      "size": 1951,
+      "sha256": "382587d312ed5e71024f2539f0a05e27b615964dc6a7af08b40b3ab6dc779e3a",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/hero/h07-after-fix/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "size": 12834,
+      "sha256": "e87dbcf740586dbadefa8da885225d09fbc19f686ea6f90684ad97a4bac93055",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/hero/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "size": 12437,
+      "sha256": "a28e143e182203445a495e1d45906b32d4f34aac63144ae2f13e8c6a4c5d8bd4",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/hero/UnityBattleSource/Assets/Resources/Effects/Fool/HeroHuntingEcho.shader",
+      "size": 3382,
+      "sha256": "8912d4b738ea19c76875f29b10730455dc5598fa63517162a46e22018c386c7e",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/hero/UnityBattleSource/Assets/Resources/Effects/Fool/TarotNova.shader",
+      "size": 3813,
+      "sha256": "4613d052556dedaeb209e1011b2ab0214b9c222289a204afbe39a938106afabd",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/hero/identity-after-fix/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "size": 12371,
+      "sha256": "3724267ffe32ffdf406200abe3478585ee5b2692e6a24d751ddef5fdbd27ff58",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/hero/identity-after-fix/UnityBattleSource/Assets/Resources/Effects/Fool/HeroPorcelainRound2.shader",
+      "size": 2791,
+      "sha256": "f6a77876ce7fa6f91322048eb4faa0b892ea95ee902d26c3871a4cc828a33722",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/main/Assets/Resources/Shaders/MinionSurface20260921.shader",
+      "size": 1366,
+      "sha256": "280901cbe7f9afcc2bc87e9b944ed79241709a1df09d2954eb602c05c200b84c",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/hardfix-final/UnityBattleSource/Assets/Resources/EnemySignature/MainlineSilkRound2.shader",
+      "size": 1718,
+      "sha256": "768e88f4822fc77497a21297404fd681d25f742b4e39636c685cd6ce6769adb4",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/UnityBattleSource/Assets/Resources/EnemySignature/EmeraldPoisonFog.shader",
+      "size": 1507,
+      "sha256": "4b3cb4be430eaa84fae376912c37d60106af9e77f3de060813b086d804958c14",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/UnityBattleSource/Assets/Resources/EnemySignature/ArchiveAegis.shader",
+      "size": 1353,
+      "sha256": "f8d6f81c4ebbb69e8b0f984abe91d523ee607c04c05db95af2b8e6c7b1581ce2",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/UnityBattleSource/Assets/Resources/EnemySignature/CrimsonStageProjection.shader",
+      "size": 2123,
+      "sha256": "0572e71110d7ff91db2a225c74e6b49a734e8914caff0de38db9a72c4e9bb23e",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/UnityBattleSource/Assets/Resources/EnemySignature/AuthoredBurstTier.shader",
+      "size": 1823,
+      "sha256": "6f6490f9e7cd877e017552e0021ab605f3edf3f7990ff07ab2b9c88eec1d2dd2",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/UnityBattleSource/Assets/Resources/EnemySignature/Q4PursuitFlame.shader",
+      "size": 1698,
+      "sha256": "b584ac87f2c1c26a8881b1455168d2748a046a8d7f2742781e7ae98db3ebeafd",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/UnityBattleSource/Assets/Resources/EnemySignature/HoundVolumetricInferno.shader",
+      "size": 3654,
+      "sha256": "d40676303b5e7e7aea2931f2931d469e29f2942dbd5c205f9ebc267de44afff1",
+      "deleted": true
+    },
+    {
+      "path": "backups/whole-spell-round2-20260922/mainline/m20-calibration/UnityBattleSource/Assets/Resources/EnemySignature/MainlineInlaidVolumeRound2.shader",
+      "size": 2541,
+      "sha256": "3f78d6cc31889fefbf808efaff6873635ed29dfc126c8d9af7e89ff22b1d9ea5",
+      "deleted": true
+    },
+    {
+      "path": "backups/church-tower-button-unify-20260925/old-entry-art.png",
+      "size": 181049,
+      "sha256": "632c51df54109d4a0bda4079806a361f6e03c4823e6a1cd65d74ccc5ad634f14",
+      "deleted": true
+    },
+    {
+      "path": "backups/church-organic-20260918/ChurchDetonation.shader",
+      "size": 1204,
+      "sha256": "c6d699dcfdef50bae1836123279e89ff5dc04129232329567f5655e39e763af3",
+      "deleted": true
+    },
+    {
+      "path": "backups/m12-deploy-grade-20260926/ArchiveAegis.before.shader",
+      "size": 1593,
+      "sha256": "89ace62382acf3b2000bbb7edbd3d0eb1fe0fc37793af2ebb6c1da32119c5255",
+      "deleted": true
+    },
+    {
+      "path": "backups/tavern-depth-panorama-20260925/right-4k.png",
+      "size": 7038762,
+      "sha256": "5326c33b85d2e9c9d5e14fafda95d05cca29ce26674262de935f6f2518f7707e",
+      "deleted": true
+    },
+    {
+      "path": "backups/tavern-depth-panorama-20260925/left.png",
+      "size": 6396951,
+      "sha256": "b171ce5c7dafda9e2ae6de0e76723d976d3db72e69dede974661f7d40cb471f8",
+      "deleted": true
+    },
+    {
+      "path": "backups/tavern-depth-panorama-20260925/mor-dialogue-4k.png",
+      "size": 7020100,
+      "sha256": "f03932fa3fa49e4a906cde4bfd91ec572b900b3407df24cbbfce045ada058222",
+      "deleted": true
+    },
+    {
+      "path": "backups/tavern-depth-panorama-20260925/center.png",
+      "size": 6706192,
+      "sha256": "f94eef75bc88a678f7e0ac6f8c28716215179850e4d41772ffdbd9295822cb98",
+      "deleted": true
+    },
+    {
+      "path": "backups/tavern-depth-panorama-20260925/mor-dialogue.png",
+      "size": 6797174,
+      "sha256": "44eb49aab4dd919a5783d7dcc0caef7b0d841efe2ab01be1e488678d5ff8b6d5",
+      "deleted": true
+    },
+    {
+      "path": "backups/tavern-depth-panorama-20260925/center-4k.png",
+      "size": 7399945,
+      "sha256": "4b0f31aefedaad7d097ea9fe4cf2cf2121ec0df9e4d53ebb741d7d281e2c4d0d",
+      "deleted": true
+    },
+    {
+      "path": "backups/tavern-depth-panorama-20260925/left-4k.png",
+      "size": 7102063,
+      "sha256": "3842ad325d6df7e2370ede5ab74163d5d0796cf98c070e5163f597ae75c3db92",
+      "deleted": true
+    },
+    {
+      "path": "backups/tavern-depth-panorama-20260925/right.png",
+      "size": 6905098,
+      "sha256": "52be7aef955c3cafb0270b170cb7318719878c83401231150a0a749dba9f6d7c",
+      "deleted": true
+    },
+    {
+      "path": "backups/two-spells-impact-20260921/PhoenixWing.shader",
+      "size": 1701,
+      "sha256": "0348ba8aa647f4a9d8bbae7221379aee4eaeb227d2a1a21609b18e389baa52f5",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-spectacle-20260926/original/FoolSidestepRift.shader",
+      "size": 12191,
+      "sha256": "6c725ee795dcb650e1d46f83fb0ce192b6511b0a4e065c14176256a00986e505",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-spectacle-20260926/original/HeroSpellVolume.shader",
+      "size": 13154,
+      "sha256": "8934db2983cf4ea18a961799d717f194fef3dcd8ce400e5404cddd1a8f8d3b1a",
+      "deleted": true
+    },
+    {
+      "path": "backups/enemy-final-energy-20260914/SignatureSprite.shader",
+      "size": 1790,
+      "sha256": "b792929d019c8f560e0c1aa116b8c4e34430748e25c43750478da4db12517ae6",
+      "deleted": true
+    },
+    {
+      "path": "backups/d02-editor-polish-20260920/SaltSpikeMesh.fbx",
+      "size": 7972284,
+      "sha256": "9e3dfb1d163cafc696eeb57c1a5eecc0ff5e2d6c80cda86fa5be999cb178490b",
+      "deleted": true
+    },
+    {
+      "path": "backups/d02-editor-polish-20260920/SaltSpike.mat",
+      "size": 2324,
+      "sha256": "c1a3b5e6ff7280ab0827840e6b875f42d306a92bdeeadff449089459d2f64824",
+      "deleted": true
+    },
+    {
+      "path": "backups/d02-editor-polish-20260920/SaltmawEffekseer/Texture/Crystal.png",
+      "size": 7454,
+      "sha256": "cf75234356b83cce29d4b44ddfa49928fab6464062d9fb5d4c72a6e1352292fc",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/d02-editor-polish-20260920/SaltmawEffekseer/Texture/Mist.png",
+      "size": 208912,
+      "sha256": "953d069e80f5374c430ddc278b9e27a9a8480af64615f68803cb6f05c7ac9e51",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/character-art-upgrade-20260916/story-detail/RescueBearer_Combat.fbx",
+      "size": 2340844,
+      "sha256": "1aa02d2653d6e633adc9eb26bd952c6f782f5eb2f70d595b98fec6ce20818b18",
+      "deleted": true
+    },
+    {
+      "path": "backups/character-art-upgrade-20260916/story-detail/TranscriptionScribe_Combat.fbx",
+      "size": 2392012,
+      "sha256": "dcd4d37c4087e8162b6af2e080b65f1ad5bf50ccdc69b8a03599adb691d51c43",
+      "deleted": true
+    },
+    {
+      "path": "backups/character-art-upgrade-20260916/surfaces/CharacterSurfaceRefinement20260916.shader",
+      "size": 4531,
+      "sha256": "6c6107a5d842937241755165c950082565c63d43f802c35e764ee60c8e3da6ab",
+      "deleted": true
+    },
+    {
+      "path": "backups/character-art-upgrade-20260916/surfaces/CharacterSurfaceRefinement20260916Fade.shader",
+      "size": 4556,
+      "sha256": "9d2710bd129251632c18cfec1f1be7007e9ea7821093e58cca307e72db6381a8",
+      "deleted": true
+    },
+    {
+      "path": "backups/character-art-upgrade-20260916/hero/Resources/Shaders/HeroTailoredPBR.shader",
+      "size": 3605,
+      "sha256": "c3b244442e66624a4dba406ca9154e91d94355766f08a1f13abd6d8478a8999a",
+      "deleted": true
+    },
+    {
+      "path": "backups/character-art-upgrade-20260916/hero/Models/Meshy_AI_battle_magician_rig_biped_Animation_Combat_Stance_frame_rate_60.fbx",
+      "size": 29760268,
+      "sha256": "affa8041bba9a95c499fe717a6ce6b72877232e355f1b403db512a46ec832a5f",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/character-art-upgrade-20260916/early-normals/early-hound-original.fbx",
+      "size": 55310844,
+      "sha256": "3e949f90678a2ac9ea2fe0af470df2a36d0a6287ad5e15191aaa398ccf19b62c",
+      "deleted": true
+    },
+    {
+      "path": "backups/character-art-upgrade-20260916/early-normals/ghost-original.fbx",
+      "size": 75362172,
+      "sha256": "947a2f000f721cf20f7db3c27b8e44d5c679d1bc0a400071dd24230fff391dff",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackS03.imageset/fool-attack-s-03.png",
+      "size": 94247,
+      "sha256": "5c055b79557ae9d83ed8eefab26324c18185c56e98758651562bbef4040be060",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackS02.imageset/fool-attack-s-02.png",
+      "size": 84667,
+      "sha256": "10dd62d70ddbacbe0c19df3a2d3f9776c3ecc76a7cb60bc3a21e186807cb5b00",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt11BasicDefense.imageset/art.png",
+      "size": 3678,
+      "sha256": "60b530f14cece14d9c59bfc18adf73ba4b95382c8d388ac8a6fc224a40197e76",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/HellHoundIdleV404.imageset/hell-hound-idle-v4-04.png",
+      "size": 152858,
+      "sha256": "5260e2be83561294dd806d921ab9cd3f2fa431732015daae56e4618e6af1846e",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt13CityNavigation.imageset/art.png",
+      "size": 7068,
+      "sha256": "27241844ed870d33f3b09bf518e4f32e4805635216853b2a3d6bd3f050b47abf",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/TalentAmethystButton.imageset/art.png",
+      "size": 1200491,
+      "sha256": "49e2139ec53706415362740d4d3e88aedc1052a7edc0e2a6193bb642afb7c7ff",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt04TalentBranches.imageset/art.png",
+      "size": 9383,
+      "sha256": "198990213cf8eb0d30b224484f1c409532f6a181512148004eeff516457c9a63",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ConsumableClockKey.imageset/consumable-clock-key.png",
+      "size": 1014572,
+      "sha256": "cec37d9082c67273926fe4571ecf97364a5fcf359b30f844f3a11487fb6afbb0",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackE03.imageset/fool-attack-e-03.png",
+      "size": 65070,
+      "sha256": "a1d752c7f5512b8e887bdcf37cd42bb5f36e9f7454228d1cd0475e2d10f36faf",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackE02.imageset/fool-attack-e-02.png",
+      "size": 57764,
+      "sha256": "e1d74a1b6a3b9f39cffe83a601b7cae0bd70bd7afa98d9068de2b7f36a7724e9",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackN06.imageset/fool-attack-n-06.png",
+      "size": 59684,
+      "sha256": "1e7f49cebb78ebed22e502a4f4362d59e347469e2dab5208879756c5be2d950e",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb01.imageset/portrait.png",
+      "size": 91637,
+      "sha256": "f20e0bc4735be6ac3199df8c468d7654271f6874e4c520482b57747b4b3b97dd",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ClockGuardTargetMemoryEye.imageset/clock-guard-target-memory-eye.png",
+      "size": 913101,
+      "sha256": "c7c5004cca20d95bbccc847a6d46926266d240d87175c8ecf7790081c28b3b3a",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt08CombatCooldown.imageset/art.png",
+      "size": 10369,
+      "sha256": "2de70f1229c3dc591cc372fabb59aa51faaecde33b79b72501a0c9c77bca12ea",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt16MapRunes.imageset/art.png",
+      "size": 6909,
+      "sha256": "095b8671be67e042f7d213a83b22b1b0a7e4f1ef7a3b1503597660e5e33c90c6",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt31CommonUtility.imageset/art.png",
+      "size": 3834,
+      "sha256": "fc7363d11bb50f64b6aeebde955f4092306bf09b2a6e21f8a1a9a232ea43dae9",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackE04.imageset/fool-attack-e-04.png",
+      "size": 67505,
+      "sha256": "2fcb87c05a0fdbe3d1f4ea4de07d401fd9957e8a260a2bdae0f75d5c6c6d7850",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackE05.imageset/fool-attack-e-05.png",
+      "size": 71079,
+      "sha256": "ac9997421d16181a92fcd6c2eb32cd472e142d07b0300123db3e29449cf9406f",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb07.imageset/portrait.png",
+      "size": 799068,
+      "sha256": "41aac75af13ac79f779086d1fa05643b7e948ceba5565ed1fedeb841409e5610",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb06.imageset/portrait.png",
+      "size": 88091,
+      "sha256": "9702d667eeaead8cb2be370add7334c28604b1e678e9927a2251b7799eb909a3",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackN01.imageset/fool-attack-n-01.png",
+      "size": 61673,
+      "sha256": "2a9b09139c77afb36c6a28376256a8c703e564fc8bc4ed9ccabe1608393aae45",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/SceneInventoryMarbleHall.imageset/art.png",
+      "size": 2846305,
+      "sha256": "d193e236216e82ca77ab8d9709c09455dc898b29c64e14f793ade829ad401e46",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ConsumableSaltTea.imageset/consumable-salt-tea.png",
+      "size": 1534991,
+      "sha256": "cc064341bae78bc9ccbe27fef7ebdf1fe83c1b86cfdd4e3f605de2006d6c450c",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/SceneInventoryTreasury.imageset/art.png",
+      "size": 3055308,
+      "sha256": "05fea4f40bc9f6bc798bc0c98da50a7fbb717f000a69bc89ac34cbb2708011ad",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolCombatIdle.imageset/fool-combat-idle.png",
+      "size": 149359,
+      "sha256": "04f04e13ab4b3cb463a194965c3d73d109d5527f17326aeeea5d3c8b73c06f4e",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackS04.imageset/fool-attack-s-04.png",
+      "size": 82220,
+      "sha256": "2646d0827ac64df40f9169db02fa39ec5e25ce1bd3c0c1eb5a8256f77de15278",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackS05.imageset/fool-attack-s-05.png",
+      "size": 74679,
+      "sha256": "c61dcb5f29f06c5f7ea28dcdd3a13de36ae545703296f7e61223646e463cd127",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt14CityHotspot.imageset/art.png",
+      "size": 3658,
+      "sha256": "929b0ce00106453e632b3c7d762770ad2803106c1194d4069ea53f6701b21e27",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt06TalentPanel.imageset/art.png",
+      "size": 5583,
+      "sha256": "05ef31143ee7201db42a946d51b8e683ca765f5ac407839a983e09c352febe72",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt13CityNavigationInventory.imageset/art.png",
+      "size": 674,
+      "sha256": "6ab2d6d946e09ee8ec792e0de410820f8951b6097c64363b40bb184014fda99a",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt19TitleGate.imageset/art.png",
+      "size": 11984,
+      "sha256": "5a401db031b567a537da72be807f1eb96da3c4c8005f50c97be81726f55a35c6",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt03FantasyTalent.imageset/art.png",
+      "size": 3515,
+      "sha256": "adb3864a620a78369c3d9602afc4288e79c766e5d2601c1893745a4511c3a2cb",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt13CityNavigationProfile.imageset/art.png",
+      "size": 1663,
+      "sha256": "7cfdf00232ca8eeb86a7aeda7f929dc61f335f8ff50f2806e4eec75cd45cc7b5",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt13CityNavigationChurch.imageset/art.png",
+      "size": 1347,
+      "sha256": "839f3a46384a0861a907a3091e8285bc3527952de3554abc2b04cbeea7066b65",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt33PressTutorial.imageset/art.png",
+      "size": 12029,
+      "sha256": "1cf10642df5e4959b069a0be9e9927dd1e14fc81ce7840e280bc67aeb9652362",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt21StoryChoice.imageset/art.png",
+      "size": 5583,
+      "sha256": "05ef31143ee7201db42a946d51b8e683ca765f5ac407839a983e09c352febe72",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt13CityNavigationConquest.imageset/art.png",
+      "size": 1673,
+      "sha256": "2eed08cb3cbeb8aa5ce13ebd43a3de830275f8a4299a022842a12b26cff91c08",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt13CityNavigationStore.imageset/art.png",
+      "size": 892,
+      "sha256": "401ca62f3b436412697b4298c88ef24800559613aab8032f264e759d8375b8e4",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/HellHoundIdleV402.imageset/hell-hound-idle-v4-02.png",
+      "size": 142594,
+      "sha256": "384a808fa5c93253cb3efe6142fd2191c6da973fcf506cdd74f91e80f201c2d1",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/HellHoundIdleV403.imageset/hell-hound-idle-v4-03.png",
+      "size": 145191,
+      "sha256": "40d556bfd27d818e42395dcf898e8d1affedecfa13a558158011b5bd066c52d5",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb10.imageset/portrait.png",
+      "size": 990077,
+      "sha256": "6d65b5c1815d103980302006ed7b8d1e728d2c28a8849affb6bbfa19c7eed266",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt07SkillUpgrade.imageset/art.png",
+      "size": 5512,
+      "sha256": "e82d07342e8729ad8e15dd6d86d696ca4693369bbb22f8bcbc189a570e22aedb",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb03.imageset/portrait.png",
+      "size": 49169,
+      "sha256": "895629b2f1792a40342585df5fa884db73fa1a077e222e5a131240e09881b300",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackN04.imageset/fool-attack-n-04.png",
+      "size": 64859,
+      "sha256": "e91e1345a56dae56012cdc8ad8ef57bde3486262c944dce024627e7965d7d633",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackN05.imageset/fool-attack-n-05.png",
+      "size": 60640,
+      "sha256": "0496d979625e1d4366f21dc23662480f79f90023c1b96ab9242b26855be284ad",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb02.imageset/portrait.png",
+      "size": 101395,
+      "sha256": "051b28f8ce69ed28590842f9642f4262499fbea3bff77227e857ed70c781b739",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/GearHoundIdle.imageset/gear-hound-idle-bright-v2.png",
+      "size": 1054240,
+      "sha256": "5373958eb7753c4a139c56bc7d6f5567aad583912e2205fa94637d5f644c59eb",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb09.imageset/portrait.png",
+      "size": 1730888,
+      "sha256": "184c86dce40c9f26e772ca7ed726889698fa7957f142a694901f0b0114ad8a02",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb08.imageset/portrait.png",
+      "size": 531299,
+      "sha256": "e794d8067a7e908503ac1a1d936ff0217424de00b12cf0296e4cdba4f800dbe5",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackE01.imageset/fool-attack-e-01.png",
+      "size": 62055,
+      "sha256": "d5e8ada13212bc40d6f8353da9cd163efd1425605be8284f510feb07e3ec5cbd",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackS01.imageset/fool-attack-s-01.png",
+      "size": 82325,
+      "sha256": "2a18aee205446daa377abe8ac830b8b4c9391dd75044a0c1336fab0f3fd4baa5",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt32SystemButtons.imageset/art.png",
+      "size": 2317,
+      "sha256": "6c568fc4377aef9f0842bb81e0766abe2e7f53a8438530e93431497d71c2301e",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt10BattleLoadout.imageset/art.png",
+      "size": 11527,
+      "sha256": "f190c2cfda06182bce1136266410d7bd9a319a8a282e61b02c65fa53ddd36038",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/rollback-flat-buttons-20260925/ButtonArt14CityHotspotPremium.imageset/art.png",
+      "size": 890392,
+      "sha256": "96f9875356c2c189a5ed76ccb1be825581b5b2958358071a6cf71978c5fe138a",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/rollback-flat-buttons-20260925/ButtonArt15CityMission.imageset/art.png",
+      "size": 8128,
+      "sha256": "42565380097b75e8627e00452c7b8f07331665594d3da35670a5849f3d41eaf5",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/rollback-flat-buttons-20260925/ButtonArt19TitleGateNight.imageset/art.png",
+      "size": 543718,
+      "sha256": "e417fdf4fa93e59452c91a6525c4c1c5b91c2f972a8caff6c37a9f470a265a06",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackS06.imageset/fool-attack-s-06.png",
+      "size": 75251,
+      "sha256": "538dc578dfca1331bc86959098bd904ebc060d11a5fb16ce2e9010901f59a7ec",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt12LegacyBattleSkill.imageset/art.png",
+      "size": 4429,
+      "sha256": "87ef00e8430fabc4c31d284d08806d5e817a0fc6150f72a1ad2ef556ffdbb425",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt26InventoryCategories.imageset/art.png",
+      "size": 9530,
+      "sha256": "2489b9b3eaffec08defbdc43dfaee57759917f51018c1b840ea74b69a45c99f7",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ConsumableMirrorSalve.imageset/consumable-mirror-salve.png",
+      "size": 1601415,
+      "sha256": "a296a26595e613b59a0d15153933429281776ad7d9d712f2cb15f0ae22a88865",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackN03.imageset/fool-attack-n-03.png",
+      "size": 66400,
+      "sha256": "a1cd0420d23b22849492b23c693fd43e20a94f57de439d03540a24ddc4079042",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb04.imageset/portrait.png",
+      "size": 78140,
+      "sha256": "5aee8f173fbcb19a49db7ef86911917be88af1c719eaffb3bf00e46bb50b186c",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb05.imageset/portrait.png",
+      "size": 95471,
+      "sha256": "5822ade9e7a75ec06997797637907fccdae589a37ed998ce177e15d56301de6a",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackN02.imageset/fool-attack-n-02.png",
+      "size": 57984,
+      "sha256": "c0607b5a4637ca26e549b57ccfac02b9fca487885b1f4c3a13b7e5b2612e7e7e",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt28PassiveRelic.imageset/art.png",
+      "size": 6763,
+      "sha256": "f61b8daa6289136636f5f5ecbc7481d94dafbe4efbd4b76690c2f50cada49b51",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt30TowerFloor.imageset/art.png",
+      "size": 6372,
+      "sha256": "2951abc67dcc6a80aef87080f6fc06894e92c2dee59e77a9cfcfd01590e77f91",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt05TalentNode.imageset/art.png",
+      "size": 8906,
+      "sha256": "b5ff077c62cbcfd72b5b9c37e50ac78ad7600ae04f3ec730dcd2f2720ea6c325",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/ButtonArt09BasicAttack.imageset/art.png",
+      "size": 3346,
+      "sha256": "f0f1590a516d715f374053a702a2edbe912aa20247754afe547e7967b331e6ae",
+      "deleted": true
+    },
+    {
+      "path": "backups/button-artwork-integration-20260925/removed-assets/FoolAttackE06.imageset/fool-attack-e-06.png",
+      "size": 61497,
+      "sha256": "c432c5fc13b9317e6168543f78daa9aa175a43b6568eca50c0db5c5f57779c6d",
+      "deleted": true
+    },
+    {
+      "path": "backups/rift-depth-20260921/GoldenRiftArt.shader",
+      "size": 2052,
+      "sha256": "a192cfc6ae02e6cf4e947f422f8cc779cfed384b24a2e89e60cec8e050651f78",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-impact-device-20260925/before-refinement/Resources/EnemySignature/ArchiveAegis.shader",
+      "size": 1353,
+      "sha256": "f8d6f81c4ebbb69e8b0f984abe91d523ee607c04c05db95af2b8e6c7b1581ce2",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-impact-device-20260925/before-refinement/Resources/EnemySignature/MainlineInlaidVolumeRound2.shader",
+      "size": 5594,
+      "sha256": "5c1a866b8efc6f989796e85858237392b598a56bcd04dd8fc3da3e4b8bb56f9e",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-impact-device-20260925/final-build126/UnityBattleSource/Assets/Resources/SpellImpact20260925/MemoryFolio.png",
+      "size": 2220681,
+      "sha256": "9028953cbfabebd0e5acb414cc279e7192c3f16b0ed10d64f7aff08e121c0479",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/spell-impact-device-20260925/final-build126/UnityBattleSource/Assets/Resources/EnemySignature/ArchiveAegis.shader",
+      "size": 1593,
+      "sha256": "89ace62382acf3b2000bbb7edbd3d0eb1fe0fc37793af2ebb6c1da32119c5255",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-impact-device-20260925/final-build126/UnityBattleSource/Assets/Resources/EnemySignature/MainlineInlaidVolumeRound2.shader",
+      "size": 6221,
+      "sha256": "87d1eed5b4e5ec20080f08ffb14005328f5c51c998a2e338c7e058e4ff34bf7b",
+      "deleted": true
+    },
+    {
+      "path": "backups/story-model-integration-20260916/Rescue-Prepared-broken.blend",
+      "size": 91595918,
+      "sha256": "0e25525d3d2135c8de780495d20314faa2eb5c99c8000373c65bf97812bda409",
+      "deleted": true
+    },
+    {
+      "path": "backups/story-model-integration-20260916/RescueBearer_Combat-old39483.fbx",
+      "size": 2485580,
+      "sha256": "a02f8b9f9b8d92c58ca0345a28b104f7abfb90b0ca1272d577117b1adf629d82",
+      "deleted": true
+    },
+    {
+      "path": "backups/story-model-integration-20260916/unused-resources/Rescue_BaseColor.png",
+      "size": 7804550,
+      "sha256": "cf7f6c4904913fe07a7ec1ecff4be13ea246953ddf679786f358d0ad9a3a070f",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/emerald-fog-art-20260915/EmeraldPoisonFog.shader",
+      "size": 1196,
+      "sha256": "82793766bea8973d8724190f221e5db0034570caf1fb706439d8868b1a8173a6",
+      "deleted": true
+    },
+    {
+      "path": "backups/emerald-fog-art-20260915/EmeraldToxicVolume.shader",
+      "size": 2382,
+      "sha256": "1ede2cde7f87f0ec9d8d4508738c015cde1bde3d65a73eca9517624ff0e474c9",
+      "deleted": true
+    },
+    {
+      "path": "backups/guard-silk-refinement-20260914/CrimsonStageProjection.shader",
+      "size": 2134,
+      "sha256": "0acfe6eed77c5c33ee94a4073be07fdeed9de5eaf21b05a002a1a96d780aef83",
+      "deleted": true
+    },
+    {
+      "path": "backups/guard-silk-refinement-20260914/ArchivistMechanicalSpell.shader",
+      "size": 1248,
+      "sha256": "4690e324d64fc35c720e00c389614c959b6e44830e39bb8b5b69fe56e35f373e",
+      "deleted": true
+    },
+    {
+      "path": "backups/d06-silhouette-20260920/BonePattern20260920.shader",
+      "size": 1378,
+      "sha256": "5121760d6435a3b1b23212fe9454ab2d8838ce575df3a28fff45124b8349c043",
+      "deleted": true
+    },
+    {
+      "path": "backups/church-tower-dark-button-20260925/prechange/Next-art.png",
+      "size": 600552,
+      "sha256": "5916b67e2d87962abc909721e4800d3adb90bb9fb03513b498ccacbc2cf7e677",
+      "deleted": true
+    },
+    {
+      "path": "backups/church-tower-dark-button-20260925/prechange/Entry-art.png",
+      "size": 620521,
+      "sha256": "5433bf218a12f7d7a080a88d5657ac83845a9d04572ea8047047bdd7f0ba84aa",
+      "deleted": true
+    },
+    {
+      "path": "backups/church-tower-dark-button-20260925/prechange/Return-art.png",
+      "size": 609297,
+      "sha256": "429bfbf7f77dd84df501d7c43b63e2493db653952f503a925894f529007297a9",
+      "deleted": true
+    },
+    {
+      "path": "backups/church-tower-dark-button-20260925/prechange/Back-art.png",
+      "size": 598341,
+      "sha256": "36cca66a98105f4411eb09a5d393b02e7c6525f1c8cb6c810f534471a2f82571",
+      "deleted": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/EmeraldRevenant.fbx",
+      "size": 21237804,
+      "sha256": "17fc0668862721e1f89735492b1fcb53f81bcacbbff45731496584a48409441f",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/EmeraldRevenantMaterial.mat",
+      "size": 2343,
+      "sha256": "080fd9efd4a8c3c57e676e85592554cef939ec7bd7a2e83aa0655cd506a5d115",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/Textures/texture_0.png",
+      "size": 7170156,
+      "sha256": "cbf3b7f916e34fdabd7d3af0ac4409bcb761da570b24d03966b678aca7595acd",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/Textures/texture_0_metallic-texture_0_roughness.png",
+      "size": 10776040,
+      "sha256": "25013a6fb763946d80dc3c21d5282a0978f60809a903ee414afe3b1a9bb6ceb3",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/Textures/texture_0_normal.png",
+      "size": 6012064,
+      "sha256": "fecff1a1b3e1d7d5ea17569db9f7c4da993885a666207e1055538517f54cc47e",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/EmeraldRevenant/animations/EmeraldRevenant_Running.fbx",
+      "size": 20768828,
+      "sha256": "05a7d5f86d70669b402bec509b7ae24c57983ad211d92991fd4afe11d68fb7ff",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/HellhoundSentinel_Combat.fbx",
+      "size": 1329084,
+      "sha256": "1015bf9ab3dbfe7f9a3b286bb7a9b3808170e4dff34b0c7467ed804d364615ea",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Body.mat",
+      "size": 2402,
+      "sha256": "105eb4ee2c354805379210b966ef404b8f2a7006394edd22c6fc1a5970aabfa2",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_2.png",
+      "size": 20857796,
+      "sha256": "b72b395ee08b509ef82d42f4c9a33427463d134bac627125a97869a0ee8ec130",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_0.png",
+      "size": 80106471,
+      "sha256": "e1c772eb5b1fadb9e32ec9c80c28a9c25f26e1f8283e91160bd81b46de1e780e",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/MetallicSmoothness.png",
+      "size": 9375106,
+      "sha256": "56efea08c481491cdacace56df739e59d2b4210bdf74adcca96311dda11208b7",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Body.mat",
+      "size": 2402,
+      "sha256": "f82aadbc2171b3df8ae1bede8eae558f30fe2c727176e8d143c33063a707e265",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Image_2.png",
+      "size": 404711,
+      "sha256": "9fb622fb2303e9314b3ba074bb3603e6c1b96861171c5d37e6965624d7f81c8b",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Image_0.png",
+      "size": 839259,
+      "sha256": "20942b1cb2fc2e4e2d8faf9b652b350b0d665f6e94fdbadd58c314c7ac1d0d9e",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/MetallicSmoothness.png",
+      "size": 4483874,
+      "sha256": "0eb7272a4d62bb9b74ba1f973fcbac1f4bf0ebbbb386a1c157da46fbdb8e1ab0",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/ArchivistSentinel_Combat.fbx",
+      "size": 988924,
+      "sha256": "653b292c201e0694b7863d5bf417973e23f9cac9d7869cbc47fbf0536db9fce0",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/ClockworkVeilMatriarch_Combat.fbx",
+      "size": 1488860,
+      "sha256": "7a8e5d42ca79c9bb79101e5788b775222d37c39f685745fa2b8ff47cd5b80482",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Body.mat",
+      "size": 2402,
+      "sha256": "f4a12b1c58a8e957b46123fff76055baac1f435c3adfc12a67edecc7d8e4a5d3",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Image_2.png",
+      "size": 318211,
+      "sha256": "0141b95a0067c03adb54cd5b60e09f1e281d0f6fd6b63e1ddc610b1ad0d3f68a",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Image_0.png",
+      "size": 679558,
+      "sha256": "79017a2dfbef2992f46285ad6de01dc91ffe6fdaf70d701f88340305b94684ef",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/four-enemies-approved-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/MetallicSmoothness.png",
+      "size": 3077480,
+      "sha256": "59fe533257b7f2fcc478b2d3be7d9e466efe7519e6c0d6db47018435d8798c30",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/d06-tail-irregular-20260920/BonePattern20260920.shader",
+      "size": 1794,
+      "sha256": "dc87fb47a2aee226d52ac202823241ccb109771a979bb56d60d9186c26d36d30",
+      "deleted": true
+    },
+    {
+      "path": "backups/binding-rework-20260921/BindingRibbon-before-light.shader",
+      "size": 1350,
+      "sha256": "d4a581b3df9ad725ad8062490797a3263bf83fac37bda8be7901018df5808543",
+      "deleted": true
+    },
+    {
+      "path": "backups/binding-authored-20260921/BindingRibbon20260921.shader",
+      "size": 1128,
+      "sha256": "9562793535a0b3ebb8e5030737c6b40545080b1bf8d8b40a042eea2dcc23302a",
+      "deleted": true
+    },
+    {
+      "path": "backups/hound-ground-fracture-20260913/HoundGroundFracture.radial-rejected.shader",
+      "size": 1354,
+      "sha256": "5f460a69cc8f643198d9d778c96e2e7b1cf513ed75753210fee41fb33472c89d",
+      "deleted": true
+    },
+    {
+      "path": "backups/binding-detail-20260921/BindingRibbon20260921.shader",
+      "size": 1963,
+      "sha256": "10b77e4d42635dbd13056ffccaa6ae5d624d8946397241ebe190d130c12318e2",
+      "deleted": true
+    },
+    {
+      "path": "backups/hound-crater-fault-20260914/HoundVolumetricInferno.shader",
+      "size": 3081,
+      "sha256": "55f916e29d6a9e57095fc12428c68cf3d18528d8e3b079968321c38d550aa6a6",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-impact-20260919/enemy/AuthoredBurstTier.shader",
+      "size": 1712,
+      "sha256": "be0df7b017c84e09c7ae9d872169c5cd36a61498515b4590f1518d5683f2033c",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-impact-20260919/hero/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "size": 7878,
+      "sha256": "57a2d586b7c957286fae8976960894b2e3eeb0906b423bd1ef9b866215ffda31",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-impact-20260919/hero/UnityBattleSource/Assets/Resources/Effects/Fool/FoolSidestepRift.shader",
+      "size": 11064,
+      "sha256": "e40f681c5764a8fc1d6565e05c2e4b2e301a3ad1e12a3ee40913dc33ba7cb945",
+      "deleted": true
+    },
+    {
+      "path": "backups/hound-spiral-polish-20260914/HoundVolumetricInferno.shader",
+      "size": 3502,
+      "sha256": "bb421d20c073c9dfadbbdf963ae9bd8ce5bcd3bb9aafec343d4856fcc12bd5a6",
+      "deleted": true
+    },
+    {
+      "path": "backups/rift-flow-20260921/GoldenRiftArt.shader",
+      "size": 1571,
+      "sha256": "c38b712e75c7754bd530c18b047eb8f6a9ad5880bf41cb4fde66475925e336f4",
+      "deleted": true
+    },
+    {
+      "path": "backups/church-loan-dark-buttons-20260925/prechange/Assets.xcassets/ButtonArtChurchLoanEntry.imageset/art.png",
+      "size": 314766,
+      "sha256": "a93fe340c682600d20d1447cf97e641f37395d81a93af7ee46865b4d4d99048f",
+      "deleted": true
+    },
+    {
+      "path": "backups/archive-shimmer-20260921/ArchiveAegis.shader",
+      "size": 694,
+      "sha256": "94693e99f7af894b047443fcd72597e9797d863d2adff381f2f653a091b1bbdf",
+      "deleted": true
+    },
+    {
+      "path": "backups/all-spells-polish-20260921/hero/FoolSidestepRift.shader",
+      "size": 11987,
+      "sha256": "fa3b528a938c0eac58cf8e25d86705527cb5d9b7f737a98247702c406b5efe11",
+      "deleted": true
+    },
+    {
+      "path": "backups/all-spells-polish-20260921/hero/HeroSpellVolume.shader",
+      "size": 11451,
+      "sha256": "1f29fd322315e657da10550e13bdd8a6fc1d8dcf3c384f03672ed9bbde3fc674",
+      "deleted": true
+    },
+    {
+      "path": "backups/all-spells-polish-20260921/hero/TarotNova.shader",
+      "size": 3729,
+      "sha256": "81a1afb1755811a5d22f4ccc73aad380010185708ca0cfc43bdf46a6698b6960",
+      "deleted": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/HellhoundSentinel_Combat.fbx",
+      "size": 1292972,
+      "sha256": "a31e87a8c1f6f47d43a4d2791ede4368a1a039ee7efd129fe9102532b8b72695",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Body.mat",
+      "size": 2402,
+      "sha256": "105eb4ee2c354805379210b966ef404b8f2a7006394edd22c6fc1a5970aabfa2",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_2.png",
+      "size": 1280540,
+      "sha256": "11b28f3d6dced93fe05404e0266a2058153c301a10651e02b0e72997d6105049",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/Image_0.png",
+      "size": 2681481,
+      "sha256": "9b7302fafe3b8942ef631d9bc979890e36a8768f55ddb59bfe517b7eb2e75728",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/HellhoundSentinel/MetallicSmoothness.png",
+      "size": 3760959,
+      "sha256": "17b11c55bcf3e02e1ec7eca608448c7673cee5428a20a399ee3445bbfd4eb785",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Body.mat",
+      "size": 2402,
+      "sha256": "f82aadbc2171b3df8ae1bede8eae558f30fe2c727176e8d143c33063a707e265",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Image_2.png",
+      "size": 404711,
+      "sha256": "9fb622fb2303e9314b3ba074bb3603e6c1b96861171c5d37e6965624d7f81c8b",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/Image_0.png",
+      "size": 839259,
+      "sha256": "20942b1cb2fc2e4e2d8faf9b652b350b0d665f6e94fdbadd58c314c7ac1d0d9e",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/MetallicSmoothness.png",
+      "size": 4483874,
+      "sha256": "0eb7272a4d62bb9b74ba1f973fcbac1f4bf0ebbbb386a1c157da46fbdb8e1ab0",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ArchivistSentinel/ArchivistSentinel_Combat.fbx",
+      "size": 988924,
+      "sha256": "653b292c201e0694b7863d5bf417973e23f9cac9d7869cbc47fbf0536db9fce0",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/ClockworkVeilMatriarch_Combat.fbx",
+      "size": 1488860,
+      "sha256": "7a8e5d42ca79c9bb79101e5788b775222d37c39f685745fa2b8ff47cd5b80482",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Body.mat",
+      "size": 2402,
+      "sha256": "f4a12b1c58a8e957b46123fff76055baac1f435c3adfc12a67edecc7d8e4a5d3",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Image_2.png",
+      "size": 318211,
+      "sha256": "0141b95a0067c03adb54cd5b60e09f1e281d0f6fd6b63e1ddc610b1ad0d3f68a",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/Image_0.png",
+      "size": 679558,
+      "sha256": "79017a2dfbef2992f46285ad6de01dc91ffe6fdaf70d701f88340305b94684ef",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hound-crouch-integration-20260913/UnityBattleSource/Assets/Resources/Enemies/Signature/ClockworkVeilMatriarch/MetallicSmoothness.png",
+      "size": 3077480,
+      "sha256": "59fe533257b7f2fcc478b2d3be7d9e466efe7519e6c0d6db47018435d8798c30",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/character-outfit-bonus-20260925/prechange/CharacterFoolCarnival.imageset/character-fool-carnival.png",
+      "size": 1616740,
+      "sha256": "f51117b57423ace973492a2202eeb13ed4d5eab38cbf17fe77c0dd00c4277fb5",
+      "deleted": true
+    },
+    {
+      "path": "backups/character-outfit-bonus-20260925/prechange/CharacterFoolStarlight.imageset/character-fool-starlight.png",
+      "size": 1461635,
+      "sha256": "4a9aac967e0a77dbd742f7bf3d0d015d09cff6d5c9cd001257907862905ae8c6",
+      "deleted": true
+    },
+    {
+      "path": "backups/all-spells-tier-20260919/church/ChurchLivingSurface.shader",
+      "size": 954,
+      "sha256": "ae848a2fe63670836b41f5a15e728c38a2131ef781aa9d742d6655283964e823",
+      "deleted": true
+    },
+    {
+      "path": "backups/all-spells-tier-20260919/church/ChurchArcane.shader",
+      "size": 2022,
+      "sha256": "0e85e65cce6cd374c99329fd54b84a187915d64435402134bdee0ef4b30bf828",
+      "deleted": true
+    },
+    {
+      "path": "backups/all-spells-tier-20260919/hero/UnityBattleSource/Assets/Resources/Mindstone/VFXV1/MasqueradeGhost.shader",
+      "size": 873,
+      "sha256": "1e332e7f03074a8599e225b8e10eb62e45342934a3eb035f4a8e36b783203e97",
+      "deleted": true
+    },
+    {
+      "path": "backups/all-spells-tier-20260919/hero/UnityBattleSource/Assets/Resources/EnemySignature/HeroSpellVolume.shader",
+      "size": 7711,
+      "sha256": "62320a89461b60f7be6bf63f9857db09c2892cf13c8b9e71012c81b3e1555514",
+      "deleted": true
+    },
+    {
+      "path": "backups/all-spells-tier-20260919/hero/UnityBattleSource/Assets/Resources/Effects/Fool/FoolSidestepRift.shader",
+      "size": 11063,
+      "sha256": "76e05b997a18cd90404ef3c60281d65e6f7457142d06039c7a4c133a955fd16a",
+      "deleted": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/story-meshes/RescueBearer_Combat.blend",
+      "size": 3656539,
+      "sha256": "940432ab33e7999bfcce07dcef96362163be3795a57ae349ce393e42c9776db7",
+      "deleted": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/story-meshes/TranscriptionScribe_Unity_Combat.fbx",
+      "size": 2392012,
+      "sha256": "dcd4d37c4087e8162b6af2e080b65f1ad5bf50ccdc69b8a03599adb691d51c43",
+      "deleted": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/story-meshes/RescueBearer_Unity_Combat.fbx",
+      "size": 3605276,
+      "sha256": "97c681cc46f6cc23b94930f41509ffd4e21bb8e2fc0e57d2732430d4fa372e00",
+      "deleted": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/story-meshes/TranscriptionScribe_Combat.blend",
+      "size": 2618806,
+      "sha256": "f70c4328c4dde24b97c29dda6b0d453195da4aad308edcd821cc68e9ccccf104",
+      "deleted": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/story-meshes/RescueBearer_Combat.fbx",
+      "size": 3605276,
+      "sha256": "97c681cc46f6cc23b94930f41509ffd4e21bb8e2fc0e57d2732430d4fa372e00",
+      "deleted": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/story-meshes/TranscriptionScribe_Combat.fbx",
+      "size": 2392012,
+      "sha256": "dcd4d37c4087e8162b6af2e080b65f1ad5bf50ccdc69b8a03599adb691d51c43",
+      "deleted": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/UnityBattleSource/Assets/Resources/CharacterSurface20260916/Core/metallic.png",
+      "size": 5249658,
+      "sha256": "186df8ed132474e685c5766b21ab9030da4a03f8d7925dba3161ddbda0d7dfe7",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/UnityBattleSource/Assets/Resources/CharacterSurface20260916/Core/roughness.png",
+      "size": 4734689,
+      "sha256": "05cc923c6874b03f213185f205c355ec21c12b00047cfe39b59cc0a24a3eea60",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/UnityBattleSource/Assets/Resources/CharacterSurface20260916/Ghost/metallic.png",
+      "size": 3752251,
+      "sha256": "478d9217cdecf5ac1f7071895677e3c6165e59b46c6d00169383a93a5ebcc735",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/UnityBattleSource/Assets/Resources/CharacterSurface20260916/Ghost/roughness.png",
+      "size": 2846584,
+      "sha256": "9f0a9ed4abb338376effd55c1f7f985aa3f1a35369e2a7d6319092d1d2384322",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/UnityBattleSource/Assets/Resources/CharacterSurface20260916/OldHound/metallic.png",
+      "size": 6828724,
+      "sha256": "0aaec84388d28eaf31f4e8227dbf1f2f2735841c42cbce3a323bc4aaad08e75c",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/UnityBattleSource/Assets/Resources/CharacterSurface20260916/OldHound/roughness.png",
+      "size": 8190811,
+      "sha256": "65e0ef82330936e2002ad78a5857d5eb2b71166d7deaaff552d9130d2a04d912",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/UnityBattleSource/Assets/Resources/CharacterSurface20260916/Guard/metallic.png",
+      "size": 5147438,
+      "sha256": "3757c867c30ff833340b6816d356b67cb5c8650cd8987085a26764c3efc25781",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/UnityBattleSource/Assets/Resources/CharacterSurface20260916/Guard/roughness.png",
+      "size": 5039176,
+      "sha256": "14a36aeec2bbf963ed4555575ff7db00e616c3eaee22034d28a9c42a007daf62",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/UnityBattleSource/Assets/Resources/Shaders/CharacterSurfaceRefinement20260916.shader",
+      "size": 4195,
+      "sha256": "15304ecfa5bf2c83875f6ce6fa81a450ed1b9f626e4e5d6b95f2867fc242803b",
+      "deleted": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/UnityBattleSource/Assets/Resources/Shaders/HeroTailoredPBR.shader",
+      "size": 3226,
+      "sha256": "0e93b33994ad4543ee316619dabaf0875510d8c35cfce2619bbd4249c693da3d",
+      "deleted": true
+    },
+    {
+      "path": "backups/model-optimization-20260916/UnityBattleSource/Assets/Resources/Shaders/CharacterSurfaceRefinement20260916Fade.shader",
+      "size": 4220,
+      "sha256": "7c1d8e09b1f5414dc1ed954e0248286ecb3d40dea1ecc53b7448270cb2deec2b",
+      "deleted": true
+    },
+    {
+      "path": "backups/reference-detail-20260921/PhoenixWing.shader",
+      "size": 1572,
+      "sha256": "269a49a0857a132689a07d418b688ee828229bf2a7a7be30d64bc3f934eb81de",
+      "deleted": true
+    },
+    {
+      "path": "backups/reference-detail-20260921/IceThunderBolt.shader",
+      "size": 1183,
+      "sha256": "bc063af442d566a9f66d0ccc9d23baef4901b86168deb68613e4fc64d095f8b8",
+      "deleted": true
+    },
+    {
+      "path": "backups/reference-detail-20260921/GoldenRiftArt.shader",
+      "size": 1571,
+      "sha256": "15a1ca31e8f2523768516cf46f3608c9309d425e6f7deb33cb4f2e53766b53a0",
+      "deleted": true
+    },
+    {
+      "path": "backups/reference-detail-20260921/IceCrystal.shader",
+      "size": 915,
+      "sha256": "576b9df3fb67e6d1bb69b1b50c6fb6e8b7a66e9893908a2f54c090b8bd6bf00f",
+      "deleted": true
+    },
+    {
+      "path": "backups/harbor-entry-20260925/ButtonArt16MapRunesEnter-old.png",
+      "size": 2117,
+      "sha256": "c17218094034d35aafd5c373fc705e8bbb2ae067bbfc6b3df23797f4d0c68779",
+      "deleted": true
+    },
+    {
+      "path": "backups/binding-impact-20260921/BindingRibbon20260921.shader",
+      "size": 1963,
+      "sha256": "10b77e4d42635dbd13056ffccaa6ae5d624d8946397241ebe190d130c12318e2",
+      "deleted": true
+    },
+    {
+      "path": "backups/city-harbor-newplates-20260927/removed-cloudmask/CityWinterCloudMask.imageset/CityWinterCloudMask.png",
+      "size": 111685,
+      "sha256": "b5eeb85e1fd46b312c889b058dda692a541adf8d07fd05f40269a72f096feed1",
+      "deleted": true
+    },
+    {
+      "path": "backups/city-harbor-newplates-20260927/removed-cloudmask/CitySpringCloudMask.imageset/CitySpringCloudMask.png",
+      "size": 144865,
+      "sha256": "f375dd0be89d40ed61ae06efd78f4939582632f17073c03cc38c1d400446ff7b",
+      "deleted": true
+    },
+    {
+      "path": "backups/city-harbor-newplates-20260927/removed-cloudmask/CityAutumnCloudMask.imageset/CityAutumnCloudMask.png",
+      "size": 110272,
+      "sha256": "8c8ee267f99b03f0d4dfa72bbeb239fe31287a2f67b5d86eaf706b3ee3cbc6b5",
+      "deleted": true
+    },
+    {
+      "path": "backups/city-harbor-newplates-20260927/removed-cloudmask/CitySummerCloudMask.imageset/CitySummerCloudMask.png",
+      "size": 111875,
+      "sha256": "4a11839ee894665d695eef9e8b9ca49b5494a601df92294e4c107a6600f12af8",
+      "deleted": true
+    },
+    {
+      "path": "backups/city-harbor-newplates-20260927/removed-cloudmask/CityWinterSnowCloudMask.imageset/CityWinterSnowCloudMask.png",
+      "size": 115427,
+      "sha256": "c29b1d51f92b21199b6616ea51b3b9fc714536154e1d8fed6214d72cef99372b",
+      "deleted": true
+    },
+    {
+      "path": "backups/city-harbor-newplates-20260927/removed-weather-imagesets/CityCloudStorm.imageset/CityCloudStorm.png",
+      "size": 1159370,
+      "sha256": "2a7636b02785f2ad9c12583e57c262d63c6469b2f63279f67670d9676bee7d90",
+      "deleted": true
+    },
+    {
+      "path": "backups/city-harbor-newplates-20260927/removed-weather-imagesets/CityStormSky.imageset/CityStormSky.png",
+      "size": 878945,
+      "sha256": "045a6e8f33f95dd7625bb23435b46a9662decec49d2558054860becfde2c9f6d",
+      "deleted": true
+    },
+    {
+      "path": "backups/city-harbor-newplates-20260927/removed-weather-imagesets/CityCloudNight.imageset/CityCloudNight.png",
+      "size": 1127797,
+      "sha256": "9366009cb6bcf9fdebbd163d167ffb6ee324edf0c8e77249edd897405288eedb",
+      "deleted": true
+    },
+    {
+      "path": "backups/city-harbor-newplates-20260927/removed-farmask/CityAutumnFarMask.imageset/CityAutumnFarMask.png",
+      "size": 103773,
+      "sha256": "d8cb41f81109d496b4256841738a776230d68d09852bff7ef12a6ae3b9f23229",
+      "deleted": true
+    },
+    {
+      "path": "backups/city-harbor-newplates-20260927/removed-farmask/CitySummerFarMask.imageset/CitySummerFarMask.png",
+      "size": 94812,
+      "sha256": "bfc6f8d2173691136422cb15fa09750c70f4f14e470d604c2a586b62cd71e9b9",
+      "deleted": true
+    },
+    {
+      "path": "backups/city-harbor-newplates-20260927/removed-farmask/CityWinterFarMask.imageset/CityWinterFarMask.png",
+      "size": 94582,
+      "sha256": "6622317145762b84d95f187209541adb2539359cc8fe260132943103032b6480",
+      "deleted": true
+    },
+    {
+      "path": "backups/city-harbor-newplates-20260927/removed-farmask/CitySpringFarMask.imageset/CitySpringFarMask.png",
+      "size": 98937,
+      "sha256": "cb05d4b96cb436021dc8354affd474b3d51b5697c0906191b38f0256b4117664",
+      "deleted": true
+    },
+    {
+      "path": "backups/city-harbor-newplates-20260927/removed-farmask/CityWinterSnowFarMask.imageset/CityWinterSnowFarMask.png",
+      "size": 97769,
+      "sha256": "9280ca19dfc93ae26c69efc4aa6f47642020afce4fbfebfe099cb6cc5857ce5f",
+      "deleted": true
+    },
+    {
+      "path": "backups/rift-impact-20260921/GoldenRiftArt.shader",
+      "size": 2596,
+      "sha256": "b7e19e8ba9733e2cfbb73e2aeadb1c2a50cd4e636f40f3855044edff329586e1",
+      "deleted": true
+    },
+    {
+      "path": "backups/hero-quality-sample-20260916/mesh/Meshy_AI_battle_magician_rig_biped_Animation_Combat_Stance_frame_rate_60.fbx",
+      "size": 29895916,
+      "sha256": "63b782682137b24d0720881727dbbae403e3ea84726dfda80202c8587a0bcab7",
+      "deleted": true,
+      "meta_removed": true
+    },
+    {
+      "path": "backups/hero-quality-sample-20260916/root/HeroTailoredPBR.shader",
+      "size": 4646,
+      "sha256": "97c4507b33a3b227abc604febaee50a5e2a6c98466678fc1349e9602963399b7",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-distinct-20260925/MainlineInlaidVolumeRound2.shader",
+      "size": 3289,
+      "sha256": "e24022c746ff27f7eff6130bc8a6fb6f56c567ec9ec4df1550c06e8f7db0b294",
+      "deleted": true
+    },
+    {
+      "path": "backups/spell-distinct-20260925/HeroSpellVolume.shader",
+      "size": 12800,
+      "sha256": "40e7a1f13b3c02a92e1b78904c71981007cbc6efc088cad610ea7d9863f4756e",
+      "deleted": true
+    }
+  ],
+  "removed_empty_historical_imagesets": [
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackS03.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackS02.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt11BasicDefense.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/HellHoundIdleV404.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt13CityNavigation.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/TalentAmethystButton.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt04TalentBranches.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ConsumableClockKey.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackE03.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackE02.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackN06.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb01.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ClockGuardTargetMemoryEye.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt08CombatCooldown.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt16MapRunes.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt31CommonUtility.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackE04.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackE05.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb07.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb06.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackN01.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/SceneInventoryMarbleHall.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ConsumableSaltTea.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/SceneInventoryTreasury.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolCombatIdle.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackS04.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackS05.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/HellHoundIdleV402.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/HellHoundIdleV403.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb10.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt07SkillUpgrade.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb03.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackN04.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackN05.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb02.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/GearHoundIdle.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb09.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb08.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackE01.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackS01.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt32SystemButtons.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt10BattleLoadout.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackS06.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt12LegacyBattleSkill.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt26InventoryCategories.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ConsumableMirrorSalve.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackN03.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb04.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ChurchBountyb05.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackN02.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt28PassiveRelic.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt30TowerFloor.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt05TalentNode.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/ButtonArt09BasicAttack.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/FoolAttackE06.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt14CityHotspot.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt06TalentPanel.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt13CityNavigationInventory.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt19TitleGate.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt03FantasyTalent.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt13CityNavigationProfile.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt13CityNavigationChurch.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt33PressTutorial.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt21StoryChoice.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt13CityNavigationConquest.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/unused-after-user-review/ButtonArt13CityNavigationStore.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/rollback-flat-buttons-20260925/ButtonArt14CityHotspotPremium.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/rollback-flat-buttons-20260925/ButtonArt15CityMission.imageset",
+    "backups/button-artwork-integration-20260925/removed-assets/rollback-flat-buttons-20260925/ButtonArt19TitleGateNight.imageset",
+    "backups/church-loan-dark-buttons-20260925/prechange/Assets.xcassets/ButtonArtChurchLoanEntry.imageset",
+    "backups/character-outfit-bonus-20260925/prechange/CharacterFoolCarnival.imageset",
+    "backups/character-outfit-bonus-20260925/prechange/CharacterFoolStarlight.imageset",
+    "backups/city-harbor-newplates-20260927/removed-cloudmask/CityWinterCloudMask.imageset",
+    "backups/city-harbor-newplates-20260927/removed-cloudmask/CitySpringCloudMask.imageset",
+    "backups/city-harbor-newplates-20260927/removed-cloudmask/CityAutumnCloudMask.imageset",
+    "backups/city-harbor-newplates-20260927/removed-cloudmask/CitySummerCloudMask.imageset",
+    "backups/city-harbor-newplates-20260927/removed-cloudmask/CityWinterSnowCloudMask.imageset",
+    "backups/city-harbor-newplates-20260927/removed-weather-imagesets/CityCloudStorm.imageset",
+    "backups/city-harbor-newplates-20260927/removed-weather-imagesets/CityStormSky.imageset",
+    "backups/city-harbor-newplates-20260927/removed-weather-imagesets/CityCloudNight.imageset",
+    "backups/city-harbor-newplates-20260927/removed-farmask/CityAutumnFarMask.imageset",
+    "backups/city-harbor-newplates-20260927/removed-farmask/CitySummerFarMask.imageset",
+    "backups/city-harbor-newplates-20260927/removed-farmask/CityWinterFarMask.imageset",
+    "backups/city-harbor-newplates-20260927/removed-farmask/CitySpringFarMask.imageset",
+    "backups/city-harbor-newplates-20260927/removed-farmask/CityWinterSnowFarMask.imageset"
+  ],
+  "preserved_visual_evidence": [
+    "backups/tavern-permanent-20260925/tavern-dialogue-preview-build117.png",
+    "backups/tavern-permanent-20260925/tavern-dialogue-preview-build116.png",
+    "backups/tavern-permanent-20260925/tavern-feature-preview-final.png",
+    "backups/tavern-permanent-20260925/tavern-feature-preview.png",
+    "backups/tavern-permanent-20260925/tavern-poker-preview-build116.png",
+    "backups/tavern-permanent-20260925/tavern-poker-preview-final.png",
+    "backups/tavern-permanent-20260925/tavern-poker-preview.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-059.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-010.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-028.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-000.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-030.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-024.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-018.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-025.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-027.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-026.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-022.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-023.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-035.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-021.png",
+    "backups/bounty-size-spell-overhaul-20260923/all-spells-b02/bounty-b02-bind/frame-020.png",
+    "backups/tower-circle-placement-20260917/floor-070.png",
+    "backups/tower-circle-placement-20260917/floor-100.png"
+  ],
+  "player_saves_touched": false,
+  "symbolic_links_touched": false,
+  "authorization": "User explicitly requested deleting historical old art originals and keeping only latest on 2026-10-14."
+}

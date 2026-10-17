@@ -1,0 +1,59 @@
+{
+  "info" : {
+    "arguments" : [
+      "devicectl",
+      "device",
+      "process",
+      "launch",
+      "--device",
+      "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+      "--terminate-existing",
+      "--timeout",
+      "20",
+      "--json-output",
+      "/private/tmp/mistport-institutions-ordinary-launch-1716.json",
+      "local.mistport.institutions"
+    ],
+    "commandType" : "devicectl.device.process.launch",
+    "environment" : {
+      "TERM" : "dumb"
+    },
+    "jsonVersion" : 3,
+    "outcome" : "success",
+    "version" : "518.33"
+  },
+  "result" : {
+    "deviceIdentifier" : "2A835FEC-7B6D-513B-AF8F-B5A84B673035",
+    "launchOptions" : {
+      "activatedWhenStarted" : true,
+      "arguments" : [
+
+      ],
+      "environmentVariables" : {
+        "TERM" : "dumb"
+      },
+      "platformSpecificOptions" : {
+
+      },
+      "startStopped" : false,
+      "terminateExistingInstances" : true,
+      "user" : {
+        "active" : true
+      }
+    },
+    "process" : {
+      "auditToken" : [
+        4294967295,
+        501,
+        501,
+        501,
+        501,
+        4286,
+        0,
+        12495
+      ],
+      "executable" : "file:///private/var/containers/Bundle/Application/32AE8C66-1472-4753-A5C9-3340DE839DEA/Mistport.app/Mistport",
+      "processIdentifier" : 4286
+    }
+  }
+}
