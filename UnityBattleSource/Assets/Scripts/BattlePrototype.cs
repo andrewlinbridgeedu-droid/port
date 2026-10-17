@@ -1186,8 +1186,11 @@ public sealed class BattlePrototype : MonoBehaviour
         string intent = parts[1];
         if (intent == "bite") {
             houndPreparedAt = Time.time; houndPreparedIntent = intent;
-            // Crouch by the cast, coil until 0.55 s after it, spring to the 1.1 s contact, recover.
-            body.PlayTimed("Light", .1f, new Vector2(.42f, .8f), new Vector2(.5f, 1.35f), new Vector2(.58f, 1.9f), new Vector2(1f, 2.7f));
+            // A real leap (2026-10-16, user: 现在是整个狗拖地过来咬，不是扑过来): crouched by the
+            // cast, coiled until 0.35 s after it, the hind legs drive, airborne until the claws
+            // come down on the 1.1 s contact, land, recover on the hop home.
+            body.PlayTimed("Pounce", .1f, new Vector2(.30f, .8f), new Vector2(.45f, 1.15f), new Vector2(.52f, 1.25f),
+                new Vector2(.68f, 1.9f), new Vector2(.78f, 2.2f), new Vector2(1f, 2.7f));
         } else if (Time.time - houndBreathCast > 1.9f) {
             // Not the second of a pair (that one is already pouring).
             houndPreparedAt = Time.time; houndPreparedIntent = intent;
@@ -3349,28 +3352,32 @@ public sealed class BattlePrototype : MonoBehaviour
         var target = Vector3.Lerp(home, player.transform.position, .65f);
         var shadowfangBody = ShadowfangHound20261016.Of(committed) ? CombatTempoPresentation.Get(this).BodyOf(committed) : null;
         if (shadowfangBody) {
-            // Shadowfang (2026-10-16): crouched since the prepare signal (or crouching fast
-            // now), it coils, springs over the last 0.55 s onto the 1.1 s contact, lands and
-            // recovers on its way home.
+            // Shadowfang leaps (2026-10-16, user: 现在是整个狗拖地过来咬，不是扑过来): crouched
+            // since the prepare signal (or crouching fast now), it coils, drives off its hind
+            // legs 0.4 s after the cast and is airborne on a high arc until its claws come down
+            // on the 1.1 s contact; it lands, absorbs and hops back home as the clip recovers.
             bool prepared = houndPreparedIntent == "bite" && Time.time - houndPreparedAt < 1.5f;
             houndPreparedAt = -99f;
-            if (!prepared) shadowfangBody.PlayTimed("Light", .1f, new Vector2(.42f, .3f), new Vector2(.5f, .55f), new Vector2(.58f, 1.1f), new Vector2(1f, 1.9f));
+            if (!prepared) shadowfangBody.PlayTimed("Pounce", .1f, new Vector2(.30f, .2f), new Vector2(.45f, .32f), new Vector2(.52f, .42f),
+                new Vector2(.68f, 1.1f), new Vector2(.78f, 1.4f), new Vector2(1f, 1.9f));
+            float height = ShadowfangHound20261016.Of(committed).WorldUnit * 1.64f;   // the hound's own height
             float elapsed = 0;
             while (elapsed < 1.1f) {
                 // Gone before the bite lands (defeated, hidden, replaced): no late hit.
                 if (!CanPresentEnemy(committed)) { actor.position = home; yield break; }
                 elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01((elapsed - .55f) / .55f);
-                actor.position = Vector3.Lerp(home, target, Mathf.SmoothStep(0, 1, t)) + Vector3.up * Mathf.Sin(t * Mathf.PI) * .35f;
+                float t = Mathf.Clamp01((elapsed - .4f) / .7f);
+                actor.position = Vector3.Lerp(home, target, t) + Vector3.up * Mathf.Sin(t * Mathf.PI) * height * .42f;
                 yield return null;
             }
             if (!CanPresentEnemy(committed)) { actor.position = home; yield break; }
             UnityBattleBridge.ReportCombatContact("enemy:hell-hound-primary");
-            yield return new WaitForSeconds(.15f);
+            yield return new WaitForSeconds(.3f);
             elapsed = 0;
-            while (elapsed < .6f) {
+            while (elapsed < .5f) {
                 elapsed += Time.deltaTime;
-                actor.position = Vector3.Lerp(target, home, Mathf.SmoothStep(0, 1, elapsed / .6f));
+                float t = Mathf.SmoothStep(0, 1, elapsed / .5f);
+                actor.position = Vector3.Lerp(target, home, t) + Vector3.up * Mathf.Sin(t * Mathf.PI) * height * .16f;
                 yield return null;
             }
         } else {

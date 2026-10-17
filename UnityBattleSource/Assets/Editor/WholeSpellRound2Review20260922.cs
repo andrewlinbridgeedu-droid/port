@@ -24,7 +24,7 @@ public static class WholeSpellRound2Review20260922
 public sealed class WholeSpellRound2Runner20260922:MonoBehaviour
 {
     [Serializable] public class Cue {public int frame;public string command;}
-    [Serializable] public class Row {public string id,key,setup,actor,focus,attack,trial;public int frames,expected;public bool safety;public string[] warm;public Cue[] cues;}
+    [Serializable] public class Row {public string id,key,setup,actor,focus,attack,trial;public int frames,expected;public bool safety;public string[] warm;public Cue[] cues;public bool side;}
     [Serializable] public class Plan {public Row[] rows;}
     sealed class Movie : IDisposable
     {
@@ -106,6 +106,13 @@ public sealed class WholeSpellRound2Runner20260922:MonoBehaviour
         // not only the enemy torso. Keep the full-game camera entirely unchanged.
         if(row.key=="H04-recipient"||row.key=="H10-recipient"){
             closeOffset=Vector3.up*2.15f;closeDistance=row.id=="H10"?8.2f:7.0f;
+        }
+        // "side": a fixed camera square to the actor's path toward the hero, a third of the
+        // way along it, so a leap shows its arc instead of being followed (2026-10-16).
+        if(row.side&&closeActor&&player){
+            var home=closeActor.EnemyRoot.position;var toHero=player.transform.position-home;toHero.y=0;
+            sideAcross=Vector3.Cross(Vector3.up,toHero.normalized).normalized;
+            sideFocus=home+toHero*.33f+closeOffset;sideDistance=Mathf.Max(closeDistance*1.2f,toHero.magnitude*.95f);
         }
     }
     void BuildTrial(Row row){
@@ -288,9 +295,13 @@ public sealed class WholeSpellRound2Runner20260922:MonoBehaviour
         try{
             camera.aspect=540f/960;Fit();full.Frame(camera);CheckProjectionState();
             Vector3 focus=current.focus=="player"?player.transform.position+Vector3.up*1.2f:closeActor.EnemyRoot.position+closeOffset;
-            camera.aspect=1;camera.fieldOfView=43;camera.transform.position=focus-camera.transform.forward*(current.focus=="player"?4.15f:closeDistance);Fit();close.Frame(camera);CheckProjectionState();
+            camera.aspect=1;camera.fieldOfView=43;
+            if(current.side){camera.transform.rotation=Quaternion.LookRotation(sideAcross,Vector3.up);camera.transform.position=sideFocus-sideAcross*sideDistance;}
+            else camera.transform.position=focus-camera.transform.forward*(current.focus=="player"?4.15f:closeDistance);
+            Fit();close.Frame(camera);CheckProjectionState();
         }finally{camera.transform.SetPositionAndRotation(position,rotation);camera.fieldOfView=fov;camera.aspect=aspect;Fit();}
     }
+    Vector3 sideFocus,sideAcross;float sideDistance;
     void CheckProjectionState(){
         var expected=Matrix4x4.Perspective(camera.fieldOfView,camera.aspect,camera.nearClipPlane,camera.farClipPlane);
         var actual=camera.projectionMatrix;
