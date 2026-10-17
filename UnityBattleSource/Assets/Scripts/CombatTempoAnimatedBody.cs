@@ -51,7 +51,11 @@ public sealed class CombatTempoAnimatedBody : MonoBehaviour
         var rigRoot = new GameObject("Sample foot planting and target gaze"); rigRoot.transform.SetParent(transform, false);
         var rig = rigRoot.AddComponent<Rig>();
         builder.layers.Add(new RigLayer(rig));
-        if (Kind == "Hound") {
+        // Shadowfang's clips plant and lift its own paws (baked foot IK, the reach in Light);
+        // pins captured from the bind pose would hold the paws back (2026-10-16).
+        bool authoredFeet = Kind == "Hound" && Bone("L_Forepaw");
+        if (authoredFeet) {
+        } else if (Kind == "Hound") {
             foreach (var leg in new[] { "frontleg", "R_frontleg", "backleg", "R_backleg" })
                 Foot(rigRoot.transform, leg + "0", leg + "1", leg + "2");
         } else if (Kind == "Hero") {
@@ -105,6 +109,31 @@ public sealed class CombatTempoAnimatedBody : MonoBehaviour
         // Contact time stays fixed; recovery cannot advance the rules clock.
         actionEnds = Time.time + (hold ? contactAfter : Kind == "Hero" ? playback : Mathf.Min(playback, contactAfter > 0 ? contactAfter + .22f : length)) + tail;
         if (headAim) headAim.weight = clip == "Opening" ? 0 : .15f;
+    }
+    /// Plays a clip on a schedule: each key is (normalized clip time, seconds from now), so a
+    /// windup, a burst and a recovery can each take their own share of a fixed beat (the
+    /// hound's bite lands on the rules' contact whatever the windup before it). The action
+    /// ends after the last key plus the tail.
+    public void PlayTimed(string clip, float tail, params Vector2[] keys)
+    {
+        Play(clip, 0, false, 0);
+        float length = ClipLength(clip), last = 0;
+        foreach (var k in keys) last = Mathf.Max(last, k.y);
+        actionEnds = Time.time + last + tail;
+        StartCoroutine(Timed(epoch, length, keys));
+    }
+    IEnumerator Timed(int token, float length, Vector2[] keys)
+    {
+        float start = Time.time, from = 0, at = 0;
+        foreach (var k in keys) {
+            float span = k.y - at;
+            if (span > .001f) {
+                animator.SetFloat("ActionSpeed", Mathf.Max(0, (k.x - from) * length / span));
+                while (Time.time - start < k.y) { if (token != epoch) yield break; yield return null; }
+            }
+            from = k.x; at = k.y;
+        }
+        if (token == epoch) animator.SetFloat("ActionSpeed", 1);
     }
     float ClipLength(string clip) {
         foreach (var c in animator.runtimeAnimatorController.animationClips) if (c.name == clip) return c.length;

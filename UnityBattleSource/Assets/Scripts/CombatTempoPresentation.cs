@@ -141,7 +141,9 @@ public sealed class CombatTempoPresentation : MonoBehaviour
     {
         // Retired hero versions cannot be selected; only the current AI art.
         if (kind == "Hero") return ReplaceAIHero(original);
-        var prefab = Resources.Load<GameObject>("CombatTempo/Animation/" + kind);
+        // The early hound is Shadowfang (2026-10-16): its own model, skin, hair cards and clips.
+        bool shadowfang = kind == "Hound";
+        var prefab = Resources.Load<GameObject>(shadowfang ? ShadowfangHound20261016.ModelPath : "CombatTempo/Animation/" + kind);
         if (!original || !prefab || !BoundsOf(original, out var before)) return null;
         var e = new Entry { original = original, handle = handle, previousModel = handle ? handle.Model : null };
         var skins = original.GetComponentsInChildren<SkinnedMeshRenderer>(false);
@@ -153,16 +155,18 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         e.oldAnimator = original.GetComponentInChildren<Animator>(true);
         if (e.oldAnimator) { e.animatorEnabled = e.oldAnimator.enabled; e.oldAnimator.enabled = false; }
         var model = Instantiate(prefab, original, false); model.name = "Blender " + kind + " sample";
-        foreach (var skin in model.GetComponentsInChildren<SkinnedMeshRenderer>())
-            if (materials.Length > 0) skin.sharedMaterials = materials;
+        if (!shadowfang)
+            foreach (var skin in model.GetComponentsInChildren<SkinnedMeshRenderer>())
+                if (materials.Length > 0) skin.sharedMaterials = materials;
         if (BoundsOf(model.transform, out var after) && after.size.y > .001f) {
             model.transform.localScale *= before.size.y / after.size.y;
             BoundsOf(model.transform, out after);
             model.transform.position += new Vector3(before.center.x - after.center.x, before.min.y - after.min.y, before.center.z - after.center.z);
         }
-        CloneAccessories(e.renderers, model.transform, before.size.y);
+        if (!shadowfang) CloneAccessories(e.renderers, model.transform, before.size.y);
         e.replacement = model.transform;
-        e.body = CombatTempoAnimatedBody.Install(model, kind, target, null);
+        e.body = CombatTempoAnimatedBody.Install(model, kind, target, shadowfang ? ShadowfangHound20261016.ControllerPath : null);
+        if (shadowfang) ShadowfangHound20261016.Install(model);
         if (handle) handle.SetTempoPresentationModel(model.transform);
         return e;
     }
@@ -225,6 +229,13 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         foreach (var e in enemies.Values)
             if (e.handle == h && e.body) { e.body.Play(clip, contactAfter, hold, tail); return true; }
         return false;
+    }
+    /// The replacement body of an enemy, when it has one.
+    public CombatTempoAnimatedBody BodyOf(EnemyHandle h)
+    {
+        if (!h) return null;
+        foreach (var e in enemies.Values) if (e.handle == h && e.body) return e.body;
+        return null;
     }
     public void LightContact(string payload)
     {

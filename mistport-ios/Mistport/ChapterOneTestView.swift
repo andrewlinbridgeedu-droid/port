@@ -974,6 +974,8 @@ struct ChapterOneEncounterTestView: View {
     @State private var requestedUltimate = false
     @State private var requestedEmeraldMask = false
     @State private var q3HuntStart: TimeInterval?
+    /// The Q3 hound cast Unity was last told about ahead of time (hound-prepare).
+    @State private var q3PreparedCast: TimeInterval?
     @State private var q4CycleStart: TimeInterval?
     private var isQ3Hound: Bool { session.encounter.id == "chapter01_q03_encounter" }
     private var isQ4Hound: Bool { session.encounter.id == "chapter01_q04_encounter" }
@@ -2223,6 +2225,16 @@ struct ChapterOneEncounterTestView: View {
                 if q3HuntStart == nil { q3HuntStart = now }
                 enemyReadyAt[enemy.id] = MPCQ3HoundTiming.castTime(
                     start: q3HuntStart ?? now, attackIndex: enemy.intentIndex)
+                // Shadowfang's windup (2026-10-16): the cast time is scheduled, so Unity hears a
+                // moment ahead and the bite's crouch (0.8 s) or the breath's lifted head (0.5 s)
+                // starts early. Presentation only: the cast and its contact keep their times.
+                if usesUnityBattlefield, !isFastForwardingBattle, pendingEnemyImpacts[enemy.id] == nil,
+                   let cast = enemyReadyAt[enemy.id], q3PreparedCast != cast,
+                   now >= cast - (enemy.currentIntent == "bite" ? 0.8 : 0.5), now < cast,
+                   let nativeID = unityBattleEnemyID(for: enemy) {
+                    q3PreparedCast = cast
+                    unityBattleRuntime.send(action: "hound-prepare:\(nativeID):\(enemy.currentIntent)")
+                }
             }
             if isQ4Hound {
                 if q4CycleStart == nil { q4CycleStart = now }

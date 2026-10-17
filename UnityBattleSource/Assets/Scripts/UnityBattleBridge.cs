@@ -509,6 +509,7 @@ public sealed class UnityBattleBridge : MonoBehaviour
         if (action.StartsWith("enemy-heal:")) { battle.PresentEnemyHealing(action.Substring("enemy-heal:".Length)); return; }
         if (action.StartsWith("enemy-impact:")) { battle.PresentEnemyImpact(action.Substring("enemy-impact:".Length)); return; }
         if (action.StartsWith("q4-hound:")) { battle.SetQ4HoundPhase(action.Substring("q4-hound:".Length)); return; }
+        if (action.StartsWith("hound-prepare:")) { battle.PrepareHound(action.Substring("hound-prepare:".Length)); return; }
         if (action == "tempo-mask") { CombatTempoPresentation.Get(battle).MaskCast(); return; }
         if (action.StartsWith("combat-speed:")) { battle.SetCombatSpeed(action.Substring("combat-speed:".Length)); return; }
         if (action.StartsWith("tempo-sample:")) { battle.SetTempoSample(action.Substring("tempo-sample:".Length)); return; }

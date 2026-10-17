@@ -1,0 +1,32 @@
+{
+  "guides": 23,
+  "between": 24,
+  "head_cap": 35,
+  "tail": 66,
+  "cards": 875,
+  "card_vertices": 21000,
+  "card_triangles": 24500,
+  "body_triangles": 59998,
+  "unweighted": 0,
+  "blender_dimensions": [
+    1.200989007949829,
+    3.097146987915039,
+    1.6413624286651611
+  ],
+  "tone_mean": [
+    0.0364,
+    0.0352,
+    0.0375
+  ],
+  "tone_min": [
+    0.0232,
+    0.0224,
+    0.0238
+  ],
+  "tone_max": [
+    0.0521,
+    0.0504,
+    0.0536
+  ],
+  "status": "Hair-card prototype; not reviewed by the user"
+}

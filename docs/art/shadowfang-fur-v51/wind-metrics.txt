@@ -1,0 +1,11 @@
+BattleIdle-battle peakResponse=0.4499991 worldUnit=0.8592904 finite=True windAtEnd=0
+BattleIdle-calm peakResponse=0 worldUnit=0.8592904 finite=True windAtEnd=0
+BattleIdle-gust peakResponse=0.4499581 worldUnit=0.8592904 finite=True windAtEnd=0
+Light peakResponse=0.6439329 worldUnit=0.8592904 finite=True windAtEnd=1
+heavy-release peakResponse=0.4533278 worldUnit=0.8592904 finite=True windAtEnd=1
+Light-side peakResponse=0.6439329 worldUnit=0.8592904 finite=True windAtEnd=1
+heavy-release-side peakResponse=0.4533278 worldUnit=0.8592904 finite=True windAtEnd=1
+Light-battle-vfx peakResponse=0.969744 worldUnit=0.8592904 finite=True windAtEnd=1
+heavy-release-battle-vfx peakResponse=0.4533278 worldUnit=0.8592904 finite=True windAtEnd=1
+Light-near-vfx peakResponse=0.6439329 worldUnit=0.8592904 finite=True windAtEnd=1
+heavy-release-near-vfx peakResponse=0.4533278 worldUnit=0.8592904 finite=True windAtEnd=1

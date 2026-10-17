@@ -86,6 +86,12 @@ public sealed class BattlePrototype : MonoBehaviour
     bool playerDefeatPresentationActive;
     EncounterModel encounterModel = EncounterModel.ClockGuard;
     bool hellHoundUsesFireBreath = true;
+    // Shadowfang's long breath and timed bite (2026-10-16, user: 同意，按这个接进游戏). The rules
+    // keep their beats: Q3's breaths come in pairs 1.4 s apart and every attack lands 1.1 s
+    // after its cast. The pair becomes one breath of about three seconds that pours between
+    // and around the two hits; a bite crouches from a prepare signal 0.8 s before its cast.
+    float houndBreathCast = -99f, houndPreparedAt = -99f, houndLastRealStream = -99f;
+    string houndPreparedIntent;
     bool hellHoundIsEnraged;
     bool hasHellHoundBaseScale;
     Vector3 hellHoundBaseScale;
@@ -197,6 +203,9 @@ public sealed class BattlePrototype : MonoBehaviour
     {
         position=Vector3.zero;
         if(!hellHoundHandle||hellHoundHandle.ProfileEnemyId!="early-hell-hound"||!hellHoundHandle.VisualRoot)return false;
+        // Shadowfang's own jaws (2026-10-16); the hidden original's head no longer moves.
+        var shadowfang=ShadowfangHound20261016.Of(hellHoundHandle);
+        if(shadowfang){position=shadowfang.Mouth;return true;}
         if(earlyHoundMuzzleVisual!=hellHoundHandle.VisualRoot){
             earlyHoundMuzzleVisual=hellHoundHandle.VisualRoot;
             var bones=earlyHoundMuzzleVisual.GetComponentsInChildren<Transform>(true);
@@ -1164,6 +1173,26 @@ public sealed class BattlePrototype : MonoBehaviour
             return;
         }
         StartCoroutine(PresentEnemyTurn());
+    }
+
+    /// Native "hound-prepare:<id>:<intent>", sent ahead of a scheduled cast (Q3): the
+    /// bite's crouch starts 0.8 s early, the breath's lifted head 0.5 s early. Presentation only.
+    public void PrepareHound(string payload)
+    {
+        var parts = payload.Split(':');
+        if (parts.Length < 2 || parts[0] != EnemyBattleIds.HellHoundPrimary || !NativeCombatEnabled) return;
+        var body = CombatTempoPresentation.Get(this).BodyOf(hellHoundHandle);
+        if (!ShadowfangHound20261016.Of(hellHoundHandle) || !body || actionRunning) return;
+        string intent = parts[1];
+        if (intent == "bite") {
+            houndPreparedAt = Time.time; houndPreparedIntent = intent;
+            // Crouch by the cast, coil until 0.55 s after it, spring to the 1.1 s contact, recover.
+            body.PlayTimed("Light", .1f, new Vector2(.42f, .8f), new Vector2(.5f, 1.35f), new Vector2(.58f, 1.9f), new Vector2(1f, 2.7f));
+        } else if (Time.time - houndBreathCast > 1.9f) {
+            // Not the second of a pair (that one is already pouring).
+            houndPreparedAt = Time.time; houndPreparedIntent = intent;
+            CombatTempoPresentation.Get(this).PlayEnemyClip(hellHoundHandle, "HeavyRelease", 0);
+        }
     }
 
     public void SetQ4HoundPhase(string phase)
@@ -3216,14 +3245,26 @@ public sealed class BattlePrototype : MonoBehaviour
         animator?.SetTrigger("Attack");
         // The early hound's replacement body lunges forward and breathes (HeavyRelease), its
         // release timed to the native 1.1 s contact; the old model only had a walk cycle.
-        if (!isRevenant) CombatTempoPresentation.Get(this).PlayEnemyClip(committedHound, "HeavyRelease", 1.0f);
+        // Shadowfang breathes at the authored pace instead: one long breath for a pair.
+        var shadowfang = isRevenant ? null : ShadowfangHound20261016.Of(committedHound);
+        bool continuing = shadowfang && Time.time - houndBreathCast < 1.9f;
+        if (shadowfang && !continuing) {
+            houndBreathCast = Time.time;
+            bool prepared = houndPreparedIntent != "bite" && Time.time - houndPreparedAt < 1f;
+            if (!prepared) CombatTempoPresentation.Get(this).PlayEnemyClip(committedHound, "HeavyRelease", 0);
+            houndPreparedAt = -99f;
+            StartCoroutine(PourHoundBreath(committedHound, houndBreathCast));
+        }
+        else if (!isRevenant && !shadowfang) CombatTempoPresentation.Get(this).PlayEnemyClip(committedHound, "HeavyRelease", 1.0f);
         FaceHellHoundAt(player.transform.position);
         yield return new WaitForSeconds(0.08f);
 
         if(!CanPresentEnemy(committedHound))yield break;
 
         UnityBattleBridge.ReportPresentationPhase("hell-hound-charge");
-        yield return isRevenant ? emeraldSpell.PlayCharge(
+        // The second breath of a pair is already pouring: no new mouth flare, same beat.
+        if (continuing) yield return new WaitForSeconds(.24f);
+        else yield return isRevenant ? emeraldSpell.PlayCharge(
             () => HellHoundFireBreathSourceAnchor,
             () => PlayerFireBreathImpactAnchor) : hellHoundFireball.PlayCharge(
             () => HellHoundFireBreathSourceAnchor,
@@ -3232,6 +3273,7 @@ public sealed class BattlePrototype : MonoBehaviour
         UnityBattleBridge.ReportPresentationPhase("hell-hound-breath");
         // The painted breath leaves the mouth now and reaches the victim at the contact (2026-10-10).
         SpellSpectacle20260926.EnemyBreath(committedHound, () => HellHoundFireBreathSourceAnchor, () => PlayerFireBreathImpactAnchor, .78f);
+        houndLastRealStream = Time.time;
         yield return isRevenant ? emeraldSpell.Fly(
             () => HellHoundFireBreathSourceAnchor,
             () => PlayerFireBreathImpactAnchor) : hellHoundFireball.Fly(
@@ -3281,6 +3323,21 @@ public sealed class BattlePrototype : MonoBehaviour
         UnityBattleBridge.ReportPresentationComplete("enemy");
     }
 
+    /// Between and around the breath's real hits, more painted fire leaves the mouth and
+    /// sweeps either side of the hero as the head swings, so the breath pours for about three
+    /// seconds. These streams carry no contact: only the rules' two hits report one.
+    IEnumerator PourHoundBreath(EnemyHandle hound, float cast)
+    {
+        foreach (var at in new[] { .85f, 1.55f, 2.25f }) {
+            while (Time.time - cast < at) { if (houndBreathCast != cast) yield break; yield return null; }
+            if (!CanPresentEnemy(hound) || !ShadowfangHound20261016.Of(hound)) yield break;
+            if (Time.time - houndLastRealStream < .4f) continue;
+            var toHero = PlayerFireBreathImpactAnchor - HellHoundFireBreathSourceAnchor; toHero.y = 0;
+            var side = Vector3.Cross(Vector3.up, toHero.normalized) * (at < 2f ? .6f : -.6f);
+            SpellSpectacle20260926.EnemyBreath(hound, () => HellHoundFireBreathSourceAnchor, () => PlayerFireBreathImpactAnchor + side, .78f);
+        }
+    }
+
     IEnumerator PresentHellHoundPounceTurn()
     {
         var actor = hellHoundHandle != null ? hellHoundHandle.EnemyRoot : null;
@@ -3288,9 +3345,33 @@ public sealed class BattlePrototype : MonoBehaviour
         var home = actor.position;
         var animator = actor.GetComponentInChildren<Animator>(true);
         animator?.SetTrigger("Attack");
+        var target = Vector3.Lerp(home, player.transform.position, .65f);
+        var shadowfangBody = ShadowfangHound20261016.Of(hellHoundHandle) ? CombatTempoPresentation.Get(this).BodyOf(hellHoundHandle) : null;
+        if (shadowfangBody) {
+            // Shadowfang (2026-10-16): crouched since the prepare signal (or crouching fast
+            // now), it coils, springs over the last 0.55 s onto the 1.1 s contact, lands and
+            // recovers on its way home.
+            bool prepared = houndPreparedIntent == "bite" && Time.time - houndPreparedAt < 1.5f;
+            houndPreparedAt = -99f;
+            if (!prepared) shadowfangBody.PlayTimed("Light", .1f, new Vector2(.42f, .3f), new Vector2(.5f, .55f), new Vector2(.58f, 1.1f), new Vector2(1f, 1.9f));
+            float elapsed = 0;
+            while (elapsed < 1.1f) {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01((elapsed - .55f) / .55f);
+                actor.position = Vector3.Lerp(home, target, Mathf.SmoothStep(0, 1, t)) + Vector3.up * Mathf.Sin(t * Mathf.PI) * .35f;
+                yield return null;
+            }
+            UnityBattleBridge.ReportCombatContact("enemy:hell-hound-primary");
+            yield return new WaitForSeconds(.15f);
+            elapsed = 0;
+            while (elapsed < .6f) {
+                elapsed += Time.deltaTime;
+                actor.position = Vector3.Lerp(target, home, Mathf.SmoothStep(0, 1, elapsed / .6f));
+                yield return null;
+            }
+        } else {
         // A real pounce on the replacement body, its bite on the 1.1 s contact (it used to walk).
         CombatTempoPresentation.Get(this).PlayEnemyClip(hellHoundHandle, "Pounce", 1.1f);
-        var target = Vector3.Lerp(home, player.transform.position, .65f);
         float elapsed = 0;
         while (elapsed < 1.1f) {
             elapsed += Time.deltaTime;
@@ -3304,6 +3385,7 @@ public sealed class BattlePrototype : MonoBehaviour
             elapsed += Time.deltaTime;
             actor.position = Vector3.Lerp(target, home, Mathf.Clamp01(elapsed / .45f));
             yield return null;
+        }
         }
         actor.position = home;
         UnityBattleBridge.ReportPresentationComplete("enemy");
