@@ -10,6 +10,6 @@ mkdir -p "$out"
 MISTPORT_AUTO_EXPORT_UNITY=0 xcodebuild -project mistport-ios/Mistport.xcodeproj -scheme Mistport \
   -configuration Debug -sdk iphoneos -destination generic/platform=iOS \
   -derivedDataPath "$out" -jobs 3 MISTPORT_APP_BUNDLE_IDENTIFIER=local.mistport.institutions \
-  INFOPLIST_KEY_CFBundleDisplayName='雾港·机构试玩' CURRENT_PROJECT_VERSION=171.7 \
+  CURRENT_PROJECT_VERSION=171.7 \
   -allowProvisioningUpdates build > "$out/build.log" 2>&1
 printf '%s\n' "$out/Build/Products/Debug-iphoneos/Mistport.app"
