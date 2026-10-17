@@ -334,3 +334,37 @@ private extension MPCCityFaction {
     /// A fixed small number per side for seeded tie-breaks (Hashable's value changes per run).
     var hashValueStable: Int { MPCCityFaction.allCases.firstIndex(of: self)! + 11 }
 }
+
+extension MPCCityTrendStage {
+    /// The stage's key choice (counts `MPCCityTrendLedger.keyWeight`, once a stage): who the
+    /// player speaks up for when the stake is put to them.
+    public var keyQuestion: String {
+        switch self {
+        case .casualties: "奥黛尔把三份床位方案摊在你面前：诊所人手不够，教会施济所有床但要登记姓名，商行愿意包下来但要押金。你替哪一份说话？"
+        case .pump: "泵站停了好几天。码头工人说街坊轮流下井就能修；档案员说市政拨款下周批；维拉说委员会的人明天就能开工。"
+        case .blockade: "港口封锁着。港务员要逐船查验；码头老水手说夜里能用小船接驳；商人说包一条船就能出港。"
+        case .workshop: "蒸汽工坊就要奠基。市政厅摆着三份章程：街坊合作社、市政工坊、委员会私厂。"
+        }
+    }
+    public var keyChoices: [MPCErrandWay] {
+        let n = MPCCityFaction.neighbours, o = MPCCityFaction.offices, c = MPCCityFaction.compacts
+        switch self {
+        case .casualties: return [
+            .init(side: n, label: "替诊所互助床位说话", fact: "在伤患潮里替诊所的互助床位说了话", reply: "奥黛尔：那就排班，今晚我守第一班。"),
+            .init(side: o, label: "替施济所登记床位说话", fact: "在伤患潮里替教会施济所的登记床位说了话", reply: "伊莱：名字登上册，谁也不会被落下。"),
+            .init(side: c, label: "替商行包床说话", fact: "在伤患潮里替商行包下床位说了话", reply: "商人：押金我先垫一半，床位今晚就有。")]
+        case .pump: return [
+            .init(side: n, label: "支持街坊义修", fact: "在泵站修复里支持了街坊义修", reply: "码头工人：那我明早带绳子来。"),
+            .init(side: o, label: "支持市政拨款", fact: "在泵站修复里支持了市政拨款", reply: "档案员：表格我替你们填好了，签个字就行。"),
+            .init(side: c, label: "支持委员会包工", fact: "在泵站修复里支持了工业委员会包工", reply: "维拉：好。合同明早送到。")]
+        case .blockade: return [
+            .init(side: n, label: "帮码头夜里接驳", fact: "在港口封锁里帮码头夜里接驳", reply: "老水手：天黑以后，旧栈桥见。"),
+            .init(side: o, label: "支持逐船查验", fact: "在港口封锁里支持港务处逐船查验", reply: "港务员：查清楚了，放行才安心。"),
+            .init(side: c, label: "替商人包船出力", fact: "在港口封锁里替商人包船出了力", reply: "商人：船票我给你留一张。")]
+        case .workshop: return [
+            .init(side: n, label: "签合作社章程", fact: "在工坊奠基时签了街坊合作社的章程", reply: "码头工人：谁出力谁分红，你也算一份。"),
+            .init(side: o, label: "签市政工坊章程", fact: "在工坊奠基时签了市政工坊的章程", reply: "档案员：按名册招工，一个都不会漏。"),
+            .init(side: c, label: "签委员会私厂章程", fact: "在工坊奠基时签了委员会私厂的章程", reply: "维拉：工钱高，规矩也严。欢迎。")]
+        }
+    }
+}

@@ -22,6 +22,15 @@ struct CityTrendTests {
         for side in MPCCityFaction.allCases { #expect(sides.filter { $0 == side }.count >= 25, "\(side)") }
     }
 
+    @Test("every stage puts a key choice with one option per side")
+    func keyChoices() {
+        for stage in MPCCityTrendStage.allCases {
+            #expect(!stage.keyQuestion.isEmpty)
+            #expect(stage.keyChoices.map(\.side) == MPCCityFaction.allCases, "\(stage)")
+            #expect(stage.keyChoices.allSatisfy { !$0.fact.isEmpty && !$0.reply.isEmpty && $0.label.count <= 10 }, "\(stage)")
+        }
+    }
+
     @Test("a few ordinary points a day, one key choice a stage, each receipt once")
     func ledgerCaps() {
         var ledger = L()
