@@ -96,6 +96,10 @@ final class UnityBattleRuntime: NSObject, ObservableObject, UnityFrameworkListen
     private var framework: UnityFramework?
     private weak var hostView: UIView?
     private weak var nativeWindow: UIWindow?
+    // Unity sleeps while no battle shows it (2026-10-17, iPhone 13: 好卡): its 60 fps loop kept
+    // running behind the city screens. Commands sent meanwhile wait in Unity's queue.
+    private var unityPaused = false
+    private var pauseTask: Task<Void, Never>?
     private var pendingEncounterPresentation: UnityBattleEncounterPresentation = .clockGuard
     private var pendingTargetSigilsPayload = ""
     private var pendingEnemyVisibilityPayload = ""
@@ -116,11 +120,28 @@ final class UnityBattleRuntime: NSObject, ObservableObject, UnityFrameworkListen
     }
 
     func attach(to view: UIView) {
+        // updateUIView calls this on every SwiftUI update: re-adding Unity's view and re-keying
+        // the window each time is costly, so an attached view is left alone.
+        let alreadyAttached = hostView === view
+            && framework?.appController()?.rootViewController?.view?.superview === view
         hostView = view
+        pauseTask?.cancel(); pauseTask = nil
+        if unityPaused { framework?.pause(false); unityPaused = false }
         if framework == nil {
             startUnity()
-        } else {
+        } else if !alreadyAttached {
             attachUnityView()
+        }
+    }
+
+    private func pauseWhenUnused(after seconds: Double) {
+        pauseTask?.cancel()
+        pauseTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(seconds))
+            guard let self, !Task.isCancelled, self.hostView == nil, !self.unityPaused,
+                  let framework = self.framework else { return }
+            framework.pause(true)
+            self.unityPaused = true
         }
     }
 
@@ -143,11 +164,14 @@ final class UnityBattleRuntime: NSObject, ObservableObject, UnityFrameworkListen
     func preload() {
         guard framework == nil else { return }
         startUnity()
+        // Long enough to load the battle scene behind the launch screen, then sleep.
+        pauseWhenUnused(after: 6)
     }
 
     func detach(from view: UIView) {
         if hostView === view {
             hostView = nil
+            pauseWhenUnused(after: 0.6)
         }
     }
 
@@ -284,7 +308,9 @@ final class UnityBattleRuntime: NSObject, ObservableObject, UnityFrameworkListen
                 y: min(1, max(0, 1 - unityY))
             )
         }
-        if !updated.isEmpty {
+        // Only when something moved: every assignment re-renders the whole battle view
+        // (2026-10-17, iPhone 13: 好卡).
+        if !updated.isEmpty, updated != enemyHealthAnchorViewports {
             enemyHealthAnchorViewports = updated
         }
     }
@@ -303,7 +329,9 @@ final class UnityBattleRuntime: NSObject, ObservableObject, UnityFrameworkListen
                 y: min(1, max(0, 1 - unityY))
             )
         }
-        if !updated.isEmpty {
+        // Only when something moved: every assignment re-renders the whole battle view
+        // (2026-10-17, iPhone 13: 好卡).
+        if !updated.isEmpty, updated != effectAnchorViewports {
             effectAnchorViewports = updated
         }
     }

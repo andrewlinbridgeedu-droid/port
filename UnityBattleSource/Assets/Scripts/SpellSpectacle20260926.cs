@@ -7034,7 +7034,9 @@ public sealed partial class SpellSpectacle20260926 : MonoBehaviour
         typeof(EnemyAuthoredBurstTier20260919), typeof(MainlineDistinct20260925),
     };
     float hideLegacyUntil = -1f, nextLegacyScan;
-    readonly List<GameObject> legacyRoots = new List<GameObject>();
+    // Each root with its renderers, gathered at the scan, not every frame (2026-10-17, iPhone 13: 好卡).
+    readonly List<(GameObject go, Renderer[] renderers)> legacyRoots = new List<(GameObject, Renderer[])>();
+    readonly List<GameObject> sceneRoots = new List<GameObject>();
 
     // Late (DefaultExecutionOrder on the class): some of those scripts switch their own
     // renderers on every frame, so they are switched off again every frame.
@@ -7049,16 +7051,24 @@ public sealed partial class SpellSpectacle20260926 : MonoBehaviour
             legacyRoots.Clear();
             foreach (var type in LegacySpellTypes)
                 foreach (var o in FindObjectsByType(type, FindObjectsSortMode.None))
-                    if (o is Component c && c && IsLegacySpell(c.gameObject)) legacyRoots.Add(c.gameObject);
-            // The signature enemies' own effect roots (EnemySignatureSpellVFX).
-            foreach (var t in FindObjectsByType<Transform>(FindObjectsSortMode.None))
-                if (t && t.parent == null && t.name.StartsWith("Enemy signature") && IsLegacySpell(t.gameObject)) legacyRoots.Add(t.gameObject);
+                    if (o is Component c && c && IsLegacySpell(c.gameObject)) legacyRoots.Add((c.gameObject, c.gameObject.GetComponentsInChildren<Renderer>()));
+            // The signature enemies' own effect roots (EnemySignatureSpellVFX) sit at the top of
+            // the scene: look at the scene roots only, not at every transform in it.
+            for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+            {
+                var scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+                if (!scene.isLoaded) continue;
+                scene.GetRootGameObjects(sceneRoots);
+                foreach (var go in sceneRoots)
+                    if (go && go.name.StartsWith("Enemy signature", StringComparison.Ordinal) && IsLegacySpell(go))
+                        legacyRoots.Add((go, go.GetComponentsInChildren<Renderer>()));
+            }
         }
-        foreach (var go in legacyRoots)
+        foreach (var item in legacyRoots)
         {
-            if (!go) continue;
-            foreach (var r in go.GetComponentsInChildren<Renderer>())
-                if (r.enabled && !(r is SkinnedMeshRenderer)) r.enabled = false;
+            if (!item.go) continue;
+            foreach (var r in item.renderers)
+                if (r && r.enabled && !(r is SkinnedMeshRenderer)) r.enabled = false;
         }
     }
 

@@ -136,13 +136,25 @@ public sealed class OvalLightShield : MonoBehaviour
 
     static void Quiet(Renderer r) { r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; r.receiveShadows = false; }
 
+    // The body's renderers, gathered once a second: the shield still follows the body every
+    // frame, but no longer walks its whole hierarchy every frame (2026-10-17, iPhone 13: 好卡).
+    readonly List<Renderer> fitRenderers = new List<Renderer>();
+    float nextFitGather;
+
     void Fit(bool force)
     {
         if (!body) return;
-        bool any = false; var b = new Bounds();
-        foreach (var r in body.GetComponentsInChildren<Renderer>())
+        if (force || Time.unscaledTime >= nextFitGather)
         {
-            if (!r || r.GetComponentInParent<OvalLightShield>() || !(r is SkinnedMeshRenderer || r is MeshRenderer)) continue;
+            nextFitGather = Time.unscaledTime + 1f;
+            fitRenderers.Clear();
+            foreach (var r in body.GetComponentsInChildren<Renderer>())
+                if (r && !r.GetComponentInParent<OvalLightShield>() && (r is SkinnedMeshRenderer || r is MeshRenderer)) fitRenderers.Add(r);
+        }
+        bool any = false; var b = new Bounds();
+        foreach (var r in fitRenderers)
+        {
+            if (!r || !r.gameObject.activeInHierarchy) continue;   // as before: disabled renderers still count
             if (!any) { b = r.bounds; any = true; } else b.Encapsulate(r.bounds);
         }
         if (any && b.size.y > .3f)

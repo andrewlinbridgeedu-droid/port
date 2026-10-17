@@ -525,9 +525,22 @@ public sealed class EarlyEnemyIdlePresence : MonoBehaviour
         }
     }
 
+    // The visible actor only changes when a model is swapped (presenter, tempo body, emerald,
+    // ghost): resolve at once on such a change and otherwise a few times a second, instead of
+    // scanning the whole bone hierarchy every frame (2026-10-17, iPhone 13: 好卡).
+    float nextResolve;
+    Transform resolvedForModel;
+    SignatureEnemyPresentation signaturePresentation;
+
     void RefreshVisibleActor()
     {
         if (handle == null) return;
+        bool swapped = handle.Model != resolvedForModel
+            || (visualActor != null && !visualActor.gameObject.activeInHierarchy);
+        if (!swapped && Time.unscaledTime < nextResolve) return;
+        nextResolve = Time.unscaledTime + .25f;
+        resolvedForModel = handle.Model;
+        signaturePresentation = GetComponent<SignatureEnemyPresentation>();
         var resolved = ResolveVisibleActor();
         if (resolved == visualActor) return;
 
@@ -668,7 +681,7 @@ public sealed class EarlyEnemyIdlePresence : MonoBehaviour
         if (legacyAnimation != null && legacyAnimation.isActiveAndEnabled
             && !legacyAnimation.IsPlaying("Idle")) return false;
 
-        var signature = GetComponent<SignatureEnemyPresentation>();
+        var signature = signaturePresentation;
         if (signature != null && signature.IsCasting)
             return false;
 

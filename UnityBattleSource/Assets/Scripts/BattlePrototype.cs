@@ -796,9 +796,11 @@ public sealed class BattlePrototype : MonoBehaviour
         }
     }
 
+    // The whole method only exists in the editor and standalone builds: an empty OnGUI still makes
+    // the legacy GUI lay out and repaint every frame on the phone (2026-10-17, iPhone 13: 好卡).
+#if UNITY_EDITOR || UNITY_STANDALONE
     void OnGUI()
     {
-#if UNITY_EDITOR || UNITY_STANDALONE
         if (previewPresentation) return;
         if (actionButtonStyle == null)
         {
@@ -823,8 +825,8 @@ public sealed class BattlePrototype : MonoBehaviour
         if (GUI.Button(new Rect(x + (width + gap) * 2f, y, width, 64f), "防御", actionButtonStyle))
             StartPlayerAction(PlayerAction.Defend);
         GUI.enabled = true;
-#endif
     }
+#endif
 
     void BuildArena()
     {
@@ -2096,6 +2098,9 @@ public sealed class BattlePrototype : MonoBehaviour
                 light.intensity = 2.5f;
                 light.range = 5f;
                 light.shadows = LightShadows.None;
+                // Vertex-lit: as a pixel light it drew the whole hound (60k-triangle body and
+                // both fur passes) a second time every frame (2026-10-17, iPhone 13: 好卡).
+                light.renderMode = LightRenderMode.ForceVertex;
             }
             enemy = hellHound;
             enemyAnimator = enemy.GetComponentInChildren<Animator>(true);

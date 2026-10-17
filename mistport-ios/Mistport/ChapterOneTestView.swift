@@ -2994,7 +2994,9 @@ struct ChapterOneEncounterTestView: View {
     }
 
     private var medalRelicButton: some View {
-        TimelineView(.animation(minimumInterval: 0.05)) { _ in
+        // No timeline of its own: it reads battleTime, which redraws it on every combat step
+        // (2026-10-17, iPhone 13: 好卡).
+        Group {
             let now = battleTime
             let remaining = max(0, (session.usurpedLifeMedalExpiresAt ?? now) - now)
             let cooldown = max(0, session.usurpedLifeMedalReadyAt - now)
@@ -3091,10 +3093,9 @@ struct ChapterOneEncounterTestView: View {
                     .overlay { MaskCrackOverlay(count: maskCrackCount) }
                     .overlay {
                         if session.masqueradeCharges > 0, let expiry = session.ownedManualMaskExpiresAt {
-                            TimelineView(.animation(minimumInterval: 0.05)) { _ in
-                                Circle().trim(from: 0, to: min(1, max(0, (expiry - battleTime) / 4)))
-                                    .stroke(Color.purple.opacity(0.85), lineWidth: 2).rotationEffect(.degrees(-90))
-                            }.allowsHitTesting(false)
+                            Circle().trim(from: 0, to: min(1, max(0, (expiry - battleTime) / 4)))
+                                .stroke(Color.purple.opacity(0.85), lineWidth: 2).rotationEffect(.degrees(-90))
+                                .allowsHitTesting(false)
                         }
                     }
                     .overlay { ClockwiseCardCooldown(now: battleTime, startedAt: skillScheduler.startedAt[.maskedWhisper], duration: 18) }
@@ -3429,9 +3430,11 @@ struct ChapterOneEncounterTestView: View {
                     // transparent layer over the Unity characters. It must
                     // use the exact same viewport as Unity or the two layers
                     // will appear to be independently letterboxed.
+                    // 30 fps: over Unity this layer only plays the odd effect (paper double, defeat),
+                    // yet composited a transparent full-screen layer at 60 (2026-10-17, iPhone 13: 好卡).
                     SpriteView(
                         scene: visualScene,
-                        preferredFramesPerSecond: 60,
+                        preferredFramesPerSecond: 30,
                         options: [.allowsTransparency, .ignoresSiblingOrder]
                     )
                     .frame(width: proxy.size.width, height: proxy.size.height)
@@ -7176,23 +7179,37 @@ private struct ClockwiseCardCooldown: View {
     let startedAt: TimeInterval?
     let duration: TimeInterval
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30, paused: startedAt == nil)) { _ in
-            let elapsed = startedAt.map { (now ?? ProcessInfo.processInfo.systemUptime) - $0 } ?? duration
-            let progress = min(1, max(0, elapsed / duration))
-            if progress < 1 {
-                GeometryReader { geometry in
-                    let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                    ZStack {
-                        Path { path in
-                            path.move(to: center)
-                            path.addArc(center: center, radius: max(geometry.size.width, geometry.size.height),
-                                        startAngle: .degrees(-90 + 360 * progress), endAngle: .degrees(270), clockwise: false)
-                            path.closeSubpath()
-                        }.fill(.black.opacity(0.6))
-                    }.frame(width: geometry.size.width, height: geometry.size.height)
-                }.clipShape(RoundedRectangle(cornerRadius: 8))
+        Group {
+            if let now {
+                // The battle clock already redraws this on every combat step; a 30 Hz timeline of
+                // its own on each of about a dozen cards, running even after the sweep finished,
+                // only added work on the main thread (2026-10-17, iPhone 13: 好卡).
+                sweep(now: now)
+            } else {
+                let finished = startedAt.map { ProcessInfo.processInfo.systemUptime - $0 >= duration } ?? true
+                TimelineView(.animation(minimumInterval: 1.0 / 30, paused: finished)) { _ in
+                    sweep(now: ProcessInfo.processInfo.systemUptime)
+                }
             }
         }.allowsHitTesting(false)
+    }
+
+    @ViewBuilder private func sweep(now: TimeInterval) -> some View {
+        let elapsed = startedAt.map { now - $0 } ?? duration
+        let progress = min(1, max(0, elapsed / duration))
+        if progress < 1 {
+            GeometryReader { geometry in
+                let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                ZStack {
+                    Path { path in
+                        path.move(to: center)
+                        path.addArc(center: center, radius: max(geometry.size.width, geometry.size.height),
+                                    startAngle: .degrees(-90 + 360 * progress), endAngle: .degrees(270), clockwise: false)
+                        path.closeSubpath()
+                    }.fill(.black.opacity(0.6))
+                }.frame(width: geometry.size.width, height: geometry.size.height)
+            }.clipShape(RoundedRectangle(cornerRadius: 8))
+        }
     }
 }
 

@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
 const $=id=>document.getElementById(id), scene=new THREE.Scene();
-const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.setClearColor(0xc9d1dc);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.NoToneMapping;document.body.prepend(renderer.domElement);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);renderer.setClearColor(0xc9d1dc);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.NoToneMapping;document.body.prepend(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xfff5e2,0x7785a8,2.5));let sun=new THREE.DirectionalLight(0xfff2df,2);sun.position.set(-10,25,18);scene.add(sun);
 const camera=new THREE.OrthographicCamera(), C=Math.SQRT1_2;
 let postOfficeLabel,postOfficePosition,navigator,nav,env,hero,run,idle,mixer,queue=[],currentNode=0,auto=false,debug=false,showPaths=false,drag=null,zoom=innerWidth<600?17:22;
@@ -94,7 +94,7 @@ $('geometry').onclick=()=>{debug=!debug;$('geometry').classList.toggle('active',
 function changeZoom(v){zoom=THREE.MathUtils.clamp(zoom*v,12,60);updateCamera();}$('zoomIn').onclick=()=>changeZoom(.85);$('zoomOut').onclick=()=>changeZoom(1.15);renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();changeZoom(e.deltaY>0?1.06:.94);},{passive:false});
 addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);updateCamera();});
 let clock=new THREE.Clock(),moving=false;
-renderer.setAnimationLoop(()=>{const dt=Math.min(clock.getDelta(),.04);if(hero){let walking=queue.length>0;if(walking!==moving){moving=walking;if(moving){idle.fadeOut(.15);run.reset().fadeIn(.15).play();}else{run.fadeOut(.18);idle.reset().fadeIn(.18).play();message('点击街道跑动 · 点击人物交谈');destination.visible=false;}}
+/* 30 fps and 1.5x pixels (2026-10-17, iPhone 13: 好卡) */let lastFrameAt=-1e9;renderer.setAnimationLoop((frameAt)=>{if(frameAt-lastFrameAt<30)return;lastFrameAt=frameAt;const dt=Math.min(clock.getDelta(),.04);if(hero){let walking=queue.length>0;if(walking!==moving){moving=walking;if(moving){idle.fadeOut(.15);run.reset().fadeIn(.15).play();}else{run.fadeOut(.18);idle.reset().fadeIn(.18).play();message('点击街道跑动 · 点击人物交谈');destination.visible=false;}}
 if(queue.length&&innerWidth<600){const follow=hero.position.clone().add(new THREE.Vector3(0,0,-4));center.lerp(follow,Math.min(1,dt*2));updateCamera();}
 if(queue.length){const p=toWorld(queue[0]),d=p.clone().sub(hero.position),step=3.2*dt;const next=d.length()<=step?p:hero.position.clone().addScaledVector(d.clone().normalize(),step);if(safeEdge(toPixel(hero.position),toPixel(next))&&progression.edge(toPixel(hero.position),toPixel(next))){hero.position.copy(next);if(next.distanceTo(p)<.0001){queue.shift();if(!queue.length&&auto){const tourNode=nav.tourNode??8;const target=hero.position.distanceTo(toWorld(nav.nodes[tourNode]))<.1?0:tourNode;go(target);auto=true;}}}else{queue=[];auto=false;message('前方有障碍，请重新选择街道');}const angle=Math.atan2(d.x,d.z);hero.rotation.y+=Math.atan2(Math.sin(angle-hero.rotation.y),Math.cos(angle-hero.rotation.y))*Math.min(1,dt*12);}mixer.update(dt);for(const npc of npcs){if(npc.delivery){
  npc.delivery.tick(dt);const state=npc.delivery.state;

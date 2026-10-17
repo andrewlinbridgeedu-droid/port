@@ -23,6 +23,10 @@ public sealed class SpellBloom20261008 : MonoBehaviour
     Material mat;
     Transform source;
     readonly List<Renderer> renderers = new List<Renderer>();
+    readonly List<Material> materials = new List<Material>();
+    // Whether a material glows, by instance: reading Material.name every frame allocated a
+    // string per renderer (2026-10-17, iPhone 13: 好卡).
+    static readonly Dictionary<int, bool> glowByMaterial = new Dictionary<int, bool>();
     static readonly int[] Ids = { Shader.PropertyToID("_SpellBloom0"), Shader.PropertyToID("_SpellBloom1"), Shader.PropertyToID("_SpellBloom2"), Shader.PropertyToID("_SpellBloom3"), Shader.PropertyToID("_SpellBloom4") };
     static readonly int IntensityId = Shader.PropertyToID("_Intensity");
 
@@ -70,8 +74,8 @@ public sealed class SpellBloom20261008 : MonoBehaviour
         foreach (var r in renderers)
         {
             if (!r || !r.enabled || !Glows(r)) continue;
-            var mats = r.sharedMaterials;
-            for (int i = 0; i < mats.Length; i++) if (mats[i]) cmd.DrawRenderer(r, mats[i], i);
+            r.GetSharedMaterials(materials);
+            for (int i = 0; i < materials.Count; i++) if (materials[i]) cmd.DrawRenderer(r, materials[i], i);
         }
         for (int i = 1; i <= Levels; i++)
         {
@@ -90,7 +94,11 @@ public sealed class SpellBloom20261008 : MonoBehaviour
     {
         var m = r.sharedMaterial;
         if (!m) return false;
-        var n = m.name;
-        return !(n.Contains("Wash") || n.Contains("Dim"));
+        int id = m.GetInstanceID();
+        if (!glowByMaterial.TryGetValue(id, out var glows)) {
+            var n = m.name;
+            glowByMaterial[id] = glows = !(n.Contains("Wash") || n.Contains("Dim"));
+        }
+        return glows;
     }
 }

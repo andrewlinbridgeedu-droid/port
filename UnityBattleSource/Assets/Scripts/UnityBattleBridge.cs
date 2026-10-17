@@ -340,9 +340,18 @@ public sealed class UnityBattleBridge : MonoBehaviour
         }
     }
 
+    // Cached: FindFirstObjectByType every frame, and twice per anchor report, cost CPU on the
+    // phone for nothing (2026-10-17, iPhone 13: 好卡). Unity's null check catches a reload.
+    BattlePrototype cachedBattle;
+    EnemyHandle[] anchorHandles = System.Array.Empty<EnemyHandle>();
+    string lastHealthAnchors, lastEffectAnchors;
+    // Unchanged anchors are still sent once a second, so a restarted battle always gets them.
+    float lastHealthSent, lastEffectSent;
+
     void Update()
     {
-        var battle = FindFirstObjectByType<BattlePrototype>();
+        if (!cachedBattle) cachedBattle = FindFirstObjectByType<BattlePrototype>();
+        var battle = cachedBattle;
         if (battle == null || !battle.IsPresentationReady) return;
         // Framework attachment is earlier than scene installation on a cold
         // device. Replay controls in order, including the final stop/start.
@@ -359,6 +368,7 @@ public sealed class UnityBattleBridge : MonoBehaviour
         if (Time.unscaledTime >= nextAnchorReportTime)
         {
             nextAnchorReportTime = Time.unscaledTime + AnchorReportInterval;
+            anchorHandles = FindObjectsByType<EnemyHandle>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
             ReportEnemyHealthAnchors();
             ReportBattleEffectAnchors();
         }
@@ -369,9 +379,7 @@ public sealed class UnityBattleBridge : MonoBehaviour
         var camera = Camera.main;
         if (camera == null) return;
 
-        var handles = FindObjectsByType<EnemyHandle>(
-            FindObjectsInactive.Exclude,
-            FindObjectsSortMode.None);
+        var handles = anchorHandles;
         var entries = new List<string>();
         for (var index = 0; index < handles.Length; index++)
         {
@@ -385,11 +393,16 @@ public sealed class UnityBattleBridge : MonoBehaviour
             var viewport = camera.WorldToViewportPoint(handle.HealthBarAnchor.position);
             if (viewport.z <= 0f) continue;
             entries.Add(
-                $"{handle.BattleEnemyId},{viewport.x.ToString("F4", CultureInfo.InvariantCulture)},{viewport.y.ToString("F4", CultureInfo.InvariantCulture)}");
+                $"{handle.BattleEnemyId},{viewport.x.ToString("F3", CultureInfo.InvariantCulture)},{viewport.y.ToString("F3", CultureInfo.InvariantCulture)}");
         }
 
-        if (entries.Count > 0)
-            Report("enemy-health-anchors", string.Join(";", entries));
+        // Only when a bar moved: each report re-renders the whole native battle view.
+        var health = string.Join(";", entries);
+        if (entries.Count > 0 && (health != lastHealthAnchors || Time.unscaledTime - lastHealthSent > 1f))
+        {
+            lastHealthAnchors = health; lastHealthSent = Time.unscaledTime;
+            Report("enemy-health-anchors", health);
+        }
     }
 
     // Native SpriteKit VFX is composited over Unity on iOS. Report the actual
@@ -398,13 +411,11 @@ public sealed class UnityBattleBridge : MonoBehaviour
     void ReportBattleEffectAnchors()
     {
         var camera = Camera.main;
-        var battle = FindFirstObjectByType<BattlePrototype>();
+        var battle = cachedBattle;
         if (camera == null || battle == null) return;
 
         var entries = new List<string>();
-        var handles = FindObjectsByType<EnemyHandle>(
-            FindObjectsInactive.Exclude,
-            FindObjectsSortMode.None);
+        var handles = anchorHandles;
         for (var index = 0; index < handles.Length; index++)
         {
             var handle = handles[index];
@@ -421,25 +432,29 @@ public sealed class UnityBattleBridge : MonoBehaviour
             var viewport = camera.WorldToViewportPoint(effectPosition);
             if (viewport.z <= 0f) continue;
             entries.Add(
-                $"{handle.BattleEnemyId},{viewport.x.ToString("F4", CultureInfo.InvariantCulture)},{viewport.y.ToString("F4", CultureInfo.InvariantCulture)}");
+                $"{handle.BattleEnemyId},{viewport.x.ToString("F3", CultureInfo.InvariantCulture)},{viewport.y.ToString("F3", CultureInfo.InvariantCulture)}");
         }
 
         var playerViewport = camera.WorldToViewportPoint(battle.PlayerFireBreathImpactAnchor);
         if (playerViewport.z > 0f)
         {
             entries.Add(
-                $"player-primary,{playerViewport.x.ToString("F4", CultureInfo.InvariantCulture)},{playerViewport.y.ToString("F4", CultureInfo.InvariantCulture)}");
+                $"player-primary,{playerViewport.x.ToString("F3", CultureInfo.InvariantCulture)},{playerViewport.y.ToString("F3", CultureInfo.InvariantCulture)}");
         }
 
         var playerHealthViewport = camera.WorldToViewportPoint(battle.PlayerHealthAnchor);
         if (playerHealthViewport.z > 0f)
         {
             entries.Add(
-                $"player-health,{playerHealthViewport.x.ToString("F4", CultureInfo.InvariantCulture)},{playerHealthViewport.y.ToString("F4", CultureInfo.InvariantCulture)}");
+                $"player-health,{playerHealthViewport.x.ToString("F3", CultureInfo.InvariantCulture)},{playerHealthViewport.y.ToString("F3", CultureInfo.InvariantCulture)}");
         }
 
-        if (entries.Count > 0)
-            Report("battle-effect-anchors", string.Join(";", entries));
+        var effects = string.Join(";", entries);
+        if (entries.Count > 0 && (effects != lastEffectAnchors || Time.unscaledTime - lastEffectSent > 1f))
+        {
+            lastEffectAnchors = effects; lastEffectSent = Time.unscaledTime;
+            Report("battle-effect-anchors", effects);
+        }
     }
 
     public void ResetEnemyExitPresentation()

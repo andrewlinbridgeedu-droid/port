@@ -3,7 +3,9 @@ using UnityEngine;
 /// World-space rainfall with ground contact; never draws over the native HUD.
 public sealed class BattleRain : MonoBehaviour
 {
-    const int Count=3200;
+    // 1800 (was 3200) and unsorted (2026-10-17, user on an iPhone 13: 好卡). The volume reaches far
+    // off screen, so the visible rain thins only a little; sorting thin streaks showed no difference.
+    const int Count=1800;
     public bool WeatherVisible { get; private set; } = true;
     public void SetWeatherVisible(bool visible) {
         WeatherVisible=visible;
@@ -78,7 +80,7 @@ public sealed class BattleRain : MonoBehaviour
         var go=new GameObject(name);go.transform.SetParent(transform,false);var ps=go.AddComponent<ParticleSystem>();ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
         var main=ps.main;main.maxParticles=cap;main.simulationSpace=ParticleSystemSimulationSpace.World;main.startSpeed=0;main.loop=true;main.playOnAwake=false;main.cullingMode=ParticleSystemCullingMode.AlwaysSimulate;
         var emission=ps.emission;emission.enabled=false;var shape=ps.shape;shape.enabled=false;
-        var r=ps.GetComponent<ParticleSystemRenderer>();r.sharedMaterial=material;r.renderMode=mode;r.sortMode=ParticleSystemSortMode.Distance;r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;r.receiveShadows=false;
+        var r=ps.GetComponent<ParticleSystemRenderer>();r.sharedMaterial=material;r.renderMode=mode;r.sortMode=ParticleSystemSortMode.None;r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;r.receiveShadows=false;
         ps.Play();return ps;
     }
     static void Fade(ParticleSystem ps)

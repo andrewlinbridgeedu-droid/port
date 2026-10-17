@@ -25,6 +25,7 @@ public sealed class EnemyTargetSigil : MonoBehaviour
     readonly List<LineRenderer> glyphLines = new();
     Renderer[] renderers;
     Animator humanoidAnimator;
+    Transform humanoidSearchedModel;
     ParticleSystem magicParticles;
     SpriteRenderer ornamentSprite;
     float previewAnimationPhase = float.NaN;
@@ -61,6 +62,7 @@ public sealed class EnemyTargetSigil : MonoBehaviour
         model = modelTransform;
         renderers = model != null ? model.GetComponentsInChildren<Renderer>(true) : null;
         humanoidAnimator = FindHumanoidAnimator(model);
+        humanoidSearchedModel = model;
         boundsSpace = calibratedBoundsSpace;
         calibratedBounds = finalPresentedBounds;
         hasCalibratedBounds = boundsSpace != null
@@ -427,8 +429,13 @@ public sealed class EnemyTargetSigil : MonoBehaviour
         ref float minY,
         ref float maxY)
     {
-        if (humanoidAnimator == null)
+        // Searched once per model: a quadruped has no humanoid animator, and looking for one
+        // every frame scanned its whole hierarchy (2026-10-17, iPhone 13: 好卡).
+        if (humanoidAnimator == null && humanoidSearchedModel != model)
+        {
+            humanoidSearchedModel = model;
             humanoidAnimator = FindHumanoidAnimator(model);
+        }
         if (humanoidAnimator == null || !humanoidAnimator.isHuman)
             return false;
 

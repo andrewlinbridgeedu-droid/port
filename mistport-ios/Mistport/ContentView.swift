@@ -725,6 +725,10 @@ private enum LaunchAssetPreloader {
             await Task.yield()
             for name in group.names {
                 guard let image = UIImage(named: name) else { continue }
+                // Kept decoded only up to 2048 x 2048 (16 MB): the 4096 panorama and the 5504-wide
+                // world map held 64 MB each for the whole session (2026-10-17, iPhone 13: 好卡).
+                let pixels = image.size.width * image.scale * image.size.height * image.scale
+                guard pixels <= 2048 * 2048 else { continue }
                 retainedImages.append(image.preparingForDisplay() ?? image)
             }
             onProgress(group.progress, group.message)

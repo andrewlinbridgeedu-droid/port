@@ -467,7 +467,9 @@ struct CityLivingScene: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: reduceMotion ? 5 : 1.0 / 30.0, paused: !isActive)) { timeline in
+        // 20 Hz (was 30): the panorama's Canvas layers are drawn on the CPU across the whole
+        // painting, about four screens wide (2026-10-17, iPhone 13: 好卡).
+        TimelineView(.animation(minimumInterval: reduceMotion ? 5 : 1.0 / 20.0, paused: !isActive)) { timeline in
             let now = Self.pinned(timeline.date)
             let hour = HarborClock.hour(at: now)
             let light = HarborLight(hour: hour)
@@ -500,10 +502,8 @@ struct CityLivingScene: View {
                         scenery(season, light: light, upcoming: upcoming, lamps: (lampsOn, lampsOff),
                                 snow: snow, in: geometry.size)
                             .opacity(seasons.mix)
-                        if let next = seasons.next {
-                            // Decode the coming season's night painting before the turn.
-                            plate(next.plateSet, 3, in: geometry.size).opacity(0.001)
-                        }
+                        // The coming season's painting is no longer kept on screen at 0.001 opacity
+                        // to stay decoded: that composited a whole extra painting every frame.
                         Canvas { context, size in
                             var painter = HarborPainter(size: size, hour: hour, t: t, light: light, rain: cover,
                                                         nightCloud: weather.nightCloud * light.dark, wind: weather.wind,
@@ -639,10 +639,6 @@ struct CityLivingScene: View {
             plate(set, light.from, in: size)
             if light.to != light.from {
                 plate(set, light.to, in: size).opacity(light.mix)
-            }
-            if upcoming != light.from && upcoming != light.to {
-                // Keep the next painting decoded before its fade begins.
-                plate(set, upcoming, in: size).opacity(0.001)
             }
         }
     }

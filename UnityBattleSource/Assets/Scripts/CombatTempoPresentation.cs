@@ -26,6 +26,7 @@ public sealed class CombatTempoPresentation : MonoBehaviour
     string encounter;
     Entry hero;
     readonly Dictionary<string, Entry> enemies = new Dictionary<string, Entry>();
+    readonly List<string> stale = new List<string>();   // reused: this ran every frame
     sealed class Entry {
         public Transform original;
         public EnemyHandle handle;
@@ -42,6 +43,8 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         public readonly List<(Renderer renderer, bool enabled)> renderers = new List<(Renderer, bool)>();
         public HeroLivingIdle20260916 oldHeroIdle;
         public bool heroIdleEnabled;
+        // The hidden 3D hero's own per-frame parts, paused while the illustrated hero stands in.
+        public readonly List<Behaviour> pausedHeroParts = new List<Behaviour>();
     }
     public static CombatTempoPresentation Get(BattlePrototype battle)
     {
@@ -74,9 +77,11 @@ public sealed class CombatTempoPresentation : MonoBehaviour
     {
         if (!battle || !(Enabled || HoundBodyOnly || HeroOnly)) return;
         if (hero != null && !hero.Valid) { Restore(hero); hero = null; }
-        foreach (var key in new List<string>(enemies.Keys)) {
-            var e = enemies[key]; if (!e.body || !e.handle || !e.handle.gameObject.activeInHierarchy || e.handle.Model != e.replacement) { Restore(e); enemies.Remove(key); }
+        stale.Clear();
+        foreach (var pair in enemies) {
+            var e = pair.Value; if (!e.body || !e.handle || !e.handle.gameObject.activeInHierarchy || e.handle.Model != e.replacement) stale.Add(pair.Key);
         }
+        foreach (var key in stale) { Restore(enemies[key]); enemies.Remove(key); }
         foreach (var h in battle.TempoSampleEnemies) {
             if (!h || !h.gameObject.activeInHierarchy || enemies.ContainsKey(h.BattleEnemyId)) continue;
             var kind = h.ProfileEnemyId == "early-hell-hound" ? "Hound" : h.ProfileEnemyId == "stonehide" ? "Stonejaw" : h.ProfileEnemyId == "bounty-b01" ? "Hollow" : null;
@@ -184,6 +189,13 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         if(entry.oldAnimator) {entry.animatorEnabled=entry.oldAnimator.enabled;entry.oldAnimator.enabled=false;}
         entry.oldHeroIdle=original.GetComponentInChildren<HeroLivingIdle20260916>();
         if(entry.oldHeroIdle) {entry.heroIdleEnabled=entry.oldHeroIdle.enabled;entry.oldHeroIdle.enabled=false;}
+        // The hidden 3D hero kept animating its ribbons and face and lighting the stage with a
+        // per-pixel fill (2026-10-17, iPhone 13: 好卡). Its back-art and finger rigs stay on: the
+        // recorder's H07 hop check (solved feet lift) fails without them.
+        foreach (var part in original.GetComponentsInChildren<Behaviour>(true))
+            if (part.enabled && (part is FoolRibbonFlutter || part is HeroPortraitFill20260917 || part is HeroFacialMotion20260917)) {
+                part.enabled = false; entry.pausedHeroParts.Add(part);
+            }
         HideOriginal(entry); return entry;
     }
     void PlayHero(string skill, string legacyClip, float contact) {
@@ -309,6 +321,8 @@ public sealed class CombatTempoPresentation : MonoBehaviour
         foreach (var item in e.renderers) if (item.renderer) item.renderer.enabled = item.enabled;
         if (e.oldAnimator) e.oldAnimator.enabled = e.animatorEnabled;
         if (e.oldHeroIdle) e.oldHeroIdle.enabled = e.heroIdleEnabled;
+        foreach (var part in e.pausedHeroParts) if (part) part.enabled = true;
+        e.pausedHeroParts.Clear();
         if (e.handle) { if (e.handle.Model == e.replacement) e.handle.SetTempoPresentationModel(e.previousModel); if (e.oldIdle) { e.oldIdle.enabled = e.idleEnabled; e.oldIdle.ResumeIdle(); } }
     }
     public void Cancel()

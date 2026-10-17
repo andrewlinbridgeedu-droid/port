@@ -51,7 +51,8 @@ public sealed class ShadowfangHound20261016 : MonoBehaviour
             var slots = new Material[skin.sharedMesh ? skin.sharedMesh.subMeshCount : 1];
             for (int i = 0; i < slots.Length; i++) slots[i] = i == FurMaterialIndex ? fur : body;
             skin.sharedMaterials = slots;
-            skin.updateWhenOffscreen = true;
+            // Bounds from the clips, not recomputed from the skin every frame (2026-10-17, iPhone 13).
+            skin.updateWhenOffscreen = false;
         }
         return model.GetComponent<ShadowfangHound20261016>() ?? model.AddComponent<ShadowfangHound20261016>();
     }
