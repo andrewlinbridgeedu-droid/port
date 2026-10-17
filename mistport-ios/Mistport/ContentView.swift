@@ -40,9 +40,10 @@ struct ContentView: View {
     // street, which no button opens (playtest 2026-10-04); they belong on the
     // home street next to the bounty targets.
     private var streetTargets: [MPCStreetTaskTarget] {
-        MPCStreetTaskCatalog.bountyTargets(game.churchServices.bounties)
-            + MPCStreetTaskCatalog.neighborTargets(game.neighbors, heardMessages: game.neighborHeardMessages)
-            + MPCStreetTaskCatalog.streetTargets(game.streetTasks)
+        let today = game.pacingDay
+        return MPCStreetTaskCatalog.bountyTargets(game.churchServices.bounties)
+            + MPCStreetTaskCatalog.neighborTargets(game.neighbors, heardMessages: game.neighborHeardMessages, today: today)
+            + MPCStreetTaskCatalog.streetTargets(game.streetTasks, today: today)
     }
     private var homeIsActive: Bool {
         let uncovered = scenePhase == .active && presentedSheet == nil && homeDestination == nil && !newspaperPresented
@@ -429,10 +430,20 @@ struct ContentView: View {
             guard game.phase != .title && game.phase != .pathSelection else { return }
             while !Task.isCancelled {
                 if scenePhase == .active { await game.openHousingDay(); try? game.openNeighborDay(); game.openStreetDay() }
-                do { try await Task.sleep(for: .seconds(30)) } catch { return }
+                // Wake at midnight too, so the new day's errands replace the old ones at once
+                // instead of up to 30 seconds later, when a tap only met a lapsed request.
+                let midnight = game.pacingDayEnd(game.pacingDay).timeIntervalSince(game.pacingClock()) + 1
+                do { try await Task.sleep(for: .seconds(min(30, max(1, midnight)))) } catch { return }
             }
         }
-        .onChange(of: scenePhase) { _, phase in Task { if phase == .active { await game.openHousingDay(); presentDailyNewspaperIfNeeded() } } }
+        .onChange(of: scenePhase) { _, phase in
+            Task {
+                guard phase == .active else { return }
+                await game.openHousingDay()
+                if game.phase != .title && game.phase != .pathSelection { try? game.openNeighborDay(); game.openStreetDay() }
+                presentDailyNewspaperIfNeeded()
+            }
+        }
         .fullScreenCover(isPresented: $newspaperPresented, onDismiss: openNewspaperDestination) {
             DailyNewspaperView(game: game) { destination in
                 newspaperDestination = destination

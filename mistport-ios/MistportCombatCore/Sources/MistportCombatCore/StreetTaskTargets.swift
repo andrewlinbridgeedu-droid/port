@@ -41,10 +41,12 @@ public enum MPCStreetTaskCatalog {
     }
     /// Today's neighbour errands on the home map: the asker, or for a message already heard,
     /// the recipient. The App keeps which messages were heard (`heardMessages`); finished
-    /// errands and fights carried over from an earlier day are not lit.
-    public static func neighborTargets(_ ledger: MPCNeighborLedger, heardMessages: Set<String> = []) -> [MPCStreetTaskTarget] {
+    /// errands and fights carried over from an earlier day are not lit. `today` (the pacing
+    /// day) keeps yesterday's askers dark in the moment before the ledger opens the new day,
+    /// when they could only have said that their request had lapsed.
+    public static func neighborTargets(_ ledger: MPCNeighborLedger, heardMessages: Set<String> = [], today: Int? = nil) -> [MPCStreetTaskTarget] {
         ledger.offers.compactMap { offer -> MPCStreetTaskTarget? in
-            guard !offer.done, offer.day == ledger.day, let errand = offer.errand,
+            guard !offer.done, offer.day == (today ?? ledger.day), let errand = offer.errand,
                   let asker = MPCNeighborCatalog.neighbor(offer.neighborID) else { return nil }
             if errand.kind == .message, heardMessages.contains(offer.id), let recipientID = errand.recipientID,
                let recipient = MPCNeighborCatalog.neighbor(recipientID) {

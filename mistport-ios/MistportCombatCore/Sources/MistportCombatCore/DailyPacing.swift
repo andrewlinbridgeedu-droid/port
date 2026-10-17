@@ -88,6 +88,23 @@ public struct MPCDailyPacingStart: Codable, Equatable, Sendable {
     public func day(now: Date, calendar: Calendar = .current) -> Int {
         MPCDailyPacing.dayNumber(start: start, now: now, calendar: calendar)
     }
+
+    /// When pacing day `day` ends: the local midnight after it, when its errands are replaced.
+    public func end(ofDay day: Int, calendar: Calendar = .current) -> Date {
+        calendar.date(byAdding: .day, value: max(1, day), to: calendar.startOfDay(for: start))!
+    }
+}
+
+extension MPCDailyPacing {
+    /// A countdown for errand pages (user 2026-10-17: lapsed errands simply give way to new
+    /// ones; a countdown may remind the player): "还剩 3 小时 25 分", "还剩 8 分".
+    public static func remainingText(seconds: TimeInterval) -> String {
+        let minutes = max(1, Int((seconds / 60).rounded(.up)))
+        if minutes < 60 { return "还剩 \(minutes) 分" }
+        let hours = minutes / 60, rest = minutes % 60
+        if hours >= 24 { return "还剩 \(hours / 24) 天" + (hours % 24 > 0 ? " \(hours % 24) 小时" : "") }
+        return "还剩 \(hours) 小时" + (rest > 0 ? " \(rest) 分" : "")
+    }
 }
 
 extension MPCDailyPacing {

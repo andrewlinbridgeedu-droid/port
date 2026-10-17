@@ -198,6 +198,9 @@ struct HomeStreetScene: View {
         let moving: Bool
         let direction: Int
         let tasks: [MPCStreetTaskTarget]
+        /// Later arrivals at a shared hold spot lift their plate a row each, so names and
+        /// bells do not print over one another ("钟楼广场水手账员", playtest 2026-10-17).
+        var plateRow = 0
     }
     private func visiblePeople(time: Double) -> [Pose] {
         let layout = HomeMapLayout.current
@@ -211,6 +214,7 @@ struct HomeStreetScene: View {
         // 2026-10-04). Stand later arrivals a step to either side.
         var holdCounts: [String: Int] = [:]
         var holdOffsets: [String: Double] = [:]
+        var plateRows: [String: Int] = [:]
         // A fixed post right on a hold spot (the merchant at H7) counts as the
         // first occupant, so a summoned witness is not hidden behind it.
         for spot in layout.holdSpots {
@@ -225,7 +229,9 @@ struct HomeStreetScene: View {
             let hold = layout.hold(for: person.id)?.id ?? ""
             let slot = holdCounts[hold, default: 0]
             holdCounts[hold] = slot + 1
-            holdOffsets[person.id] = slot == 0 ? 0 : Double((slot + 1) / 2) * 0.035 * (slot.isMultiple(of: 2) ? -1 : 1)
+            // 0.05 painting heights (about 44 points on a phone) keeps neighbouring tap areas apart.
+            holdOffsets[person.id] = slot == 0 ? 0 : Double((slot + 1) / 2) * 0.05 * (slot.isMultiple(of: 2) ? -1 : 1)
+            plateRows[person.id] = slot
         }
         for (index, person) in HomeCitizenCatalog.people.enumerated() {
             let personTime = time - (personPauses[person.id] ?? 0)
@@ -272,7 +278,8 @@ struct HomeStreetScene: View {
             }
             guard visibleRange.contains(point[0]) else { continue }
             let size = Self.bodyHeight(at: point[1]) * painting.height
-            poses.append(.init(person: person, point: point, size: size, moving: moving, direction: direction, tasks: tasks))
+            poses.append(.init(person: person, point: point, size: size, moving: moving, direction: direction, tasks: tasks,
+                               plateRow: tasks.isEmpty ? 0 : plateRows[person.id] ?? 0))
         }
         poses.sort {
             let a = !$0.tasks.isEmpty ? 0 : $0.person.service != nil ? 1 : $0.person.post != nil ? 2 : 3
@@ -366,7 +373,10 @@ struct HomeStreetScene: View {
     private func citizen(_ pose: Pose, date: Date, time: Double) -> some View {
         // Name plates near either screen edge slide inward instead of being
         // cut in half (playtest 2026-10-05, shots 488/495/506).
-        let screenX = painting.minX + pose.point[0] * painting.height
+        // On-screen x, from the visible strip's left edge. This used the panorama x, so every
+        // person beyond the first screen width had their plate pushed far off to one spot and
+        // the people the map lit for errands showed no name or bell (2026-10-17).
+        let screenX = (pose.point[0] - (visibleRange.lowerBound + 0.035)) * painting.height
         let viewportWidth = max(1, (visibleRange.upperBound - visibleRange.lowerBound - 0.07) * painting.height)
         let plateHalfWidth = 36.0
         let plateShift = screenX < plateHalfWidth ? plateHalfWidth - screenX
@@ -385,6 +395,9 @@ struct HomeStreetScene: View {
             else { greet(pose, date: date, time: time) }
         } label: {
             ZStack {
+                // The body's tap area; the plate below adds its own, so a name can be tapped
+                // too when people share a hold spot (it was outside the hit shape, 2026-10-17).
+                Color.clear.frame(width: 44, height: max(44, pose.size)).contentShape(Rectangle())
                 Ellipse().fill(.black.opacity(0.28)).frame(width: pose.size * 0.4, height: 4).offset(y: pose.size * 0.5)
                 HomeWalkSprite(atlas: pose.person.atlasName,
                                frame: pose.moving ? Int(time * 7) % 8 : 0,
@@ -393,9 +406,9 @@ struct HomeStreetScene: View {
                     VStack(spacing: 1) {
                         if let kind = pose.tasks.first?.kind { Image(systemName: kind == .postal ? "envelope.fill" : kind == .neighbor ? "bell.fill" : "seal.fill").foregroundStyle(kind == .bounty ? .red : .yellow) }
                         Text(pose.person.name).font(.system(size: 10, weight: .semibold)).fixedSize(horizontal: true, vertical: false).foregroundStyle(.white)
-                    }.padding(3).background(.black.opacity(0.55), in: Capsule()).opacity(pose.tasks.isEmpty || pose.tasks.contains { $0.id == trackedID } ? 1 : 0.55).offset(x: plateShift, y: -pose.size * 0.7)
+                    }.padding(3).background(.black.opacity(0.55), in: Capsule()).opacity(pose.tasks.isEmpty || pose.tasks.contains { $0.id == trackedID } ? 1 : 0.55).offset(x: plateShift, y: -pose.size * 0.7 - Double(pose.plateRow) * 28)
                 }
-            }.frame(width: 44, height: max(44, pose.size)).contentShape(Rectangle())
+            }.frame(width: 44, height: max(44, pose.size))
         }.buttonStyle(.plain).accessibilityLabel("\(pose.person.name)\(pose.tasks.isEmpty ? "，打招呼" : "，任务互动")")
     }
     private func greet(_ pose: Pose, date: Date, time: Double) {
@@ -770,7 +783,7 @@ struct HomeCounterView: View {
                         Text("今天的街坊委托都已完成，明天会有新的。").font(.caption)
                     }
                 }
-                ForEach(MPCStreetTaskCatalog.streetTargets(game.streetTasks).filter { $0.placeID == buildingID }) { target in
+                ForEach(MPCStreetTaskCatalog.streetTargets(game.streetTasks, today: game.pacingDay).filter { $0.placeID == buildingID }) { target in
                     if let task = MPCStreetTaskCatalog.streetTask(game.streetTasks.offers.first { $0.id == target.taskID }?.taskID ?? "") {
                         HomeCounterAction(title: StreetTaskText.kind(target.kind) + " · " + task.title,
                                           detail: target.id.hasSuffix(":post") ? task.request + "\n→ \(task.copper) 铜，\(task.steps.count) 步" : target.title) {
@@ -912,7 +925,7 @@ struct HomeNeighborPosterView: View {
     let neighborID: String
     var body: some View {
         GameArtPage(title: "街坊委托", subtitle: "委托板 · 来访登记", closeTitle: "返回委托板") {
-            ForEach(game.neighbors.offers.filter { $0.neighborID == neighborID }) { offer in
+            ForEach(game.neighbors.offers.filter { $0.neighborID == neighborID && $0.day == game.pacingDay }) { offer in
                 if let errand = offer.errand {
                     Text(MPCNeighborCatalog.neighbor(neighborID)?.name ?? "街坊").font(.headline)
                     Text(errand.request)
@@ -920,7 +933,7 @@ struct HomeNeighborPosterView: View {
                         Text("已完成").foregroundStyle(.secondary)
                     } else {
                         if offer.replayWithoutReward == true { Text("这次是重试，原报酬已领取。").font(.footnote) }
-                        let target = MPCStreetTaskCatalog.neighborTargets(game.neighbors, heardMessages: game.neighborHeardMessages).first { $0.taskID == offer.id }
+                        let target = MPCStreetTaskCatalog.neighborTargets(game.neighbors, heardMessages: game.neighborHeardMessages, today: game.pacingDay).first { $0.taskID == offer.id }
                         let person = target?.personID ?? neighborID
                         let name = MPCNeighborCatalog.neighbor(person)?.name ?? "委托人"
                         Text("请到\(name)面前交谈；委托板不能代为交货或传话。").font(.footnote)
@@ -931,6 +944,7 @@ struct HomeNeighborPosterView: View {
                 }
             }
         }
+        .task(id: game.pacingDay) { try? game.openNeighborDay() }
     }
 }
 
@@ -1106,19 +1120,29 @@ struct HomeStreetTaskView: View {
                 } else if !offer.accepted {
                     Text(task.request)
                     Text("\(task.steps.count) 步 · 完成得 \(task.copper) 铜" + (task.kind == .commission ? "" : " · 计入城市贡献")).font(.subheadline)
-                    Text("体力 \(MPCStamina.cost(.errandThreeStep))，第一步时扣除；有效至第 \(offer.lastDay) 天，逾期未完成会作废，不扣钱。").font(.footnote).foregroundStyle(.secondary)
+                    Text("体力 \(MPCStamina.cost(.errandThreeStep))，第一步时扣除。").font(.footnote).foregroundStyle(.secondary)
+                    timeLeft(offer)
                     Text("第一步：" + task.steps[0].goal + "（" + StreetTaskText.target(task.steps[0].target) + "）").font(.footnote)
                     Button("接下这件事") { accept { try game.acceptStreetTask(offer.id) } }
                 } else if let step = offer.step {
                     Text("第 \(offer.stepIndex + 1)/\(task.steps.count) 步 · " + step.goal).font(.headline)
+                    timeLeft(offer)
                     if here == step.target { stepControls(offer, step) }
-                    else { Text("这一步要去找：" + StreetTaskText.target(step.target)).foregroundStyle(.secondary) }
+                    else {
+                        // A task often takes a few trips; one tap walks the map to the next person or place.
+                        Text("这一步要去找：" + StreetTaskText.target(step.target)).foregroundStyle(.secondary)
+                        Button("前往 · " + StreetTaskText.target(step.target)) {
+                            NotificationCenter.default.post(name: .homeQuestFocus, object: offer.id + ":\(offer.stepIndex)")
+                        }
+                    }
                 }
             } else {
-                Text("这件事已经过期，或不在今天的委托里。")
+                // Replaced by a new day's tasks while open; the page closes itself (below).
+                Text("今天的委托已换新，回街上看看新的。")
             }
             if !notice.isEmpty { Text(notice).foregroundStyle(.orange) }
         }
+        .onChange(of: offer == nil, initial: true) { _, gone in if gone { dismiss() } }
         .fullScreenCover(item: $battle) { ticket in
             if let offer {
                 StreetTaskBattleView(game: game, offerID: offer.id, battleID: ticket.id, onClose: { battle = nil })
@@ -1155,8 +1179,15 @@ struct HomeStreetTaskView: View {
         }
     }
 
+    /// The countdown to the end of the offer's last day (user 2026-10-17, instead of "作废").
+    private func timeLeft(_ offer: MPCStreetTaskLedger.Offer) -> some View {
+        TimelineView(.periodic(from: .now, by: 30)) { _ in
+            Text((offer.lastDay == game.pacingDay ? "今天午夜换新 · " : "第 \(offer.lastDay) 天午夜前完成 · ") + game.errandTimeLeft(lastDay: offer.lastDay))
+                .font(.footnote).foregroundStyle(.secondary)
+        }
+    }
     private func accept(_ action: () throws -> Void) {
-        do { try action(); notice = "已接下。先看任务条，再去找第一步的人。" }
+        do { try action(); notice = "已接下。" }
         catch { notice = "这一步尚未成立。" }
     }
     /// Shows the step's line, and the thanks and pay when it was the last step.

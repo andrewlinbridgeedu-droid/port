@@ -382,10 +382,12 @@ extension MPCStreetTaskCatalog {
     }
 
     /// Home-map targets for street tasks: the poster before a task is taken, then the
-    /// current step's person or place.
-    public static func streetTargets(_ ledger: MPCStreetTaskLedger) -> [MPCStreetTaskTarget] {
+    /// current step's person or place. With `today`, an offer past its last day is not lit
+    /// even before the ledger opens the new day (a fight under way still is).
+    public static func streetTargets(_ ledger: MPCStreetTaskLedger, today: Int? = nil) -> [MPCStreetTaskTarget] {
         ledger.offers.compactMap { offer -> MPCStreetTaskTarget? in
-            guard let task = offer.task, !offer.done else { return nil }
+            guard let task = offer.task, !offer.done,
+                  today.map({ offer.lastDay >= $0 || offer.activeTicket != nil }) ?? true else { return nil }
             let kind: MPCStreetTaskTarget.Kind = task.kind == .commission ? .commission : task.kind == .joint ? .jointErrand : .urgentErrand
             guard offer.accepted else {
                 let place = task.kind == .commission ? task.giverID : "board"

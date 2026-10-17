@@ -11,24 +11,33 @@ struct NeighborConversationView: View {
 
     var body: some View {
         GameArtPage(title: MPCNeighborCatalog.neighbor(neighborID)?.name ?? "街坊", subtitle: "街坊来往 · 今日委托", art: neighborID == "postman" ? "HomePostOfficeEmpty20260929" : "HomeCommissionOfficeEmpty20260929", closeTitle: "告辞") {
-            Text("第 \(game.pacingDay) 天 · 好感 \(game.neighbors.affinity[neighborID, default: 0])").font(.subheadline)
-            Text("今天的请求明天会作废；已开打的赶塔怪行动可完成结算。").font(.footnote).foregroundStyle(.secondary)
-            ForEach(game.neighbors.offers.filter { $0.neighborID == neighborID }) { offer in
+            // Only today's requests (and a fight still under way) are shown: a request from an
+            // earlier day used to stay here as "已过期" (user 2026-10-17: lapsed errands should
+            // simply give way to new ones, with a countdown at most).
+            let today = game.pacingDay
+            let mine = game.neighbors.offers.filter { $0.neighborID == neighborID && ($0.day == today || $0.activeTicket != nil) }
+            let relays = game.neighbors.offers.filter { $0.errand?.recipientID == neighborID && $0.day == today && !$0.done && game.canRelayNeighbor($0.id) }
+            Text("第 \(today) 天 · 好感 \(game.neighbors.affinity[neighborID, default: 0])").font(.subheadline)
+            if (mine + relays).contains(where: { !$0.done }) {
+                TimelineView(.periodic(from: .now, by: 30)) { _ in
+                    Text("今天的委托午夜换新 · " + game.errandTimeLeft(lastDay: today)).font(.footnote).foregroundStyle(.secondary)
+                }
+            }
+            ForEach(mine) { offer in
                 if let errand = offer.errand { offerCard(offer, errand) }
             }
-            ForEach(game.neighbors.offers.filter { $0.errand?.recipientID == neighborID && !$0.done && game.canRelayNeighbor($0.id) }) { offer in
+            ForEach(relays) { offer in
                 GroupBox("有人托你传话") {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(offer.errand?.request ?? "")
                         Button("把话带到 · \(offer.errand?.copper ?? 0) 铜") {
-                            perform { try await game.relayNeighbor(offer.id) }
-                            if game.neighbors.offers.first(where: { $0.id == offer.id })?.done == true { message = (offer.errand?.reply ?? "") + "\n" + message }
+                            perform(reply: offer.errand?.reply) { try await game.relayNeighbor(offer.id) }
                         }
                     }
                 }
             }
             if !message.isEmpty { Text(message).foregroundStyle(.orange) }
-            if game.neighbors.offers.allSatisfy({ $0.neighborID != neighborID && $0.errand?.recipientID != neighborID }) {
+            if mine.isEmpty && relays.isEmpty {
                 Text("今天没有托你的事，沿街走走吧。")
             }
             let stories = game.neighbors.stories(neighborID)
@@ -57,7 +66,7 @@ struct NeighborConversationView: View {
                 #endif
             }
             .fullScreenCover(item: $battle) { ticket in
-                NeighborPestBattleView(game: game, offerID: ticket.offerID, battleID: ticket.id, onClose: { battle = nil })
+                NeighborPestBattleView(game: game, neighborID: neighborID, offerID: ticket.offerID, battleID: ticket.id, onClose: { battle = nil })
             }
     }
     private func offerCard(_ offer: MPCNeighborLedger.Offer, _ errand: MPCNeighborErrand) -> some View {
@@ -72,8 +81,6 @@ struct NeighborConversationView: View {
                     do { try game.abandonNeighborPest(offerID: offer.id, ticket: ticket) }
                     catch { message = "撤销未完成，请重试。" }
                 }
-            } else if offer.day != game.pacingDay {
-                Text("这条请求已过期。")
             } else {
                 StaminaCostView(activity: game.staminaActivityForNeighbor(offer.id))
                 Text(offer.replayWithoutReward == true ? "这次是重试，原报酬与好感已领取。" : "完成得 \(errand.copper) 铜 · 好感 +1").font(.subheadline)
@@ -94,20 +101,28 @@ struct NeighborConversationView: View {
                     }
                     Text("答错只划掉选项，不扣铜。").font(.footnote)
                 case .message:
-                    if !game.canRelayNeighbor(offer.id) {
-                        Button("接下传话") { Task { do { try await game.acceptNeighborMessage(offer.id); message = "话记住了，可以前往接话的人。" } catch { message = game.housingError(error) } } }
+                    // The recipient is lit only once the message is taken on here.
+                    let recipient = MPCNeighborCatalog.neighbor(errand.recipientID ?? "")?.name ?? "收话人"
+                    if game.canRelayNeighbor(offer.id) {
+                        Text("口信已记下，请到\(recipient)面前把话带到。")
+                        Button("前往 · \(recipient)") {
+                            NotificationCenter.default.post(name: .homeQuestFocus, object: offer.id + ":recipient")
+                        }
+                    } else {
+                        Text("接下后，到\(recipient)面前把话带到。")
+                        Button("接下传话") { Task { do { try await game.acceptNeighborMessage(offer.id); message = "话记住了，去找\(recipient)。" } catch { message = game.housingError(error) } } }
                     }
-                    Text("已记下口信。请到 \(MPCNeighborCatalog.neighbor(errand.recipientID ?? "")?.name ?? "收话人") 面前交谈。")
                 case .pest:
                     Button("去赶走塔怪") { battle = .init(id: UUID().uuidString, offerID: offer.id) }.buttonStyle(GameArtButtonStyle(primary: true))
                 }
             }
         }
     }
-    private func perform(_ action: @escaping () async throws -> MPCNeighborLedger.Reward?) {
+    /// `reply`: what a message's recipient says back, shown above the thanks.
+    private func perform(reply: String? = nil, _ action: @escaping () async throws -> MPCNeighborLedger.Reward?) {
         Task {
         do {
-            if let reward = try await action() { message = reward.thanks + (reward.copper == 0 ? "\n重试完成，原报酬与好感已领取。" : "\n已收 \(reward.copper) 铜，好感 \(reward.affinity)。") + (reward.story.map { "\n" + $0 } ?? "") }
+            if let reward = try await action() { message = (reply.map { $0 + "\n" } ?? "") + reward.thanks + (reward.copper == 0 ? "\n重试完成，原报酬与好感已领取。" : "\n已收 \(reward.copper) 铜，好感 \(reward.affinity)。") + (reward.story.map { "\n" + $0 } ?? "") }
             else { message = "这条线索对不上，已划掉该选项；没有扣铜。" }
         } catch { message = game.housingError(error) }
         }
@@ -116,6 +131,7 @@ struct NeighborConversationView: View {
 
 struct NeighborPestBattleView: View {
     @Bindable var game: GameStore
+    let neighborID: String
     let offerID: String
     let battleID: String
     let onClose: () -> Void
@@ -169,6 +185,9 @@ struct NeighborPestBattleView: View {
                     onStart: {
                         game.saveChapterOneBattleLoadout(skills)
                         Task { do {
+                            // This cover hides the neighbour's page, whose onDisappear ends the
+                            // conversation; the fight is that neighbour's errand, so resume it.
+                            try game.talkToNeighbor(neighborID)
                             configuredSession = try await game.beginNeighborPest(offerID: offerID, ticket: battleID, skills: skills)
                             started = true
                         } catch { startError = game.housingError(error) } }

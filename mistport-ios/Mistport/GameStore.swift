@@ -4729,10 +4729,21 @@ extension GameStore {
         _ = churchServicesRevision
         return (try? readNeighbors().ledger) ?? .init()
     }
-    /// Message errands whose asker has been heard; the recipient is lit on the street.
+    /// Message errands taken on at the asker (heard and paid for); the recipient is lit on
+    /// the street. Merely opening the asker's page marks a message heard, and lighting the
+    /// recipient then left a page with nothing to relay while the asker went dark (2026-10-17).
     var neighborHeardMessages: Set<String> {
         _ = churchServicesRevision
-        return (try? readNeighbors().heardMessages) ?? []
+        let receipts = housingRecord?.stamina.receipts ?? []
+        return ((try? readNeighbors().heardMessages) ?? []).filter { receipts.contains("neighbor-" + $0) }
+    }
+    /// When today's errands give way to tomorrow's (local midnight).
+    func pacingDayEnd(_ day: Int) -> Date {
+        (dailyPacingStart ?? MPCDailyPacingStart(start: pacingClock(), origin: .newSave, recordedAt: pacingClock())).end(ofDay: day)
+    }
+    /// "还剩 3 小时 25 分" until the end of `lastDay`.
+    func errandTimeLeft(lastDay: Int) -> String {
+        MPCDailyPacing.remainingText(seconds: pacingDayEnd(lastDay).timeIntervalSince(pacingClock()))
     }
     func openNeighborDay() throws {
         var record = try readNeighbors()
@@ -5649,6 +5660,8 @@ extension GameStore {
         guard Bundle.main.bundleIdentifier == "local.mistport.institutions" else { return }
         defaults.set(defaults.double(forKey: "institution.clock-offset") + 86_400, forKey: "institution.clock-offset")
         await openHousingDay()
+        // The new day's errands replace the old ones now, as at midnight.
+        try? openNeighborDay(); openStreetDay()
     }
     func prepareInstitutionReviewFixtureIfNeeded() async {
         await prepareInstitutionHousingFixtureIfNeeded()
