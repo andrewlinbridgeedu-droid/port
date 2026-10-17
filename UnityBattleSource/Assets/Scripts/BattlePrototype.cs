@@ -3340,13 +3340,14 @@ public sealed class BattlePrototype : MonoBehaviour
 
     IEnumerator PresentHellHoundPounceTurn()
     {
-        var actor = hellHoundHandle != null ? hellHoundHandle.EnemyRoot : null;
+        var committed = hellHoundHandle;
+        var actor = committed != null ? committed.EnemyRoot : null;
         if (actor == null || !actor.gameObject.activeInHierarchy || player == null) yield break;
         var home = actor.position;
         var animator = actor.GetComponentInChildren<Animator>(true);
         animator?.SetTrigger("Attack");
         var target = Vector3.Lerp(home, player.transform.position, .65f);
-        var shadowfangBody = ShadowfangHound20261016.Of(hellHoundHandle) ? CombatTempoPresentation.Get(this).BodyOf(hellHoundHandle) : null;
+        var shadowfangBody = ShadowfangHound20261016.Of(committed) ? CombatTempoPresentation.Get(this).BodyOf(committed) : null;
         if (shadowfangBody) {
             // Shadowfang (2026-10-16): crouched since the prepare signal (or crouching fast
             // now), it coils, springs over the last 0.55 s onto the 1.1 s contact, lands and
@@ -3356,11 +3357,14 @@ public sealed class BattlePrototype : MonoBehaviour
             if (!prepared) shadowfangBody.PlayTimed("Light", .1f, new Vector2(.42f, .3f), new Vector2(.5f, .55f), new Vector2(.58f, 1.1f), new Vector2(1f, 1.9f));
             float elapsed = 0;
             while (elapsed < 1.1f) {
+                // Gone before the bite lands (defeated, hidden, replaced): no late hit.
+                if (!CanPresentEnemy(committed)) { actor.position = home; yield break; }
                 elapsed += Time.deltaTime;
                 float t = Mathf.Clamp01((elapsed - .55f) / .55f);
                 actor.position = Vector3.Lerp(home, target, Mathf.SmoothStep(0, 1, t)) + Vector3.up * Mathf.Sin(t * Mathf.PI) * .35f;
                 yield return null;
             }
+            if (!CanPresentEnemy(committed)) { actor.position = home; yield break; }
             UnityBattleBridge.ReportCombatContact("enemy:hell-hound-primary");
             yield return new WaitForSeconds(.15f);
             elapsed = 0;
@@ -3371,14 +3375,16 @@ public sealed class BattlePrototype : MonoBehaviour
             }
         } else {
         // A real pounce on the replacement body, its bite on the 1.1 s contact (it used to walk).
-        CombatTempoPresentation.Get(this).PlayEnemyClip(hellHoundHandle, "Pounce", 1.1f);
+        CombatTempoPresentation.Get(this).PlayEnemyClip(committed, "Pounce", 1.1f);
         float elapsed = 0;
         while (elapsed < 1.1f) {
+            if (!CanPresentEnemy(committed)) { actor.position = home; yield break; }
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / 1.1f);
             actor.position = Vector3.Lerp(home, target, t) + Vector3.up * Mathf.Sin(t * Mathf.PI) * .5f;
             yield return null;
         }
+        if (!CanPresentEnemy(committed)) { actor.position = home; yield break; }
         UnityBattleBridge.ReportCombatContact("enemy:hell-hound-primary");
         elapsed = 0;
         while (elapsed < .45f) {
