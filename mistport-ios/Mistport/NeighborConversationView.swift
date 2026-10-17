@@ -74,6 +74,7 @@ struct NeighborConversationView: View {
             Text(errand.request).font(.headline)
             if offer.done {
                 Text(errand.thanks)
+                if let way = offer.chosenWay { Text("你\(way.fact)。· 帮了\(way.side.name)").font(.footnote).foregroundStyle(.secondary) }
                 Text("已完成，报酬已到账。").foregroundStyle(.green)
             } else if let ticket = offer.activeTicket {
                 Text("有一场未结束的赶塔怪行动。")
@@ -84,11 +85,13 @@ struct NeighborConversationView: View {
             } else {
                 StaminaCostView(activity: game.staminaActivityForNeighbor(offer.id))
                 Text(offer.replayWithoutReward == true ? "这次是重试，原报酬与好感已领取。" : "完成得 \(errand.copper) 铜 · 好感 +1").font(.subheadline)
+                waysPicker(offer)
+                let undecided = offer.way == nil && !MPCNeighborCatalog.ways(offer.errandID).isEmpty
                 switch errand.kind {
                 case .deliver:
                     let stock = game.chapterOneCampaign.inventory[errand.itemID ?? "", default: 0]
                     Text("需要 \(GameStore.workshopItemName(errand.itemID ?? "")) ×\(errand.count) · 持有 \(stock)")
-                    Button("交给街坊") { perform { try await game.deliverNeighbor(offer.id) } }.disabled(stock < errand.count)
+                    Button("交给街坊") { perform { try await game.deliverNeighbor(offer.id) } }.disabled(stock < errand.count || undecided)
                     if stock < errand.count { Text("货物不足，先到工坊制作。").font(.footnote) }
                 case .find:
                     Text(errand.question ?? "")
@@ -96,7 +99,7 @@ struct NeighborConversationView: View {
                         let excluded = offer.excludedChoiceIDs.contains(choice.id)
                         Button { perform { try await game.answerNeighbor(offer.id, choiceID: choice.id) } } label: {
                             Text(choice.text).strikethrough(excluded).frame(maxWidth: .infinity, alignment: .leading)
-                        }.disabled(excluded)
+                        }.disabled(excluded || undecided)
                         if excluded { Text(choice.explanation).font(.footnote).foregroundStyle(.secondary) }
                     }
                     Text("答错只划掉选项，不扣铜。").font(.footnote)
@@ -111,9 +114,32 @@ struct NeighborConversationView: View {
                     } else {
                         Text("接下后，到\(recipient)面前把话带到。")
                         Button("接下传话") { Task { do { try await game.acceptNeighborMessage(offer.id); message = "话记住了，去找\(recipient)。" } catch { message = game.housingError(error) } } }
+                            .disabled(undecided)
                     }
                 case .pest:
                     Button("去赶走塔怪") { battle = .init(id: UUID().uuidString, offerID: offer.id) }.buttonStyle(GameArtButtonStyle(primary: true))
+                        .disabled(undecided)
+                }
+            }
+        }
+    }
+    /// The two ways to finish (2026-10-17): the same pay, a different side of the city helped.
+    /// Picked before the work is done; it can change until then, and counts for the city trend.
+    @ViewBuilder
+    private func waysPicker(_ offer: MPCNeighborLedger.Offer) -> some View {
+        let ways = MPCNeighborCatalog.ways(offer.errandID)
+        if !ways.isEmpty {
+            Text(offer.way == nil ? "先选怎么办：报酬一样，帮到的人不同。" : "怎么办：").font(.footnote).foregroundStyle(.secondary)
+            HStack(spacing: 8) {
+                ForEach(ways) { way in
+                    Button {
+                        do { try game.chooseNeighborWay(offer.id, side: way.side) } catch { message = "这一步尚未成立，请重试。" }
+                    } label: {
+                        VStack(spacing: 2) {
+                            Text((offer.way == way.side ? "✓ " : "") + way.label).font(.subheadline.bold()).lineLimit(1).minimumScaleFactor(0.8)
+                            Text("帮\(way.side.name) · \(way.side.motto)").font(.caption2)
+                        }.frame(maxWidth: .infinity)
+                    }.buttonStyle(GameArtButtonStyle(primary: offer.way == way.side))
                 }
             }
         }
@@ -122,7 +148,7 @@ struct NeighborConversationView: View {
     private func perform(reply: String? = nil, _ action: @escaping () async throws -> MPCNeighborLedger.Reward?) {
         Task {
         do {
-            if let reward = try await action() { message = (reply.map { $0 + "\n" } ?? "") + reward.thanks + (reward.copper == 0 ? "\n重试完成，原报酬与好感已领取。" : "\n已收 \(reward.copper) 铜，好感 \(reward.affinity)。") + (reward.story.map { "\n" + $0 } ?? "") }
+            if let reward = try await action() { message = (reply.map { $0 + "\n" } ?? "") + reward.thanks + (reward.way.map { "\n" + $0.reply } ?? "") + (reward.copper == 0 ? "\n重试完成，原报酬与好感已领取。" : "\n已收 \(reward.copper) 铜，好感 \(reward.affinity)。") + (reward.copper > 0 ? reward.way.map { "城势记了一笔\($0.side.name)。" } ?? "" : "") + (reward.story.map { "\n" + $0 } ?? "") }
             else { message = "这条线索对不上，已划掉该选项；没有扣铜。" }
         } catch { message = game.housingError(error) }
         }

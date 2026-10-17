@@ -465,7 +465,10 @@ public struct MPCNeighborLedger: Codable, Equatable, Sendable {
         public fileprivate(set) var done = false
         /// A user-requested retry of an already-paid offer; absent in older saves.
         public fileprivate(set) var replayWithoutReward: Bool?
+        /// How the player will finish it (MPCNeighborCatalog.ways); absent in older saves.
+        public fileprivate(set) var way: MPCCityFaction?
         public var errand: MPCNeighborErrand? { MPCNeighborCatalog.errand(errandID)?.errand }
+        public var chosenWay: MPCErrandWay? { way.flatMap { side in MPCNeighborCatalog.ways(errandID).first { $0.side == side } } }
     }
     public struct Reward: Codable, Equatable, Sendable {
         public let copper: Int
@@ -473,6 +476,8 @@ public struct MPCNeighborLedger: Codable, Equatable, Sendable {
         public let affinity: Int
         /// A story unlocked by this errand, if it reached a story level.
         public let story: String?
+        /// The way it was finished, for the city trend (nil if none was chosen).
+        public var way: MPCErrandWay? = nil
     }
 
     public private(set) var day = 0
@@ -524,11 +529,21 @@ public struct MPCNeighborLedger: Codable, Equatable, Sendable {
         return true
     }
 
+    /// Picks how an open errand will be finished; it can change until the errand is done.
+    /// Both ways pay the same; the choice only counts for the city trend.
+    public mutating func choose(offerID: String, way side: MPCCityFaction) throws {
+        guard let i = offers.firstIndex(where: { $0.id == offerID }) else { throw Failure.notOffered }
+        guard !offers[i].done else { throw Failure.done }
+        guard MPCNeighborCatalog.ways(offers[i].errandID).contains(where: { $0.side == side }) else { throw Failure.invalidChoice }
+        offers[i].way = side
+    }
+
     private mutating func complete(_ i: Int, _ errand: MPCNeighborErrand, coins: inout Int) -> Reward {
         offers[i].done = true
         let id = offers[i].neighborID
+        let way = offers[i].chosenWay
         if offers[i].replayWithoutReward == true {
-            return .init(copper: 0, thanks: errand.thanks, affinity: affinity[id, default: 0], story: nil)
+            return .init(copper: 0, thanks: errand.thanks, affinity: affinity[id, default: 0], story: nil, way: nil)
         }
         affinity[id, default: 0] += 1
         completedErrands += 1
@@ -536,7 +551,7 @@ public struct MPCNeighborLedger: Codable, Equatable, Sendable {
         let stories = MPCNeighborCatalog.neighbor(id)?.stories ?? []
         coins += errand.copper
         return .init(copper: errand.copper, thanks: errand.thanks, affinity: level,
-                     story: zip(MPCNeighborCatalog.storyAffinity, stories).first { $0.0 == level }?.1)
+                     story: zip(MPCNeighborCatalog.storyAffinity, stories).first { $0.0 == level }?.1, way: way)
     }
 
     public mutating func deliver(offerID: String, coins: inout Int, inventory: inout [String: Int]) throws -> Reward {

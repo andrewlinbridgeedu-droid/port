@@ -4835,6 +4835,7 @@ extension GameStore {
             try settleChurchGear(&state, battleID: ticket, outcome: session.outcome == .victory ? .victory : .defeat)
         }
         if let reward, reward.copper > 0 { recordCityContribution(.errand, receipt: "errand-" + offerID) }
+        recordCityTrend(reward, offerID: offerID)
         return reward
     }
     func abandonNeighborPest(offerID: String, ticket: String, defeated: Bool = false) throws {
@@ -5309,11 +5310,13 @@ extension GameStore {
     func deliverNeighbor(_ offerID: String) async throws -> MPCNeighborLedger.Reward {
         let reward = try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try deliverNeighborBody(offerID) }
         if reward.copper > 0 { recordCityContribution(.errand, receipt: "errand-" + offerID) }
+        recordCityTrend(reward, offerID: offerID)
         return reward
     }
     func answerNeighbor(_ offerID: String, choiceID: String) async throws -> MPCNeighborLedger.Reward? {
         let reward = try await housingAction(staminaActivityForNeighbor(offerID), receipt: "neighbor-" + offerID) { try answerNeighborBody(offerID, choiceID: choiceID) }
         if let reward, reward.copper > 0 { recordCityContribution(.errand, receipt: "errand-" + offerID) }
+        recordCityTrend(reward, offerID: offerID)
         return reward
     }
     func acceptNeighborMessage(_ offerID: String) async throws {
@@ -5326,6 +5329,7 @@ extension GameStore {
     func relayNeighbor(_ offerID: String) async throws -> MPCNeighborLedger.Reward {
         let reward = try await housingAction(.errandThreeStep, receipt: "neighbor-" + offerID) { try relayNeighborBody(offerID) }
         if reward.copper > 0 { recordCityContribution(.errand, receipt: "errand-" + offerID) }
+        recordCityTrend(reward, offerID: offerID)
         return reward
     }
     func beginNeighborPest(offerID: String, ticket: String, skills: [FoolSkillID]) async throws -> MPCChapterOneEncounterSession {
@@ -5910,6 +5914,45 @@ extension GameStore {
     }
 
     var streetTasks: MPCStreetTaskLedger { _ = churchServicesRevision; return readStreetTasks().ledger }
+
+    // MARK: City trend (2026-10-17, CITY_TREND_TASKS_PROPOSAL_20261017.md)
+    private static let cityTrendKey = "mistport.city-trend.v1"
+    private struct CityTrendRecord: Codable {
+        var ledger = MPCCityTrendLedger()
+        /// The simulated world's seed, drawn once for this save; the shared server will have its own.
+        var seed = UInt64.random(in: 1...UInt64.max)
+    }
+    private func readCityTrend() -> CityTrendRecord {
+        if let data = defaults.data(forKey: Self.cityTrendKey), let record = try? JSONDecoder().decode(CityTrendRecord.self, from: data) {
+            return record
+        }
+        // Fix the world's seed at first sight, so the city the player reads does not change.
+        let fresh = CityTrendRecord()
+        defaults.set(try? JSONEncoder().encode(fresh), forKey: Self.cityTrendKey)
+        return fresh
+    }
+    /// This account's choices for the city.
+    var cityTrendLedger: MPCCityTrendLedger { _ = churchServicesRevision; return readCityTrend().ledger }
+    /// The city today: the simulated crowd plus this account's receipts (no shared server yet).
+    var cityTrend: MPCCityTrendSnapshot {
+        _ = churchServicesRevision
+        let record = readCityTrend()
+        return MPCCityTrend.snapshot(day: pacingDay, ledger: record.ledger, simulation: .init(seed: record.seed))
+    }
+    /// Counts a finished errand's way for the city, once per offer (a paid-out retry does not count).
+    private func recordCityTrend(_ reward: MPCNeighborLedger.Reward?, offerID: String) {
+        guard let reward, reward.copper > 0, let way = reward.way else { return }
+        var record = readCityTrend()
+        record.ledger.record(id: "errand-" + offerID, day: pacingDay, side: way.side, fact: way.fact)
+        defaults.set(try? JSONEncoder().encode(record), forKey: Self.cityTrendKey)
+        churchServicesRevision += 1
+    }
+    /// How the player will finish a neighbour errand; both ways pay the same.
+    func chooseNeighborWay(_ offerID: String, side: MPCCityFaction) throws {
+        var record = try readNeighbors()
+        try record.ledger.choose(offerID: offerID, way: side)
+        try updateChurchServices(neighbors: record) { _ in }
+    }
     var cityContribution: MPCCityContributionLedger { _ = churchServicesRevision; return readContribution().ledger }
     var cityContributionText: String { MPCCityContribution.progressText(points: cityContribution.points) }
     /// Short form for the home HUD: tier name, and the next threshold while there is one.

@@ -111,6 +111,8 @@ struct DailyNewspaperView: View {
             paperRule(thickness: 2)
             Text(game.housingDailyNotice).font(.system(size: 12, design: .serif))
             Text(game.todayPacingSummary).font(.system(size: 14, weight: .semibold, design: .serif))
+            cityTrendFront
+            paperRule(thickness: 1)
             row("主线进展", destination: .story) {
                 if let next = game.nextChapterMission {
                     Text("\(next.title) · \(game.missionLockText(next) ?? "今天可以推进")")
@@ -164,6 +166,55 @@ struct DailyNewspaperView: View {
             HStack { Spacer(); Text("雾港报馆印行 · 今日消息到此"); Spacer() }
                 .font(.system(size: 10, design: .serif))
         }.foregroundStyle(ink)
+    }
+    /// The city's trend (2026-10-17): the three sides' shares, the week's rise and fall, what the
+    /// player did, the stages settled, the day's shock and where it is heading. Only facts.
+    private var cityTrendFront: some View {
+        let trend = game.cityTrend
+        let mine = game.cityTrendLedger.receipts.filter { $0.counted > 0 && $0.day >= game.pacingDay - 1 }
+        return VStack(alignment: .leading, spacing: 7) {
+            Text("城势 · 雾港靠什么担保一个人").font(.system(size: 20, weight: .bold, design: .serif))
+            ForEach(MPCCityFaction.allCases, id: \.self) { side in
+                HStack(spacing: 8) {
+                    Text("\(side.name) · \(side.motto)").font(.system(size: 12, weight: .semibold, design: .serif))
+                        .frame(width: 92, alignment: .leading)
+                    GeometryReader { box in
+                        ZStack(alignment: .leading) {
+                            Rectangle().fill(ink.opacity(0.12))
+                            Rectangle().fill(ink.opacity(0.72)).frame(width: box.size.width * trend.share(side))
+                        }
+                    }.frame(height: 7)
+                    Text("\(Int((trend.share(side) * 100).rounded()))%" + weekArrow(trend, side))
+                        .font(.system(size: 12, design: .serif).monospacedDigit()).frame(width: 52, alignment: .trailing)
+                }
+            }
+            ForEach(mine, id: \.id) { receipt in
+                Text("本报讯：你\(receipt.fact)。（\(receipt.side.name)\(receipt.key ? " · 关键一票" : "")）")
+                    .font(.system(size: 12, design: .serif))
+            }
+            if let shock = trend.shocks.last, shock.day >= game.pacingDay - 1 {
+                Text("突发：\(shock.news)。\(shock.side.name)受挫。").font(.system(size: 12, weight: .semibold, design: .serif))
+            }
+            ForEach(trend.results, id: \.stage) { result in
+                Text("\(result.stage.title)已定：\(result.winner.name)拿下——\(result.stage.outcome(result.winner))。")
+                    .font(.system(size: 12, design: .serif))
+            }
+            if let forecast = trend.forecast { Text(forecast).font(.system(size: 13, weight: .semibold, design: .serif)) }
+            let yours = MPCCityFaction.allCases.compactMap { side in trend.yours[side.rawValue].map { "\(side.name) \($0)" } }
+            Text(yours.isEmpty ? "你这周还没有替哪一边办过事。办委托时选的办法，会算进全城的城势。"
+                 : "你这周替：" + yours.joined(separator: " · ") + "。")
+                .font(.system(size: 11, design: .serif))
+            if trend.source == .simulated {
+                Text("全城数字暂由单机模拟的其他市民给出；接通共享服后换成所有玩家的总和。")
+                    .font(.system(size: 10, design: .serif)).foregroundStyle(ink.opacity(0.7))
+            }
+        }
+    }
+    /// ▲/▼ for the week's change in a side's share, once there is a week to compare with.
+    private func weekArrow(_ trend: MPCCityTrendSnapshot, _ side: MPCCityFaction) -> String {
+        guard !trend.lastWeek.isEmpty else { return "" }
+        let change = trend.share(side, of: trend.week) - trend.share(side, of: trend.lastWeek)
+        return change > 0.02 ? " ▲" : change < -0.02 ? " ▼" : " –"
     }
     private func paperRule(thickness: CGFloat) -> some View {
         Rectangle().fill(ink.opacity(0.7)).frame(height: thickness)
