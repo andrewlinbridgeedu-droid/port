@@ -1107,9 +1107,9 @@ private extension HermitBranch {
     var art: String { switch self { case .trickery: "IconTalentTrickster"; case .phantom: "IconTalentDeceiver"; case .omen: "IconTalentBoundary" } }
     var buttonArt: String { switch self { case .trickery: "ButtonArt04TalentBranchTrickery"; case .phantom: "ButtonArt04TalentBranchPhantom"; case .omen: "ButtonArt04TalentBranchOmen" } }
     var combo: String { switch self {
-    case .trickery: "错步穿行 → 镜像追击 → 其他伤害技能\n用不同技能接续攻击，持续兑现破防收益。"
-    case .phantom: "遗落物假面 → 幻影承伤 → 错步穿行\n承伤后强化下一击；幻影仍按实际命中消耗。"
-    case .omen: "伪证烙印 → 叠加误认 → 荒谬归结\n先铺垫再兑现；未获得的技能仍需剧情解锁。"
+    case .trickery: "侧身刺 → 镜像追击 → 其他伤害技能\n用不同技能接续攻击，持续兑现破防收益。"
+    case .phantom: "遗落物假面 → 幻影承伤 → 侧身刺\n承伤后强化下一击；幻影仍按实际命中消耗。"
+    case .omen: "污名记 → 叠加误认 → 归谬法\n先铺垫再兑现；未获得的技能仍需剧情解锁。"
     } }
 }
 

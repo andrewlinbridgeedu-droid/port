@@ -216,6 +216,10 @@ struct DailyNewspaperView: View {
                     .font(.system(size: 12, design: .serif))
             }
             if let forecast = trend.forecast { Text(forecast).font(.system(size: 13, weight: .semibold, design: .serif)) }
+            Text(trend.smokeReport).font(.system(size: 12, design: .serif))
+            if let notice = MPCCityTrendSnapshot.lampHouseNotice(day: game.pacingDay) {
+                Text("本报讯：" + notice).font(.system(size: 12, design: .serif))
+            }
             let yours = MPCCityFaction.allCases.compactMap { side in trend.yours[side.rawValue].map { "\(side.name) \($0)" } }
             Text(yours.isEmpty ? "你这周还没有替哪一边办过事。办委托时选的办法，会算进全城的城势。"
                  : "你这周替：" + yours.joined(separator: " · ") + "。")

@@ -497,7 +497,7 @@ struct ChapterOneEncounterRuntimeTests {
 
     @Test("Encounter skill execution preserves the Fool combo state")
     func foolComboExecution() throws {
-        // 假面谕令 is a relic now; 伪证 alone writes the four stacks (ten-card redesign).
+        // 假面 is a relic now; 伪证 alone writes the four stacks (ten-card redesign).
         var session = try MPCChapterOneEncounterSession.start(encounterID: "encounter_rain_01")
         let target = try #require(session.enemies.first)
         _ = try session.useFoolSkill(.fabricatedEvidence, targetID: target.id)
@@ -624,7 +624,7 @@ struct ChapterOneEncounterRuntimeTests {
             loadout: MPCChapterOneLoadout(ritual: .borrowedSecond)
         )
         let target = try #require(session.enemies.first)
-        // The default hand has no 假面谕令 any more (now a relic); 伪证 shares its two-action delay.
+        // The default hand has no 假面 any more (now a relic); 伪证 shares its two-action delay.
         _ = try session.useFoolSkill(.fabricatedEvidence, targetID: target.id)
         #expect(session.remainingCooldownActions(for: .fabricatedEvidence) == 2)
         #expect(!session.borrowedSecondAvailable)
@@ -869,7 +869,7 @@ struct ChapterOneEncounterRuntimeTests {
             consumables: ["consumable_clock_key": 1]
         )
         let target = try #require(session.enemies.first)
-        // The default hand has no 假面谕令 any more (now a relic); 伪证 shares its two-action delay.
+        // The default hand has no 假面 any more (now a relic); 伪证 shares its two-action delay.
         _ = try session.useFoolSkill(.fabricatedEvidence, targetID: target.id)
         #expect(session.remainingCooldownActions(for: .fabricatedEvidence) == 2)
         _ = try session.useBasicAction(.damage, targetID: target.id)

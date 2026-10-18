@@ -62,7 +62,7 @@ public enum MPCCityTrendStage: Int, Codable, CaseIterable, Sendable {
     public var stake: String {
         switch self {
         case .casualties: "伤员的床位归谁管"
-        case .pump: "泵站由谁来修"
+        case .pump: "泵站由谁来修，煤烟往哪儿排"
         case .blockade: "封锁的港口怎么放行"
         case .workshop: "新工坊归谁"
         }
@@ -73,9 +73,9 @@ public enum MPCCityTrendStage: Int, Codable, CaseIterable, Sendable {
         case (.casualties, .neighbours): "诊所的互助床位留下来，街坊轮流守夜，止痛膏照旧由诊所配"
         case (.casualties, .offices): "伤员按名册分到教会施济所，床位有序，名字都进了登记册"
         case (.casualties, .compacts): "商行包下药品和床位，来得快，但要先付押金"
-        case (.pump, .neighbours): "街坊义修泵站，慢两天，水费不涨"
-        case (.pump, .offices): "市政拨款修泵，表格齐全，旧街先通水"
-        case (.pump, .compacts): "工业委员会包工，货场先通水，水价跟着涨"
+        case (.pump, .neighbours): "街坊义修泵站，慢两天，水费不涨；锅炉照旧烧旧煤，旧街一到傍晚就呛"
+        case (.pump, .offices): "市政拨款修泵，表格齐全，旧街先通水；烟囱按新规加高三丈，烟吹到了海上"
+        case (.pump, .compacts): "工业委员会包工，货场先通水，水价跟着涨；新锅炉日夜不停，港口的雾一天比一天黄"
         case (.blockade, .neighbours): "码头的人夜里接驳，货和人都过得去，警察厅盯上了码头"
         case (.blockade, .offices): "港务处逐船查验后放行，慢，但没有一个人被偷运出去"
         case (.blockade, .compacts): "商人包船出港，航路先开，船票贵了一倍"
@@ -245,6 +245,27 @@ public struct MPCCityTrendSnapshot: Codable, Equatable, Sendable {
         MPCCityFaction.allCases.max { share($0) < share($1) }.flatMap { share($0) > 1.0 / 3 + 0.005 ? $0 : nil }
     }
     public func result(_ stage: MPCCityTrendStage) -> MPCCityFaction? { results.first { $0.stage == stage }?.winner }
+    /// "今日烟况" (2026-10-18, user: 进步与保守之争，一个重要体现是大气治理): what the pump stage settled
+    /// about the coal smoke, or before that, how heavy the yards' smoke is with the compacts' share.
+    public var smokeReport: String {
+        switch result(.pump) {
+        case .neighbours: return "今日烟况：旧街的锅炉还烧旧煤，傍晚呛得人睁不开眼。"
+        case .offices: return "今日烟况：新烟囱加高了三丈，烟往海上去了，打渔的人在码头上骂。"
+        case .compacts: return "今日烟况：货场的新锅炉日夜不停，港口的雾一天比一天黄。诊所里咳嗽的孩子多了。"
+        case nil: return share(.compacts) > 0.4 ? "今日烟况：货场烟重，雾里带着煤味。" : "今日烟况：起了海风，雾是白的。"
+        }
+    }
+    /// A notice from the 守灯会, the 黑夜女神's church, on a few days of the chapter: the one house in
+    /// town that takes women as clerks and keepers, and the town not liking it (2026-10-18).
+    public static func lampHouseNotice(day: Int) -> String? {
+        switch day {
+        case 3: "守灯会贴出告示：招女学徒，教识字、记账和看灯。有人在告示前吐了口唾沫。"
+        case 9: "守灯会的修女替诊所值了一夜班。行会的人说，女人不该进病房。"
+        case 16: "工业委员会第一次收了一位女学徒画图纸。她是在守灯会学的算术。"
+        case 23: "守灯会的女祭司主持了码头的葬礼。有两户人家没有进门。"
+        default: nil
+        }
+    }
     /// "照这样下去……" for the stage under way, or nil outside the stages.
     public var forecast: String? {
         guard let current = MPCCityTrendStage.stage(day: day), !stage.isEmpty else { return nil }

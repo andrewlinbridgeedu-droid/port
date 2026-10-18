@@ -72,7 +72,7 @@ struct Q2GhostSplitTests {
         for _ in 0..<2 {
             let before = Dictionary(uniqueKeysWithValues: session.enemies.map { ($0.id, $0.hp) })
             // Native cooldown scheduling calls this API only when the next cast is due.
-            // 错步穿行 cuts up to three bodies (ten-card redesign, 2026-10-12).
+            // 侧身刺 cuts up to three bodies (ten-card redesign, 2026-10-12).
             let result = try session.useFoolSkill(.sidestepStrike, targetID: selectedID)
             #expect(result.targets.count == 3)
             #expect(Set(result.targets.map(\.targetID)).count == 3)

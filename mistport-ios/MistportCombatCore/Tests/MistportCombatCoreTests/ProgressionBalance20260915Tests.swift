@@ -34,7 +34,7 @@ struct ProgressionBalance20260915Tests {
         #expect(s.enemyDefenseBonusBP(for:puppet.id) == 5000)
         _ = try s.useFoolSkill(.turnTheTables,targetID:puppet.id)
         #expect(s.enemyDefenseBonusBP(for:puppet.id) == 0)
-        // 反客为主's dispel grants 2 错位 since the ten-card redesign (2026-10-12).
+        // 突转's dispel grants 2 错位 since the ten-card redesign (2026-10-12).
         #expect(s.foolState(for:puppet.id)?.misalignmentStacks == 2)
     }
     /// Q1–Q15 on the real loop with a paid salve ledger: each mission's route that spends the fewest salves,

@@ -75,8 +75,9 @@ struct Pathway: Identifiable, Hashable {
         return Self.veilRankTitles[rank]
     }
 
-    /// 帷幕之径, rank 8 → 0: persona, the prompter, the Doppelgänger, the periaktos, the coryphaeus,
-    /// the three unities, deus ex machina, theatrum mundi, and Odysseus's "Nobody".
+    /// 帷幕之径, rank 8 → 0, each from the world's own history (WORLD_HISTORY_20261018.md): the 大希
+    /// mask, the 金粉城 prompter's box, the 风碑 legend of the double, the 雅隆 scene prism and chorus,
+    /// 塞隆's three unities, the 吊神 crane, 洛伦's《人世大舞台》, and 奥兰's "无人" in《归航记》.
     static let veilRankTitles: [Int: String] = [
         8: "假面人", 7: "提词人", 6: "二重身", 5: "换景师", 4: "歌队长",
         3: "立律人", 2: "降神者", 1: "执幕人", 0: "无名者",

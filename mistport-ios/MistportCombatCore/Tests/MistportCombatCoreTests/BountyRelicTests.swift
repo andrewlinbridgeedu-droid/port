@@ -117,7 +117,7 @@ struct BountyRelicTests {
         #expect(!bare.contains(true), "Q\(q) falls without its relic: \(bare.filter { $0 }.count) lines")
         let worn = try await RealLoop.map(orders) { try RealLoop.story(q, $0).won }.filter { $0 }.count
         #expect(worn * 6 >= orders.count, "Q\(q) wears its relic but wins only \(worn)/\(orders.count)")
-        if q == 22 { // The blank card cannot hold a failed check's blow, and 张冠李戴 cannot delay it.
+        if q == 22 { // The blank card cannot hold a failed check's blow, and 错认喜剧 cannot delay it.
             let carded = try await RealLoop.map(orders) { try RealLoop.story(22, $0, gear: MPCStageLoadout.towerGear(through: 80), relic: .some(nil), active: "relic_blank_name_card").won }
             #expect(!carded.contains(true))
         }

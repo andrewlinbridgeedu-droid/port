@@ -521,7 +521,7 @@ struct ChapterOneConclusionView: View {
                                 Text(result.summary)
                                 Text("最终目标：\(result.finalTarget)")
                             }
-                            Text("训练奖励 · 新技能「后手改写」")
+                            Text("训练奖励 · 新技能「悔笔」")
                                 .font(.subheadline.bold())
                                 .foregroundStyle(.yellow)
                             Button("完成训练并铭刻技能") {
@@ -924,7 +924,7 @@ struct ChapterOneEncounterTestView: View {
     @AppStorage(GameSettingsKeys.battleSpeed, store: .standard) private var savedBattleSpeed = 1
     // Rule time starts at zero, matching deterministic replay. Uptime only feeds frame deltas.
     @State private var battleTime: TimeInterval = 0
-    /// The haste end last told to Unity (抢拍开幕's hourglass beside the hero, 2026-10-15).
+    /// The haste end last told to Unity (急板's hourglass beside the hero, 2026-10-15).
     @State private var sentHeroHasteUntil: TimeInterval = 0
     @State private var lastBattleWallTime: TimeInterval?
     @State private var battleTickRemainder: TimeInterval = 0
@@ -995,7 +995,7 @@ struct ChapterOneEncounterTestView: View {
     @State private var q30AngelIntroSessionID: UUID?
     /// Allies whose rig was last sent `down` (final-boss party; `syncPartyRigPresentation`).
     @State private var lastPartyFallenPresentation: Set<String> = []
-    /// The haste end last told to Unity (抢拍开幕's hourglass lasts exactly the rules' haste).
+    /// The haste end last told to Unity (急板's hourglass lasts exactly the rules' haste).
     @State private var presentedRelicEventIDs: Set<String> = []
     @State private var pendingGhostReveals: [String: TimeInterval] = [:]
     @State private var revealedGhostIDs: Set<String> = []
@@ -1361,7 +1361,7 @@ struct ChapterOneEncounterTestView: View {
                         // the automatic loop resumes after the explicit Start
                         // Battle tap.
                         isFirstCardTutorial = true
-                        actionMessage = "装备「错步穿行」后开始战斗"
+                        actionMessage = "装备「侧身刺」后开始战斗"
                         onFirstBattleInterventionCompleted()
 
                     }
@@ -1963,7 +1963,7 @@ struct ChapterOneEncounterTestView: View {
             }
         }
         if !orderedHits.isEmpty { syncVisualHealth() }
-        // 抢拍开幕's haste (2026-10-15, user: the haste needs a cue lasting its 3.2 or 4.5 seconds):
+        // 急板's haste (2026-10-15, user: the haste needs a cue lasting its 3.2 or 4.5 seconds):
         // whenever the rules start or extend it, Unity's hourglass beside the hero is given the
         // seconds left; an extension spins it once more.
         if usesUnityBattlefield, !isFastForwardingBattle, session.orderedHasteUntil > now,
@@ -2692,7 +2692,7 @@ struct ChapterOneEncounterTestView: View {
     }
 
     /// Named finishers announce themselves as they are cast (2026-10-07, after comparing
-    /// with other games' signature moves: 名招出手时打一行招式名). Only 荒谬归结 for now.
+    /// with other games' signature moves: 名招出手时打一行招式名). Only 归谬法 for now.
     private static let signatureMoves: Set<FoolSkillID> = [.absurdFinale]
 
     private func announceSignatureMove(_ skill: FoolSkillID) {
@@ -5471,6 +5471,9 @@ struct ChapterSkillDetailSheet: View {
                 .resizable().scaledToFit().frame(maxWidth: .infinity).frame(height: 190)
                 .shadow(color: .purple.opacity(0.22), radius: 12, y: 4)
             GroupBox("技能效果") { Text(skill.summary).font(.body).lineSpacing(6).frame(maxWidth: .infinity, alignment: .leading) }
+            if !skill.origin.isEmpty {
+                GroupBox("出处") { Text(skill.origin).font(.body).lineSpacing(6).frame(maxWidth: .infinity, alignment: .leading) }
+            }
             if !skill.tags.isEmpty {
                 Text(skill.tags.joined(separator: "  ·  ")).font(.subheadline.bold()).foregroundStyle(GameArt.ink)
             }
@@ -6724,7 +6727,7 @@ struct ChapterOneMissionBridgeView: View {
 
     private static func prebattleObjective(_ number: Int) -> String? {
         switch number {
-        case 8: "张冠李戴未满4层先造成伤害并加1层；满4层再释放才延迟行动。技能按编排顺序自动出牌。"
+        case 8: "错认喜剧未满4层先造成伤害并加1层；满4层再释放才延迟行动。技能按编排顺序自动出牌。"
         case 20: "目标：趁锤卫恢复或校准，解除1600点拘束；救出活档案即可胜利。"
         case 25: "目标：趁维娅恢复或校准，拆除1800点根结；她不会被击杀。"
         case 26: "目标：先打断900点车链供能，再击败锤卫。"

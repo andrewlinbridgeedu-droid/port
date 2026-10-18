@@ -2,8 +2,8 @@ import Testing
 @testable import MistportCombatCore
 
 /// Tower minion packs and group cards (2026-10-03): more, smaller small monsters walk
-/// in from the back, so 错步穿行 (up to three targets) has several bodies to hit.
-/// 荒谬归结's tower splash belonged to the manual card mode, removed 2026-10-15.
+/// in from the back, so 侧身刺 (up to three targets) has several bodies to hit.
+/// 归谬法's tower splash belonged to the manual card mode, removed 2026-10-15.
 @Suite("Church tower minion packs and group cards")
 struct ChurchMinionPackTests {
     typealias Catalog = MPCChurchTowerCatalog

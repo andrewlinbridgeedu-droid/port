@@ -4,7 +4,7 @@ public enum HermitBranch: String, CaseIterable, Sendable {
     case trickery, phantom, omen
     public var title: String { switch self { case .trickery: "诡术"; case .phantom: "幻身"; case .omen: "秘兆" } }
     public var summary: String { switch self {
-    case .trickery: "错步破防 · 交替连击"
+    case .trickery: "侧刺破防 · 交替连击"
     case .phantom: "幻影承伤 · 蓄势反击"
     case .omen: "误认铺垫 · 满层兑现"
     } }
@@ -30,26 +30,26 @@ public struct HermitTalent: Identifiable, Sendable {
     public static let all: [Self] = {
         let rows: [(HermitBranch, [(String, String, String)])] = [
             (.trickery, [
-                ("利落开场", "错步穿行伤害提高 10%。", "suit.spade.fill"),
-                ("窥隙", "错步穿行计算伤害时忽略目标 15% 防御。", "scope"),
+                ("利落开场", "侧身刺伤害提高 10%。", "suit.spade.fill"),
+                ("窥隙", "侧身刺计算伤害时忽略目标 15% 防御。", "scope"),
                 ("换手", "与上一次技能不同的伤害技能，伤害提高 12%。", "arrow.triangle.swap"),
-                ("追幕", "错步之后的下一个非错步伤害技能，伤害提高 20%。", "bolt.fill"),
+                ("追幕", "侧身刺之后的下一个非侧身刺伤害技能，伤害提高 20%。", "bolt.fill"),
                 ("收场", "对生命不高于 35% 的目标，技能伤害提高 18%。", "suit.diamond.fill"),
                 ("无间戏法", "每第三次命中的伤害技能提高 35% 伤害；多目标只计一次。", "crown.fill")]),
             (.phantom, [
-                ("余蜡", "施放假面谕令时获得 30 护盾。", "shield.fill"),
+                ("余蜡", "施放假面时获得 30 护盾。", "shield.fill"),
                 ("护幕", "幻影承受攻击时，主角获得 20 护盾。", "shield.lefthalf.filled"),
                 ("回声", "幻影承受攻击后，下一个伤害技能提高 15%；不可叠加。", "waveform"),
                 ("缝影", "幻影承受攻击时，恢复 20 生命，不超过生命上限。", "heart.fill"),
                 ("藏锋", "施放假面后的下一个伤害技能提高 20%；不可叠加。", "moon.fill"),
                 ("镜幕反奏", "最后一次幻影承伤后，下一个伤害技能提高 40%；不可叠加。", "sparkles")]),
             (.omen, [
-                ("留痕", "伪证烙印的误认持续时间延长 0.5 秒。", "eye.fill"),
+                ("留痕", "污名记的误认持续时间延长 0.5 秒。", "eye.fill"),
                 ("读兆", "命中前每层误认使该次技能伤害提高 4%。", "book.closed.fill"),
                 ("借势", "命中前有误认时，伤害技能同时获得 15 护盾。", "diamond.fill"),
                 ("深证", "对满 4 层误认目标，技能伤害计算忽略 20% 防御。", "seal.fill"),
-                ("伏笔", "伪证烙印后的下一个伤害技能提高 20%。", "pencil.tip"),
-                ("预言兑现", "对命中前满 4 层误认的目标，荒谬归结伤害提高 45%。", "star.fill")])
+                ("伏笔", "污名记后的下一个伤害技能提高 20%。", "pencil.tip"),
+                ("预言兑现", "对命中前满 4 层误认的目标，归谬法伤害提高 45%。", "star.fill")])
         ]
         return rows.flatMap { branch, entries in entries.enumerated().map { index, entry in
             Self(id: "\(branch.rawValue).\(index)", branch: branch, index: index, title: entry.0, detail: entry.1, symbol: entry.2)

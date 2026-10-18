@@ -108,8 +108,8 @@ struct ArchiveStreetProgressionTests {
         #expect(controlled.playerHP > ordinary.playerHP)
     }
 
-    /// The App's loop (MPCStoryBattleStepper): 伪证 writes four marks, 张冠李戴 converts them and
-    /// holds back the leech's next wind-up (2026-10-15, user: 恢复张冠李戴能打断吞名).
+    /// The App's loop (MPCStoryBattleStepper): 伪证 writes four marks, 错认喜剧 converts them and
+    /// holds back the leech's next wind-up (2026-10-15, user: 恢复错认喜剧能打断吞名).
     @Test func q8RealLoopConversionDelaysTheDevour() throws {
         var game = try MPCStoryBattleStepper(encounterID: "chapter01_q08_encounter",
             loadout: .init(normalSkillIDs: [.fabricatedEvidence, .identityDisplacement, .sidestepStrike], isUltimateUnlocked: false, passiveIDs: [], relicIDs: []))

@@ -10,7 +10,7 @@ enum RealLoop {
     static let clasp = MPCChapterOneCatalog.returnGiftClaspRelicID
     static let bag = MPCChapterOneCatalog.saltSealedBreathingBagRelicID
     static let medal = MPCChapterOneCatalog.usurpedLifeMedalRelicID
-    /// `"11,12,01,05"` → 抢拍, 碎镜连弹, 错步, 伪证.
+    /// `"11,12,01,05"` → 抢拍, 燃镜, 错步, 伪证.
     static func line(_ codes: String) -> [FoolSkillID] { codes.split(separator: ",").map { FoolSkillID(rawValue: "fool_skill_" + $0)! } }
     static func name(_ order: [FoolSkillID]) -> String { order.map { String($0.rawValue.suffix(2)) }.joined(separator: ",") }
 

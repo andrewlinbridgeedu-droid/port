@@ -6,7 +6,7 @@ import Testing
 /// arrangements and the stage loadout (all talents earned so far, the walls' floors and relic).
 @Suite("Thirty mission legal loadout balance")
 struct ChapterThirtyBalanceTests {
-    static let auditRoute = RealLoop.line("05,04,06,07") // 伪证→张冠李戴→双影→荒谬, the old player-audit route
+    static let auditRoute = RealLoop.line("05,04,06,07") // 伪证→错认喜剧→双影→荒谬, the old player-audit route
     static let fourTalents = RealLoop.branch("trickery")
 
     /// Earned tower gear is growth that counts: four talents and no gear win Q27 rarely, the first ten floors more often.

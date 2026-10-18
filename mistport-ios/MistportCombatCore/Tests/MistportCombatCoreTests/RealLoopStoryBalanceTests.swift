@@ -25,7 +25,7 @@ struct RealLoopStoryBalanceTests {
         #expect(q7Wins == 1)
     }
 
-    /// The same four cards, rearranged, still decide the outcome (Q12's 抢拍/碎镜连弹 swap is in OrderedSkillRulesTests):
+    /// The same four cards, rearranged, still decide the outcome (Q12's 抢拍/燃镜 swap is in OrderedSkillRulesTests):
     /// the hand of the first winning line loses in some other order.
     @Test(arguments: [8, 18, 22, 26]) func cardOrderStillDecides(_ q: Int) async throws {
         let orders = MPCStageLoadout.orders(before: q)

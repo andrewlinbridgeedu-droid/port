@@ -175,8 +175,8 @@ struct CombatTempoDeviceReviewRoot: View {
                     // "pack8" a full eight-body wave on floor 72. Group cards on show.
                     let packFloor = sample == "pack" ? 2 : sample == "pack8" ? 72 : nil
                     // "q5": the emerald revenant (poison mist, its heavy burst taken on the mask).
-                    // "cards"/"cards2": the hero's other cards (假面谕令, 张冠李戴, 反客为主 / 后手改写,
-                    // 错步, 双影) with the ultimate (无名宣告) unlocked, on the first tower floor.
+                    // "cards"/"cards2": the hero's other cards (假面, 错认喜剧, 突转 / 悔笔,
+                    // 错步, 双影) with the ultimate (我名无人) unlocked, on the first tower floor.
                     let otherCards = sample == "cards" || sample == "cards2"
                     let mission = sample == "q4" ? 4 : sample == "q5" ? 5 : sample == "hero" || otherCards || packFloor != nil ? 13 : 7
                     for n in 1...mission { _ = campaign.applyChapterMissionProgress(districtID: "old-clock", missionNumber: n) }

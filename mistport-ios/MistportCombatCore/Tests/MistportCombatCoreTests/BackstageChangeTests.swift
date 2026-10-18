@@ -1,10 +1,10 @@
 import Testing
 @testable import MistportCombatCore
 
-/// 后手改写 works without any relic (user decision 2026-09-30): it strikes out one
+/// 悔笔 works without any relic (user decision 2026-09-30): it strikes out one
 /// enemy-applied damage over time. Since the ten-card redesign (2026-10-12) it also raises a
 /// 240 ward for 4 s instead of seeding the next setup card (that belonged to the manual mode).
-@Suite("后手改写: cleanse and ward")
+@Suite("悔笔: cleanse and ward")
 struct BackstageChangeTests {
     @Test func wardsWithoutARelicEvenWithNothingToCleanse() throws {
         var session = try MPCChapterOneEncounterSession.start(

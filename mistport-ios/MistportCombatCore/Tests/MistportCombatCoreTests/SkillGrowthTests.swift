@@ -76,7 +76,7 @@ struct SkillGrowthTests {
         #expect(base.foolStates == raised.foolStates)
     }
 
-    /// 反客为主 and 后手改写 strike since the ten-card redesign (2026-10-12): the hit scales once,
+    /// 突转 and 悔笔 strike since the ten-card redesign (2026-10-12): the hit scales once,
     /// the marks they write do not.
     @Test(arguments: [FoolSkillID.turnTheTables, .backstageChange])
     func redesignedSupportCardsScaleOnlyTheirHit(skill: FoolSkillID) throws {

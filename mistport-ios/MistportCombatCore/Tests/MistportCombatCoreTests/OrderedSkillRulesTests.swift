@@ -68,7 +68,7 @@ struct OrderedSkillRulesTests {
         _ = try cast(.delayedSignature, at: s.orderedCastReadyAt, in: &s)
         _ = try cast(.mirrorBarrage, at: s.orderedCastReadyAt, in: &s)
         _ = s.advanceRelicClock(at: 5)
-        #expect(s.triggeredEffects.contains("延时落款：兑现6次命中"))
+        #expect(s.triggeredEffects.contains("附言：兑现6次命中"))
     }
 
     @Test func eligibilityMigrationPreservesPlayerPropertyAndOrder() {

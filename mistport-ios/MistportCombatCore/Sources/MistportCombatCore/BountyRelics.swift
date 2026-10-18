@@ -96,7 +96,7 @@ public enum MPCProgressionWalls {
     nonisolated(unsafe) public static var q12FortifyStackPercent = 50
     nonisolated(unsafe) public static var q12FortifyMaxPercent = 95
     /// Q12 puppets enter with this many stacks (2026-10-15, user: 让“必须带遗落物”重新成立): with the
-    /// ordered cards a 伪证→张冠李戴→荒谬 burst, its delay pushing the first fortify back, killed a puppet
+    /// ordered cards a 伪证→错认喜剧→荒谬 burst, its delay pushing the first fortify back, killed a puppet
     /// before it ever fortified (27/168 audit lines won without the sword at F30; now 0, sword lines 77/168).
     nonisolated(unsafe) public static var q12OpeningFortifyStacks = 1
     nonisolated(unsafe) public static var q18AdjudicatorHP = 5200
@@ -105,7 +105,7 @@ public enum MPCProgressionWalls {
     nonisolated(unsafe) public static var q18ChargePercent = 200
     /// Q18 thirteenth blow, Q26 convoy slam and Q30 sovereign slam: without a worn piece
     /// from the wall's tower floor or deeper, the blow takes this share of base health. 140 → 300 (2026-10-15):
-    /// the medal's 150% health, the clasp and armor let one 140% blow through, and 张冠李戴's delay held the next
+    /// the medal's 150% health, the clasp and armor let one 140% blow through, and 错认喜剧's delay held the next
     /// one back until the boss died (F40 won Q18 9/168 audit lines, F60 Q26 21/168, F80 Q30 10/168; now 0).
     /// Fights with the floor's gear never see this blow, so the Q30 blessing tuning at F90 is untouched.
     nonisolated(unsafe) public static var towerCheckBlowHealthPercent: [Int: Int] = [18: 300, 26: 300, 30: 300]
@@ -182,7 +182,7 @@ public enum MPCProgressionWalls {
     /// The allies' clock in party fights: they act on combat time, not only after the hero's hits.
     nonisolated(unsafe) public static var partyCompanionTickTenths = 10
     /// Q17/Q22: hits needed while the enemy calibrates, and the failed blow's multiplier. Q22 5 → 12
-    /// (2026-10-15): 碎镜连弹's six hits under 抢拍 passed every check; the seal's double count needs six.
+    /// (2026-10-15): 燃镜's six hits under 抢拍 passed every check; the seal's double count needs six.
     nonisolated(unsafe) public static var verificationHitsRequired: [Int: Int] = [17: 2, 22: 12]
     nonisolated(unsafe) public static var verificationFailPercent: [Int: Int] = [17: 180, 22: 160]
     /// The reverse seal's cap on a failed-verification blow.

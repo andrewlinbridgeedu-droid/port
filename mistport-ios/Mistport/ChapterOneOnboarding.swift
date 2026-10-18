@@ -230,7 +230,7 @@ enum ChapterOneTutorialCue: String, CaseIterable {
         case .houndPrelude:
             "寻人信上的追索记录惊动了它。一条老猎犬从雾里走出来，径直盯住了你。"
         case .secondBattle:
-            "猎犬喉间两团火一起亮起时，使用遗落物『无主假面』，让幻影接住两发追索火球。\n挡住两颗火球后，三秒内点击『反击』：普通牌冷却刷新，从编排第一张重新出手。常态护体会削弱你的输出，反击时才能打开缺口。先伪证、后错步，连招会更有力。假面不占技能编排，每隔十八秒可以再次手动使用，幻影只维持四秒。反击不刷新假面和大招，也不会额外收费。之后防住精英与强敌的重招，同样能获得反击机会。"
+            "猎犬喉间两团火一起亮起时，使用遗落物『无主假面』，让幻影接住两发追索火球。\n挡住两颗火球后，三秒内点击『反击』：普通牌冷却刷新，从编排第一张重新出手。常态护体会削弱你的输出，反击时才能打开缺口。先『污名记』、后『侧身刺』，连招会更有力。假面不占技能编排，每隔十八秒可以再次手动使用，幻影只维持四秒。反击不刷新假面和大招，也不会额外收费。之后防住精英与强敌的重招，同样能获得反击机会。"
         case .rainInterlude:
             "幽灵散了，那叠信落在水里。你捡起最上面那封，墨已经化开，只有“别送我回家”几个字还看得清。\n玛拉把信折好，收进了自己怀里，没有交给你。\n“旧邮务间该有底联。”她说。雾里响起犬吠，有什么东西循着你的名字找来了。"
         case .q3Aftermath:
@@ -247,22 +247,22 @@ enum ChapterOneTutorialCue: String, CaseIterable {
     /// shows above the battle are not repeated here.
     var hint: String? {
         switch self {
-        case .rainFirstAftermath: "『错步穿行』现在属于你了。下一关会得到第二张技能牌。"
+        case .rainFirstAftermath: "『侧身刺』现在属于你了。下一关会得到第二张技能牌。"
         case .q4Aftermath: "奥黛尔交给你『僭命勋章』：借你八秒强盛，期限一到，收走你剩下生命的一半，挡不了毒，也挡不了刀。出发前，在它和假面之间选一个。"
         case .q5Delivery: "毒雾会越来越浓，直到战斗结束。它全身燃起绿焰时，重击就要来了。选好主动遗落物再进去。"
         case .q6Prelude: "它封存时装甲严丝合缝，出击后才要重新对齐。等它收盾的空隙再打。"
         case .q7Prelude: "后方的寄忆核心在不断修复守卫。先停下它，保住那张牌。"
-        case .q8Prelude: "你习得『张冠李戴』：误认不足四层时造成伤害并加一层；满四层再释放，会转成错位，推迟目标的行动。战斗按编排顺序自动出牌。"
+        case .q8Prelude: "你习得『错认喜剧』：误认不足四层时造成伤害并加一层；满四层再释放，会转成错位，推迟目标的行动。战斗按编排顺序自动出牌。"
         case .q9Prelude: "先打掉持续覆盖证词的核心。这一关仍只有两个技能格。"
-        case .q9Aftermath: "两份证词的矛盾被封成『伪证烙印』：先留下标记，再接伤害技能。技能格仍为两格；角色页开放四点天赋。"
-        case .q10Prelude: "可以带上『伪证烙印』，让后面的伤害吃到标记。通关后开放四个技能格。"
-        case .q10Aftermath: "你学会追索被覆盖的残影：『双影追猎』。技能格扩为四格。"
+        case .q9Aftermath: "改过的记录给奥黛尔记了一笔污名。玛拉把这笔污名封成『污名记』：先留下标记，再接伤害技能。技能格仍为两格；角色页开放四点天赋。"
+        case .q10Prelude: "可以带上『污名记』，让后面的伤害吃到标记。通关后开放四个技能格。"
+        case .q10Aftermath: "你学会追索被覆盖的残影：『双星追猎』。技能格扩为四格。"
         case .q11Prelude: "两只记忆蛭轮流维持这屋子的回忆，空壳守卫守着门。"
-        case .q11Aftermath: "你从这场荒唐里习得『荒谬归结』。"
+        case .q11Aftermath: "你从这场荒唐里习得『归谬法』。"
         case .q12Prelude: "两个书记员交替封存、校正和重击。校正会抹掉你的护盾。"
-        case .q12Aftermath: "你习得『反客为主』，下一战可以编入序列。"
+        case .q12Aftermath: "你习得『突转』，下一战可以编入序列。"
         case .q13Prelude: "寄忆核心在改写他的命令。打掉核心，切断这里的控制，留他活着。"
-        case .q13Aftermath: "你从两份命令的回声里习得终极技能『无名宣告』，每场战斗可以手动放一次。"
+        case .q13Aftermath: "你从两份命令的回声里习得终极技能『我名无人』，每场战斗可以手动放一次。"
         case .q14Prelude: "每个目标的误认和错位分开记。先决定控制谁，再把后面的牌接到同一个目标上。"
         case .q15Prelude: "两枚寄忆核心轮流把记录写回去。先切断支援，再制住她。她要活着。"
         case .q15Aftermath: "先回主城整理物证。后面的调查，要等对应关卡开放。"
@@ -323,7 +323,7 @@ enum ChapterOneTutorialCue: String, CaseIterable {
         case .q19Aftermath: "布兔子"
         case .q20Aftermath: "敲匣子的人"
         case .q7Prelude: "补录处 · 寄忆核心"
-        case .q8Prelude: "不属于我的名字 · 张冠李戴"
+        case .q8Prelude: "不属于我的名字 · 错认喜剧"
         case .q5Aftermath: "已送达"
         case .q6Aftermath: "空着的签名栏"
         case .q7Aftermath: "赶时间的笔迹"
@@ -405,9 +405,9 @@ enum ChapterOneTutorialCue: String, CaseIterable {
                     actionTitle: "接过卡牌"
                 ),
                 .init(
-                    kicker: "错步穿行",
+                    kicker: "侧身刺",
                     message: "别再砍它的盔甲了。\n那只是它想让你看见的地方。\n用这张牌，打它没防着的那一侧。",
-                    actionTitle: "使用错步穿行"
+                    actionTitle: "使用侧身刺"
                 )
             ]
         }

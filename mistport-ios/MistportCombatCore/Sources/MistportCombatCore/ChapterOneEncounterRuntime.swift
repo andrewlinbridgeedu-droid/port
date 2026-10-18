@@ -1040,7 +1040,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     private var emeraldPoisonNextTick: TimeInterval?
     private var emeraldPoisonSourceID: String?
 
-    /// 后手改写's cleanse, worst first: thins the emerald fog back to its first concentration
+    /// 悔笔's cleanse, worst first: thins the emerald fog back to its first concentration
     /// (the fog itself lasts the battle), then the story core's released poison, then the
     /// enemy damage-over-time with the most damage left. Returns what was cleansed.
     private mutating func cleanseOnePlayerDamageOverTime() -> String? {
@@ -1519,7 +1519,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     private var readySkillHeldActions: [FoolSkillID: Int]
     private var healingPenaltyBP: Int
     private var previousActionCategory: MPCPlayerActionCategory?
-    /// Set by 后手改写 with the leech vial: the next 伪证 marks last 0.5 s longer per stack.
+    /// Set by 悔笔 with the leech vial: the next 伪证 marks last 0.5 s longer per stack.
     private var enhancedSetupStacks: Int
     private var borrowedBellTriggeredRound: Int?
     private var unreliableNarratorTriggeredRound: Int?
@@ -1853,7 +1853,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             foolUltimateUsed = true
             applyBossActionCategory(.setup)
             result = .init(skillID: skillID, damage: 0, targetID: nil)
-            calculationDetail = "全体\(hasSeal ? 2 : 4)层误认并准备归结；最终伤害0"
+            calculationDetail = "全体\(hasSeal ? 2 : 4)层误认并准备归谬；最终伤害0"
         case .maskedWhisper:
             // Retired card (now the ownerless-mask relic); old loadouts and fixtures may still cast it.
             let id = try validatedTargetID(targetID)
@@ -1874,7 +1874,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
             masqueradeCharges = 2
             if loadout.talents.has("phantom.0") { playerShield = min(playerMaxHP, playerShield + strengthenedSkillAmount(30, skill: skillID)) }
             if loadout.talents.has("phantom.4") { talentMaskReady = true }
-            triggeredEffects.append("假面谕令：幻影承接接下来的两次敌方攻击；再次施放刷新为两次，不叠加")
+            triggeredEffects.append("假面：幻影承接接下来的两次敌方攻击；再次施放刷新为两次，不叠加")
             if loadout.passiveIDs.contains("fool_passive_02"), unreliableNarratorTriggeredRound != round {
                 var passiveState = foolStates[id] ?? resolution.state
                 passiveState.illusionStacks = min(4, passiveState.illusionStacks + 1)
@@ -1951,7 +1951,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         recordPlayerSkill(skillID, targetID: result.targetID)
         let targetText = result.targetID.map { " → \($0)" } ?? ""
         let stateText = result.targetID.flatMap { foolStates[$0] }.map {
-            "；结算后误认\($0.illusionStacks)/错位\($0.misalignmentStacks)/归结\($0.finaleReady ? "是" : "否")"
+            "；结算后误认\($0.illusionStacks)/错位\($0.misalignmentStacks)/归谬\($0.finaleReady ? "是" : "否")"
         } ?? ""
         log.append(.init(
             round: round,
@@ -3310,7 +3310,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
         default: return fallback
         }
     }
-    /// Q22 wall: the blow after a failed check is neither delayed (张冠李戴 waits for the wind-up after it)
+    /// Q22 wall: the blow after a failed check is neither delayed (错认喜剧 waits for the wind-up after it)
     /// nor held by the blank card; only the reverse seal answers it (2026-10-15).
     func q22FailedBlowIsDue(_ enemy: MPCRuntimeEnemy) -> Bool {
         chapterMissionNumber == 22 && chapterVerificationFailed && enemy.currentIntent == "strike"
@@ -3760,7 +3760,7 @@ extension MPCChapterOneEncounterSession {
                     let damage = orderedDamage(event.skill, to: id, coefficient: coefficient, counts: false)
                     targets.append(.init(targetID: id, damage: damage))
                 }
-                triggeredEffects.append("延时落款：兑现\(hits)次命中")
+                triggeredEffects.append("附言：兑现\(hits)次命中")
             case .mirror:
                 guard let id = alive ? event.target : enemies.first(where: \.isAlive)?.id else { continue }
                 let boosted = event.empowered && (foolStates[id]?.misalignmentStacks ?? 0) > 0
@@ -3876,7 +3876,7 @@ extension MPCChapterOneEncounterSession {
         case .stolenTempo:
             targets = [result(orderedDamage(skill, to: id, coefficient: 1_000))]
             orderedHasteUntil = relicClock + MPCOrderedSkillRules.hasteDuration
-            triggeredEffects.append("抢拍开幕：施法速度+100%，持续3.2秒")
+            triggeredEffects.append("急板：施法速度+100%，持续3.2秒")
         case .mirrorBarrage:
             targets = [result(orderedDamage(skill, to: id, coefficient: 3_600))]
             orderedMark(id, stacks: 1)
@@ -3889,13 +3889,13 @@ extension MPCChapterOneEncounterSession {
             targets = [result(orderedDamage(skill, to: id, coefficient: valid ? 11_000 : 3_000))]
             if valid {
                 foolStates[id]?.illusionStacks = 0; orderedMisalign(id); sealConversionReady = false
-                triggeredEffects.append("张冠李戴：4误认转为2错位，破甲70%，持续4秒")
+                triggeredEffects.append("错认喜剧：4误认转为2错位，破甲70%，持续4秒")
                 // A full four-stack conversion also delays the target's next wind-up by one beat
-                // (Q8's 吞名). An attack already committed still lands (2026-10-15, user: 恢复张冠李戴能打断吞名).
+                // (Q8's 吞名). An attack already committed still lands (2026-10-15, user: 恢复错认喜剧能打断吞名).
                 if stacks >= 4, let index = enemies.firstIndex(where: { $0.id == id && $0.isAlive }) {
                     enemies[index].delayedRounds = max(1, enemies[index].delayedRounds)
                     behaviorTags.insert(.reachFourIllusion)
-                    triggeredEffects.append("张冠李戴：目标下次起手延迟一拍；在途攻击不取消")
+                    triggeredEffects.append("错认喜剧：目标下次起手延迟一拍；在途攻击不取消")
                 }
             } else { orderedMark(id, stacks: 1) }
             if valid, loadout.passiveIDs.contains("fool_passive_03") { _ = receivePlayerHealing(80) }
@@ -3933,7 +3933,7 @@ extension MPCChapterOneEncounterSession {
                 enhancedSetupStacks = max(enhancedSetupStacks, 1)
             }
             // The App shows 净化 only for a real cleanse; this line was the manual path's (2026-10-15).
-            triggeredEffects.append("后手改写：" + (cleansed.isEmpty ? "无可净化" : "划去" + cleansed.joined(separator: "、")))
+            triggeredEffects.append("悔笔：" + (cleansed.isEmpty ? "无可净化" : "划去" + cleansed.joined(separator: "、")))
         case .delayedSignature:
             targets = [result(orderedDamage(skill, to: id, coefficient: 2_000))]
             orderedPending.removeAll { $0.target == id && $0.skill == .delayedSignature }
@@ -4103,9 +4103,9 @@ extension MPCChapterOneEncounterSession {
             if active { result.append(.init(id, name, symbol, harmful: harmful, count: count, unit: unit)) }
         }
         add("counter", "反击", "arrow.clockwise", counter.isActive(at: now), count: max(0, Int(ceil((counter.activeUntil ?? now) - now))), unit: "秒")
-        add("haste", "抢拍", "hourglass", now < orderedHasteUntil, count: max(0, Int(ceil(orderedHasteUntil - now))), unit: "秒")
-        add("ordered-shield", "改写护盾", "shield.fill", orderedShield > 0 && now < orderedShieldUntil, count: orderedShield, unit: "护盾值")
-        add("ordered-ward", "反客减伤", "shield.lefthalf.filled", now < orderedWardUntil, count: 1, unit: "次")
+        add("haste", "急板", "hourglass", now < orderedHasteUntil, count: max(0, Int(ceil(orderedHasteUntil - now))), unit: "秒")
+        add("ordered-shield", "悔笔护盾", "shield.fill", orderedShield > 0 && now < orderedShieldUntil, count: orderedShield, unit: "护盾值")
+        add("ordered-ward", "突转减伤", "shield.lefthalf.filled", now < orderedWardUntil, count: 1, unit: "次")
         add("shield", "护盾", "shield.fill", playerShield > 0, count: playerShield, unit: "护盾值")
         let maskLive = (ownedManualMaskExpiresAt.map { now < $0 } ?? true) && (timedMasqueradeExpiresAt.map { now < $0 } ?? true)
         add("mask", "幻影", "theatermasks.fill", masqueradeCharges > 0 && maskLive, count: masqueradeCharges, unit: "次")
@@ -4136,7 +4136,7 @@ extension MPCChapterOneEncounterSession {
         add("talent-echo", "幻影回响强化", "waveform", talentEchoReady)
         add("talent-final-echo", "末次幻影强化", "sparkles", talentFinalEchoReady)
         add("talent-mask", "假面强化", "theatermasks.fill", talentMaskReady)
-        add("talent-evidence", "伪证强化", "doc.text.fill", talentEvidenceReady)
+        add("talent-evidence", "污名强化", "doc.text.fill", talentEvidenceReady)
         add("second", "借来的秒针", "clock.fill", borrowedSecondAvailable)
         if let blessing = farewellBlessings?.hero { result.append(.init("blessing", blessing.name, "sparkles")) }
         return result
@@ -4153,11 +4153,11 @@ extension MPCChapterOneEncounterSession {
             add("illusion", "误认", "eye.trianglebadge.exclamationmark", state.illusionStacks > 0 && now < state.illusionExpiresAt, harmful: true, count: state.illusionStacks)
             add("misalignment", "错位", "arrow.triangle.swap", state.misalignmentStacks > 0 && now < state.misalignmentExpiresAt, harmful: true, count: state.misalignmentStacks)
             add("armor-break", "破甲", "shield.slash.fill", now < state.armorBreakExpiresAt, harmful: true)
-            add("evidence", "伪证", "doc.text.fill", state.fabricatedEvidenceCharges > 0, harmful: true, count: state.fabricatedEvidenceCharges, unit: "次")
-            add("finale", "归结", "sparkles", state.finaleReady, harmful: true)
+            add("evidence", "污名", "doc.text.fill", state.fabricatedEvidenceCharges > 0, harmful: true, count: state.fabricatedEvidenceCharges, unit: "次")
+            add("finale", "归谬", "sparkles", state.finaleReady, harmful: true)
         }
         if let stamp = orderedPending.first(where: { $0.target == enemyID && $0.skill == .delayedSignature }), case .signature(let hits) = stamp.kind {
-            add("signature", "落款", "envelope.fill", now < stamp.at, harmful: true, count: hits, unit: "次命中")
+            add("signature", "附言", "envelope.fill", now < stamp.at, harmful: true, count: hits, unit: "次命中")
         }
         let shield = enemyGiftShields[enemyID, default: 0]
         add("gift", "礼盾", "shield.fill", shield > 0, count: shield, unit: "护盾值")

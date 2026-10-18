@@ -68,13 +68,15 @@ struct ChapterOneContentTests {
     @Test("Ten distinct ordinary cards plus separate mask and ultimate")
     func orderedCardNames() {
         #expect(MPCChapterOneCatalog.skills.map(\.name) == [
-            "错步穿行", "伪证烙印", "抢拍开幕", "碎镜连弹", "后手改写", "反客为主",
-            "张冠李戴", "双影追猎", "荒谬归结", "延时落款", "假面谕令", "无名宣告"
+            "侧身刺", "污名记", "急板", "燃镜", "悔笔", "突转",
+            "错认喜剧", "双星追猎", "归谬法", "附言", "假面", "我名无人"
         ])
+        // Every card says where its name comes from (2026-10-18).
+        #expect(MPCChapterOneCatalog.skills.allSatisfy { !$0.origin.isEmpty })
         #expect(MPCChapterOneCatalog.combos.count == 5)
         #expect(!MPCChapterOneCatalog.combos.contains { $0.id == "K07" })
-        #expect(MPCChapterOneCatalog.combos.first?.name == "抢拍连射")
-        #expect(MPCChapterOneCatalog.combos.last?.name == "疾步扫场")
+        #expect(MPCChapterOneCatalog.combos.first?.name == "急板终曲")
+        #expect(MPCChapterOneCatalog.combos.last?.name == "快板过场")
     }
 
     @Test("Q1–Q5 content is present alongside reusable prototype content")
