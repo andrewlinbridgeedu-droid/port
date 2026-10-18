@@ -1292,6 +1292,7 @@ struct HomePlotView: View {
             if let plot = trend.plot {
                 let side = plot.target
                 Text("\(side.leaderTitle)\(side.leaderName)这几天在\(side.leaderPlace)公开露面。\(side.name)这一章走得太前，全城都在传：有人要他的命。")
+                Text(side.leaderStory).font(.callout)
                 Text("风声：刺客已得手 \(plot.struck) 次，护卫挡下 \(plot.held) 次。" + (plot.killedDay == nil
                     ? "再净得手 \(max(0, MPCCityTrendWorld.killMargin - plot.net)) 次，他就活不过这几天。" : ""))
                     .font(.callout)
@@ -1300,6 +1301,7 @@ struct HomePlotView: View {
                 if let killed = plot.killedDay {
                     Text("第 \(killed) 天，\(side.leaderLabel)遇刺身亡。" + (plot.aftermath == .collapse ? "\(side.name)树倒猢狲散。" : "全城为他举哀。"))
                         .font(.headline)
+                    Text(side.leaderEpitaph).font(.callout)
                 } else if let mine = game.cityTrendLedger.plotTry {
                     Text(mine.assassin ? (mine.success ? "你那一刀得手了。" : "你去刺杀，没能得手。")
                          : (mine.success ? "你替他挡下了一次刺杀。" : "你去护卫，没能挡住。")).font(.headline)

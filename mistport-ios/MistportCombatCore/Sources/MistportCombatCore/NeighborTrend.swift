@@ -40,21 +40,21 @@ extension MPCNeighborCatalog {
     }
 
     /// A line in the neighbour's voice about how their side is doing and how the player has
-    /// been leaning: "这阵子街坊说话算数……你一直帮着我们这边，我记着。"
+    /// been leaning: "这阵子谁家缺点什么……你一直帮着我们这边，我记着。"
     public static func tone(_ neighborID: String, trend: MPCCityTrendSnapshot, leaning: MPCCityFaction?) -> String? {
         guard let side = sides[neighborID] else { return nil }
         let points = trend.stage.isEmpty ? trend.total : trend.stage
         let order = MPCCityFaction.allCases.sorted { trend.share($0, of: points) > trend.share($1, of: points) }
         let place = order.firstIndex(of: side)!
         let mood: String = switch (side, place) {
-        case (.neighbours, 0): "这阵子街坊说话算数，大家都肯搭把手。"
-        case (.neighbours, 2): "现在什么都要登记、要押金，街坊之间反倒生分了。"
-        case (.neighbours, _): "街坊还撑得住，就看这几天了。"
-        case (.offices, 0): "名册越来越齐，办事有章可循。"
-        case (.offices, 2): "规矩没人守了，章盖了也白盖。"
-        case (.offices, _): "公署那边还在等批文，事情一半一半。"
-        case (.compacts, 0): "钱一到，事就办成——这阵子谁都认这个理。"
-        case (.compacts, 2): "合同签了也没人认，商行的人都在叹气。"
+        case (.neighbours, 0): "这阵子谁家缺点什么，喊一嗓子就有人送来。好久没这样了。"
+        case (.neighbours, 2): "现在借把梯子都要先问登没登记，街坊见了面只点个头。"
+        case (.neighbours, _): "街坊还撑着。你家借碗米，我家还把葱，就看能撑几天了。"
+        case (.offices, 0): "这阵子名册齐了，窗口前的队也短了。有章可循，心里踏实。"
+        case (.offices, 2): "章盖了没人认，规矩贴在墙上，风一吹就掉。"
+        case (.offices, _): "公署那边还在等批文，章盖了一半，搁在那儿。"
+        case (.compacts, 0): "这阵子钱一到，事就办成。谁都认这个理，连我也认了。"
+        case (.compacts, 2): "合同签了也没人认，商行的人见面就叹气。"
         case (.compacts, _): "价钱还在谈，谁也不肯先松口。"
         }
         guard let leaning else { return mood }

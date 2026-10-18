@@ -38,75 +38,75 @@ public struct MPCChurchBountyChallenge: Codable, Equatable, Sendable {
 public enum MPCChurchBountyCatalog {
     public static let all: [MPCChurchBounty] = [
         .init(id:"b01",title:"第七号空壳",unlockMission:7,enemyID:"bounty_b01_execution_body",modelID:"bounty-b01",visualIdentity:"灰铁甲、左肩七号铭牌、缺齿长剑。",nodes:[
-            .init(id:"witness",speaker:"诺恩",location:"封锁公告处",dialogue:"两个人都死在封锁线外。第一声钟响时，巡逻队还没换班。",evidence:"两起凶案发生于同一封锁时段。"),
-            .init(id:"wound",speaker:"奥黛尔",location:"诊所",dialogue:"剑从左上斜下，同一道缺口留下两枚短齿痕。这不是跌伤。",evidence:"独立验伤：左斜剑创与双短齿。"),
-            .init(id:"exclude",speaker:"值勤登记员",location:"巡逻值房",dialogue:"有人说所有守卫都去过。登记和两名夜班人证明，正常巡逻队当时在桥另一侧。",evidence:"排除误导：正常巡逻队有独立不在场证明。",requires:["witness","wound"]),
-            .init(id:"compare",speaker:"维拉",location:"铁匠铺",dialogue:"把木门割痕与剑齿拓片叠起来。两枚短齿一模一样，油垢只来自废岗亭旧机座。",evidence:"实物比对指向废岗亭。",requires:["exclude"]),
-            .init(id:"identity",speaker:"废岗亭观察",location:"废岗亭",dialogue:"左肩七号残标、缺齿剑和双案时间指令均吻合。它亮起处决灯，转向门外的幸存者。",evidence:"目标独立编号与作案工具核验完成。",requires:["compare"])
-        ],copper:60,merit:12,closure:"非法执行体已销毁，命令匣封存。维修工的责任另案取证，不因职业推定有罪。"),
+            .init(id:"witness",speaker:"诺恩",location:"封锁公告处",dialogue:"两个人。卖炭的老周，还有个出门买退烧药的女人，都死在封锁线外，同一段封锁里。第一声钟响时，巡逻队还没换班。",evidence:"两起凶案发生于同一封锁时段。"),
+            .init(id:"wound",speaker:"奥黛尔",location:"诊所",dialogue:"剑从左上斜劈下来，同一处缺口留下两枚短齿痕，不是摔的。她手里那包退烧药，我替她送回家了。",evidence:"独立验伤：左斜剑创与双短齿。"),
+            .init(id:"exclude",speaker:"值勤登记员",location:"巡逻值房",dialogue:"街上都说是守卫干的，昨晚有人往值房门口泼泔水。登记簿和两个夜班的都能作证：那时候巡逻队在桥那边。",evidence:"排除误导：正常巡逻队有独立不在场证明。",requires:["witness","wound"]),
+            .init(id:"compare",speaker:"维拉",location:"铁匠铺",dialogue:"木门上的割痕和剑齿拓片叠起来，两枚短齿分毫不差。油垢只有废岗亭的旧机座才有。这一型，是我师父那辈造来守夜的。",evidence:"实物比对指向废岗亭。",requires:["exclude"]),
+            .init(id:"identity",speaker:"废岗亭观察",location:"废岗亭",dialogue:"左肩的七号只剩半截，剑上缺着齿。胸腔里那张处决令早该作废，时间却和两起案子分秒不差。它亮起灯，转向门外的人。",evidence:"目标独立编号与作案工具核验完成。",requires:["compare"])
+        ],copper:60,merit:12,closure:"七号停在了废岗亭，命令匣已封存。那张处决令早就撤销了，只是一直没人去告诉它。最后修过它的维修工，诺恩会另外去问，不因为会修就算他有罪。"),
         .init(id:"b02",title:"背架收尸人",unlockMission:14,enemyID:"bounty_b02_abductor",modelID:"bounty-b02",visualIdentity:"旧褐工装，沾血的反扣束带与外锁背架。",nodes:[
-            .init(id:"witness",speaker:"奥黛尔",location:"诊所",dialogue:"他运走的所谓死者，昨天还亲自签收了药。治疗记录与死亡证明相互冲突。",evidence:"被掳者近期仍活着。"),
-            .init(id:"wound",speaker:"逃出的工人",location:"避难屋",dialogue:"我看见同伴还在挣扎。束带扣朝外，他说死人不需要自己解开。",evidence:"独立目击：活人被反扣束带拘禁。"),
-            .init(id:"exclude",speaker:"救援登记员",location:"市政救援站",dialogue:"洛克的编号和救援录音对得上。他没有这副外锁架，不能拿他的旧事替此案定罪。",evidence:"洛克的救援录音与交接编号相符。",requires:["witness","wound"]),
-            .init(id:"compare",speaker:"维拉",location:"渡运台",dialogue:"锁扣油迹与这张废浴场渡运收据相符。市政救援架从不从外面锁死人。",evidence:"油迹与收据交叉定位废浴场。",requires:["exclude"]),
-            .init(id:"identity",speaker:"浴场观察",location:"废浴场",dialogue:"反扣束带、赃运收据和仍被拘束的人同时在场。确认是独立绑架犯，他开始收紧背架。",evidence:"活人获救入口与作案者身份核验。",requires:["compare"])
-        ],copper:80,merit:16,closure:"收尸人被制止，幸存者获释。束带和运单已由教会封存。"),
+            .init(id:"witness",speaker:"奥黛尔",location:"诊所",dialogue:"他运走的那个“死人”，昨天还在这儿签收了咳嗽药，问我能不能便宜两个铜子。死亡证明上却写他前天就死了。",evidence:"被掳者近期仍活着。"),
+            .init(id:"wound",speaker:"逃出的工人",location:"避难屋",dialogue:"我看见阿贝还在动。束带扣朝外，那人说，死人用不着自己解。阿贝喊了我一声。我没回头，我先跑了。",evidence:"独立目击：活人被反扣束带拘禁。"),
+            .init(id:"exclude",speaker:"救援登记员",location:"市政救援站",dialogue:"都来问洛克。他的编号和救援录音对得上，他那副架子从不从外面锁。别拿他的旧事，往这案子上扣。",evidence:"洛克的救援录音与交接编号相符。",requires:["witness","wound"]),
+            .init(id:"compare",speaker:"维拉",location:"渡运台",dialogue:"锁扣上的油，和这张去废浴场的渡运收据对得上。救援架从不从外面锁。从外面锁，是怕背上的人醒过来。",evidence:"油迹与收据交叉定位废浴场。",requires:["exclude"]),
+            .init(id:"identity",speaker:"浴场观察",location:"废浴场",dialogue:"空池子里摆着几副外锁背架，束带上的血还没干，其中一副里的人还在挣。赃运收据钉在墙上。他看见你，先去收紧那副背架。",evidence:"活人获救入口与作案者身份核验。",requires:["compare"])
+        ],copper:80,merit:16,closure:"收尸人被押走了。他以前真是收尸的，按具算钱；码头大火那年，一夜背了十几趟。后来死的人不够了。阿贝送进了诊所。先跑的那个工友在门外站了一下午，最后还是进去了。"),
         .init(id:"b03",title:"溺钟海盗",unlockMission:23,enemyID:"bounty_b03_drowned_captain",modelID:"bounty-b03",visualIdentity:"海蓝亡魂，胸前船锚章与旧海盗印。",nodes:[
-            .init(id:"witness",speaker:"港务员",location:"港务登记处",dialogue:"被劫的三艘船都在退潮钟响后出港。船期没有被改过。",evidence:"独立船期锁定袭船时间。"),
-            .init(id:"wound",speaker:"伊莱",location:"钟台",dialogue:"那不是换班口令。倒着敲的三短一长，是旧海盗队的回船暗号。",evidence:"逆钟节拍属于海盗队。"),
-            .init(id:"exclude",speaker:"老水手",location:"码头",dialogue:"活人港工被疑是船长，可袭击后的湿甲板上，只有我们的脚印。那船长早已溺亡。",evidence:"排除活人港工；亡魂线索与旧船证一致。",requires:["witness","wound"]),
-            .init(id:"compare",speaker:"港务员",location:"沉船档案柜",dialogue:"溺亡船证、潮线残盐、袭击钟点三者重合。潮退时钟沉船露出舱口。",evidence:"三项物证定位钟沉船。",requires:["exclude"]),
-            .init(id:"identity",speaker:"沉船观察",location:"钟沉船",dialogue:"灵体持有相同海盗印，重复逆钟口令并驱赶袭船残影。确认目标，不能把普通溺亡者当罪犯。",evidence:"海盗印、暗号与攻击行为核验。",requires:["compare"])
-        ],copper:100,merit:20,closure:"袭船灵体终结，海盗印和赃货账入档。受害船主将依据这份账册取回货物。"),
+            .init(id:"witness",speaker:"港务员",location:"港务登记处",dialogue:"三艘船都是退潮钟响以后出的港，船期我一个字没改，你可以翻。第三艘的大副没回来。他上个月刚当了爹。",evidence:"独立船期锁定袭船时间。"),
+            .init(id:"wound",speaker:"伊莱",location:"钟台",dialogue:"那不是换班口令。倒着敲，三短一长，是老海盗队叫船回来的暗号。别问我怎么知道。这种东西，我卖过。",evidence:"逆钟节拍属于海盗队。"),
+            .init(id:"exclude",speaker:"老水手",location:"码头",dialogue:"他们抓了小莫，说他就是船长。可出事后湿甲板上只有我们的脚印。那船长早淹死了。二十年前，是他把我推上救生艇的。",evidence:"排除活人港工；亡魂线索与旧船证一致。",requires:["witness","wound"]),
+            .init(id:"compare",speaker:"港务员",location:"沉船档案柜",dialogue:"溺亡船证、潮线上的残盐、袭船的钟点，三样对在一起。潮一退，钟沉船就露出舱口。那张船员表，到今天也没人去注销。",evidence:"三项物证定位钟沉船。",requires:["exclude"]),
+            .init(id:"identity",speaker:"沉船观察",location:"钟沉船",dialogue:"舱里坐满了溺死的人，多半只是渔夫。只有一个握着海盗印，一遍遍倒敲船钟，把残影赶向过路的船。他在点名。没人应。",evidence:"海盗印、暗号与攻击行为核验。",requires:["compare"])
+        ],copper:100,merit:20,closure:"船长散了。海盗印和赃货账入档，船主们按账取回货物。老水手要走了那张船员表。他说，总得有人把这些名字念完。"),
         .init(id:"b04",title:"铜笔伪造者",unlockMission:19,enemyID:"bounty_b04_forgery_engine",modelID:"enemy_codex_executor",visualIdentity:"铜绿笔端、倒序印号，机械臂留有断齿。",nodes:[
-            .init(id:"witness",speaker:"遗产领取者",location:"公证柜台",dialogue:"两份遗嘱都写唯一继承人。我没要求谁死，只想知道哪一张被改过。",evidence:"两份互斥遗嘱原件。"),
-            .init(id:"wound",speaker:"印章员",location:"验印台",dialogue:"章是真的，序号却倒着走。有人用真章做了假的先后顺序。",evidence:"独立验印确认倒序号。"),
-            .init(id:"exclude",speaker:"维拉",location:"铁匠铺",dialogue:"重复笔压不是每个书记员都有。普通抄写笔会回弹，这道断笔间距来自损坏的齿轮。",evidence:"排除普通书记员，锁定特定机器缺陷。",requires:["witness","wound"]),
-            .init(id:"compare",speaker:"印厂旧工",location:"废印厂外",dialogue:"把两张纸的间距叠起来，只能由三号旧机产生。它被偷运回废印厂。",evidence:"断笔间距与机器档案唯一匹配。",requires:["exclude"]),
-            .init(id:"identity",speaker:"印厂观察",location:"废印厂",dialogue:"倒序模具与待覆盖遗嘱在同一台机器上。机身序号与失窃登记一致，确认伪造母版的写入源。",evidence:"机器序号、工具与伪造原件核验。",requires:["compare"])
-        ],copper:120,merit:24,closure:"伪造母版销毁，合法证书退还，遗嘱的真实先后顺序得以恢复。"),
+            .init(id:"witness",speaker:"遗产领取者",location:"公证柜台",dialogue:"两份遗嘱，都写唯一继承人，一份是我，一份是我哥。我们半年没说话了。我不要房子，只想知道爸写的是哪一张。",evidence:"两份互斥遗嘱原件。"),
+            .init(id:"wound",speaker:"印章员",location:"验印台",dialogue:"章是真的，序号却倒着走。有人拿真章，排了一个假的先后。我盖了三十年章，头一回见真章替人撒谎。",evidence:"独立验印确认倒序号。"),
+            .init(id:"exclude",speaker:"维拉",location:"铁匠铺",dialogue:"外头都在骂书记员。普通抄写笔会回弹，这道断笔的间距，是坏齿轮磨出来的。这是机器，不是人手。",evidence:"排除普通书记员，锁定特定机器缺陷。",requires:["witness","wound"]),
+            .init(id:"compare",speaker:"印厂旧工",location:"废印厂外",dialogue:"两张纸的间距叠起来，只有三号机印得出。它少的那颗齿，是我当年没修好。有人把它偷运回废印厂了。",evidence:"断笔间距与机器档案唯一匹配。",requires:["exclude"]),
+            .init(id:"identity",speaker:"印厂观察",location:"废印厂",dialogue:"三号机还热着。倒序模具卡在臂上，底下压着一张没印完的遗嘱。机身序号和失窃登记一样。桌上一叠收据，一张一个价。",evidence:"机器序号、工具与伪造原件核验。",requires:["compare"])
+        ],copper:120,merit:24,closure:"三号机拆了，伪造母版销毁，合法证书退还，遗嘱的先后理清了。兄妹俩在公证柜台前碰了面，谁也没先开口。最后哥哥把父亲的旧怀表推了过去。"),
         .init(id:"b05",title:"赤丝裁衣人",unlockMission:27,enemyID:"bounty_b05_silk_murderer",modelID:"bounty-b05",visualIdentity:"灰白衣、赤丝与小银剪胸针。",nodes:[
-            .init(id:"witness",speaker:"衣铺老板",location:"旧衣铺",dialogue:"失踪的人都留下同一种量衣单，衣服却从未回来。",evidence:"失踪名单与量衣单对应。"),
-            .init(id:"wound",speaker:"奥黛尔",location:"诊所",dialogue:"针孔周围有生前出血。他们不是死后被缝住，是活着时遭到勒紧。",evidence:"独立验伤证实生前侵害。"),
-            .init(id:"exclude",speaker:"维娅的封存证言",location:"联络处",dialogue:"这不是我的收束结。外侧多了一道非法收紧结，故意让人无法呼救。",evidence:"现场绳结与维娅封存的结法不同，另有操作者。",requires:["witness","wound"]),
-            .init(id:"compare",speaker:"染坊学徒",location:"染坊账房",dialogue:"赤染料批号与收款条一致。那些量衣单都进了后院染坊。",evidence:"染料与收款条定位染坊后院。",requires:["exclude"]),
-            .init(id:"identity",speaker:"染坊观察",location:"染坊后院",dialogue:"剪刀胸针、非法紧结和失踪者衣料全在。操作者开始勒紧被缚者，身份与罪证已核验。",evidence:"独立凶手与现场罪证匹配。",requires:["compare"])
-        ],copper:140,merit:28,closure:"裁衣人被制止，被缚者获救。维娅提供证言，不抹掉她原有责任。"),
+            .init(id:"witness",speaker:"衣铺老板",location:"旧衣铺",dialogue:"失踪的人都留了同一种量衣单。有个姑娘订了嫁衣，定金付了，说下个月来取。衣服一直没回来，她也没有。",evidence:"失踪名单与量衣单对应。"),
+            .init(id:"wound",speaker:"奥黛尔",location:"诊所",dialogue:"针孔周围有出血。是活着的时候勒紧的，不是死后缝上的。他们那时候，都醒着。",evidence:"独立验伤证实生前侵害。"),
+            .init(id:"exclude",speaker:"维娅的封存证言",location:"联络处",dialogue:"这不是我的结。外头多了一道死结，是专门让人喊不出声的。我绑过人，可我从没让谁喊不出声。",evidence:"现场绳结与维娅封存的结法不同，另有操作者。",requires:["witness","wound"]),
+            .init(id:"compare",speaker:"染坊学徒",location:"染坊账房",dialogue:"赤染料的批号和收款条对得上，那些量衣单最后都进了后院染坊。师傅叫我别问，我就没问。现在我问了。",evidence:"染料与收款条定位染坊后院。",requires:["exclude"]),
+            .init(id:"identity",speaker:"染坊观察",location:"染坊后院",dialogue:"晾布架上挂着失踪者的衣料，尺寸一件件标好。他胸前别着小银剪，把打了死结的赤丝收紧，轻声说：“别动，马上就合身了。”",evidence:"独立凶手与现场罪证匹配。",requires:["compare"])
+        ],copper:140,merit:28,closure:"裁衣人被押走时只问了一句：那件嫁衣，能不能让他做完。被缚的人都救了下来，那个姑娘也在，嗓子还哑着。维娅的证言照实入卷，不抵她原有的责任。"),
         .init(id:"b06",title:"无灯押船人",unlockMission:26,enemyID:"bounty_b06_dark_hold_captain",modelID:"enemy_archive_adjudicator",visualIdentity:"漆黑赃甲、划除的军号与船锚腰牌。",nodes:[
-            .init(id:"witness",speaker:"港务员",location:"港务登记处",dialogue:"三艘货船进暗航线前都熄了灯。不是灯油不足，补给单上刚加满。",evidence:"熄灯航线与补给记录冲突。"),
-            .init(id:"wound",speaker:"铁匠",location:"军甲修理棚",dialogue:"这块甲片序号在失窃清单上。我只认编号，不凭一个人穿重甲就定罪。",evidence:"赃甲序号独立确认。"),
-            .init(id:"exclude",speaker:"码头工",location:"报警钟楼",dialogue:"正常重卫交接时钟还完好。那个船锚腰牌的人，用锤砸掉了钟舌。",evidence:"排除正常值勤重卫；具体毁钟者有独立标识。",requires:["witness","wound"]),
-            .init(id:"compare",speaker:"港务员",location:"封舱台外",dialogue:"赃甲编号、锤痕和压舱铅痕都指向同一艘船。封舱台就在前面。",evidence:"三项物证定位封舱台。",requires:["exclude"]),
-            .init(id:"identity",speaker:"封舱观察",location:"封舱台",dialogue:"划除军号和船锚腰牌吻合。押船头目持锤阻止人质离船；确认独立身份，准备破围。",evidence:"赃甲、腰牌、现场强迫行为核验。",requires:["compare"])
-        ],copper:160,merit:32,closure:"押船头目被击败，人质离船。失窃军甲与赃物已查扣归档。"),
+            .init(id:"witness",speaker:"港务员",location:"港务登记处",dialogue:"三艘货船进暗航线前都熄了灯。不是没油，补给单上刚加满。舱单写的是咸鱼。咸鱼不会敲舱板。",evidence:"熄灯航线与补给记录冲突。"),
+            .init(id:"wound",speaker:"铁匠",location:"军甲修理棚",dialogue:"这块甲片的编号在失窃单上。我只认编号。别见谁穿重甲就抓谁，我儿子也穿，在北门站岗。",evidence:"赃甲序号独立确认。"),
+            .init(id:"exclude",speaker:"码头工",location:"报警钟楼",dialogue:"重卫交班的时候，钟还好好的。后来那个挂船锚腰牌的，抡锤把钟舌砸了。我拉了三下绳，一点声都没有。",evidence:"排除正常值勤重卫；具体毁钟者有独立标识。",requires:["witness","wound"]),
+            .init(id:"compare",speaker:"港务员",location:"封舱台外",dialogue:"赃甲编号、锤痕、压舱铅痕，都指向同一条船。封舱台就在前面。我记了一辈子账，没想过账上记的是人。",evidence:"三项物证定位封舱台。",requires:["exclude"]),
+            .init(id:"identity",speaker:"封舱观察",location:"封舱台",dialogue:"他甲上的军号被刮掉了，腰间挂着船锚牌。舱口挤满了人，他提锤挡在跳板前，一个也不放。有个孩子在哭，他叫人把灯熄了。",evidence:"赃甲、腰牌、现场强迫行为核验。",requires:["compare"])
+        ],copper:160,merit:32,closure:"押船头目倒下了。他当过兵，那身甲原本是他的，退伍时被收了回去。人质一个个走下跳板，那个孩子下船时，回头看了一眼船上的灯。失窃军甲与赃物已查扣归档。"),
         .init(id:"b07",title:"三声敲门客",unlockMission:5,enemyID:"bounty_b07_knocker",modelID:"bounty-b07",visualIdentity:"青蓝低伏的铃蛙，金色喉铃和不同门牌的封签。",nodes:[
-            .init(id:"witness",speaker:"夜班邮差",location:"旧邮局",dialogue:"同一句‘替我开门’在两条街同时响起。原说话者那时正躺在诊所。",evidence:"求救声在同一时刻出现在两个街区。"),
-            .init(id:"wound",speaker:"奥黛尔",location:"诊所",dialogue:"三名伤者的门闩上都是同样的黏液和右前爪缺趾木屑。",evidence:"独立验伤与缺趾爪痕吻合。"),
-            .init(id:"exclude",speaker:"修门工",location:"木工街",dialogue:"我的工单、五指工具痕和邮务时间都能核实；不能因我听力不好就说我偷声。",evidence:"排除被传闻误指的修门工。",requires:["witness","wound"]),
-            .init(id:"compare",speaker:"档案员",location:"旧排水口",dialogue:"木漆、排水泥和重复声纹都指向第三间空屋。",evidence:"三种独立痕迹定位第三间空屋。",requires:["exclude"]),
-            .init(id:"identity",speaker:"空屋观察",location:"第三间空屋",dialogue:"喉铃复制求救声，缺趾爪碰上同样的门闩；它正诱骗另一名住户。",evidence:"现场行为、喉铃与爪痕共同核实目标。",requires:["compare"])
-        ],copper:60,merit:20,closure:"诱骗已停止，借声喉膜拓样封存，失去声音者的记录归还家属。"),
+            .init(id:"witness",speaker:"夜班邮差",location:"旧邮局",dialogue:"同一句“替我开门”，两条街同时有人听见。可说这话的老太太，那会儿正躺在诊所。她每天都来问，有没有她儿子的信。",evidence:"求救声在同一时刻出现在两个街区。"),
+            .init(id:"wound",speaker:"奥黛尔",location:"诊所",dialogue:"三户人家的门闩上，都是一样的黏液，还有右前爪缺趾的木屑。老太太醒了，可从那晚起，一个字也说不出来。",evidence:"独立验伤与缺趾爪痕吻合。"),
+            .init(id:"exclude",speaker:"修门工",location:"木工街",dialogue:"我的工单、五根手指留下的工具印子、邮差的时间，你们都去查。我是耳朵不好，又不是心不好。街坊现在连门都不让我修了。",evidence:"排除被传闻误指的修门工。",requires:["witness","wound"]),
+            .init(id:"compare",speaker:"档案员",location:"旧排水口",dialogue:"门上的木漆、排水口的泥、录下的重复声纹，三样都指向第三间空屋。我小时候，那屋里总飘出炖汤的味道。",evidence:"三种独立痕迹定位第三间空屋。",requires:["exclude"]),
+            .init(id:"identity",speaker:"空屋观察",location:"第三间空屋",dialogue:"它伏在门后，喉铃一鼓，就是老太太的声音：“替我开门。”缺趾的爪子搭在门闩上。门外，有人正在掏钥匙。",evidence:"现场行为、喉铃与爪痕共同核实目标。",requires:["compare"])
+        ],copper:60,merit:20,closure:"铃蛙不叫了，借声喉膜的拓样已封存。录下的那句求救还给了老太太。她如今说不出话，有时会请邮差替她放一遍，听听自己原来的声音。"),
         .init(id:"b08",title:"借脸人·弥伦",unlockMission:11,enemyID:"bounty_b08_miren",modelID:"bounty-b08",visualIdentity:"半张蜡面具、深蓝礼服、红领饰和短刺；真身右手有旧伤。",nodes:[
-            .init(id:"witness",speaker:"被冒名者的雇主",location:"雇工会",dialogue:"他在同一天的两座城签了收据，不可能都是本人。",evidence:"同日异地的两张签收原件。"),
-            .init(id:"wound",speaker:"奥黛尔",location:"诊所",dialogue:"真正的家人右手有旧伤。盗款人的伪签留下了另一种手压。",evidence:"病历旧伤与伪签手压不符。"),
-            .init(id:"exclude",speaker:"港务员",location:"港务登记处",dialogue:"被疑的孪生兄弟出港底片和船员证言都在；他没有回来。",evidence:"独立时间线排除孪生兄弟。",requires:["witness","wound"]),
-            .init(id:"compare",speaker:"照相师",location:"相片铺",dialogue:"蜡面反光与赃收据乳剂粉末来自同一间旧照相馆。",evidence:"蜡面与相片乳剂定位旧照相馆。",requires:["exclude"]),
-            .init(id:"identity",speaker:"照相馆观察",location:"旧照相馆",dialogue:"他拿着失窃原件，换脸时仍露出真实右手伤痕，正把被替代者锁进暗房。",evidence:"赃物、旧伤与现场拘禁行为共同核实弥伦。",requires:["compare"])
-        ],copper:80,merit:20,closure:"弥伦已被拘捕，伪装撤除，被替代者获释，借面签收底片封存。"),
+            .init(id:"witness",speaker:"被冒名者的雇主",location:"雇工会",dialogue:"同一天，他在两座城里各签了一张收据，不可能都是本人。那孩子老实，多领一个铜子都要还回来。",evidence:"同日异地的两张签收原件。"),
+            .init(id:"wound",speaker:"奥黛尔",location:"诊所",dialogue:"那孩子的病历上，右手是好的。可伪签的手压在掌根有道旧伤，这道伤我在另一份病历上见过。他母亲还来问我，儿子怎么忽然不咳了。",evidence:"病历旧伤与伪签手压不符。"),
+            .init(id:"exclude",speaker:"港务员",location:"港务登记处",dialogue:"被疑的那个孪生兄弟，出港底片和船员证词都在，他没回来过。上船那天，他在这儿问我外海冷不冷。",evidence:"独立时间线排除孪生兄弟。",requires:["witness","wound"]),
+            .init(id:"compare",speaker:"照相师",location:"相片铺",dialogue:"蜡面的反光，和赃收据上沾的乳剂粉，出自同一间旧照相馆。那馆子关门前最后一单是全家福，到今天没人来取。",evidence:"蜡面与相片乳剂定位旧照相馆。",requires:["exclude"]),
+            .init(id:"identity",speaker:"照相馆观察",location:"旧照相馆",dialogue:"他攥着失窃的原件，把那个年轻人往暗房里推。蜡面换了一张又一张，右手那道旧伤一直在。他小声练着一个字：“妈。”",evidence:"赃物、旧伤与现场拘禁行为共同核实弥伦。",requires:["compare"])
+        ],copper:80,merit:20,closure:"弥伦被押走了。蜡面揭下来，是一张很普通的脸。被锁在暗房的年轻人回了家，他母亲开门看了他很久，才问：“真是你吗？”借面签收的底片已封存。"),
         .init(id:"b09",title:"铜背吞契兽",unlockMission:17,enemyID:"bounty_b09_contract_eater",modelID:"bounty-b09",visualIdentity:"青绿鳞皮、赤铜不对称背甲和夹在甲缝里的旧封签。",nodes:[
-            .init(id:"witness",speaker:"两名债户",location:"民事柜台",dialogue:"我们都留着已清偿原收据，账房底联却被咬掉一个‘清’字。",evidence:"两份独立清偿收据与残缺底联。"),
-            .init(id:"wound",speaker:"档案员",location:"卷宗室",dialogue:"纸断面有唾液和同一枚歪铜齿印，不是虫蛀。",evidence:"唾液与歪铜齿缺口一致。"),
-            .init(id:"exclude",speaker:"账房学徒",location:"质押所外",dialogue:"公开复写本和异地登记都证明我按时销账；有人把坏账栽到我头上。",evidence:"排除无辜账房学徒。",requires:["witness","wound"]),
-            .init(id:"compare",speaker:"档案员",location:"废质押所",dialogue:"纸窖排浆含相同票纸和铜屑，破窗齿痕也吻合。",evidence:"票纸、铜屑与破窗齿印定位地下纸窖。",requires:["exclude"]),
-            .init(id:"identity",speaker:"纸窖观察",location:"地下纸窖",dialogue:"甲兽护着被吞的凭据，并袭击取证者。先收容它，再查是谁驱使它索债。",evidence:"甲兽被确认是危险现场目标；催债责任仍待查。",requires:["compare"])
-        ],copper:110,merit:20,closure:"甲兽已安全收容，清偿凭据复原并归还债户；幕后催债者另案调查。"),
+            .init(id:"witness",speaker:"两名债户",location:"民事柜台",dialogue:"我们俩都留着还清的原收据，账房的底联却被咬掉一个“清”字。我还了七年，最后一笔是卖了我老婆的缝纫机。",evidence:"两份独立清偿收据与残缺底联。"),
+            .init(id:"wound",speaker:"档案员",location:"卷宗室",dialogue:"纸的断口上有唾液，还有同一枚歪铜齿的印子，不是虫蛀。虫子不挑字，它专挑“清”字下嘴。",evidence:"唾液与歪铜齿缺口一致。"),
+            .init(id:"exclude",speaker:"账房学徒",location:"质押所外",dialogue:"复写本是公开的，异地登记也查得到，我每一笔都按时销了账。现在有人见我就吐口水，我娘都不敢出门买菜。",evidence:"排除无辜账房学徒。",requires:["witness","wound"]),
+            .init(id:"compare",speaker:"档案员",location:"废质押所",dialogue:"纸窖排出来的浆里有同一批票纸和铜屑，破窗上的齿印也对得上。窗台上放着一只碗。有人一直在喂它。",evidence:"票纸、铜屑与破窗齿印定位地下纸窖。",requires:["exclude"]),
+            .init(id:"identity",speaker:"纸窖观察",location:"地下纸窖",dialogue:"甲兽趴在一堆咬烂的凭据上，背甲缝里夹满旧封签。你一靠近，它就扑上来。它护着那堆纸，像护着一窝蛋。",evidence:"甲兽被确认是危险现场目标；催债责任仍待查。",requires:["compare"])
+        ],copper:110,merit:20,closure:"甲兽已安全收容，清偿凭据一张张复原，还给了债户。窗台上那只碗是谁放的，还在查。卖了缝纫机的那位拿着收据，在柜台前站了很久，说要回去念给老婆听。"),
         .init(id:"b10",title:"换寿先知·绯欠",unlockMission:26,enemyID:"bounty_b10_life_oracle",modelID:"bounty-b10",visualIdentity:"白发、绯月冠架和红白长帷，掌中拿着碎裂账签。",nodes:[
-            .init(id:"witness",speaker:"获治病患",location:"施济登记处",dialogue:"收据正面写免费，背面却在我签名后添上另一人的寿数。",evidence:"三张疗契背面出现事后增补条款。"),
-            .init(id:"wound",speaker:"奥黛尔",location:"诊所",dialogue:"与病患从未接触的人，在同一收据号对应的日子开始衰弱。",evidence:"独立病历显示转嫁伤害的时间对应。"),
-            .init(id:"exclude",speaker:"守灯值班员",location:"守灯诊所",dialogue:"公开药剂批次、原始值班稿和病人行踪都不在那条转接链里。",evidence:"排除正规诊所，保留其原始记录。",requires:["witness","wound"]),
-            .init(id:"compare",speaker:"档案员",location:"施济厅外",dialogue:"封条纤维、账签缺角和转接印只出自封闭施济厅。",evidence:"三项物证定位封闭施济厅。",requires:["exclude"]),
-            .init(id:"identity",speaker:"施济厅观察",location:"封闭施济厅",dialogue:"绯欠命令囊体把别人的疗效转接给自己；原底稿与伪造版本同在。",evidence:"现场转接行为、原稿和伪契核实目标。",requires:["compare"])
-        ],copper:150,merit:30,closure:"转接链已切断，受害者的疗契记录归还，换寿双联账封存。")
+            .init(id:"witness",speaker:"获治病患",location:"施济登记处",dialogue:"收据正面写着免费。我签了字以后，背面又添了一行，写的是别人的寿数。我能下地了。可那是谁的？",evidence:"三张疗契背面出现事后增补条款。"),
+            .init(id:"wound",speaker:"奥黛尔",location:"诊所",dialogue:"从没见过这些病人的人，在收据号对应的那几天开始衰弱。卖花的小姑娘，上周还跑着来送花，现在要人扶。",evidence:"独立病历显示转嫁伤害的时间对应。"),
+            .init(id:"exclude",speaker:"守灯值班员",location:"守灯诊所",dialogue:"药剂批次是公开的，值班原稿和病人行踪都在，跟那条转接链不沾边。我们救不了所有人，可从没让别人替病人付钱。",evidence:"排除正规诊所，保留其原始记录。",requires:["witness","wound"]),
+            .init(id:"compare",speaker:"档案员",location:"施济厅外",dialogue:"封条纤维、账签缺角、转接印，只有封闭的施济厅才有。码头大火那年冬天，门口的队排到了桥上。",evidence:"三项物证定位封闭施济厅。",requires:["exclude"]),
+            .init(id:"identity",speaker:"施济厅观察",location:"封闭施济厅",dialogue:"原底稿和改过的伪契摊在同一张桌上。绯欠一抬手，囊体就把别人的疗效送进她身体。“我没骗谁，”她说，“他们都签了字。”",evidence:"现场转接行为、原稿和伪契核实目标。",requires:["compare"])
+        ],copper:150,merit:30,closure:"转接链断了，疗契记录还给了受害者，换寿双联账已封存。卖花的小姑娘慢慢能自己走路了。那个先好起来的病人，每周都去买她一束花。")
     ]
     public static func challenge(caseID: String, nodeID: String) -> MPCChurchBountyChallenge? {
         guard ["compare","identity"].contains(nodeID) else { return nil }
@@ -126,10 +126,10 @@ public enum MPCChurchBountyCatalog {
         let correct = nodeID == "compare" ? match.0 : match.1
         let misleading = match.2
         let id = caseID + "_" + nodeID + "_match"
-        return .init(question: nodeID == "compare" ? "哪组证据能够排除相似对象并确定地点？" : "谁符合已验证的作案身份？", choices:[
-            .init(id:id,text:correct,explanation:"独立证据相互印证，记录比对结果。"),
-            .init(id:caseID+"_"+nodeID+"_look",text:misleading,explanation:"外观或职业相同不构成罪证，已从本案嫌疑依据中排除。"),
-            .init(id:caseID+"_"+nodeID+"_rumor",text:"依照街头传闻，先抓最可疑的人",explanation:"传闻没有与时间、工具、现场相互印证，不能开启攻击。")
+        return .init(question: nodeID == "compare" ? "哪一组证据，能排除看着相似的嫌疑，又能指出地方？" : "已经查实的这些，对得上谁？", choices:[
+            .init(id:id,text:correct,explanation:"几样证据各有来处，彼此对得上。记下了。"),
+            .init(id:caseID+"_"+nodeID+"_look",text:misleading,explanation:"长得像、干同一行，都不算证据。这一条划掉了。"),
+            .init(id:caseID+"_"+nodeID+"_rumor",text:"听街上的，先抓最可疑的那个",explanation:"传闻对不上时间、工具和现场，不能凭这个动手。")
         ],correctChoiceID:id)
     }
     public static func bounty(id: String) -> MPCChurchBounty? { all.first {$0.id == id} }

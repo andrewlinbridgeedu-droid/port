@@ -2599,15 +2599,15 @@ struct ChapterOneEncounterTestView: View {
     /// The intro's lines, seconds from `angel-intro` (drafts; edit here). 18.4–24.1 is the fight
     /// inside the ball of light, left wordless.
     private static let q30AngelIntroLines: [Q30AngelIntroLine] = [
-        .init(start: 0.6, end: 3.6, speaker: "瑟维安", text: "切断了外接，就以为切断了我？"),
-        .init(start: 3.6, end: 6.6, speaker: "瑟维安", text: "雾港的每一个名字，都签在我的册子上——包括你的。"),
-        .init(start: 6.6, end: 9.6, speaker: "瑟维安", text: "可惜你的名字，在你入港之前，就已经有人订下了。"),
-        .init(start: 9.6, end: 12.6, speaker: "瑟维安", text: "来吧，收件人。我把他交还给你。"),
+        .init(start: 0.6, end: 3.6, speaker: "瑟维安", text: "灯都灭了。你们以为，这样他们就自由了？"),
+        .init(start: 3.6, end: 6.6, speaker: "瑟维安", text: "雾港每一个没人要的名字，都是我签下的。包括你的。"),
+        .init(start: 6.6, end: 9.6, speaker: "瑟维安", text: "可你的名字，在你上岸之前，就已经有人订下了。"),
+        .init(start: 9.6, end: 12.6, speaker: "瑟维安", text: "来吧，收件人。他是你们的了。"),
         .init(start: 12.6, end: 14.4, speaker: "裂口深处的声音", text: "……归还。"),
         .init(start: 14.4, end: 16.6, speaker: nil, text: "天上亮起一盏孤灯。"),
-        .init(start: 16.6, end: 18.4, speaker: "伊莱娅", text: "到此为止。外面的那位，归我。"),
-        .init(start: 24.1, end: 26.1, speaker: "伊莱娅", text: "里面的私印，交给你们。"),
-        .init(start: 26.1, end: 28.5, speaker: "瑟维安", text: "没有主人……那就用我自己的名字，签完这一份。"),
+        .init(start: 16.6, end: 18.4, speaker: "伊莱娅", text: "到此为止。外面那位，归我。"),
+        .init(start: 24.1, end: 26.1, speaker: "伊莱娅", text: "里面的人，交给你们。"),
+        .init(start: 26.1, end: 28.5, speaker: "瑟维安", text: "没有人来领……那就用我自己的名字，签完这一份。"),
     ]
 
     /// Every Q30 attempt opens on the cutscene with the clock held, so hero, allies and boss stay
@@ -3532,23 +3532,40 @@ struct ChapterOneEncounterTestView: View {
         .frame(minHeight: 280)
     }
 
+    /// Two lines over the first seconds of each fight (2026-10-18 rewrite: every mission has its
+    /// own, said the way the people in it would say them).
     static func enemyPreludeLines(_ mission: Int) -> [String] {
         switch mission {
         case 1: return ["空壳守卫：已认领人员，不得离开保管区域。", "街区播报：无法说明来历的人，也会得到照看。"]
-        case 2: return ["退信间的低语：别送我回家。", "另一道残响：他们没有……领到我。"]
-        case 3: return ["旧犬项圈里的名字，与你记得的一致。", "邮务编号旁，还刻着一道陌生的委托号。"]
-        case 4: return ["同一只猎犬停在远处，喉间双焰渐亮。", "项圈里传来断续的召回信号。"]
-        case 5: return ["邮务执役者：退件尚未清零……", "邮务执役者：已送达。已送达。"]
+        case 2: return ["退信间的低语：别送我回家。", "另一道残响：妈妈……他们说你签了字。"]
+        case 3: return ["老猎犬嗅了嗅风。项圈上的名字，和你记得的一样。", "它不叫。它在核对你。"]
+        case 4: return ["老猎犬停在远处，喉间两团火慢慢亮起来。", "项圈里传来断断续续的哨声。"]
+        case 5: return ["邮差：退件还没清完……还没清完……", "邮差：已送达。已送达。"]
         case 6: return ["档案门卫：通行证有效。", "档案门卫：请由领回您的监护人申请查阅。"]
-        case 7: return ["空壳守卫：归属待填，请勿取走。", "空白牌背面，露出诊所领药编号。"]
-        case 8: return ["记忆蛭：那只杯子……你很熟悉。", "它借来的声音，正试探你的反应。"]
-        case 9: return ["书记员：重复报案，撤回原述。", "奥黛尔的寻人证词正在被覆盖。"]
-        case 10: return ["档案守卫：名单所列，均已领回。", "押运编号指向一户你不认识的家庭。"]
-        case 11: return ["门后的人：你从小就用这一只。", "茶杯底部却印着诊所的药柜编号。"]
-        case 12: return ["书记员：一名移出，一名补入。", "玛拉紧紧攥着旧通行证。"]
-        case 13: return ["背架录音：安置完成。等待调拨。", "洛克：后面……原本不是这一句。"]
-        case 14: return ["书记员：家庭归属已核定。", "伊恩的名牌后面，牵出细红线。"]
-        case 15: return ["维娅：没有这些家，他们今晚住在哪里？", "丝线仍在把陌生人编入家庭。"]
+        case 7: return ["空壳守卫：归属待填，请勿取走。", "空白牌背面，露出诊所的领药号。"]
+        case 8: return ["记忆蛭：这只杯子……你小时候就用它。", "它借来的声音，很像一个母亲。"]
+        case 9: return ["书记员：重复报案，撤回原述。", "奥黛尔的签名，正被一个一个改掉。"]
+        case 10: return ["档案守卫：名单所列，均已领回。", "你的名字后面，填着一个陌生的门牌。"]
+        case 11: return ["门后的人：你从小就用这一只。", "女人：吃了饭再走吧。"]
+        case 12: return ["书记员：移出一名，补入一名。", "玛拉攥着旧通行证，一言不发。"]
+        case 13: return ["洛克：别怕，安置好就能走。", "洛克：后面……原本不是这一句。"]
+        case 14: return ["书记员：家庭归属已核定。自愿。", "伊恩的名牌后面，牵出一根细红线。"]
+        case 15: return ["维娅：没有这些家，他们今晚住哪儿？", "屋里有个孩子在喊：妈妈。"]
+        case 16: return ["老猎犬看着你，没有扑上来。", "远处没有哨声。"]
+        case 17: return ["笔臂沙沙地写，一刻也不停。", "你抽走的那张，已经补上了。"]
+        case 18: return ["裁定卫：许可有效。", "纸上的日期，是三年前的冬天。"]
+        case 19: return ["翠焰执役者：床位已满，等待押运。", "床头的木牌上，名字还没擦干净。"]
+        case 20: return ["木匣里：咚、咚、咚。", "锤卫：货物完好。"]
+        case 21: return ["救援架：等待调拨。等待调拨。", "洛克：不是……这一句……"]
+        case 22: return ["维娅：只缺这一格。", "维娅：他晚上怕黑。"]
+        case 23: return ["裁定守备：旧许可有效，禁止更改。", "灯后面，有人在看。"]
+        case 24: return ["幽灵：没有人来领我……", "船舱里：奥黛尔还留着那只杯子吗？"]
+        case 25: return ["维娅：拆吧。", "红线自己缠了上来。"]
+        case 26: return ["锤卫：最后一趟。货物完好。", "车链在给它送力气。"]
+        case 27: return ["档案守卫：原档禁止调阅。", "地底很冷，你听得见自己的心跳。"]
+        case 28: return ["瑟维安：你拿到了纸，就以为能离开名字？", "远处的灯，一动不动。"]
+        case 29: return ["瑟维安：我还有自己的积蓄。", "钟环上的格子，一格一格亮起来。"]
+        case 30: return ["瑟维安：没有人来领我。我替他们找了主人。", "瑟维安：自由，是给有人在等的人的。"]
         default: return ["雾中的身影正注视着你。"]
         }
     }

@@ -570,6 +570,23 @@ extension MPCCityFaction {
         case .compacts: "工坊货场北巷"
         }
     }
+    /// What the leader did the night of the dock fire three years ago (2026-10-18 rewrite): each
+    /// one did some good and some harm, so neither striking nor guarding is the easy side.
+    public var leaderStory: String {
+        switch self {
+        case .neighbours: "三年前码头起火那夜，他带着码头的人挨家挨户敲门，背出来十一个人。也是他说，互助会的床先给会里的人。如今他腿脚不好了，每天早上还去码头口坐着，替没活干的人记名字。"
+        case .offices: "大火之后，是他连夜写出避难所的新章程：在册的人先进。他说规矩不公平，可没有规矩，那晚会死更多人。那份章程的草稿，他一直锁在抽屉里。"
+        case .compacts: "大火烧掉了他半个仓库。第二个月，他把剩下的一半改成工棚，按日结钱，不问来历。有人说他趁火压价，也有人说，那年冬天只有他的工棚管饭。"
+        }
+    }
+    /// One line after the leader is killed.
+    public var leaderEpitaph: String {
+        switch self {
+        case .neighbours: "码头口那张小凳子空了。"
+        case .offices: "抽屉里那份章程草稿，被人送进了档案馆。"
+        case .compacts: "那天工棚没有开工。"
+        }
+    }
 }
 
 extension MPCCityTrend {

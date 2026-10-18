@@ -26,6 +26,8 @@ struct ContentView: View {
     @Bindable var storefront: Storefront
     @Environment(\.scenePhase) private var scenePhase
     @State private var newspaperPresented = false
+    /// --review-cue=<ChapterOneTutorialCue> (DEBUG): shows one story page over the city.
+    @State private var reviewCue: ChapterOneTutorialCue?
     @State private var homeFocusID: String?
     @State private var homeFocusRevision = 0
     @State private var homeDestination: HomeDestination?
@@ -462,6 +464,17 @@ struct ContentView: View {
             try? await Task.sleep(for: .milliseconds(500))
             if value.hasPrefix("sheet:"), let sheet = AppSheet(rawValue: String(value.dropFirst(6))) { presentedSheet = sheet }
             else { homeDestination = .init(id: value) }
+        }
+        // Story review (2026-10-18 rewrite): --review-cue=<cue> plays one story page's pages.
+        .task {
+            guard let flag = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("--review-cue=") }),
+                  let cue = ChapterOneTutorialCue(rawValue: String(flag.dropFirst("--review-cue=".count))) else { return }
+            try? await Task.sleep(for: .milliseconds(1400))
+            newspaperPresented = false
+            reviewCue = cue
+        }
+        .overlay {
+            if let reviewCue { ChapterOneTutorialOverlay(cue: reviewCue) { self.reviewCue = nil } }
         }
         #endif
         .onReceive(NotificationCenter.default.publisher(for: .homeQuestFocus)) { event in

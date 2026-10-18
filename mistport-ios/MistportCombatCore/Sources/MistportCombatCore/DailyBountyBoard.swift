@@ -11,16 +11,16 @@ public struct MPCBountyNotice: Sendable, Equatable {
 public enum MPCBountyNoticeCatalog {
     public static func notice(for id: String) -> MPCBountyNotice? {
         switch id {
-        case "b01": return .init(crime: "在封锁线外按非法处决令杀害两人。", combat: "缺齿剑伏击：蓄势后打出约 2.5 倍重斩。", warning: "别在它举剑时交掉全部防御。")
-        case "b02": return .init(crime: "把仍活着的人反扣在背架上，冒充尸体运走。", combat: "金纹束缚：命中后追加两次持续伤害。", warning: "单次挡下攻击，也未必挡得住后续伤害。")
-        case "b03": return .init(crime: "以逆钟暗号袭击三艘退潮出港的船。", combat: "两道护航残影在场时，船长免受直接伤害；另有蓄力重击。", warning: "先清护航残影，别盲攻船长。")
-        case "b04": return .init(crime: "偷用真章倒签两份互斥遗嘱，抹掉合法继承顺序。", combat: "倒序覆写：若连续施放相同技能，反击升至约 2.5 倍。", warning: "交替出招，避免被它读出重复动作。")
-        case "b05": return .init(crime: "借量衣之名掳人，用赤丝在受害者清醒时勒紧。", combat: "赤丝缠缚：直接伤害后再追加三次持续伤害。", warning: "战斗拖久会被持续伤害耗尽。")
-        case "b06": return .init(crime: "熄灯押运活人，毁掉报警钟并持失窃军甲阻止逃离。", combat: "重甲防御与蓄力重击交替出现，重击约为普通攻击两倍。", warning: "注意防御回合，保留手段应对重击。")
-        case "b07": return .init(crime: "模仿求救声骗住户开门，致三人受伤。", combat: "喉铃突袭约 1.75 倍伤害；毒涎随后持续三次。", warning: "个头小，持续毒伤却足以拖垮准备不足的人。")
-        case "b08": return .init(crime: "盗用他人面孔与签名取款，并把本人锁进暗房。", combat: "借脸伪影掩护真身，短刺约为普通攻击 1.5 倍。", warning: "认准真身，别把技能浪费在伪影上。")
-        case "b09": return .init(crime: "吞毁已清偿的债据并攻击取证者；幕后驱使者仍待查。", combat: "铜背甲不断叠盾，裂甲重爪约为普通攻击两倍。", warning: "先破甲，再处理它的重爪。")
-        case "b10": return .init(crime: "篡改免费疗契，把治病代价转嫁给不相干的人。", combat: "绯帷重击约 1.8 倍；囊体最多三次为她转息疗伤。", warning: "先截断囊体，否则战斗会被拖长。")
+        case "b01": return .init(crime: "照一张早已撤销的处决令，在封锁线外杀了两个人。", combat: "缺齿剑伏击：蓄势后打出约 2.5 倍重斩。", warning: "它不动的时候最危险。举剑那一下，别把防御全交出去。")
+        case "b02": return .init(crime: "把还活着的人反扣在背架上，当成尸体运走。", combat: "金纹束缚：命中后再追加两次持续伤害。", warning: "挡下了第一下，未必挡得住后面那两下。")
+        case "b03": return .init(crime: "倒敲船钟作暗号，劫了三艘退潮出港的船。", combat: "两道护航残影在场时，船长不受直接伤害；另有蓄力重击。", warning: "先清护航残影，别对着船长白费力气。")
+        case "b04": return .init(crime: "偷用真章倒签两份遗嘱，让一家人为一张纸反目。", combat: "倒序覆写：若连续施放相同技能，反击升至约 2.5 倍。", warning: "交替出招。同一招连用两次，它就记住了。")
+        case "b05": return .init(crime: "借量衣把人带走，趁人还醒着，用赤丝勒紧。", combat: "赤丝缠缚：直接伤害后再追加三次持续伤害。", warning: "拖得越久，丝勒得越紧。")
+        case "b06": return .init(crime: "熄灯押运活人，砸了报警钟，穿着失窃军甲不许人下船。", combat: "重甲防御与蓄力重击交替出现，重击约为普通攻击两倍。", warning: "它举甲防御时先缓一缓，把手段留给重击。")
+        case "b07": return .init(crime: "学人求救，骗住户开门，已有三人受伤。", combat: "喉铃突袭约 1.75 倍伤害；毒涎随后持续三次。", warning: "个头不大，毒却能把没准备的人慢慢拖垮。")
+        case "b08": return .init(crime: "借别人的脸和签名取钱，把本人锁进暗房。", combat: "借脸伪影掩护真身，短刺约为普通攻击 1.5 倍。", warning: "认准真身，别把招式花在影子上。")
+        case "b09": return .init(crime: "专吃已还清的债据，咬伤取证的人；背后是谁在使唤它，还没查清。", combat: "铜背甲不断叠盾，裂甲重爪约为普通攻击两倍。", warning: "先破甲，再对付它的重爪。")
+        case "b10": return .init(crime: "篡改免费疗契，让不相干的人替病人折寿。", combat: "绯帷重击约 1.8 倍；囊体最多三次为她转息疗伤。", warning: "先截断囊体，不然她会一直回血，越拖越长。")
         default: return nil
         }
     }
