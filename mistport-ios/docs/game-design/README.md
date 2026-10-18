@@ -4,4 +4,6 @@
 
 [当前世界观连续性](chapter-one-30/WORLD_CONTINUITY.md)解释第一章人物与规则；更早的[故事圣经](../legacy/game-design-v0.5/STORY_BIBLE.md)仅作来源。[v0.5 三人回合制设计、程序员交接包与配置快照](../legacy/game-design-v0.5/README.md)已退出活跃目录；它们是历史审计资料，不是新功能开发依据。Swift 和 Unity 的实际运行配置以源码和打包资源核对。
 
+全作五章的总纲见[五章总纲](FIVE_CHAPTER_OUTLINE_20261018.md)。第二章《请勿想起》的 30 关骨架在 [chapter-two-30/STORY_30.md](chapter-two-30/STORY_30.md)，目前是待认可的草稿。
+
 旧入口 `CURRENT_PLAN_20260916.md` 仅保留跳转，避免历史链接失效。新规划与状态更新写入 `chapter-one-30/` 和相应开发记录，不再往旧入口追加日期段落。
