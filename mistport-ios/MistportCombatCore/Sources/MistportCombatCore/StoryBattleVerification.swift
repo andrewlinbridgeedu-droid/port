@@ -45,7 +45,7 @@ public enum MPCStageLoadout {
         if n >= 15 { l.skillLevels[.absurdFinale] = 2 }
         return l
     }
-    /// The tower and church hand before Q`n`: 抢拍 speeds 悔笔's shield and 燃镜's six hits, 错步 cuts
+    /// The tower and church hand before Q`n`: 抢拍 speeds 重绘's shield and 燃镜's six hits, 错步 cuts
     /// through three minions (2026-10-15: the steadiest arrangement on the calibrated floors).
     public static func towerHand(before n: Int) -> [FoolSkillID] {
         n < 10 ? [.stolenTempo, .sidestepStrike, .backstageChange] : [.stolenTempo, .backstageChange, .sidestepStrike, .mirrorBarrage]

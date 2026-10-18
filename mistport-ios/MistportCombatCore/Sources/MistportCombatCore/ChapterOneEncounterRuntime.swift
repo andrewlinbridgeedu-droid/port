@@ -1040,7 +1040,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     private var emeraldPoisonNextTick: TimeInterval?
     private var emeraldPoisonSourceID: String?
 
-    /// 悔笔's cleanse, worst first: thins the emerald fog back to its first concentration
+    /// 重绘's cleanse, worst first: thins the emerald fog back to its first concentration
     /// (the fog itself lasts the battle), then the story core's released poison, then the
     /// enemy damage-over-time with the most damage left. Returns what was cleansed.
     private mutating func cleanseOnePlayerDamageOverTime() -> String? {
@@ -1519,7 +1519,7 @@ public struct MPCChapterOneEncounterSession: Equatable, Sendable {
     private var readySkillHeldActions: [FoolSkillID: Int]
     private var healingPenaltyBP: Int
     private var previousActionCategory: MPCPlayerActionCategory?
-    /// Set by 悔笔 with the leech vial: the next 伪证 marks last 0.5 s longer per stack.
+    /// Set by 重绘 with the leech vial: the next 伪证 marks last 0.5 s longer per stack.
     private var enhancedSetupStacks: Int
     private var borrowedBellTriggeredRound: Int?
     private var unreliableNarratorTriggeredRound: Int?
@@ -3933,7 +3933,7 @@ extension MPCChapterOneEncounterSession {
                 enhancedSetupStacks = max(enhancedSetupStacks, 1)
             }
             // The App shows 净化 only for a real cleanse; this line was the manual path's (2026-10-15).
-            triggeredEffects.append("悔笔：" + (cleansed.isEmpty ? "无可净化" : "划去" + cleansed.joined(separator: "、")))
+            triggeredEffects.append("重绘：" + (cleansed.isEmpty ? "无可净化" : "划去" + cleansed.joined(separator: "、")))
         case .delayedSignature:
             targets = [result(orderedDamage(skill, to: id, coefficient: 2_000))]
             orderedPending.removeAll { $0.target == id && $0.skill == .delayedSignature }
@@ -4104,7 +4104,7 @@ extension MPCChapterOneEncounterSession {
         }
         add("counter", "反击", "arrow.clockwise", counter.isActive(at: now), count: max(0, Int(ceil((counter.activeUntil ?? now) - now))), unit: "秒")
         add("haste", "急板", "hourglass", now < orderedHasteUntil, count: max(0, Int(ceil(orderedHasteUntil - now))), unit: "秒")
-        add("ordered-shield", "悔笔护盾", "shield.fill", orderedShield > 0 && now < orderedShieldUntil, count: orderedShield, unit: "护盾值")
+        add("ordered-shield", "重绘护盾", "shield.fill", orderedShield > 0 && now < orderedShieldUntil, count: orderedShield, unit: "护盾值")
         add("ordered-ward", "突转减伤", "shield.lefthalf.filled", now < orderedWardUntil, count: 1, unit: "次")
         add("shield", "护盾", "shield.fill", playerShield > 0, count: playerShield, unit: "护盾值")
         let maskLive = (ownedManualMaskExpiresAt.map { now < $0 } ?? true) && (timedMasqueradeExpiresAt.map { now < $0 } ?? true)

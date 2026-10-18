@@ -521,7 +521,7 @@ struct ChapterOneConclusionView: View {
                                 Text(result.summary)
                                 Text("最终目标：\(result.finalTarget)")
                             }
-                            Text("训练奖励 · 新技能「悔笔」")
+                            Text("训练奖励 · 新技能「重绘」")
                                 .font(.subheadline.bold())
                                 .foregroundStyle(.yellow)
                             Button("完成训练并铭刻技能") {

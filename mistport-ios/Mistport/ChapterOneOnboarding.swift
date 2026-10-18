@@ -262,7 +262,7 @@ enum ChapterOneTutorialCue: String, CaseIterable {
         case .q12Prelude: "两个书记员交替封存、校正和重击。校正会抹掉你的护盾。"
         case .q12Aftermath: "你习得『突转』，下一战可以编入序列。"
         case .q13Prelude: "寄忆核心在改写他的命令。打掉核心，切断这里的控制，留他活着。"
-        case .q13Aftermath: "你从两份命令的回声里习得终极技能『我名无人』，每场战斗可以手动放一次。"
+        case .q13Aftermath: "你从两份命令的回声里习得终极技能『我叫无人』，每场战斗可以手动放一次。"
         case .q14Prelude: "每个目标的误认和错位分开记。先决定控制谁，再把后面的牌接到同一个目标上。"
         case .q15Prelude: "两枚寄忆核心轮流把记录写回去。先切断支援，再制住她。她要活着。"
         case .q15Aftermath: "先回主城整理物证。后面的调查，要等对应关卡开放。"

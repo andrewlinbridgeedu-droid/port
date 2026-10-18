@@ -68,8 +68,8 @@ struct ChapterOneContentTests {
     @Test("Ten distinct ordinary cards plus separate mask and ultimate")
     func orderedCardNames() {
         #expect(MPCChapterOneCatalog.skills.map(\.name) == [
-            "侧身刺", "污名记", "急板", "燃镜", "悔笔", "突转",
-            "错认喜剧", "双星追猎", "归谬法", "附言", "假面", "我名无人"
+            "侧身刺", "污名记", "急板", "燃镜", "重绘", "突转",
+            "错认喜剧", "双星追猎", "归谬法", "附言", "假面", "我叫无人"
         ])
         // Every card says where its name comes from (2026-10-18).
         #expect(MPCChapterOneCatalog.skills.allSatisfy { !$0.origin.isEmpty })

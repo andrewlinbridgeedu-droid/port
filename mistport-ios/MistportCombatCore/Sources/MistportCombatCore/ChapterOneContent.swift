@@ -27,18 +27,18 @@ public struct MPCSkillContent: Identifiable, Equatable, Sendable {
     public var origin: String { Self.origins[id] ?? "" }
 
     static let origins: [FoolSkillID: String] = [
-        .sidestepStrike: "金粉城剑谱《左手之书》里的侧身刺：侧步让开对手的剑，顺势刺进他没防着的那一侧。",
+        .sidestepStrike: "菲奥拉剑术大师卡洛维的《左手之书》里的侧身刺：侧步让开对手的剑，顺势刺进他没防着的那一侧。",
         .fabricatedEvidence: "大希帝国的监察官每五年重造一次公民名册，可以在某人的名字旁边加一个记号。从此这个名字就带着污点：不能做官，也不能作证。",
-        .stolenTempo: "金粉城的乐谱上，标着“急板”的地方，演奏的人要尽可能快。",
+        .stolenTempo: "菲奥拉的乐谱上，标着“急板”的地方，演奏的人要尽可能快。",
         .mirrorBarrage: "叙兰城的学者欧米隆，在大希舰队围城时让城头的士兵举起磨亮的铜镜，把阳光聚到船帆上，烧了半支舰队。",
-        .backstageChange: "金粉城画家行会的说法：在画错的地方重新画过，叫悔笔。几百年后颜料变薄，底下那一笔会重新透出来。",
+        .backstageChange: "菲奥拉画家行会的说法：在画错的地方重新画过，叫重绘。几百年后颜料变薄，底下那一笔会重新透出来。",
         .turnTheTables: "雅隆城的哲人塞隆在《论剧》里说：好戏都有一处突转，形势在一瞬间翻过来。",
         .identityDisplacement: "大希喜剧作家梅洛开创的错认喜剧：孪生兄弟、主仆互换、认错人，一笑到底。代表作是《孪生的卢修》。",
         .mirrorPursuit: "城邦神话里的追猎兄弟利恩与利安，一个会死，一个不会。哥哥死后，弟弟求神分出一半不死，兄弟俩一起化作天上的追猎双星。",
         .absurdFinale: "雅隆城的辩士梅格在广场上教人：先顺着对方说下去，说到荒谬为止，对方就不攻自破。",
         .delayedSignature: "大希人写信，签完名还要在底下补几句真心话，叫附言。大希俗话说：“正文写给体面，附言写给人。”",
         .maskedWhisper: "大希剧场的演员戴面具上台。大希语里，“面具”这个词后来也拿来指“人”。",
-        .namelessStage: "盲诗人卡赛的史诗《归航记》：英雄奥兰被独眼巨人困在山洞里，骗巨人说“我叫‘无人’”。巨人被刺瞎后大喊“无人害我”，没有一个同伴来帮他。",
+        .namelessStage: "盲诗人卡赛的史诗《归航之歌》：英雄奥兰被独眼巨人困在山洞里，骗巨人说“我叫‘无人’”。巨人被刺瞎后大喊“无人害我”，没有一个同伴来帮他。",
     ]
 }
 
@@ -360,22 +360,22 @@ public enum MPCChapterOneCatalog {
         .init(id: .fabricatedEvidence, name: "污名记", summary: "20%伤害，施加4层误认，持续4秒。接错认喜剧可转换错位。施法0.55秒，收招0.35秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["4层误认", "起手"]),
         .init(id: .stolenTempo, name: "急板", summary: "10%伤害；施法与收招速度提高100%，持续3.2秒。冷却不变，燃镜频率加倍。施法0.45秒，收招0.25秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["加速", "燃镜搭档"]),
         .init(id: .mirrorBarrage, name: "燃镜", summary: "持续1.8秒，每0.6秒打出36%伤害并追加1层误认（4秒）。急板时每0.3秒一发，共6发。收招0.3秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["多段", "加速增弹"]),
-        .init(id: .backstageChange, name: "悔笔", summary: "20%伤害，净化一项持续伤害，获得240护盾4秒。延长仍生效的急板和目标误认、错位、破甲各1.3秒。施法0.65秒，收招0.3秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["续时", "净化护盾"]),
+        .init(id: .backstageChange, name: "重绘", summary: "20%伤害，净化一项持续伤害，获得240护盾4秒。延长仍生效的急板和目标误认、错位、破甲各1.3秒。施法0.65秒，收招0.3秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["续时", "净化护盾"]),
         .init(id: .turnTheTables, name: "突转", summary: "驱散目标礼盾或强化：成功造成275%伤害并施加2错位与70%破甲4秒；否则35%伤害、2误认4秒。下次直接受击减伤60%，4秒内有效。施法0.65秒，收招0.4秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["驱散反制", "错位"]),
         .init(id: .identityDisplacement, name: "错认喜剧", summary: "消耗4误认，造成110%伤害并施加2错位与70%破甲4秒，目标下次起手延迟一拍（在途攻击照常命中）；不足时仅30%伤害、追加1误认。施法0.95秒，收招0.4秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["转换", "破甲"]),
         .init(id: .mirrorPursuit, name: "双星追猎", summary: "两段各40%伤害；起手与命中时均有错位，每段提升为180%，结束消耗1错位。施法1.15秒，收招0.4秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["两段", "错位兑现"]),
         .init(id: .absurdFinale, name: "归谬法", summary: "60%伤害；命中时仍有错位，追加500%与80%穿甲，错位期间每次技能命中再加80%（最多3次），消耗错位。施法1.8秒，收招0.55秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["重击", "短窗终结"]),
         .init(id: .delayedSignature, name: "附言", summary: "20%伤害，2.6秒后引爆：50%＋期间每次有效技能命中70%，最多8次；溅射2人半伤。普攻、自身附言与爆炸不计；目标倒下取消。施法0.55秒，收招0.25秒。CD 7秒。", unlockStage: .prologue, isUltimate: false, tags: ["延时爆炸", "多段搭档"]),
         .init(id: .maskedWhisper, name: "假面", summary: "已转为独立无主假面遗落物，不占普通技能槽。", unlockStage: .investigationOne, isUltimate: false, tags: ["遗落物"]),
-        .init(id: .namelessStage, name: "我名无人", summary: "每场一次：所有敌人获得4层误认，持续4秒，独立于四格编排，可接错认喜剧转换。", unlockStage: .investigationFour, isUltimate: true, tags: ["终极", "全体误认"])
+        .init(id: .namelessStage, name: "我叫无人", summary: "每场一次：所有敌人获得4层误认，持续4秒，独立于四格编排，可接错认喜剧转换。", unlockStage: .investigationFour, isUltimate: true, tags: ["终极", "全体误认"])
     ]
 
     public static let combos: [MPCComboContent] = [
         .init(id: "O01", name: "急板终曲", sequence: "急板 → 燃镜 → 错认喜剧 → 归谬法", purpose: "六发燃镜叠满误认，在错位窗口结束前终结"),
         .init(id: "O02", name: "第五幕", sequence: "污名记 → 错认喜剧 → 双星追猎 → 归谬法", purpose: "双星两次兑现错位，并增加归谬法的铺垫命中"),
-        .init(id: "O03", name: "写在信末", sequence: "急板 → 附言 → 燃镜 → 悔笔", purpose: "先附言再燃镜，把多次有效命中记入延时爆炸"),
-        .init(id: "O04", name: "命运突转", sequence: "突转 → 双星追猎 → 归谬法 → 悔笔", purpose: "敌人有礼盾或强化时，驱散直接建立错位"),
-        .init(id: "O05", name: "快板过场", sequence: "急板 → 侧身刺 → 悔笔 → 燃镜", purpose: "加速群攻，续时保持燃镜频率")
+        .init(id: "O03", name: "写在信末", sequence: "急板 → 附言 → 燃镜 → 重绘", purpose: "先附言再燃镜，把多次有效命中记入延时爆炸"),
+        .init(id: "O04", name: "命运突转", sequence: "突转 → 双星追猎 → 归谬法 → 重绘", purpose: "敌人有礼盾或强化时，驱散直接建立错位"),
+        .init(id: "O05", name: "快板过场", sequence: "急板 → 侧身刺 → 重绘 → 燃镜", purpose: "加速群攻，续时保持燃镜频率")
     ]
 
     public static let passives: [MPCPassiveContent] = [
@@ -401,7 +401,7 @@ public enum MPCChapterOneCatalog {
         relic("relic_encore_bell", "不肯落幕的铃", .story, "手动打断翠焰亡灵蓄力，使本次攻击延后3秒；返场时该次攻击伤害提高50%。", "延后的攻击不会消失，返场时会以更高伤害归还。", "返场延后", "旧邮务间按取回条交出的异常物。铃声不能免除欠下的攻击，只能让它晚三秒落下。", .investigationOne),
         relic("relic_cracked_monocle", "偏差透镜", .common, "攻击4层误认目标时获得20%穿甲。攻击0层误认目标时伤害降低8%。", "必须在目标状态之间做取舍。", "误认兑现", "镜片里总有一个稍晚眨眼的人。", .investigationOne),
         relic("relic_late_second_watch", "迟滞铜片", .common, "成功应对已公布的强攻或避开攻击后，下回合额外执行1张普通技能；每场最多2次。", "只奖励对敌方意图的准确判断。", "意图应对", "它永远比归一系统慢半拍。", .investigationOne),
-        relic("relic_memory_leech_vial", "记忆蛭标本", .rare, "悔笔再净化一项持续伤害，下一张铺垫技能再多1层误认。", "首次触发损失5%当前生命。", "净化连段", "瓶中生物记得每位持有者的噩梦。", .investigationTwo),
+        relic("relic_memory_leech_vial", "记忆蛭标本", .rare, "重绘再净化一项持续伤害，下一张铺垫技能再多1层误认。", "首次触发损失5%当前生命。", "净化连段", "瓶中生物记得每位持有者的噩梦。", .investigationTwo),
         relic("relic_borrowed_bell", "借声铜铃", .common, "AI第一次造成破绽或降低防御时，获得10%最大生命护盾。", "同一轮不能重复触发。", "队伍协同", "铜铃从不发出自己的声音。", .investigationTwo),
         relic("relic_thirteenth_record", "预警录片", .common, "每3回合揭示额外敌方意图。揭示回合玩家伤害降低8%。", "信息越多，行动越需要克制。", "观察控制", "录片上有一声不属于任何人。", .investigationThree),
         relic("relic_clock_chaser_spur", "追猎者断刺", .rare, "完成一轮普通技能而未使用归谬法时，下一轮第一张伤害技能提高25%。", "只有坚持循环才会生效。", "循环奖励", "它来自一位追逐错误的人。", .investigationThree),
@@ -421,7 +421,7 @@ public enum MPCChapterOneCatalog {
         relic("relic_additional_testimony", "追加证词", .story, "每个循环第一次使用铺垫技能后，下一张攻击技能额外重复一次，重复效果为50%。", "只在铺垫确实转入攻击时生效。", "循环追加", "被删掉的证词从页边重新长了回来。", .investigationFour),
         relic("relic_errata_clip", "错页夹", .rare, "第1格与第2格属于不同技能类别时，第2格技能效果提高15%。", "战前顺序必须有意制造类别差异。", "首二格编排", "夹住的不是错页，而是两种互相矛盾的答案。", .investigationFour),
         relic("relic_returning_salt", "归航盐片", .common, "生命首次低于40%时恢复6%最大生命；下一次行动延迟无效。", "每场只承认第一次濒危。", "潮门续航", "盐片里仍有一条船没有驶回港口。", .investigationFour),
-        relic("relic_nameless_seal", "无主印章", .story, "装备后，我名无人对全体敌人施加2层误认；我名无人后，下一次满足原有4层条件的成功错认喜剧不消耗误认，成功使用后恢复正常。", "用较少的初始误认换取一次不消耗误认的转换；条件不足时不消耗这次机会。", "终极分支", "没有主人承认的印章无法制造完整身份，却能留下不被转换抹去的残余证明。", .investigationFour)
+        relic("relic_nameless_seal", "无主印章", .story, "装备后，我叫无人对全体敌人施加2层误认；我叫无人后，下一次满足原有4层条件的成功错认喜剧不消耗误认，成功使用后恢复正常。", "用较少的初始误认换取一次不消耗误认的转换；条件不足时不消耗这次机会。", "终极分支", "没有主人承认的印章无法制造完整身份，却能留下不被转换抹去的残余证明。", .investigationFour)
     ]
 
     public static let items: [MPCItemContent] = [
