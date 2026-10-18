@@ -206,6 +206,8 @@ public struct MPCCityTrendSnapshot: Codable, Equatable, Sendable {
     public let yours: [String: Int]
     public let results: [StageResult]
     public let shocks: [MPCCityTrendShock]
+    /// The leader exposed on day 21 and how the plot stands (nil before, or when no side led enough).
+    public var plot: MPCCityTrendWorld.Plot? = nil
 
     public func share(_ side: MPCCityFaction, of points: [String: Double]? = nil) -> Double {
         let points = points ?? total
@@ -230,83 +232,215 @@ public struct MPCCityTrendSnapshot: Codable, Equatable, Sendable {
     }
 }
 
+/// The city stepped one day at a time (2026-10-17): one engine for the single-player world, the
+/// shared server (which feeds it every account's points) and the outcome explorer
+/// (tools/city-trend-sim). Days are added in order; nothing is recomputed or undone.
+public struct MPCCityTrendWorld: Codable, Equatable, Sendable {
+    /// Late in the chapter the side out in front shows its leader, who can be killed on the
+    /// following days. Candidate rules after WORLD_CAMPAIGN_CORE_RACE_SPEC_20260927: one try per
+    /// account, and a death needs `killMargin` more successful assassinations than successful guards.
+    public struct Plot: Codable, Equatable, Sendable {
+        /// What a death does to its side: the side falls apart, or the city rallies round it.
+        public enum Aftermath: String, Codable, Sendable { case collapse, martyr }
+        public let target: MPCCityFaction
+        public fileprivate(set) var tried: Set<String> = []
+        public fileprivate(set) var struck = 0
+        public fileprivate(set) var held = 0
+        public fileprivate(set) var killedDay: Int?
+        public fileprivate(set) var aftermath: Aftermath?
+        /// Tries taken on the day in progress, per role (each capped at `triesPerDay`).
+        fileprivate var triesDay = 0
+        fileprivate var assassinsToday = 0
+        fileprivate var guardsToday = 0
+        public var net: Int { struck - held }
+    }
+    public static let plotDays = 21...27
+    /// Seats a day for assassins and for guards (like the 9-27 core: a few seats, not everyone).
+    /// The attack has one more: it picks the moment (2026-10-17, tools/city-trend-sim: with two
+    /// each, a 70:30 majority kept its workshop in 99.5% of worlds).
+    public static let assassinSeats = 3
+    public static let guardSeats = 2
+    public static let killMargin = 4
+    /// The lead over the second side (share of the chapter so far) that draws a plot on day 21.
+    public static let plotLead = 0.03
+    /// Candidate tuning (swept with tools/city-trend-sim): the simulated crowd's tries a day and
+    /// how a death moves its side (collapse for the rest of the chapter, or a three-day rally).
+    nonisolated(unsafe) public static var crowdTries = 2.0
+    nonisolated(unsafe) public static var collapseChance = 0.6
+
+    public let simulation: MPCCityTrendSimulation
+    /// Whether the simulated crowd also plots and guards (single player); the shared server
+    /// leaves that to real accounts.
+    public let crowdPlots: Bool
+    public private(set) var daily: [[String: Double]] = []
+    public private(set) var shocks: [MPCCityTrendShock] = []
+    public private(set) var plot: Plot?
+    public var day: Int { daily.count }
+
+    public init(simulation: MPCCityTrendSimulation, crowdPlots: Bool = true) {
+        self.simulation = simulation; self.crowdPlots = crowdPlots
+    }
+
+    /// One account tries to kill (assassin) or to guard the exposed leader on the day in
+    /// progress. Once per account; returns whether the try was taken.
+    @discardableResult
+    public mutating func attempt(account: String, assassin: Bool, success: Bool) -> Bool {
+        let today = day + 1
+        guard var plot, plot.killedDay == nil, Self.plotDays.contains(today), !plot.tried.contains(account) else { return false }
+        if plot.triesDay != today { plot.triesDay = today; plot.assassinsToday = 0; plot.guardsToday = 0 }
+        guard assassin ? plot.assassinsToday < Self.assassinSeats : plot.guardsToday < Self.guardSeats else { return false }
+        if assassin { plot.assassinsToday += 1 } else { plot.guardsToday += 1 }
+        plot.tried.insert(account)
+        if success { if assassin { plot.struck += 1 } else { plot.held += 1 } }
+        self.plot = plot
+        return true
+    }
+
+    /// Adds the next day: the crowd's points plus the players' (already capped by their ledgers).
+    public mutating func advance(players: [MPCCityFaction: Double] = [:]) {
+        let sides = MPCCityFaction.allCases
+        let d = day + 1
+        var total: [MPCCityFaction: Double] = [:]
+        for day in daily { for side in sides { total[side, default: 0] += day[side.rawValue] ?? 0 } }
+        let totalSum = total.values.reduce(0, +)
+        if d == Self.plotDays.lowerBound, plot == nil, totalSum > 0 {
+            let order = sides.sorted { (total[$0] ?? 0) > (total[$1] ?? 0) }
+            if ((total[order[0]] ?? 0) - (total[order[1]] ?? 0)) / totalSum >= Self.plotLead { plot = Plot(target: order[0]) }
+        }
+        var recent: [MPCCityFaction: Double] = [:]
+        for day in daily.suffix(3) { for side in sides { recent[side, default: 0] += day[side.rawValue] ?? 0 } }
+        let recentSum = recent.values.reduce(0, +)
+        var shocked: MPCCityFaction?
+        if let stage = MPCCityTrendStage.stage(day: d), d == simulation.shockDay(stage) {
+            // Half the time the side in front draws the trouble; otherwise anyone.
+            let leader = sides.max { (total[$0] ?? 0) < (total[$1] ?? 0) }!
+            let pick = simulation.unit(stage.rawValue, 2) < 0.5 ? leader : sides[Int(simulation.unit(stage.rawValue, 3) * 3) % 3]
+            shocked = pick
+            shocks.append(.init(day: d, side: pick, news: MPCCityTrend.shockNews(stage, pick)))
+        }
+        // A death moves its side: it falls apart for the rest of the chapter, or the city rallies round it for three days.
+        func afterDeath(_ side: MPCCityFaction) -> Double {
+            guard let plot, plot.target == side, let killed = plot.killedDay, d > killed else { return 1 }
+            return plot.aftermath == .collapse ? 0.55 : (d <= killed + 3 ? 1.4 : 1)
+        }
+        let tilt = Dictionary(uniqueKeysWithValues: sides.enumerated().map { ($1, 0.85 + 0.3 * simulation.unit(0, $0)) })
+        var weights: [MPCCityFaction: Double] = [:]
+        for (i, side) in sides.enumerated() {
+            let momentum = recentSum > 0 ? (recent[side] ?? 0) / recentSum : 1.0 / 3
+            let share = totalSum > 0 ? (total[side] ?? 0) / totalSum : 1.0 / 3
+            let backlash = max(0, share - MPCCityTrendSimulation.backlashShare) * 2.2
+            let swing = MPCCityTrendSimulation.noise
+            let noise = 1 - swing / 2 + swing * simulation.unit(d, i, 7)
+            let mood = MPCCityTrendStage.stage(day: d).map {
+                1 - MPCCityTrendSimulation.stageLean + 2 * MPCCityTrendSimulation.stageLean * simulation.unit($0.rawValue, i, 5)
+            } ?? 1
+            weights[side] = tilt[side]! * mood * (1 + MPCCityTrendSimulation.momentum * (momentum - 1.0 / 3))
+                * max(0.15, 1 - backlash) * noise * (shocked == side ? 0.45 : 1) * afterDeath(side)
+        }
+        let weightSum = weights.values.reduce(0, +)
+        var today: [String: Double] = [:]
+        for side in sides {
+            let crowd = d < MPCNeighborCatalog.firstDay ? 0 : MPCCityTrendSimulation.dailyVolume * weights[side]! / weightSum
+            // A shock undoes half of that side's day; after a death its people's work counts half
+            // (the side falls apart) or a fifth more (the city rallies round it).
+            let death = afterDeath(side)
+            let own = (players[side] ?? 0) * (shocked == side ? 0.5 : 1) * (death < 1 ? 0.5 : death > 1 ? 1.2 : 1)
+            today[side.rawValue] = crowd + own
+        }
+        daily.append(today)
+        if var plot, plot.killedDay == nil, Self.plotDays.contains(d) {
+            if crowdPlots {
+                // The other players simulated: tries split by how the city leans against or for the target.
+                let s = totalSum > 0 ? (total[plot.target] ?? 0) / totalSum : 1.0 / 3
+                for k in 0..<Int(Self.crowdTries.rounded()) {
+                    if simulation.unit(d, k, 41) < 0.8 * (1 - s) { plot.struck += 1 }
+                    if simulation.unit(d, k, 43) < 0.8 * s { plot.held += 1 }
+                }
+            }
+            if plot.net >= Self.killMargin {
+                plot.killedDay = d
+                plot.aftermath = simulation.unit(plot.target.rawValue.count, 47) < Self.collapseChance ? .collapse : .martyr
+            }
+            self.plot = plot
+        }
+    }
+
+    func points(_ days: ClosedRange<Int>) -> [MPCCityFaction: Double] {
+        var out: [MPCCityFaction: Double] = [:]
+        for d in days where d >= 1 && d <= daily.count {
+            for side in MPCCityFaction.allCases { out[side, default: 0] += daily[d - 1][side.rawValue] ?? 0 }
+        }
+        return out
+    }
+    /// A stage's winner once the day after its last has begun (or the chapter is through).
+    func result(_ stage: MPCCityTrendStage) -> MPCCityTrendSnapshot.StageResult? {
+        guard daily.count >= stage.days.upperBound else { return nil }
+        let points = points(stage.days)
+        let winner = MPCCityFaction.allCases.max { a, b in
+            (points[a] ?? 0) != (points[b] ?? 0) ? (points[a] ?? 0) < (points[b] ?? 0)
+                : simulation.unit(stage.rawValue, a.hashValueStable) > simulation.unit(stage.rawValue, b.hashValueStable)
+        }!
+        return .init(stage: stage, winner: winner, shares: MPCCityTrend.shares(points))
+    }
+
+    /// How the newspaper sees the city on `day` (this world advanced through it).
+    public func snapshot(day: Int, yours: MPCCityTrendLedger?, source: MPCCityTrendSnapshot.Source = .simulated) -> MPCCityTrendSnapshot {
+        let current = MPCCityTrendStage.stage(day: day)
+        return .init(day: day, source: source,
+                     total: MPCCityTrend.keyed(points(1...max(1, day))),
+                     week: MPCCityTrend.keyed(points(max(1, day - 6)...max(1, day))),
+                     lastWeek: day > 7 ? MPCCityTrend.keyed(points(max(1, day - 13)...(day - 7))) : [:],
+                     stage: current.map { MPCCityTrend.keyed(points($0.days.lowerBound...day)) } ?? [:],
+                     yours: (yours?.points(in: max(1, day - 6)...max(1, day)) ?? [:]).reduce(into: [:]) { $0[$1.key.rawValue] = $1.value },
+                     // A stage is settled once its last day has passed.
+                     results: MPCCityTrendStage.allCases.filter { $0.days.upperBound < day }.compactMap(result),
+                     shocks: shocks.filter { $0.day <= day },
+                     plot: plot)
+    }
+
+    /// The chapter's end, once day 28 is through: the world chapter two opens in.
+    public var ending: MPCCityTrendEnding? {
+        guard daily.count >= MPCCityTrendStage.workshop.days.upperBound else { return nil }
+        let total = points(1...daily.count)
+        return .init(stages: MPCCityTrendStage.allCases.map { result($0)!.winner },
+                     dominant: MPCCityFaction.allCases.max { (total[$0] ?? 0) < (total[$1] ?? 0) }!,
+                     plotTarget: plot?.target, killed: plot?.killedDay != nil, aftermath: plot?.aftermath)
+    }
+}
+
+/// The world chapter one ends in: who took each stage (the last decides the workshop), who
+/// leads the city, and whether the leader exposed on day 21 was killed, and how it fell out.
+public struct MPCCityTrendEnding: Codable, Hashable, Sendable {
+    public let stages: [MPCCityFaction]
+    public let dominant: MPCCityFaction
+    public let plotTarget: MPCCityFaction?
+    public let killed: Bool
+    public let aftermath: MPCCityTrendWorld.Plot.Aftermath?
+    public var workshop: MPCCityFaction { stages[3] }
+    public var summary: String {
+        let plot: String = plotTarget.map { side in
+            killed ? "\(side.name)领头人遇刺身亡（\(aftermath == .collapse ? "树倒猢狲散" : "全城为其举哀")）" : "\(side.name)领头人遇刺未死"
+        } ?? "无人露面遇刺"
+        return stages.map(\.name).joined(separator: "→") + " · 工坊归\(workshop.name) · \(dominant.name)主导 · " + plot
+    }
+}
+
 public enum MPCCityTrend {
     /// The city on `day` from this account's receipts and the simulated crowd (no server yet).
     public static func snapshot(day: Int, ledger: MPCCityTrendLedger, simulation: MPCCityTrendSimulation) -> MPCCityTrendSnapshot {
-        let sides = MPCCityFaction.allCases
-        var daily: [[MPCCityFaction: Double]] = []
-        var total: [MPCCityFaction: Double] = [:]
-        var shocks: [MPCCityTrendShock] = []
-        var results: [MPCCityTrendSnapshot.StageResult] = []
-        // A small, seeded lean the crowd starts with, so every world opens a little differently.
-        let tilt = Dictionary(uniqueKeysWithValues: sides.enumerated().map { ($1, 0.85 + 0.3 * simulation.unit(0, $0)) })
+        var world = MPCCityTrendWorld(simulation: simulation)
         if day >= 1 {
             for d in 1...day {
-                let recent = daily.suffix(3).reduce(into: [MPCCityFaction: Double]()) { acc, day in
-                    for (k, v) in day { acc[k, default: 0] += v }
-                }
-                let recentSum = recent.values.reduce(0, +), totalSum = total.values.reduce(0, +)
-                var shocked: MPCCityFaction?
-                if let stage = MPCCityTrendStage.stage(day: d), d == simulation.shockDay(stage) {
-                    // Half the time the side in front draws the trouble; otherwise anyone.
-                    let leader = sides.max { (total[$0] ?? 0) < (total[$1] ?? 0) }!
-                    let pick = simulation.unit(stage.rawValue, 2) < 0.5 ? leader : sides[Int(simulation.unit(stage.rawValue, 3) * 3) % 3]
-                    shocked = pick
-                    shocks.append(.init(day: d, side: pick, news: shockNews(stage, pick)))
-                }
-                var weights: [MPCCityFaction: Double] = [:]
-                for (i, side) in sides.enumerated() {
-                    let momentum = recentSum > 0 ? (recent[side] ?? 0) / recentSum : 1.0 / 3
-                    let share = totalSum > 0 ? (total[side] ?? 0) / totalSum : 1.0 / 3
-                    let backlash = max(0, share - MPCCityTrendSimulation.backlashShare) * 2.2
-                    let swing = MPCCityTrendSimulation.noise
-                    let noise = 1 - swing / 2 + swing * simulation.unit(d, i, 7)
-                    let follow = MPCCityTrendSimulation.momentum
-                    let mood = MPCCityTrendStage.stage(day: d).map {
-                        1 - MPCCityTrendSimulation.stageLean + 2 * MPCCityTrendSimulation.stageLean * simulation.unit($0.rawValue, i, 5)
-                    } ?? 1
-                    weights[side] = tilt[side]! * mood * (1 + follow * (momentum - 1.0 / 3)) * max(0.15, 1 - backlash)
-                        * noise * (shocked == side ? 0.45 : 1)
-                }
-                let weightSum = weights.values.reduce(0, +)
-                let yours = ledger.points(on: d)
-                var today: [MPCCityFaction: Double] = [:]
-                for side in sides {
-                    let crowd = d < MPCNeighborCatalog.firstDay ? 0 : MPCCityTrendSimulation.dailyVolume * weights[side]! / weightSum
-                    today[side] = crowd + Double(yours[side] ?? 0)
-                    total[side, default: 0] += today[side]!
-                }
-                daily.append(today)
+                world.advance(players: ledger.points(on: d).reduce(into: [:]) { $0[$1.key] = Double($1.value) })
             }
         }
-        // A stage is settled once its last day has passed.
-        for stage in MPCCityTrendStage.allCases where stage.days.upperBound < day {
-            let points = sum(daily, stage.days)
-            let winner = sides.max { a, b in
-                (points[a] ?? 0) != (points[b] ?? 0) ? (points[a] ?? 0) < (points[b] ?? 0)
-                    : simulation.unit(stage.rawValue, a.hashValueStable) > simulation.unit(stage.rawValue, b.hashValueStable)
-            }!
-            results.append(.init(stage: stage, winner: winner, shares: shares(points)))
-        }
-        let current = MPCCityTrendStage.stage(day: day)
-        return .init(day: day, source: .simulated,
-                     total: keyed(total),
-                     week: keyed(sum(daily, max(1, day - 6)...max(1, day))),
-                     lastWeek: day > 7 ? keyed(sum(daily, max(1, day - 13)...(day - 7))) : [:],
-                     stage: current.map { keyed(sum(daily, $0.days.lowerBound...day)) } ?? [:],
-                     yours: ledger.points(in: max(1, day - 6)...max(1, day)).reduce(into: [:]) { $0[$1.key.rawValue] = $1.value },
-                     results: results, shocks: shocks)
+        return world.snapshot(day: day, yours: ledger)
     }
 
-    private static func sum(_ daily: [[MPCCityFaction: Double]], _ days: ClosedRange<Int>) -> [MPCCityFaction: Double] {
-        var out: [MPCCityFaction: Double] = [:]
-        for d in days where d >= 1 && d <= daily.count { for (k, v) in daily[d - 1] { out[k, default: 0] += v } }
-        return out
-    }
-    private static func keyed(_ points: [MPCCityFaction: Double]) -> [String: Double] {
+    static func keyed(_ points: [MPCCityFaction: Double]) -> [String: Double] {
         points.reduce(into: [:]) { $0[$1.key.rawValue] = ($1.value * 10).rounded() / 10 }
     }
-    private static func shares(_ points: [MPCCityFaction: Double]) -> [String: Double] {
+    static func shares(_ points: [MPCCityFaction: Double]) -> [String: Double] {
         let sum = points.values.reduce(0, +)
         return points.reduce(into: [:]) { $0[$1.key.rawValue] = sum > 0 ? (($1.value / sum) * 1000).rounded() / 1000 : 0 }
     }

@@ -17,9 +17,12 @@ struct CityTrendTests {
                 #expect(ways.allSatisfy { !$0.label.isEmpty && !$0.fact.isEmpty && !$0.reply.isEmpty && $0.label.count <= 10 }, "\(errand.id)")
             }
         }
-        let sides = MPCNeighborCatalog.all.flatMap(\.errands).flatMap { MPCNeighborCatalog.ways($0.id) }.map(\.side)
-        // Every side is on offer often enough to be a real choice.
-        for side in MPCCityFaction.allCases { #expect(sides.filter { $0 == side }.count >= 25, "\(side)") }
+        // Each pair of sides is offered equally often: the explorer (tools/city-trend-sim) showed a
+        // side on offer in every errand wins the shared world almost every time (2026-10-17).
+        let pairs = MPCNeighborCatalog.all.flatMap(\.errands).map { Set(MPCNeighborCatalog.ways($0.id).map(\.side)) }
+        for pair in [[MPCCityFaction.neighbours, .offices], [.neighbours, .compacts], [.offices, .compacts]] {
+            #expect(pairs.filter { $0 == Set(pair) }.count == 23, "\(pair)")
+        }
     }
 
     @Test("every stage puts a key choice with one option per side")
@@ -109,6 +112,46 @@ struct CityTrendTests {
             #expect(end.share(.neighbours) < 0.62, "seed \(seed): \(end.share(.neighbours))")
             #expect(MPCCityFaction.allCases.allSatisfy { end.share($0) > 0.12 }, "seed \(seed)")
         }
+    }
+
+    @Test("the side out in front shows its leader on day 21; seats, one try each, death at a net four")
+    func plot() throws {
+        var world = MPCCityTrendWorld(simulation: .init(seed: 5), crowdPlots: false)
+        for _ in 1...20 { world.advance(players: [.offices: 30]) }
+        #expect(world.plot == nil)
+        let early = world.attempt(account: "early", assassin: true, success: true)   // no plot before day 21
+        #expect(!early)
+        world.advance(players: [.offices: 30])                                      // day 21 opens the plot
+        let target = try #require(world.plot?.target)
+        #expect(target == .offices)
+        // Day 22: three assassin seats and two guard seats; one try per account.
+        var strikes: [Bool] = [], guards: [Bool] = []
+        for k in 0..<4 { strikes.append(world.attempt(account: "a\(k)", assassin: true, success: true)) }
+        #expect(strikes == [true, true, true, false])
+        let again = world.attempt(account: "a0", assassin: false, success: true)
+        #expect(!again)
+        for k in 0..<3 { guards.append(world.attempt(account: "g\(k)", assassin: false, success: k == 0)) }
+        #expect(guards == [true, true, false])
+        world.advance(players: [.offices: 30])
+        #expect(world.plot?.net == 2 && world.plot?.killedDay == nil)
+        // Day 23: two more strikes make a net four: the leader dies that day.
+        for k in 0..<2 { world.attempt(account: "b\(k)", assassin: true, success: true) }
+        world.advance(players: [.offices: 30])
+        #expect(world.plot?.killedDay == 23 && world.plot?.aftermath != nil)
+        let late = world.attempt(account: "late", assassin: true, success: true)
+        #expect(!late)
+        while world.day < 28 { world.advance(players: [.offices: 30]) }
+        let ending = try #require(world.ending)
+        #expect(ending.killed && ending.plotTarget == .offices && ending.stages.count == 4)
+        #expect(ending.summary.contains("公署领头人遇刺身亡"))
+    }
+
+    @Test("a balanced city shows no leader")
+    func noPlotWhenBalanced() {
+        var world = MPCCityTrendWorld(simulation: .init(seed: 5), crowdPlots: false)
+        for _ in 1...28 { world.advance(players: [.neighbours: 20, .offices: 20, .compacts: 20]) }
+        #expect(world.plot == nil || (world.ending?.plotTarget != nil))
+        #expect(world.ending != nil)
     }
 
     @Test("the newspaper's forecast names the stage and who is ahead")
