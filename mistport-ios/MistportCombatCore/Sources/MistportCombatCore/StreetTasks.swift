@@ -418,7 +418,10 @@ public struct MPCStreetTaskLedger: Codable, Equatable, Sendable {
         public fileprivate(set) var activeTicket: String?
         public fileprivate(set) var settledTickets: Set<String> = []
         public fileprivate(set) var done = false
+        /// How the player carries it out (MPCStreetTaskCatalog.ways); absent in older saves.
+        public fileprivate(set) var way: MPCCityFaction?
         public var task: MPCStreetTask? { MPCStreetTaskCatalog.streetTask(taskID) }
+        public var chosenWay: MPCErrandWay? { way.flatMap { side in MPCStreetTaskCatalog.ways(taskID).first { $0.side == side } } }
         public var step: MPCStreetStep? {
             guard let task, !done, task.steps.indices.contains(stepIndex) else { return nil }
             return task.steps[stepIndex]
@@ -435,6 +438,8 @@ public struct MPCStreetTaskLedger: Codable, Equatable, Sendable {
         public let sceneID: String?
         /// Record with `MPCCityContributionLedger` as `.errand`; nil for commissions.
         public let contributionReceipt: String?
+        /// The way it was carried out, for the city trend.
+        public var way: MPCErrandWay? = nil
     }
     /// What a finished step says; `reward` is set when it was the last step.
     public struct Progress: Codable, Equatable, Sendable {
@@ -478,9 +483,14 @@ public struct MPCStreetTaskLedger: Codable, Equatable, Sendable {
         return offers
     }
 
-    public mutating func accept(offerID: String) throws {
+    /// `way`: how the player will carry it out (both pay the same; nil only where a task has no ways).
+    public mutating func accept(offerID: String, way: MPCCityFaction? = nil) throws {
         guard let i = offers.firstIndex(where: { $0.id == offerID }) else { throw Failure.notOffered }
         guard !offers[i].done else { throw Failure.done }
+        if let way {
+            guard MPCStreetTaskCatalog.ways(offers[i].taskID).contains(where: { $0.side == way }) else { throw Failure.invalidChoice }
+            offers[i].way = way
+        }
         offers[i].accepted = true
     }
 
@@ -503,7 +513,8 @@ public struct MPCStreetTaskLedger: Codable, Equatable, Sendable {
         if let scene = task.sceneID, !scenes.contains(scene) { scenes.append(scene) }
         coins += task.copper
         let reward = Reward(offerID: offers[i].id, taskID: task.id, copper: task.copper, thanks: task.thanks, neighbors: task.neighbors,
-                            sceneID: task.sceneID, contributionReceipt: task.contributionSource == nil ? nil : "street-" + offers[i].id)
+                            sceneID: task.sceneID, contributionReceipt: task.contributionSource == nil ? nil : "street-" + offers[i].id,
+                            way: offers[i].chosenWay)
         return .init(line: step.line, reward: reward)
     }
 

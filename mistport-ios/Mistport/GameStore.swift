@@ -6060,9 +6060,9 @@ extension GameStore {
         return added
     }
 
-    func acceptStreetTask(_ offerID: String) throws {
+    func acceptStreetTask(_ offerID: String, way: MPCCityFaction? = nil) throws {
         var record = readStreetTasks()
-        try record.ledger.accept(offerID: offerID)
+        try record.ledger.accept(offerID: offerID, way: way)
         persistStreetTasks(record)
     }
     private func grantStreetReward(_ reward: MPCStreetTaskLedger.Reward?) throws {
@@ -6073,6 +6073,12 @@ extension GameStore {
             try updateChurchServices(neighbors: neighborsRecord) { _ in }
         }
         if let receipt = reward.contributionReceipt { recordCityContribution(.errand, receipt: receipt) }
+        if let way = reward.way {
+            var record = readCityTrend()
+            record.ledger.record(id: "street-" + reward.offerID, day: pacingDay, side: way.side, fact: way.fact)
+            defaults.set(try? JSONEncoder().encode(record), forKey: Self.cityTrendKey)
+            churchServicesRevision += 1
+        }
     }
     /// Stamina is charged once per task, on its first step (one receipt per offer).
     func streetTalk(_ offerID: String, at target: String) async throws -> MPCStreetTaskLedger.Progress {

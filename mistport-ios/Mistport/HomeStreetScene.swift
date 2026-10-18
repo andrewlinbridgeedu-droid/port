@@ -1093,6 +1093,7 @@ struct HomeStreetTaskView: View {
             if let offer, let task {
                 if offer.done {
                     Text(task.thanks)
+                    if let way = offer.chosenWay { Text(way.reply + " · 帮了\(way.side.name)").font(.footnote) }
                     Text("已完成 · 报酬 \(task.copper) 铜").foregroundStyle(.secondary)
                 } else if !offer.accepted {
                     Text(task.request)
@@ -1100,9 +1101,24 @@ struct HomeStreetTaskView: View {
                     Text("体力 \(MPCStamina.cost(.errandThreeStep))，第一步时扣除。").font(.footnote).foregroundStyle(.secondary)
                     timeLeft(offer)
                     Text("第一步：" + task.steps[0].goal + "（" + StreetTaskText.target(task.steps[0].target) + "）").font(.footnote)
-                    Button("接下这件事") { accept { try game.acceptStreetTask(offer.id) } }
+                    let ways = MPCStreetTaskCatalog.ways(task.id)
+                    if ways.isEmpty {
+                        Button("接下这件事") { accept { try game.acceptStreetTask(offer.id) } }
+                    } else {
+                        // Two ways (2026-10-17): the same steps and pay, a different side of the city helped.
+                        Text("怎么办：报酬一样，帮到的人不同。接下时选定。").font(.footnote).foregroundStyle(.secondary)
+                        ForEach(ways) { way in
+                            Button { accept { try game.acceptStreetTask(offer.id, way: way.side) } } label: {
+                                VStack(spacing: 2) {
+                                    Text("接下 · " + way.label).font(.subheadline.bold())
+                                    Text("帮\(way.side.name) · \(way.side.motto)").font(.caption2)
+                                }.frame(maxWidth: .infinity)
+                            }.buttonStyle(GameArtButtonStyle())
+                        }
+                    }
                 } else if let step = offer.step {
                     Text("第 \(offer.stepIndex + 1)/\(task.steps.count) 步 · " + step.goal).font(.headline)
+                    if let way = offer.chosenWay { Text("办法：\(way.label) · 帮\(way.side.name)").font(.footnote).foregroundStyle(.secondary) }
                     timeLeft(offer)
                     if here == step.target { stepControls(offer, step) }
                     else {

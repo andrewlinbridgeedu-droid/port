@@ -25,6 +25,35 @@ struct CityTrendTests {
         }
     }
 
+    @Test("every street task has two ways, the three pairs of sides 11 times each, and the reward says which")
+    func streetTaskWays() throws {
+        let pairs = MPCStreetTaskCatalog.streetTasks.map { Set(MPCStreetTaskCatalog.ways($0.id).map(\.side)) }
+        #expect(pairs.count == 33 && pairs.allSatisfy { $0.count == 2 })
+        for pair in [[MPCCityFaction.neighbours, .offices], [.neighbours, .compacts], [.offices, .compacts]] {
+            #expect(pairs.filter { $0 == Set(pair) }.count == 11, "\(pair)")
+        }
+        for task in MPCStreetTaskCatalog.streetTasks {
+            #expect(MPCStreetTaskCatalog.ways(task.id).allSatisfy { !$0.fact.isEmpty && !$0.reply.isEmpty && $0.label.count <= 10 }, "\(task.id)")
+        }
+        var ledger = MPCStreetTaskLedger(), coins = 0
+        ledger.open(day: 6, contributionPoints: 400)
+        let offer = try #require(ledger.offers.first { $0.id == "urgent-d6" })
+        let ways = MPCStreetTaskCatalog.ways(offer.taskID)
+        let other = try #require(MPCCityFaction.allCases.first { side in !ways.contains { $0.side == side } })
+        #expect(throws: MPCStreetTaskLedger.Failure.invalidChoice) { try ledger.accept(offerID: offer.id, way: other) }
+        try ledger.accept(offerID: offer.id, way: ways[0].side)
+        var reward: MPCStreetTaskLedger.Reward?
+        for step in offer.task!.steps where step.action == .talk || step.action == .answer || step.action == .handOver {
+            var inventory = [MPCCraftingCatalog.salveID: 9, MPCCraftingCatalog.clothID: 9, MPCCraftingCatalog.strapID: 9, MPCCraftingCatalog.patchID: 9]
+            switch step.action {
+            case .talk: reward = try ledger.talk(offerID: offer.id, at: step.target, coins: &coins).reward ?? reward
+            case .handOver: reward = try ledger.handOver(offerID: offer.id, at: step.target, coins: &coins, inventory: &inventory).reward ?? reward
+            default: reward = try ledger.answer(offerID: offer.id, at: step.target, choiceID: step.correctChoiceID!, coins: &coins)?.reward ?? reward
+            }
+        }
+        if ledger.offers.first(where: { $0.id == offer.id })?.done == true { #expect(reward?.way == ways[0]) }
+    }
+
     @Test("every stage puts a key choice with one option per side")
     func keyChoices() {
         for stage in MPCCityTrendStage.allCases {
