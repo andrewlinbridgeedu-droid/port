@@ -426,7 +426,7 @@ struct CharacterProfileView: View {
                                 try game.repairOwnedChurchRelic(relic.id)
                                 relicRepairNotice = "\(relic.name)已修复，出征前可正常装备。"
                             } catch {
-                                relicRepairNotice = "修复失败：\(error.localizedDescription)"
+                                relicRepairNotice = "修复失败：\(game.playerError(error))"
                             }
                         }
                         .buttonStyle(GameArtButtonStyle(compact: true))
@@ -1447,7 +1447,7 @@ struct HermitTalentTreeView: View {
                         Text("三系各6个节点，每节点5级；总预算30点。\n可尝试专精、20＋10、15＋15。")
                         Text("正式发点需确认任务里程碑映射。旧天赋继续用于战斗，新版不会自动覆盖旧配置。")
                             .foregroundStyle(gold)
-                        #if DEBUG
+                        #if DEBUG && !PLAYTEST_BUILD
                         Button("进入30点测试沙盘") { openSandbox() }.buttonStyle(FantasyTalentButton(tint: tint))
                         #else
                         Text("新版尚未开放正式配点")
@@ -1482,7 +1482,7 @@ struct HermitTalentTreeView: View {
         }.foregroundStyle(Color(red: 0.18, green: 0.25, blue: 0.34))
             .preferredColorScheme(.light)
             .task {
-                #if DEBUG
+                #if DEBUG && !PLAYTEST_BUILD
                 if draft == nil { openSandbox() }
                 #endif
             }
@@ -1583,7 +1583,7 @@ struct HermitTalentTreeView: View {
         if draft.remaining == 0 { return "可用点数不足" }
         return "每级消耗1点"
     }
-    private func perform(_ operation: () throws -> Void) { do { try operation() } catch { message = error.localizedDescription } }
+    private func perform(_ operation: () throws -> Void) { do { try operation() } catch { message = game.playerError(error) } }
     private func openSandbox() {
         perform {
             let directory = store.url.deletingLastPathComponent()
@@ -1606,7 +1606,7 @@ struct HermitTalentTreeView: View {
             try edit(&candidate)
             candidate.didSave(try store.commit(candidate))
             draft = candidate
-        } catch { message = error.localizedDescription }
+        } catch { message = game.playerError(error) }
     }
     private func refundText(_ preview: S9Removal) -> String {
         "本次共返还\(preview.total)点：\n" + S9TalentNode.all.compactMap { item in preview.refunds[item.id].map { "\(item.name)：\($0)点" } }.joined(separator: "\n") + "\n确认后立即保存。"

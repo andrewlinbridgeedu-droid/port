@@ -13,6 +13,11 @@ enum GameSettingsKeys {
 }
 
 struct GameSettingsView: View {
+    /// Shows the build, diagnostics and save export when given (the home screen's settings).
+    var game: GameStore? = nil
+    @State private var diagnosticsCopied = false
+    @State private var exportedSave: URL?
+    @State private var exportError = ""
     @Environment(\.dismiss) private var dismiss
     @AppStorage(GameSettingsKeys.displayName, store: .standard) private var displayName = "愚者"
     @AppStorage(HomeMusicController.isEnabledKey, store: .standard) private var musicEnabled = true
@@ -42,6 +47,27 @@ struct GameSettingsView: View {
                     }
                     Text("最多 12 个字，作为主界面显示名字。")
                         .font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+                if let game {
+                    GroupBox("版本与诊断") {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text(game.buildDescription).font(.subheadline.bold())
+                            Text("遇到问题时，把诊断信息和截图一起发给开发者。").font(.caption).foregroundStyle(.secondary)
+                            Button(diagnosticsCopied ? "已复制诊断信息" : "复制诊断信息") {
+                                UIPasteboard.general.string = game.diagnosticsText
+                                diagnosticsCopied = true
+                            }
+                            if let exportedSave {
+                                ShareLink(item: exportedSave) { Label("发送存档文件", systemImage: "square.and.arrow.up") }
+                            } else {
+                                Button("导出存档") {
+                                    do { exportedSave = try game.exportSaveFile() } catch { exportError = "存档没能导出，请稍后再试。" }
+                                }
+                            }
+                            if !exportError.isEmpty { Text(exportError).font(.caption).foregroundStyle(.orange) }
+                            Text("存档只在这台手机上；删掉 App 会一起删掉。").font(.caption).foregroundStyle(.secondary)
+                        }.frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
                 GroupBox("声音") {

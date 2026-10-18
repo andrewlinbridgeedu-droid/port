@@ -792,9 +792,9 @@ struct LightsEventPreviewView: View {
     private var hypotheticalBanner: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("预告 · \(snapshot.phase.title)").font(.subheadline.bold()).foregroundStyle(.orange)
-            Text("以下是示例数字。事件开放前不能投资、交货或参战。")
+            Text("事件开放前不能投资、交货或参战，下面是预计的局面。")
                 .font(.caption).foregroundStyle(muted).fixedSize(horizontal: false, vertical: true)
-            #if DEBUG
+            #if DEBUG && !PLAYTEST_BUILD
             Menu {
                 ForEach(P.fixtures) { fixture in
                     Button(fixture.label) { snapshotID = fixture.id; openArticle = nil }

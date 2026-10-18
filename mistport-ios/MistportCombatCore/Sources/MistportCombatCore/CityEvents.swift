@@ -64,7 +64,7 @@ public enum MPCCityEventCatalog {
     public static let battlePay = 10
     public static let failureDays = 7
     public static let prefix = "church_maintenance_event_"
-    public static let fixtureNotice = "一起帮忙的其他街坊和工人是预置人物，不是联网玩家；进度只算你自己的交付和战斗。"
+    public static let fixtureNotice = "城里的街坊和工人也在一起帮忙；进度只算你自己的交付和战斗。"
 
     static var strap: String { MPCCraftingCatalog.strapID }
     static var salve: String { MPCCraftingCatalog.salveID }

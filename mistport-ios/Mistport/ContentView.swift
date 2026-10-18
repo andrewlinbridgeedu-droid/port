@@ -478,7 +478,7 @@ struct ContentView: View {
                 else if target.kind == .neighbor, let neighborID = target.personID { HomeNeighborVisit(game: game, neighborID: neighborID) }
                 else { HomeBountyInteractionView(game: game, target: target) }
             }
-            else if destination.id == "housing" { HousingAgencyView(game: game) }
+            else if destination.id == "housing" || destination.id == "housing-agency" { HousingAgencyView(game: game) }
             else if destination.id == "housing-home" { HousingResidenceView(game: game) }
             else if destination.id == "housing-stamina" { HousingStaminaView(game: game) }
             else if destination.id == "highland-board" { HousingHighlandBoardView(game: game) }
@@ -518,7 +518,7 @@ struct ContentView: View {
                     }
                 }
             case .settings:
-                GameSettingsView()
+                GameSettingsView(game: game)
             case .store:
                 if game.cityServiceIsUnlocked(.store) {
                     StoreView(storefront: storefront)

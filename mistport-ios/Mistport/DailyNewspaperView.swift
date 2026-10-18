@@ -132,7 +132,7 @@ struct DailyNewspaperView: View {
                     done.contains($0.unlockMission) ? $0.title : "\($0.title)（第 \($0.unlockMission) 关后）"
                 }.joined(separator: " · "))
             }
-            row("工坊订单", destination: .workshop, locked: game.cityServiceIsUnlocked(.workshop) ? nil : "完成 Q5 后开放工坊") {
+            row("工坊订单", destination: .workshop, locked: game.cityServiceIsUnlocked(.workshop) ? nil : "完成第 5 关后开放工坊") {
                 Text("可用预算 \(game.workshopOrders.budget) 铜，最多累积 3 天。")
                 Text(game.workshopProficiencyNotice)
             }
@@ -142,7 +142,7 @@ struct DailyNewspaperView: View {
                     Text("还需 \(game.cityEvents.winsLeft(event)) 场胜利；今天已记 \(game.cityEvents.winsCounted(event.id, day: game.pacingDay))/2 场。")
                 } else { Text(game.pacingDay < 4 ? "第一场事件在第 4 天开始。" : "本章事件已结束，可查看城市变化。") }
             }
-            row("酒馆彩头", destination: .tavern, locked: game.tavernPokerUnlocked ? nil : "完成 B08 通缉案结案领奖后开放牌桌") {
+            row("酒馆彩头", destination: .tavern, locked: game.tavernPokerUnlocked ? nil : "借脸人一案结案领奖后开放牌桌") {
                 if !game.tavernPokerUnlocked { Text("先完成酒馆相关通缉案，日后可在这里查看彩头。") }
                 else if let prize = game.newspaperTavernPrize { Text("今日彩头：\(prize.name)；到牌桌确认本局规则。") }
                 else { Text("今天暂无可领取的额外彩头，仍可按牌桌规则游玩。") }
@@ -220,10 +220,7 @@ struct DailyNewspaperView: View {
             Text(yours.isEmpty ? "你这周还没有替哪一边办过事。办委托时选的办法，会算进全城的城势。"
                  : "你这周替：" + yours.joined(separator: " · ") + "。")
                 .font(.system(size: 11, design: .serif))
-            if trend.source == .simulated {
-                Text("全城数字暂由单机模拟的其他市民给出；接通共享服后换成所有玩家的总和。")
-                    .font(.system(size: 10, design: .serif)).foregroundStyle(ink.opacity(0.7))
-            }
+
         }
     }
     /// ▲/▼ for the week's change in a side's share, once there is a week to compare with.

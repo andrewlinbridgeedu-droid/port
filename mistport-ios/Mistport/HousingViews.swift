@@ -409,9 +409,9 @@ struct HousingResidenceView: View {
             if !detail.isEmpty { Text(detail).font(.footnote) }
             let prepare = MPCCityEconomy.restBP(lodgingID: game.housingPayment?.lodgingID ?? "dock_bunk")
             LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
-                Button("回房休息 · 补回体力") { Task { do { try await game.returnHomeRest(prepareBattle: false); detail = "已把可用储备转回体力。" } catch { detail = error.localizedDescription } } }.buttonStyle(GameArtButtonStyle())
+                Button("回房休息 · 补回体力") { Task { do { try await game.returnHomeRest(prepareBattle: false); detail = "已把可用储备转回体力。" } catch { detail = game.playerError(error) } } }.buttonStyle(GameArtButtonStyle())
                 if prepare > 0 {
-                    Button("床边准备 · 生命＋\(prepare / 100)%") { Task { do { try await game.returnHomeRest(prepareBattle: true); detail = "下一场准备已完成；每日一次，失败也消耗。" } catch { detail = error.localizedDescription } } }.buttonStyle(GameArtButtonStyle())
+                    Button("床边准备 · 生命＋\(prepare / 100)%") { Task { do { try await game.returnHomeRest(prepareBattle: true); detail = "下一场准备已完成；每日一次，失败也消耗。" } catch { detail = game.playerError(error) } } }.buttonStyle(GameArtButtonStyle())
                     Button("保养角 · 维修报价") { maintenance = true }.buttonStyle(GameArtButtonStyle())
                     Button("书桌与来信 · 会客") { meeting = true }.buttonStyle(GameArtButtonStyle(primary: true))
                 }

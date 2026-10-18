@@ -5262,6 +5262,64 @@ extension GameStore {
         var state = churchServices; state.loans.coins = venueCoins
         try commitChurchServices(state, housing: r)
     }
+    // MARK: Diagnostics for playtesters (2026-10-17 review: no version, no way to send a save)
+    /// The save suite this game reads (as MistportApp.playerDefaults chooses it).
+    var saveSuiteName: String {
+        #if DEBUG
+        if Bundle.main.bundleIdentifier == "local.mistport.institutions" {
+            return "mistport.institutions.playtest.20261013." + (UserDefaults.standard.string(forKey: "institution.profile") ?? "fresh")
+        }
+        #endif
+        return "mistport.player-test-01-15"
+    }
+    var buildDescription: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = info?["CFBundleVersion"] as? String ?? "?"
+        #if PLAYTEST_CLOCK
+        let variant = "加速包"
+        #elseif PLAYTEST_BUILD
+        let variant = "真实节奏包"
+        #else
+        let variant = "开发包"
+        #endif
+        return "雾港 \(version)（\(build)）· \(variant)"
+    }
+    /// One block a tester can paste into a message: build, device, day, progress.
+    var diagnosticsText: String {
+        var system = utsname(); uname(&system)
+        let model = withUnsafeBytes(of: &system.machine) { String(decoding: $0.prefix { $0 != 0 }, as: UTF8.self) }
+        let offset = defaults.double(forKey: "institution.clock-offset") / 3600
+        let missions = churchTowerMissionNumbers.sorted()
+        let trend = cityTrend
+        return [
+            buildDescription,
+            "机型 \(model) · iOS \(UIDevice.current.systemVersion)",
+            "存档 \(saveSuiteName.split(separator: ".").last.map(String.init) ?? saveSuiteName) · 第 \(pacingDay) 天" + (offset != 0 ? " · 时钟前进 \(Int(offset)) 小时" : ""),
+            "主线已通 \(missions.count) 关（最高第 \(missions.last ?? 0) 关）· 塔 \(churchTowerProgress.clearedFloors.count) 层",
+            "铜 \(venueCoins) · 体力 \(currentStamina)",
+            "城势 " + MPCCityFaction.allCases.map { "\($0.name)\(Int((trend.share($0) * 100).rounded()))%" }.joined(separator: " "),
+            "时间 \(Date().formatted(date: .numeric, time: .shortened)) · 时区 \(TimeZone.current.identifier)",
+        ].joined(separator: "\n")
+    }
+    /// Writes this save (its UserDefaults suite) to a file the share sheet can send.
+    func exportSaveFile() throws -> URL {
+        let domain = UserDefaults.standard.persistentDomain(forName: saveSuiteName) ?? [:]
+        let data = try PropertyListSerialization.data(fromPropertyList: domain, format: .binary, options: 0)
+        let stamp = Date().formatted(.iso8601.year().month().day().time(includingFractionalSeconds: false)).replacingOccurrences(of: ":", with: "")
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("雾港存档-第\(pacingDay)天-\(stamp).plist")
+        try data.write(to: url, options: .atomic)
+        return url
+    }
+
+    /// Any error as the player should read it: a Chinese description where the error has one,
+    /// otherwise the housing wording; never a type name like "MPCStaminaState.Failure error 0"
+    /// (2026-10-17 review).
+    func playerError(_ error: Error) -> String {
+        if error is MPCStaminaState.Failure || error is HousingServiceFailure || error is MPCHousingLedger.Failure { return housingError(error) }
+        if let text = (error as? LocalizedError)?.errorDescription, !text.isEmpty { return text }
+        return housingError(error)
+    }
     func housingError(_ error: Error) -> String {
         if case MPCStaminaState.Failure.notEnough(let needed, _) = error {
             let seconds = housingRecord?.stamina.secondsUntil(needed, at: housingNow.timeIntervalSince1970) ?? 0
@@ -5901,7 +5959,16 @@ extension GameStore {
     private func readStreetTasks() -> StreetTaskRecord {
         defaults.data(forKey: Self.streetTasksKey).flatMap { try? JSONDecoder().decode(StreetTaskRecord.self, from: $0) } ?? .init()
     }
+    /// A stored record that exists but no longer decodes is kept as it is: writing over it would
+    /// lose the player's progress (2026-10-17 review). The reads fall back to an empty record.
+    private func storedRecordIsUnreadable<T: Decodable>(_ type: T.Type, key: String) -> Bool {
+        guard let data = defaults.data(forKey: key) else { return false }
+        if (try? JSONDecoder().decode(T.self, from: data)) != nil { return false }
+        NSLog("SAVE_UNREADABLE: %@ kept, not overwritten", key)
+        return true
+    }
     private func persistStreetTasks(_ record: StreetTaskRecord) {
+        guard !storedRecordIsUnreadable(StreetTaskRecord.self, key: Self.streetTasksKey) else { return }
         defaults.set(try? JSONEncoder().encode(record), forKey: Self.streetTasksKey)
         churchServicesRevision += 1
     }
@@ -5909,6 +5976,7 @@ extension GameStore {
         defaults.data(forKey: Self.contributionKey).flatMap { try? JSONDecoder().decode(ContributionRecord.self, from: $0) } ?? .init()
     }
     private func persistContribution(_ record: ContributionRecord) {
+        guard !storedRecordIsUnreadable(ContributionRecord.self, key: Self.contributionKey) else { return }
         defaults.set(try? JSONEncoder().encode(record), forKey: Self.contributionKey)
         churchServicesRevision += 1
     }
@@ -5921,15 +5989,23 @@ extension GameStore {
         var ledger = MPCCityTrendLedger()
         /// The simulated world's seed, drawn once for this save; the shared server will have its own.
         var seed = UInt64.random(in: 1...UInt64.max)
+        init(seed: UInt64 = .random(in: 1...UInt64.max)) { self.seed = seed }
     }
     private func readCityTrend() -> CityTrendRecord {
-        if let data = defaults.data(forKey: Self.cityTrendKey), let record = try? JSONDecoder().decode(CityTrendRecord.self, from: data) {
-            return record
+        if let data = defaults.data(forKey: Self.cityTrendKey) {
+            if let record = try? JSONDecoder().decode(CityTrendRecord.self, from: data) { return record }
+            // Unreadable: keep it untouched (persistCityTrend refuses to write) and show a neutral city.
+            NSLog("SAVE_UNREADABLE: %@ kept, not overwritten", Self.cityTrendKey)
+            return CityTrendRecord(seed: 1)
         }
         // Fix the world's seed at first sight, so the city the player reads does not change.
         let fresh = CityTrendRecord()
         defaults.set(try? JSONEncoder().encode(fresh), forKey: Self.cityTrendKey)
         return fresh
+    }
+    private func persistCityTrend(_ record: CityTrendRecord) {
+        guard !storedRecordIsUnreadable(CityTrendRecord.self, key: Self.cityTrendKey) else { return }
+        defaults.set(try? JSONEncoder().encode(record), forKey: Self.cityTrendKey)
     }
     /// This account's choices for the city.
     var cityTrendLedger: MPCCityTrendLedger { _ = churchServicesRevision; return readCityTrend().ledger }
@@ -5944,7 +6020,7 @@ extension GameStore {
         guard let reward, reward.copper > 0, let way = reward.way else { return }
         var record = readCityTrend()
         record.ledger.record(id: "errand-" + offerID, day: pacingDay, side: way.side, fact: way.fact)
-        defaults.set(try? JSONEncoder().encode(record), forKey: Self.cityTrendKey)
+        persistCityTrend(record)
         churchServicesRevision += 1
     }
     /// The city as this morning's paper printed it (through yesterday): who sends people today.
@@ -5986,7 +6062,7 @@ extension GameStore {
             let session = try MPCChapterOneEncounterSession.start(
                 encounterID: MPCCityTrend.plotEncounterID(target: plot.target, assassin: assassin, ticket: ticket),
                 party: chapterOneCampaign.party, consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: loadout)
-            defaults.set(try? JSONEncoder().encode(record), forKey: Self.cityTrendKey)
+            persistCityTrend(record)
             try updateChurchServices { try beginChurchGear(&$0, battleID: ticket, loadout: loadout) }
             return session
         }
@@ -5998,7 +6074,7 @@ extension GameStore {
         var record = readCityTrend()
         guard record.ledger.plotTicket == ticket, let target = cityTrend.plot?.target else { return false }
         record.ledger.recordPlotTry(day: pacingDay, target: target, assassin: assassin, success: won)
-        defaults.set(try? JSONEncoder().encode(record), forKey: Self.cityTrendKey)
+        persistCityTrend(record)
         var coins = venueCoins
         if won { coins += Self.plotPay }
         try updateChurchServices { state in
@@ -6009,6 +6085,12 @@ extension GameStore {
         return won
     }
     static let plotPay = 20
+    /// A plot fight left open (the app was closed mid-fight) counts as a retreat, so the one try
+    /// is used and the page does not say "under way" for ever (2026-10-17 review).
+    func closeStalePlotTicket() {
+        guard let ticket = cityTrendLedger.plotTicket else { return }
+        _ = try? settleCityPlot(assassin: ticket.hasPrefix("plot-strike-"), ticket: ticket, won: false, retreated: true)
+    }
     /// This stage's key vote, if cast (once a stage; counts three).
     func cityTrendKeyVote(_ stage: MPCCityTrendStage) -> MPCCityTrendReceipt? {
         cityTrendLedger.receipts.first { $0.id == "key-\(stage.rawValue)" }
@@ -6019,7 +6101,7 @@ extension GameStore {
               let choice = stage.keyChoices.first(where: { $0.side == side }) else { return }
         var record = readCityTrend()
         record.ledger.record(id: "key-\(stage.rawValue)", day: pacingDay, side: side, key: true, fact: choice.fact)
-        defaults.set(try? JSONEncoder().encode(record), forKey: Self.cityTrendKey)
+        persistCityTrend(record)
         churchServicesRevision += 1
     }
     /// How the player will finish a neighbour errand; both ways pay the same.
@@ -6076,7 +6158,7 @@ extension GameStore {
         if let way = reward.way {
             var record = readCityTrend()
             record.ledger.record(id: "street-" + reward.offerID, day: pacingDay, side: way.side, fact: way.fact)
-            defaults.set(try? JSONEncoder().encode(record), forKey: Self.cityTrendKey)
+            persistCityTrend(record)
             churchServicesRevision += 1
         }
     }

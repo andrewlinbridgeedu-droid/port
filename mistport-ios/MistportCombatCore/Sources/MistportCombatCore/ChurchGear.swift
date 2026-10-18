@@ -68,16 +68,16 @@ public enum MPCChurchGearCatalog {
         armor("tower-f80-deep-mail", "沉井护胄", "深井第80层", 660, 2_700),
         weapon("tower-f90-rift-edge", "裂隙封刃", "深井第90层", 11_500),
         armor("tower-f100-last-seal", "终界封甲", "深井第100层", 760, 3_000),
-        weapon("bounty-b01-broken-sword", "七号缺齿剑", "通缉 B01", 2_800),
-        armor("bounty-b02-backframe", "收尸人外锁架", "通缉 B02", 310, 1_350),
-        weapon("bounty-b03-tide-anchor", "溺钟潮锚", "通缉 B03", 4_300),
-        weapon("bounty-b04-reverse-seal", "伪造者倒签笔", "通缉 B04", 3_800),
-        weapon("bounty-b05-red-shears", "赤丝银剪", "通缉 B05", 4_900),
-        armor("bounty-b06-dark-lantern", "无灯舱甲", "通缉 B06", 410, 1_700),
-        armor("bounty-b07-bell-throat", "金喉铃护", "通缉 B07", 200, 900),
-        weapon("bounty-b08-mirror-rapier", "借脸镜刺", "通缉 B08", 3_300),
-        armor("bounty-b09-copper-shell", "吞契铜背甲", "通缉 B09", 370, 1_500),
-        weapon("bounty-b10-life-ledger", "绯月寿账签", "通缉 B10", 4_700)
+        weapon("bounty-b01-broken-sword", "七号缺齿剑", "通缉·第七号空壳", 2_800),
+        armor("bounty-b02-backframe", "收尸人外锁架", "通缉·背架收尸人", 310, 1_350),
+        weapon("bounty-b03-tide-anchor", "溺钟潮锚", "通缉·溺钟海盗", 4_300),
+        weapon("bounty-b04-reverse-seal", "伪造者倒签笔", "通缉·铜笔伪造者", 3_800),
+        weapon("bounty-b05-red-shears", "赤丝银剪", "通缉·赤丝裁衣人", 4_900),
+        armor("bounty-b06-dark-lantern", "无灯舱甲", "通缉·无灯押船人", 410, 1_700),
+        armor("bounty-b07-bell-throat", "金喉铃护", "通缉·三声敲门客", 200, 900),
+        weapon("bounty-b08-mirror-rapier", "借脸镜刺", "通缉·借脸人", 3_300),
+        armor("bounty-b09-copper-shell", "吞契铜背甲", "通缉·铜背吞契兽", 370, 1_500),
+        weapon("bounty-b10-life-ledger", "绯月寿账签", "通缉·换寿先知", 4_700)
     ]
 
     /// Workshop gear agreed 2026-09-29 (DAILY_LOOP_AND_ECONOMY_20260929.md §4.2): a blade
@@ -115,8 +115,10 @@ public enum MPCChurchGearCatalog {
     public static func towerDrop(floor: Int) -> MPCChurchGearItem? {
         all.first { $0.source == "深井第\(floor)层" }
     }
+    /// Bounty gear ids start with "bounty-<case>-" ("bounty-b01-broken-sword"); the source is
+    /// display text only ("通缉·第七号空壳").
     public static func bountyDrop(caseID: String) -> MPCChurchGearItem? {
-        all.first { $0.source == "通缉 \(caseID.uppercased())" }
+        all.first { $0.id.hasPrefix("bounty-" + caseID.lowercased() + "-") }
     }
 }
 

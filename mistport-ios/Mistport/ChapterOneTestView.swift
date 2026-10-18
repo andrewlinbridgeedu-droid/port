@@ -1120,8 +1120,8 @@ struct ChapterOneEncounterTestView: View {
         self.holdsQ5Preview = holdsQ5Preview
         self.showsStandaloneOpeningBattleButton = showsStandaloneOpeningBattleButton
         self.requiresExplicitBattleStartAfterIntervention = requiresExplicitBattleStartAfterIntervention
-        #if DEBUG
-        // Test builds allow leaving every tutorial encounter immediately.
+        #if DEBUG && !PLAYTEST_BUILD
+        // Test builds allow leaving every tutorial encounter immediately (not the phone playtest).
         self.locksExitForTutorial = false
         #else
         self.locksExitForTutorial = [
@@ -1212,6 +1212,21 @@ struct ChapterOneEncounterTestView: View {
                                     RoundedRectangle(cornerRadius: 18)
                                         .stroke(Color.red.opacity(0.38), lineWidth: 12)
                                         .blur(radius: 8).allowsHitTesting(false)
+                                }
+                            }
+                            // The battle clock waits for Unity's first battle frame and the enemy
+                            // anchors, which can take 10–18 s on a phone; say so instead of a still
+                            // field (2026-10-17 review).
+                            .overlay {
+                                if battleIsActive, usesUnityBattlefield, session.outcome == .inProgress, battleTime < 0.05,
+                                   !(unityBattleRuntime.isReady && !unityBattleRuntime.enemyHealthAnchorViewports.isEmpty) {
+                                    VStack(spacing: 10) {
+                                        ProgressView().tint(.white)
+                                        Text("正在布阵…").font(.callout.bold()).foregroundStyle(.white)
+                                    }
+                                    .padding(.horizontal, 22).padding(.vertical, 16)
+                                    .background(.black.opacity(0.55), in: RoundedRectangle(cornerRadius: 14))
+                                    .allowsHitTesting(false)
                                 }
                             }
                             // Render the arena behind the floating card dock,
@@ -6672,7 +6687,7 @@ struct ChapterOneMissionBridgeView: View {
                         Button("修复 \(price)铜币") {
                             do { try game.repairOwnedChurchRelic(id) }
                             catch {
-                                battleStartError = "修复失败：\(error.localizedDescription)"
+                                battleStartError = "修复失败：\(gameErrorText(error))"
                                 showsBattleStartError = true
                             }
                         }
@@ -6802,7 +6817,7 @@ struct ChapterOneMissionBridgeView: View {
             try game.beginChurchLoanBattle(loanBattleID, loadout: loadout)
             session = prepared
         } catch {
-            battleStartError = "无法开始这场战斗：\(error.localizedDescription)"
+            battleStartError = "无法开始这场战斗：\(gameErrorText(error))"
             showsBattleStartError = true
             return
         }
@@ -9240,4 +9255,10 @@ private struct MaskTimingCue: View {
             .scaleEffect(pulses ? 1.06 : 0.96)
             .onAppear { withAnimation(.easeInOut(duration: 0.55).repeatForever(autoreverses: true)) { pulses = true } }
     }
+}
+
+/// An error as a player reads it here, where no GameStore is at hand (2026-10-17 review).
+func gameErrorText(_ error: Error) -> String {
+    if let text = (error as? LocalizedError)?.errorDescription, !text.isEmpty { return text }
+    return "这一步没有成功，请稍后再试。"
 }

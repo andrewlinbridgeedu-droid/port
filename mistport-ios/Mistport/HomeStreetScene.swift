@@ -724,16 +724,18 @@ struct HomeCounterView: View {
         greeting = "\(name)：今天也请多关照。"
     }
     var body: some View {
-        let building = HomeMapLayout.current.building(buildingID)!
-        HomeCounterScene(title: building.name!, room: room, actorArt: staffArt(activeStaffName)) {
+        // A destination that is not a building on the map (an unmapped id from a list) shows
+        // an empty counter instead of crashing (办事册 "赁屋行" passed "housing-agency", 2026-10-17).
+        let building = HomeMapLayout.current.building(buildingID)
+        HomeCounterScene(title: building?.name ?? "柜台", room: room, actorArt: staffArt(activeStaffName)) {
                 Text(greeting.isEmpty ? "\(activeStaffName) · 请问有什么事？" : greeting).font(.callout)
                 if ["harbor", "oldstreet", "cafe"].contains(buildingID) {
                     let venue = buildingID == "harbor" ? "soup" : buildingID == "oldstreet" ? "bakery" : "cafe"
                     HousingMealChoicesLink(game: game, venue: venue)
                 }
-                if buildingID == "post" { HomeCounterAction(title: "承接邮务核对", detail: "Q4后；40铜／单，10体力") { postalPresented = true } }
+                if buildingID == "post" { HomeCounterAction(title: "承接邮务核对", detail: "第4关后；40铜／单，10体力") { postalPresented = true } }
                 if buildingID == "cityhall" || (buildingID == "oldstreet" && activeStaffName == "染坊账房") {
-                    HomeCounterAction(title: "雨夜的交货单 · 公开会面", detail: "Q13后；核验证据、谈条款与履约") { meetingPresented = true }
+                    HomeCounterAction(title: "雨夜的交货单 · 公开会面", detail: "第13关后；核验证据、谈条款与履约") { meetingPresented = true }
                 }
                 if (buildingID == "cityhall" && game.cityEconomy.meeting?.stage == .collected) || (buildingID == "oldstreet" && game.cityEconomy.meeting?.stage == .sealed) {
                     HomeCounterAction(title: "办理当前交货合同", detail: "核对原封／取得收条") { contractWorkPresented = true }
@@ -1307,9 +1309,9 @@ struct HomePlotView: View {
                         Text("你这周多替\(leaning.name)办事。").font(.footnote)
                     }
                     StaminaCostView(activity: .errandThreeStep)
-                    Button("刺杀\(side.leaderLabel)") { battle = .init(id: "plot-" + UUID().uuidString.lowercased(), assassin: true) }
+                    Button("刺杀\(side.leaderLabel)") { battle = .init(id: "plot-strike-" + UUID().uuidString.lowercased(), assassin: true) }
                         .buttonStyle(GameArtButtonStyle(primary: true))
-                    Button("护卫\(side.leaderLabel)") { battle = .init(id: "plot-" + UUID().uuidString.lowercased(), assassin: false) }
+                    Button("护卫\(side.leaderLabel)") { battle = .init(id: "plot-guard-" + UUID().uuidString.lowercased(), assassin: false) }
                         .buttonStyle(GameArtButtonStyle())
                     Text("只有一次机会：打赢算一次得手或一次挡下，赢了得 \(GameStore.plotPay) 铜；打输或中途撤退也算用掉。")
                         .font(.footnote).foregroundStyle(.secondary)
@@ -1323,6 +1325,7 @@ struct HomePlotView: View {
         .fullScreenCover(item: $battle) { ticket in
             CityPlotBattleView(game: game, assassin: ticket.assassin, battleID: ticket.id, onClose: { battle = nil })
         }
+        .onAppear { if battle == nil { game.closeStalePlotTicket() } }
     }
 }
 

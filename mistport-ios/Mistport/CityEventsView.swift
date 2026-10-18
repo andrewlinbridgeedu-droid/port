@@ -12,8 +12,8 @@ struct CityEventsView: View {
         GameArtPage(title: "城市事件", subtitle: "第 \(game.pacingDay) 天 · 城市协作", art: eventArt) {
             Text(MPCCityEventCatalog.fixtureNotice).font(.footnote).foregroundStyle(.secondary)
             if let ticket = game.cityEvents.activeTicket {
-                Text("有一场未结束的行动。若上次已离开战斗，可撤销票据后重新出发。")
-                Button("撤销未结束的行动") { perform { try game.abandonCityEvent(ticket: ticket) } }
+                Text("有一场没打完的行动。如果上次已经离开战斗，可以先撤下它再重新出发。")
+                Button("撤下没打完的行动") { perform { try game.abandonCityEvent(ticket: ticket) } }
             }
             if let event = MPCCityEventCatalog.running(day: game.pacingDay) {
                 eventCard(event)

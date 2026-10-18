@@ -111,7 +111,7 @@ struct CityBankView: View {
     }
     private func run(_ action: @escaping @MainActor () async throws -> Void) {
         busy = true
-        Task { defer { busy = false }; do { try await action(); message = "柜员已记账。" } catch { message = error.localizedDescription } }
+        Task { defer { busy = false }; do { try await action(); message = "柜员已记账。" } catch { message = game.playerError(error) } }
     }
 }
 
@@ -176,7 +176,7 @@ struct CityBankManagerView: View {
         busy = true
         Task { defer { busy = false }
             do { try await game.signBankProject(kind: kind, amount: amount); message = "经理：订单已登记，记得回来核验原件。" }
-            catch { message = error.localizedDescription }
+            catch { message = game.playerError(error) }
         }
     }
 }
@@ -225,7 +225,7 @@ private struct CityProjectCard: View {
     }
     private func command(stamina: Int = 0, _ action: @escaping (inout MPCCityEconomy) throws -> Void) {
         busy = true
-        Task { defer { busy = false }; do { try await game.cityEconomyAction(stamina: stamina, receipt: "project-deliver-" + project.id) { economy, _ in try action(&economy) }; message = "手续已记录。" } catch { message = error.localizedDescription } }
+        Task { defer { busy = false }; do { try await game.cityEconomyAction(stamina: stamina, receipt: "project-deliver-" + project.id) { economy, _ in try action(&economy) }; message = "手续已记录。" } catch { message = game.playerError(error) } }
     }
 }
 
@@ -356,7 +356,7 @@ struct CityBicycleOrderView: View {
             do {
                 let passed = try await game.bicycleOrderStep(id, step: name, stamina: stamina, change)
                 message = passed ? "" : "试车没过。"
-            } catch { message = error.localizedDescription }
+            } catch { message = game.playerError(error) }
         }
     }
 }
@@ -435,7 +435,7 @@ struct CityPrivateMeetingView: View {
     }
     private func run(_ action: @escaping @MainActor () async throws -> Void) {
         busy = true
-        Task { defer { busy = false }; do { try await action(); message = "已记下这一步，可以继续。" } catch { message = error.localizedDescription } }
+        Task { defer { busy = false }; do { try await action(); message = "已记下这一步，可以继续。" } catch { message = game.playerError(error) } }
     }
 }
 
@@ -444,16 +444,16 @@ struct CityInstitutionsView: View {
     let onOpen: (String) -> Void
     private let counters: [(String, String, String)] = [
         ("bank", "银行", "新客与普通定期；产业投资由经理接待"),
-        ("housing-agency", "赁屋行", "Q1铺位；Q5合租；Q13联排；Q20阁楼；Q30高地"),
+        ("housing-agency", "赁屋行", "第1关铺位；第5关合租；第13关联排；第20关阁楼；第30关高地"),
         ("housing-home", "我的住处", "回房用休息储备；付费联排以上可备战与会客"),
-        ("meeting", "公证与公开会面", "Q13染坊账房基础合同；普通住房也可接"),
-        ("merchant", "商人与晋阶采购", "Q4遗落物和药；Q17／20／23三份主材"),
-        ("postal-work", "邮局", "Q4单据核验与邮务筹资"),
+        ("meeting", "公证与公开会面", "第13关后染坊账房的基础合同；普通住房也可接"),
+        ("merchant", "商人与晋阶采购", "第4关后遗落物和药；第17／20／23关后三份主材"),
+        ("postal-work", "邮局", "第4关后单据核验与邮务筹资"),
         ("board", "广场委托板", "每日有限委托，街坊故事与贡献条件"),
-        ("church", "联合教会", "Q7深井、通缉、借物；塔层继续按日开放"),
-        ("workshop", "百工坊与工业委员会", "Q5生产；塔材料与装备；Q16项目订单"),
-        ("clinic", "诊所", "Q4伤情与案件验伤；备用药在商人处采购"),
-        ("police", "警察厅", "Q4公开登记；Q7后案件调查与证人问话"),
+        ("church", "联合教会", "第7关后深井、通缉、借物；塔层按日开放"),
+        ("workshop", "百工坊与工业委员会", "第5关后生产；塔材料与装备；第16关后项目订单"),
+        ("clinic", "诊所", "第4关后伤情与案件验伤；备用药在商人处采购"),
+        ("police", "警察厅", "第4关后公开登记；第7关后案件调查与证人问话"),
         ("cityhall", "市政厅", "民事登记、验印、公证与合同收条"),
         ("harbor", "港务处", "航运与案件货物核验；饮食登记"),
         ("housing-soup", "汤棚", "基础食宿12铜／日"),
@@ -461,9 +461,9 @@ struct CityInstitutionsView: View {
         ("housing-cafe", "午夜钟咖啡馆", "登记饮食；联排推荐套餐22铜／日"),
         ("oldstreet", "旧街铺面", "染坊账房、木工、相片铺与案件联系人"),
         ("newspaper", "报社", "今日主线、塔额与城市事项"),
-        ("tavern", "酒馆", "通缉问话；B08结案后常驻牌局，不发新晋阶材料"),
+        ("tavern", "酒馆", "通缉问话；借脸人一案结案后常驻牌局，不发新晋阶材料"),
         ("science", "科学委员会", "查看遗落物作用与代价、公开验证记录"),
-        ("highland-board", "高地告示处", "Q30后，今日付费高地住户的有限委托"),
+        ("highland-board", "高地告示处", "第30关后，今日付费高地住户的有限委托"),
         ("palace", "皇宫接待处", "城市历史地标；内廷业务以后续章节为准")
     ]
     var body: some View {
@@ -487,7 +487,7 @@ struct CityScienceView: View {
                 Text(EarlyRelicShop.name(id)).font(.headline)
                 Text(EarlyRelicShop.detail(id))
             }
-            if game.chapterOneCampaign.ownedRelicIDs.isDisjoint(with: EarlyRelicShop.ids) { Text("Q4后可在商人处购入遗落物，再带来查阅作用与代价。") }
+            if game.chapterOneCampaign.ownedRelicIDs.isDisjoint(with: EarlyRelicShop.ids) { Text("第4关后可在商人处购入遗落物，再带来查阅作用与代价。") }
             Text("本章公开柜提供已有遗落物的规则档案；专业研究与新的鉴定剧情随后续章节发布。").font(.footnote)
         }
     }
@@ -503,27 +503,40 @@ struct InstitutionPlaytestRoot: View {
     @State private var busy = false
     @State private var message = ""
     @State private var bicycleReview: (GameStore, String)?
+    @State private var confirmAdvance = false
     private var profile: String { UserDefaults.standard.string(forKey: "institution.profile") ?? "fresh" }
     var body: some View {
         ContentView(game: game, storefront: storefront)
             .defaultAppStorage(UserDefaults(suiteName: "mistport.institutions.playtest.20261013." + profile)!)
             .overlay(alignment: .bottomLeading) {
+                // Two phone builds (2026-10-17): the real-pace one has no playtest settings at all;
+                // the accelerated one keeps only the clock (PLAYTEST_CLOCK).
+                #if !PLAYTEST_BUILD || PLAYTEST_CLOCK
                 if game.phase == .cityHub || game.phase == .title {
                     Button("试玩设置") { settings = true }.font(.caption.bold()).padding(12)
                         .background(.black.opacity(0.6), in: Capsule()).padding(12).padding(.bottom, game.phase == .cityHub ? 100 : 0)
                 }
+                #endif
             }
             .sheet(isPresented: $settings) {
-                GameArtPage(title: "机构试玩存档", subtitle: "独立 App · 时间操作仅作用于试玩存档") {
+                GameArtPage(title: "试玩设置", subtitle: "只作用于这台手机上的试玩存档") {
+                    Text("当前：第\(game.pacingDay)天")
+                    #if PLAYTEST_BUILD
+                    Text("加速试玩用：把时钟往前拨一天。日期门槛、体力、住房日费、委托和城势都会照规则往前走，拨了不能退回。")
+                    #else
                     Text("开局档从180铜开始正常游玩。住房档模拟已完成Q13，提供1200铜和联排租约；这部分是测试夹具，不是真实赢取。两档分别保存银行与合同记录。")
                     Button("切到开局档（保留该档进度）") { switchProfile("fresh") }
                     Button("切到住房档（保留该档进度）") { switchProfile("housing") }
-                    Text("当前：\(profile == "fresh" ? "开局" : "住房") · 第\(game.pacingDay)日")
-                    Button("试玩时钟前进24小时") {
-                        busy = true
-                        Task { defer { busy = false }; await game.advanceInstitutionClock(); message = "已前进24小时，日费、到期和日期门槛照规则结算。" }
-                    }.disabled(busy)
-                    Text("可以用时钟检查72小时存单、合同到账、租约与材料预算；正式日期门槛没有删除。")
+                    Text("当前档：\(profile == "fresh" ? "开局" : profile == "housing" ? "住房" : profile)")
+                    #endif
+                    Button("试玩时钟前进24小时") { confirmAdvance = true }.disabled(busy)
+                        .confirmationDialog("把时钟往前拨 24 小时？", isPresented: $confirmAdvance, titleVisibility: .visible) {
+                            Button("前进24小时", role: .destructive) {
+                                busy = true
+                                Task { defer { busy = false }; await game.advanceInstitutionClock(); message = "已前进到第\(game.pacingDay)天。" }
+                            }
+                            Button("取消", role: .cancel) {}
+                        } message: { Text("拨了不能退回。") }
                     if !message.isEmpty { Text(message) }
                 }.buttonStyle(GameArtButtonStyle())
             }
@@ -568,7 +581,7 @@ struct CityPostalWorkView: View {
                     let serial = game.postalJobSerial, step = game.postalJobStep
                     Button(answer) { Task { await game.verifyPostalField(answer, serial: serial, step: step) } }.buttonStyle(GameArtButtonStyle())
                 }
-            } else { Text("Q4后可承接邮务工作；不需要投资或高级住房。") }
+            } else { Text("第4关后可承接邮务工作；不需要投资或高级住房。") }
             if !game.featureMessage.isEmpty { Text(game.featureMessage).foregroundStyle(.orange) }
         }.task { await game.openHousingDay() }
     }
@@ -605,7 +618,7 @@ struct CityContractWorkView: View {
     }
     private func perform(_ action: @escaping @MainActor () async throws -> Void) {
         busy = true
-        Task { defer { busy = false }; do { try await action(); dismiss() } catch { message = error.localizedDescription } }
+        Task { defer { busy = false }; do { try await action(); dismiss() } catch { message = game.playerError(error) } }
     }
 }
 
@@ -622,7 +635,7 @@ struct CityHousingMaintenanceView: View {
                 Text("\(EarlyRelicShop.name(id)) · 完好\(durability)%")
                 Button("保养至100% · \(price)铜") {
                     do { try game.repairOwnedChurchRelic(id); message = "保养已完成，费用与今日服务已记账。" }
-                    catch { message = error.localizedDescription }
+                    catch { message = game.playerError(error) }
                 }.buttonStyle(GameArtButtonStyle()).disabled(durability == 100 || game.venueCoins < price)
             }
             if game.chapterOneCampaign.ownedRelicIDs.isDisjoint(with: EarlyRelicShop.ids) { Text("先在商人处购入遗落物。没有维修需求，就没有这笔支出或优惠。") }
