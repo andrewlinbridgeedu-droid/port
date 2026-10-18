@@ -308,6 +308,7 @@ struct CityHubView: View {
         case .urgentErrand: "街头急件"
         case .jointErrand: "合力差事"
         case .commission: "市政委托"
+        case .plot: "城势"
         }
         guard let personID = target.personID,
               let name = HomeCitizenCatalog.people.first(where: { $0.id == personID })?.name,

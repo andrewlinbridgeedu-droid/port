@@ -51,6 +51,7 @@ struct CityEventsView: View {
             Text(event.title).font(.title3.bold())
             Text("第 \(event.firstDay)–\(event.lastDay) 天 · \(event.partner)").font(.subheadline)
             Text(event.briefing).lineSpacing(5)
+            if let stage = MPCCityTrendStage.allCases.first(where: { $0.eventID == event.id }) { keyVote(stage) }
             if game.cityEvents.status(event.id, day: game.pacingDay) == .succeeded {
                 Text(event.success).foregroundStyle(.green)
             } else {
@@ -80,6 +81,30 @@ struct CityEventsView: View {
                 Text("完成：\(event.success)").font(.footnote)
                 Text("逾期：\(event.failure)").font(.footnote).foregroundStyle(.secondary)
             }
+        }
+    }
+    /// The stage's key vote (2026-10-17): whom the player speaks up for; once, counting three.
+    private func keyVote(_ stage: MPCCityTrendStage) -> some View {
+        GroupBox("关键一票 · \(stage.stake)") {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(stage.keyQuestion).font(.callout)
+                if let vote = game.cityTrendKeyVote(stage) {
+                    Text("你\(vote.fact)。").font(.subheadline.bold())
+                    if let reply = stage.keyChoices.first(where: { $0.side == vote.side })?.reply { Text(reply).font(.callout) }
+                    Text("这一票算三点，记进\(vote.side.name)。这一段只能投一次。").font(.footnote).foregroundStyle(.secondary)
+                } else {
+                    ForEach(stage.keyChoices) { choice in
+                        Button { game.castCityTrendKeyVote(stage, side: choice.side) } label: {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(choice.label).font(.subheadline.bold())
+                                Text("帮\(choice.side.name) · \(choice.side.motto) · \(stage.outcome(choice.side))").font(.caption2)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }.frame(maxWidth: .infinity, alignment: .leading)
+                        }.buttonStyle(GameArtButtonStyle())
+                    }
+                    Text("这一票算三点，只能投一次，投了不能改。").font(.footnote).foregroundStyle(.secondary)
+                }
+            }.frame(maxWidth: .infinity, alignment: .leading)
         }
     }
     private func statusText(_ event: MPCCityEvent) -> String {

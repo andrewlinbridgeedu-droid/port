@@ -85,6 +85,10 @@ enum HomeCitizenCatalog {
         ] {
             citizens.append(.init(id: id, name: name, dialogue: "今天也请多关照。", post: nil, service: service.isEmpty ? nil : service))
         }
+        // The three faction leaders a plot can expose (2026-10-17); on the street only while exposed.
+        for side in MPCCityFaction.allCases {
+            citizens.append(.init(id: side.leaderID, name: side.leaderLabel, dialogue: "", post: nil, service: nil))
+        }
         for index in citizens.indices {
             let post = (layout.alwaysInteractive + layout.namedPosts).first { $0.who == citizens[index].name }
             citizens[index].post = post?.post
@@ -92,7 +96,13 @@ enum HomeCitizenCatalog {
         }
         return citizens
     }()
+    /// Where the faction leaders come to be seen: the docks, the plaza arch, the works lane.
+    static let leaderAnchors: [String: [Double]] = [
+        MPCCityFaction.neighbours.leaderID: [1.39, 0.875], MPCCityFaction.offices.leaderID: [0.985, 0.705],
+        MPCCityFaction.compacts.leaderID: [1.515, 0.817],
+    ]
     static func homeAnchor(for id: String) -> [Double] {
+        if let anchor = leaderAnchors[id] { return anchor }
         guard let index = people.firstIndex(where: { $0.id == id }) else { return [0.5, 0.7] }
         if let post = people[index].post { return post }
         let streets = ["boulevard-main", "plaza-ring", "yard-main"]
@@ -307,7 +317,7 @@ struct HomeStreetScene: View {
                 Ellipse().fill(.black.opacity(0.28)).frame(width: pose.size * 0.4, height: 4).offset(y: pose.size * 0.5)
                 HomeWalkSprite(citizen: pose.person.id, motion: pose.motion, size: pose.size)
                 VStack(spacing: 1) {
-                    if let kind = pose.tasks.first?.kind { Image(systemName: kind == .postal ? "envelope.fill" : kind == .neighbor ? "bell.fill" : "seal.fill").foregroundStyle(kind == .bounty ? .red : .yellow) }
+                    if let kind = pose.tasks.first?.kind { Image(systemName: kind == .postal ? "envelope.fill" : kind == .neighbor ? "bell.fill" : kind == .plot ? "scope" : "seal.fill").foregroundStyle(kind == .bounty || kind == .plot ? .red : .yellow) }
                     Text(pose.person.name).font(.system(size: 10, weight: .semibold)).fixedSize(horizontal: true, vertical: false).foregroundStyle(.white)
                 }.padding(3).background(.black.opacity(0.55), in: Capsule()).opacity(pose.tasks.isEmpty || pose.tasks.contains { $0.id == trackedID } ? 1 : 0.55).offset(x: plateShift, y: -pose.size * 0.7 - Double(pose.plateRow) * 28)
             }.frame(width: 44, height: max(44, pose.size))
@@ -934,6 +944,7 @@ struct HomeTaskChoicesView: View {
     var body: some View {
         if let selected {
             if selected.kind == .neighbor, let neighborID = selected.personID { HomeNeighborVisit(game: game, neighborID: neighborID) }
+            else if selected.kind == .plot { HomePlotView(game: game) }
             else if [.urgentErrand, .jointErrand, .commission].contains(selected.kind) { HomeStreetTaskView(game: game, target: selected) }
             else { HomeBountyInteractionView(game: game, target: selected) }
         } else {
@@ -1242,5 +1253,134 @@ struct StreetTaskBattleView: View {
         }
         .preferredColorScheme(.dark).buttonStyle(.plain)
         .task { if previewSession == nil { previewSession = try? game.streetBattlePreview(offerID: offerID, ticket: battleID) } }
+    }
+}
+
+// MARK: The plot (city trend, days 21–27)
+
+
+/// The plot (2026-10-17, CITY_TREND_TASKS_PROPOSAL_20261017.md): from day 21 the leader of the
+/// side out in front is seen in public, and the city decides whether they live. Each account
+/// has one try, to strike or to guard; a death needs four more strikes than guards across the
+/// whole city, and what it does to the side cannot be known beforehand.
+struct HomePlotView: View {
+    @Bindable var game: GameStore
+    @State private var battle: PlotTicket?
+    private struct PlotTicket: Identifiable { let id: String; let assassin: Bool }
+
+    var body: some View {
+        let trend = game.cityTrend
+        GameArtPage(title: trend.plot?.target.leaderLabel ?? "风声", subtitle: "城势 · 第 21–27 天", art: "HomePoliceOfficeEmpty20260929", closeTitle: "返回港城") {
+            if let plot = trend.plot {
+                let side = plot.target
+                Text("\(side.leaderTitle)\(side.leaderName)这几天在\(side.leaderPlace)公开露面。\(side.name)这一章走得太前，全城都在传：有人要他的命。")
+                Text("风声：刺客已得手 \(plot.struck) 次，护卫挡下 \(plot.held) 次。" + (plot.killedDay == nil
+                    ? "再净得手 \(max(0, MPCCityTrendWorld.killMargin - plot.net)) 次，他就活不过这几天。" : ""))
+                    .font(.callout)
+                Text("他若死了，\(side.name)可能树倒猢狲散，也可能全城为他举哀、反倒更齐心——谁也说不准。")
+                    .font(.footnote).foregroundStyle(.secondary)
+                if let killed = plot.killedDay {
+                    Text("第 \(killed) 天，\(side.leaderLabel)遇刺身亡。" + (plot.aftermath == .collapse ? "\(side.name)树倒猢狲散。" : "全城为他举哀。"))
+                        .font(.headline)
+                } else if let mine = game.cityTrendLedger.plotTry {
+                    Text(mine.assassin ? (mine.success ? "你那一刀得手了。" : "你去刺杀，没能得手。")
+                         : (mine.success ? "你替他挡下了一次刺杀。" : "你去护卫，没能挡住。")).font(.headline)
+                    Text("每人只有一次机会。剩下的，看全城的人。").font(.footnote).foregroundStyle(.secondary)
+                } else if MPCCityTrendWorld.plotDays.contains(game.pacingDay) {
+                    if let leaning = game.cityTrendLedger.leaning(through: game.pacingDay) {
+                        Text("你这周多替\(leaning.name)办事。").font(.footnote)
+                    }
+                    StaminaCostView(activity: .errandThreeStep)
+                    Button("刺杀\(side.leaderLabel)") { battle = .init(id: "plot-" + UUID().uuidString.lowercased(), assassin: true) }
+                        .buttonStyle(GameArtButtonStyle(primary: true))
+                    Button("护卫\(side.leaderLabel)") { battle = .init(id: "plot-" + UUID().uuidString.lowercased(), assassin: false) }
+                        .buttonStyle(GameArtButtonStyle())
+                    Text("只有一次机会：打赢算一次得手或一次挡下，赢了得 \(GameStore.plotPay) 铜；打输或中途撤退也算用掉。")
+                        .font(.footnote).foregroundStyle(.secondary)
+                } else {
+                    Text("露面的日子已经过去。").font(.footnote)
+                }
+            } else {
+                Text("城里暂时没有人露面。")
+            }
+        }
+        .fullScreenCover(item: $battle) { ticket in
+            CityPlotBattleView(game: game, assassin: ticket.assassin, battleID: ticket.id, onClose: { battle = nil })
+        }
+    }
+}
+
+/// The plot fight; mirrors StreetTaskBattleView. Starting it uses the account's one try.
+struct CityPlotBattleView: View {
+    @Bindable var game: GameStore
+    let assassin: Bool
+    let battleID: String
+    let onClose: () -> Void
+    @State private var started = false
+    @State private var finished = false
+    @State private var won = false
+    @State private var skills: [FoolSkillID] = []
+    @State private var reordered = true
+    @State private var configuredSession: MPCChapterOneEncounterSession?
+    @State private var previewSession: MPCChapterOneEncounterSession?
+    @State private var startError = ""
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            if let initial = configuredSession ?? previewSession {
+                ChapterOneEncounterTestView(initialSession: initial,
+                    campaign: game.churchBattleCampaign, playerSequence: game.currentSequence,
+                    battleIsActive: started,
+                    showsStandaloneOpeningBattleButton: false,
+                    onVictory: { _ in
+                        guard !finished else { return }
+                        do { won = try game.settleCityPlot(assassin: assassin, ticket: battleID, won: true); finished = true }
+                        catch { startError = "结算未完成，请保留本场并重试。" }
+                    }, onExit: {
+                        if started && !finished { try? game.settleCityPlot(assassin: assassin, ticket: battleID, won: false, retreated: true) }
+                        onClose()
+                    },
+                    onDefeat: {
+                        guard !finished else { return }
+                        try? game.settleCityPlot(assassin: assassin, ticket: battleID, won: false)
+                        finished = true
+                    },
+                    onRetrySetup: { onClose() },
+                    onSequenceChanged: { skills = $0 },
+                    onSelectActiveRelic: game.selectCampaignActiveRelic,
+                    onSelectPassiveRelic: game.toggleCampaignRelic,
+                    onUseManualMask: { game.recordManualMaskUse(encounterID: initial.encounter.id) },
+                    onConsumeSupply: game.consumeCampaignSupply)
+            }
+            if !started && !finished {
+                ChapterOneBattleSetupOverlay(
+                    availableSkills: MPCChapterOneCatalog.visibleSkills.filter {
+                        game.chapterOneCampaign.unlockedSkillIDs.contains($0.id) && $0.id != .maskedWhisper
+                    }, relics: [], selectedSkillIDs: $skills,
+                    requiresFirstReorder: false, slotCapacity: game.chapterOneLoadoutSlotCapacity,
+                    hasCompletedFirstReorder: $reordered, usesEarlyTutorialLayout: true,
+                    showsStartTutorialHint: false,
+                    onStart: {
+                        game.saveChapterOneBattleLoadout(skills)
+                        Task { do {
+                            configuredSession = try await game.beginCityPlot(assassin: assassin, ticket: battleID, skills: skills)
+                            started = true
+                        } catch { startError = game.housingError(error) } }
+                    })
+                if (configuredSession ?? previewSession) == nil {
+                    VStack { HStack { GameArtReturnButton(title: "返回") { onClose() }; Spacer() }; Spacer() }.padding()
+                }
+            }
+            if !startError.isEmpty { Text(startError).foregroundStyle(.orange).padding().background(.black) }
+            if finished {
+                GameArtBattleResult(won: won,
+                    detail: won ? (assassin ? "得手了。剩下的看全城。" : "挡下了这一次。") + "报酬 \(GameStore.plotPay) 铜已到账。"
+                        : "没成。每人只有一次机会，这次已经用掉。",
+                    title: "返回港城", action: onClose)
+            }
+        }
+        .preferredColorScheme(.dark).buttonStyle(.plain)
+        .task { if previewSession == nil { previewSession = try? game.cityPlotPreview(assassin: assassin, ticket: battleID) } }
     }
 }

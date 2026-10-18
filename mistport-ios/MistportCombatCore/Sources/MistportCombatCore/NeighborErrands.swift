@@ -495,13 +495,15 @@ public struct MPCNeighborLedger: Codable, Equatable, Sendable {
 
     /// Opens a new pacing day's requests. Each neighbour's next errand follows how many
     /// they have had done; goods are asked for only once the workshop is open.
+    /// `trend`: yesterday's paper; the side out in front and the side behind send their people
+    /// (MPCNeighborCatalog.askers(day:trend:)). Without it, the plain rotation.
     @discardableResult
-    public mutating func open(day: Int, completedMissions: Set<Int>) -> [Offer] {
+    public mutating func open(day: Int, completedMissions: Set<Int>, trend: MPCCityTrendSnapshot? = nil) -> [Offer] {
         guard day > self.day else { return offers }
         self.day = day
         offers = offers.filter { $0.activeTicket != nil }
         let workshop = MPCCraftingCatalog.isUnlocked(completedMissions: completedMissions)
-        for neighbor in MPCNeighborCatalog.askers(day: day) {
+        for neighbor in MPCNeighborCatalog.askers(day: day, trend: trend) {
             let usable = neighbor.errands.filter { workshop || !$0.needsWorkshop }
             guard !usable.isEmpty else { continue }
             let errand = usable[affinity[neighbor.id, default: 0] % usable.count]

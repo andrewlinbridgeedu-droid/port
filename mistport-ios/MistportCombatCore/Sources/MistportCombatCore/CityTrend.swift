@@ -107,7 +107,32 @@ public struct MPCCityTrendLedger: Codable, Equatable, Sendable {
     public static let ordinaryPerDay = 3
     public static let keyWeight = 3
     public private(set) var receipts: [MPCCityTrendReceipt] = []
+    /// The account's one try at the leader exposed on day 21 (absent in older saves).
+    public struct PlotTry: Codable, Equatable, Sendable {
+        public let day: Int
+        public let target: MPCCityFaction
+        public let assassin: Bool
+        public let success: Bool
+    }
+    public private(set) var plotTry: PlotTry?
+    /// The plot fight under way, if any.
+    public private(set) var plotTicket: String?
     public init() {}
+
+    /// Opens the plot fight's ticket; one at a time, and only before the account has tried.
+    public mutating func openPlotTicket(_ ticket: String) -> Bool {
+        guard plotTry == nil, plotTicket == nil || plotTicket == ticket else { return false }
+        plotTicket = ticket
+        return true
+    }
+    /// Records the one try (a win is a success, a loss or a retreat a failure) and closes the ticket.
+    @discardableResult
+    public mutating func recordPlotTry(day: Int, target: MPCCityFaction, assassin: Bool, success: Bool) -> Bool {
+        guard plotTry == nil else { return false }
+        plotTry = .init(day: day, target: target, assassin: assassin, success: success)
+        plotTicket = nil
+        return true
+    }
 
     /// Records a choice once per receipt ID; returns the points it added to the city.
     @discardableResult
@@ -208,6 +233,8 @@ public struct MPCCityTrendSnapshot: Codable, Equatable, Sendable {
     public let shocks: [MPCCityTrendShock]
     /// The leader exposed on day 21 and how the plot stands (nil before, or when no side led enough).
     public var plot: MPCCityTrendWorld.Plot? = nil
+    /// The chapter's end, once day 28 is through.
+    public var ending: MPCCityTrendEnding? = nil
 
     public func share(_ side: MPCCityFaction, of points: [String: Double]? = nil) -> Double {
         let points = points ?? total
@@ -261,7 +288,7 @@ public struct MPCCityTrendWorld: Codable, Equatable, Sendable {
     public static let assassinSeats = 3
     public static let guardSeats = 2
     public static let killMargin = 4
-    /// The lead over the second side (share of the chapter so far) that draws a plot on day 21.
+    /// The lead over the second side (share of the chapter through day 20) that exposes a leader for days 21–27.
     public static let plotLead = 0.03
     /// Candidate tuning (swept with tools/city-trend-sim): the simulated crowd's tries a day and
     /// how a death moves its side (collapse for the rest of the chapter, or a three-day rally).
@@ -303,10 +330,6 @@ public struct MPCCityTrendWorld: Codable, Equatable, Sendable {
         var total: [MPCCityFaction: Double] = [:]
         for day in daily { for side in sides { total[side, default: 0] += day[side.rawValue] ?? 0 } }
         let totalSum = total.values.reduce(0, +)
-        if d == Self.plotDays.lowerBound, plot == nil, totalSum > 0 {
-            let order = sides.sorted { (total[$0] ?? 0) > (total[$1] ?? 0) }
-            if ((total[order[0]] ?? 0) - (total[order[1]] ?? 0)) / totalSum >= Self.plotLead { plot = Plot(target: order[0]) }
-        }
         var recent: [MPCCityFaction: Double] = [:]
         for day in daily.suffix(3) { for side in sides { recent[side, default: 0] += day[side.rawValue] ?? 0 } }
         let recentSum = recent.values.reduce(0, +)
@@ -348,6 +371,12 @@ public struct MPCCityTrendWorld: Codable, Equatable, Sendable {
             today[side.rawValue] = crowd + own
         }
         daily.append(today)
+        // At the end of day 20 the side out in front shows its leader, so tries on day 21 count.
+        if d == Self.plotDays.lowerBound - 1, plot == nil {
+            let points = self.points(1...d), sum = points.values.reduce(0, +)
+            let order = sides.sorted { (points[$0] ?? 0) > (points[$1] ?? 0) }
+            if sum > 0, ((points[order[0]] ?? 0) - (points[order[1]] ?? 0)) / sum >= Self.plotLead { plot = Plot(target: order[0]) }
+        }
         if var plot, plot.killedDay == nil, Self.plotDays.contains(d) {
             if crowdPlots {
                 // The other players simulated: tries split by how the city leans against or for the target.
@@ -395,7 +424,8 @@ public struct MPCCityTrendWorld: Codable, Equatable, Sendable {
                      // A stage is settled once its last day has passed.
                      results: MPCCityTrendStage.allCases.filter { $0.days.upperBound < day }.compactMap(result),
                      shocks: shocks.filter { $0.day <= day },
-                     plot: plot)
+                     plot: day >= Self.plotDays.lowerBound ? plot : nil,
+                     ending: day > MPCCityTrendStage.workshop.days.upperBound ? ending : nil)
     }
 
     /// The chapter's end, once day 28 is through: the world chapter two opens in.
@@ -431,6 +461,9 @@ public enum MPCCityTrend {
         var world = MPCCityTrendWorld(simulation: simulation)
         if day >= 1 {
             for d in 1...day {
+                if let try_ = ledger.plotTry, try_.day == d, world.plot?.target == try_.target {
+                    world.attempt(account: "you", assassin: try_.assassin, success: try_.success)
+                }
                 world.advance(players: ledger.points(on: d).reduce(into: [:]) { $0[$1.key] = Double($1.value) })
             }
         }
@@ -500,5 +533,60 @@ extension MPCCityTrendStage {
             .init(side: o, label: "签市政工坊章程", fact: "在工坊奠基时签了市政工坊的章程", reply: "档案员：按名册招工，一个都不会漏。"),
             .init(side: c, label: "签委员会私厂章程", fact: "在工坊奠基时签了委员会私厂的章程", reply: "维拉：工钱高，规矩也严。欢迎。")]
         }
+    }
+}
+
+/// The leaders a plot can expose (2026-10-17: only faction leaders, never characters the story
+/// needs). New characters, so a death touches no errand, case or card table of the main cast.
+extension MPCCityFaction {
+    public var leaderID: String { "leader-" + rawValue }
+    /// The leader's own name ("葛文"); sentences put `leaderTitle` before it.
+    public var leaderName: String {
+        switch self {
+        case .neighbours: "葛文"
+        case .offices: "卡索"
+        case .compacts: "莫里斯"
+        }
+    }
+    /// How plates, buttons and fights name the leader: "老会长葛文".
+    public var leaderLabel: String {
+        switch self {
+        case .neighbours: "老会长葛文"
+        case .offices: "秘书长卡索"
+        case .compacts: "董事莫里斯"
+        }
+    }
+    public var leaderTitle: String {
+        switch self {
+        case .neighbours: "码头互助会的老会长"
+        case .offices: "市政厅秘书长"
+        case .compacts: "工业委员会董事"
+        }
+    }
+    public var leaderPlace: String {
+        switch self {
+        case .neighbours: "货场码头口"
+        case .offices: "广场拱门下"
+        case .compacts: "工坊货场北巷"
+        }
+    }
+}
+
+extension MPCCityTrend {
+    public static let plotPrefix = "church_maintenance_plot_"
+    /// A plot fight: the assassin cuts through the leader's guards; the guard holds off the hired blades.
+    public static func plotEncounterID(target: MPCCityFaction, assassin: Bool, ticket: String) -> String {
+        plotPrefix + (assassin ? "strike" : "guard") + "-" + target.rawValue + "_" + ticket
+    }
+    public static func plotEncounter(id: String) -> MPCEncounterContent? {
+        guard let parsed = MPCStreetEncounters.parse(id, prefix: plotPrefix) else { return nil }
+        let parts = parsed.key.split(separator: "-").map(String.init)
+        guard parts.count == 2, let side = MPCCityFaction(rawValue: parts[1]), ["strike", "guard"].contains(parts[0]) else { return nil }
+        let strike = parts[0] == "strike"
+        // Harder than a street errand (floors 10–20): a late-chapter fight with real risk.
+        let waves: [[MPCStreetEncounters.Species]] = strike
+            ? [[.crimsonBrute, .copperback], [.goldenThroat, .crimsonBrute, .moonfang]]   // the leader's bodyguards
+            : [[.scissor, .moonfang, .moonfang], [.veilOracle, .scissor]]                // the hired blades
+        return MPCStreetEncounters.content(id: id, name: (strike ? "刺杀·" : "护卫·") + side.leaderLabel, tag: "plot", waves: waves, floor: 30)
     }
 }

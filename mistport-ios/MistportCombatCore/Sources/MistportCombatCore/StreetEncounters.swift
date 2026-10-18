@@ -39,6 +39,6 @@ public enum MPCStreetEncounters {
 
     public static func encounter(id: String) -> MPCEncounterContent? {
         MPCCityEventCatalog.encounter(id: id) ?? MPCRemnantCatalog.encounter(id: id) ?? MPCNeighborCatalog.encounter(id: id)
-            ?? MPCStreetTaskCatalog.streetEncounter(id: id)
+            ?? MPCStreetTaskCatalog.streetEncounter(id: id) ?? MPCCityTrend.plotEncounter(id: id)
     }
 }

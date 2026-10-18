@@ -195,6 +195,22 @@ struct DailyNewspaperView: View {
             if let shock = trend.shocks.last, shock.day >= game.pacingDay - 1 {
                 Text("突发：\(shock.news)。\(shock.side.name)受挫。").font(.system(size: 12, weight: .semibold, design: .serif))
             }
+            if let plot = trend.plot {
+                let side = plot.target
+                if let killed = plot.killedDay {
+                    Text("第 \(killed) 天，\(side.leaderTitle)\(side.leaderName)遇刺身亡。" + (plot.aftermath == .collapse
+                        ? "\(side.name)树倒猢狲散。" : "全城为他举哀，\(side.name)反倒更齐心了。"))
+                        .font(.system(size: 13, weight: .bold, design: .serif))
+                } else if MPCCityTrendWorld.plotDays.contains(game.pacingDay) {
+                    Text("\(side.leaderTitle)\(side.leaderName)在\(side.leaderPlace)公开露面。风声：刺客得手 \(plot.struck) 次，护卫挡下 \(plot.held) 次。")
+                        .font(.system(size: 12, weight: .semibold, design: .serif))
+                } else {
+                    Text("\(side.leaderLabel)躲过了这一轮风声。").font(.system(size: 12, design: .serif))
+                }
+            }
+            if let ending = trend.ending {
+                Text("本章定局：\(ending.summary)。").font(.system(size: 13, weight: .bold, design: .serif))
+            }
             ForEach(trend.results, id: \.stage) { result in
                 Text("\(result.stage.title)已定：\(result.winner.name)拿下——\(result.stage.outcome(result.winner))。")
                     .font(.system(size: 12, design: .serif))

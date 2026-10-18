@@ -44,6 +44,7 @@ struct ContentView: View {
         return MPCStreetTaskCatalog.bountyTargets(game.churchServices.bounties)
             + MPCStreetTaskCatalog.neighborTargets(game.neighbors, heardMessages: game.neighborHeardMessages, today: today)
             + MPCStreetTaskCatalog.streetTargets(game.streetTasks, today: today)
+            + game.cityPlotTargets
     }
     private var homeIsActive: Bool {
         let uncovered = scenePhase == .active && presentedSheet == nil && homeDestination == nil && !newspaperPresented
@@ -472,6 +473,7 @@ struct ContentView: View {
             if let target = destination.target {
                 let matching = destination.choices.isEmpty ? [target] : destination.choices
                 if matching.count > 1 { HomeTaskChoicesView(game: game, targets: matching) }
+                else if target.kind == .plot { HomePlotView(game: game) }
                 else if [.urgentErrand, .jointErrand, .commission].contains(target.kind) { HomeStreetTaskView(game: game, target: target) }
                 else if target.kind == .neighbor, let neighborID = target.personID { HomeNeighborVisit(game: game, neighborID: neighborID) }
                 else { HomeBountyInteractionView(game: game, target: target) }

@@ -18,6 +18,9 @@ struct NeighborConversationView: View {
             let mine = game.neighbors.offers.filter { $0.neighborID == neighborID && ($0.day == today || $0.activeTicket != nil) }
             let relays = game.neighbors.offers.filter { $0.errand?.recipientID == neighborID && $0.day == today && !$0.done && game.canRelayNeighbor($0.id) }
             Text("第 \(today) 天 · 好感 \(game.neighbors.affinity[neighborID, default: 0])").font(.subheadline)
+            if let tone = MPCNeighborCatalog.tone(neighborID, trend: game.cityTrend, leaning: game.cityTrendLedger.leaning(through: today)) {
+                Text(tone).font(.callout).italic().foregroundStyle(.secondary)
+            }
             if (mine + relays).contains(where: { !$0.done }) {
                 TimelineView(.periodic(from: .now, by: 30)) { _ in
                     Text("今天的委托午夜换新 · " + game.errandTimeLeft(lastDay: today)).font(.footnote).foregroundStyle(.secondary)

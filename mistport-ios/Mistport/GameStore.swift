@@ -4748,7 +4748,7 @@ extension GameStore {
     func openNeighborDay() throws {
         var record = try readNeighbors()
         let old = record.ledger
-        record.ledger.open(day: pacingDay, completedMissions: churchTowerMissionNumbers)
+        record.ledger.open(day: pacingDay, completedMissions: churchTowerMissionNumbers, trend: cityTrendMorning)
         record.heardMessages.formIntersection(Set(record.ledger.offers.map(\.id)))
         guard record.ledger != old else { return }
         try updateChurchServices(neighbors: record) { _ in }
@@ -5113,7 +5113,7 @@ extension GameStore {
     }
     var newspaperNeighborOffers: [MPCNeighborLedger.Offer] {
         var ledger = neighbors
-        return ledger.open(day: pacingDay, completedMissions: churchTowerMissionNumbers)
+        return ledger.open(day: pacingDay, completedMissions: churchTowerMissionNumbers, trend: cityTrendMorning)
     }
     var newspaperTavernPrize: MPCTavernPrize? {
         guard tavernPokerUnlocked else { return nil }
@@ -5944,6 +5944,81 @@ extension GameStore {
         guard let reward, reward.copper > 0, let way = reward.way else { return }
         var record = readCityTrend()
         record.ledger.record(id: "errand-" + offerID, day: pacingDay, side: way.side, fact: way.fact)
+        defaults.set(try? JSONEncoder().encode(record), forKey: Self.cityTrendKey)
+        churchServicesRevision += 1
+    }
+    /// The city as this morning's paper printed it (through yesterday): who sends people today.
+    var cityTrendMorning: MPCCityTrendSnapshot? {
+        guard pacingDay > 1 else { return nil }
+        let record = readCityTrend()
+        return MPCCityTrend.snapshot(day: pacingDay - 1, ledger: record.ledger, simulation: .init(seed: record.seed))
+    }
+    // MARK: The plot (days 21–27): kill or guard the leader of the side out in front; one try.
+    /// The exposed leader on the street, while this account still has its try.
+    var cityPlotTargets: [MPCStreetTaskTarget] {
+        guard let plot = cityTrend.plot, plot.killedDay == nil, MPCCityTrendWorld.plotDays.contains(pacingDay),
+              cityTrendLedger.plotTry == nil else { return [] }
+        let side = plot.target
+        return [.init(id: "plot-" + side.rawValue, taskID: "plot", kind: .plot, personID: side.leaderID,
+                      title: side.leaderLabel + "露面 · 刺杀或护卫")]
+    }
+    private func plotLoadout(_ skills: [FoolSkillID]) -> MPCChapterOneLoadout {
+        var loadout = churchBattleCampaign.loadout
+        var legal: [FoolSkillID] = []
+        for skill in skills where skill != .maskedWhisper && chapterOneCampaign.unlockedSkillIDs.contains(skill) && !legal.contains(skill) { legal.append(skill) }
+        loadout.normalSkillIDs = Array(legal.prefix(chapterOneLoadoutSlotCapacity))
+        loadout.talents = hermitTalents; loadout.skillLevels = foolSkillLevels
+        return loadout
+    }
+    func cityPlotPreview(assassin: Bool, ticket: String) throws -> MPCChapterOneEncounterSession {
+        guard let target = cityTrend.plot?.target else { throw MPCStreetTaskLedger.Failure.notOffered }
+        return try MPCChapterOneEncounterSession.start(encounterID: MPCCityTrend.plotEncounterID(target: target, assassin: assassin, ticket: ticket),
+            party: chapterOneCampaign.party, consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: churchBattleCampaign.loadout)
+    }
+    func beginCityPlot(assassin: Bool, ticket: String, skills: [FoolSkillID]) async throws -> MPCChapterOneEncounterSession {
+        try await housingAction(.errandThreeStep, receipt: "plot-" + ticket) {
+            guard let plot = cityTrend.plot, plot.killedDay == nil, MPCCityTrendWorld.plotDays.contains(pacingDay) else {
+                throw MPCStreetTaskLedger.Failure.notOffered
+            }
+            var record = readCityTrend()
+            guard record.ledger.openPlotTicket(ticket) else { throw MPCStreetTaskLedger.Failure.pending }
+            let loadout = plotLoadout(skills)
+            let session = try MPCChapterOneEncounterSession.start(
+                encounterID: MPCCityTrend.plotEncounterID(target: plot.target, assassin: assassin, ticket: ticket),
+                party: chapterOneCampaign.party, consumables: chapterOneCampaign.inventory, companionIDs: [], loadout: loadout)
+            defaults.set(try? JSONEncoder().encode(record), forKey: Self.cityTrendKey)
+            try updateChurchServices { try beginChurchGear(&$0, battleID: ticket, loadout: loadout) }
+            return session
+        }
+    }
+    /// Ends the plot fight: a win is a strike or a hold (and 20 copper); a loss or a retreat
+    /// uses the try all the same. Returns whether it was won.
+    @discardableResult
+    func settleCityPlot(assassin: Bool, ticket: String, won: Bool, retreated: Bool = false) throws -> Bool {
+        var record = readCityTrend()
+        guard record.ledger.plotTicket == ticket, let target = cityTrend.plot?.target else { return false }
+        record.ledger.recordPlotTry(day: pacingDay, target: target, assassin: assassin, success: won)
+        defaults.set(try? JSONEncoder().encode(record), forKey: Self.cityTrendKey)
+        var coins = venueCoins
+        if won { coins += Self.plotPay }
+        try updateChurchServices { state in
+            state.loans.coins = coins
+            try settleChurchGear(&state, battleID: ticket, outcome: won ? .victory : retreated ? .retreat : .defeat)
+        }
+        churchServicesRevision += 1
+        return won
+    }
+    static let plotPay = 20
+    /// This stage's key vote, if cast (once a stage; counts three).
+    func cityTrendKeyVote(_ stage: MPCCityTrendStage) -> MPCCityTrendReceipt? {
+        cityTrendLedger.receipts.first { $0.id == "key-\(stage.rawValue)" }
+    }
+    /// Casts the stage's key vote while the stage runs; it cannot be changed.
+    func castCityTrendKeyVote(_ stage: MPCCityTrendStage, side: MPCCityFaction) {
+        guard stage.days.contains(pacingDay), cityTrendKeyVote(stage) == nil,
+              let choice = stage.keyChoices.first(where: { $0.side == side }) else { return }
+        var record = readCityTrend()
+        record.ledger.record(id: "key-\(stage.rawValue)", day: pacingDay, side: side, key: true, fact: choice.fact)
         defaults.set(try? JSONEncoder().encode(record), forKey: Self.cityTrendKey)
         churchServicesRevision += 1
     }

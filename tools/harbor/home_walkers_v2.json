@@ -220,6 +220,27 @@
       "citizens": [
         "ilya"
       ]
+    },
+    "HarborWalkerLeaderNeighbours20261017": {
+      "model": "clockmaker",
+      "hue": "0.6,0.7,0.75",
+      "citizens": [
+        "leader-neighbours"
+      ]
+    },
+    "HarborWalkerLeaderOffices20261017": {
+      "model": "street_warden",
+      "hue": "0.0,0.15,0.55",
+      "citizens": [
+        "leader-offices"
+      ]
+    },
+    "HarborWalkerLeaderCompacts20261017": {
+      "model": "merchant",
+      "hue": "0.24,0.85,0.6",
+      "citizens": [
+        "leader-compacts"
+      ]
     }
   },
   "idleModels": {

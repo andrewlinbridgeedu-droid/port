@@ -117,14 +117,15 @@ struct CityTrendTests {
     @Test("the side out in front shows its leader on day 21; seats, one try each, death at a net four")
     func plot() throws {
         var world = MPCCityTrendWorld(simulation: .init(seed: 5), crowdPlots: false)
-        for _ in 1...20 { world.advance(players: [.offices: 30]) }
+        for _ in 1...19 { world.advance(players: [.offices: 30]) }
         #expect(world.plot == nil)
         let early = world.attempt(account: "early", assassin: true, success: true)   // no plot before day 21
         #expect(!early)
-        world.advance(players: [.offices: 30])                                      // day 21 opens the plot
+        world.advance(players: [.offices: 30])                                      // the end of day 20 exposes a leader
         let target = try #require(world.plot?.target)
         #expect(target == .offices)
-        // Day 22: three assassin seats and two guard seats; one try per account.
+        #expect(world.snapshot(day: 20, yours: nil).plot == nil && world.day == 20)
+        // Day 21: three assassin seats and two guard seats; one try per account.
         var strikes: [Bool] = [], guards: [Bool] = []
         for k in 0..<4 { strikes.append(world.attempt(account: "a\(k)", assassin: true, success: true)) }
         #expect(strikes == [true, true, true, false])
@@ -134,10 +135,10 @@ struct CityTrendTests {
         #expect(guards == [true, true, false])
         world.advance(players: [.offices: 30])
         #expect(world.plot?.net == 2 && world.plot?.killedDay == nil)
-        // Day 23: two more strikes make a net four: the leader dies that day.
+        // Day 22: two more strikes make a net four: the leader dies that day.
         for k in 0..<2 { world.attempt(account: "b\(k)", assassin: true, success: true) }
         world.advance(players: [.offices: 30])
-        #expect(world.plot?.killedDay == 23 && world.plot?.aftermath != nil)
+        #expect(world.plot?.killedDay == 22 && world.plot?.aftermath != nil)
         let late = world.attempt(account: "late", assassin: true, success: true)
         #expect(!late)
         while world.day < 28 { world.advance(players: [.offices: 30]) }
@@ -146,12 +147,76 @@ struct CityTrendTests {
         #expect(ending.summary.contains("公署领头人遇刺身亡"))
     }
 
+    @Test("one plot try per account, its own fight, replayed when the city is rebuilt")
+    func playerPlotTry() throws {
+        var ledger = L()
+        let opened = ledger.openPlotTicket("plot-a"), second = ledger.openPlotTicket("plot-b")
+        #expect(opened && !second)
+        let first = ledger.recordPlotTry(day: 22, target: .offices, assassin: true, success: true)
+        let again = ledger.recordPlotTry(day: 23, target: .offices, assassin: false, success: true)
+        #expect(first && !again)
+        let reopened = ledger.openPlotTicket("plot-c")
+        #expect(ledger.plotTicket == nil && !reopened)
+        let id = MPCCityTrend.plotEncounterID(target: .offices, assassin: true, ticket: "plot-a")
+        let content = try #require(MPCStreetEncounters.encounter(id: id))
+        #expect(content.name == "刺杀·" + MPCCityFaction.offices.leaderLabel && content.waves.count == 2)
+        #expect(MPCStreetEncounters.encounter(id: MPCCityTrend.plotEncounterID(target: .compacts, assassin: false, ticket: "plot-a"))?.name.hasPrefix("护卫·") == true)
+        #expect(MPCCityTrend.plotEncounter(id: "church_maintenance_plot_poison-offices_plot-a") == nil)
+        // The try counts in the rebuilt world only if that side's leader is the one exposed.
+        for seed in 0..<200 {
+            let sim = MPCCityTrendSimulation(seed: UInt64(seed))
+            guard let target = MPCCityTrend.snapshot(day: 21, ledger: L(), simulation: sim).plot?.target else { continue }
+            for day in [21, 22] {   // a try on the first day of the plot counts too
+                var mine = L()
+                mine.recordPlotTry(day: day, target: target, assassin: true, success: true)
+                let with = MPCCityTrend.snapshot(day: day, ledger: mine, simulation: sim).plot
+                let without = MPCCityTrend.snapshot(day: day, ledger: L(), simulation: sim).plot
+                #expect(with?.tried.contains("you") == true && (with?.struck ?? 0) == (without?.struck ?? 0) + 1, "seed \(seed) day \(day)")
+            }
+            return
+        }
+        Issue.record("no world exposed a leader")
+    }
+
     @Test("a balanced city shows no leader")
     func noPlotWhenBalanced() {
         var world = MPCCityTrendWorld(simulation: .init(seed: 5), crowdPlots: false)
         for _ in 1...28 { world.advance(players: [.neighbours: 20, .offices: 20, .compacts: 20]) }
         #expect(world.plot == nil || (world.ending?.plotTarget != nil))
         #expect(world.ending != nil)
+    }
+
+    @Test("every neighbour speaks for a side; the side in front and the side behind send people")
+    func whoComes() throws {
+        #expect(Set(MPCNeighborCatalog.sides.keys) == Set(MPCNeighborCatalog.all.map(\.id)))
+        let counts = MPCNeighborCatalog.sides.values.reduce(into: [MPCCityFaction: Int]()) { $0[$1, default: 0] += 1 }
+        #expect(counts == [.neighbours: 9, .offices: 7, .compacts: 7])
+        for seed in 0..<40 {
+            for day in 5...27 where MPCCityTrendStage.stage(day: day) != nil && MPCCityTrendStage.stage(day: day)!.days.lowerBound < day {
+                let trend = MPCCityTrend.snapshot(day: day - 1, ledger: L(), simulation: .init(seed: UInt64(seed)))
+                let plain = MPCNeighborCatalog.askers(day: day)
+                let askers = MPCNeighborCatalog.askers(day: day, trend: trend)
+                #expect(askers.count == plain.count && Set(askers.map(\.id)).count == askers.count, "day \(day)")
+                let order = MPCCityFaction.allCases.sorted { trend.share($0, of: trend.stage) > trend.share($1, of: trend.stage) }
+                #expect(askers.contains { MPCNeighborCatalog.sides[$0.id] == order[0] }, "seed \(seed) day \(day)")
+                if askers.count >= 3 { #expect(askers.contains { MPCNeighborCatalog.sides[$0.id] == order[2] }, "seed \(seed) day \(day)") }
+                // The first seat is always the rotation's own.
+                #expect(askers.first == plain.first)
+            }
+        }
+        // Outside the stages (days 1–3) nothing changes.
+        let early = MPCCityTrend.snapshot(day: 2, ledger: L(), simulation: .init(seed: 3))
+        #expect(MPCNeighborCatalog.askers(day: 3, trend: early) == MPCNeighborCatalog.askers(day: 3))
+        // The ledger opens the same people.
+        var ledger = MPCNeighborLedger()
+        let trend = MPCCityTrend.snapshot(day: 8, ledger: L(), simulation: .init(seed: 3))
+        let offers = ledger.open(day: 9, completedMissions: Set(1...30), trend: trend)
+        #expect(offers.map(\.neighborID) == MPCNeighborCatalog.askers(day: 9, trend: trend).map(\.id))
+        // Their voice follows their side's standing and the player's leaning.
+        let tone = try #require(MPCNeighborCatalog.tone("baker", trend: trend, leaning: .neighbours))
+        #expect(tone.hasSuffix("你一直帮着我们这边，我记着。"))
+        #expect(MPCNeighborCatalog.tone("baker", trend: trend, leaning: .offices)?.contains("替公署办事") == true)
+        #expect(MPCNeighborCatalog.tone("nobody", trend: trend, leaning: nil) == nil)
     }
 
     @Test("the newspaper's forecast names the stage and who is ahead")

@@ -1302,6 +1302,132 @@
           "cellHeight": 180
         }
       }
+    },
+    "HarborWalkerLeaderNeighbours20261017": {
+      "citizens": [
+        "leader-neighbours"
+      ],
+      "strips": {
+        "W0": {
+          "asset": "HarborWalkerLeaderNeighboursW020261017",
+          "cellWidth": 60,
+          "cellHeight": 180
+        },
+        "W1": {
+          "asset": "HarborWalkerLeaderNeighboursW120261017",
+          "cellWidth": 94,
+          "cellHeight": 180
+        },
+        "W2": {
+          "asset": "HarborWalkerLeaderNeighboursW220261017",
+          "cellWidth": 112,
+          "cellHeight": 180
+        },
+        "W3": {
+          "asset": "HarborWalkerLeaderNeighboursW320261017",
+          "cellWidth": 97,
+          "cellHeight": 180
+        },
+        "W4": {
+          "asset": "HarborWalkerLeaderNeighboursW420261017",
+          "cellWidth": 61,
+          "cellHeight": 180
+        },
+        "I3": {
+          "asset": "HarborWalkerLeaderNeighboursI320261017",
+          "cellWidth": 57,
+          "cellHeight": 180
+        },
+        "I4": {
+          "asset": "HarborWalkerLeaderNeighboursI420261017",
+          "cellWidth": 77,
+          "cellHeight": 180
+        }
+      }
+    },
+    "HarborWalkerLeaderOffices20261017": {
+      "citizens": [
+        "leader-offices"
+      ],
+      "strips": {
+        "W0": {
+          "asset": "HarborWalkerLeaderOfficesW020261017",
+          "cellWidth": 63,
+          "cellHeight": 180
+        },
+        "W1": {
+          "asset": "HarborWalkerLeaderOfficesW120261017",
+          "cellWidth": 106,
+          "cellHeight": 180
+        },
+        "W2": {
+          "asset": "HarborWalkerLeaderOfficesW220261017",
+          "cellWidth": 117,
+          "cellHeight": 180
+        },
+        "W3": {
+          "asset": "HarborWalkerLeaderOfficesW320261017",
+          "cellWidth": 109,
+          "cellHeight": 180
+        },
+        "W4": {
+          "asset": "HarborWalkerLeaderOfficesW420261017",
+          "cellWidth": 65,
+          "cellHeight": 180
+        },
+        "I3": {
+          "asset": "HarborWalkerLeaderOfficesI320261017",
+          "cellWidth": 58,
+          "cellHeight": 180
+        },
+        "I4": {
+          "asset": "HarborWalkerLeaderOfficesI420261017",
+          "cellWidth": 77,
+          "cellHeight": 180
+        }
+      }
+    },
+    "HarborWalkerLeaderCompacts20261017": {
+      "citizens": [
+        "leader-compacts"
+      ],
+      "strips": {
+        "W0": {
+          "asset": "HarborWalkerLeaderCompactsW020261017",
+          "cellWidth": 66,
+          "cellHeight": 180
+        },
+        "W1": {
+          "asset": "HarborWalkerLeaderCompactsW120261017",
+          "cellWidth": 106,
+          "cellHeight": 180
+        },
+        "W2": {
+          "asset": "HarborWalkerLeaderCompactsW220261017",
+          "cellWidth": 119,
+          "cellHeight": 180
+        },
+        "W3": {
+          "asset": "HarborWalkerLeaderCompactsW320261017",
+          "cellWidth": 109,
+          "cellHeight": 180
+        },
+        "W4": {
+          "asset": "HarborWalkerLeaderCompactsW420261017",
+          "cellWidth": 66,
+          "cellHeight": 180
+        },
+        "I3": {
+          "asset": "HarborWalkerLeaderCompactsI320261017",
+          "cellWidth": 60,
+          "cellHeight": 180
+        },
+        "I4": {
+          "asset": "HarborWalkerLeaderCompactsI420261017",
+          "cellWidth": 77,
+          "cellHeight": 180
+        }
+      }
     }
   }
 }
