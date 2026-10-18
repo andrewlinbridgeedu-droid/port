@@ -9,6 +9,7 @@ struct CityHubView: View {
     @GestureState private var panoramaDrag: CGFloat = 0
     let path: Pathway?
     let sequence: Int
+    var rankTitle: String? = nil
     let districtName: String
     let nextMissionTitle: String
     let storyIsAvailable: Bool
@@ -74,7 +75,7 @@ struct CityHubView: View {
                 .allowsHitTesting(false)
 
                 VStack(spacing: 0) {
-                    CityStatusHUD(path: path, sequence: sequence, districtName: districtName, contributionPoints: contributionPoints, contributionLabel: contributionLabel,
+                    CityStatusHUD(path: path, sequence: sequence, rankTitle: rankTitle, districtName: districtName, contributionPoints: contributionPoints, contributionLabel: contributionLabel,
                                   coins: coins, materials: materials, clues: clues, ingredientCount: ingredientCount,
                                   onSettings: onSettings, onTest: onTest)
                         .padding(.horizontal, 18)
@@ -366,6 +367,7 @@ private struct CityStatusHUD: View {
     @State private var isExpanded = false
     let path: Pathway?
     let sequence: Int
+    let rankTitle: String?
     let districtName: String
     let contributionPoints: Int
     let contributionLabel: String
@@ -440,7 +442,7 @@ private struct CityStatusHUD: View {
                          ? "旅人" : playerName)
                         .font(.system(size: 17, weight: .bold, design: .serif))
                         .lineLimit(1)
-                    Text("\(path?.name ?? "未定路径") · 阶位 \(sequence) · \(districtName)")
+                    Text("\(rankTitle ?? path?.name ?? "未定路径") · 阶位 \(sequence) · \(districtName)")
                         .font(.system(size: 10, weight: .medium))
                         .foregroundStyle(.white.opacity(0.62))
                         .lineLimit(1).minimumScaleFactor(0.8)
@@ -875,7 +877,7 @@ struct HubFeatureView: View {
         VStack(spacing: 10) {
             FeatureStatPlate(
                 title: game.selectedPath?.name ?? "未选择路径",
-                subtitle: "阶位 \(game.displayedSequence) · 最大生命 \(game.chapterOneCampaign.party.playerMaxHP)",
+                subtitle: "\(game.displayedRankTitle.map { $0 + " · " } ?? "")阶位 \(game.displayedSequence) · 最大生命 \(game.chapterOneCampaign.party.playerMaxHP)",
                 symbol: game.selectedPath?.symbol ?? "sparkles",
                 tint: game.selectedPath?.tint ?? .purple
             )

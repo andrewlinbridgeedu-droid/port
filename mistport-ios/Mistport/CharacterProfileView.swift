@@ -1417,7 +1417,7 @@ struct HermitTalentTreeView: View {
                 HStack {
                     GameArtReturnButton(title: "返回角色") { dismiss() }
                     VStack(alignment: .leading, spacing: 3) {
-                        Text("帷幕之径 · 阶位 9").font(.system(size: 22, weight: .bold, design: .serif))
+                        Text("街头戏法师 · 阶位 9").font(.system(size: 22, weight: .bold, design: .serif))
                         Text("开发预览 · 战斗效果未接入").font(.caption).foregroundStyle(gold)
                     }
                     Spacer(minLength: 0)

@@ -66,6 +66,22 @@ struct Pathway: Identifiable, Hashable {
         }
     }
 
+    /// The title a rank carries (2026-10-18, user: 参考西方典籍 → 可以). 帷幕之径 has all ten, each
+    /// from a Western source (FIVE_CHAPTER_OUTLINE_20261018.md); the other paths only have rank 9
+    /// so far and show no title above it.
+    func rankTitle(_ rank: Int, for gender: CharacterGender) -> String? {
+        if rank >= 9 { return sequenceNineTitle(for: gender) }
+        guard id == .fool else { return nil }
+        return Self.veilRankTitles[rank]
+    }
+
+    /// 帷幕之径, rank 8 → 0: persona, the prompter, the Doppelgänger, the periaktos, the coryphaeus,
+    /// the three unities, deus ex machina, theatrum mundi, and Odysseus's "Nobody".
+    static let veilRankTitles: [Int: String] = [
+        8: "假面人", 7: "提词人", 6: "二重身", 5: "换景师", 4: "歌队长",
+        3: "立律人", 2: "降神者", 1: "执幕人", 0: "无名者",
+    ]
+
     func characterDescription(for gender: CharacterGender) -> String {
         let pronoun = gender == .female ? "她" : "他"
         return switch id {

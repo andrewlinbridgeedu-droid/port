@@ -185,6 +185,7 @@ struct ContentView: View {
                     CityHubView(
                         path: game.selectedPath,
                         sequence: game.displayedSequence,
+                        rankTitle: game.displayedRankTitle,
                         districtName: game.selectedChapterDistrict.name,
                         nextMissionTitle: game.nextChapterMission.map { game.missionLockText($0) ?? $0.title } ?? "本次调查已完成 · 可重访",
                         storyIsAvailable: game.canEnterStoryMission,

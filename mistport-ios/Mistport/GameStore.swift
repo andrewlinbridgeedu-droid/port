@@ -1670,7 +1670,7 @@ final class GameStore {
             guard let data = try? JSONEncoder().encode(commit) else { return }
             defaults.set(data, forKey: Self.sequenceEightRitualCommitKey)
             recoverSequenceEightRitual()
-            featureMessage = "阶位 8 仪式完成：已交付三份主材与\(receipt.fee)铜币。新能力随后续剧情开放。"
+            featureMessage = "阶位 8 仪式完成\(displayedRankTitle.map { "，你现在是\($0)" } ?? "")：已交付三份主材与\(receipt.fee)铜币。新能力随后续剧情开放。"
         } catch MPCSequenceEightRitual.Failure.completed {
             featureMessage = "阶位 8 仪式已完成；新能力随后续剧情开放。"
         } catch MPCSequenceEightRitual.Failure.locked {
@@ -1686,6 +1686,8 @@ final class GameStore {
 
     /// Shown sequence: the qualification ritual records Sequence 8 without S8 combat rules.
     var displayedSequence: Int { sequenceEightRitual == nil ? currentSequence : min(currentSequence, 8) }
+    /// "街头戏法师", "假面人": the title of the rank shown, if the path has one there.
+    var displayedRankTitle: String? { selectedPath?.rankTitle(displayedSequence, for: selectedCharacterGender) }
 
     /// Old saves already at Sequence 8 keep it and are never charged again.
     var sequenceEightQualified: Bool { currentSequence <= 8 || sequenceEightRitual != nil }
