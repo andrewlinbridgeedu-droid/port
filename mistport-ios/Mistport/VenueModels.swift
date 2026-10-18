@@ -91,7 +91,7 @@ extension GameContent {
                 VenueItemDefinition(id: "fog-sugar", name: "雾糖方块", detail: "恢复少量侵蚀耐受。", symbol: "cube.fill", artName: "ItemFogSugar", category: .provision, progressionTier: 1, price: 18, rarity: .common, grantsAdvancementMaterial: false),
                 VenueItemDefinition(id: "rain-rumor", name: "写在杯底的传闻", detail: "显示本区一个隐藏材料点。", symbol: "eye.fill", artName: "ItemRainRumor", category: .intelligence, progressionTier: 1, price: 28, rarity: .uncommon, grantsAdvancementMaterial: false),
                 VenueItemDefinition(id: "memory-bean", name: "记忆烘焙豆", detail: "可用于制作灵性恢复剂。", symbol: "leaf.fill", artName: "ItemMemoryBean", category: .crafting, progressionTier: 1, price: 34, rarity: .uncommon, grantsAdvancementMaterial: false),
-                VenueItemDefinition(id: "ownerless-spring", name: "无主灵摆簧", detail: "序列晋阶演证所需的稀有辅材。", symbol: "clock.badge.exclamationmark.fill", artName: "ItemOwnerlessSpring", category: .advancement, progressionTier: 1, price: 88, rarity: .rare, grantsAdvancementMaterial: true)
+                VenueItemDefinition(id: "ownerless-spring", name: "无主灵摆簧", detail: "晋阶演证所需的稀有辅材。", symbol: "clock.badge.exclamationmark.fill", artName: "ItemOwnerlessSpring", category: .advancement, progressionTier: 1, price: 88, rarity: .rare, grantsAdvancementMaterial: true)
             ]
         ),
         VenueDefinition(
@@ -110,7 +110,7 @@ extension GameContent {
                 VenueItemDefinition(id: "lamp-bread", name: "雾灯烤面包", detail: "短时间提高移动速度。", symbol: "birthday.cake.fill", artName: nil, category: .provision, progressionTier: 1, price: 16, rarity: .common, grantsAdvancementMaterial: false),
                 VenueItemDefinition(id: "salt-fish", name: "反潮盐鱼", detail: "下一次水系伤害降低。", symbol: "fish.fill", artName: nil, category: .provision, progressionTier: 1, price: 30, rarity: .uncommon, grantsAdvancementMaterial: false),
                 VenueItemDefinition(id: "off-menu-note", name: "秘密菜单背页", detail: "记录一名归一议会联络人的行踪。", symbol: "doc.text.fill", artName: nil, category: .intelligence, progressionTier: 1, price: 42, rarity: .uncommon, grantsAdvancementMaterial: false),
-                VenueItemDefinition(id: "echo-marrow", name: "回声兽髓", detail: "序列晋阶演证所需的稀有辅材。", symbol: "sparkles", artName: nil, category: .advancement, progressionTier: 1, price: 92, rarity: .rare, grantsAdvancementMaterial: true)
+                VenueItemDefinition(id: "echo-marrow", name: "回声兽髓", detail: "晋阶演证所需的稀有辅材。", symbol: "sparkles", artName: nil, category: .advancement, progressionTier: 1, price: 92, rarity: .rare, grantsAdvancementMaterial: true)
             ]
         )
     ]

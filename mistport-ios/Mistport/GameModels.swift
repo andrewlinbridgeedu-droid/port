@@ -46,7 +46,7 @@ struct Pathway: Identifiable, Hashable {
 
     func displayName(for gender: CharacterGender) -> String {
         guard id == .priestess else { return name }
-        return gender == .female ? "女祭司·潮听" : "祭司·潮听"
+        return "潮忆之径"
     }
 
     func sequenceNineTitle(for gender: CharacterGender) -> String {
@@ -133,14 +133,14 @@ enum GameContent {
         Pathway(
             id: .fool,
             arcana: "0",
-            name: "愚者",
+            name: "帷幕之径",
             sequenceNineTitle: "街头戏法师",
             symbol: "theatermasks.fill",
             artName: "PathFoolMale",
             femaleArtName: "PathFoolFemale",
             tint: Color(red: 0.78, green: 0.55, blue: 0.94),
             principle: "利用错误掩盖真实，再从破绽中穿过",
-            description: "愚者不追求制造完美幻象，而是让错误先被相信。误认会成为武器，也会慢慢改写你对自己的记忆。",
+            description: "帷幕之径不追求制造完美幻象，而是让错误先被相信。误认会成为武器，也会慢慢改写你对自己的记忆。",
             abilityName: "误认编排",
             abilityDescription: "每次利用错误都会扩大下一次破绽，但失控侵蚀也会更接近你。",
             soloVerb: "制造误认、错置身份、利用错误穿行",
@@ -150,7 +150,7 @@ enum GameContent {
         Pathway(
             id: .priestess,
             arcana: "II",
-            name: "女祭司·潮听",
+            name: "潮忆之径",
             sequenceNineTitle: "灵视者",
             symbol: "moon.stars.fill",
             artName: "PathPriestessMale",
@@ -167,7 +167,7 @@ enum GameContent {
         Pathway(
             id: .chariot,
             arcana: "VII",
-            name: "战车·远征",
+            name: "远征之径",
             sequenceNineTitle: "夜巡者",
             symbol: "shield.lefthalf.filled",
             artName: "PathChariotMale",
@@ -184,7 +184,7 @@ enum GameContent {
         Pathway(
             id: .magician,
             arcana: "I",
-            name: "魔术师·炼成",
+            name: "炼成之径",
             sequenceNineTitle: "盐晶学徒",
             symbol: "wand.and.stars",
             artName: "PathMagicianMale",
@@ -201,7 +201,7 @@ enum GameContent {
         Pathway(
             id: .justice,
             arcana: "XI",
-            name: "正义·誓衡",
+            name: "誓衡之径",
             sequenceNineTitle: "誓约见证人",
             symbol: "scalemass.fill",
             artName: "PathJusticeMale",
@@ -218,7 +218,7 @@ enum GameContent {
         Pathway(
             id: .star,
             arcana: "XVII",
-            name: "星星·星渡",
+            name: "星渡之径",
             sequenceNineTitle: "星图测绘师",
             symbol: "sparkles",
             artName: "PathStarMale",

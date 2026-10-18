@@ -4525,7 +4525,7 @@ final class DungeonScene: SKScene {
                 attackDamage = max(1, Int(CGFloat(attackDamage) * retainedDamage))
                 spawnFloatingText(path.id == .chariot ? "意志承伤" : "防护抵消", at: player.position, color: .systemCyan)
                 publishState(
-                    path.id == .chariot ? "战车壁垒 · 大幅减伤" : "防护生效 · 本次伤害降低",
+                    path.id == .chariot ? "远征壁垒 · 大幅减伤" : "防护生效 · 本次伤害降低",
                     feedback: true,
                     force: true
                 )

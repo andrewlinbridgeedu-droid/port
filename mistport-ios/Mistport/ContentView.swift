@@ -245,7 +245,7 @@ struct ContentView: View {
                         onStreetService: openHomeService,
                         onCounter: { if $0 == "cafe" { openHomeService("cafe_keeper") } else { homeDestination = .init(id: $0) } },
                         blackSaltShore: game.churchHasDepartedMistport ? (
-                            status: !game.sequenceEightQualified ? "先举行序列 8 仪式"
+                            status: !game.sequenceEightQualified ? "先举行阶位 8 仪式"
                                 : game.chapterTwoBridge.worldEventStoryReady ? "已见过两家负责人 · 可重访" : "两家负责人在站内等候",
                             action: { blackSaltShorePresented = true }
                         ) : nil

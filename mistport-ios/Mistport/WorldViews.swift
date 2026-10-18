@@ -31,7 +31,7 @@ struct WorldRouteView: View {
                         VStack(alignment: .leading, spacing: 1) {
                             Text("九联邦航路")
                                 .font(.title2.bold())
-                            Text("序列 9 → 0")
+                            Text("阶位 9 → 0")
                                 .font(.caption.monospacedDigit())
                                 .foregroundStyle(.white.opacity(0.62))
                         }
@@ -90,7 +90,7 @@ private struct WorldMapNode: View {
                     .foregroundStyle(.black)
                     .frame(width: 25, height: 25)
                     .background(nodeColor, in: Circle())
-                Text(region.sequence >= 8 || region.sequence == 0 ? region.name : "序列 \(region.sequence)")
+                Text(region.sequence >= 8 || region.sequence == 0 ? region.name : "阶位 \(region.sequence)")
                     .font(.caption2.bold())
                     .lineLimit(1)
             }
@@ -105,7 +105,7 @@ private struct WorldMapNode: View {
         .buttonStyle(.plain)
         .disabled(region.access == .locked)
         .opacity(region.access == .locked ? 0.68 : 1)
-        .accessibilityLabel("序列 \(region.sequence)，\(region.name)")
+        .accessibilityLabel("阶位 \(region.sequence)，\(region.name)")
     }
 
     private var nodeColor: Color {
@@ -121,14 +121,14 @@ private struct WorldMapNode: View {
 private struct WorldRouteSummary: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label("序列 9 → 1：九个主题联邦", systemImage: "map.fill")
+            Label("阶位 9 → 1：九个主题联邦", systemImage: "map.fill")
                 .font(.headline)
                 .foregroundStyle(.yellow)
             Text("每个联邦只制作 1 座核心城、2 片卫星区域与 2–3 个重点副本。其余城市存在于航线、档案与角色口述中，既保留世界规模，也控制制作成本。")
                 .font(.subheadline)
                 .foregroundStyle(.white.opacity(0.72))
                 .lineSpacing(3)
-            Text("序列 0 不是第十个联邦，而是终局“无冕天域”。")
+            Text("阶位 0 不是第十个联邦，而是终局“无冕天域”。")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.purple)
         }
@@ -174,12 +174,12 @@ private struct WorldRegionCard: View {
         .overlay { RoundedRectangle(cornerRadius: 16).stroke(regionColor.opacity(0.28), lineWidth: 1) }
         .opacity(region.access == .locked ? 0.72 : 1)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("序列 \(region.sequence)，\(region.name)，核心城 \(region.capital)，\(accessLabel)")
+        .accessibilityLabel("阶位 \(region.sequence)，\(region.name)，核心城 \(region.capital)，\(accessLabel)")
     }
 
     private var sequenceSeal: some View {
         VStack(spacing: 1) {
-            Text("序列")
+            Text("阶位")
                 .font(.system(.caption2, design: .rounded).weight(.semibold))
             Text("\(region.sequence)")
                 .font(.title3.bold().monospacedDigit())
@@ -626,7 +626,7 @@ struct BlackSaltShoreView: View {
                 .foregroundStyle(ChurchGold)
                 .fixedSize(horizontal: false, vertical: true)
             if !game.sequenceEightQualified {
-                blackSaltAction(title: "举行序列 8 仪式", detail: "\(MPCSequenceEightRitual.fee) 铜币",
+                blackSaltAction(title: "举行阶位 8 仪式", detail: "\(MPCSequenceEightRitual.fee) 铜币",
                                 plate: .ritual, enabled: game.churchHasDepartedMistport) {
                     game.performAdvancement()
                     notice = game.featureMessage

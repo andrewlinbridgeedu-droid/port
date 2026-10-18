@@ -433,7 +433,7 @@ struct PathSelectionView: View {
             Text("第一张牌决定\n最初的道路")
                 .font(.largeTitle.bold())
                 .foregroundStyle(.white)
-            Text("当前开放愚者路径与第一章30关调查。")
+            Text("当前开放帷幕之径与第一章30关调查。")
                 .font(.subheadline)
                 .foregroundStyle(.white.opacity(0.7))
 
@@ -513,7 +513,7 @@ struct PathCard: View {
                         Text(path.displayName(for: gender))
                             .font(.title2.bold())
                             .foregroundStyle(path.tint)
-                        Text("序列 9 · \(path.sequenceNineTitle(for: gender))")
+                        Text("阶位 9 · \(path.sequenceNineTitle(for: gender))")
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(.white.opacity(0.82))
                     }
@@ -538,7 +538,7 @@ struct PathCard: View {
             .clipShape(.rect(cornerRadius: 18))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("选择\(path.displayName(for: gender))路径，\(gender.title)角色，序列九\(path.sequenceNineTitle(for: gender))")
+        .accessibilityLabel("选择\(path.displayName(for: gender))路径，\(gender.title)角色，阶位九\(path.sequenceNineTitle(for: gender))")
         .accessibilityHint(path.principle)
     }
 }
@@ -794,7 +794,7 @@ struct PathMiniHeader: View {
             ArcanaSeal(symbol: path.symbol, tint: path.tint, size: 36)
             VStack(alignment: .leading, spacing: 1) {
                 Text(path.name).font(.headline).foregroundStyle(path.tint)
-                Text("序列 9 · \(path.sequenceNineTitle)").font(.caption2).foregroundStyle(.white.opacity(0.56))
+                Text("阶位 9 · \(path.sequenceNineTitle)").font(.caption2).foregroundStyle(.white.opacity(0.56))
             }
         }
         .accessibilityElement(children: .combine)
@@ -1058,7 +1058,7 @@ struct EndingView: View {
             Spacer()
             ArcanaSeal(symbol: success ? (path?.symbol ?? "sparkles") : "flame.fill", tint: success ? (path?.tint ?? .purple) : .red, size: 104)
             Text("雾港篇 · 结算").font(.caption.weight(.semibold)).tracking(1.1).foregroundStyle(.white.opacity(0.6))
-            Text(success ? "晋升成功：\n序列 8" : "仪式反噬：\n暂退雾港")
+            Text(success ? "晋升成功：\n阶位 8" : "仪式反噬：\n暂退雾港")
                 .font(.largeTitle.bold()).multilineTextAlignment(.center).foregroundStyle(.white)
             Text(success ? "盐雾让开一道缝隙。远处那面剧院镜子碎裂前，映出了第二张塔罗牌。" : "仪式没有完全拒绝你，但海雾吞去了部分记忆。下一次，你需要更完整地理解自己的路径。")
                 .multilineTextAlignment(.center).foregroundStyle(.white.opacity(0.72)).lineSpacing(4)
@@ -1125,7 +1125,7 @@ struct StoreView: View {
                                 .foregroundStyle(Color(red: 0.10, green: 0.42, blue: 0.32))
                         }
 
-                        Text("20 项主任务 · 愚者序列 9→8 · 波次战斗 · 单人完整晋阶")
+                        Text("20 项主任务 · 帷幕之径阶位 9→8 · 波次战斗 · 单人完整晋阶")
                             .font(.subheadline)
                             .foregroundStyle(.black.opacity(0.68))
 
@@ -1147,7 +1147,7 @@ struct StoreView: View {
                             .font(.caption.weight(.bold))
                             .tracking(2)
                             .foregroundStyle(.cyan)
-                        Text("新的联邦、序列晋升、敌人与剧情")
+                        Text("新的联邦、阶位晋升、敌人与剧情")
                             .font(.title3.bold())
                             .foregroundStyle(.white)
                         Text("一次购买，永久拥有。衣装只改变外观；付费内容不会提高第一章战力。")

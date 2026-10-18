@@ -345,7 +345,7 @@ extension GameContent {
                     MissionSeed("玛拉的五份档案", "两名公共记录员分别保存五个互相冲突的玛拉。", "玛拉伏笔。"),
                     MissionSeed("归一启动", "两名寄忆核心与空壳守卫启动归一档案库。", "Boss 线索。"),
                     MissionSeed("最后一份异议", "精英空壳守卫与删改官守住最后一份异议。", "首领前哨。", kind: .elite),
-                    MissionSeed("不存在的灾难", "击败瑟维安与归一档案库，并决定是否保留所有互相冲突的记忆。", "历史演证·未删原卷；晋升序列8。", kind: .boss)
+                    MissionSeed("不存在的灾难", "击败瑟维安与归一档案库，并决定是否保留所有互相冲突的记忆。", "历史演证·未删原卷；晋升阶位 8。", kind: .boss)
                 ],
                 expedition: ExpeditionDefinition(
                     id: "mist-crown-council",

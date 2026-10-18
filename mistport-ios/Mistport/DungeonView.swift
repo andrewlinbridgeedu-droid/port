@@ -847,7 +847,7 @@ private struct CombatSkillDetail: View {
 
     private var description: String {
         switch skill.id {
-        case .strike: "以放大的秘仪牌锁定弱点。命中造成伤害并削减意志，愚者牌会向附近目标弹射。"
+        case .strike: "以放大的秘仪牌锁定弱点。命中造成伤害并削减意志，帷幕牌会向附近目标弹射。"
         case .mobility: "预先留下错误位置。下一次敌方攻击可由替身承受，同时对目标发动反击。"
         case .control: "解读敌方意图并制造破绽；高额削减意志，击破后延后敌方行动。"
         case .ward: "记录即将到来的危险，获得一次防护，并积累可由终结技兑现的预兆。"

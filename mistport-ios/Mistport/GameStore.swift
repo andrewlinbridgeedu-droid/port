@@ -1605,7 +1605,7 @@ final class GameStore {
     func upgradeSkill(_ skillID: DungeonSkillID) {
         let currentLevel = skillLevel(for: skillID)
         guard currentLevel < 5 else {
-            featureMessage = "该能力已达到当前序列上限。晋升序列后才能继续强化。"
+            featureMessage = "该能力已达到当前阶位上限。晋升阶位后才能继续强化。"
             return
         }
         guard hasFoolTestAccess || milestoneIsUnlocked(.skillEvolution, in: selectedChapterDistrict) else {
@@ -1657,7 +1657,7 @@ final class GameStore {
     /// once through a written commit; no Sequence 8 combat rule is granted.
     func performAdvancement() {
         guard currentSequence == 9 else {
-            featureMessage = "当前序列权益保留；后续晋阶将在黑盐岸开放。"
+            featureMessage = "当前阶位权益保留；后续晋阶将在黑盐岸开放。"
             return
         }
         var coins = venueCoins
@@ -1670,11 +1670,11 @@ final class GameStore {
             guard let data = try? JSONEncoder().encode(commit) else { return }
             defaults.set(data, forKey: Self.sequenceEightRitualCommitKey)
             recoverSequenceEightRitual()
-            featureMessage = "序列 8 仪式完成：已交付三份主材与\(receipt.fee)铜币。新能力随后续剧情开放。"
+            featureMessage = "阶位 8 仪式完成：已交付三份主材与\(receipt.fee)铜币。新能力随后续剧情开放。"
         } catch MPCSequenceEightRitual.Failure.completed {
-            featureMessage = "序列 8 仪式已完成；新能力随后续剧情开放。"
+            featureMessage = "阶位 8 仪式已完成；新能力随后续剧情开放。"
         } catch MPCSequenceEightRitual.Failure.locked {
-            featureMessage = "第30关后抵达黑盐岸，才能举行序列 8 仪式。"
+            featureMessage = "第30关后抵达黑盐岸，才能举行阶位 8 仪式。"
         } catch MPCSequenceEightRitual.Failure.materials {
             featureMessage = "晋阶主材尚缺：\(missingAdvancementIngredientNames.joined(separator: "、"))。"
         } catch MPCSequenceEightRitual.Failure.proofs {
@@ -1696,8 +1696,8 @@ final class GameStore {
     }
 
     var sequenceEightRitualStatus: String {
-        if let ritual = sequenceEightRitual { return "已完成：三份主材与\(ritual.fee)铜币已交付，记为序列 8。新能力随后续剧情开放。" }
-        if currentSequence <= 8 { return "已是序列 8，原有权益保留。" }
+        if let ritual = sequenceEightRitual { return "已完成：三份主材与\(ritual.fee)铜币已交付，记为阶位 8。新能力随后续剧情开放。" }
+        if currentSequence <= 8 { return "已是阶位 8，原有权益保留。" }
         guard churchTowerMissionNumbers.contains(MPCSequenceEightRitual.storyMission) else {
             return "第30关后抵达黑盐岸举行。需三份主材、个人演证、悖论见证、无主回响，提交时扣\(MPCSequenceEightRitual.fee)铜币。"
         }
@@ -1715,7 +1715,7 @@ final class GameStore {
 
     var chapterTwoBridgeStatus: String {
         guard churchHasDepartedMistport else { return "第30关后前往黑盐岸。" }
-        guard sequenceEightQualified else { return "先在黑盐岸举行序列 8 仪式，再前往外港转运站。仪式可在角色页举行。" }
+        guard sequenceEightQualified else { return "先在黑盐岸举行阶位 8 仪式，再前往外港转运站。仪式可在角色页举行。" }
         if chapterTwoBridge.worldEventStoryReady { return "已见过两位负责人。转运站的维修与采购尚未开放。" }
         return "外港转运站在前方航线上。两家为供能检修权来到这里。"
     }
@@ -5453,7 +5453,7 @@ extension GameStore {
             seed.debugJumpToOldClockMission(8, enterImmediately: false)
             seed.venueCoins = 2_000
             seed.persistChapterProgress()
-            defaults.set("愚者", forKey: "mistport.player.display-name")
+            defaults.set("旅人", forKey: "mistport.player.display-name")
             defaults.set(true, forKey: "housing-review-seeded")
         }
         let fixture = GameStore(launchArguments: [], defaults: defaults)

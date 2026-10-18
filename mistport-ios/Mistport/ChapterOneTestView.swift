@@ -4096,7 +4096,7 @@ struct ChapterOneEncounterTestView: View {
                 .frame(maxHeight: 180)
                 .shadow(color: .cyan.opacity(0.48), radius: 12)
             VStack(spacing: 3) {
-                Text("愚者")
+                Text("帷幕之径")
                     .font(.caption.bold())
                 ProgressView(value: Double(session.playerHP), total: Double(session.playerMaxHP))
                     .tint(.green)
@@ -5574,7 +5574,7 @@ private func makeChapterOnePresentationScene(
     let level = DungeonLevel(
         id: "chapter-one-\(session.encounter.id)-\(session.waveIndex)",
         title: session.encounter.name,
-        subtitle: "第一章 · 愚者完整体验",
+        subtitle: "第一章 · 帷幕之径完整体验",
         artName: "SceneClockDistrictV2",
         sceneSize: CGSize(width: 430, height: 932),
         spawnPoint: playerPlacement.scenePoint(in: CGSize(width: 430, height: 932)),

@@ -729,7 +729,7 @@ extension MPCStamina.Activity {
     }
 }
 extension GameStore {
-    var housingPlayerName: String { UserDefaults.standard.string(forKey: "mistport.player.display-name") ?? "愚者" }
+    var housingPlayerName: String { UserDefaults.standard.string(forKey: "mistport.player.display-name") ?? "旅人" }
 }
 
 struct HousingMealChoicesLink: View {

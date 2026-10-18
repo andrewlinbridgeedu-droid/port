@@ -166,7 +166,7 @@ enum BasicAttackVFXCatalog {
                 sequence: sequence,
                 sharedTint: Color(red: 0.24, green: 0.68, blue: 1),
                 usesSharedBloom: true,
-                bloomTitle: "序列9 · 神兵蓝泛光"
+                bloomTitle: "阶位 9 · 神兵蓝泛光"
             )
         }
         return BasicAttackVFXProfile(

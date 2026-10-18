@@ -258,7 +258,7 @@ struct CharacterProfileView: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text("角色")
                     .font(.system(size: 22, weight: .heavy, design: .serif))
-                Text("雾岬联邦 · 序列档案")
+                Text("雾岬联邦 · 阶位档案")
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(.black.opacity(0.58))
             }
@@ -489,10 +489,10 @@ struct CharacterProfileView: View {
                     }
                 }
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("黑盐岸 · 序列 8 仪式").font(.subheadline.bold())
+                    Text("黑盐岸 · 阶位 8 仪式").font(.subheadline.bold())
                     Text(game.sequenceEightRitualStatus)
                         .font(.caption).foregroundStyle(.secondary)
-                    PlateButton(title: game.sequenceEightQualified ? "序列 8 仪式已完成" : "举行仪式 · \(MPCSequenceEightRitual.fee) 铜币",
+                    PlateButton(title: game.sequenceEightQualified ? "阶位 8 仪式已完成" : "举行仪式 · \(MPCSequenceEightRitual.fee) 铜币",
                                 plate: .ritual,
                                 enabled: !game.sequenceEightQualified
                                     && game.churchTowerMissionNumbers.contains(MPCSequenceEightRitual.storyMission)) {
@@ -744,7 +744,7 @@ struct CharacterProfileView: View {
             HStack(spacing: 18) {
                 Image("IconTalentTrickster").resizable().scaledToFit().frame(width: 72, height: 80)
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("愚者 · 天赋星图").font(.system(size: 20, weight: .bold, design: .serif))
+                    Text("帷幕之径 · 天赋星图").font(.system(size: 20, weight: .bold, design: .serif))
                     Text("诡术 / 幻身 / 秘兆").font(.subheadline)
                     Text("可用 \(game.hermitTalentPoints) 点 · 第9关获得4点")
                         .font(.caption).foregroundStyle(.yellow)
@@ -1151,7 +1151,7 @@ struct LegacyHermitTalentTreeView: View {
                     HStack {
                         GameArtReturnButton(title: "返回角色") { dismiss() }
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("愚者 · 天赋星图").font(.system(size: 23, weight: .bold, design: .serif))
+                            Text("帷幕之径 · 天赋星图").font(.system(size: 23, weight: .bold, design: .serif))
                             Text("以不同的选择，成为不同的自己").font(.caption).foregroundStyle(.white.opacity(0.5))
                         }
                         Spacer(minLength: 0)
@@ -1417,7 +1417,7 @@ struct HermitTalentTreeView: View {
                 HStack {
                     GameArtReturnButton(title: "返回角色") { dismiss() }
                     VStack(alignment: .leading, spacing: 3) {
-                        Text("愚者 · 序列9").font(.system(size: 22, weight: .bold, design: .serif))
+                        Text("帷幕之径 · 阶位 9").font(.system(size: 22, weight: .bold, design: .serif))
                         Text("开发预览 · 战斗效果未接入").font(.caption).foregroundStyle(gold)
                     }
                     Spacer(minLength: 0)

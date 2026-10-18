@@ -397,7 +397,7 @@ private struct CityStatusHUD: View {
             VStack(alignment: .leading, spacing: 7) {
                 HStack(spacing: 2) {
                     Text(playerName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                         ? (path?.name ?? "旅人") : playerName)
+                         ? "旅人" : playerName)
                         .font(.system(size: 16, weight: .bold, design: .serif))
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
@@ -437,10 +437,10 @@ private struct CityStatusHUD: View {
                 .accessibilityLabel("收起玩家信息")
                 VStack(alignment: .leading, spacing: 3) {
                     Text(playerName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                         ? (path?.name ?? "旅人") : playerName)
+                         ? "旅人" : playerName)
                         .font(.system(size: 17, weight: .bold, design: .serif))
                         .lineLimit(1)
-                    Text("\(path?.name ?? "未定路径") · 序列 \(sequence) · \(districtName)")
+                    Text("\(path?.name ?? "未定路径") · 阶位 \(sequence) · \(districtName)")
                         .font(.system(size: 10, weight: .medium))
                         .foregroundStyle(.white.opacity(0.62))
                         .lineLimit(1).minimumScaleFactor(0.8)
@@ -832,14 +832,14 @@ struct HubFeatureView: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(kind.title)
                     .font(.title3.bold())
-                Text(kind == .inventory ? "随旅途收集 · 留存每一份所得" : "雾岬序列系统")
+                Text(kind == .inventory ? "随旅途收集 · 留存每一份所得" : "雾岬阶位系统")
                     .font(.caption2)
                     .foregroundStyle(kind == .inventory ? InventoryPalette.ink.opacity(0.65) : .white.opacity(0.58))
             }
             Spacer()
             if kind == .build {
                 Button(action: { showsFoolGuide = true }) {
-                    Text("愚者攻略")
+                    Text("帷幕之径攻略")
                         .font(.system(size: 11, weight: .bold))
                         .lineLimit(1).fixedSize(horizontal: true, vertical: false)
                         .foregroundStyle(.white)
@@ -875,7 +875,7 @@ struct HubFeatureView: View {
         VStack(spacing: 10) {
             FeatureStatPlate(
                 title: game.selectedPath?.name ?? "未选择路径",
-                subtitle: "序列 \(game.displayedSequence) · 最大生命 \(game.chapterOneCampaign.party.playerMaxHP)",
+                subtitle: "阶位 \(game.displayedSequence) · 最大生命 \(game.chapterOneCampaign.party.playerMaxHP)",
                 symbol: game.selectedPath?.symbol ?? "sparkles",
                 tint: game.selectedPath?.tint ?? .purple
             )
@@ -1025,7 +1025,7 @@ struct HubFeatureView: View {
                     GameEmblemView(emblem: .advancement, tint: .yellow)
                         .frame(width: 48, height: 48)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(game.sequenceEightQualified ? "序列 8 已达成" : "举行序列 8 晋阶仪式")
+                        Text(game.sequenceEightQualified ? "阶位 8 已达成" : "举行阶位 8 晋阶仪式")
                             .font(.headline)
                         Text("三份主材 + 晋阶演证 · 不依赖商店随机刷新")
                             .font(.caption2)
@@ -1475,7 +1475,7 @@ private struct BuildDetailItem: Identifiable {
 
     static func skill(_ skill: DungeonSkillDefinition) -> Self {
         .init(
-            id: "skill-\(skill.id.rawValue)", category: "愚者战斗技能", name: skill.name,
+            id: "skill-\(skill.id.rawValue)", category: "帷幕之径战斗技能", name: skill.name,
             artName: skill.buildArtName, summary: skill.skillSummary,
             rows: [("伤害", "\(skill.damage)"), ("冷却", "\(Int(skill.cooldown)) 回合"), ("范围", "\(Int(skill.radius))")],
             usage: skill.skillUsage, tint: skill.tint
@@ -1916,14 +1916,14 @@ private struct FoolPathGuideView: View {
                 VStack(alignment: .leading, spacing: 15) {
                     HStack {
                         VStack(alignment: .leading, spacing: 3) {
-                            Text("愚者攻略").font(.largeTitle.bold())
-                            Text("序列 9 · 街头戏法师").foregroundStyle(.cyan)
+                            Text("帷幕之径攻略").font(.largeTitle.bold())
+                            Text("阶位 9 · 街头戏法师").foregroundStyle(.cyan)
                         }
                         Spacer()
                         GameArtReturnButton(title: "返回构筑") { dismiss() }
                     }
 
-                    GuidePlate(title: "战斗定位", text: "愚者通过叠加误认、转成错位、延迟敌人行动，再在破绽窗口完成爆发。", tint: .purple)
+                    GuidePlate(title: "战斗定位", text: "帷幕之径通过叠加误认、转成错位、延迟敌人行动，再在破绽窗口完成爆发。", tint: .purple)
                     GuidePlate(title: "战前编排", text: "普通技能按战前排列顺序自动循环。遗落物假面由你手动使用，不占技能槽；用它与伪证烙印铺垫误认，再用张冠李戴转成错位，最后用双影追猎或荒谬归结兑现。", tint: .cyan)
                     GuidePlate(title: "自动战斗如何选择", text: "系统从左到右扫描技能序列；当前不可用的技能跳过，继续寻找下一张可用技能。技能都不可用时才进行普攻。", tint: .yellow)
                     GuidePlate(title: "推荐入门配置", text: "偏差透镜强化4层误认目标的终结，纸月筹码保留控制方向；优先把铺垫、转化和终结技能排成稳定循环。", tint: .mint)

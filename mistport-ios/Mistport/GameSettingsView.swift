@@ -19,7 +19,7 @@ struct GameSettingsView: View {
     @State private var exportedSave: URL?
     @State private var exportError = ""
     @Environment(\.dismiss) private var dismiss
-    @AppStorage(GameSettingsKeys.displayName, store: .standard) private var displayName = "愚者"
+    @AppStorage(GameSettingsKeys.displayName, store: .standard) private var displayName = "旅人"
     @AppStorage(HomeMusicController.isEnabledKey, store: .standard) private var musicEnabled = true
     @AppStorage(GameSettingsKeys.musicVolume, store: .standard) private var musicVolume = 0.7
     @AppStorage(GameSettingsKeys.interfaceSoundVolume, store: .standard) private var soundVolume = 0.6
@@ -36,7 +36,7 @@ struct GameSettingsView: View {
                     VStack(alignment: .leading, spacing: 14) {
                     HStack {
                         Text("名字")
-                        TextField("愚者", text: $nameDraft)
+                        TextField("旅人", text: $nameDraft)
                             .multilineTextAlignment(.trailing)
                             .focused($editingName)
                             .submitLabel(.done)
@@ -126,7 +126,7 @@ struct GameSettingsView: View {
 
     private func saveName() {
         let name = nameDraft.trimmingCharacters(in: .whitespacesAndNewlines)
-        displayName = name.isEmpty ? "愚者" : String(name.prefix(12))
+        displayName = name.isEmpty ? "旅人" : String(name.prefix(12))
         editingName = false
     }
 }
