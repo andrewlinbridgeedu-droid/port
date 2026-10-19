@@ -71,7 +71,9 @@ public enum MPCChurchTowerCatalog {
     /// User decision 2026-09-29: the church (deep well, bounties, church work) opens
     /// after Q7, once any mission at or past Q7 is completed. Tower first-clear allowances
     /// still count from the save's first day (MPCDailyPacing).
-    public static let unlockMission = 7
+    /// The church (深井, 通缉, 教会工作) opens after Q2, where 玛拉's first-day walk ends at the 守灯会
+    /// (2026-10-18, user: 深井和通缉第一天开放). It was Q7.
+    public static let unlockMission = 2
     public static func isUnlocked(completedMissionNumbers: Set<Int>) -> Bool {
         completedMissionNumbers.contains { $0 >= unlockMission }
     }
@@ -188,7 +190,7 @@ public enum MPCChurchTowerCatalog {
     /// gate, the church's Q7 and the day `MPCDailyPacing` allows it (F1–10 Q7, F11–30 Q10, F50 Q15, F70 Q20,
     /// F90 Q25, F100 Q27). Tower verification plays each floor with the loadout of this stage.
     public static func paceMission(floor n: Int) -> Int {
-        let day = (n + MPCDailyPacing.towerFloorsPerDay - 1) / MPCDailyPacing.towerFloorsPerDay
+        let day = max(1, (n - MPCDailyPacing.towerFirstDayBonus + MPCDailyPacing.towerFloorsPerDay - 1) / MPCDailyPacing.towerFloorsPerDay)
         return max(unlockMission, requiredMission(floor: n), min(30, MPCDailyPacing.highestOpenMission(day: day)))
     }
     public static func requiredMission(floor n: Int) -> Int {

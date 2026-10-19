@@ -6236,3 +6236,29 @@ extension GameStore {
         try updateChurchServices { try settleChurchGear(&$0, battleID: ticket, outcome: defeated ? .defeat : .retreat) }
     }
 }
+
+// MARK: 雨后第一天 (2026-10-18, user: 打完第2关后，玛拉带你认城…每站一小段戏、一件小事)
+extension GameStore {
+    private static let cityTourKey = "mistport.city-tour.v1"
+    var cityTourLedger: MPCCityTour.Ledger {
+        _ = churchServicesRevision
+        return defaults.data(forKey: Self.cityTourKey).flatMap { try? JSONDecoder().decode(MPCCityTour.Ledger.self, from: $0) } ?? .init()
+    }
+    /// The walk's next stop, once Q2 is done and until all six are walked.
+    var cityTourNextStop: MPCCityTour.Stop? {
+        guard MPCCityTour.isOpen(completedMissionNumbers: churchTowerMissionNumbers) else { return nil }
+        return cityTourLedger.nextStop
+    }
+    func cityTourStopNumber(_ stop: MPCCityTour.Stop) -> Int { (MPCCityTour.stops.firstIndex(of: stop) ?? 0) + 1 }
+    /// Marks the next stop done and pays its copper, once.
+    func completeCityTourStop(_ id: String) throws {
+        var ledger = cityTourLedger
+        guard let stop = MPCCityTour.stop(id), ledger.complete(id) else { return }
+        if stop.reward > 0 {
+            let coins = venueCoins + stop.reward
+            try updateChurchServices { $0.loans.coins = coins }
+        }
+        defaults.set(try JSONEncoder().encode(ledger), forKey: Self.cityTourKey)
+        churchServicesRevision += 1
+    }
+}

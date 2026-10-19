@@ -22,23 +22,24 @@ struct DailyPacingTests {
         #expect(MPCDailyPacing.dayNumber(start: date(10), now: date(3), calendar: calendar) == 1)
     }
 
-    @Test func threeMissionsOnDayOneThenOneADayAndSkippedDaysStillCount() {
-        #expect(MPCDailyPacing.highestOpenMission(day: 1) == 3)
-        #expect(MPCDailyPacing.highestOpenMission(day: 2) == 4)
-        #expect(MPCDailyPacing.isMissionOpen(18, day: 16))
-        #expect(!MPCDailyPacing.isMissionOpen(19, day: 16))
-        #expect(MPCDailyPacing.openingDay(mission: 30) == 28)
+    @Test func sevenMissionsOnDayOneThenOneADayAndSkippedDaysStillCount() {
+        #expect(MPCDailyPacing.highestOpenMission(day: 1) == 7)
+        #expect(MPCDailyPacing.highestOpenMission(day: 2) == 8)
+        #expect(MPCDailyPacing.isMissionOpen(18, day: 12))
+        #expect(!MPCDailyPacing.isMissionOpen(19, day: 12))
+        #expect(MPCDailyPacing.openingDay(mission: 30) == 24)
         #expect(MPCDailyPacing.highestOpenMission(day: 45) == 30)
         for mission in 1...30 {
             #expect(MPCDailyPacing.isMissionOpen(mission, day: MPCDailyPacing.openingDay(mission: mission)))
-            #expect(!MPCDailyPacing.isMissionOpen(mission, day: MPCDailyPacing.openingDay(mission: mission) - 1) || mission <= 3)
+            #expect(!MPCDailyPacing.isMissionOpen(mission, day: MPCDailyPacing.openingDay(mission: mission) - 1) || mission <= MPCDailyPacing.missionsOnFirstDay)
         }
     }
 
     @Test func towerAllowanceAccumulatesAndReachesEveryWallFloorByItsMission() {
-        #expect(MPCDailyPacing.towerFirstClearsAllowed(day: 1) == MPCDailyPacing.towerFloorsPerDay)
+        #expect(MPCDailyPacing.towerFirstClearsAllowed(day: 1) == MPCDailyPacing.towerFloorsPerDay + MPCDailyPacing.towerFirstDayBonus)
+        #expect(MPCDailyPacing.towerFirstClearsAllowed(day: 2) == 2 * MPCDailyPacing.towerFloorsPerDay + MPCDailyPacing.towerFirstDayBonus)
         #expect(MPCDailyPacing.canFirstClearTower(clearedFloors: 0, day: 1))
-        #expect(!MPCDailyPacing.canFirstClearTower(clearedFloors: MPCDailyPacing.towerFloorsPerDay, day: 1))
+        #expect(!MPCDailyPacing.canFirstClearTower(clearedFloors: MPCDailyPacing.towerFloorsPerDay + MPCDailyPacing.towerFirstDayBonus, day: 1))
         #expect(MPCDailyPacing.towerFirstClearsAllowed(day: 400) == MPCChurchTowerCatalog.releasedFloorCount)
         // A wall's floor is allowed by the day its mission opens.
         for wall in MPCProgressionWalls.walls {
@@ -82,17 +83,17 @@ struct DailyPacingTests {
     }
 
     @Test func lockTextsSayWhenThingsOpen() {
-        #expect(MPCDailyPacing.missionLockText(3, day: 1) == nil)
-        #expect(MPCDailyPacing.missionLockText(4, day: 1) == "第 4 关明天开放")
-        #expect(MPCDailyPacing.missionLockText(6, day: 1) == "第 6 关 3 天后开放")
+        #expect(MPCDailyPacing.missionLockText(7, day: 1) == nil)
+        #expect(MPCDailyPacing.missionLockText(8, day: 1) == "第 8 关明天开放")
+        #expect(MPCDailyPacing.missionLockText(10, day: 1) == "第 10 关 3 天后开放")
         #expect(MPCDailyPacing.towerLockText(clearedFloors: 0, day: 1) == nil)
-        #expect(MPCDailyPacing.towerLockText(clearedFloors: MPCDailyPacing.towerFloorsPerDay, day: 1) != nil)
+        #expect(MPCDailyPacing.towerLockText(clearedFloors: MPCDailyPacing.towerFloorsPerDay + MPCDailyPacing.towerFirstDayBonus, day: 1) != nil)
         #expect(MPCDailyPacing.todaySummary(day: 1, completedMissions: 0, clearedFloors: 0)
-                == "第 1 天 · 今天可推进到第 3 关 · 深井在第 7 关后开放")
-        #expect(MPCDailyPacing.todaySummary(day: 5, completedMissions: 7, clearedFloors: 0)
-                == "第 5 天 · 第 8 关明天开放 · 深井今天还能新封 \(5 * MPCDailyPacing.towerFloorsPerDay) 层")
-        #expect(MPCDailyPacing.todaySummary(day: 6, completedMissions: 7, clearedFloors: 24)
-                == "第 6 天 · 今天可推进到第 8 关 · 深井新层明天再开")
+                == "第 1 天 · 今天可推进到第 7 关 · 深井在第 2 关后开放")
+        #expect(MPCDailyPacing.todaySummary(day: 1, completedMissions: 7, clearedFloors: 0)
+                == "第 1 天 · 第 8 关明天开放 · 深井今天还能新封 \(MPCDailyPacing.towerFloorsPerDay + MPCDailyPacing.towerFirstDayBonus) 层")
+        #expect(MPCDailyPacing.todaySummary(day: 2, completedMissions: 8, clearedFloors: 12)
+                == "第 2 天 · 第 9 关明天开放 · 深井新层明天再开")
         #expect(MPCDailyPacing.todaySummary(day: 40, completedMissions: 30, clearedFloors: 100)
                 == "第 40 天 · 主线已全部打完 · 深井已全部封堵")
     }

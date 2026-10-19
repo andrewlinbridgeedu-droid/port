@@ -28,6 +28,9 @@ struct ContentView: View {
     @State private var newspaperPresented = false
     /// --review-cue=<ChapterOneTutorialCue> (DEBUG): shows one story page over the city.
     @State private var reviewCue: ChapterOneTutorialCue?
+    /// 雨后第一天 (2026-10-18): 玛拉's scene for a stop, then its small thing.
+    @State private var tourCue: ChapterOneTutorialCue?
+    @State private var tourTask: MPCCityTour.Stop?
     @State private var homeFocusID: String?
     @State private var homeFocusRevision = 0
     @State private var homeDestination: HomeDestination?
@@ -249,7 +252,14 @@ struct ContentView: View {
                             status: !game.sequenceEightQualified ? "先举行阶位 8 仪式"
                                 : game.chapterTwoBridge.worldEventStoryReady ? "已见过两家负责人 · 可重访" : "两家负责人在站内等候",
                             action: { blackSaltShorePresented = true }
-                        ) : nil
+                        ) : nil,
+                        tourStop: game.cityTourNextStop,
+                        tourNumber: game.cityTourNextStop.map(game.cityTourStopNumber) ?? 0,
+                        onCityTour: {
+                            guard let stop = game.cityTourNextStop else { return }
+                            GameInterfaceSound.shared.playClick()
+                            tourCue = ChapterOneTutorialCue.tour(stop)
+                        }
                     )
                 case .districtMap:
                     // Legacy entry/debug routes bypass the removed street page too.
@@ -478,6 +488,22 @@ struct ContentView: View {
             if let reviewCue { ChapterOneTutorialOverlay(cue: reviewCue) { self.reviewCue = nil } }
         }
         #endif
+        .overlay {
+            if let tourCue {
+                ChapterOneTutorialOverlay(cue: tourCue) {
+                    let stop = tourCue.tourStop
+                    self.tourCue = nil
+                    tourTask = stop
+                }
+                .zIndex(30)
+            }
+        }
+        .fullScreenCover(item: $tourTask) { stop in
+            CityTourTaskView(game: game, stop: stop) {
+                tourTask = nil
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { homeDestination = .init(id: stop.destinationID) }
+            }
+        }
         .onReceive(NotificationCenter.default.publisher(for: .homeQuestFocus)) { event in
             homeFocusID = event.object as? String; homeFocusRevision += 1
             presentedSheet = nil; churchPresented = false; tavernBountyPresented = false

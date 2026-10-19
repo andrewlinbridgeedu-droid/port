@@ -1,4 +1,5 @@
 import SwiftUI
+import MistportCombatCore
 import UIKit
 import Vision
 import CoreImage
@@ -101,6 +102,23 @@ enum ChapterOneTutorialCue: String, CaseIterable {
     case q11Aftermath, q12Aftermath, q13Aftermath, q14Aftermath, q15Aftermath, q16Aftermath, q17Aftermath, q18Aftermath, q19Aftermath, q20Aftermath
 
     case q21Prelude, q21Aftermath, q22Prelude, q22Aftermath, q23Prelude, q23Aftermath, q24Prelude, q24Aftermath, q25Prelude, q25Aftermath, q26Prelude, q26Aftermath, q27Prelude, q27Aftermath, q28Prelude, q28Aftermath, q29Prelude, q29Aftermath, q30Prelude, q30Aftermath
+    /// 雨后第一天 (2026-10-18): 玛拉's six stops after Q2, text in MPCCityTour.
+    case tourSoup, tourBunk, tourPost, tourBank, tourCafe, tourLamp
+
+    /// The tour stop this cue plays, if it is one.
+    var tourStop: MPCCityTour.Stop? {
+        let id: String? = switch self {
+        case .tourSoup: "soup"
+        case .tourBunk: "bunk"
+        case .tourPost: "post"
+        case .tourBank: "bank"
+        case .tourCafe: "cafe"
+        case .tourLamp: "lamp"
+        default: nil
+        }
+        return id.flatMap(MPCCityTour.stop)
+    }
+    static func tour(_ stop: MPCCityTour.Stop) -> Self? { allCases.first { $0.tourStop?.id == stop.id } }
 
     var persistenceKey: String {
         if self == .q5Delivery { return "chapter-one.tutorial.q5EncoreDelivery" }
@@ -110,7 +128,8 @@ enum ChapterOneTutorialCue: String, CaseIterable {
     /// The story beat (2026-10-18 rewrite, user: 更像人类，更悲情，更呈现人性). People and
     /// things, not procedures; how a fight or a new card works lives in `hint`, on its own page.
     var message: String {
-        switch self {
+        if let stop = tourStop { return stop.scene }
+        return switch self {
         case .q30Aftermath:
             "私印从他手里滑落，在地上滚了半圈。\n瑟维安死了。巡官翻遍总册，找不到一个能替他收尸的名字。最后是玛拉在认领栏上签了字。\n三天后，诊所的门被推开了。伊恩瘦了很多，站在门口，好像不敢进来。\n奥黛尔没有起身，只把那只缺角的杯子推到桌子对面。茶是凉的。\n伊恩端起来，一口喝完了。这一次，他什么也没说。\n洛克拿着一本名册挨家挨户地敲门，上面是他亲手送走的每一个人。找到一个，他就划掉一个。有几个名字，他一直没能划掉。\n维娅在审理庭上说了实话，所有的实话。听审的人里，没有阿洛。\n外海的追索没有停。它比你来雾港还早，早到你自己都记不起。赫斯替你守住了一条去黑盐岸的航线，只有单程。\n码头上，玛拉把原档递还给你：“我得留下。有太多签名，要我自己一个一个去认。”\n“你也是。下一次，别让别人替你签。”\n船开了。雾港的灯在你身后一盏一盏变小。你没有回头，可你知道她一直站在那里。"
         case .q30Prelude:
@@ -237,6 +256,8 @@ enum ChapterOneTutorialCue: String, CaseIterable {
             "猎犬退进雾里，留下半截项圈。皮子内侧刻着你的名字，字迹工整，像在替人填表。\n名字旁边还有一串编号，不是雾港的格式。你把项圈碎片和它撞落的迟秒怀表一起收好。"
         case .q4Aftermath:
             "召回的哨声从远处响起。老猎犬犹豫了一下，转身走了，像是被人叫回家吃饭。\n玛拉送你到诊所门口，自己没有进去。\n奥黛尔·芬是个瘦小的女人，白大褂的袖口磨起了毛。桌上摆着两只杯子，一只是她的，一只缺了个角，茶早凉透了。\n“伊恩的。他去送药，一直没回来。这孩子每次进门都嫌我的茶凉，可我还是每天给他倒一杯。倒了，就好像他今天会回来。”\n她推过来一叠退回的寻人信，每一封都盖着：已送达。\n“他们说他被家里人领走了。”她笑了一下，“伊恩没有家里人。他只有这间诊所。”\n你出门时，玛拉还站在雨里，背对着诊所的窗。去旧邮务间，查清这份“已送达”。"
+        case .tourSoup, .tourBunk, .tourPost, .tourBank, .tourCafe, .tourLamp:
+            ""
         case .q5PaperDoubleIntervention:
             "看它身上的绿焰。\n那是重击将至的信号。\n现在手动使用『无主假面』，让幻影接下这一击。\n重击被接住后，三秒内点击『反击』，重启普通牌的编排。毒雾仍会加浓，必须尽快结束战斗。"
         }
@@ -275,7 +296,8 @@ enum ChapterOneTutorialCue: String, CaseIterable {
     }
 
     var kicker: String {
-        switch self {
+        if let stop = tourStop { return "雨后第一天 · \(stop.title)" }
+        return switch self {
         case .q30Aftermath: "无主者的签名 · 尾声"
         case .q30Prelude: "无主者的签名"
         case .q29Aftermath: "最后的代签 · 事后"
@@ -340,6 +362,7 @@ enum ChapterOneTutorialCue: String, CaseIterable {
         case .q3Aftermath: "项圈上的外部编号"
         case .q4Aftermath: "诊所 · 缺角的茶杯"
         case .q5PaperDoubleIntervention: "第五关 · 不肯落幕"
+        case .tourSoup, .tourBunk, .tourPost, .tourBank, .tourCafe, .tourLamp: ""
         }
     }
 
@@ -362,6 +385,7 @@ enum ChapterOneTutorialCue: String, CaseIterable {
         case .fogGhostPrelude, .houndPrelude: "准备迎战"
         case .firstBattle, .secondBattle: "明白了"
         case .q5PaperDoubleIntervention: "留意绿焰"
+        case .tourSoup, .tourBunk, .tourPost, .tourBank, .tourCafe, .tourLamp: "看看这里"
         }
     }
 

@@ -54,6 +54,10 @@ struct CityHubView: View {
     var onCounter: (String) -> Void = { _ in }
     /// After Q30: Chapter Two's Black Salt Shore bridge (status line, action).
     var blackSaltShore: (status: String, action: () -> Void)? = nil
+    /// 雨后第一天's next stop and its number (2026-10-18), shown above the mission strip.
+    var tourStop: MPCCityTour.Stop? = nil
+    var tourNumber = 0
+    var onCityTour: () -> Void = {}
 
     private var tint: Color { path?.tint ?? .purple }
 
@@ -91,6 +95,11 @@ struct CityHubView: View {
                         )
                         .padding(.horizontal, 28)
                         .padding(.bottom, 8)
+                    }
+                    if let tourStop {
+                        tourStrip(tourStop)
+                            .padding(.horizontal, 18)
+                            .padding(.top, 8)
                     }
                     taskStrip(in: scenery)
                         .padding(.horizontal, 18)
@@ -327,6 +336,29 @@ struct CityHubView: View {
         let screen = viewport.width / 2 - width / 2 + boundedPanoramaOffset(panoramaOffset + panoramaDrag, in: viewport) + x * viewport.height
         return screen < 0 ? " · 在左侧 ←" : screen > viewport.width ? " · 在右侧 →" : ""
     }
+    /// 玛拉's walk after Q2: one strip, one tap to the next stop.
+    private func tourStrip(_ stop: MPCCityTour.Stop) -> some View {
+        Button(action: onCityTour) {
+            HStack(spacing: 10) {
+                Image(systemName: "lamp.desk.fill").font(.title3).foregroundStyle(Color(red: 1, green: 0.82, blue: 0.45))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("雨后第一天 · 跟玛拉去\(stop.title)").font(.callout.weight(.semibold)).lineLimit(1)
+                    Text("第 \(tourNumber)/\(MPCCityTour.stops.count) 站 · 学\(stop.topic)").font(.caption2).foregroundStyle(.white.opacity(0.78)).lineLimit(1)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right").font(.caption.bold())
+            }
+            .frame(maxWidth: .infinity, minHeight: 46, alignment: .leading)
+            .padding(.horizontal, 12)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(.white)
+        .background(Color(red: 0.24, green: 0.16, blue: 0.08).opacity(0.86), in: RoundedRectangle(cornerRadius: 10))
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(red: 1, green: 0.82, blue: 0.45).opacity(0.55), lineWidth: 1))
+        .accessibilityLabel("雨后第一天，跟玛拉去\(stop.title)，第 \(tourNumber) 站")
+    }
+
     private func taskStrip(in viewport: CGSize) -> some View {
         HStack(spacing: 10) {
             Button(action: onStory) {

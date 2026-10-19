@@ -192,10 +192,12 @@ struct ChurchTowerHundredBalanceTests {
         #expect(try MPCChurchTowerVerificationRunner.run(number: n, suppliedLoadout: bare).session.outcome == .defeat)
     }
 
-    /// Floor progress follows the chapter: F20 and F30 are lost three missions before their pace stage (Q7's
-    /// three cards). From Q10 on four slots, so F40/F50 depend on gear and the daily gate more than on cards.
+    /// Floor progress follows the chapter: F20 and F30 are lost with Q7's three cards, three missions before
+    /// the Q10 gate they were calibrated for (requiredMission). 2026-10-18: the story now opens faster (Q1–Q7
+    /// on day 1), so `paceMission` moved later; the calibration this checks did not, so the stage is fixed
+    /// to the gate. From Q10 on four slots, so F40/F50 depend on gear and the daily gate more than on cards.
     @Test(arguments: [20, 30]) func closingFloorsNeedTheirStage(_ n: Int) async throws {
-        let stage = MPCChurchTowerCatalog.paceMission(floor: n) - 3
+        let stage = MPCChurchTowerCatalog.requiredMission(floor: n) - 3
         let wins = try await RealLoop.map(MPCStageLoadout.orders(before: stage + 1)) {
             try RealLoop.church(MPCChurchTowerCatalog.floor(number: n)!.id, before: stage + 1, order: $0, gearThrough: n - 1).session.outcome == .victory
         }

@@ -514,7 +514,7 @@ struct InstitutionPlaytestRoot: View {
                 #if !PLAYTEST_BUILD || PLAYTEST_CLOCK
                 if game.phase == .cityHub || game.phase == .title {
                     Button("试玩设置") { settings = true }.font(.caption.bold()).padding(12)
-                        .background(.black.opacity(0.6), in: Capsule()).padding(12).padding(.bottom, game.phase == .cityHub ? 100 : 0)
+                        .background(.black.opacity(0.6), in: Capsule()).padding(12).padding(.bottom, game.phase == .cityHub ? (game.cityTourNextStop == nil ? 100 : 158) : 0)
                 }
                 #endif
             }
@@ -641,5 +641,54 @@ struct CityHousingMaintenanceView: View {
             if game.chapterOneCampaign.ownedRelicIDs.isDisjoint(with: EarlyRelicShop.ids) { Text("先在商人处购入遗落物。没有维修需求，就没有这笔支出或优惠。") }
             if !message.isEmpty { Text(message).foregroundStyle(.orange) }
         }.task { await game.openHousingDay() }
+    }
+}
+
+/// One stop of 雨后第一天 after 玛拉's scene (2026-10-18): the small thing to do, the plain rules, and
+/// a door to the real place.
+struct CityTourTaskView: View {
+    @Bindable var game: GameStore
+    let stop: MPCCityTour.Stop
+    let onVisit: () -> Void
+    @State private var picked: Int?
+    @State private var finished = false
+    @State private var message = ""
+
+    var body: some View {
+        GameArtPage(title: stop.title,
+                    subtitle: "雨后第一天 · 第 \(game.cityTourStopNumber(stop))/\(MPCCityTour.stops.count) 站 · \(stop.topic)",
+                    closeTitle: finished ? "继续" : "稍后再来") {
+            switch stop.task {
+            case .question(let prompt, let choices, let answer, let nudge):
+                Text(prompt).font(.headline)
+                ForEach(choices.indices, id: \.self) { index in
+                    Button(choices[index]) {
+                        picked = index
+                        if index == answer { finish() } else { message = nudge }
+                    }
+                    .buttonStyle(GameArtButtonStyle(primary: finished && index == answer))
+                    .disabled(finished)
+                }
+            case .action(let label):
+                Button(label) { finish() }
+                    .buttonStyle(GameArtButtonStyle(primary: !finished))
+                    .disabled(finished)
+            }
+            if !message.isEmpty { Text(message).foregroundStyle(GameArt.ink) }
+            if finished {
+                Text(stop.done).font(.body)
+                GroupBox("记住这些") { Text(stop.lesson).frame(maxWidth: .infinity, alignment: .leading) }
+                if stop.reward > 0 { Text("得到 \(stop.reward) 铜。").font(.callout.bold()) }
+                Button("去\(stop.title)看看") { onVisit() }.buttonStyle(GameArtButtonStyle())
+            }
+        }
+    }
+
+    private func finish() {
+        do {
+            try game.completeCityTourStop(stop.id)
+            finished = true
+            message = ""
+        } catch { message = game.playerError(error) }
     }
 }

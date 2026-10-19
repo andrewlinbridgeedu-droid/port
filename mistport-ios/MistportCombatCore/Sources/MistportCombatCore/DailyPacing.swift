@@ -10,13 +10,16 @@ import Foundation
 /// (`PACING=`); the game never writes them. Local saves trust the device clock;
 /// a moved-forward clock can only be caught by a server.
 public enum MPCDailyPacing {
-    /// Story missions open on day 1 (Q1–Q3, so the first session is not a single
-    /// short battle), then this many more each day (Q30 on day 28).
-    nonisolated(unsafe) public static var missionsOnFirstDay = 3
+    /// Story missions open on day 1, then this many more each day. 2026-10-18 (user: 第一天开放到第七关，
+    /// 深井和通缉第一天开放): Q1–Q7 on day 1, so the first evening is a full session; Q30 on day 24.
+    nonisolated(unsafe) public static var missionsOnFirstDay = 7
     nonisolated(unsafe) public static var missionsPerDay = 1
     /// Tower first clears allowed per day, accumulating. Replays of cleared floors
     /// are never limited; they pay no first-clear reward.
     nonisolated(unsafe) public static var towerFloorsPerDay = 4
+    /// Extra first clears on day 1 (2026-10-18): with Q8 open on day 2, its wall (F10) needs ten floors
+    /// by then; 8 on day 1 and 4 a day after keeps every wall's floor allowed by its mission's day.
+    nonisolated(unsafe) public static var towerFirstDayBonus = 4
 
     /// 1 on the save's first calendar day; a clock set before the start counts as day 1.
     public static func dayNumber(start: Date, now: Date, calendar: Calendar = .current) -> Int {
@@ -40,7 +43,7 @@ public enum MPCDailyPacing {
 
     /// Tower floors that may have been first-cleared by the end of `day`.
     public static func towerFirstClearsAllowed(day: Int) -> Int {
-        min(MPCChurchTowerCatalog.releasedFloorCount, max(1, day) * towerFloorsPerDay)
+        min(MPCChurchTowerCatalog.releasedFloorCount, max(1, day) * towerFloorsPerDay + towerFirstDayBonus)
     }
 
     /// Whether one more floor may be first-cleared today; mission gates on floors still apply.
@@ -54,7 +57,7 @@ public enum MPCDailyPacing {
                                      calendar: Calendar = .current) -> Date {
         let missionDay = openingDay(mission: min(30, completedMissions + 1))
         let nextFloor = clearedTowerFloors >= MPCChurchTowerCatalog.releasedFloorCount ? 0 : clearedTowerFloors + 1
-        let floorDay = (nextFloor + towerFloorsPerDay - 1) / towerFloorsPerDay
+        let floorDay = max(1, (nextFloor - towerFirstDayBonus + towerFloorsPerDay - 1) / towerFloorsPerDay)
         let day = max(1, missionDay, floorDay)
         return calendar.date(byAdding: .day, value: -(day - 1), to: calendar.startOfDay(for: today))!
     }

@@ -4,10 +4,12 @@ import Testing
 
 @Suite("Church tower released first section")
 struct ChurchTowerTests {
-    @Test func opensAfterQ7ButNoFutureFloors() {
+    /// Q2 since 2026-10-18 (user: 深井和通缉第一天开放); it was Q7.
+    @Test func opensAfterQ2ButNoFutureFloors() {
         let progress = MPCChurchTowerProgress()
         #expect(!progress.canEnter(1, completedMissionNumbers: []))
-        #expect(!progress.canEnter(1, completedMissionNumbers: Set(1...6)))
+        #expect(!progress.canEnter(1, completedMissionNumbers: [1]))
+        #expect(progress.canEnter(1, completedMissionNumbers: [2]))
         #expect(progress.canEnter(1, completedMissionNumbers: [7]))
         #expect(progress.canEnter(1, completedMissionNumbers: [16]))
         #expect(!progress.canEnter(2, completedMissionNumbers: [7]))
