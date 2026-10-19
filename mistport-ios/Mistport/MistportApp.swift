@@ -51,6 +51,13 @@ struct MistportApp: App {
     private static var playerDefaults: UserDefaults {
         #if DEBUG
         if Bundle.main.bundleIdentifier == "local.mistport.institutions" {
+            // One launch with -institution.profile <name> moves the playtest to that save for good
+            // (2026-10-18, user: 重置进度，我开始试玩了): a new name is an empty save, and the old one
+            // stays untouched under its own name.
+            let arguments = ProcessInfo.processInfo.arguments
+            if let flag = arguments.firstIndex(of: "-institution.profile"), arguments.indices.contains(flag + 1) {
+                UserDefaults.standard.set(arguments[flag + 1], forKey: "institution.profile")
+            }
             let profile = UserDefaults.standard.string(forKey: "institution.profile") ?? "fresh"
             return UserDefaults(suiteName: "mistport.institutions.playtest.20261013." + profile)!
         }
