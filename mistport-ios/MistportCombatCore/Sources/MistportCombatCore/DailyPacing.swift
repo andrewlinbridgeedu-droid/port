@@ -115,6 +115,13 @@ extension MPCDailyPacing {
         return wait == 1 ? "第 \(mission) 关明天开放" : "第 \(mission) 关 \(wait) 天后开放"
     }
 
+    /// For a service that opens after `mission`: when that mission opens (2026-10-18, user: 第一天你说我能
+    /// 封4层，但要过第七关，但第一天又只开放4关 — the paper counted floors before the well could open).
+    public static func openingNote(afterMission mission: Int, day: Int) -> String {
+        let opens = openingDay(mission: mission)
+        return opens <= day ? "第 \(mission) 关已经开放，打完就能进。" : "第 \(mission) 关第 \(opens) 天才开放，还要等 \(opens - day) 天。"
+    }
+
     /// Why a new tower floor cannot be first-cleared today, or nil when it can.
     public static func towerLockText(clearedFloors: Int, day: Int) -> String? {
         guard !canFirstClearTower(clearedFloors: clearedFloors, day: day) else { return nil }
