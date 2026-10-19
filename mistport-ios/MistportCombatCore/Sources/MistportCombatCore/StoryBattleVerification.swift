@@ -124,7 +124,8 @@ public enum MPCStoryVerificationRunner {
     public static func run(mission q: Int, loadout: MPCChapterOneLoadout, policy: Policy = .audit, consumables: [String: Int] = [:],
                            party: MPCPartyPersistentState = .init(), mask: MPCStoryBattleStepper.Mask? = nil,
                            tuning: MPCChurchBattleStepper.Tuning = .live,
-                           configure: ((inout MPCChapterOneEncounterSession) -> Void)? = nil) throws -> Report {
+                           configure: ((inout MPCChapterOneEncounterSession) -> Void)? = nil,
+                           observe: ((MPCStoryBattleStepper) -> Void)? = nil) throws -> Report {
         let encounterID = String(format: "chapter01_q%02d_encounter", q)
         var game = try MPCStoryBattleStepper(encounterID: encounterID, loadout: loadout, consumables: consumables, party: party,
                                              companionIDs: MPCChapterOneCatalog.mission(forEncounterID: encounterID)?.companionIDs ?? [],
@@ -133,7 +134,7 @@ public enum MPCStoryVerificationRunner {
         while !game.isFinished {
             let view = game.view
             let s = view.session
-            guard s.outcome == .inProgress else { _ = try game.step(); continue }
+            guard s.outcome == .inProgress else { _ = try game.step(); observe?(game); continue }
             var trial = s, out: [MPCBattleInput] = [], salves = 0
             let alive = s.enemies.filter(\.isAlive)
             let support = alive.first { $0.contentID == "enemy_memory_leech_node" }
@@ -174,6 +175,7 @@ public enum MPCStoryVerificationRunner {
             }
             do { _ = try game.step(out); medicines += salves }
             catch MPCChurchBattleDriver.Failure.refused { _ = try game.step() } // the whole step's choices drop, the ultimate's too
+            observe?(game) // model only (MPCMissionChallengeRecorder); never changes the battle
         }
         return .init(session: game.session, seconds: max(0, game.now - MPCChurchBattleDriver.step), maskUses: game.maskUses, medicinesUsed: medicines)
     }
