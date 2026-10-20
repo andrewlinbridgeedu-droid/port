@@ -1,0 +1,92 @@
+[
+  {
+    "action": "06-mirror-burn",
+    "outfit": "mistport-night",
+    "skill": "fool_skill_12",
+    "segments": [
+      [
+        3.0,
+        2.62
+      ],
+      [
+        0.38,
+        0.79
+      ],
+      [
+        2.04,
+        3.25
+      ]
+    ],
+    "release": [
+      2,
+      2.48
+    ],
+    "rest": 3.25,
+    "flare": [
+      0.83,
+      1.96
+    ],
+    "sourceSHA256": "459c76707c56b6fae8ffa6b816a45a34c70b4d777abc2432abd92cd204724167",
+    "sourceFrames": [
+      72,
+      71,
+      70,
+      69,
+      68,
+      67,
+      66,
+      65,
+      64,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      49,
+      50,
+      51,
+      52,
+      53,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78
+    ],
+    "id": "06-mirror-burn",
+    "frames": 48,
+    "columns": 8,
+    "rows": 6,
+    "releaseFrame": 28.905,
+    "sourceStart": 0.0,
+    "sourceRelease": 1.23,
+    "sourceEnd": 2.0,
+    "recoverySeconds": 0.18,
+    "width": 512,
+    "height": 640
+  }
+]

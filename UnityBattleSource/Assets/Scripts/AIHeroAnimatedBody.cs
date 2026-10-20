@@ -10,12 +10,18 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
         public string id; public int frames, columns, rows;
         public float releaseFrame, sourceStart, sourceRelease, sourceEnd, recoverySeconds;
     }
-    sealed class Clip { public Texture2D atlas, idle; public ClipInfo info; }
+    sealed class Clip { public Texture2D atlas, idle; public ClipInfo info; public bool sharedIdle; }
     sealed class Bank { public int references; public Dictionary<string,Clip> clips; }
     static readonly Dictionary<string,Bank> banks=new Dictionary<string,Bank>();
     public static readonly string[] Actions = {
         "01-diagonal-cut", "02-command-flick", "03-overarm-throw", "04-seal-press", "05-sidearm-cast"
     };
+    // A take recorded for one skill in one outfit (2026-10-19: 燃镜 in 雾港夜行). Loaded
+    // when the outfit has it; other outfits keep the shared rotation for that skill.
+    public static readonly Dictionary<string,string> Signatures = new Dictionary<string,string> {
+        ["fool_skill_12"] = "06-mirror-burn"
+    };
+    public bool HasAction(string action) => action != null && clips.ContainsKey(action);
     public string Outfit { get; private set; }
     public string CurrentAction { get; private set; }
     public bool IsActing => CurrentAction != null;
@@ -114,9 +120,11 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
         if(next==null) return false;
         string previous=Outfit;
         clips.Clear();foreach(var pair in next) clips.Add(pair.Key,pair.Value);
-        Outfit=outfit;current=clips[CurrentAction ?? Actions[0]];
         // Preserve the action clock across wardrobe changes; different recordings
-        // map to the same rule contact, never restart the ongoing cast.
+        // map to the same rule contact, never restart the ongoing cast. A signature
+        // take the new outfit lacks continues on the first shared take.
+        if(CurrentAction!=null && !clips.ContainsKey(CurrentAction)) CurrentAction=Actions[0];
+        Outfit=outfit;current=clips[CurrentAction ?? Actions[0]];
         Bind();ReleaseBank(previous);return true;
     }
     static Dictionary<string,Clip> Acquire(string outfit) {
@@ -133,6 +141,16 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
             }
             next[action] = new Clip { atlas=atlas, idle=idle, info=JsonUtility.FromJson<ClipInfo>(json.text) };
         }
+        // A signature take keeps the outfit's reference rest art: its own last frame is a
+        // slimmer re-drawing of the coat, and the rest pose must not jump between casts.
+        foreach (var action in Signatures.Values) {
+            string path = Root + outfit + "/" + action;
+            var json = Resources.Load<TextAsset>(path);
+            if (!json) continue;
+            var atlas = Resources.Load<Texture2D>(path);
+            if (!atlas) { Debug.LogError("AI_HERO_ASSET_MISSING " + path); continue; }
+            next[action] = new Clip { atlas=atlas, idle=next[Actions[0]].idle, sharedIdle=true, info=JsonUtility.FromJson<ClipInfo>(json.text) };
+        }
         banks.Add(outfit,new Bank {references=1,clips=next});return next;
     }
     static void ReleaseBank(string outfit) {
@@ -141,7 +159,7 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
         banks.Remove(outfit);Release(bank.clips);
     }
     static void Release(Dictionary<string, Clip> values) {
-        foreach (var c in values.Values) { if(c.atlas) Resources.UnloadAsset(c.atlas); if(c.idle) Resources.UnloadAsset(c.idle); }
+        foreach (var c in values.Values) { if(c.atlas) Resources.UnloadAsset(c.atlas); if(c.idle && !c.sharedIdle) Resources.UnloadAsset(c.idle); }
         values.Clear();
     }
     // Only presentation chooses variants. The card still owns its contact and
@@ -155,7 +173,8 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
         }
     }
     public void PlaySkill(string skill, float contactAfter) {
-        var action = motionSequence.Next();
+        var action = Signatures.TryGetValue(skill ?? "",out var signature) && clips.ContainsKey(signature)
+            ? signature : motionSequence.Next();
         PlayAction(action,contactAfter);
         Debug.Log($"AI_HERO_CAST skill={skill} action={action} contact={contactAfter:F4} outfit={Outfit}");
     }

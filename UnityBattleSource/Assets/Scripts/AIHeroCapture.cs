@@ -33,7 +33,7 @@ public sealed class AIHeroCapture : MonoBehaviour {
         var camera=Camera.main;var originalPos=camera.transform.position;var originalRot=camera.transform.rotation;var originalFov=camera.fieldOfView;
         foreach(var outfit in new[]{"mistport-night","starlight-magician","midnight-carnival"}) {
             presentation.SetOutfit(outfit);yield return null;
-            if(body.Outfit!=outfit || body.LoadedAtlasCount!=5 || camera.transform.position!=originalPos || camera.transform.rotation!=originalRot) {Fail("Outfit/atlas count/camera mismatch");yield break;}
+            if(body.Outfit!=outfit || body.LoadedAtlasCount<AIHeroAnimatedBody.Actions.Length || camera.transform.position!=originalPos || camera.transform.rotation!=originalRot) {Fail("Outfit/atlas count/camera mismatch");yield break;}
             yield return new WaitForEndOfFrame();Shot(outfit+"-production.png");
         }
         report.Add("Three native outfit IDs, five atlases each; production camera unchanged.");
@@ -45,7 +45,7 @@ public sealed class AIHeroCapture : MonoBehaviour {
         Time.captureFramerate=30;
         foreach(var outfit in new[]{"mistport-night","starlight-magician","midnight-carnival"}) {
             presentation.SetOutfit(outfit);yield return null;
-            foreach(var action in AIHeroAnimatedBody.Actions) {
+            foreach(var action in AIHeroAnimatedBody.Actions.Concat(AIHeroAnimatedBody.Signatures.Values).Where(body.HasAction)) {
                 var dir=outfit+"-"+action;Directory.CreateDirectory(Path.Combine(output,dir));
                 body.PlayAction(action,.7f);
                 for(int i=0;i<48;i++) {yield return new WaitForEndOfFrame();Shot(dir+"/"+i.ToString("D4")+".png");}
