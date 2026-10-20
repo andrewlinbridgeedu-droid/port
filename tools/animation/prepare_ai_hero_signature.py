@@ -30,6 +30,9 @@ takes = [{
     'release': (2, 2.48),      # segment index, source second: the arms snap open
     'rest': 3.25,              # fixed-foot box
     'flare': (0.83, 1.96),     # never sampled
+    # The exit blend crosses into the outfit's reference rest art, whose coat flares wider than
+    # this take's last frame; half the usual 0.18 s keeps the double hem to two or three frames.
+    'exitBlend': 0.09,
 }]
 
 def matte(rgb):
@@ -96,7 +99,7 @@ for take in takes:
     definition={'id':name,'frames':N,'columns':COLS,'rows':ROWS,
       'releaseFrame':float(release/total*(N-1)),
       'sourceStart':0.0,'sourceRelease':float(release),'sourceEnd':float(total),
-      'recoverySeconds':.18,'width':W,'height':H}
+      'recoverySeconds':take.get('exitBlend',.18),'width':W,'height':H}
     (folder/(name+'.json')).write_text(json.dumps(definition,indent=2)+'\n')
     # Every frame, small, in order: the joins and the release are checked here.
     sheet=Image.new('RGB',(W//2*12,H//2*4),(24,31,46))
