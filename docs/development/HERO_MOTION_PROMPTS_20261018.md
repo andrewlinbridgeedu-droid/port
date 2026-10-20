@@ -148,3 +148,31 @@ One sharp hit reaction only. Both feet stay planted on exactly the same spots: n
 - 先看脚：脚离开原位的直接作废，重录。
 - 三套衣服的同一个动作，出手时间要对得上，差太多也重录。
 - 录好的原片放进 `ArtSource/HeroMotion20261018/<动作>/<衣服>.mp4`，我来挑帧、抠图、接进游戏。
+
+## 第一轮收片复看（10-19）
+
+用户交来 6 条，都是雾港夜行。其中 `11_45PM` 和 `12_30AM (1)` 是同一个文件，实际 5 条。
+
+| 文件 | 内容 | 结论 |
+|---|---|---|
+| `1_38AM` | 双手举到肩上、掌心向前，张开收回 | **可用，对应燃镜**。背面、灰底、脚不动。头顶冒出一团星光，抠图后在肩背留一层淡白雾 |
+| `11_45PM` | 凭空变出一把剑，举过头下劈，剑又消失 | 主角不拿剑，剑凭空出现又消失。开头底色从黑渐变到灰 |
+| `10_43PM` | 手臂由左向右横扫，接近重绘 | 全程黑底，黑衣抠图会吃掉衣边；中途侧身露脸 |
+| `11_10PM` | 回身甩手，接近突转 | 转成正面露脸，脚挪了 |
+| `12_30AM` | 整个人转过来面向镜头 | 脸和衣服都变了，**不能用** |
+
+每条第一帧都是参考图本身（黑底），流水线会跳过它。
+
+### 重录时在每条提示词开头加上这三句
+
+```text
+The background is plain uniform medium gray (#8F8F8F) from the very first frame to the last; never black, never a gradient.
+He keeps his back to the camera for the entire clip: his face is never visible, and his chest never turns toward the camera.
+His hands stay empty: no sword, weapon, card or any other object appears.
+```
+
+**突转和重绘**这类要扭身的动作，把"twist"改成"肩膀扭动，胸口和脸始终背对镜头"：
+
+```text
+Only his shoulders and arms twist; his hips, chest and head stay facing away from the camera, and both feet stay planted.
+```
