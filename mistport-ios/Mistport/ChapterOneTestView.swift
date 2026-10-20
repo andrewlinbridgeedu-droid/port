@@ -1020,6 +1020,8 @@ struct ChapterOneEncounterTestView: View {
             || campaign.ownedRelicIDs.contains("relic_encore_bell")
     }
     @State private var continuousVictoryReported = false
+    /// Watches every rule tick for the mission's three stars; read-only.
+    @State private var challengeRecorder = MPCMissionChallengeRecorder()
     @State private var victoryPresentationDeadline: TimeInterval?
     @State private var preludeRevealAt: TimeInterval?
 
@@ -1051,6 +1053,8 @@ struct ChapterOneEncounterTestView: View {
     let battleIsActive: Bool
     let tutorialCue: ChapterOneTutorialCue?
     let onVictory: (MPCChapterOneEncounterSession) -> Void
+    /// The story mission's star report, sent just before `onVictory`.
+    let onChallengeStats: (MPCMissionBattleStats) -> Void
     let onExit: () -> Void
     let onDefeat: () -> Void
     let bountyLossText: String?
@@ -1082,6 +1086,7 @@ struct ChapterOneEncounterTestView: View {
         requiresExplicitBattleStartAfterIntervention: Bool = true,
         showsStandaloneOpeningBattleButton: Bool = true,
         onVictory: @escaping (MPCChapterOneEncounterSession) -> Void,
+        onChallengeStats: @escaping (MPCMissionBattleStats) -> Void = { _ in },
         onExit: @escaping () -> Void,
         onDefeat: @escaping () -> Void = {},
         bountyLossText: String? = nil,
@@ -1158,6 +1163,7 @@ struct ChapterOneEncounterTestView: View {
         self.showsCardComparisonPreview = showsCardComparisonPreview
         self.tutorialCue = tutorialCue
         self.onVictory = onVictory
+        self.onChallengeStats = onChallengeStats
         self.onDefeat = onDefeat
         self.bountyLossText = bountyLossText
         self.wallHintText = wallHintText
@@ -1840,6 +1846,7 @@ struct ChapterOneEncounterTestView: View {
         if session.outcome == .victory {
             if !continuousVictoryReported {
                 continuousVictoryReported = true
+                onChallengeStats(challengeRecorder.stats(for: session))
                 onVictory(session)
             }
         } else if session.outcome == .defeat {
@@ -1875,6 +1882,7 @@ struct ChapterOneEncounterTestView: View {
     }
 
     private func advanceContinuousCombat(at now: TimeInterval) {
+        defer { challengeRecorder.observe(session, at: now) }
         let damageFormationBeforeClock = session.enemies
         let waveBeforeClock = session.waveIndex
         let relicTarget = selectedTargetID.flatMap { id in session.enemies.first { $0.id == id && $0.isAlive }?.id }
@@ -2010,6 +2018,7 @@ struct ChapterOneEncounterTestView: View {
             }
             if !continuousVictoryReported && now >= max(playerCastReadyAt, victoryPresentationDeadline ?? now) {
                 continuousVictoryReported = true
+                onChallengeStats(challengeRecorder.stats(for: session))
                 onVictory(session)
             }
             return
@@ -4656,6 +4665,7 @@ struct ChapterOneEncounterTestView: View {
         requestedUltimate = false
         requestedEmeraldMask = false
         continuousVictoryReported = false
+        challengeRecorder = MPCMissionChallengeRecorder()
         victoryPresentationDeadline = nil
         pendingPlayerImpact = nil
         pendingEnemyImpacts.removeAll()
@@ -4726,6 +4736,7 @@ struct ChapterOneEncounterTestView: View {
         requestedUltimate = false
         requestedEmeraldMask = false
         continuousVictoryReported = false
+        challengeRecorder = MPCMissionChallengeRecorder()
         victoryPresentationDeadline = nil
         pendingPlayerImpact = nil
         pendingEnemyImpacts.removeAll()
@@ -6424,6 +6435,9 @@ struct ChapterOneMissionBridgeView: View {
     @State private var victoryTitle = "战斗胜利"
     @State private var victoryHandled = false
     @State private var loanBattleID = UUID().uuidString
+    /// The last won battle's star report and what it paid (2026-10-20).
+    @State private var challengeStats: MPCMissionBattleStats?
+    @State private var challengeResult: ChapterOneChallengeResult?
 
     @State private var battleStartError = ""
     @State private var showsBattleStartError = false
@@ -6480,6 +6494,7 @@ struct ChapterOneMissionBridgeView: View {
                     // underneath it, or two identical start controls appear.
                     showsStandaloneOpeningBattleButton: false,
                     onVictory: completeEncounter,
+                    onChallengeStats: { challengeStats = $0 },
                     onExit: { game.finishChurchLoanBattle(loanBattleID, outcome: .retreat); game.returnToCity() },
                     onDefeat: { game.finishChurchLoanBattle(loanBattleID, outcome: .defeat) },
                     wallHintText: game.activeChapterMission.flatMap { game.wallDefeatHint(missionNumber: $0.number) },
@@ -6580,7 +6595,7 @@ struct ChapterOneMissionBridgeView: View {
 
                     VStack {
                         let number = game.activeChapterMission?.number ?? 1
-                        if number >= 3 || Self.prebattleObjective(number) != nil || prebattleWallHint != nil {
+                        if number >= 3 || Self.prebattleObjective(number) != nil || prebattleWallHint != nil || showsPrebattleChallenges {
                             prebattleReadiness
                         }
                         Spacer(minLength: 0)
@@ -6595,7 +6610,8 @@ struct ChapterOneMissionBridgeView: View {
                 if let victoryReceipt {
                     ChapterOneVictoryReceiptView(title: victoryTitle, receipt: victoryReceipt,
                                                  skillIDs: pendingSkillRewards,
-                                                 missionNumber: session.chapterMissionNumber) {
+                                                 missionNumber: session.chapterMissionNumber,
+                                                 challenges: challengeResult) {
                         self.victoryReceipt = nil
                         pendingSkillRewards.removeAll()
                         finishCompletedEncounter()
@@ -6677,6 +6693,21 @@ struct ChapterOneMissionBridgeView: View {
                     .foregroundStyle(.yellow)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            if showsPrebattleChallenges {
+                let ledger = game.missionChallengeLedger
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text("挑战").font(.caption2.bold()).foregroundStyle(.white.opacity(0.7))
+                    VStack(alignment: .leading, spacing: 1) {
+                        ForEach(MPCMissionChallengeCatalog.challenges(for: number)) { challenge in
+                            let earned = ledger.hasEarned(challenge)
+                            Label(challenge.title, systemImage: earned ? "star.fill" : "star")
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(earned ? Color(red: 1, green: 0.84, blue: 0.4) : .white.opacity(0.9))
+                        }
+                    }
+                }
+                .accessibilityIdentifier("chapter-one-prebattle-challenges")
+            }
             if number >= 3 {
                 HStack(spacing: 8) {
                     Text("止痛膏 \(game.painSalveStock)份 · 假面裂纹 \(campaign.masqueradeCrackCount)/10")
@@ -6721,7 +6752,7 @@ struct ChapterOneMissionBridgeView: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 9)
         .frame(maxWidth: 390, alignment: .leading)
-        .background(.black.opacity(0.82), in: RoundedRectangle(cornerRadius: 12))
+        .background(.black.opacity(0.97), in: RoundedRectangle(cornerRadius: 12))
         .overlay(RoundedRectangle(cornerRadius: 12).stroke(.yellow.opacity(0.35), lineWidth: 1))
     }
 
@@ -6741,6 +6772,12 @@ struct ChapterOneMissionBridgeView: View {
 
     private var isOldClockMission: Bool {
         game.activeChapterMission?.districtID == "old-clock"
+    }
+
+    /// The three stars before the fight; Q1 and Q2 show them only on a replay, after the lessons.
+    private var showsPrebattleChallenges: Bool {
+        guard isOldClockMission, let mission = game.activeChapterMission else { return false }
+        return mission.number >= 3 || game.missionIsCompleted(mission)
     }
 
     private var entranceTaskID: String {
@@ -6953,6 +6990,15 @@ struct ChapterOneMissionBridgeView: View {
         campaign.lifetimeChurchMerit = game.chapterOneCampaign.lifetimeChurchMerit
         campaign.spendableChurchMerit = game.chapterOneCampaign.spendableChurchMerit
         campaign.completeEncounter(completed)
+        // Stars before the campaign is saved, so the settlement journal carries their dust.
+        var starDust = 0
+        if isOldClockMission, let stats = challengeStats, stats.mission == completed.chapterMissionNumber {
+            let claim = game.claimMissionChallenges(stats)
+            starDust = claim.dust
+            campaign.inventory[MPCMissionChallengeCatalog.dustItemID, default: 0] += claim.dust
+            challengeResult = ChapterOneChallengeResult(stats: stats, claim: claim, ledger: game.missionChallengeLedger)
+        }
+        challengeStats = nil
         game.chapterOneCampaign = campaign
         session = completed
         pendingSkillRewards = MPCChapterOneCatalog.visibleSkills.map(\.id).filter {
@@ -6964,6 +7010,7 @@ struct ChapterOneMissionBridgeView: View {
             : isOldClockMission && number == 6 ? "追猎解除" : "战斗胜利"
         var itemNames = campaign.inventory.keys.sorted().compactMap { id -> String? in
             let gained = campaign.inventory[id, default: 0] - oldInventory[id, default: 0]
+                - (id == MPCMissionChallengeCatalog.dustItemID ? starDust : 0)
             guard gained > 0 else { return nil }
             let name = MPCChapterOneCatalog.items.first(where: { $0.id == id })?.name ?? "调查物品"
             return "\(name) ×\(gained)"
@@ -7254,14 +7301,17 @@ struct ChapterOneVictoryReceiptView: View {
     let receipt: GameStore.MissionRewardReceipt
     let skillIDs: [FoolSkillID]
     let missionNumber: Int?
+    let challenges: ChapterOneChallengeResult?
     let onFinished: () -> Void
     init(title: String, receipt: GameStore.MissionRewardReceipt,
          skillIDs: [FoolSkillID], missionNumber: Int? = nil,
+         challenges: ChapterOneChallengeResult? = nil,
          onFinished: @escaping () -> Void) {
         self.title = title
         self.receipt = receipt
         self.skillIDs = skillIDs
         self.missionNumber = missionNumber
+        self.challenges = challenges
         self.onFinished = onFinished
     }
     @State private var didFinish = false
@@ -7348,6 +7398,7 @@ struct ChapterOneVictoryReceiptView: View {
                             Text("习得 · \(skill.name)").foregroundStyle(.white).font(.headline)
                         }
                     }
+                    if let challenges { ChapterOneChallengeReceipt(result: challenges).padding(.top, 6) }
                     MistportPlaqueButton(title: "继续 · 前往后续", action: finish)
                     .accessibilityIdentifier("chapter-one-victory-continue")
                     .opacity(continueIsArmed ? 1 : 0.45)
@@ -7372,6 +7423,76 @@ struct ChapterOneVictoryReceiptView: View {
                 withAnimation(.easeOut(duration: reduceMotion ? 0 : 0.3)) { stage = 2 }
             } catch { }
         }
+    }
+}
+
+/// One won story battle against its mission's three stars (2026-10-20).
+struct ChapterOneChallengeResult: Equatable {
+    let challenges: [MPCMissionChallenge]
+    /// Stars paid for, ever, after this battle.
+    let paid: Set<String>
+    /// Stars this battle paid for the first time.
+    let fresh: Set<String>
+    /// Stars this battle met (new or already paid).
+    let met: Set<String>
+    let dust: Int
+    let seconds: Double
+    let damagePercent: Double
+
+    init(stats: MPCMissionBattleStats, claim: MPCMissionChallengeLedger.Claim, ledger: MPCMissionChallengeLedger) {
+        challenges = MPCMissionChallengeCatalog.challenges(for: stats.mission)
+        paid = Set(challenges.filter(ledger.hasEarned).map(\.id))
+        fresh = Set(claim.newlyEarned.map(\.id))
+        met = fresh.union(claim.alreadyEarned.map(\.id))
+        dust = claim.dust
+        seconds = stats.seconds
+        damagePercent = stats.damageTakenPercent
+    }
+
+    /// What this battle measured, for the stars that are numbers.
+    func measured(_ challenge: MPCMissionChallenge) -> String? {
+        switch challenge.kind {
+        case .timeLimit: "本场 \(Int(seconds.rounded(.up))) 秒"
+        case .damageTakenAtMost: "本场受伤 \(Int(damagePercent.rounded()))%"
+        default: nil
+        }
+    }
+}
+
+private struct ChapterOneChallengeReceipt: View {
+    let result: ChapterOneChallengeResult
+    private let gold = Color(red: 1, green: 0.84, blue: 0.4)
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            HStack {
+                Text("挑战 · \(result.paid.count)/3 星").font(.headline)
+                Spacer()
+                if result.dust > 0 {
+                    Text("技能粉尘 +\(result.dust)").font(.subheadline.bold()).foregroundStyle(gold)
+                }
+            }
+            ForEach(result.challenges) { challenge in
+                let paid = result.paid.contains(challenge.id)
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Image(systemName: paid ? "star.fill" : "star").foregroundStyle(paid ? gold : .white.opacity(0.4))
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(challenge.title).font(.subheadline)
+                        if let measured = result.measured(challenge) {
+                            Text(measured).font(.caption2).foregroundStyle(.white.opacity(0.6))
+                        }
+                    }
+                    Spacer(minLength: 4)
+                    Text(result.fresh.contains(challenge.id) ? "新得" : paid ? "已得" : "未达成")
+                        .font(.caption.bold())
+                        .foregroundStyle(result.fresh.contains(challenge.id) ? gold : .white.opacity(0.5))
+                }
+            }
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 16).padding(.vertical, 12)
+        .background(Color.white.opacity(0.055), in: RoundedRectangle(cornerRadius: 12))
+        .accessibilityElement(children: .combine)
     }
 }
 

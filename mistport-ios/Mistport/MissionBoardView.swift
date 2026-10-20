@@ -1891,3 +1891,69 @@ private final class WisteriaBundleHandler: NSObject, WKURLSchemeHandler {
     }
     func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {}
 }
+
+/// 旧关挑战 (2026-10-20, user 10-18: 打过的每一关加三个挑战……重打旧关有了目标): every cleared story
+/// mission with its three stars and how each is counted; one tap fights it again.
+struct MissionChallengeReplayView: View {
+    @Environment(\.dismiss) private var dismiss
+    let game: GameStore
+    let onReplay: (DistrictMission) -> Void
+
+    var body: some View {
+        let ledger = game.missionChallengeLedger
+        let missions = game.replayableMissions
+        NavigationStack {
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 10) {
+                    Text("每关三颗星。每颗星第一次达成时给技能粉尘，用来升级技能；之后再达成不再给。重打不推进主线。")
+                        .font(.footnote).foregroundStyle(.white.opacity(0.72))
+                        .fixedSize(horizontal: false, vertical: true)
+                    ForEach(missions) { mission in row(mission, ledger: ledger) }
+                }
+                .padding(16)
+            }
+            .background(Color(red: 0.03, green: 0.035, blue: 0.08).ignoresSafeArea())
+            .navigationTitle("旧关挑战 · \(ledger.totalStars)/\(missions.count * 3) 星")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) { Button("关闭") { dismiss() } }
+            }
+        }
+        .preferredColorScheme(.dark)
+    }
+
+    private func row(_ mission: DistrictMission, ledger: MPCMissionChallengeLedger) -> some View {
+        let challenges = MPCMissionChallengeCatalog.challenges(for: mission.number)
+        let dust = MPCMissionChallengeCatalog.dustPerStar(mission: mission.number)
+        return VStack(alignment: .leading, spacing: 7) {
+            HStack(spacing: 8) {
+                Text("第 \(mission.number) 关 · \(mission.title)").font(.subheadline.bold()).lineLimit(1)
+                Spacer(minLength: 4)
+                MistportPlaqueButton(title: "重打", compact: true, expands: false, horizontalInset: 14) { onReplay(mission) }
+                    .accessibilityIdentifier("mission-challenge-replay-\(mission.number)")
+            }
+            ForEach(challenges) { challenge in
+                let earned = ledger.hasEarned(challenge)
+                HStack(alignment: .firstTextBaseline, spacing: 7) {
+                    Image(systemName: earned ? "star.fill" : "star")
+                        .foregroundStyle(earned ? Color(red: 1, green: 0.84, blue: 0.4) : .white.opacity(0.45))
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(challenge.title).font(.caption.weight(.semibold))
+                            .foregroundStyle(.white.opacity(earned ? 0.62 : 0.94))
+                        if !earned {
+                            Text(challenge.detail).font(.system(size: 10)).foregroundStyle(.white.opacity(0.55))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    Spacer(minLength: 4)
+                    Text(earned ? "已得" : "+\(dust) 粉尘").font(.caption2.bold())
+                        .foregroundStyle(earned ? .white.opacity(0.45) : Color(red: 1, green: 0.84, blue: 0.4))
+                }
+            }
+        }
+        .padding(12)
+        .foregroundStyle(.white)
+        .background(.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 12))
+        .accessibilityElement(children: .contain)
+    }
+}

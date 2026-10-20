@@ -10,6 +10,7 @@ private enum AppSheet: String, Identifiable {
     case world
     case expedition
     case missions
+    case missionChallenges
     case profile
     case build
     case workshop
@@ -259,6 +260,11 @@ struct ContentView: View {
                             guard let stop = game.cityTourNextStop else { return }
                             GameInterfaceSound.shared.playClick()
                             tourCue = ChapterOneTutorialCue.tour(stop)
+                        },
+                        challengeStars: game.replayableMissions.isEmpty ? nil : game.missionChallengeLedger.totalStars,
+                        onChallenges: {
+                            GameInterfaceSound.shared.playClick()
+                            presentedSheet = .missionChallenges
                         }
                     )
                 case .districtMap:
@@ -599,6 +605,11 @@ struct ContentView: View {
                         presentedSheet = nil
                     }
                 )
+            case .missionChallenges:
+                MissionChallengeReplayView(game: game) { mission in
+                    game.replayMission(mission)
+                    presentedSheet = nil
+                }
             case .missions:
                 MissionBoardView(
                     game: game,

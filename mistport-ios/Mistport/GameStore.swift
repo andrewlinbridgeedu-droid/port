@@ -1884,9 +1884,10 @@ final class GameStore {
         settledMissionReward = nil
         activeChapterMissionID = nil
         acknowledgeMissionReward()
-        // Q2 continues directly into Q3; other completed battles return home.
+        // Q2 continues directly into Q3 the first time; replays and other battles return home.
         if mission.districtID == "old-clock", mission.number == 2,
-           let next = GameContent.chapterOneDistricts.first(where: { $0.id == "old-clock" })?.missions.first(where: { $0.number == 3 }) {
+           let next = GameContent.chapterOneDistricts.first(where: { $0.id == "old-clock" })?.missions.first(where: { $0.number == 3 }),
+           !missionIsCompleted(next) {
             prepareChapterOneMission(next)
             beginMission(next)
         } else {
@@ -6260,5 +6261,35 @@ extension GameStore {
         }
         defaults.set(try JSONEncoder().encode(ledger), forKey: Self.cityTourKey)
         churchServicesRevision += 1
+    }
+}
+
+// Mission challenges (2026-10-18, user: 打过的每一关加三个挑战……每颗星只给一次技能粉尘，用来升级技能).
+// The ledger lives in the save's own suite, beside the campaign; each star pays once, ever.
+extension GameStore {
+    private static let missionChallengeKey = "mistport.mission-challenges.v1"
+    var missionChallengeLedger: MPCMissionChallengeLedger {
+        _ = churchServicesRevision
+        return defaults.data(forKey: Self.missionChallengeKey).flatMap { try? JSONDecoder().decode(MPCMissionChallengeLedger.self, from: $0) } ?? .init()
+    }
+    func missionStars(_ number: Int) -> Int { missionChallengeLedger.stars(mission: number) }
+    /// Cleared story missions, newest first: the list behind the home star button.
+    var replayableMissions: [DistrictMission] { playerTestMissions.filter(missionIsCompleted).reversed() }
+    /// A cleared mission again, for its stars (the story button only ever enters the next one).
+    func replayMission(_ mission: DistrictMission) {
+        guard missionIsCompleted(mission) else { return }
+        prepareChapterOneMission(mission)
+        beginMission(mission)
+    }
+    /// Records the stars a won story battle met and returns the dust they pay. The ledger is written
+    /// first: if the app dies before the campaign is saved, a star is lost, never paid twice.
+    func claimMissionChallenges(_ stats: MPCMissionBattleStats) -> MPCMissionChallengeLedger.Claim {
+        var ledger = missionChallengeLedger
+        let claim = ledger.claim(stats)
+        if !claim.newlyEarned.isEmpty, let data = try? JSONEncoder().encode(ledger) {
+            defaults.set(data, forKey: Self.missionChallengeKey)
+            churchServicesRevision += 1
+        }
+        return claim
     }
 }

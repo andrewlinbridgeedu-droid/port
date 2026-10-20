@@ -58,6 +58,9 @@ struct CityHubView: View {
     var tourStop: MPCCityTour.Stop? = nil
     var tourNumber = 0
     var onCityTour: () -> Void = {}
+    /// Stars earned so far; nil until a story mission is cleared (2026-10-20: 旧关挑战).
+    var challengeStars: Int? = nil
+    var onChallenges: () -> Void = {}
 
     private var tint: Color { path?.tint ?? .purple }
 
@@ -380,6 +383,17 @@ struct CityHubView: View {
             .buttonStyle(.plain)
             .disabled(!storyIsAvailable)
             .accessibilityLabel("主线 \(nextMissionTitle)" + (storyIsAvailable ? "，进入" : ""))
+            if let challengeStars {
+                Button(action: onChallenges) {
+                    VStack(spacing: 1) {
+                        Image(systemName: "star.fill").font(.system(size: 15, weight: .bold))
+                            .foregroundStyle(Color(red: 1, green: 0.84, blue: 0.4))
+                        Text("\(challengeStars)").font(.system(size: 11, weight: .bold).monospacedDigit())
+                    }.frame(minWidth: 44, minHeight: 44)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("旧关挑战，已得 \(challengeStars) 颗星")
+            }
             Button(action: onStamina) {
                 HStack(spacing: 3) {
                     HousingLanternIcon(value: staminaValue).frame(width: 24, height: 28)
