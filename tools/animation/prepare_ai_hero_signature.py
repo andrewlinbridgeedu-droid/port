@@ -24,6 +24,8 @@ evidence = root/'docs/development/hero-ai-animation-20261002/integration'
 W,H,N,COLS,ROWS = 512,640,48,8,6
 
 # (source start, source end) in seconds; a segment with start > end plays backwards.
+# ('mix', a, b, length): a crossfade from the frame at a to the frame at b over `length` seconds of
+# the cut, standing in for a stretch that cannot be shown (a smear over a fast move).
 takes = [{
     'action': '06-mirror-burn', 'outfit': 'mistport-night', 'skill': 'fool_skill_12',
     'segments': [(3.00, 2.62), (0.38, 0.79), (2.04, 3.25)],
@@ -52,6 +54,16 @@ takes = [{
     'release': (1, 1.92),      # the arm sweeps out, the coat at its widest
     'rest': 3.00,
     'floor': True,             # this take has a contact shadow under the feet
+}, {
+    # 10_43PM (user 10-20: 不是吧，我发了很多视频): a sweep from his left to his right. The whole clip
+    # is on pure black, which mattes cleanly (the coat never goes below it). At 0.75-1.17 s the turn
+    # shows his face in profile, so that stretch is replaced by a two-frame crossfade from the arm
+    # out to the left (0.67 s) to the arm out to the right (1.33 s): a smear across the fast part of
+    # the sweep. 重绘's single wide stroke.
+    'action': '09-repaint-sweep', 'outfit': 'mistport-night', 'skill': 'fool_skill_09',
+    'segments': [(0.10, 0.67), ('mix', 0.67, 1.33, 0.09), (1.33, 2.75)],
+    'release': (2, 1.58),      # the arm straight out to the right at the end of the stroke
+    'rest': 3.00,
 }]
 only = set(sys.argv[1:])
 
@@ -92,12 +104,17 @@ def fit(im, box, size=(W,H)):
     canvas.alpha_composite(scaled,(round(W*.5-(x0+x1)*.5*scale),round(590-y1*scale)))
     return canvas
 
+def seg_length(seg): return seg[3] if seg[0] == 'mix' else abs(seg[1]-seg[0])
+
 def source_time(segments, t):
-    for a,b in segments:
-        length=abs(b-a)
-        if t <= length + 1e-9: return a + (t if b >= a else -t)
+    """(second, None, 0) for a plain frame; (a, b, w) inside a crossfade."""
+    for seg in segments:
+        length=seg_length(seg)
+        if t <= length + 1e-9:
+            if seg[0] == 'mix': return seg[1], seg[2], min(1, t/length)
+            a,b=seg; return a + (t if b >= a else -t), None, 0
         t -= length
-    return segments[-1][1]
+    last=segments[-1]; return (last[2] if last[0] == 'mix' else last[1]), None, 0
 
 report=[]
 for take in takes:
@@ -107,19 +124,27 @@ for take in takes:
     meta=next(reader); width,height=meta['size']; fps=meta['fps']
     frames=[Image.frombytes('RGB',(width,height),buf) for buf in reader]
     segments=take['segments']
-    total=sum(abs(b-a) for a,b in segments)
+    total=sum(seg_length(seg) for seg in segments)
     index,second=take['release']
-    release=sum(abs(b-a) for a,b in segments[:index])+abs(second-segments[index][0])
+    release=sum(seg_length(seg) for seg in segments[:index])+abs(second-segments[index][0])
     rest=matte(frames[round(take['rest']*fps)],take.get('floor',False));box=rest.getbbox()
     folder=output/take['outfit'];name=take['action']
     atlas=Image.new('RGBA',(W*COLS,H*ROWS));snapshots=[];used=[]
     for i,t in enumerate(np.linspace(0,total,N)):
-        k=min(len(frames)-1,round(source_time(segments,t)*fps))
+        at,mix_to,w=source_time(segments,t)
+        k=min(len(frames)-1,round(at*fps))
         if 'flare' in take:
             lo,hi=take['flare']
             assert not (round(lo*fps) <= k <= round(hi*fps)), f'flare frame {k} sampled'
         used.append(k)
         fitted=fit(matte(frames[k],take.get('floor',False)),box)
+        if mix_to is not None and w > 0:
+            other=fit(matte(frames[min(len(frames)-1,round(mix_to*fps))],take.get('floor',False)),box)
+            # Both silhouettes stay solid (a smear, not a fade through transparency); the colour mixes.
+            a=np.asarray(fitted).astype(np.float32);b=np.asarray(other).astype(np.float32)
+            wa=a[...,3:]/255*(1-w);wb=b[...,3:]/255*w
+            rgb=(a[...,:3]*wa+b[...,:3]*wb)/np.maximum(wa+wb,1e-6)
+            fitted=Image.fromarray(np.dstack([rgb,np.maximum(a[...,3],b[...,3])]).clip(0,255).astype(np.uint8))
         atlas.alpha_composite(fitted,((i%COLS)*W,(i//COLS)*H))
         snapshots.append(fitted)
     atlas.save(folder/(name+'.png'),compress_level=4)

@@ -253,5 +253,93 @@
     "recoverySeconds": 0.18,
     "width": 512,
     "height": 640
+  },
+  {
+    "action": "09-repaint-sweep",
+    "outfit": "mistport-night",
+    "skill": "fool_skill_09",
+    "segments": [
+      [
+        0.1,
+        0.67
+      ],
+      [
+        "mix",
+        0.67,
+        1.33,
+        0.09
+      ],
+      [
+        1.33,
+        2.75
+      ]
+    ],
+    "release": [
+      2,
+      1.58
+    ],
+    "rest": 3.0,
+    "sourceSHA256": "e877636a18a02ad52424eb9b0d70d16cbd141cef73dfe90a6b4e098ef6e5c092",
+    "sourceFrames": [
+      2,
+      3,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      16,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66
+    ],
+    "id": "09-repaint-sweep",
+    "frames": 48,
+    "columns": 8,
+    "rows": 6,
+    "releaseFrame": 20.5625,
+    "sourceStart": 0.0,
+    "sourceRelease": 0.91,
+    "sourceEnd": 2.08,
+    "recoverySeconds": 0.18,
+    "width": 512,
+    "height": 640
   }
 ]
