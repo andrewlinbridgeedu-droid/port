@@ -77,7 +77,11 @@ public sealed class WholeSpellRound2Runner20260922:MonoBehaviour
         }
         if(text.Contains("\"eventName\":\"combat-contact\"")&&text.Contains("enemy-cancel:"))cancels++;
     }
+    // --round2-lenient (2026-10-21, showcase reels): a failed check is written down and the run goes on,
+    // so one unknown contact count does not stop the remaining rows. Never use it for a safety pass.
+    bool lenient;
     void Check(bool ok,string label){
+        if(!ok&&lenient){File.AppendAllText(output+"/"+tag+"-failed.txt",label+"\n");Debug.LogWarning("ROUND2_LENIENT_FAIL "+label);return;}
         if(!ok){File.WriteAllText(output+"/"+tag+"-failed.txt",label+"\n"+error);Debug.LogError("ROUND2_FAIL "+label);EditorApplication.Exit(3);throw new Exception(label);}
         checks.Add(label);File.WriteAllLines(output+"/"+tag+"-progress.txt",checks);Debug.Log("ROUND2_PASS "+label);
     }
@@ -264,6 +268,7 @@ public sealed class WholeSpellRound2Runner20260922:MonoBehaviour
         string filter=Environment.GetCommandLineArgs().FirstOrDefault(a=>a.StartsWith("--round2-only="))?.Substring(14);
         playerImpactFixture=Environment.GetCommandLineArgs().Contains("--round2-player-impact-fixture");
         safety=Environment.GetCommandLineArgs().Contains("--round2-safety");
+        lenient=!safety&&Environment.GetCommandLineArgs().Contains("--round2-lenient");
         SpellSpectacle20260926.Suppressed=Environment.GetCommandLineArgs().Contains("--spectacle-off");
         // Tower minions walk in from beyond their slots (2026-10-03); the rows check that every
         // actor stays in its encounter slot, so the recorder starts them already arrived.
