@@ -1,0 +1,13 @@
+{
+  "id": "15-postscript-point",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 23.5,
+  "sourceStart": 0.0,
+  "sourceRelease": 1.0,
+  "sourceEnd": 2.0,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}

@@ -17,14 +17,26 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
         "01-diagonal-cut", "02-command-flick", "03-overarm-throw", "04-seal-press", "05-sidearm-cast"
     };
     // A take recorded for one skill in one outfit (2026-10-19: 燃镜 in 雾港夜行; 10-20: 归谬法's
-    // conjured blade, 突转's whirl and 重绘's sweep, same outfit). Loaded when the outfit has it; other outfits
-    // keep the shared rotation for that skill.
+    // conjured blade, 突转's whirl and 重绘's sweep; 10-21: the seven other cards and the ultimate,
+    // generated with Veo, same outfit). Loaded when the outfit has it; other outfits keep the shared
+    // rotation for that skill.
     public static readonly Dictionary<string,string> Signatures = new Dictionary<string,string> {
         ["fool_skill_12"] = "06-mirror-burn",
         ["fool_skill_07"] = "07-phantom-cleave",
         ["fool_skill_08"] = "08-turnabout-whirl",
-        ["fool_skill_09"] = "09-repaint-sweep"
+        ["fool_skill_09"] = "09-repaint-sweep",
+        ["fool_skill_01"] = "10-sidestep-thrust",
+        ["fool_skill_05"] = "11-brand-mark",
+        ["fool_skill_11"] = "12-presto-beat",
+        ["fool_skill_04"] = "13-mask-toss",
+        ["fool_skill_06"] = "14-twin-palms",
+        ["fool_skill_13"] = "15-postscript-point",
+        ["fool_skill_10"] = "16-nameless-stage"
     };
+    // The outfit's own hit reaction (2026-10-21), played when a confirmed hit lands while the hero
+    // is not casting; a hit during a cast keeps the cast and only shakes the body.
+    public const string HitTake = "17-hit-react";
+    static IEnumerable<string> TakeNames() { foreach (var take in Signatures.Values) yield return take; yield return HitTake; }
     public bool HasAction(string action) => action != null && clips.ContainsKey(action);
     public string Outfit { get; private set; }
     public string CurrentAction { get; private set; }
@@ -147,7 +159,7 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
         }
         // A signature take keeps the outfit's reference rest art: its own last frame is a
         // slimmer re-drawing of the coat, and the rest pose must not jump between casts.
-        foreach (var action in Signatures.Values) {
+        foreach (var action in TakeNames()) {
             string path = Root + outfit + "/" + action;
             var json = Resources.Load<TextAsset>(path);
             if (!json) continue;
@@ -241,9 +253,13 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
     const float RecoilTime = .38f;
     public void ConfirmedHit(bool heavy) => ConfirmedHit(heavy ? 1.3f : 1f);
     public void ConfirmedHit(float strength) {
+        // The take carries the knees, the dropped head and the flung arms, so the procedural knock and
+        // swing run at half strength under it. Its impact pose lands as the hit pause ends.
+        bool take = !IsActing && clips.ContainsKey(HitTake);
+        if (take) PlayAction(HitTake, HitPauseDuration + .04f);
         recoilAge=0;
         hitPauseUntil=Time.unscaledTime+HitPauseDuration;
-        recoilStrength=Mathf.Clamp(strength,1f,1.4f)*(SpellSpectacle20260926.ReducedMotion?.35f:1f);
+        recoilStrength=Mathf.Clamp(strength,1f,1.4f)*(take?.5f:1f)*(SpellSpectacle20260926.ReducedMotion?.35f:1f);
         Debug.Log($"AI_HERO_HIT action={CurrentAction ?? "idle"} heldFrame={DisplayFrame:F2} pause={HitPauseDuration:F2}");
     }
     void FinishAction() {

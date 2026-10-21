@@ -64,10 +64,50 @@ takes = [{
     'segments': [(0.10, 0.67), ('mix', 0.67, 1.33, 0.09), (1.33, 2.75)],
     'release': (2, 1.58),      # the arm straight out to the right at the end of the stroke
     'rest': 3.00,
+},
+# 2026-10-21: eight takes generated with Veo 3.1 Fast (1080p) from the gray reference
+# (ArtSource/HeroBackViews4K20261002/gray), prompts in HERO_MOTION_PROMPTS_20261018.md, second round.
+# Each opens on the reference itself, so the rest box is frame 0. Several breathe white smoke round
+# the head after the move (from ~1.8-3.3 s); every cut ends before it.
+{
+    # A rapier forms in the hand at 0.50-0.83 s and is gone as the arm straightens: those frames are a
+    # two-frame smear from the hand coming up (0.38 s) to the arm out (0.92 s). One step out and back.
+    'action': '10-sidestep-thrust', 'outfit': 'mistport-night', 'skill': 'fool_skill_01',
+    'segments': [(0.0, 0.38), ('mix', 0.38, 0.92, 0.09), (0.92, 2.83)],
+    'release': (2, 1.25), 'rest': 0.0,
+}, {
+    # Bare fingers write two strokes by the shoulder, then flick out (the first take drew a sword).
+    'action': '11-brand-mark', 'outfit': 'mistport-night', 'skill': 'fool_skill_05',
+    'segments': [(0.0, 2.33)], 'release': (0, 1.71), 'rest': 0.0, 'body_only': True,
+}, {
+    # Four quick beats at the chest, then both hands thrown open.
+    'action': '12-presto-beat', 'outfit': 'mistport-night', 'skill': 'fool_skill_11',
+    'segments': [(0.0, 2.83)], 'release': (0, 2.0), 'rest': 0.0,
+}, {
+    # A hand to the face (held 0.83-2.0 s: the middle of the hold is cut), then flung out to the right.
+    'action': '13-mask-toss', 'outfit': 'mistport-night', 'skill': 'fool_skill_04',
+    'segments': [(0.0, 1.17), (1.83, 3.0)], 'release': (1, 2.5), 'rest': 0.0,
+}, {
+    # Both palms pushed out at the shoulders (the first take turned his face). Smoke rises from 1.83 s,
+    # so the hands come back down the way they went up.
+    'action': '14-twin-palms', 'outfit': 'mistport-night', 'skill': 'fool_skill_06',
+    'segments': [(0.0, 1.5), (0.75, 0.0)], 'release': (0, 1.0), 'rest': 0.0,
+}, {
+    # Points, raises one finger (a glint over it at 1.0-1.33 s, dropped by body_only), lowers.
+    'action': '15-postscript-point', 'outfit': 'mistport-night', 'skill': 'fool_skill_13',
+    'segments': [(0.0, 1.17), (2.17, 3.0)], 'release': (0, 1.0), 'rest': 0.0, 'body_only': True,
+}, {
+    # The ultimate: arms open wide, coat lifted by the draft; the held middle is cut short.
+    'action': '16-nameless-stage', 'outfit': 'mistport-night', 'skill': 'fool_skill_10',
+    'segments': [(0.0, 2.2), (3.0, 5.0)], 'release': (0, 1.5), 'rest': 0.0,
+}, {
+    # The hit reaction (AIHeroAnimatedBody.HitTake): head drops, knees give, arms fling, back by 2.75 s.
+    'action': '17-hit-react', 'outfit': 'mistport-night', 'skill': 'hit',
+    'segments': [(0.5, 2.75)], 'release': (0, 0.95), 'rest': 0.0,
 }]
 only = set(sys.argv[1:])
 
-def matte(rgb, floor=False):
+def matte(rgb, floor=False, body_only=False):
     a = np.asarray(rgb).astype(np.float32)
     edge = np.concatenate([a[:8].reshape(-1,3), a[-8:].reshape(-1,3), a[:,:8].reshape(-1,3), a[:,-8:].reshape(-1,3)])
     bg = np.median(edge, axis=0)
@@ -89,6 +129,13 @@ def matte(rgb, floor=False):
     labels, count = ndi.label(solid)
     sizes = np.bincount(labels.ravel()); sizes[0]=0
     solid = np.isin(labels,np.where(sizes>20)[0])
+    if body_only:
+        # Only what joins the body (dilated, so fingers and ribbon ends stay): a glint over a
+        # fingertip or a wisp of smoke is dropped instead of becoming part of the figure.
+        joined, count = ndi.label(ndi.binary_dilation(solid, iterations=4))
+        if count > 1:
+            sizes = np.bincount(joined.ravel()); sizes[0] = 0
+            solid &= joined == sizes.argmax()
     alpha = ndi.gaussian_filter(solid.astype(np.float32),.55)
     alpha[solid & (ndi.distance_transform_edt(solid)>1.5)] = 1
     unmix = (a - (1-alpha[...,None])*bg)/np.maximum(alpha[...,None],.15)
@@ -127,7 +174,8 @@ for take in takes:
     total=sum(seg_length(seg) for seg in segments)
     index,second=take['release']
     release=sum(seg_length(seg) for seg in segments[:index])+abs(second-segments[index][0])
-    rest=matte(frames[round(take['rest']*fps)],take.get('floor',False));box=rest.getbbox()
+    mo=dict(floor=take.get('floor',False),body_only=take.get('body_only',False))
+    rest=matte(frames[round(take['rest']*fps)],**mo);box=rest.getbbox()
     folder=output/take['outfit'];name=take['action']
     atlas=Image.new('RGBA',(W*COLS,H*ROWS));snapshots=[];used=[]
     for i,t in enumerate(np.linspace(0,total,N)):
@@ -137,9 +185,9 @@ for take in takes:
             lo,hi=take['flare']
             assert not (round(lo*fps) <= k <= round(hi*fps)), f'flare frame {k} sampled'
         used.append(k)
-        fitted=fit(matte(frames[k],take.get('floor',False)),box)
+        fitted=fit(matte(frames[k],**mo),box)
         if mix_to is not None and w > 0:
-            other=fit(matte(frames[min(len(frames)-1,round(mix_to*fps))],take.get('floor',False)),box)
+            other=fit(matte(frames[min(len(frames)-1,round(mix_to*fps))],**mo),box)
             # Both silhouettes stay solid (a smear, not a fade through transparency); the colour mixes.
             a=np.asarray(fitted).astype(np.float32);b=np.asarray(other).astype(np.float32)
             wa=a[...,3:]/255*(1-w);wb=b[...,3:]/255*w

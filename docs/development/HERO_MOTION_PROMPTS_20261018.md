@@ -288,3 +288,27 @@ His hands stay empty: no sword, weapon, card or any other object appears.
 
 One sharp hit reaction only. Both feet stay planted on exactly the same spots: no stagger steps, no shuffling, no hopping. No attacker, wounds, blood, glow, particles or added effects. No camera movement, zoom, costume changes or cropped body parts.
 ```
+
+## 第二轮结果：用 Veo 生成（10-21）
+
+用户 10-21："我在右侧开了cloud shelll……你自己操作全部做完吧"，"一定不能超过赠金"。
+
+- **生成**：雾港夜行 8 条，Veo 3.1 Fast，1080p，8 秒，不带声音，首帧是灰底参考图。脚本 `tools/animation/veo_hero_takes.py`，提示词 `hero-ai-animation-20261002/integration/veo-shots-20261021.json`。
+- **花费**：成功生成 10 条（8 条加 2 条重录），按单价约 9.6 美元；被配额拒掉的 1 次不收费。赠金当时剩 20.72（很可能是加元），结算延迟，当天还没扣。
+- **重录了两条**：
+  - 污名记第一次又变出一把剑。把"划掉"改成"用两根指尖写字"后是空手。
+  - 双星追猎第一次转成侧脸。改成"只动手臂，胸口和头始终正对远方"后全程背面，但动作变成双手一起推出。
+- **Veo 的共同毛病**：好几条在动作做完以后（约 1.8–3.3 秒起）头边冒白烟。剪辑点都停在冒烟之前。侧身刺 0.5–0.83 秒手里闪出一把细剑，用两帧拖影带过。
+
+| 牌 | 原片 | 用的段落 | 命中帧 |
+|---|---|---|---|
+| 侧身刺 | sidestep | 0–0.38 → 拖影 → 0.92–2.83 | 1.25 秒，跨步刺出 |
+| 污名记 | brand2 | 0–2.33 | 1.71 秒，手向外一甩 |
+| 急板 | presto | 0–2.83 | 2.0 秒，双手张开 |
+| 错认喜剧 | mask | 0–1.17，1.83–3.0 | 2.5 秒，手甩向右边 |
+| 双星追猎 | twinhunt2 | 0–1.5，再倒放回 0 | 1.0 秒，双掌推出 |
+| 附言 | postscript | 0–1.17，2.17–3.0 | 1.0 秒，竖指 |
+| 我叫无人 | noname | 0–2.2，3.0–5.0 | 1.5 秒，双臂全开 |
+| 受击 | hit | 0.5–2.75 | 0.95 秒，头垂膝弯 |
+
+污名记指尖的一缕白线和附言指尖的小星光连着手指，没能自动去掉，几个像素大小。

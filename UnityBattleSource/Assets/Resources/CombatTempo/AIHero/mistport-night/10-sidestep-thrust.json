@@ -1,0 +1,13 @@
+{
+  "id": "10-sidestep-thrust",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 15.798319327731088,
+  "sourceStart": 0.0,
+  "sourceRelease": 0.7999999999999999,
+  "sourceEnd": 2.3800000000000003,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}
