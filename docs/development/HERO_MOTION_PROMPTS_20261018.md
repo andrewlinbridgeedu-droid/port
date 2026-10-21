@@ -176,3 +176,115 @@ His hands stay empty: no sword, weapon, card or any other object appears.
 ```text
 Only his shoulders and arms twist; his hips, chest and head stay facing away from the camera, and both feet stay planted.
 ```
+
+## 第二轮：还缺的 8 条（10-21）
+
+用户 10-21："一共12，我给你5个，那还有7个，prompt都发我吧"。5 条里 `12_30AM` 转成正面用不了，所以要录的是 7 + 1 = 8 条。
+
+**首帧参考图改用灰底版**：`ArtSource/HeroBackViews4K20261002/gray/<衣服>-back-4k-gray.png`。原来 `final/` 下的三张是透明背景，上传后透明变成黑色，第一轮每条片子都从黑渐变到灰，黑外套被抠掉，这就是根源。灰底版是同一张图垫了 #8F8F8F。
+
+下面每条都已经把三句约束（灰底、全程背对、手里没东西）写在开头，直接整条复制。
+
+### 1. 侧身刺 · 侧步突刺（只许一步）
+
+```text
+Use the attached rear-view character image as the exact visual reference. Preserve his hair, coat, sash, ribbons, cuffs and boots unchanged.
+The background is plain uniform medium gray (#8F8F8F) from the very first frame to the last; never black, never a gradient.
+He keeps his back to the camera for the entire clip: his face is never visible, and his chest never turns toward the camera.
+His hands stay empty: no sword, weapon, card or any other object appears.
+
+8 seconds, 24 fps. Locked camera, full body including boot soles, rear view. Start in the reference stance. At 0.6 seconds he takes exactly ONE short sidestep to screen-left with his left foot, dropping his weight low. In the same motion his right arm drives straight forward into the depth of the frame, fingers together like the point of a blade, a fencer's sidestep thrust. Hold the extended thrust for a brief beat. At 2 seconds his left foot steps back to its original spot and his arm returns. He is back in the exact starting pose by 3.5 seconds, then holds a calm breathing idle.
+
+Exactly one step out and one step back. No other steps, no shuffling, no hopping, no kicks. No glow, particles or added effects. No camera movement, zoom, costume changes or cropped body parts.
+```
+
+### 2. 污名记 · 凌空落记
+
+```text
+Use the attached rear-view character image as the exact visual reference. Preserve his hair, coat, sash, ribbons, cuffs and boots unchanged.
+The background is plain uniform medium gray (#8F8F8F) from the very first frame to the last; never black, never a gradient.
+He keeps his back to the camera for the entire clip: his face is never visible, and his chest never turns toward the camera.
+His hands stay empty: no sword, weapon, card or any other object appears.
+
+8 seconds, 24 fps. Locked camera, full body including boot soles, rear view. Start in the reference stance. At 0.5 seconds he raises his right hand to head height, index and middle fingers together. At 1 second he slashes a short, sharp mark in the air in front of him: one quick downward stroke, then one crossing stroke, with a decisive snap of the wrist at the end, like a magistrate striking a name off a register. His shoulders follow the strokes; his left hand stays relaxed at his side. He lowers the hand and returns to the exact starting pose by 3 seconds, then holds a calm breathing idle.
+
+Both feet stay planted on exactly the same spots for the entire clip: no steps, no shuffling, no hopping, no kicks. No glowing lines, particles or added effects. No camera movement, zoom, costume changes or cropped body parts.
+```
+
+### 3. 急板 · 疾速拍点
+
+```text
+Use the attached rear-view character image as the exact visual reference. Preserve his hair, coat, sash, ribbons, cuffs and boots unchanged.
+The background is plain uniform medium gray (#8F8F8F) from the very first frame to the last; never black, never a gradient.
+He keeps his back to the camera for the entire clip: his face is never visible, and his chest never turns toward the camera.
+His hands stay empty: no sword, weapon, card or any other object appears.
+
+8 seconds, 24 fps. Locked camera, full body including boot soles, rear view. Start in the reference stance. At 0.4 seconds both hands come up to chest height and he beats a very fast tempo, like a conductor marking presto: four quick, crisp alternating wrist snaps, right-left-right-left, within one second. His knees give a slight springy bounce on each beat and his coat tails flick with the rhythm. On the last beat both hands open outward. He settles back into the exact starting pose by 3 seconds, then holds a calm breathing idle.
+
+Both feet stay planted on exactly the same spots for the entire clip: no steps, no shuffling, no hopping, no kicks. No baton, glow, particles or added effects. No camera movement, zoom, costume changes or cropped body parts.
+```
+
+### 4. 错认喜剧 · 摘面掷出
+
+```text
+Use the attached rear-view character image as the exact visual reference. Preserve his hair, coat, sash, ribbons, cuffs and boots unchanged.
+The background is plain uniform medium gray (#8F8F8F) from the very first frame to the last; never black, never a gradient.
+He keeps his back to the camera for the entire clip: his face is never visible, and his chest never turns toward the camera.
+His hands stay empty: no sword, weapon, card or any other object appears.
+
+8 seconds, 24 fps. Locked camera, full body including boot soles, rear view. Start in the reference stance. At 0.5 seconds he raises his right hand to his face, as if taking hold of a mask he is wearing; we only ever see the back of his head and his raised elbow. At 1.2 seconds he peels the hand away from his face in a theatrical flourish and flings it forward and out to screen-right, as if tossing the mask toward someone in front of him, fingers springing open at the end. His shoulders give a small showman's shrug. He returns to the exact starting pose by 3.5 seconds, then holds a calm breathing idle.
+
+Both feet stay planted on exactly the same spots for the entire clip: no steps, no shuffling, no hopping, no kicks. No mask appears; the hand is empty. No glow, particles or added effects. No camera movement, zoom, costume changes or cropped body parts.
+```
+
+### 5. 双星追猎 · 左右连击
+
+```text
+Use the attached rear-view character image as the exact visual reference. Preserve his hair, coat, sash, ribbons, cuffs and boots unchanged.
+The background is plain uniform medium gray (#8F8F8F) from the very first frame to the last; never black, never a gradient.
+He keeps his back to the camera for the entire clip: his face is never visible, and his chest never turns toward the camera.
+His hands stay empty: no sword, weapon, card or any other object appears.
+
+8 seconds, 24 fps. Locked camera, full body including boot soles, rear view. Start in the reference stance. At 0.5 seconds he sinks slightly into his knees. At 0.9 seconds he drives his right open hand straight forward into the depth of the frame, and at 1.3 seconds his left open hand follows in the same line, two fast consecutive thrusts like two hunters striking one after the other. His shoulders rotate with each thrust and his coat tails swing. He draws both hands back and returns to the exact starting pose by 3 seconds, then holds a calm breathing idle.
+
+Both feet stay planted on exactly the same spots for the entire clip: no steps, no lunging forward, no shuffling, no hopping, no kicks. No glow, particles or added effects. No camera movement, zoom, costume changes or cropped body parts.
+```
+
+### 6. 附言 · 点住再弹
+
+```text
+Use the attached rear-view character image as the exact visual reference. Preserve his hair, coat, sash, ribbons, cuffs and boots unchanged.
+The background is plain uniform medium gray (#8F8F8F) from the very first frame to the last; never black, never a gradient.
+He keeps his back to the camera for the entire clip: his face is never visible, and his chest never turns toward the camera.
+His hands stay empty: no sword, weapon, card or any other object appears.
+
+8 seconds, 24 fps. Locked camera, full body including boot soles, rear view. Start in the reference stance. At 0.5 seconds he extends his right arm forward and points with his index finger, pressing firmly at one spot in the air in front of him, as if adding a last line after signing a letter. He holds the point completely still for a full second. At 2 seconds he gives one small, sharp flick of the finger, as if sealing it, and lowers the arm. He returns to the exact starting pose by 3.5 seconds, then holds a calm breathing idle.
+
+Both feet stay planted on exactly the same spots for the entire clip: no steps, no shuffling, no hopping, no kicks. No pen, glow, particles or added effects. No camera movement, zoom, costume changes or cropped body parts.
+```
+
+### 7. 我叫无人 · 张臂立幕（终极）
+
+```text
+Use the attached rear-view character image as the exact visual reference. Preserve his hair, coat, sash, ribbons, cuffs and boots unchanged.
+The background is plain uniform medium gray (#8F8F8F) from the very first frame to the last; never black, never a gradient.
+He keeps his back to the camera for the entire clip: his face is never visible, and his chest never turns toward the camera.
+His hands stay empty: no sword, weapon, card or any other object appears.
+
+8 seconds, 24 fps. Locked camera, full body including boot soles, rear view. Start in the reference stance. At 0.5 seconds he slowly lifts his head slightly upward. At 1 second both arms open wide to the sides at shoulder height, palms open, as if presenting himself to a vast theater in front of him, far away from the camera. A strong upward draft lifts his coat tails, sash and ribbons high, and they stay lifted while he holds the pose for two seconds. At 3.5 seconds the draft fades and the cloth settles gently as he lowers his arms. He is back in the exact starting pose by 5 seconds, then holds a calm breathing idle.
+
+Both feet stay planted on exactly the same spots for the entire clip: no steps, no floating, no shuffling, no hopping, no kicks. No glow, light rays, particles or added effects; only the wind moves the cloth. No camera movement, zoom, costume changes or cropped body parts.
+```
+
+### 8. 受击 · 一下就回
+
+```text
+Use the attached rear-view character image as the exact visual reference. Preserve his hair, coat, sash, ribbons, cuffs and boots unchanged.
+The background is plain uniform medium gray (#8F8F8F) from the very first frame to the last; never black, never a gradient.
+He keeps his back to the camera for the entire clip: his face is never visible, and his chest never turns toward the camera.
+His hands stay empty: no sword, weapon, card or any other object appears.
+
+8 seconds, 24 fps. Locked camera, full body including boot soles, rear view. Start in the reference stance. At 1 second one unseen heavy impact hits his chest from the front: his shoulders jerk back, his head drops slightly and his knees bend, and his coat tails swing forward with the jolt. He absorbs it on the spot and straightens up, back in the exact starting pose by 3 seconds, then holds a calm breathing idle.
+
+One sharp hit reaction only. Both feet stay planted on exactly the same spots: no stagger steps, no shuffling, no hopping. No attacker, wounds, blood, glow, particles or added effects. No camera movement, zoom, costume changes or cropped body parts.
+```
