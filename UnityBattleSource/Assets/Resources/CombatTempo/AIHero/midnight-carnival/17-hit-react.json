@@ -1,0 +1,13 @@
+{
+  "id": "17-hit-react",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 10.444444444444445,
+  "sourceStart": 0.0,
+  "sourceRelease": 0.5,
+  "sourceEnd": 2.25,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}

@@ -1,0 +1,13 @@
+{
+  "id": "06-mirror-burn",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 24.760252365930597,
+  "sourceStart": 0.0,
+  "sourceRelease": 1.67,
+  "sourceEnd": 3.17,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}

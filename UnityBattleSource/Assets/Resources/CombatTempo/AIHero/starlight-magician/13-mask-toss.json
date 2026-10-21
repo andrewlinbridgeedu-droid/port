@@ -1,0 +1,13 @@
+{
+  "id": "13-mask-toss",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 30.080000000000002,
+  "sourceStart": 0.0,
+  "sourceRelease": 1.6,
+  "sourceEnd": 2.5,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}

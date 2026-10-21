@@ -8,7 +8,7 @@ and never starts at rest, so the wind-up is the clip's own lowering played
 backwards (rest -> arms out low), joined to the real rise at 0.38 s.
 
 Same matte and fixed-foot layout as prepare_ai_hero_runtime.py. Run on the SSD
-with the media venv; pass nothing for every take below, or the actions to rebuild.
+with the media venv; pass nothing for every take below, or the actions (or outfit/action) to rebuild.
 """
 import hashlib, json, sys
 from pathlib import Path
@@ -88,14 +88,14 @@ takes = [{
     'action': '13-mask-toss', 'outfit': 'mistport-night', 'skill': 'fool_skill_04',
     'segments': [(0.0, 1.17), (1.83, 3.0)], 'release': (1, 2.5), 'rest': 0.0,
 }, {
-    # Both palms pushed out at the shoulders (the first take turned his face). Smoke rises from 1.83 s,
-    # so the hands come back down the way they went up.
+    # 10-21 second round (Veo 3.1): both palms pushed out at the shoulders and brought back down, no
+    # smoke until near the end (the Fast take of the first round smoked from 1.83 s).
     'action': '14-twin-palms', 'outfit': 'mistport-night', 'skill': 'fool_skill_06',
-    'segments': [(0.0, 1.5), (0.75, 0.0)], 'release': (0, 1.0), 'rest': 0.0,
+    'segments': [(0.0, 2.33)], 'release': (0, 1.33), 'rest': 0.0,
 }, {
-    # Points, raises one finger (a glint over it at 1.0-1.33 s, dropped by body_only), lowers.
+    # 10-21 second round (Veo 3.1): points, raises one finger and holds it (no glint), lowers.
     'action': '15-postscript-point', 'outfit': 'mistport-night', 'skill': 'fool_skill_13',
-    'segments': [(0.0, 1.17), (2.17, 3.0)], 'release': (0, 1.0), 'rest': 0.0, 'body_only': True,
+    'segments': [(0.0, 1.17), (2.17, 3.0)], 'release': (0, 1.0), 'rest': 0.0,
 }, {
     # The ultimate: arms open wide, coat lifted by the draft; the held middle is cut short.
     'action': '16-nameless-stage', 'outfit': 'mistport-night', 'skill': 'fool_skill_10',
@@ -105,6 +105,41 @@ takes = [{
     'action': '17-hit-react', 'outfit': 'mistport-night', 'skill': 'hit',
     'segments': [(0.5, 2.75)], 'release': (0, 0.95), 'rest': 0.0,
 }]
+# 2026-10-21 second round: the other two outfits, Veo 3.1 (1080p) from their gray references, two
+# versions per prompt and the better one kept (HERO_MOTION_PROMPTS_20261018.md, round-two results).
+# Same action names as 雾港夜行, so AIHeroAnimatedBody.Signatures loads them per outfit.
+def outfit_take(outfit, action, segments, release, body_only=False):
+    take = {'action': action, 'outfit': outfit, 'skill': '', 'segments': segments, 'release': release, 'rest': 0.0}
+    if body_only: take['body_only'] = True
+    return take
+takes += [
+    # Retake 10-21 (the first kept version smoked by the hand): writes, holds, flicks out at 2.83 s.
+    outfit_take('midnight-carnival', '11-brand-mark', [(0.0, 1.0), (2.33, 3.33)], (1, 2.83)),
+    outfit_take('midnight-carnival', '12-presto-beat', [(0.0, 3.0)], (0, 2.33)),
+    outfit_take('midnight-carnival', '06-mirror-burn', [(0.0, 3.67)], (0, 1.67)),
+    outfit_take('midnight-carnival', '13-mask-toss', [(0.0, 2.83)], (0, 2.33)),
+    outfit_take('midnight-carnival', '14-twin-palms', [(0.0, 2.83)], (0, 1.83)),
+    outfit_take('midnight-carnival', '07-phantom-cleave', [(0.0, 3.67)], (0, 2.5)),
+    outfit_take('midnight-carnival', '15-postscript-point', [(0.0, 1.33), (2.33, 3.17)], (0, 1.0)),
+    outfit_take('midnight-carnival', '17-hit-react', [(0.5, 2.75)], (0, 1.0)),
+    # Retakes (the first versions turned the face, conjured a rapier, lit the background or smoked).
+    outfit_take('midnight-carnival', '10-sidestep-thrust', [(0.0, 3.0)], (0, 1.17)),
+    outfit_take('midnight-carnival', '09-repaint-sweep', [(0.0, 3.0)], (0, 2.33)),
+    outfit_take('midnight-carnival', '08-turnabout-whirl', [(0.0, 2.67)], (0, 1.67)),
+    outfit_take('midnight-carnival', '16-nameless-stage', [(0.0, 2.5), (3.0, 4.8)], (0, 1.67)),
+    outfit_take('starlight-magician', '10-sidestep-thrust', [(0.0, 2.5)], (0, 1.17)),
+    outfit_take('starlight-magician', '11-brand-mark', [(0.0, 2.5)], (0, 1.83), body_only=True),
+    outfit_take('starlight-magician', '12-presto-beat', [(0.0, 3.0)], (0, 2.33)),
+    outfit_take('starlight-magician', '06-mirror-burn', [(0.0, 3.17)], (0, 1.67)),
+    outfit_take('starlight-magician', '09-repaint-sweep', [(0.0, 3.0)], (0, 2.17)),
+    outfit_take('starlight-magician', '08-turnabout-whirl', [(0.0, 2.17)], (0, 1.17)),
+    outfit_take('starlight-magician', '13-mask-toss', [(0.0, 2.5)], (0, 1.6)),
+    outfit_take('starlight-magician', '14-twin-palms', [(0.0, 2.5)], (0, 1.33)),
+    outfit_take('starlight-magician', '07-phantom-cleave', [(0.0, 2.0), (3.17, 4.0)], (0, 1.67)),
+    outfit_take('starlight-magician', '15-postscript-point', [(0.0, 2.33)], (0, 1.33), body_only=True),
+    outfit_take('starlight-magician', '16-nameless-stage', [(0.0, 2.5), (3.0, 4.0)], (0, 1.83), body_only=True),
+    outfit_take('starlight-magician', '17-hit-react', [(0.5, 2.5)], (0, 1.0)),
+]
 only = set(sys.argv[1:])
 
 def matte(rgb, floor=False, body_only=False):
@@ -165,7 +200,7 @@ def source_time(segments, t):
 
 report=[]
 for take in takes:
-    if only and take['action'] not in only: continue
+    if only and take['action'] not in only and f"{take['outfit']}/{take['action']}" not in only: continue
     video=library/take['action']/(take['outfit']+'.mp4')
     reader=imageio_ffmpeg.read_frames(str(video),pix_fmt='rgb24')
     meta=next(reader); width,height=meta['size']; fps=meta['fps']
@@ -211,5 +246,5 @@ for take in takes:
         'sourceSHA256':hashlib.sha256(video.read_bytes()).hexdigest(),'sourceFrames':used,**definition})
     print('ATLAS',take['outfit'],name,f'release={definition["releaseFrame"]:.2f}',flush=True)
 previous=json.loads((evidence/'signature-build.json').read_text()) if (evidence/'signature-build.json').exists() else []
-report=[r for r in previous if r['action'] not in {x['action'] for x in report}]+report
+report=[r for r in previous if (r['outfit'],r['action']) not in {(x['outfit'],x['action']) for x in report}]+report
 (evidence/'signature-build.json').write_text(json.dumps(report,indent=2,ensure_ascii=False)+'\n')

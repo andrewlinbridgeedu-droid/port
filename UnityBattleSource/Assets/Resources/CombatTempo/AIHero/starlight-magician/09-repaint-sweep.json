@@ -1,0 +1,13 @@
+{
+  "id": "09-repaint-sweep",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 33.99666666666666,
+  "sourceStart": 0.0,
+  "sourceRelease": 2.17,
+  "sourceEnd": 3.0,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}

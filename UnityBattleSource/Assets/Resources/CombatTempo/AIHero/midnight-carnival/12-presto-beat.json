@@ -1,0 +1,13 @@
+{
+  "id": "12-presto-beat",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 36.50333333333334,
+  "sourceStart": 0.0,
+  "sourceRelease": 2.33,
+  "sourceEnd": 3.0,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}

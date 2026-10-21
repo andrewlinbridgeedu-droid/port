@@ -1,0 +1,13 @@
+{
+  "id": "11-brand-mark",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 35.25,
+  "sourceStart": 0.0,
+  "sourceRelease": 1.5,
+  "sourceEnd": 2.0,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}

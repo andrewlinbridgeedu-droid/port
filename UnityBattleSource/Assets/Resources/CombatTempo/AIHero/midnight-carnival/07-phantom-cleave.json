@@ -1,0 +1,13 @@
+{
+  "id": "07-phantom-cleave",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 32.01634877384196,
+  "sourceStart": 0.0,
+  "sourceRelease": 2.5,
+  "sourceEnd": 3.67,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}

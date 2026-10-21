@@ -1,0 +1,13 @@
+{
+  "id": "14-twin-palms",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 30.392226148409897,
+  "sourceStart": 0.0,
+  "sourceRelease": 1.83,
+  "sourceEnd": 2.83,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}

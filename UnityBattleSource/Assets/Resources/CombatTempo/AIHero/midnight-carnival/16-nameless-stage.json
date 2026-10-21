@@ -1,0 +1,13 @@
+{
+  "id": "16-nameless-stage",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 18.253488372093024,
+  "sourceStart": 0.0,
+  "sourceRelease": 1.67,
+  "sourceEnd": 4.3,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}
