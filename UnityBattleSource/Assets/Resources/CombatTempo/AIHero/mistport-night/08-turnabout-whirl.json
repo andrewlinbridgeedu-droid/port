@@ -1,0 +1,13 @@
+{
+  "id": "08-turnabout-whirl",
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "releaseFrame": 28.939814814814813,
+  "sourceStart": 0.0,
+  "sourceRelease": 1.33,
+  "sourceEnd": 2.16,
+  "recoverySeconds": 0.18,
+  "width": 512,
+  "height": 640
+}

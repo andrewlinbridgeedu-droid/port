@@ -16,10 +16,13 @@ public sealed class AIHeroAnimatedBody : MonoBehaviour
     public static readonly string[] Actions = {
         "01-diagonal-cut", "02-command-flick", "03-overarm-throw", "04-seal-press", "05-sidearm-cast"
     };
-    // A take recorded for one skill in one outfit (2026-10-19: 燃镜 in 雾港夜行). Loaded
-    // when the outfit has it; other outfits keep the shared rotation for that skill.
+    // A take recorded for one skill in one outfit (2026-10-19: 燃镜 in 雾港夜行; 10-20: 归谬法's
+    // conjured blade and 突转's whirl, same outfit). Loaded when the outfit has it; other outfits
+    // keep the shared rotation for that skill.
     public static readonly Dictionary<string,string> Signatures = new Dictionary<string,string> {
-        ["fool_skill_12"] = "06-mirror-burn"
+        ["fool_skill_12"] = "06-mirror-burn",
+        ["fool_skill_07"] = "07-phantom-cleave",
+        ["fool_skill_08"] = "08-turnabout-whirl"
     };
     public bool HasAction(string action) => action != null && clips.ContainsKey(action);
     public string Outfit { get; private set; }

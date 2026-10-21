@@ -8,9 +8,9 @@ and never starts at rest, so the wind-up is the clip's own lowering played
 backwards (rest -> arms out low), joined to the real rise at 0.38 s.
 
 Same matte and fixed-foot layout as prepare_ai_hero_runtime.py. Run on the SSD
-with the media venv; pass nothing, the takes are listed below.
+with the media venv; pass nothing for every take below, or the actions to rebuild.
 """
-import hashlib, json
+import hashlib, json, sys
 from pathlib import Path
 import numpy as np
 from PIL import Image
@@ -33,14 +33,40 @@ takes = [{
     # The exit blend crosses into the outfit's reference rest art, whose coat flares wider than
     # this take's last frame; half the usual 0.18 s keeps the double hem to two or three frames.
     'exitBlend': 0.09,
+}, {
+    # 2026-10-20 (user: 我觉得都可以，你定吧). 11_45PM: a sword appears in his hand, goes up over
+    # his head and comes down; it dissolves into a ribbon at 1.42-1.50 s. Before 1.0 s the
+    # background is still fading up from black and eats the dark coat, so only 1.0-2.17 s is used:
+    # the wind-up is that stretch played backwards (the sword forms out of the ribbon as the arm
+    # rises), then the cut itself. A conjured blade for 归谬法's single heavy blow.
+    'action': '07-phantom-cleave', 'outfit': 'mistport-night', 'skill': 'fool_skill_07',
+    'segments': [(2.17, 1.00), (1.00, 2.25)],
+    'release': (1, 1.21),      # the arm down, the blade pointing at the floor
+    'rest': 3.00,
+}, {
+    # 11_10PM: he spins round, faces the camera (1.0-1.5 s, feet moving) and turns back. Only the
+    # turn back (1.67 s on: his back to the camera again) is used; the wind-up is it played
+    # backwards, so he twists away and whips round with the coat flaring. 突转's reversal.
+    'action': '08-turnabout-whirl', 'outfit': 'mistport-night', 'skill': 'fool_skill_08',
+    'segments': [(2.75, 1.67), (1.67, 2.75)],
+    'release': (1, 1.92),      # the arm sweeps out, the coat at its widest
+    'rest': 3.00,
+    'floor': True,             # this take has a contact shadow under the feet
 }]
+only = set(sys.argv[1:])
 
-def matte(rgb):
+def matte(rgb, floor=False):
     a = np.asarray(rgb).astype(np.float32)
     edge = np.concatenate([a[:8].reshape(-1,3), a[-8:].reshape(-1,3), a[:,:8].reshape(-1,3), a[:,-8:].reshape(-1,3)])
     bg = np.median(edge, axis=0)
     distance = np.max(np.abs(a-bg),axis=2)
     near = distance < 26
+    if floor:
+        # A soft contact shadow under the feet (11_10PM): neutral gray a little darker than the
+        # wall counts as background when it joins it. The boots are brown, so they stay.
+        v = a.max(axis=2); bv = bg.max()
+        sat = (v - a.min(axis=2)) / np.maximum(v, 1)
+        near |= (sat < .12) & (v > .58 * bv) & (v < bv + 10)
     seeds = np.zeros(near.shape, bool); seeds[0,:]=near[0,:]; seeds[-1,:]=near[-1,:]; seeds[:,0]=near[:,0]; seeds[:,-1]=near[:,-1]
     connected = ndi.binary_propagation(seeds,mask=near)
     islands,n = ndi.label((distance < 6) & ~connected)
@@ -75,6 +101,7 @@ def source_time(segments, t):
 
 report=[]
 for take in takes:
+    if only and take['action'] not in only: continue
     video=library/take['action']/(take['outfit']+'.mp4')
     reader=imageio_ffmpeg.read_frames(str(video),pix_fmt='rgb24')
     meta=next(reader); width,height=meta['size']; fps=meta['fps']
@@ -83,15 +110,16 @@ for take in takes:
     total=sum(abs(b-a) for a,b in segments)
     index,second=take['release']
     release=sum(abs(b-a) for a,b in segments[:index])+abs(second-segments[index][0])
-    rest=matte(frames[round(take['rest']*fps)]);box=rest.getbbox()
+    rest=matte(frames[round(take['rest']*fps)],take.get('floor',False));box=rest.getbbox()
     folder=output/take['outfit'];name=take['action']
     atlas=Image.new('RGBA',(W*COLS,H*ROWS));snapshots=[];used=[]
     for i,t in enumerate(np.linspace(0,total,N)):
         k=min(len(frames)-1,round(source_time(segments,t)*fps))
-        lo,hi=take['flare']
-        assert not (round(lo*fps) <= k <= round(hi*fps)), f'flare frame {k} sampled'
+        if 'flare' in take:
+            lo,hi=take['flare']
+            assert not (round(lo*fps) <= k <= round(hi*fps)), f'flare frame {k} sampled'
         used.append(k)
-        fitted=fit(matte(frames[k]),box)
+        fitted=fit(matte(frames[k],take.get('floor',False)),box)
         atlas.alpha_composite(fitted,((i%COLS)*W,(i//COLS)*H))
         snapshots.append(fitted)
     atlas.save(folder/(name+'.png'),compress_level=4)
@@ -106,7 +134,9 @@ for take in takes:
     for i,shot in enumerate(snapshots):
         small=shot.resize((W//2,H//2));sheet.paste(small,((i%12)*W//2,(i//12)*H//2),small)
     sheet.save(evidence/(take['outfit']+'-'+name+'-frames.jpg'),quality=88)
-    report.append({**{k:take[k] for k in ('action','outfit','skill','segments','release','rest','flare')},
+    report.append({**{k:take[k] for k in ('action','outfit','skill','segments','release','rest','flare') if k in take},
         'sourceSHA256':hashlib.sha256(video.read_bytes()).hexdigest(),'sourceFrames':used,**definition})
     print('ATLAS',take['outfit'],name,f'release={definition["releaseFrame"]:.2f}',flush=True)
+previous=json.loads((evidence/'signature-build.json').read_text()) if (evidence/'signature-build.json').exists() else []
+report=[r for r in previous if r['action'] not in {x['action'] for x in report}]+report
 (evidence/'signature-build.json').write_text(json.dumps(report,indent=2,ensure_ascii=False)+'\n')
