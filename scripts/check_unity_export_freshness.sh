@@ -42,7 +42,9 @@ has_required_presentation_code() {
     # symbol is generated only when the matching Unity presentation code
     # reached the iOS export, preventing a new Swift HUD from being paired
     # with old actors.
-    [ -f "$generated_cpp" ] && grep -q 'BattlePrototype_UseDualClockGuardModel' "$generated_cpp"
+    # IL2CPP splits large assemblies into Assembly-CSharp__N.cpp; the symbol can land in any part
+    # (2026-10-21: it moved to __1 once the hero takes grew the assembly).
+    [ -f "$generated_cpp" ] && grep -q 'BattlePrototype_UseDualClockGuardModel' "$(dirname "$generated_cpp")"/Assembly-CSharp*.cpp
 }
 
 export_is_fresh() {
