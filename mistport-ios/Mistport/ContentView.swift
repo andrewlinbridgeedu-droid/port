@@ -265,6 +265,14 @@ struct ContentView: View {
                         onChallenges: {
                             GameInterfaceSound.shared.playClick()
                             presentedSheet = .missionChallenges
+                        },
+                        dailyGoals: game.dailyGoalPlan.flatMap { plan in
+                            plan.goals.isEmpty || plan.claimed ? nil
+                                : (plan.doneCount(now: game.dailyProgress), plan.goals.count, plan.canClaim(now: game.dailyProgress))
+                        },
+                        onDailyGoals: {
+                            GameInterfaceSound.shared.playClick()
+                            newspaperPresented = true
                         }
                     )
                 case .districtMap:
@@ -449,7 +457,7 @@ struct ContentView: View {
         .task(id: game.phase) {
             guard game.phase != .title && game.phase != .pathSelection else { return }
             while !Task.isCancelled {
-                if scenePhase == .active { await game.openHousingDay(); try? game.openNeighborDay(); game.openStreetDay() }
+                if scenePhase == .active { await game.openHousingDay(); try? game.openNeighborDay(); game.openStreetDay(); game.ensureDailyGoalPlan() }
                 // Wake at midnight too, so the new day's errands replace the old ones at once
                 // instead of up to 30 seconds later, when a tap only met a lapsed request.
                 let midnight = game.pacingDayEnd(game.pacingDay).timeIntervalSince(game.pacingClock()) + 1
@@ -460,7 +468,7 @@ struct ContentView: View {
             Task {
                 guard phase == .active else { return }
                 await game.openHousingDay()
-                if game.phase != .title && game.phase != .pathSelection { try? game.openNeighborDay(); game.openStreetDay() }
+                if game.phase != .title && game.phase != .pathSelection { try? game.openNeighborDay(); game.openStreetDay(); game.ensureDailyGoalPlan() }
                 presentDailyNewspaperIfNeeded()
             }
         }

@@ -7438,6 +7438,8 @@ struct ChapterOneChallengeResult: Equatable {
     let dust: Int
     let seconds: Double
     let damagePercent: Double
+    /// The mission's best before this battle (nil on its first win).
+    let previous: MPCMissionRecord?
 
     init(stats: MPCMissionBattleStats, claim: MPCMissionChallengeLedger.Claim, ledger: MPCMissionChallengeLedger) {
         challenges = MPCMissionChallengeCatalog.challenges(for: stats.mission)
@@ -7447,7 +7449,25 @@ struct ChapterOneChallengeResult: Equatable {
         dust = claim.dust
         seconds = stats.seconds
         damagePercent = stats.damageTakenPercent
+        previous = claim.previous
     }
+
+    /// 2026-10-22 (going back stronger should show): this battle against the mission's best so far.
+    var recordLine: String? {
+        guard let previous else { return nil }
+        let time = seconds < previous.seconds - 0.05
+            ? "用时 \(Self.secondsText(previous.seconds)) → \(Self.secondsText(seconds)) 秒，新纪录"
+            : "用时 \(Self.secondsText(seconds)) 秒（最好 \(Self.secondsText(previous.seconds))）"
+        let hurt = damagePercent < previous.damagePercent - 0.5
+            ? "受伤 \(Int(previous.damagePercent.rounded()))% → \(Int(damagePercent.rounded()))%，新纪录"
+            : "受伤 \(Int(damagePercent.rounded()))%（最少 \(Int(previous.damagePercent.rounded()))%）"
+        return time + " · " + hurt
+    }
+    var isRecord: Bool {
+        guard let previous else { return false }
+        return seconds < previous.seconds - 0.05 || damagePercent < previous.damagePercent - 0.5
+    }
+    static func secondsText(_ value: Double) -> String { String(format: "%.1f", value) }
 
     /// What this battle measured, for the stars that are numbers.
     func measured(_ challenge: MPCMissionChallenge) -> String? {
@@ -7471,6 +7491,11 @@ private struct ChapterOneChallengeReceipt: View {
                 if result.dust > 0 {
                     Text("技能粉尘 +\(result.dust)").font(.subheadline.bold()).foregroundStyle(gold)
                 }
+            }
+            if let line = result.recordLine {
+                Text(line).font(.caption.weight(.semibold))
+                    .foregroundStyle(result.isRecord ? gold : .white.opacity(0.7))
+                    .fixedSize(horizontal: false, vertical: true)
             }
             ForEach(result.challenges) { challenge in
                 let paid = result.paid.contains(challenge.id)

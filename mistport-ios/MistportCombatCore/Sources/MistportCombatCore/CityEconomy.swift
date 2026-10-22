@@ -135,6 +135,14 @@ public struct MPCCityEconomy: Codable, Equatable, Sendable {
     public private(set) var battleRest: [String: Int] = [:]
     public private(set) var maintenanceDays: Set<Int> = []
     public private(set) var notices: [String] = []
+    /// Money that arrived on its own (2026-10-22, the morning paper's 到账): matured deposits, settled
+    /// orders, paid meetings, newest last. Optional so ledgers written before it decode; the last 20 kept.
+    public private(set) var arrivals: [Arrival]?
+    public struct Arrival: Codable, Equatable, Sendable {
+        public let at: TimeInterval
+        public let coins: Int
+        public let text: String
+    }
     public init() {}
 
     public var outstanding: Int {
@@ -363,8 +371,14 @@ public struct MPCCityEconomy: Codable, Equatable, Sendable {
         addNotice("会面已结束，已发生的招待与耗材不退款；本周接待次数保留。")
     }
     public mutating func settle(now: TimeInterval, coins: inout Int) {
-        if let item = deposit, !item.closed, now >= item.dueAt { try? redeemDeposit(now: now, coins: &coins) }
-        if let item = termDeposit, !item.closed, now >= item.dueAt { try? redeemTermDeposit(now: now, coins: &coins) }
+        if let item = deposit, !item.closed, now >= item.dueAt {
+            let before = coins; try? redeemDeposit(now: now, coins: &coins)
+            addArrival(now, coins - before, "新客存单到期，本金\(item.principal)铜连收益")
+        }
+        if let item = termDeposit, !item.closed, now >= item.dueAt {
+            let before = coins; try? redeemTermDeposit(now: now, coins: &coins)
+            addArrival(now, coins - before, "普通定期到期，本金\(item.principal)铜、利息\(item.profit)铜")
+        }
         for index in projects.indices where !projects[index].settled {
             let project = projects[index]
             guard (now >= project.dueAt && project.delivered) || now > project.deadline else { continue }
@@ -373,12 +387,14 @@ public struct MPCCityEconomy: Codable, Equatable, Sendable {
             customerBudget += escrow - payout; coins += payout
             projects[index].settled = true; projects[index].repayment = payout; contractPaid += payout
             addNotice(payout > 0 ? "项目已验收，本息\(payout)铜入账。" : "项目未通过验收，投入\(project.committed)铜损失；不追加追索。")
+            addArrival(now, payout, "\(project.kind.title)验收回款")
         }
         if let item = meeting {
             if item.stage == .delivered, now >= (item.dueAt ?? .infinity) {
                 let payout = meetingEscrow.removeValue(forKey: item.id) ?? 0
                 coins += payout; contractPaid += payout; meeting?.stage = .paid
                 addNotice("染坊核对收货，\(payout)铜合同款到账。")
+                addArrival(now, payout, "染坊会客合同款")
             } else if ![.delivered, .paid, .failed, .cancelled].contains(item.stage), now > item.deadline {
                 customerBudget += meetingEscrow.removeValue(forKey: item.id) ?? 0
                 meeting?.stage = .failed; addNotice("交货期限已过，合同关闭；已发生的招待与耗材不退。")
@@ -412,4 +428,10 @@ public struct MPCCityEconomy: Codable, Equatable, Sendable {
         return discount
     }
     private mutating func addNotice(_ value: String) { notices.append(value); notices = Array(notices.suffix(12)) }
+    private mutating func addArrival(_ at: TimeInterval, _ coins: Int, _ text: String) {
+        guard coins > 0 else { return }
+        arrivals = Array(((arrivals ?? []) + [Arrival(at: at, coins: coins, text: text)]).suffix(20))
+    }
+    /// What arrived after `time` (the last morning paper the player read).
+    public func arrivals(after time: TimeInterval) -> [Arrival] { (arrivals ?? []).filter { $0.at > time } }
 }

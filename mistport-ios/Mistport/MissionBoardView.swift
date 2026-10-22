@@ -1932,6 +1932,10 @@ struct MissionChallengeReplayView: View {
                 MistportPlaqueButton(title: "重打", compact: true, expands: false, horizontalInset: 14) { onReplay(mission) }
                     .accessibilityIdentifier("mission-challenge-replay-\(mission.number)")
             }
+            if let record = ledger.record(mission: mission.number) {
+                Text("最好成绩 \(String(format: "%.1f", record.seconds)) 秒 · 最少受伤 \(Int(record.damagePercent.rounded()))% · 赢过 \(record.wins) 次")
+                    .font(.caption2).foregroundStyle(.white.opacity(0.6))
+            }
             ForEach(challenges) { challenge in
                 let earned = ledger.hasEarned(challenge)
                 HStack(alignment: .firstTextBaseline, spacing: 7) {

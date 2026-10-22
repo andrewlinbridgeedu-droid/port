@@ -61,6 +61,9 @@ struct CityHubView: View {
     /// Stars earned so far; nil until a story mission is cleared (2026-10-20: 旧关挑战).
     var challengeStars: Int? = nil
     var onChallenges: () -> Void = {}
+    /// 今日三件事 (2026-10-22): goals done today, how many, whether the reward waits; nil once paid.
+    var dailyGoals: (done: Int, total: Int, ready: Bool)? = nil
+    var onDailyGoals: () -> Void = {}
 
     private var tint: Color { path?.tint ?? .purple }
 
@@ -383,6 +386,17 @@ struct CityHubView: View {
             .buttonStyle(.plain)
             .disabled(!storyIsAvailable)
             .accessibilityLabel("主线 \(nextMissionTitle)" + (storyIsAvailable ? "，进入" : ""))
+            if let dailyGoals {
+                Button(action: onDailyGoals) {
+                    VStack(spacing: 1) {
+                        Image(systemName: dailyGoals.ready ? "gift.fill" : "checklist").font(.system(size: 15, weight: .bold))
+                            .foregroundStyle(dailyGoals.ready ? Color(red: 1, green: 0.84, blue: 0.4) : .white.opacity(0.9))
+                        Text("今日 \(dailyGoals.done)/\(dailyGoals.total)").font(.system(size: 10, weight: .bold).monospacedDigit())
+                    }.frame(minWidth: 48, minHeight: 44)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(dailyGoals.ready ? "今日三件事都办完了，去日刊领奖励" : "今日三件事，已办 \(dailyGoals.done) 件，共 \(dailyGoals.total) 件")
+            }
             if let challengeStars {
                 Button(action: onChallenges) {
                     VStack(spacing: 1) {

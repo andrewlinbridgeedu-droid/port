@@ -6286,10 +6286,72 @@ extension GameStore {
     func claimMissionChallenges(_ stats: MPCMissionBattleStats) -> MPCMissionChallengeLedger.Claim {
         var ledger = missionChallengeLedger
         let claim = ledger.claim(stats)
-        if !claim.newlyEarned.isEmpty, let data = try? JSONEncoder().encode(ledger) {
+        // A new star or a changed record (every win counts towards it) is written down.
+        if !claim.newlyEarned.isEmpty || claim.record != claim.previous, let data = try? JSONEncoder().encode(ledger) {
             defaults.set(data, forKey: Self.missionChallengeKey)
             churchServicesRevision += 1
         }
         return claim
+    }
+}
+
+// 晨报到账、今日三件事 (2026-10-22, user: 先做 1、2 和 3). Money that settled on its own is listed once in
+// the morning paper; up to three small goals a day pay a little when all are done, once.
+extension GameStore {
+    private static let dailyGoalKey = "mistport.daily-goals.v1"
+    private static let arrivalsSeenKey = "mistport.arrivals-seen.v1"
+
+    /// Counts that only grow; the day's goals are measured against them.
+    var dailyProgress: MPCDailyProgress {
+        .init(missionsCleared: churchTowerMissionNumbers.count, towerFloors: churchTowerProgress.clearedFloors.count,
+              stars: missionChallengeLedger.totalStars, errands: neighbors.completedErrands + streetTasks.completed.count)
+    }
+    /// Today's plan, once made (nil before the day's first paper).
+    var dailyGoalPlan: MPCDailyGoalPlan? {
+        _ = churchServicesRevision
+        guard let plan = defaults.data(forKey: Self.dailyGoalKey).flatMap({ try? JSONDecoder().decode(MPCDailyGoalPlan.self, from: $0) }),
+              plan.day == pacingDay else { return nil }
+        return plan
+    }
+    /// Makes today's plan from what the day offers, measured from now. Called when the day opens and when
+    /// the paper is read; a plan already made today is kept.
+    func ensureDailyGoalPlan() {
+        guard dailyGoalPlan == nil else { return }
+        var offer = MPCDailyGoalPlan.Offer()
+        if let next = nextChapterMission, missionLockText(next) == nil { offer.openMission = (next.number, next.title) }
+        if cityServiceIsUnlocked(.church) {
+            let cleared = churchTowerProgress.clearedFloors.count
+            offer.towerFloorsLeft = max(0, min(100, MPCDailyPacing.towerFirstClearsAllowed(day: pacingDay)) - cleared)
+        }
+        if let mission = replayableMissions.first(where: { missionStars($0.number) < 3 }) { offer.missingStarMission = (mission.number, mission.title) }
+        offer.errandsOpen = newspaperNeighborOffers.filter { !$0.done }.count + streetTasks.offers.filter { !$0.done }.count
+        let plan = MPCDailyGoalPlan.make(day: pacingDay, baseline: dailyProgress, offer: offer)
+        defaults.set(try? JSONEncoder().encode(plan), forKey: Self.dailyGoalKey)
+        churchServicesRevision += 1
+    }
+    /// Pays the day's reward once every goal is done. The plan is written as claimed first: if the app
+    /// dies before the wallet is saved the reward is lost, never paid twice.
+    func claimDailyGoals() {
+        guard var plan = dailyGoalPlan, plan.claim(now: dailyProgress), let data = try? JSONEncoder().encode(plan) else { return }
+        defaults.set(data, forKey: Self.dailyGoalKey)
+        do {
+            var inventory = chapterOneCampaign.inventory
+            inventory[MPCMissionChallengeCatalog.dustItemID, default: 0] += MPCDailyGoalPlan.rewardDust
+            let coins = venueCoins + MPCDailyGoalPlan.rewardCopper
+            try updateChurchServices(inventory: inventory) { $0.loans.coins = coins }
+            featureMessage = "今日小目标都完成了：铜币 +\(MPCDailyGoalPlan.rewardCopper)，技能粉尘 +\(MPCDailyGoalPlan.rewardDust)。"
+        } catch {
+            featureMessage = "今日奖励没有入账：\(error.localizedDescription)"
+        }
+        churchServicesRevision += 1
+    }
+    /// Money that arrived on its own since the paper was last read.
+    var morningArrivals: [MPCCityEconomy.Arrival] {
+        _ = churchServicesRevision
+        return cityEconomy.arrivals(after: defaults.double(forKey: Self.arrivalsSeenKey))
+    }
+    func acknowledgeArrivals() {
+        defaults.set(housingNow.timeIntervalSince1970, forKey: Self.arrivalsSeenKey)
+        churchServicesRevision += 1
     }
 }

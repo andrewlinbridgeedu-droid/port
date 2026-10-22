@@ -45,6 +45,8 @@ struct DailyNewspaperView: View {
     let onSelect: (DailyNewspaperDestination) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var talkingToPrinter = false
+    /// The arrivals just acknowledged, shown as a receipt line (2026-10-22).
+    @State private var received: Int?
     private let ink = Color(red: 0.19, green: 0.14, blue: 0.09)
     private let paper = Color(red: 0.93, green: 0.86, blue: 0.70)
 
@@ -81,7 +83,7 @@ struct DailyNewspaperView: View {
         }
         .background(Color(red: 0.12, green: 0.075, blue: 0.04).ignoresSafeArea())
         .preferredColorScheme(.dark)
-        .onAppear { game.markDailyNewspaperSeen() }
+        .onAppear { game.markDailyNewspaperSeen(); game.ensureDailyGoalPlan() }
         #if DEBUG
         .task {
             guard ProcessInfo.processInfo.arguments.contains("--home-map-review"),
@@ -111,6 +113,7 @@ struct DailyNewspaperView: View {
             paperRule(thickness: 2)
             Text(game.housingDailyNotice).font(.system(size: 12, design: .serif))
             Text(game.todayPacingSummary).font(.system(size: 14, weight: .semibold, design: .serif))
+            morningLedger
             cityTrendFront
             paperRule(thickness: 1)
             row("主线进展", destination: .story) {
@@ -237,6 +240,75 @@ struct DailyNewspaperView: View {
                  : "你这周替：" + yours.joined(separator: " · ") + "。")
                 .font(.system(size: 11, design: .serif))
 
+        }
+    }
+    /// 昨夜到账 and 今日小目标 (2026-10-22, user: 先做 1、2 和 3). Money that settled on its own since the last
+    /// paper, read in one place; up to three goals for today with a small reward when all are done.
+    @ViewBuilder private var morningLedger: some View {
+        let arrivals = game.morningArrivals
+        let total = arrivals.map(\.coins).reduce(0, +)
+        let gold = Color(red: 0.55, green: 0.36, blue: 0.05)
+        if let received {
+            Text("已收下 \(received) 铜，都在钱包里。").font(.system(size: 14, weight: .bold, design: .serif)).foregroundStyle(gold)
+                .transition(.scale(scale: 0.8).combined(with: .opacity))
+        } else if !arrivals.isEmpty {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("昨夜到账").font(.system(size: 20, weight: .bold, design: .serif))
+                ForEach(Array(arrivals.enumerated()), id: \.offset) { _, arrival in
+                    HStack(alignment: .firstTextBaseline) {
+                        Text(arrival.text).font(.system(size: 13, design: .serif))
+                        Spacer(minLength: 6)
+                        Text("+\(arrival.coins) 铜").font(.system(size: 14, weight: .bold, design: .serif).monospacedDigit()).foregroundStyle(gold)
+                    }
+                }
+                Text("这些钱到期时已经自动进了钱包，这里一次列给你看。").font(.system(size: 11, design: .serif))
+                Button {
+                    GameInterfaceSound.shared.playClick()
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) { received = total }
+                    game.acknowledgeArrivals()
+                } label: {
+                    Text("收下 · 共 +\(total) 铜").font(.system(size: 14, weight: .bold, design: .serif))
+                        .padding(.horizontal, 12).padding(.vertical, 7)
+                        .overlay(Rectangle().stroke(ink.opacity(0.75), lineWidth: 0.8))
+                }.buttonStyle(.plain)
+            }
+        }
+        if let plan = game.dailyGoalPlan, !plan.goals.isEmpty {
+            let now = game.dailyProgress
+            let reward = "铜币 +\(MPCDailyGoalPlan.rewardCopper)、技能粉尘 +\(MPCDailyGoalPlan.rewardDust)"
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Text("今日小目标").font(.system(size: 20, weight: .bold, design: .serif))
+                    Spacer()
+                    Text("\(plan.doneCount(now: now))/\(plan.goals.count)").font(.system(size: 14, weight: .bold, design: .serif).monospacedDigit())
+                }
+                ForEach(plan.goals) { goal in
+                    let done = goal.isDone(from: plan.baseline, to: now)
+                    HStack(alignment: .firstTextBaseline, spacing: 7) {
+                        Image(systemName: done ? "checkmark.square.fill" : "square").font(.system(size: 13))
+                        Text(goal.title).font(.system(size: 14, design: .serif)).strikethrough(done, color: ink.opacity(0.5))
+                            .fixedSize(horizontal: false, vertical: true)
+                        Spacer(minLength: 4)
+                        if goal.count > 1 {
+                            Text("\(goal.progress(from: plan.baseline, to: now))/\(goal.count)").font(.system(size: 12, design: .serif).monospacedDigit())
+                        }
+                    }.opacity(done ? 0.6 : 1)
+                }
+                if plan.claimed {
+                    Text("今天的奖励已领：\(reward)。明天的小目标明早随报纸送到。").font(.system(size: 12, design: .serif))
+                } else if plan.canClaim(now: now) {
+                    Button {
+                        GameInterfaceSound.shared.playClick()
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) { game.claimDailyGoals() }
+                    } label: {
+                        Text("领取 · \(reward)").font(.system(size: 14, weight: .bold, design: .serif)).foregroundStyle(gold)
+                            .padding(.horizontal, 12).padding(.vertical, 7)
+                            .overlay(Rectangle().stroke(gold, lineWidth: 1))
+                    }.buttonStyle(.plain)
+                } else {
+                    Text("都办完可领：\(reward)。做不完也没关系，明天换新的。").font(.system(size: 12, design: .serif))
+                }
+            }
         }
     }
     /// ▲/▼ for the week's change in a side's share, once there is a week to compare with.

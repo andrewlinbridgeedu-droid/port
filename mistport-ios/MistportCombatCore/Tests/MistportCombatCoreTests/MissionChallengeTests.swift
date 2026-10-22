@@ -266,6 +266,21 @@ struct MissionChallengeTests {
         #expect(decoded == ledger)
     }
 
+    @Test func recordsKeepTheBestTimeAndTheLeastHealthLost() throws {
+        var ledger = MPCMissionChallengeLedger()
+        let first = ledger.claim(MPCMissionBattleStats(mission: 7, won: true, seconds: 42, enteringMaxHP: 1000, damageTaken: 600))
+        #expect(first.previous == nil && first.record == MPCMissionRecord(seconds: 42, damagePercent: 60, wins: 1))
+        let faster = ledger.claim(MPCMissionBattleStats(mission: 7, won: true, seconds: 18, enteringMaxHP: 1000, damageTaken: 700))
+        #expect(faster.previous?.seconds == 42 && faster.record == MPCMissionRecord(seconds: 18, damagePercent: 60, wins: 2))
+        let lost = ledger.claim(MPCMissionBattleStats(mission: 7, won: false, seconds: 9, enteringMaxHP: 1000, damageTaken: 100))
+        #expect(lost.record == nil && ledger.record(mission: 7)?.seconds == 18)
+        // A ledger written before records existed still decodes, and pays nothing twice.
+        let old = try JSONDecoder().decode(MPCMissionChallengeLedger.self, from: Data(#"{"claimedIDs":["q07.1"]}"#.utf8))
+        #expect(old.totalStars == 1 && old.record(mission: 7) == nil)
+        let round = try JSONDecoder().decode(MPCMissionChallengeLedger.self, from: JSONEncoder().encode(ledger))
+        #expect(round == ledger)
+    }
+
     @Test func probeTiming() throws {
         let start = Date()
         let s = try ChallengeSim.run(12, .init(order: RealLoop.line("11,07,12,04")))

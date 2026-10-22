@@ -27,6 +27,26 @@ struct CityEconomyTests {
         ledger.settle(now: 100 * 86_400, coins: &cash)
         #expect(cash == 1_000 + amount / 60 && ledger.bankBonusBudget + ledger.bankBonusPaid == 240)
     }
+    @Test("money that arrives on its own is listed once for the morning paper")
+    func arrivals() throws {
+        var ledger = MPCCityEconomy(), cash = 1_000
+        try ledger.openTermDeposit(60, completed: Set(1...16), liquidReserve: 0, now: 0, coins: &cash)
+        try ledger.openProject(kind: .invoice, amount: 40, completed: [1, 5], day: 1, now: 0, coins: &cash)
+        let id = try #require(ledger.projects.first?.id)
+        try ledger.inspectProject(id, originalSeal: true, now: 1); try ledger.deliverProject(id, now: 2)
+        ledger.settle(now: 6 * 86_400, coins: &cash)
+        #expect(ledger.arrivals(after: 0).isEmpty)
+        ledger.settle(now: 7 * 86_400, coins: &cash); ledger.settle(now: 7 * 86_400 + 5, coins: &cash)
+        let arrived = ledger.arrivals(after: 6 * 86_400)
+        #expect(arrived.map(\.coins).sorted() == [42, 61])
+        #expect(arrived.map(\.coins).reduce(0, +) == cash - (1_000 - 100))
+        #expect(ledger.arrivals(after: 7 * 86_400).isEmpty)
+        // A ledger written before arrivals existed decodes with none.
+        var object = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(ledger)) as? [String: Any])
+        object.removeValue(forKey: "arrivals")
+        let restored = try JSONDecoder().decode(MPCCityEconomy.self, from: JSONSerialization.data(withJSONObject: object))
+        #expect(restored.arrivals == nil && restored.arrivals(after: 0).isEmpty && restored.outstanding == 0)
+    }
     @Test("old bank ledger retains money, welcome receipt and investments when term field absent")
     func oldLedger() throws {
         var ledger = MPCCityEconomy(), cash = 1_000

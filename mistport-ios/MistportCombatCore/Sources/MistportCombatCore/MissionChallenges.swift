@@ -235,6 +235,9 @@ public struct MPCMissionChallengeRecorder: Sendable {
 /// Stars already paid, by challenge id. Codable so the App keeps it with the campaign.
 public struct MPCMissionChallengeLedger: Codable, Equatable, Sendable {
     public private(set) var claimedIDs: Set<String>
+    /// Each story mission's best won battle (2026-10-22, the "really got stronger" read-out): the fastest
+    /// time and the least health lost, kept separately. Optional so ledgers written before it decode.
+    public private(set) var records: [String: MPCMissionRecord]?
     public init(claimedIDs: Set<String> = []) { self.claimedIDs = claimedIDs }
 
     public struct Claim: Equatable, Sendable {
@@ -243,6 +246,10 @@ public struct MPCMissionChallengeLedger: Codable, Equatable, Sendable {
         /// Stars this battle met that were already paid.
         public let alreadyEarned: [MPCMissionChallenge]
         public let dust: Int
+        /// The mission's record before this battle (nil the first time it is won).
+        public var previous: MPCMissionRecord? = nil
+        /// The record after it.
+        public var record: MPCMissionRecord? = nil
     }
 
     public func hasEarned(_ challenge: MPCMissionChallenge) -> Bool { claimedIDs.contains(challenge.id) }
@@ -250,15 +257,38 @@ public struct MPCMissionChallengeLedger: Codable, Equatable, Sendable {
         MPCMissionChallengeCatalog.challenges(for: mission).filter(hasEarned).count
     }
     public var totalStars: Int { claimedIDs.count }
+    public func record(mission: Int) -> MPCMissionRecord? { records?[Self.recordKey(mission)] }
+    static func recordKey(_ mission: Int) -> String { String(format: "q%02d", mission) }
 
     /// Records the stars a won battle met and returns the dust to add, once per star, ever.
-    /// Calling it again with the same stats pays nothing.
+    /// Calling it again with the same stats pays nothing. A won battle also updates the mission's record.
     public mutating func claim(_ stats: MPCMissionBattleStats) -> Claim {
         let met = MPCMissionChallengeCatalog.challenges(for: stats.mission).filter { $0.isMet(by: stats) }
         let fresh = met.filter { !claimedIDs.contains($0.id) }
         for challenge in fresh { claimedIDs.insert(challenge.id) }
-        return .init(newlyEarned: fresh, alreadyEarned: met.filter { !fresh.contains($0) },
-                     dust: fresh.count * MPCMissionChallengeCatalog.dustPerStar(mission: stats.mission))
+        var claim = Claim(newlyEarned: fresh, alreadyEarned: met.filter { !fresh.contains($0) },
+                          dust: fresh.count * MPCMissionChallengeCatalog.dustPerStar(mission: stats.mission))
+        if stats.won {
+            let key = Self.recordKey(stats.mission)
+            claim.previous = records?[key]
+            var record = claim.previous ?? MPCMissionRecord(seconds: stats.seconds, damagePercent: stats.damageTakenPercent, wins: 0)
+            record.seconds = min(record.seconds, stats.seconds)
+            record.damagePercent = min(record.damagePercent, stats.damageTakenPercent)
+            record.wins += 1
+            records = (records ?? [:]).merging([key: record]) { $1 }
+            claim.record = record
+        }
+        return claim
+    }
+}
+
+/// A story mission's best won battle: fastest time and least health lost (not necessarily the same battle).
+public struct MPCMissionRecord: Codable, Equatable, Sendable {
+    public var seconds: Double
+    public var damagePercent: Double
+    public var wins: Int
+    public init(seconds: Double, damagePercent: Double, wins: Int) {
+        self.seconds = seconds; self.damagePercent = damagePercent; self.wins = wins
     }
 }
 
