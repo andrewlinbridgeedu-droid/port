@@ -2,6 +2,7 @@ import Observation
 import Foundation
 import MistportCombatCore
 import SwiftUI
+import UserNotifications
 
 /// Shared presentation for the two early passive relics. Existing bitmap art is
 /// temporary until their dedicated illustrations are delivered.
@@ -6353,5 +6354,220 @@ extension GameStore {
     func acknowledgeArrivals() {
         defaults.set(housingNow.timeIntervalSince1970, forKey: Self.arrivalsSeenKey)
         churchServicesRevision += 1
+    }
+}
+
+/// 上线的理由 (2026-10-22, user: 1 2 3 4 都做): teammate errands, the wandering merchant, what is coming up
+/// (明日预告) and one daily reminder. All pull, nothing lost by staying away.
+extension GameStore {
+    private static let partyErrandKey = "mistport.party-errands.v1"
+    private static let reminderKey = "mistport.reminder.v1"
+    private static let merchantSoldKey = "mistport.merchant-sold.v1"
+    static let reminderIDs = (1...3).map { "mistport.reminder.\($0)" }
+
+    struct ReminderSettings: Codable, Equatable {
+        var asked = false
+        var enabled = false
+        var hour = 20
+    }
+
+    var highestClearedMission: Int { churchTowerMissionNumbers.max() ?? 0 }
+    func pacingDay(at date: Date) -> Int {
+        (dailyPacingStart ?? MPCDailyPacingStart(start: pacingClock(), origin: .newSave, recordedAt: pacingClock())).day(now: date)
+    }
+    static func rewardItemName(_ id: String) -> String {
+        id == MPCMissionChallengeCatalog.dustItemID ? "技能粉尘" : workshopItemName(id)
+    }
+
+    // MARK: Teammate errands
+
+    var partyErrands: MPCPartyErrandLedger {
+        _ = churchServicesRevision
+        return defaults.data(forKey: Self.partyErrandKey).flatMap { try? JSONDecoder().decode(MPCPartyErrandLedger.self, from: $0) } ?? .init()
+    }
+    func partyMateAvailable(_ mateID: String) -> Bool {
+        MPCPartyErrandCatalog.isAvailable(mateID, highestMission: highestClearedMission, closedCases: closedBountyIDs)
+    }
+    /// Teammates back from an errand and waiting to be thanked.
+    var partyMatesBack: [String] {
+        let now = housingNow.timeIntervalSince1970
+        return MPCPartyErrandCatalog.mates.filter { partyErrands.open($0)?.isBack(at: now) == true }
+    }
+    /// Something to do with a teammate: one is back, or one is free and has not gone out today.
+    var partyNeedsAttention: Bool {
+        !partyMatesBack.isEmpty || MPCPartyErrandCatalog.mates.contains { partyMateAvailable($0) && partyErrands.canSend($0, day: pacingDay) }
+    }
+    func sendPartyErrand(_ errandID: String) {
+        var ledger = partyErrands
+        do {
+            let trip = try ledger.send(errandID, day: pacingDay, at: housingNow.timeIntervalSince1970,
+                                       highestMission: highestClearedMission, closedCases: closedBountyIDs)
+            defaults.set(try JSONEncoder().encode(ledger), forKey: Self.partyErrandKey)
+            featureMessage = "\(MPCPartyErrandCatalog.name(trip.mateID))出门了，\(trip.errand?.hours ?? 0) 小时后回来。"
+        } catch let failure as MPCPartyErrandLedger.Failure {
+            featureMessage = switch failure {
+            case .away: "还没回来。"
+            case .sentToday: "今天已经跑过一趟了，明天再托。"
+            default: "现在还托不了。"
+            }
+        } catch {
+            featureMessage = "没托成：\(error.localizedDescription)"
+        }
+        churchServicesRevision += 1
+    }
+    /// Pays what the trip brought. The ledger is written first: if the app dies before the wallet is
+    /// saved the reward is lost, never paid twice.
+    @discardableResult
+    func claimPartyErrand(_ mateID: String) -> MPCPartyErrandLedger.Reward? {
+        var ledger = partyErrands
+        guard let reward = try? ledger.claim(mateID, at: housingNow.timeIntervalSince1970),
+              let data = try? JSONEncoder().encode(ledger) else { return nil }
+        defaults.set(data, forKey: Self.partyErrandKey)
+        do {
+            var inventory = chapterOneCampaign.inventory
+            inventory[reward.itemID, default: 0] += reward.itemCount
+            let coins = venueCoins + reward.copper
+            try updateChurchServices(inventory: inventory) { $0.loans.coins = coins }
+        } catch {
+            featureMessage = "这一趟带回的东西没有入账：\(error.localizedDescription)"
+        }
+        churchServicesRevision += 1
+        return reward
+    }
+
+    // MARK: The merchant
+
+    /// What 阿德拉 brings today, from Q4 (when relics are first sold) on her days in port.
+    var merchantOffer: MPCWanderingMerchant.Offer? {
+        guard highestClearedMission >= 4 else { return nil }
+        let relics = EarlyRelicShop.passiveIDs.filter { $0 != EarlyRelicShop.needle && MPCChapterOneCatalog.isRelicEnabled($0) }
+            .compactMap { id in EarlyRelicShop.price(id).map { MPCWanderingMerchant.Relic(id: id, shopPrice: $0, shopMission: EarlyRelicShop.unlock(id)) } }
+        return MPCWanderingMerchant.offer(day: pacingDay, relics: relics, owned: chapterOneCampaign.ownedRelicIDs,
+                                          highestMission: highestClearedMission, soldVisits: merchantSoldVisits)
+    }
+    var merchantInPort: Bool { highestClearedMission >= 4 && MPCWanderingMerchant.isInPort(day: pacingDay) }
+    /// Arrival days of the visits she sold something on: one relic a visit.
+    var merchantSoldVisits: Set<Int> {
+        _ = churchServicesRevision
+        return Set((defaults.array(forKey: Self.merchantSoldKey) as? [Int]) ?? [])
+    }
+    var merchantSoldThisVisit: Bool { MPCWanderingMerchant.arrivalDay(day: pacingDay).map(merchantSoldVisits.contains) ?? false }
+    /// Buys her relic through the shop's purchase record, so a crash between the two writes recovers.
+    func buyFromMerchant() {
+        guard let offer = merchantOffer, !chapterOneCampaign.ownedRelicIDs.contains(offer.relicID) else { return }
+        guard venueCoins >= offer.price else { featureMessage = "铜币不足，还需要 \(offer.price - venueCoins) 枚。"; return }
+        let purchase = EarlyRelicPurchase(coins: venueCoins - offer.price,
+                                          relicIDs: Array(chapterOneCampaign.ownedRelicIDs.union([offer.relicID])))
+        guard let data = try? JSONEncoder().encode(purchase), let visit = MPCWanderingMerchant.arrivalDay(day: pacingDay) else { return }
+        // The visit is marked first: a crash in between loses the sale, never sells twice.
+        defaults.set(Array(merchantSoldVisits.union([visit])).sorted(), forKey: Self.merchantSoldKey)
+        defaults.set(data, forKey: Self.earlyRelicPurchaseKey)
+        recoverEarlyRelicPurchase()
+        featureMessage = "买下了\(EarlyRelicShop.name(offer.relicID))，可以在角色页装到被动位。"
+        churchServicesRevision += 1
+    }
+
+    // MARK: Coming up
+
+    /// What will be waiting at `then` (game clock) that is not here now.
+    func comingUpFacts(at then: Date) -> MPCComingUp.Facts {
+        let now = housingNow.timeIntervalSince1970, later = then.timeIntervalSince1970
+        let nowDay = pacingDay, thenDay = pacingDay(at: then)
+        let economy = cityEconomy
+        var payout = 0
+        if let deposit = economy.deposit, !deposit.closed, deposit.dueAt > now, deposit.dueAt <= later { payout += deposit.maturityValue }
+        if let term = economy.termDeposit, !term.closed, term.dueAt > now, term.dueAt <= later { payout += term.maturityValue }
+        let ledger = partyErrands
+        let back = MPCPartyErrandCatalog.mates.filter { id in
+            ledger.open(id).map { !$0.isBack(at: now) && $0.isBack(at: later) } ?? false
+        }.map(MPCPartyErrandCatalog.name)
+        let full = Double(MPCStamina.maximum)
+        let staminaFull = housingRecord.map { $0.stamina.current(at: now) < full && $0.stamina.current(at: later) >= full } ?? false
+        return .init(nowDay: nowDay, thenDay: thenDay, nextMission: nextChapterMission.map { ($0.number, $0.title) },
+                     wellOpen: cityServiceIsUnlocked(.church), clearedFloors: churchTowerProgress.clearedFloors.count,
+                     payoutCopper: payout, teammatesBack: back,
+                     merchantArrives: highestClearedMission >= 4 && !MPCWanderingMerchant.isInPort(day: nowDay) && MPCWanderingMerchant.isInPort(day: thenDay),
+                     staminaFull: staminaFull)
+    }
+    /// 明日预告: what tomorrow morning brings, and the hook for the mission that opens then.
+    var tomorrowPreview: (lines: [MPCComingUp.Line], teaser: String?) {
+        let calendar = Calendar.current
+        guard let morning = calendar.date(byAdding: .hour, value: 24 + 9, to: calendar.startOfDay(for: housingNow)) else { return ([], nil) }
+        let facts = comingUpFacts(at: morning)
+        let lines = MPCComingUp.lines(facts).filter { $0.kind != .stamina }
+        let teaser = lines.first?.kind == .story ? facts.nextMission.flatMap { MPCComingUp.teaser(mission: $0.number) } : nil
+        return (lines, teaser)
+    }
+    /// Today's story is done and the next mission waits for a later day.
+    var storyDoneForToday: Bool { nextChapterMission.map { missionLockText($0) != nil } ?? false }
+    /// The hook under the home task bar while the next mission opens tomorrow.
+    var nextMissionTeaser: String? {
+        guard let next = nextChapterMission, missionLockText(next) != nil,
+              MPCDailyPacing.openingDay(mission: next.number) == pacingDay + 1 else { return nil }
+        return MPCComingUp.teaser(mission: next.number)
+    }
+
+    // MARK: Daily reminder
+
+    var reminderSettings: ReminderSettings {
+        _ = churchServicesRevision
+        return defaults.data(forKey: Self.reminderKey).flatMap { try? JSONDecoder().decode(ReminderSettings.self, from: $0) } ?? .init()
+    }
+    private func saveReminderSettings(_ settings: ReminderSettings) {
+        defaults.set(try? JSONEncoder().encode(settings), forKey: Self.reminderKey)
+        churchServicesRevision += 1
+    }
+    /// Asked once, the first evening the day's story is done.
+    var shouldOfferReminders: Bool { phase == .cityHub && !reminderSettings.asked && storyDoneForToday }
+    func declineReminders() {
+        var settings = reminderSettings
+        settings.asked = true
+        saveReminderSettings(settings)
+    }
+    func enableReminders() async {
+        var settings = reminderSettings
+        settings.asked = true
+        let granted = (try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])) ?? false
+        settings.enabled = granted
+        saveReminderSettings(settings)
+        featureMessage = granted ? "好，每天 \(settings.hour) 点提醒你一次，只在有新东西时才响。日刊最后可以改时间或关掉。"
+            : "系统没有允许通知。可以在 iPhone 的“设置 → 通知 → 雾港”里打开。"
+        scheduleReminders()
+    }
+    func setReminderHour(_ hour: Int) {
+        var settings = reminderSettings
+        settings.hour = min(23, max(6, hour))
+        saveReminderSettings(settings)
+        scheduleReminders()
+    }
+    func disableReminders() {
+        var settings = reminderSettings
+        settings.enabled = false
+        saveReminderSettings(settings)
+        scheduleReminders()
+    }
+    /// Replaces the pending reminders: at most one a day at the chosen hour for the next three days, each
+    /// saying what will be new by then; a day with nothing new gets none. Called when the app leaves the
+    /// foreground and when the setting changes. Under the playtest clock the facts use the game clock.
+    func scheduleReminders() {
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: Self.reminderIDs)
+        let settings = reminderSettings
+        guard settings.enabled else { return }
+        let calendar = Calendar.current, real = Date(), offset = housingNow.timeIntervalSince(real)
+        var slot = 0
+        for dayOffset in 0..<4 where slot < Self.reminderIDs.count {
+            guard let day = calendar.date(byAdding: .day, value: dayOffset, to: calendar.startOfDay(for: real)),
+                  let fire = calendar.date(bySettingHour: settings.hour, minute: 0, second: 0, of: day),
+                  fire.timeIntervalSince(real) > 15 * 60,
+                  let text = MPCComingUp.reminder(comingUpFacts(at: fire.addingTimeInterval(offset))) else { continue }
+            let content = UNMutableNotificationContent()
+            content.title = text.title
+            content.body = text.body
+            content.sound = .default
+            let trigger = UNCalendarNotificationTrigger(dateMatching: calendar.dateComponents([.year, .month, .day, .hour, .minute], from: fire), repeats: false)
+            center.add(UNNotificationRequest(identifier: Self.reminderIDs[slot], content: content, trigger: trigger))
+            slot += 1
+        }
     }
 }

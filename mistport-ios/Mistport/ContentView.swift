@@ -273,7 +273,9 @@ struct ContentView: View {
                         onDailyGoals: {
                             GameInterfaceSound.shared.playClick()
                             newspaperPresented = true
-                        }
+                        },
+                        nextMissionTeaser: game.nextMissionTeaser,
+                        newsWaiting: game.partyNeedsAttention || (game.merchantInPort && game.merchantOffer != nil)
                     )
                 case .districtMap:
                     // Legacy entry/debug routes bypass the removed street page too.
@@ -465,12 +467,22 @@ struct ContentView: View {
             }
         }
         .onChange(of: scenePhase) { _, phase in
+            // Leaving the game: refresh the reminders with what will be new by then (2026-10-22).
+            if phase == .background { game.scheduleReminders() }
             Task {
                 guard phase == .active else { return }
                 await game.openHousingDay()
                 if game.phase != .title && game.phase != .pathSelection { try? game.openNeighborDay(); game.openStreetDay(); game.ensureDailyGoalPlan() }
                 presentDailyNewspaperIfNeeded()
             }
+        }
+        // Asked once, the first evening the day's story is done (2026-10-22).
+        .alert("明天还有新的一关", isPresented: Binding(get: { homeIsActive && game.shouldOfferReminders }, set: { _ in })) {
+            Button("好，提醒我") { Task { await game.enableReminders() } }
+            Button("不用", role: .cancel) { game.declineReminders() }
+        } message: {
+            Text((game.nextChapterMission.map { "第 \($0.number) 关《\($0.title)》开放的时候，" } ?? "有新东西的时候，")
+                 + "要每天晚上 8 点提醒你一次吗？没有新东西就不响。以后可以在日刊最后改时间或关掉。")
         }
         .fullScreenCover(isPresented: $newspaperPresented, onDismiss: openNewspaperDestination) {
             DailyNewspaperView(game: game) { destination in

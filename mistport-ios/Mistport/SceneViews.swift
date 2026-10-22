@@ -64,6 +64,10 @@ struct CityHubView: View {
     /// 今日三件事 (2026-10-22): goals done today, how many, whether the reward waits; nil once paid.
     var dailyGoals: (done: Int, total: Int, ready: Bool)? = nil
     var onDailyGoals: () -> Void = {}
+    /// 上线的理由 (2026-10-22): the hook for the mission that opens tomorrow, and whether the paper has
+    /// something waiting (a teammate back or free, the merchant in port).
+    var nextMissionTeaser: String? = nil
+    var newsWaiting = false
 
     private var tint: Color { path?.tint ?? .purple }
 
@@ -376,6 +380,8 @@ struct CityHubView: View {
                         Text(nextMissionTitle).font(.callout.weight(.semibold)).lineLimit(1)
                         if let target = trackedTarget {
                             Text(targetCaption(target) + offscreenHint(target, in: viewport)).font(.caption2).foregroundStyle(.white.opacity(0.78)).lineLimit(1)
+                        } else if let nextMissionTeaser {
+                            Text(nextMissionTeaser).font(.caption2).italic().foregroundStyle(.white.opacity(0.78)).lineLimit(2)
                         }
                     }
                     Spacer(minLength: 0)
@@ -386,16 +392,22 @@ struct CityHubView: View {
             .buttonStyle(.plain)
             .disabled(!storyIsAvailable)
             .accessibilityLabel("主线 \(nextMissionTitle)" + (storyIsAvailable ? "，进入" : ""))
-            if let dailyGoals {
+            if dailyGoals != nil || newsWaiting {
+                let ready = dailyGoals?.ready == true
                 Button(action: onDailyGoals) {
                     VStack(spacing: 1) {
-                        Image(systemName: dailyGoals.ready ? "gift.fill" : "checklist").font(.system(size: 15, weight: .bold))
-                            .foregroundStyle(dailyGoals.ready ? Color(red: 1, green: 0.84, blue: 0.4) : .white.opacity(0.9))
-                        Text("今日 \(dailyGoals.done)/\(dailyGoals.total)").font(.system(size: 10, weight: .bold).monospacedDigit())
-                    }.frame(minWidth: 48, minHeight: 44)
+                        Image(systemName: ready ? "gift.fill" : dailyGoals == nil ? "newspaper" : "checklist").font(.system(size: 15, weight: .bold))
+                            .foregroundStyle(ready ? Color(red: 1, green: 0.84, blue: 0.4) : .white.opacity(0.9))
+                        Text(dailyGoals.map { "今日 \($0.done)/\($0.total)" } ?? "日刊").font(.system(size: 10, weight: .bold).monospacedDigit())
+                    }
+                    .frame(minWidth: 48, minHeight: 44)
+                    .overlay(alignment: .topTrailing) {
+                        if newsWaiting { Circle().fill(Color(red: 1, green: 0.42, blue: 0.3)).frame(width: 8, height: 8).offset(x: -4, y: 4) }
+                    }
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(dailyGoals.ready ? "今日三件事都办完了，去日刊领奖励" : "今日三件事，已办 \(dailyGoals.done) 件，共 \(dailyGoals.total) 件")
+                .accessibilityLabel((dailyGoals.map { $0.ready ? "今日三件事都办完了，去日刊领奖励" : "今日三件事，已办 \($0.done) 件，共 \($0.total) 件" } ?? "日刊")
+                                    + (newsWaiting ? "；日刊里有队友或货郎的消息" : ""))
             }
             if let challengeStars {
                 Button(action: onChallenges) {

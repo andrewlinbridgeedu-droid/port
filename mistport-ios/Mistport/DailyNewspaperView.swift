@@ -47,6 +47,8 @@ struct DailyNewspaperView: View {
     @State private var talkingToPrinter = false
     /// The arrivals just acknowledged, shown as a receipt line (2026-10-22).
     @State private var received: Int?
+    /// What a teammate just brought back, shown with their story.
+    @State private var partyReward: MPCPartyErrandLedger.Reward?
     private let ink = Color(red: 0.19, green: 0.14, blue: 0.09)
     private let paper = Color(red: 0.93, green: 0.86, blue: 0.70)
 
@@ -114,6 +116,8 @@ struct DailyNewspaperView: View {
             Text(game.housingDailyNotice).font(.system(size: 12, design: .serif))
             Text(game.todayPacingSummary).font(.system(size: 14, weight: .semibold, design: .serif))
             morningLedger
+            partyErrands
+            merchantStall
             cityTrendFront
             paperRule(thickness: 1)
             row("主线进展", destination: .story) {
@@ -178,6 +182,7 @@ struct DailyNewspaperView: View {
                 Text(game.todayRemnant?.title ?? "任意通缉结案领奖后，每天开放一个小案。")
             }
             row("今日工作", destination: .work) { Text(game.repeatWorkNotice) }
+            tomorrowColumn
             HStack { Spacer(); Text("雾港报馆印行 · 今日消息到此"); Spacer() }
                 .font(.system(size: 10, design: .serif))
         }.foregroundStyle(ink)
@@ -310,6 +315,146 @@ struct DailyNewspaperView: View {
                 }
             }
         }
+    }
+    /// 托队友办事 (2026-10-22): each teammate is free, out somewhere until a time, or back with a story.
+    @ViewBuilder private var partyErrands: some View {
+        let ledger = game.partyErrands
+        let now = game.housingNow.timeIntervalSince1970
+        let mates = MPCPartyErrandCatalog.mates.filter(game.partyMateAvailable)
+        let gold = Color(red: 0.55, green: 0.36, blue: 0.05)
+        if !mates.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("托队友办事").font(.system(size: 20, weight: .bold, design: .serif))
+                if let partyReward {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("\(partyReward.mateName) · \(partyReward.errandTitle)").font(.system(size: 13, weight: .bold, design: .serif))
+                        Text(partyReward.note).font(.system(size: 13, design: .serif)).fixedSize(horizontal: false, vertical: true)
+                        Text("带回：铜币 +\(partyReward.copper)、\(GameStore.rewardItemName(partyReward.itemID)) +\(partyReward.itemCount)")
+                            .font(.system(size: 13, weight: .bold, design: .serif)).foregroundStyle(gold)
+                    }
+                    .padding(10).frame(maxWidth: .infinity, alignment: .leading)
+                    .overlay(Rectangle().stroke(ink.opacity(0.5), lineWidth: 0.7))
+                    .transition(.scale(scale: 0.9).combined(with: .opacity))
+                }
+                ForEach(mates, id: \.self) { mate in
+                    let name = MPCPartyErrandCatalog.name(mate)
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        if let trip = ledger.open(mate), let errand = trip.errand {
+                            if trip.isBack(at: now) {
+                                Text("\(name)回来了 · \(errand.title)").font(.system(size: 14, weight: .semibold, design: .serif))
+                                Spacer(minLength: 4)
+                                paperButton("听\(name)说说", tint: gold) {
+                                    let reward = game.claimPartyErrand(mate)
+                                    withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) { partyReward = reward }
+                                }
+                            } else {
+                                Text("\(name)在\(errand.place)，\(Self.clockText(trip.returnsAt, from: now))回来。").font(.system(size: 14, design: .serif))
+                            }
+                        } else if ledger.sentToday(mate, day: game.pacingDay) {
+                            Text("\(name)今天已经跑过一趟了，明天再托。").font(.system(size: 14, design: .serif))
+                        } else {
+                            Text("\(name)今天有空。").font(.system(size: 14, design: .serif))
+                            Spacer(minLength: 4)
+                            Menu {
+                                ForEach(MPCPartyErrandCatalog.offers(mate, highestMission: game.highestClearedMission)) { errand in
+                                    Button("\(errand.title) · \(errand.hours) 小时 · \(errand.copper) 铜和\(GameStore.rewardItemName(errand.itemID))") {
+                                        GameInterfaceSound.shared.playClick()
+                                        game.sendPartyErrand(errand.id)
+                                    }
+                                }
+                            } label: {
+                                Text("托\(name)去…").font(.system(size: 14, weight: .bold, design: .serif))
+                                    .padding(.horizontal, 12).padding(.vertical, 7)
+                                    .overlay(Rectangle().stroke(ink.opacity(0.75), lineWidth: 0.8))
+                            }
+                        }
+                    }
+                }
+                Text("一人一天跑一趟。回来的东西等你来收，不会过期。").font(.system(size: 11, design: .serif))
+            }
+        }
+    }
+    /// 货郎靠岸 (2026-10-22): on her two days in port, the one relic she brought.
+    @ViewBuilder private var merchantStall: some View {
+        if game.merchantInPort, let line = MPCWanderingMerchant.arrivalLine(day: game.pacingDay) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("货郎靠岸").font(.system(size: 20, weight: .bold, design: .serif))
+                Text(line).font(.system(size: 14, design: .serif))
+                if let offer = game.merchantOffer {
+                    Text("她带来一件「\(EarlyRelicShop.name(offer.relicID))」。" + (offer.early
+                        ? "城里的铺子要等第 \(offer.shopMission) 关以后才有。" : "比铺子里便宜一成。"))
+                        .font(.system(size: 14, weight: .semibold, design: .serif))
+                    Text(EarlyRelicShop.detail(offer.relicID)).font(.system(size: 12, design: .serif)).fixedSize(horizontal: false, vertical: true)
+                    HStack(alignment: .firstTextBaseline) {
+                        paperButton("买下 · \(offer.price) 铜", tint: Color(red: 0.55, green: 0.36, blue: 0.05)) { game.buyFromMerchant() }
+                        Spacer(minLength: 6)
+                        Text("你有 \(game.venueCoins) 铜").font(.system(size: 12, design: .serif).monospacedDigit())
+                    }
+                    Text("错过了也不要紧，她过几天还会来。").font(.system(size: 11, design: .serif))
+                } else {
+                    Text(game.merchantSoldThisVisit ? MPCWanderingMerchant.soldLine : MPCWanderingMerchant.nothingLine)
+                        .font(.system(size: 13, design: .serif))
+                }
+            }
+        }
+    }
+    /// 明日预告 and the daily reminder setting (2026-10-22).
+    private var tomorrowColumn: some View {
+        let preview = game.tomorrowPreview
+        let settings = game.reminderSettings
+        return VStack(alignment: .leading, spacing: 7) {
+            Text("明日预告").font(.system(size: 20, weight: .bold, design: .serif))
+            if let teaser = preview.teaser {
+                Text(teaser).font(.system(size: 14, design: .serif).italic()).fixedSize(horizontal: false, vertical: true)
+            }
+            if preview.lines.isEmpty {
+                Text("明天没有新开的东西。今天没做完的，明天都还在。").font(.system(size: 14, design: .serif))
+            } else {
+                Text(preview.lines.map(\.text).joined(separator: " · ")).font(.system(size: 14, weight: .semibold, design: .serif))
+            }
+            if game.highestClearedMission >= 4, !game.merchantInPort {
+                Text("货郎\(MPCWanderingMerchant.name)下一次靠岸：第 \(MPCWanderingMerchant.nextArrival(onOrAfter: game.pacingDay)) 天。")
+                    .font(.system(size: 12, design: .serif))
+            }
+            HStack(alignment: .firstTextBaseline) {
+                Text("每日提醒").font(.system(size: 15, weight: .bold, design: .serif))
+                Spacer()
+                if settings.enabled {
+                    Menu {
+                        ForEach([8, 12, 18, 19, 20, 21, 22], id: \.self) { hour in
+                            Button("每天 \(hour):00") { game.setReminderHour(hour) }
+                        }
+                        Button("关掉提醒", role: .destructive) { game.disableReminders() }
+                    } label: {
+                        Text("每天 \(settings.hour):00").font(.system(size: 13, weight: .bold, design: .serif))
+                            .padding(.horizontal, 10).padding(.vertical, 6)
+                            .overlay(Rectangle().stroke(ink.opacity(0.75), lineWidth: 0.8))
+                    }
+                } else {
+                    paperButton("打开", tint: ink) { Task { await game.enableReminders() } }
+                }
+            }
+            Text("一天最多一条，只在有新的一关、到账、队友回来、货郎靠岸时才响。").font(.system(size: 11, design: .serif))
+            paperRule(thickness: 0.6).padding(.top, 5)
+        }
+    }
+    private func paperButton(_ title: String, tint: Color, action: @escaping () -> Void) -> some View {
+        Button {
+            GameInterfaceSound.shared.playClick()
+            action()
+        } label: {
+            Text(title).font(.system(size: 14, weight: .bold, design: .serif)).foregroundStyle(tint)
+                .padding(.horizontal, 12).padding(.vertical, 7)
+                .overlay(Rectangle().stroke(tint, lineWidth: 1))
+        }.buttonStyle(.plain)
+    }
+    /// "今天 21:30" / "明天 05:30" on the game clock.
+    static func clockText(_ time: TimeInterval, from now: TimeInterval) -> String {
+        let calendar = Calendar.current, date = Date(timeIntervalSince1970: time)
+        let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: Date(timeIntervalSince1970: now)),
+                                           to: calendar.startOfDay(for: date)).day ?? 0
+        let clock = date.formatted(.dateTime.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits))
+        return (days <= 0 ? "今天 " : days == 1 ? "明天 " : "\(days) 天后 ") + clock
     }
     /// ▲/▼ for the week's change in a side's share, once there is a week to compare with.
     private func weekArrow(_ trend: MPCCityTrendSnapshot, _ side: MPCCityFaction) -> String {
