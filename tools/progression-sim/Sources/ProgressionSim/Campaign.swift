@@ -140,6 +140,10 @@ struct Milestone: Codable {
 struct RunResult: Codable {
     var bankExperiment: BankRunSummary? = nil
     var housingExperiment: HousingSummary? = nil
+    /// Human runs: challenge stars earned on replays (first-clear stars are not counted here).
+    var starsReplayed: Double? = nil
+    /// Human runs: story tries past the pace's counted ones (the bot's plan search), not in `minutes`.
+    var uncountedRetryMinutes: Double? = nil
     let policy: String
     let profile: String
     let startOffset: Int
@@ -320,6 +324,13 @@ final class Campaign {
     /// Set for human-pace runs: every non-battle second comes from the step model.
     var model: HumanTimingModel? { assumptions.pace.map { HumanTimingModel(pace: $0) } }
     var battleOnly: [String: Double] = [:]
+    /// Human runs: challenge stars still missing per cleared mission, with that mission's winning battle seconds.
+    var starPool: [(mission: Int, missing: Double, seconds: Double)] = []
+    var starsReplayed = 0.0
+    var commissionsDone = Set<String>()
+    /// Human runs: story tries per mission, and the seconds of tries past the pace's counted ones.
+    var mainTries: [Int: Int] = [:]
+    var uncountedRetrySeconds = 0.0
     var visitedMissions = Set<Int>(), investigatedCases = Set<String>(), briefedEvents = Set<String>()
     var churchVisitDay = -1
     func total(_ steps: [TimedStep]) -> Double { steps.reduce(0) { $0 + $1.seconds } }
@@ -446,7 +457,10 @@ final class Campaign {
         } else if assumptions.basketCost > 0 {
             if copper >= assumptions.basketCost { copper -= assumptions.basketCost; basketsBought += 1 } else { basketsMissed += 1 }
         }
-        if let m = model { busy("newspaper", total(m.newspaper)) }
+        if let m = model {
+            busy("newspaper", total(m.newspaper + [m.dailyGoalsRead]))
+            if usesDailyContent { starReplays(m); busy("newspaper", m.dailyGoalsClaim.seconds) }
+        }
         if usesDailyContent { neighbors.open(day: dayNumber, completedMissions: completedMissions) }
         housingSecondSession()
         workshopSession()
@@ -457,6 +471,19 @@ final class Campaign {
         staminaLeft = 100 + bonus
         if bankScenario != nil { bankBeginDay() }
         if churchOpen { refreshBoard() }
+    }
+
+    /// Challenge-star replays (human runs): `all` does the day's one star goal (今日小目标), `completionist`
+    /// every star still missing. A star costs the pace's tries at the mission's own winning battle time.
+    func starReplays(_ m: HumanTimingModel) {
+        var budget = policy == .completionist ? Double.infinity : 1
+        for i in starPool.indices where budget > 0 && starPool[i].missing > 0 {
+            let stars = min(budget, starPool[i].missing), tries = stars * m.pace.starTries
+            busy("stars", tries * (total(m.starReplay) + starPool[i].seconds))
+            battleOnly["stars", default: 0] += tries * starPool[i].seconds
+            battles["stars", default: 0] += Int(tries.rounded(.up))
+            starPool[i].missing -= stars; budget -= stars; starsReplayed += stars
+        }
     }
 
     /// The day's workshop visit (workshop policies, from Q5): keep three salves of our own,
@@ -579,7 +606,20 @@ final class Campaign {
         for (name, feature, today, pay, seconds) in offers where today && contribution.isOpen(feature) {
             guard useStamina(name == "urgent" ? 15 : name == "joint" ? 25 : 35) else { continue }
             guard tierContentDays.insert("\(name)-\(dayNumber)").inserted else { continue }
-            busy(name, seconds)
+            // Human runs time the task actually posted (MPCStreetTask) and fight its street battles.
+            let task = name == "urgent" ? MPCStreetTaskCatalog.urgentErrand(day: dayNumber)
+                : name == "joint" ? MPCStreetTaskCatalog.jointErrand(day: dayNumber)
+                : MPCStreetTaskCatalog.cityCommissions.first { !commissionsDone.contains($0.id) }
+            if let m = model, let task {
+                busy(name, total(m.streetTask(task)))
+                for (index, step) in task.steps.enumerated() where step.action == .battle {
+                    tickets += 1
+                    _ = streetFight(MPCStreetTaskCatalog.streetEncounterID(taskID: task.id, step: index, ticket: "street-\(tickets)"), kind: name)
+                }
+                if name == "commission" { commissionsDone.insert(task.id) }
+            } else {
+                busy(name, seconds)
+            }
             if q < 30 && !assumptions.tierCopperInChapterOne { tierContentDone[name, default: 0] += 1; contribute("\(name)-\(dayNumber)", .errand); continue }
             loopIncome(name) { copper += pay; earned[name, default: 0] += pay }
             tierContentDone[name, default: 0] += 1
@@ -687,11 +727,13 @@ final class Campaign {
         if let m = model, visitedMissions.insert(mission).inserted { busy("main", total(m.storyFirstVisit(mission))) }
         var attempts = 0, total = 0.0
         // A retry starts from a different whole plan (cards, relics, medal time), so the
-        // one salve is not always spent on the same losing plan first.
+        // one salve is not always spent on the same losing plan first. 奥黛尔 gives the medal after Q4
+        // and Q5–Q9 ask the player to pick it or the mask (nil: the mask); from Q10 the medal only.
+        let medalTimes: [Double?] = mission >= 10 ? [6.0, 14.0] : mission >= 5 ? [nil, 6.0, 14.0] : [nil]
         let plans = cards(forMission: mission).flatMap { sequence in
             bountyRelicCandidates(mission: mission, owned: relics.ownedIDs).flatMap { bountyRelic in
                 (mission >= 5 && !passives.isEmpty ? passives.map { Optional($0) } : [nil]).flatMap { passive in
-                    (mission >= 10 ? [6.0, 14.0] as [Double?] : [nil]).map { (sequence, bountyRelic, passive, $0) } } } }
+                    medalTimes.map { (sequence, bountyRelic, passive, $0) } } } }
         let shift = plans.isEmpty ? 0 : rotation % plans.count
         let orderedPlans = Array(plans[shift...] + plans[..<shift])
         let planKey = "\(key)|\(stats.attackBP)|\(stats.maxHP)|\(stats.damageReductionBP)|\(passives.sorted())|\(relics.ownedIDs.sorted())|\(rotation)"
@@ -703,11 +745,19 @@ final class Campaign {
             attempts += 1
             let consumables = mission >= 5 && salve > 0 ? ["consumable_pain_salve": 1] : [:]
             let l = housingBattleLoadout(loadout(mission: mission, gear: stats, passive: passive, sequence: sequence, bountyRelic: bountyRelic), target: "main")
+            // A person who lost twice follows the pre-battle hint and goes for the core first.
+            mainTries[mission, default: 0] += 1
+            let tries = mainTries[mission, default: 0]
             let report = try! CampaignFights.story(q: mission, sequence: sequence, mask: (3...9).contains(mission),
-                                                consumables: consumables, priorityCore: profile.priorityCore,
+                                                consumables: consumables, priorityCore: profile.priorityCore || (model != nil && tries > 2),
                                                 ultimate: mission >= 14, loadout: l, medalOffset: offset,
                                                 precise: true, actionDelay: profile.actionDelay)
-            spend("main", report.seconds); total += report.seconds
+            if let m = model, tries > m.pace.storyTriesCounted {
+                uncountedRetrySeconds += report.seconds + overhead("main")
+            } else {
+                spend("main", report.seconds)
+            }
+            total += report.seconds
             if report.medicinesUsed > 0 { salve = 0; salvesUsed += 1 }
             let won = report.session.outcome == .victory
             wear(passive, won: won)
@@ -723,6 +773,10 @@ final class Campaign {
                     : bankScenario != nil ? (mission >= 26 ? -2 * shift / 5 : 0) : mission == 30 ? -2 * shift : 0)
                 copper += paid; merit += reward.merit; earned["main", default: 0] += paid
                 q = mission
+                if let m = model {
+                    if mission == MPCCityTour.unlockMission { busy("tour", self.total(m.cityTour)) }
+                    starPool.append((mission, max(0, 3 - HumanTimingModel.firstClearStars[mission - 1]), report.seconds))
+                }
                 if bankScenario != nil {
                     for item in reward.itemIDs { inventory[item, default: 0] += 1 }
                     bankAfterMission()
@@ -986,6 +1040,10 @@ final class Campaign {
                          passives: passives, bountyRelics: relics.ownedIDs.sorted(), milestones: milestones, visits: visits)
         if bankScenario != nil { result.bankExperiment = bankSummary }
         if housingEnabled { result.housingExperiment = housingSummary }
+        if model != nil {
+            result.starsReplayed = (starsReplayed * 10).rounded() / 10
+            result.uncountedRetryMinutes = (uncountedRetrySeconds / 60 * 10).rounded() / 10
+        }
         return result
     }
 }

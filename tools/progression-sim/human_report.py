@@ -24,26 +24,41 @@ for activity in [a["activity"] for a in timings["paces"][0]["activities"]]:
     lines.append(f"| {activity} | {by_pace[paces[0]][activity]['scope']} | " + " | ".join(cells) + " |")
 
 lines += ["", "## 按天推进的整章（人的速度）", "",
-          "| 速度 | 打法 | 起始日 | 结果 | 打完第几天 | 平均每天 | 中位 | 最长一天 | 超过 2 小时的天 | 不到 1 小时的天 | 全章小时 | 章末铜 |",
-          "|---|---|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+          "| 速度 | 打法 | 起始日 | 结果 | 打完第几天 | 平均每天 | 中位 | 最长一天 | 超过 2 小时的天 | 不到 1 小时的天 | 全章小时 | 另计的重试（分钟） | 章末铜 |",
+          "|---|---|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
 for r in runs:
     by_day = r["minutesByDay"]
     total = sum(r["minutes"].values())
     result = f"卡在 Q{r['stuckAt']}" if r.get("stuckAt") else "通关"
     lines.append(f"| {names.get(r['profile'], r['profile'])} | {r['policy']} | {r['startOffset']} | {result} | {r['days']} | "
                  f"{total / max(1, r['days']):.0f} | {median(by_day):.0f} | {max(by_day):.0f} | {sum(1 for m in by_day if m > 120)} | "
-                 f"{sum(1 for m in by_day if m < 60)} | {total / 60:.1f} | {r['copper']} |")
+                 f"{sum(1 for m in by_day if m < 60)} | {total / 60:.1f} | {r.get('uncountedRetryMinutes') or 0:.0f} | {r['copper']} |")
 
 lines += ["", "## 时间花在哪（每天平均分钟，全都做，起始日 0）", ""]
-kinds = ["newspaper", "main", "tower", "bounty", "postal", "workshop", "errand", "event", "remnant"]
-labels = ["日刊", "主线", "塔", "通缉", "邮务", "工坊", "街坊", "事件", "残余"]
-lines += ["| 速度 | " + " | ".join(labels) + " | 合计 |", "|---|" + "---:|" * (len(kinds) + 1)]
+kinds = ["newspaper", "main", "tower", "bounty", "postal", "workshop", "errand", ("urgent", "joint", "commission"),
+         "event", "remnant", "tour", "stars"]
+labels = ["日刊", "主线", "塔", "通缉", "邮务", "工坊", "街坊", "街头急件", "事件", "残余", "认城", "挑战星"]
+def kind_minutes(r, k):
+    return sum(r["minutes"].get(x, 0) for x in (k if isinstance(k, tuple) else (k,)))
+for policy in ("all", "completionist"):
+    lines += ["", f"打法 {policy}：", "", "| 速度 | " + " | ".join(labels) + " | 合计 | 重打得星 |", "|---|" + "---:|" * (len(kinds) + 2)]
+    for r in runs:
+        if r["policy"] != policy or r["startOffset"] != runs[0]["startOffset"]:
+            continue
+        days = max(1, r["days"])
+        cells = [f"{kind_minutes(r, k) / days:.1f}" for k in kinds]
+        lines.append(f"| {names.get(r['profile'], r['profile'])} | " + " | ".join(cells) + f" | {sum(r['minutes'].values()) / days:.1f} | {r.get('starsReplayed') or 0:.0f} |")
+
+# The shape of the chapter: day 1 alone, the rest of the first week, then the days after.
+lines += ["", "## 每天的形状（分钟；起始日 0）", "",
+          "| 速度 | 打法 | 第 1 天 | 第 2–7 天平均 | 第 8 天到最后平均 | 最后一天 | 共几天 |", "|---|---|---:|---:|---:|---:|---:|"]
 for r in runs:
-    if r["policy"] != "all" or r["startOffset"] != runs[0]["startOffset"]:
+    if r["startOffset"] != runs[0]["startOffset"] or r["policy"] not in ("all", "completionist", "hinted"):
         continue
-    days = max(1, r["days"])
-    cells = [f"{r['minutes'].get(k, 0) / days:.1f}" for k in kinds]
-    lines.append(f"| {names.get(r['profile'], r['profile'])} | " + " | ".join(cells) + f" | {sum(r['minutes'].values()) / days:.1f} |")
+    d = r["minutesByDay"]
+    week = d[1:7]; rest = d[7:]
+    lines.append(f"| {names.get(r['profile'], r['profile'])} | {r['policy']} | {d[0]:.0f} | {sum(week) / max(1, len(week)):.0f} | "
+                 f"{sum(rest) / max(1, len(rest)):.0f} | {d[-1]:.0f} | {len(d)} |")
 
 # What would fill a 60- or 120-minute day: the day's content, then repeat jobs (J1/J2 in turn,
 # paid through the daily taper), then card games. Averages over the chapter, all policy, offset 0.

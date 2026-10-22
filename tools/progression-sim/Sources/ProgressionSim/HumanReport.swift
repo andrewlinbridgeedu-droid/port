@@ -90,6 +90,20 @@ enum HumanReport {
         rows.append(.init(activity: "remnant", scope: "一个残余案，接案、调查、战斗到领奖",
                           steps: averaged(MPCRemnantCatalog.all.flatMap { r in r.leads.indices.map { m.remnant(r, lead: $0) } }),
                           battleSeconds: remnant.0, battles: 1))
+        // Added 2026-10-22: the city tour, street tasks timed from their text, and challenge-star replays.
+        rows.append(.init(activity: "city_tour", scope: "雨后第一天，六站认城（一次）", steps: m.cityTour))
+        for kind in MPCStreetTask.Kind.allCases {
+            let tasks = MPCStreetTaskCatalog.streetTasks.filter { $0.kind == kind }
+            let fights = Double(tasks.reduce(0) { $0 + $1.steps.filter { $0.action == .battle }.count }) / Double(max(1, tasks.count))
+            let perFight = battle(kind.rawValue, per: Double(run?.battles[kind.rawValue] ?? 0)).0
+            rows.append(.init(activity: "street_" + kind.rawValue, scope: "街头\(kind == .urgent ? "急件" : kind == .joint ? "联办" : "城托")（\(tasks.count) 条平均），接单到感谢",
+                              steps: averaged(tasks.map { m.streetTask($0) }), battleSeconds: (perFight * fights * 10).rounded() / 10,
+                              battles: Int(fights.rounded())))
+        }
+        let replays = Double(run?.battles["stars"] ?? 0)
+        rows.append(.init(activity: "star_replay", scope: "重打一次拿挑战星（不含战斗外的多次尝试；每颗星按速度档 1.2/1.5/2.0 次）",
+                          steps: m.starReplay, battleSeconds: replays > 0 ? ((run?.battleSecondsByKind["stars"] ?? 0) / replays * 10).rounded() / 10 : 0,
+                          battles: 1))
         return rows
     }
 
@@ -109,7 +123,7 @@ enum HumanReport {
                     if policy == .all && offset == offsets[0] { reference = result }
                     let total = result.minutes.values.reduce(0, +)
                     print("human \(pace.name.padding(toLength: 8, withPad: " ", startingAt: 0)) \(policy.rawValue.padding(toLength: 13, withPad: " ", startingAt: 0)) day+\(offset): reached Q\(result.finalMission)"
-                          + (result.stuckAt.map { " STUCK at Q\($0)" } ?? " done") + String(format: " · %.0f min · day %d", total, result.days))
+                          + (result.stuckAt.map { " STUCK at Q\($0)" } ?? " done") + String(format: " · %.0f min · day %d · day 1 %.0f min", total, result.days, result.minutesByDay.first ?? 0))
                 }
             }
             results.append(.init(pace: pace, activities: activities(pace: pace, run: reference)))

@@ -24,6 +24,13 @@ struct HumanPace: Codable, Sendable {
     let wrongAnswerChance: Double
     /// Finding a person or a place on the street map before tapping it.
     let searchSeconds: Double
+    /// Replays per missing challenge star (2026-10-22 assumption): every star has a route that wins
+    /// at least 10 of 12 bot runs (MISSION_CHALLENGES_20261018.md), but a person has to find it.
+    let starTries: Double
+    /// Story tries per mission counted as play time (2026-10-22 assumption). The bot searches every card,
+    /// relic and medal plan in turn (Q18 over a thousand); a person reads the defeat hint after a few
+    /// losses. Tries beyond this are reported apart (`uncountedRetryMinutes`), not added to the day.
+    let storyTriesCounted: Int
 
     /// Reading speeds from typical Chinese reading rates (careful 250–300, game dialogue
     /// skimmed 400–600 characters a minute); taps and decisions from the keystroke-level
@@ -31,11 +38,11 @@ struct HumanPace: Codable, Sendable {
     /// the casual pace does not pick the priority target first.
     static let all = [
         HumanPace(name: "quick", readingCPM: 600, tapSeconds: 0.8, decisionSeconds: 2.0, battleActionDelay: 0,
-                  priorityCore: true, wrongAnswerChance: 0.1, searchSeconds: 6),
+                  priorityCore: true, wrongAnswerChance: 0.1, searchSeconds: 6, starTries: 1.2, storyTriesCounted: 4),
         HumanPace(name: "typical", readingCPM: 400, tapSeconds: 1.1, decisionSeconds: 3.5, battleActionDelay: 0,
-                  priorityCore: true, wrongAnswerChance: 0.2, searchSeconds: 12),
+                  priorityCore: true, wrongAnswerChance: 0.2, searchSeconds: 12, starTries: 1.5, storyTriesCounted: 5),
         HumanPace(name: "casual", readingCPM: 260, tapSeconds: 1.5, decisionSeconds: 5.0, battleActionDelay: 0,
-                  priorityCore: false, wrongAnswerChance: 0.3, searchSeconds: 20)
+                  priorityCore: false, wrongAnswerChance: 0.3, searchSeconds: 20, starTries: 2.0, storyTriesCounted: 6)
     ]
     var profile: Profile { Profile(name: name, actionDelay: battleActionDelay, priorityCore: priorityCore) }
 }
@@ -142,6 +149,38 @@ enum StreetMap {
     }()
 }
 
+/// The story pages around each mission (the 2026-10-18 rewrite): each cue's `message` and rules
+/// `hint` in Mistport/ChapterOneOnboarding.swift, read from the App source. The bubble shows 54
+/// characters a page, one tap a page; its typewriter (12 ms a character) is faster than reading.
+enum StoryPages {
+    static var file: URL { StreetMap.folder.deletingLastPathComponent().appendingPathComponent("ChapterOneOnboarding.swift") }
+    /// Cues without a mission number in their name.
+    static let early = ["opening": 1, "cityMission": 1, "mapEntry": 1, "firstBattle": 1, "rainFirstAftermath": 1,
+                        "fogGhostPrelude": 2, "rainInterlude": 2, "houndPrelude": 3, "secondBattle": 3,
+                        "q5Delivery": 5, "q5PaperDoubleIntervention": 5]
+    static let pageCharacters = 54
+    static let byMission: [Int: (characters: Int, pages: Int)] = {
+        guard let source = try? String(contentsOf: file, encoding: .utf8),
+              let start = source.range(of: "var message: String {"), let end = source.range(of: "var kicker: String {"),
+              let literal = try? NSRegularExpression(pattern: #"case \.(\w+):\s*"((?:[^"\\]|\\.)*)""#) else { return [:] }
+        let text = String(source[start.lowerBound..<end.lowerBound])
+        var result: [Int: (characters: Int, pages: Int)] = [:]
+        for match in literal.matches(in: text, range: NSRange(text.startIndex..., in: text)) {
+            guard let name = Range(match.range(at: 1), in: text).map({ String(text[$0]) }),
+                  let body = Range(match.range(at: 2), in: text).map({ String(text[$0]) }) else { continue }
+            let mission = early[name] ?? name.firstMatch(of: /^q(\d+)/).flatMap { Int($0.1) }
+            guard let mission else { continue }
+            let paragraphs = body.components(separatedBy: "\\n").map { $0.replacingOccurrences(of: "\\", with: "") }
+            let characters = paragraphs.reduce(0) { $0 + $1.count }
+            guard characters > 0 else { continue }
+            let pages = max(1, Int((Double(characters) / Double(pageCharacters)).rounded(.up)))
+            result[mission, default: (0, 0)].characters += characters
+            result[mission, default: (0, 0)].pages += pages
+        }
+        return result
+    }()
+}
+
 /// The step model for one pace. Text lengths are counted from the authored content.
 struct HumanTimingModel {
     let pace: HumanPace
@@ -172,11 +211,47 @@ struct HumanTimingModel {
         guard let m = Self.missions.first(where: { $0.number == mission }) else { return [] }
         var steps = [step("城市→任务板→选关", taps(3) + DeviceWaits.screen * 2), step("街区地图走到关卡", DeviceWaits.districtWalk + taps(2)),
                      step("读剧情", read(m.name + m.location + m.storyText) + taps(1)), step("首通奖励", read(40) + taps(1))]
+        if let pages = StoryPages.byMission[mission] {
+            steps.append(step("剧情页（\(pages.pages) 页）", read(pages.characters) + taps(Double(pages.pages))))
+        }
         if !m.permanentSkillIDs.isEmpty { steps.append(step("新技能说明", read(80) + taps(2) + decide(1))) }
         return steps
     }
     var storyAttempt: [TimedStep] { battleFrame(result: 40, planning: 1) }
     var storyRetry: [TimedStep] { [step("换打法再来", decide(1) + taps(1))] + battleFrame(result: 20, planning: 0.5) }
+
+    /// Challenge stars expected on a first clear, Q1–Q30 (MISSION_CHALLENGES_20261018.md, model table;
+    /// stars the export had no data for count as missing).
+    static let firstClearStars: [Double] = [3.00, 2.50, 3.00, 2.50, 1.50, 1.33, 1.00, 1.54, 1.21, 1.74,
+                                            1.33, 1.30, 1.43, 1.41, 1.29, 1.48, 1.73, 1.54, 1.25, 0.68,
+                                            1.58, 1.43, 1.70, 1.47, 1.44, 1.33, 1.38, 1.48, 1.06, 1.51]
+    /// One replay for a missing star, battle excluded: the star list, the three conditions, arranging
+    /// the cards for the one wanted, the battle frame and the result's "上次 → 本场" line.
+    var starReplay: [TimedStep] {
+        [step("首页星星→旧关挑战→选关", taps(3) + DeviceWaits.screen * 2), step("读三条条件", read(45)),
+         step("照条件排牌", decide(1.5) + taps(4))] + battleFrame(result: 60, planning: 0)
+    }
+
+    /// 雨后第一天 (MPCCityTour), once after Q2: each stop's scene, its small task, the lesson and the
+    /// line after, then the door into the real place and back.
+    var cityTour: [TimedStep] {
+        [step("首页提示条→认城", taps(1) + DeviceWaits.screen)] + MPCCityTour.stops.map { stop in
+            let task: Double
+            switch stop.task {
+            case let .question(prompt, choices, _, nudge):
+                task = question(prompt.count + choices.reduce(0) { $0 + $1.count }, explanation: nudge.count)
+            case let .action(label): task = read(label) + taps(1)
+            }
+            let scene = stop.scene.replacingOccurrences(of: "\n", with: "")
+            let pages = (Double(scene.count) / Double(StoryPages.pageCharacters)).rounded(.up)
+            return step("\(stop.title)：剧情、小事、说明、去看看", read(scene) + taps(pages) + task
+                        + read(stop.lesson + stop.done) + taps(3) + DeviceWaits.screen * 2)
+        }
+    }
+
+    /// 今日小目标 in the paper, and going back to claim once all are done.
+    var dailyGoalsRead: TimedStep { step("读今日小目标", read(70)) }
+    var dailyGoalsClaim: TimedStep { step("回日刊领小目标奖励", taps(3) + DeviceWaits.screen + read(24)) }
 
     /// One floor inside a climbing session (the walk to the church is shared by the day's floors).
     var towerFloor: [TimedStep] {
@@ -224,6 +299,8 @@ struct HumanTimingModel {
     func errand(_ errand: MPCNeighborErrand, asker: String) -> [TimedStep] {
         var steps = [step("在街上找到并走到\(asker)", pace.searchSeconds + StreetMap.averageWalkSeconds + taps(1)),
                      step("读请求", read(errand.request))]
+        let ways = MPCNeighborCatalog.ways(errand.id)
+        if !ways.isEmpty { steps.append(chooseWay(ways)) }
         switch errand.kind {
         case .deliver: steps.append(step("交货", taps(2)))
         case .find: steps.append(step("找东西（三选一）", question((errand.question ?? "").count + errand.choices.reduce(0) { $0 + $1.text.count })))
@@ -233,7 +310,32 @@ struct HumanTimingModel {
             steps.append(step("读回话", read(errand.reply ?? "")))
         case .pest: steps.append(step("开战", taps(1))); steps += battleFrame(result: 20, planning: 0.3)
         }
-        steps.append(step("读感谢", read(errand.thanks) + taps(1)))
+        steps.append(step("读感谢", read(errand.thanks + (ways.first?.reply ?? "")) + taps(1)))
+        return steps
+    }
+    /// Two ways to do an errand (2026-10-17): read both buttons, pick one.
+    func chooseWay(_ ways: [MPCErrandWay]) -> TimedStep {
+        step("选办法（\(ways.count) 种）", read(ways.reduce(0) { $0 + $1.label.count }) + decide() + taps(1))
+    }
+
+    /// A street task (MPCStreetTask: urgent, joint, commission) from its poster to the thanks. A person is
+    /// walked to on the street; a place is tapped on the home map. Fight seconds are added by the caller.
+    func streetTask(_ task: MPCStreetTask) -> [TimedStep] {
+        let ways = MPCStreetTaskCatalog.ways(task.id)
+        var steps = [step("找到发布处、读请求", pace.searchSeconds + taps(2) + DeviceWaits.screen + read(task.title + task.request))]
+        if !ways.isEmpty { steps.append(chooseWay(ways)) }
+        for s in task.steps {
+            var seconds = (s.isPerson ? pace.searchSeconds + StreetMap.averageWalkSeconds + taps(1) : taps(2) + DeviceWaits.screen * 2)
+                + read(s.goal) + read(s.line) + taps(1)
+            switch s.action {
+            case .talk: break
+            case .handOver: seconds += taps(2)
+            case .answer: seconds += question((s.question ?? "").count + s.choices.reduce(0) { $0 + $1.text.count })
+            case .battle: seconds += battleFrame(result: 20, planning: 0.3).reduce(0) { $0 + $1.seconds }
+            }
+            steps.append(step(s.goal, seconds))
+        }
+        steps.append(step("读感谢", read(task.thanks + (ways.first?.reply ?? "")) + taps(1)))
         return steps
     }
     /// A story unlocked by the errand, read once.
